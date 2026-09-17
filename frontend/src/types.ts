@@ -44,6 +44,10 @@ export interface Actuator {
     price_per_nm: number | null;
     data_source: string;
     verified: boolean;
+    country: string | null;
+    country_flag: string | null;
+    source_url: string | null;
+    source_domain: string | null;
 }
 
 export interface CategoryMeta {

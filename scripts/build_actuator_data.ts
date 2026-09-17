@@ -31,6 +31,54 @@ function round(n: number, dp = 1): number {
     return Math.round(n * f) / f;
 }
 
+// Brand -> country of origin (matched by substring, first match wins).
+const COUNTRY: [string, string, string][] = [
+    ["cubemars", "China", "\u{1F1E8}\u{1F1F3}"],
+    ["unitree", "China", "\u{1F1E8}\u{1F1F3}"],
+    ["steadywin", "China", "\u{1F1E8}\u{1F1F3}"],
+    ["xiaomi", "China", "\u{1F1E8}\u{1F1F3}"],
+    ["myactuator", "China", "\u{1F1E8}\u{1F1F3}"],
+    ["robstride", "China", "\u{1F1E8}\u{1F1F3}"],
+    ["lkm", "China", "\u{1F1E8}\u{1F1F3}"],
+    ["waveshare", "China", "\u{1F1E8}\u{1F1F3}"],
+    ["feetech", "China", "\u{1F1E8}\u{1F1F3}"],
+    ["hiwonder", "China", "\u{1F1E8}\u{1F1F3}"],
+    ["leaderdrive", "China", "\u{1F1E8}\u{1F1F3}"],
+    ["damiao", "China", "\u{1F1E8}\u{1F1F3}"],
+    ["innfos", "China", "\u{1F1E8}\u{1F1F3}"],
+    ["atar", "China", "\u{1F1E8}\u{1F1F3}"],
+    ["ipower", "China", "\u{1F1E8}\u{1F1F3}"],
+    ["robotis", "South Korea", "\u{1F1F0}\u{1F1F7}"],
+    ["harmonic drive", "Japan", "\u{1F1EF}\u{1F1F5}"],
+    ["nabtesco", "Japan", "\u{1F1EF}\u{1F1F5}"],
+    ["nidec", "Japan", "\u{1F1EF}\u{1F1F5}"],
+    ["maxon", "Switzerland", "\u{1F1E8}\u{1F1ED}"],
+    ["spinea", "Slovakia", "\u{1F1F8}\u{1F1F0}"],
+    ["tq-systems", "Germany", "\u{1F1E9}\u{1F1EA}"],
+    ["trinamic", "Germany", "\u{1F1E9}\u{1F1EA}"],
+    ["trampa", "United Kingdom", "\u{1F1EC}\u{1F1E7}"],
+    ["odrive", "United States", "\u{1F1FA}\u{1F1F8}"],
+    ["mjbots", "United States", "\u{1F1FA}\u{1F1F8}"],
+    ["allied", "United States", "\u{1F1FA}\u{1F1F8}"],
+];
+
+function countryFor(brand: string): { name: string | null; flag: string | null } {
+    const b = brand.toLowerCase();
+    for (const [needle, name, flag] of COUNTRY) {
+        if (b.includes(needle)) return { name, flag };
+    }
+    return { name: null, flag: null };
+}
+
+function hostname(url: string | null): string | null {
+    if (!url) return null;
+    try {
+        return new URL(url).hostname.replace(/^www\./, "");
+    } catch {
+        return null;
+    }
+}
+
 const files = readdirSync(SRC_DIR).filter((f) => f.endsWith(".json"));
 const merged: Actuator[] = [];
 const seen = new Set<string>();
@@ -73,6 +121,20 @@ for (const file of files.sort()) {
         // All v1 data came from web search snippets, not direct datasheets.
         entry.data_source = "web_search";
         entry.verified = false;
+
+        // Country of origin (by brand).
+        const c = countryFor(entry.brand);
+        entry.country = c.name;
+        entry.country_flag = c.flag;
+
+        // Primary source link + domain for attribution in the UI.
+        const src =
+            (entry.product_url as string | null) ??
+            (entry.datasheet_url as string | null) ??
+            (entry.sources as string[] | undefined)?.[0] ??
+            null;
+        entry.source_url = src;
+        entry.source_domain = hostname(src);
 
         merged.push(entry);
     }

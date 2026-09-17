@@ -34,6 +34,7 @@ function specs(a: Actuator): Spec[] {
         { label: "IP rating", value: a.ip_rating ?? dash() },
         { label: "Price", value: price(a.price_usd) },
         { label: "$ / peak N·m", value: a.price_per_nm == null ? dash() : `$${num(a.price_per_nm, 1)}` },
+        { label: "Origin", value: a.country ? `${a.country_flag ?? ""} ${a.country}` : dash() },
     ];
 }
 

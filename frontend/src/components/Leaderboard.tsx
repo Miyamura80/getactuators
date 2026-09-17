@@ -33,6 +33,7 @@ export function Leaderboard({
                         <th className="col-pick" aria-label="Compare" />
                         <th className="col-name">Actuator</th>
                         <th className="col-cat">Category</th>
+                        <th className="col-country">Origin</th>
                         {COLUMNS.map((c) => {
                             const on = sortKey === c.key;
                             return (
@@ -58,6 +59,7 @@ export function Leaderboard({
                             );
                         })}
                         <th className="col-comm">Comm</th>
+                        <th className="col-src">Source</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -95,6 +97,10 @@ export function Leaderboard({
                                         {cat?.label ?? a.category}
                                     </span>
                                 </td>
+                                <td className="col-country" title={a.country ?? undefined}>
+                                    <span className="flag">{a.country_flag ?? "–"}</span>
+                                    <span className="country-name">{a.country ?? ""}</span>
+                                </td>
                                 {COLUMNS.map((c) => (
                                     <td key={c.key} className="col-num">
                                         {c.bar ? (
@@ -110,12 +116,26 @@ export function Leaderboard({
                                     </td>
                                 ))}
                                 <td className="col-comm">{list(a.comm)}</td>
+                                <td className="col-src">
+                                    {a.source_url ? (
+                                        <a
+                                            href={a.source_url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            {a.source_domain ?? "link"}
+                                        </a>
+                                    ) : (
+                                        <span className="cell-null">{"–"}</span>
+                                    )}
+                                </td>
                             </tr>
                         );
                     })}
                     {rows.length === 0 && (
                         <tr>
-                            <td colSpan={COLUMNS.length + 4} className="empty">
+                            <td colSpan={COLUMNS.length + 6} className="empty">
                                 No actuators match these filters.
                             </td>
                         </tr>
