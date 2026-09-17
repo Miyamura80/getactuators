@@ -1,0 +1,372 @@
+[
+    {
+        "id": "harmonic-drive-fha-14c-100",
+        "name": "FHA-14C-100 (FHA-C Mini)",
+        "brand": "Harmonic Drive LLC",
+        "category": "harmonic_precision",
+        "use_cases": ["robot_arm", "cobot_joint", "semiconductor", "medical_robotics"],
+        "product_url": "https://www.harmonicdrive.net/products/rotary-actuators/hollow-shaft-servo-actuators/fha-mini",
+        "datasheet_url": "https://www.harmonicdrive.net/_hd/content/catalogs/pdf/fha-c-miniature-spec-sheet-24v.pdf",
+        "price_usd": null,
+        "availability": "in_production",
+
+        "peak_torque_nm": null,
+        "rated_torque_nm": 28,
+        "max_speed_rpm": 60,
+        "gear_ratio": "100:1",
+        "weight_g": 1650,
+        "torque_density_nm_per_kg": null,
+        "backdrivable": false,
+        "backlash_arcmin": 0,
+        "repeatability_arcmin": null,
+
+        "voltage_v": "24",
+        "peak_current_a": null,
+        "power_w": null,
+        "kt_nm_per_a": null,
+
+        "comm": ["CAN", "EtherCAT"],
+        "control_modes": ["position", "velocity", "torque"],
+        "encoder": "dual absolute (15-bit motor input, 14-bit output), battery-less within one turn",
+        "integrated_driver": true,
+        "ip_rating": null,
+
+        "notes": "Compact hollow-shaft AC servo actuator: pancake BLDC motor + zero-backlash Harmonic Drive strain-wave gear. FHA-C Mini family sizes 8C/11C/14C with ratios 30/50/100:1. 'Zero backlash' is the manufacturer's strain-wave claim (recorded as 0). Positioning accuracy ~90 arc-sec (=1.5 arcmin) for FHA-14C-100; repeatability not confirmed in accessible sources. 24VDC integrated-drive version communicates via CANopen (4-wire) with EtherCAT option. rated_torque 28 N·m is the value listed by distributors; separate momentary/peak torque not confirmed from a primary source, so peak and torque_density left null. Weight ~1.65 kg approximate (distributor listing). Quote-only pricing.",
+        "sources": [
+            "https://www.harmonicdrive.net/products/rotary-actuators/hollow-shaft-servo-actuators/fha-mini",
+            "https://www.harmonicdrive.net/products/miniature-products/miniature-actuators/fha-mini-integrated-drive",
+            "https://www.harmonicdrive.net/_hd/content/catalogs/pdf/fha-c-miniature-spec-sheet-24v.pdf",
+            "https://www.radwell.com/Buy/HARMONIC%20DRIVE/HARMONIC%20DRIVE/FHA-14C-100-D200-M1-SP"
+        ]
+    },
+    {
+        "id": "harmonic-drive-sha-cg",
+        "name": "SHA-CG series (SHA-CG Hollow Shaft Actuator)",
+        "brand": "Harmonic Drive LLC",
+        "category": "harmonic_precision",
+        "use_cases": [
+            "robot_arm",
+            "cobot_joint",
+            "positioning_stage",
+            "assembly_automation"
+        ],
+        "product_url": "https://www.harmonicdrive.net/products/rotary-actuators/hollow-shaft-servo-actuators/sha-cg",
+        "datasheet_url": "https://www.harmonicdrivegearhead.com/_hd/content/documents/SHASGandCGManual.pdf",
+        "price_usd": null,
+        "availability": "in_production",
+
+        "peak_torque_nm": null,
+        "rated_torque_nm": null,
+        "max_speed_rpm": null,
+        "gear_ratio": "50:1-160:1",
+        "weight_g": null,
+        "torque_density_nm_per_kg": null,
+        "backdrivable": false,
+        "backlash_arcmin": 0,
+        "repeatability_arcmin": 0.08,
+
+        "voltage_v": "24 / 100-240",
+        "peak_current_a": null,
+        "power_w": null,
+        "kt_nm_per_a": null,
+
+        "comm": ["EtherCAT", "CAN"],
+        "control_modes": ["position", "velocity", "torque"],
+        "encoder": "magnetic dual absolute, output resolution up to ~20,971,520 pulse/rev",
+        "integrated_driver": true,
+        "ip_rating": null,
+
+        "notes": "Hollow-shaft AC servo actuator combining CSG zero-backlash strain-wave gear with a brushless servomotor and integrated servo drive (EtherCAT/CANopen). 4 frame sizes, 5 reduction ratios 50:1-160:1. Series delivers up to 3,400 N·m across sizes; positional accuracy better than 1 arcmin and repeatability better than +/-5 arc-sec (recorded as ~0.08 arcmin). Per-size rated/peak torque, weight and speed not captured from a primary datasheet in accessible sources (manufacturer PDFs were egress-blocked this session), so left null rather than guessed. 'Zero backlash' recorded as 0 per manufacturer strain-wave claim. Quote-only pricing.",
+        "sources": [
+            "https://www.harmonicdrive.net/products/rotary-actuators/hollow-shaft-servo-actuators/sha-cg",
+            "https://www.harmonicdrivegearhead.com/_hd/content/documents/SHASGandCGManual.pdf",
+            "https://www.ethercat.org/en/products/C964F53A03D7411191AB43DDDEF93C22.htm",
+            "https://www.electromate.com/sha-25a-100-cg-100v/"
+        ]
+    },
+    {
+        "id": "harmonic-drive-cha-series",
+        "name": "CHA series (Hollow Shaft Servo Actuator)",
+        "brand": "Harmonic Drive (Harmonic Drive SE / LLC)",
+        "category": "harmonic_precision",
+        "use_cases": ["robot_arm", "industrial_robot_joint", "heavy_positioning"],
+        "product_url": "https://harmonicdrive.de/en/products/servo-actuators-with-hollow-shaft/cha",
+        "datasheet_url": "https://harmonicdrive.de/fileadmin/user_upload/ED_CHA_E_1018854_8.2018_V03.pdf",
+        "price_usd": null,
+        "availability": "in_production",
+
+        "peak_torque_nm": null,
+        "rated_torque_nm": null,
+        "max_speed_rpm": null,
+        "gear_ratio": "30:1-160:1",
+        "weight_g": null,
+        "torque_density_nm_per_kg": null,
+        "backdrivable": false,
+        "backlash_arcmin": 0,
+        "repeatability_arcmin": null,
+
+        "voltage_v": null,
+        "peak_current_a": null,
+        "power_w": null,
+        "kt_nm_per_a": null,
+
+        "comm": ["EtherCAT", "CAN"],
+        "control_modes": ["position", "velocity", "torque"],
+        "encoder": "absolute feedback",
+        "integrated_driver": false,
+        "ip_rating": null,
+
+        "notes": "CHA hollow-shaft servo actuator: synchronous servomotor + CPU-H series zero-backlash strain-wave gear + high-capacity precision output bearing. Available in eight sizes, gear ratios 30:1-160:1, maximum torque range from about 8 N·m up to 1,840 N·m across the size range. Requires a matching external servo drive (CANopen/EtherCAT drives offered). Per-size rated/peak torque, weight, speed and repeatability not captured from a primary datasheet in accessible sources (egress-blocked), so left null. Backlash recorded 0 per strain-wave zero-backlash claim. Quote-only pricing.",
+        "sources": [
+            "https://harmonicdrive.de/en/products/servo-actuators-with-hollow-shaft/cha",
+            "https://harmonicdrive.de/fileadmin/user_upload/ED_CHA_E_1018854_8.2018_V03.pdf",
+            "https://harmonicdrive.de/fileadmin/user_upload/ED_CHA_C_E_1019461_02_2017_V04_5.pdf"
+        ]
+    },
+    {
+        "id": "harmonic-drive-lpa-20",
+        "name": "LPA-20 (Low Profile Rotary Actuator)",
+        "brand": "Harmonic Drive LLC",
+        "category": "harmonic_precision",
+        "use_cases": [
+            "humanoid_joint",
+            "cobot_joint",
+            "robot_arm",
+            "surgical_robotics"
+        ],
+        "product_url": "https://www.harmonicdrive.net/products/integrated-actuators/integrated-actuators/lpa-integrated-servo-drive",
+        "datasheet_url": "https://www.harmonicdrive.net/_hd/Content/documents1/Group%20Integrated%20Brochure.pdf",
+        "price_usd": null,
+        "availability": "in_production",
+
+        "peak_torque_nm": 57,
+        "rated_torque_nm": 16.9,
+        "max_speed_rpm": null,
+        "gear_ratio": "51:1-101:1",
+        "weight_g": 1400,
+        "torque_density_nm_per_kg": 40.7,
+        "backdrivable": false,
+        "backlash_arcmin": 0,
+        "repeatability_arcmin": null,
+
+        "voltage_v": "48",
+        "peak_current_a": null,
+        "power_w": null,
+        "kt_nm_per_a": null,
+
+        "comm": ["CAN", "EtherCAT"],
+        "control_modes": ["position", "velocity", "torque"],
+        "encoder": "dual absolute encoders",
+        "integrated_driver": true,
+        "ip_rating": null,
+
+        "notes": "Low-profile integrated servo actuator aimed at humanoid/cobot joints and surgical robotics. Combines zero-backlash Harmonic Drive gearing, brushless servomotor, brake, dual absolute encoders and integrated servo drive (CANopen/EtherCAT). Gear ratios 51/81/101:1. Continuous torque 6.5-16.9 N·m and maximum (peak) torque 34-57 N·m depending on ratio; values recorded are the top-of-range (101:1) figures. Weight ~1.4 kg (approx). torque_density computed from peak 57 N·m / 1.4 kg. Repeatability not published in accessible sources. Voltage class assumed 48V (typical for the line) - not confirmed from a primary datasheet. Quote-only pricing.",
+        "sources": [
+            "https://www.harmonicdrive.net/products/integrated-actuators/integrated-actuators/lpa-integrated-servo-drive",
+            "https://humanoidroboticstechnology.com/company/harmonic-drive-llc/lpa-20-integrated-servo-actuator/",
+            "https://www.ethercat.org/en/products/5DE0F5357C2642E8804F4202F3D76A0C.htm",
+            "https://www.roboticstomorrow.com/news/2026/07/06/harmonic-drive-advances-surgical-robotics-supply-with-innovative-lpa-20-compact-actuator-control-component/26804"
+        ]
+    },
+    {
+        "id": "leaderdrive-lhs",
+        "name": "LHS series (Harmonic Drive strain-wave reducer)",
+        "brand": "Leaderdrive (Suzhou Leader Harmonic Drive)",
+        "category": "harmonic_precision",
+        "use_cases": ["robot_arm", "industrial_robot_joint", "cobot_joint"],
+        "product_url": "https://www.gigager.net/showroom/leaderdrive-lhs-i-series-harmonic-drive-speed-reducer-for-high-precision.html",
+        "datasheet_url": null,
+        "price_usd": null,
+        "availability": "in_production",
+
+        "peak_torque_nm": null,
+        "rated_torque_nm": null,
+        "max_speed_rpm": null,
+        "gear_ratio": "50:1-160:1",
+        "weight_g": null,
+        "torque_density_nm_per_kg": null,
+        "backdrivable": false,
+        "backlash_arcmin": 0,
+        "repeatability_arcmin": null,
+
+        "voltage_v": null,
+        "peak_current_a": null,
+        "power_w": null,
+        "kt_nm_per_a": null,
+
+        "comm": [],
+        "control_modes": [],
+        "encoder": null,
+        "integrated_driver": false,
+        "ip_rating": null,
+
+        "notes": "Strain-wave (harmonic) gear reducer component - a Harmonic Drive alternative used to build precision robot-arm joints, not a motorized actuator, so motor/electrical/comms fields are null. Sizes ~14/17/20/25/32/40 with reduction ratios 50/80/100/120/160:1. Rated output torque spans roughly 3.8 N·m (smallest size) to ~279 N·m (size 40) per distributor listings; specific per-size/ratio values not confirmed from a primary Leaderdrive datasheet, so left null. Marketed as zero-backlash (recorded 0); transmission accuracy / lost motion typically about 1 arcmin but not confirmed here. Quote-only pricing.",
+        "sources": [
+            "https://www.gigager.net/showroom/leaderdrive-lhs-i-series-harmonic-drive-speed-reducer-for-high-precision.html",
+            "https://www.made-in-china.com/showroom/leaderdriveharmonic/product-detailVKinUBxDhXkI/China-Leaderdrive-Lhs-I-Series-Harmonic-Drive-Speed-Reducer-for-High-Precision.html",
+            "https://www.directindustry.com/prod/leader-harmonious-drive-systems-co-ltd/product-245080-2757791.html"
+        ]
+    },
+    {
+        "id": "leaderdrive-lhd",
+        "name": "LHD series (hollow-shaft harmonic reducer)",
+        "brand": "Leaderdrive (Suzhou Leader Harmonic Drive)",
+        "category": "harmonic_precision",
+        "use_cases": ["robot_arm", "industrial_robot_joint"],
+        "product_url": "https://www.gigager.net/showroom/leaderdrive-lhd-series-harmonic-drive-speed-reducer-for-robot-arms.html",
+        "datasheet_url": null,
+        "price_usd": null,
+        "availability": "in_production",
+
+        "peak_torque_nm": null,
+        "rated_torque_nm": null,
+        "max_speed_rpm": null,
+        "gear_ratio": "50:1-160:1",
+        "weight_g": null,
+        "torque_density_nm_per_kg": null,
+        "backdrivable": false,
+        "backlash_arcmin": 0,
+        "repeatability_arcmin": null,
+
+        "voltage_v": null,
+        "peak_current_a": null,
+        "power_w": null,
+        "kt_nm_per_a": null,
+
+        "comm": [],
+        "control_modes": [],
+        "encoder": null,
+        "integrated_driver": false,
+        "ip_rating": null,
+
+        "notes": "Compact hollow-shaft strain-wave (harmonic) gear reducer component for robot-arm joints; no integrated motor, so motor/electrical/comms fields are null. Seven sizes (14/17/20/25/32/40 and larger) with reduction ratios 50/80/100/120/160:1; directindustry lists a coaxial hollow-shaft variant in the ~100-200 N·m class. Per-size rated/peak torque and weight not confirmed from a primary Leaderdrive datasheet, so left null. Marketed zero-backlash (recorded 0). Quote-only pricing.",
+        "sources": [
+            "https://www.gigager.net/showroom/leaderdrive-lhd-series-harmonic-drive-speed-reducer-for-robot-arms.html",
+            "https://leaderdrivereducer.en.ec21.com/LeaderDrive_LHD_Series_Harmonic_Drive--9782640_9782690.html",
+            "https://www.directindustry.com/prod/leader-harmonious-drive-systems-co-ltd/product-245080-2758185.html"
+        ]
+    },
+    {
+        "id": "leaderdrive-lcs",
+        "name": "LCS series (cup-type harmonic reducer)",
+        "brand": "Leaderdrive (Suzhou Leader Harmonic Drive)",
+        "category": "harmonic_precision",
+        "use_cases": ["robot_arm", "cobot_joint", "industrial_robot_joint"],
+        "product_url": "https://aifitlab.com/products/leaderdrive-lcs-i-strain-wave-gear",
+        "datasheet_url": null,
+        "price_usd": null,
+        "availability": "in_production",
+
+        "peak_torque_nm": null,
+        "rated_torque_nm": null,
+        "max_speed_rpm": null,
+        "gear_ratio": "50:1-160:1",
+        "weight_g": null,
+        "torque_density_nm_per_kg": null,
+        "backdrivable": false,
+        "backlash_arcmin": 0,
+        "repeatability_arcmin": null,
+
+        "voltage_v": null,
+        "peak_current_a": null,
+        "power_w": null,
+        "kt_nm_per_a": null,
+
+        "comm": [],
+        "control_modes": [],
+        "encoder": null,
+        "integrated_driver": false,
+        "ip_rating": null,
+
+        "notes": "Cup-type strain-wave (harmonic) gear reducer component used to build precision arm joints; no integrated motor, so motor/electrical/comms fields are null. Sizes 8/14/17/20/25/32/40/50 with reduction ratios 50/80/100/120/160:1. Per-size rated/peak torque and weight not confirmed from a primary Leaderdrive datasheet, so left null. Marketed zero-backlash (recorded 0). Quote-only pricing.",
+        "sources": [
+            "https://aifitlab.com/products/leaderdrive-lcs-i-strain-wave-gear",
+            "https://www.step.parts/parts/leaderdrive_lcs_i_series_lcs_14_xxx_c_ii",
+            "https://www.gigager.net/showroom/leaderdrive-lcs-ii-series-harmonic-drive-speed-reducer-for-industrial-robotics.html"
+        ]
+    },
+    {
+        "id": "nidec-flexwave-wpg",
+        "name": "FLEXWAVE WPG series (strain-wave gearhead)",
+        "brand": "Nidec Drive Technology (Nidec-Shimpo)",
+        "category": "harmonic_precision",
+        "use_cases": [
+            "robot_arm",
+            "industrial_robot_joint",
+            "machine_tool",
+            "semiconductor"
+        ],
+        "product_url": "https://www.nidec-dtc.com/product/wpg-gearhead/",
+        "datasheet_url": "https://www.nidec-dtc.com/wp-content/uploads/2025/02/Flexwave_Catalog_A4-2025.pdf",
+        "price_usd": null,
+        "availability": "in_production",
+
+        "peak_torque_nm": null,
+        "rated_torque_nm": null,
+        "max_speed_rpm": null,
+        "gear_ratio": "50:1-160:1",
+        "weight_g": null,
+        "torque_density_nm_per_kg": null,
+        "backdrivable": true,
+        "backlash_arcmin": 0,
+        "repeatability_arcmin": null,
+
+        "voltage_v": null,
+        "peak_current_a": null,
+        "power_w": null,
+        "kt_nm_per_a": null,
+
+        "comm": [],
+        "control_modes": [],
+        "encoder": null,
+        "integrated_driver": false,
+        "ip_rating": null,
+
+        "notes": "FLEXWAVE strain-wave (harmonic) gearing from Nidec Drive Technology (formerly Nidec-Shimpo). This is a zero-backlash gear unit / gearhead component (flexspline, circular spline, wave generator), not a motorized actuator, so motor/electrical/comms fields are null. FLEXWAVE spans ~5 frame sizes (approx 35-80 mm) with ratios from 50:1 up to 160:1 (single stage) and maximum torque up to about 346 N·m across the range. Marketed zero-backlash and fully back-drivable with high repeatability; per-size rated torque and repeatability-in-arc-sec not confirmed from a primary datasheet here, so left null. Quote-only pricing.",
+        "sources": [
+            "https://www.nidec-dtc.com/product/wpg-gearhead/",
+            "https://www.nidec-dtc.com/wp-content/uploads/2025/02/Flexwave_Catalog_A4-2025.pdf",
+            "https://www.automate.org/products/nidec-shimpo-america/flexwave-zero-backlash-harmonic-gearing",
+            "https://www.valin.com/sites/default/files/2023/asset/document/nidec-shimpo-flexwave-strain-wave-_harmonic-gear-unit-brochure.pdf"
+        ]
+    },
+    {
+        "id": "nidec-smart-flexwave-srh",
+        "name": "Smart-FLEXWAVE SRH series (smart strain-wave reducer)",
+        "brand": "Nidec Drive Technology (Nidec-Shimpo)",
+        "category": "harmonic_precision",
+        "use_cases": ["humanoid_joint", "cobot_joint", "robot_arm"],
+        "product_url": "https://www.nidec-dtc.com/product/srh-series-wpu-srh-bd/",
+        "datasheet_url": "https://www.nidec-dtc.com/wp-content/uploads/2025/10/Smart-FLEXWAVE_Catalog_A1-2025.pdf",
+        "price_usd": null,
+        "availability": "in_production",
+
+        "peak_torque_nm": null,
+        "rated_torque_nm": null,
+        "max_speed_rpm": null,
+        "gear_ratio": "50:1-160:1",
+        "weight_g": null,
+        "torque_density_nm_per_kg": null,
+        "backdrivable": true,
+        "backlash_arcmin": 0,
+        "repeatability_arcmin": null,
+
+        "voltage_v": null,
+        "peak_current_a": null,
+        "power_w": null,
+        "kt_nm_per_a": null,
+
+        "comm": [],
+        "control_modes": [],
+        "encoder": "integrated (built-in sensing)",
+        "integrated_driver": false,
+        "ip_rating": null,
+
+        "notes": "Smart-FLEXWAVE (SRH / WPU-SRH-BD) is Nidec Drive Technology's ultra-thin/lightweight zero-backlash strain-wave 'smart reducer' with built-in sensing, aimed at humanoid and cobot joints. It is a reducer-with-sensor module (no integrated motor or drive), so torque/electrical/comms fields are left null pending a primary datasheet (catalog PDFs egress-blocked this session). Zero-backlash recorded as 0. Quote-only pricing.",
+        "sources": [
+            "https://www.nidec-dtc.com/product/srh-series-wpu-srh-bd/",
+            "https://www.nidec-dtc.com/wp-content/uploads/2025/10/Smart-FLEXWAVE_Catalog_A1-2025.pdf",
+            "https://www.nidec-dtc.com/product-category/strain-wave/"
+        ]
+    }
+]
