@@ -118,9 +118,11 @@ for (const file of files.sort()) {
                 ? round(entry.price_usd / entry.peak_torque_nm, 2)
                 : null;
 
-        // All v1 data came from web search snippets, not direct datasheets.
-        entry.data_source = "web_search";
-        entry.verified = false;
+        // v1 data came from web search snippets. Entries that have since been
+        // spot-checked against manufacturer/reseller pages carry verified:true
+        // in the source file; everything else stays unverified.
+        entry.verified = entry.verified === true;
+        entry.data_source = entry.verified ? "spot_checked" : "web_search";
 
         // Country of origin (by brand).
         const c = countryFor(entry.brand);

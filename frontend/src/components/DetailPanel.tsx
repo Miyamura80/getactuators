@@ -66,7 +66,11 @@ export function DetailPanel({ actuator, onClose }: Props) {
                     </button>
                 </header>
 
-                {!a.verified && (
+                {a.verified ? (
+                    <p className="verified-note" title="Headline specs spot-checked against manufacturer/reseller pages">
+                        {"✓"} Headline specs spot-checked against manufacturer sources (Sep 2026)
+                    </p>
+                ) : (
                     <p className="unverified" title="Sourced from web search, not a direct datasheet read">
                         Specs sourced from web search {"·"} verify against the datasheet before design use
                     </p>

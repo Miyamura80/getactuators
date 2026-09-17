@@ -91,7 +91,7 @@
         "max_speed_rpm": 46,
         "gear_ratio": "353.5:1",
         "weight_g": 82,
-        "torque_density_nm_per_kg": 50.0,
+        "torque_density_nm_per_kg": 50,
         "backdrivable": null,
         "backlash_arcmin": null,
         "repeatability_arcmin": null,
@@ -168,7 +168,7 @@
         "max_speed_rpm": 39,
         "gear_ratio": "272.5:1",
         "weight_g": 165,
-        "torque_density_nm_per_kg": 60.0,
+        "torque_density_nm_per_kg": 60,
         "backdrivable": null,
         "backlash_arcmin": 15,
         "repeatability_arcmin": null,
@@ -193,7 +193,8 @@
             "https://www.robotis.us/dynamixel-xh540-w270-t/",
             "https://emanual.robotis.com/docs/en/dxl/x/xh540-w270/",
             "https://www.generationrobots.com/en/403377-dynamixel-xh540-w270-t-servo-motor.html"
-        ]
+        ],
+        "verified": true
     },
     {
         "id": "dynamixel-xm540-w270-t",
@@ -235,7 +236,8 @@
             "https://www.robotis.us/dynamixel-xm540-w270-t/",
             "https://emanual.robotis.com/docs/en/dxl/x/xm540-w270/",
             "https://docs.robotis.com/docs/dxl/model_reference/x_series/xm_series/xm540-w270/"
-        ]
+        ],
+        "verified": true
     },
     {
         "id": "dynamixel-ph54-200-s500-r",
@@ -389,7 +391,8 @@
             "https://www.robotshop.com/products/feetech-12v-30kgcm-magnetic-encoding-servo-sts3215",
             "https://github.com/TheRobotStudio/SO-ARM100",
             "https://shop.wowrobo.com/products/feetech-sts3215-servo-12v-30kg-high-torque-servo-for-so-arm100"
-        ]
+        ],
+        "verified": true
     },
     {
         "id": "feetech-sts3250",

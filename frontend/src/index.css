@@ -528,6 +528,21 @@ table.board {
     color: var(--muted);
     font-size: 11px;
 }
+.verified-tick {
+    color: var(--green);
+    font-weight: 700;
+    margin-left: 6px;
+    font-size: 12px;
+}
+.verified-note {
+    margin: 14px 0 0;
+    padding: 8px 12px;
+    background: color-mix(in oklab, var(--green) 12%, var(--black));
+    color: var(--text);
+    font-size: 12px;
+    border: 1px solid color-mix(in oklab, var(--green) 40%, var(--black));
+    font-family: var(--mono);
+}
 .col-country .flag {
     font-size: 15px;
     margin-right: 6px;

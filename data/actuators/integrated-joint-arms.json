@@ -9,7 +9,6 @@
         "datasheet_url": "https://www.myactuator.com/downloads-xseries",
         "price_usd": 355,
         "availability": "in_production",
-
         "peak_torque_nm": 8,
         "rated_torque_nm": 4.5,
         "max_speed_rpm": 310,
@@ -19,18 +18,15 @@
         "backdrivable": null,
         "backlash_arcmin": null,
         "repeatability_arcmin": null,
-
         "voltage_v": "24-48",
         "peak_current_a": null,
         "power_w": 135,
         "kt_nm_per_a": null,
-
         "comm": ["CAN", "RS-485"],
         "control_modes": ["position", "velocity", "torque"],
         "encoder": "18-bit magnetic (dual-encoder option)",
         "integrated_driver": true,
         "ip_rating": null,
-
         "notes": "Entry-level planetary joint module (MC-X-300 driver built in). Peak torque per RobotShop V3 1:8 listing; other listings quote ~10 N.m. Net weight not published on primary sources (listings vary ~335-450 g), so torque density left null.",
         "sources": [
             "https://www.robotshop.com/products/myactuator-rmd-x6-v3-can-bus-18-mc-x-300-o-brushless-servo-driver",
@@ -48,7 +44,6 @@
         "datasheet_url": "https://www.myactuator.com/x8-25-details",
         "price_usd": null,
         "availability": "in_production",
-
         "peak_torque_nm": 25,
         "rated_torque_nm": 13,
         "max_speed_rpm": 160,
@@ -58,18 +53,15 @@
         "backdrivable": null,
         "backlash_arcmin": null,
         "repeatability_arcmin": null,
-
         "voltage_v": "24-48",
         "peak_current_a": null,
         "power_w": 166,
         "kt_nm_per_a": null,
-
         "comm": ["CAN", "RS-485"],
         "control_modes": ["position", "velocity", "torque"],
         "encoder": "18-bit magnetic",
         "integrated_driver": true,
         "ip_rating": "IP54",
-
         "notes": "Popular arm/leg joint module. Peak 25 N.m and rated 13 N.m per RobotShop/MyActuator; continuous current ~5 A, nominal speed 122 rpm / ~160 rpm no-load at 48 V. Only gross shipping weight (~1.1 kg incl. packaging) is published on listings, so net weight and torque density left null.",
         "sources": [
             "https://www.robotshop.com/products/my-actuator-rmd-x8-pro-v2-can-bus-bldc-actuator-w-19-reduction-mc-x-300-o-driver",
@@ -87,7 +79,6 @@
         "datasheet_url": "https://www.dingsmotionusa.com/rmd-x8-120",
         "price_usd": 645,
         "availability": "in_production",
-
         "peak_torque_nm": 120,
         "rated_torque_nm": null,
         "max_speed_rpm": null,
@@ -97,24 +88,22 @@
         "backdrivable": false,
         "backlash_arcmin": null,
         "repeatability_arcmin": null,
-
         "voltage_v": "24-48",
         "peak_current_a": null,
         "power_w": 574,
         "kt_nm_per_a": null,
-
         "comm": ["CAN", "EtherCAT"],
         "control_modes": ["position", "velocity", "torque"],
         "encoder": "dual 18-bit magnetic",
         "integrated_driver": true,
         "ip_rating": null,
-
         "notes": "High-torque, large-hollow-bore planetary joint for arm base/humanoid joints. Model name '120' = 120 N.m peak (one distributor lists 110 N.m peak / 574 W); rated torque not clearly published. Gear ratio ~20:1 inferred from part code RMD-X8-P20-120. EtherCAT and CAN driver variants.",
         "sources": [
             "https://www.robotshop.com/products/myactuator-myactuator-brushless-dc-motor-rmd-x8-120-ethercat-large-torque-120nm-robot-joint-module-large-hollow-planetary-reduction-torque",
             "https://rcdrone.top/products/myactuator-rmd-x8-120-servo-motor-actuator-48v-574w-110n-m-peak-torque-dual-encoder-ethercat-can-bus-for-robots-robotic-arms",
             "https://www.dingsmotionusa.com/rmd-x8-120"
-        ]
+        ],
+        "verified": true
     },
     {
         "id": "myactuator-rmd-x10-s2-v3",
@@ -126,28 +115,24 @@
         "datasheet_url": "https://www.myactuator.com/downloads-xseries",
         "price_usd": 625,
         "availability": "in_production",
-
         "peak_torque_nm": 100,
         "rated_torque_nm": 50,
         "max_speed_rpm": 50,
         "gear_ratio": "35:1",
         "weight_g": 980,
-        "torque_density_nm_per_kg": 102.0,
+        "torque_density_nm_per_kg": 102,
         "backdrivable": false,
         "backlash_arcmin": null,
         "repeatability_arcmin": null,
-
         "voltage_v": "24-48",
         "peak_current_a": null,
         "power_w": 265,
         "kt_nm_per_a": null,
-
         "comm": ["CAN", "RS-485"],
         "control_modes": ["position", "velocity", "torque"],
         "encoder": "18-bit magnetic (dual)",
         "integrated_driver": true,
         "ip_rating": null,
-
         "notes": "High-reduction planetary joint (MC-X-500 driver). Peak 100 N.m per RobotShop, rated 50 N.m at 50 rpm. Weight ~2.16 lb (~980 g) per Amazon listing used for torque density. Good for high-torque, low-speed arm joints.",
         "sources": [
             "https://www.robotshop.com/products/myactuator-rmd-x10-s2-v3-bldc-can-bus-135mc-x-500-o-brushless-servo-driver",
@@ -165,7 +150,6 @@
         "datasheet_url": "https://www.myactuator.com/downloads-lseries",
         "price_usd": null,
         "availability": "in_production",
-
         "peak_torque_nm": 3.4,
         "rated_torque_nm": 1.64,
         "max_speed_rpm": 780,
@@ -175,18 +159,15 @@
         "backdrivable": true,
         "backlash_arcmin": null,
         "repeatability_arcmin": null,
-
         "voltage_v": "24",
         "peak_current_a": null,
         "power_w": 200,
         "kt_nm_per_a": null,
-
         "comm": ["CAN", "RS-485", "TTL"],
         "control_modes": ["position", "velocity", "torque"],
         "encoder": "18-bit magnetic",
         "integrated_driver": true,
         "ip_rating": null,
-
         "notes": "RMD-L is a direct-drive (gearless) outer-rotor gimbal-style actuator with integrated driver/encoder, not a geared joint reducer. Low torque, high speed, fully backdrivable; better suited to gimbals/light QDD than high-load arm joints. Nominal 1.64 N.m, max instantaneous 3.4 N.m, 780 rpm, 650 g.",
         "sources": [
             "https://us.amazon.com/MyActuator-RMD-L-9015-16T-Closed-Loop-Brushless-Turntable/dp/B0CCYHDR1N",
@@ -204,7 +185,6 @@
         "datasheet_url": "https://wiki.aifitlab.com/robstride-docs/robstride-00-instruction-manual",
         "price_usd": null,
         "availability": "in_production",
-
         "peak_torque_nm": 14,
         "rated_torque_nm": null,
         "max_speed_rpm": null,
@@ -214,18 +194,15 @@
         "backdrivable": true,
         "backlash_arcmin": null,
         "repeatability_arcmin": null,
-
         "voltage_v": null,
         "peak_current_a": null,
         "power_w": null,
         "kt_nm_per_a": null,
-
         "comm": ["CAN"],
         "control_modes": ["position", "velocity", "torque", "mit"],
         "encoder": "dual 14-bit magnetic",
         "integrated_driver": true,
         "ip_rating": null,
-
         "notes": "Smallest RobStride QDD integrated module. 14 N.m peak, 10:1 reduction, dual 14-bit encoders, CAN, MIT-mode control. Rated torque and voltage not clearly published on primary sources.",
         "sources": [
             "https://www.seeedstudio.com/Robostride-00-Actuator-p-6664.html",
@@ -242,7 +219,6 @@
         "datasheet_url": "https://openelab.io/blogs/learn/what-is-robstride01-36v-qdd-motor-robot-arms-automation",
         "price_usd": null,
         "availability": "in_production",
-
         "peak_torque_nm": 17,
         "rated_torque_nm": 7,
         "max_speed_rpm": null,
@@ -252,18 +228,15 @@
         "backdrivable": true,
         "backlash_arcmin": null,
         "repeatability_arcmin": null,
-
         "voltage_v": "24-48",
         "peak_current_a": null,
         "power_w": null,
         "kt_nm_per_a": null,
-
         "comm": ["CAN"],
         "control_modes": ["position", "velocity", "torque", "mit"],
         "encoder": "single 14-bit magnetic",
         "integrated_driver": true,
         "ip_rating": null,
-
         "notes": "Compact 36 V-nominal QDD module (24-48 V range). 17 N.m peak, 7 N.m rated at 100 rpm, 7.75:1 reduction, single magnetic encoder. Rated torque quoted at 100 rpm; no-load max speed not published.",
         "sources": [
             "https://www.seeedstudio.com/Robostride-01-Actuator-p-6773.html",
@@ -281,28 +254,24 @@
         "datasheet_url": "https://openelab.io/blogs/learn/complete-guide-to-robstride-qdd-motors-model-comparison-and-selection",
         "price_usd": null,
         "availability": "in_production",
-
         "peak_torque_nm": 17,
         "rated_torque_nm": null,
         "max_speed_rpm": null,
         "gear_ratio": "7.75:1",
         "weight_g": 405,
-        "torque_density_nm_per_kg": 42.0,
+        "torque_density_nm_per_kg": 42,
         "backdrivable": true,
         "backlash_arcmin": null,
         "repeatability_arcmin": null,
-
         "voltage_v": "24-48",
         "peak_current_a": null,
         "power_w": 170,
         "kt_nm_per_a": null,
-
         "comm": ["CAN"],
         "control_modes": ["position", "velocity", "torque", "mit"],
         "encoder": "dual 14-bit magnetic",
         "integrated_driver": true,
         "ip_rating": null,
-
         "notes": "Dual-encoder sibling of RobStride 01. 17 N.m peak, 7.75:1 reduction, 48 V nominal, ~170 W, dual 14-bit magnetic encoders, CAN with MIT-mode control. Rated (continuous) torque not clearly published.",
         "sources": [
             "https://www.seeedstudio.com/Robostride-02-Actuator-p-6665.html",
@@ -320,7 +289,6 @@
         "datasheet_url": "https://openelab.io/blogs/learn/what-is-robstride03-qdd-60n-m-actuator",
         "price_usd": null,
         "availability": "in_production",
-
         "peak_torque_nm": 60,
         "rated_torque_nm": 21,
         "max_speed_rpm": null,
@@ -330,18 +298,15 @@
         "backdrivable": true,
         "backlash_arcmin": null,
         "repeatability_arcmin": null,
-
         "voltage_v": "15-60",
         "peak_current_a": null,
         "power_w": null,
         "kt_nm_per_a": null,
-
         "comm": ["CAN"],
         "control_modes": ["position", "velocity", "torque", "mit"],
         "encoder": "dual magnetic",
         "integrated_driver": true,
         "ip_rating": null,
-
         "notes": "Mid-size QDD module for larger arms/legs. 60 N.m peak, 21 N.m rated at 100 rpm, 9:1 reduction, 48 V nominal (15-60 V range), dual magnetic encoders. Mass ~900 g +/-20 g.",
         "sources": [
             "https://www.seeedstudio.com/Robostride-03-Actuator-p-6774.html",
@@ -358,7 +323,6 @@
         "datasheet_url": "https://openelab.io/blogs/learn/robstride04-qdd-120n-m-integrated-joint-bldc-gear-motor-complete-guide",
         "price_usd": null,
         "availability": "in_production",
-
         "peak_torque_nm": 120,
         "rated_torque_nm": 40,
         "max_speed_rpm": null,
@@ -368,23 +332,21 @@
         "backdrivable": true,
         "backlash_arcmin": null,
         "repeatability_arcmin": null,
-
         "voltage_v": "48",
         "peak_current_a": null,
         "power_w": null,
         "kt_nm_per_a": null,
-
         "comm": ["CAN"],
         "control_modes": ["position", "velocity", "torque", "mit"],
         "encoder": "dual magnetic",
         "integrated_driver": true,
         "ip_rating": null,
-
         "notes": "Largest mainstream RobStride QDD module. 120 N.m peak, 40 N.m rated, 9:1 reduction, 48 V, CAN at 1 Mbps, dual magnetic encoders. Installed mass 1420 g +/-20 g.",
         "sources": [
             "https://www.seeedstudio.com/Robostride-04-Actuator-p-6775.html",
             "https://openelab.io/blogs/learn/robstride04-qdd-120n-m-integrated-joint-bldc-gear-motor-complete-guide"
-        ]
+        ],
+        "verified": true
     },
     {
         "id": "lkmtech-mg5010e-i36-v3",
@@ -396,7 +358,6 @@
         "datasheet_url": "https://aifitlab.com/products/lkmtech-mg5010e-i36-v3-motor",
         "price_usd": null,
         "availability": "in_production",
-
         "peak_torque_nm": 25,
         "rated_torque_nm": 13,
         "max_speed_rpm": 74,
@@ -406,18 +367,15 @@
         "backdrivable": false,
         "backlash_arcmin": null,
         "repeatability_arcmin": null,
-
         "voltage_v": "24",
         "peak_current_a": null,
         "power_w": null,
         "kt_nm_per_a": null,
-
         "comm": ["CAN"],
         "control_modes": ["position", "velocity", "torque"],
         "encoder": "dual 18-bit magnetic",
         "integrated_driver": true,
         "ip_rating": null,
-
         "notes": "LKMTech planetary joint motor with built-in driver and dual 18-bit encoders. V3 rated/peak torque 13/25 N.m at 36:1; base i36 variant listed at 4 N.m and ~74 rpm at 24 V. Net weight not published on primary sources.",
         "sources": [
             "https://makerselectronics.com/product/lkmtech-mg5010e-i36-24v-brushless-dc-motor-dual-encoder/",
@@ -435,7 +393,6 @@
         "datasheet_url": "https://openelab.io/products/steadywin-gim6010-36-precision-robotic-actuator",
         "price_usd": null,
         "availability": "in_production",
-
         "peak_torque_nm": 41,
         "rated_torque_nm": 18,
         "max_speed_rpm": 97,
@@ -445,18 +402,15 @@
         "backdrivable": false,
         "backlash_arcmin": 15,
         "repeatability_arcmin": null,
-
         "voltage_v": "12-56",
         "peak_current_a": null,
         "power_w": 221,
         "kt_nm_per_a": null,
-
         "comm": ["CAN", "RS-485"],
         "control_modes": ["position", "velocity", "torque"],
         "encoder": "14-bit magnetic",
         "integrated_driver": true,
         "ip_rating": "IP54",
-
         "notes": "Steel two-stage 36:1 planetary joint module with a published ~15 arcmin gearbox backlash (important for arms). GDS6 48 V config: 221 W, 18 N.m rated, 41 N.m stall; alternate GDZ468H config lists 17.4/51.5 N.m with CAN+RS485. Weight 574 g with driver (546 g without). Output speed 50-97 rpm depending on driver.",
         "sources": [
             "https://openelab.io/products/steadywin-gim6010-36-precision-robotic-actuator",
