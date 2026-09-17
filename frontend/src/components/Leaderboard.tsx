@@ -84,25 +84,27 @@ export function Leaderboard({
                                     />
                                 </td>
                                 <td className="col-name">
-                                    <span className="rank">{i + 1}</span>
-                                    <span
-                                        className="brand-dot"
-                                        style={{ background: colorForBrand(a.brand) }}
-                                    />
-                                    <span className="name-block">
-                                        <span className="name">
-                                            {a.name}
-                                            {a.verified && (
-                                                <span
-                                                    className="verified-tick"
-                                                    title="Spot-checked against manufacturer sources"
-                                                >
-                                                    {"✓"}
-                                                </span>
-                                            )}
+                                    <div className="name-cell">
+                                        <span className="rank">{i + 1}</span>
+                                        <span
+                                            className="brand-dot"
+                                            style={{ background: colorForBrand(a.brand) }}
+                                        />
+                                        <span className="name-block">
+                                            <span className="name">
+                                                {a.name}
+                                                {a.verified && (
+                                                    <span
+                                                        className="verified-tick"
+                                                        title="Spot-checked against manufacturer sources"
+                                                    >
+                                                        {"✓"}
+                                                    </span>
+                                                )}
+                                            </span>
+                                            <span className="brand">{a.brand}</span>
                                         </span>
-                                        <span className="brand">{a.brand}</span>
-                                    </span>
+                                    </div>
                                 </td>
                                 <td className="col-cat">
                                     <span
