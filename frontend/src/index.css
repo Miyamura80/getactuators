@@ -1416,7 +1416,8 @@ table.board {
         opacity 0.15s ease,
         transform 0.15s ease;
 }
-.cat-card:hover .cat-go {
+.cat-card:hover .cat-go,
+.cat-card:focus-visible .cat-go {
     opacity: 1;
     transform: translateY(0);
 }
@@ -1483,5 +1484,18 @@ table.board {
     .cat-go {
         opacity: 1;
         transform: none;
+    }
+}
+
+/* Narrow phones: let the top bar's nav drop to its own row instead of
+   overflowing when the brand plus three no-wrap links exceed the viewport. */
+@media (max-width: 560px) {
+    .page-bar {
+        flex-wrap: wrap;
+        row-gap: 8px;
+    }
+    .page-nav {
+        width: 100%;
+        justify-content: flex-start;
     }
 }
