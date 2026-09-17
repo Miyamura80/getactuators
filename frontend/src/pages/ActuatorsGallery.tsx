@@ -54,7 +54,10 @@ export function ActuatorsGallery() {
                 </Link>
                 <nav className="page-nav">
                     <Link to="/" className="page-nav-link">
-                        Leaderboard
+                        Home
+                    </Link>
+                    <Link to="/all" className="page-nav-link">
+                        All actuators
                     </Link>
                     <Link to="/actuators" className="page-nav-link" data-on={true}>
                         Gallery

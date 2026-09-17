@@ -3,11 +3,13 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
 import { usePath } from "./lib/router";
+import { Home } from "./pages/Home";
 import { ActuatorsGallery } from "./pages/ActuatorsGallery";
 import { ExplodedView } from "./pages/ExplodedView";
 
 function Root() {
     const path = usePath();
+    if (path === "/all") return <App />;
     if (path === "/actuators") return <ActuatorsGallery />;
     if (path.startsWith("/actuators/")) {
         const raw = path.slice("/actuators/".length);
@@ -20,6 +22,7 @@ function Root() {
         }
         return <ExplodedView id={id} />;
     }
+    if (path === "/") return <Home />;
     return <App />;
 }
 
