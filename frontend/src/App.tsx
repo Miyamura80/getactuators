@@ -36,10 +36,6 @@ export default function App() {
 
     const counts = useMemo(() => categoryCounts(), []);
     const useCases = useMemo(() => allUseCases(), []);
-    const countries = useMemo(
-        () => new Set(ACTUATORS.map((a) => a.country).filter(Boolean)).size,
-        [],
-    );
     const maxes = useMemo(() => {
         const m: Record<string, number> = {};
         for (const c of COLUMNS) if (c.bar) m[c.key] = maxValue(ACTUATORS, c.value);
@@ -120,7 +116,7 @@ export default function App() {
             <Sidebar items={NAV} active={active} onSelect={goTo} />
 
             <main className="content">
-                <Hero total={ACTUATORS.length} categories={Object.keys(counts).length} countries={countries} />
+                <Hero />
 
                 <section id="highlights" className="block">
                     <h2 className="block-title">

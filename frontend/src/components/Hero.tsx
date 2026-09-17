@@ -1,12 +1,6 @@
 import { BrandMark } from "./BrandMark";
 
-interface Props {
-    total: number;
-    categories: number;
-    countries: number;
-}
-
-export function Hero({ total, categories, countries }: Props) {
+export function Hero() {
     return (
         <header className="hero">
             <div className="hero-main">
@@ -21,20 +15,6 @@ export function Hero({ total, categories, countries }: Props) {
                     robots, ranked on the specs that decide a build.
                 </p>
             </div>
-            <dl className="hero-stats">
-                <div>
-                    <dt>Actuators</dt>
-                    <dd>{total}</dd>
-                </div>
-                <div>
-                    <dt>Categories</dt>
-                    <dd>{categories}</dd>
-                </div>
-                <div>
-                    <dt>Countries</dt>
-                    <dd>{countries}</dd>
-                </div>
-            </dl>
         </header>
     );
 }

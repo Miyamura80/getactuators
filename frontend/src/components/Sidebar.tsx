@@ -17,7 +17,7 @@ export function Sidebar({ items, active, onSelect }: Props) {
             <div className="side-brand">
                 <BrandMark size={26} />
                 <span>
-                    get<b>actuators</b>
+                    get<b>actuators</b>.com
                 </span>
             </div>
             <nav>

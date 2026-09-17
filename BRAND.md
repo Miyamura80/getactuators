@@ -10,15 +10,18 @@ Atmosphere keywords: monochromatic, systemic, modular, computed, blueprint.
 
 ## The mark
 
-A wireframe square with a solid accent tag anchored to the **top-left corner**,
-sitting on black. The tag is 40% of the box width and 10% of its height, flush
-inside the top-left corner. Square corners, no fill, thin cyan stroke.
+A rotary actuator seen end-on, drawn in thin cyan strokes on black: a circular
+housing, a stator-slot ring, four mounting bolt holes on the diagonals, a hub,
+and a keyed square output shaft with a rotation arc. No fill, no gradients, no
+shadows. The object itself is the logo.
 
-- The tag is always top-left. Do not move it for variation.
-- Scale by duplicating marks on a grid, not by enlarging a single one.
-- It appears in the hero, the sidebar brand lockup, and as the small square that
-  tags each section heading.
-- Implemented as `frontend/src/components/BrandMark.tsx`.
+- Keep the geometry concentric and centered; the rotation arc reads top-right.
+- The keyed shaft is the only solid cyan fill; everything else is stroked.
+- It appears in the hero and the sidebar brand lockup. The small wireframe square
+  with a top-left tag is kept as the secondary motif that tags each section
+  heading (`.block-tag`).
+- Implemented as `frontend/src/components/BrandMark.tsx`; the tab favicon is the
+  same actuator on a black tile at `frontend/public/favicon.svg`.
 
 ## Color
 
