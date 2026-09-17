@@ -373,6 +373,8 @@ a:hover {
 /* ---- Table ------------------------------------------------------------- */
 .table-wrap {
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
     border: 1px solid var(--line);
 }
 table.board {
@@ -471,11 +473,18 @@ table.board {
 .col-name {
     position: sticky;
     left: 0;
+    z-index: 1;
     background: var(--black);
+    min-width: 210px;
+    border-right: 1px solid var(--line-strong);
+}
+.board thead th.col-name {
+    z-index: 3;
+}
+.name-cell {
     display: flex;
     align-items: center;
     gap: 10px;
-    min-width: 210px;
 }
 .row:hover .col-name {
     background: var(--panel);
@@ -842,5 +851,27 @@ table.board {
     }
     .spec-grid {
         grid-template-columns: 1fr;
+    }
+    table.board {
+        font-size: 12px;
+    }
+    .col-name {
+        min-width: 158px;
+    }
+    .board tbody td,
+    .board th.col-name,
+    .board th.col-cat,
+    .board th.col-country,
+    .board th.col-comm,
+    .board th.col-src {
+        padding-left: 9px;
+        padding-right: 9px;
+    }
+    .board th.sortable button {
+        padding-left: 9px;
+        padding-right: 9px;
+    }
+    .rank {
+        width: 16px;
     }
 }
