@@ -28,8 +28,16 @@ const NAV: NavItem[] = [
     { id: "table", label: "All actuators" },
 ];
 
+// The Home page links here as /all?use=<tag> to land on a pre-filtered table.
+function initialFilters(): FilterState {
+    if (typeof window === "undefined") return DEFAULT_FILTERS;
+    const use = new URLSearchParams(window.location.search).get("use");
+    if (!use) return DEFAULT_FILTERS;
+    return { ...DEFAULT_FILTERS, useCases: new Set(use.split(",").filter(Boolean)) };
+}
+
 export default function App() {
-    const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
+    const [filters, setFilters] = useState<FilterState>(initialFilters);
     const [selected, setSelected] = useState<Actuator | null>(null);
     const [compare, setCompare] = useState<Set<string>>(new Set());
     const [showCompare, setShowCompare] = useState(false);
@@ -85,6 +93,16 @@ export default function App() {
             if (el) obs.observe(el);
         }
         return () => obs.disconnect();
+    }, []);
+
+    // Landing from Home with a ?use= filter: jump to the table so the applied
+    // filter is visible immediately instead of starting at the hero.
+    useEffect(() => {
+        const use = new URLSearchParams(window.location.search).get("use");
+        if (use) {
+            setActive("table");
+            document.getElementById("table")?.scrollIntoView({ block: "start" });
+        }
     }, []);
 
     const goTo = (id: string) => {

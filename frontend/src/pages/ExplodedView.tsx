@@ -104,8 +104,8 @@ export function ExplodedView({ id }: Props) {
                     <Link to="/actuators" className="page-nav-link">
                         ← Gallery
                     </Link>
-                    <Link to="/" className="page-nav-link">
-                        Leaderboard
+                    <Link to="/all" className="page-nav-link">
+                        All actuators
                     </Link>
                 </nav>
             </header>

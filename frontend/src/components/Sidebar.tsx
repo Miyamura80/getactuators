@@ -15,12 +15,12 @@ interface Props {
 export function Sidebar({ items, active, onSelect }: Props) {
     return (
         <aside className="sidebar">
-            <div className="side-brand">
+            <Link to="/" className="side-brand" aria-label="getactuators home">
                 <BrandMark size={26} />
                 <span>
                     get<b>actuators</b>.com
                 </span>
-            </div>
+            </Link>
             <nav>
                 {items.map((it) => (
                     <button
@@ -35,6 +35,9 @@ export function Sidebar({ items, active, onSelect }: Props) {
                 ))}
             </nav>
             <div className="side-pages">
+                <Link to="/" className="side-page-link">
+                    ← Home
+                </Link>
                 <Link to="/actuators" className="side-page-link">
                     Actuator gallery →
                 </Link>
