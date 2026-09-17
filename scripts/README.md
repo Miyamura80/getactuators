@@ -1,6 +1,6 @@
 # Scripts
 
-Utility and initialization scripts for the Bun-Template project.
+Utility and initialization scripts for the Getactuators project.
 
 ## Asset Generation
 
