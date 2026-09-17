@@ -39,7 +39,8 @@
             "https://www.robotis.us/dynamixel-xl330-m288-t/",
             "https://emanual.robotis.com/docs/en/dxl/x/xl330-m288/",
             "https://docs.robotis.com/docs/dxl/model_reference/x_series/xl_series/xl330-m288/"
-        ]
+        ],
+        "verified": true
     },
     {
         "id": "dynamixel-xl430-w250-t",
@@ -74,7 +75,8 @@
             "https://www.robotis.us/dynamixel-xl430-w250-t/",
             "https://emanual.robotis.com/docs/en/dxl/x/xl430-w250/",
             "https://media.distrelec.com/Web/Downloads/_t/ds/Dynamixel_XL-Series_eng_tds.pdf"
-        ]
+        ],
+        "verified": true
     },
     {
         "id": "dynamixel-xm430-w350-t",
@@ -116,7 +118,8 @@
             "https://www.robotis.us/dynamixel-xm430-w350-t/",
             "https://emanual.robotis.com/docs/en/dxl/x/xm430-w350/",
             "https://www.robotshop.com/products/robotis-dynamixel-xm430-w350-t-smart-servo-actuator"
-        ]
+        ],
+        "verified": true
     },
     {
         "id": "dynamixel-xc430-w150-t",
@@ -151,7 +154,8 @@
             "https://www.robotis.us/dynamixel-xc430-w150-t/",
             "https://emanual.robotis.com/docs/en/dxl/x/xc430-w150/",
             "https://docs.robotis.com/docs/dxl/model_reference/x_series/xc_series/xc430-w150/"
-        ]
+        ],
+        "verified": true
     },
     {
         "id": "dynamixel-xh540-w270-t",
@@ -279,7 +283,8 @@
             "https://www.robotis.us/dynamixel-ph54-200-s500-r/",
             "https://emanual.robotis.com/docs/en/dxl/p/ph54-200-s500-r/",
             "https://www.generationrobots.com/en/403321-dynamixel-pro-plus-h54p-200-s500-r-servo.html"
-        ]
+        ],
+        "verified": false
     },
     {
         "id": "dynamixel-pm54-060-s250-r",
@@ -295,7 +300,7 @@
         "rated_torque_nm": 10.1,
         "max_speed_rpm": 33.1,
         "gear_ratio": "251.4:1",
-        "weight_g": null,
+        "weight_g": 855,
         "torque_density_nm_per_kg": null,
         "backdrivable": null,
         "backlash_arcmin": 6,
@@ -316,12 +321,13 @@
         "encoder": "absolute, 502,834 steps/rev",
         "integrated_driver": true,
         "ip_rating": null,
-        "notes": "Mid-tier 60W Dynamixel-P (Pro+) joint. Robotis lists estimated rated torque 10.1 N.m at 24V; no clean peak/stall figure published, so peak/density left null. Backlash ~6 arcmin. Weight left null - a distributor listing reported 855 g but that appears copied from the PH54 and is unverified. RS-485 only.",
+        "notes": "Mid-tier 60W Dynamixel-P (Pro+) joint. Robotis lists estimated rated torque 10.1 N.m at 24V (28.3 rpm, 3.0A continuous); no clean peak/stall figure is published, so peak and torque_density are left null. Weight 855 g in the 54x126x54 mm frame (same body as the PH54), confirmed by the Robotis distributor datasheet. Backlash ~6 arcmin. RS-485 only.",
         "sources": [
             "https://www.robotis.us/dynamixel-pm54-060-s250-r/",
             "https://emanual.robotis.com/docs/en/dxl/p/pm54-060-s250-r/",
-            "https://www.generationrobots.com/en/403379-dynamixel-m54p-060-s250-r-servo.html"
-        ]
+            "https://static.generation-robots.com/media/fiche-technique-pm54-060-s250-r.pdf"
+        ],
+        "verified": false
     },
     {
         "id": "dynamixel-h54-200-s500-r",
@@ -332,11 +338,11 @@
         "product_url": "https://docs.robotis.com/docs/dxl/model_reference/pro_series/pro_h_series/h54-200-s500-r/",
         "datasheet_url": "https://emanual.robotis.com/docs/en/dxl/pro/h54-200-s500-r/",
         "price_usd": null,
-        "availability": "unknown",
+        "availability": "discontinued",
         "peak_torque_nm": 44.7,
         "rated_torque_nm": null,
         "max_speed_rpm": 33.1,
-        "gear_ratio": null,
+        "gear_ratio": "502:1",
         "weight_g": 855,
         "torque_density_nm_per_kg": 52.3,
         "backdrivable": null,
@@ -351,12 +357,13 @@
         "encoder": "absolute, 1,003,846 steps/rev",
         "integrated_driver": true,
         "ip_rating": null,
-        "notes": "Original Dynamixel PRO H-series (predecessor to the Pro+ PH54), a 200W RS-485 joint used in full-size humanoids/large arms. Retailer spec sheets cite stall torque 44.7 N.m and no-load 33.1 rpm at 24V; weight 855 g. Torque figure may reflect the rated value carried over from the Pro+ line - treat peak as approximate. Largely superseded by PH54.",
+        "notes": "Original Dynamixel PRO H-series (predecessor to the Pro+ PH54), a 200W RS-485 joint used in full-size humanoids/large arms. Stall torque 44.7 N.m and no-load 33.1 rpm at 24V (continuous torque ~25.3 N.m); weight 855 g; ~502:1 straight-type reduction. Officially discontinued by Robotis and now sold only on the secondary market, so no current list price. Superseded by the Pro+ PH54-200-S500-R, whose rated torque coincidentally also lists 44.7 N.m.",
         "sources": [
             "https://docs.robotis.com/docs/dxl/model_reference/pro_series/pro_h_series/h54-200-s500-r/",
             "https://emanual.robotis.com/docs/en/dxl/pro/h54-200-s500-r/",
             "https://www.crustcrawler.com/products/Dynamixel%20Pro/docs/H54-200-S500-R.pdf"
-        ]
+        ],
+        "verified": true
     },
     {
         "id": "feetech-sts3215",
@@ -427,7 +434,8 @@
             "https://servodatabase.com/servo/feetech/sts3250",
             "https://openelab.io/products/feetech-sts3250-c002-servo-12v",
             "https://shop.wowrobo.com/products/feetech-sts3250-c002-servo-12v-50kg-1-345-servo"
-        ]
+        ],
+        "verified": true
     },
     {
         "id": "feetech-scs15",
@@ -462,7 +470,8 @@
             "https://www.feetechrc.com/en/scs_ttl_Servo.html",
             "https://ecksteinimg.de/Datasheet/MO01016/SCS15.pdf",
             "https://grobotronics.com/servo-robot-17kg.cm-metal-gears-uart-feetech-scs15.html"
-        ]
+        ],
+        "verified": true
     },
     {
         "id": "waveshare-st3215",
@@ -478,8 +487,8 @@
         "rated_torque_nm": null,
         "max_speed_rpm": 45,
         "gear_ratio": null,
-        "weight_g": 55,
-        "torque_density_nm_per_kg": 53.5,
+        "weight_g": 69,
+        "torque_density_nm_per_kg": 42.6,
         "backdrivable": null,
         "backlash_arcmin": null,
         "repeatability_arcmin": null,
@@ -492,12 +501,13 @@
         "encoder": "12-bit magnetic absolute (4096 steps, 360 deg)",
         "integrated_driver": true,
         "ip_rating": null,
-        "notes": "Waveshare-branded Feetech STS3215 (magnetic-encoder bus servo), servo/motor mode switchable. Torque 30 kg.cm = 2.94 N.m @12V (19.5 kg.cm = 1.91 N.m @7.4V variant); no-load 45 rpm (0.222 s/60 deg) @12V; locked-rotor 2.7A. A faster ST3215-HS variant trades to ~20 kg.cm / 106 rpm. Weight listed 55-68 g across sources (55 g used). Used in Waveshare RoArm kits and LeRobot builds.",
+        "notes": "Waveshare-branded Feetech STS3215-class magnetic-encoder bus servo, servo/motor mode switchable. Torque 30 kg.cm = 2.94 N.m @12V (19.5 kg.cm = 1.91 N.m @7.4V variant); no-load 45 rpm (0.222 s/60 deg) @12V; locked-rotor 2.7A. The Waveshare-branded unit is listed at ~68 to 69 g (heavier than the 55 g Feetech OEM). A faster ST3215-HS variant trades to ~20 kg.cm / 106 rpm. Used in Waveshare RoArm kits and LeRobot builds.",
         "sources": [
             "https://www.waveshare.com/st3215-servo.htm",
             "https://www.waveshare.com/wiki/ST3215_Servo",
             "https://servodatabase.com/servo/waveshare/st3215"
-        ]
+        ],
+        "verified": true
     },
     {
         "id": "waveshare-sc15",
@@ -531,7 +541,8 @@
         "sources": [
             "https://www.waveshare.com/sc15-servo.htm",
             "https://servodatabase.com/servo/waveshare/sc15"
-        ]
+        ],
+        "verified": true
     },
     {
         "id": "hiwonder-lx-16a",
@@ -547,8 +558,8 @@
         "rated_torque_nm": null,
         "max_speed_rpm": 53,
         "gear_ratio": null,
-        "weight_g": null,
-        "torque_density_nm_per_kg": null,
+        "weight_g": 52,
+        "torque_density_nm_per_kg": 36.7,
         "backdrivable": null,
         "backlash_arcmin": null,
         "repeatability_arcmin": null,
@@ -561,11 +572,12 @@
         "encoder": "potentiometer (0-1000 counts over 240 deg)",
         "integrated_driver": true,
         "ip_rating": null,
-        "notes": "Full-metal-gear serial bus servo popular in SpotMicro-class hobby quadrupeds and the Hiwonder xArm. Stall torque 17 kg.cm (1.67 N.m) @6V and 19.5 kg.cm (1.91 N.m) @7.4V; speed 0.19 s/60 deg (~53 rpm) @7.4V; 240 deg range; stall current 2.4-3A; position accuracy 0.3 deg. Uses a private half-duplex TTL protocol (needs Hiwonder debug board). Weight not published on primary sources, left null. Price approximate.",
+        "notes": "Full-metal-gear serial bus servo popular in SpotMicro-class hobby quadrupeds and the Hiwonder xArm. Stall torque 17 kg.cm (1.67 N.m) @6V and 19.5 kg.cm (1.91 N.m) @7.4V; speed 0.19 s/60 deg (~53 rpm) @7.4V; 240 deg range; stall current 2.4-3A; position accuracy 0.3 deg; weight 52 g. Uses a private half-duplex TTL protocol (needs Hiwonder debug board). Price approximate.",
         "sources": [
             "https://www.hiwonder.com/products/lx-16a",
             "https://www.robotshop.com/products/hiwonder-hiwonder-lx-16a-full-metal-gear-serial-bus-servo-with-real-time-feedback-function-rc-robot-control-angle-240",
             "https://cdn.robotshop.com/rbm/a5e9ab51-86bc-497b-adac-003de3088fb7/9/92896585-5e83-4c7c-a663-650b81e5978b/67e9729b_lx-16a-serial-bus-servo-user-manual.pdf"
-        ]
+        ],
+        "verified": true
     }
 ]

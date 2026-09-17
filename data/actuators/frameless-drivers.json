@@ -5,8 +5,8 @@
         "brand": "CubeMars (T-Motor)",
         "category": "frameless_driver",
         "use_cases": ["robot_arm", "exoskeleton", "quadruped_leg"],
-        "product_url": "https://www.directindustry.com/prod/cubemars/product-217143-2272215.html",
-        "datasheet_url": "https://www.automate.org/products/t-motor/t-motor-high-quality-r60-kv115-outrunner-motor-48v-brushless-dc-motor-mid-drive-motor-for-robotic-exoskeleton",
+        "product_url": "https://www.cubemars.com/goods-943-R60+KV115.html",
+        "datasheet_url": "https://www.directindustry.com/prod/cubemars/product-217143-2272215.html",
         "price_usd": null,
         "availability": "in_production",
         "peak_torque_nm": 2.3,
@@ -14,25 +14,26 @@
         "max_speed_rpm": 4150,
         "gear_ratio": "1:1",
         "weight_g": 248,
-        "torque_density_nm_per_kg": 9.27,
+        "torque_density_nm_per_kg": 9.3,
         "backdrivable": true,
         "backlash_arcmin": null,
         "repeatability_arcmin": null,
         "voltage_v": 48,
         "peak_current_a": 28,
-        "power_w": null,
+        "power_w": 351,
         "kt_nm_per_a": 0.083,
         "comm": [],
         "control_modes": null,
         "encoder": "Integrated Hall sensors (14 pole pairs); Ke 0.0087 V/rpm",
         "integrated_driver": false,
         "ip_rating": null,
-        "notes": "Motor. R-series torque motor (housed/framed with bearings + Hall sensors); the equivalent bare-frameless variants are the RO60 outrunner and RI60 inrunner. Rated current 9A. Needs an external FOC driver (e.g. ODrive/moteus). Km 0.171 Nm/sqrt(W).",
+        "notes": "Motor. R-series torque motor (housed/framed with bearings + Hall sensors), dia 73.8 x 23 mm. Peak torque 2.3 Nm at 28A peak; rated torque 0.75 Nm at ~8.5A; no-load speed ~5520 rpm; 351 W. The bare-frameless equivalents are the RO60 outrunner and RI60 inrunner. Needs an external FOC driver (e.g. ODrive/moteus). Km 0.171 Nm/sqrt(W).",
         "sources": [
+            "https://www.cubemars.com/goods-943-R60+KV115.html",
             "https://www.directindustry.com/prod/cubemars/product-217143-2272215.html",
-            "https://www.automate.org/products/t-motor/t-motor-high-quality-r60-kv115-outrunner-motor-48v-brushless-dc-motor-mid-drive-motor-for-robotic-exoskeleton",
-            "https://irlock.com/products/t-motor-r60-kv115"
-        ]
+            "https://www.automate.org/products/t-motor/t-motor-high-quality-r60-kv115-outrunner-motor-48v-brushless-dc-motor-mid-drive-motor-for-robotic-exoskeleton"
+        ],
+        "verified": true
     },
     {
         "id": "cubemars-ri60-kv120",
@@ -45,29 +46,30 @@
         "price_usd": null,
         "availability": "in_production",
         "peak_torque_nm": 1.63,
-        "rated_torque_nm": null,
+        "rated_torque_nm": 0.57,
         "max_speed_rpm": 5760,
         "gear_ratio": "1:1",
         "weight_g": 155.9,
-        "torque_density_nm_per_kg": 10.46,
+        "torque_density_nm_per_kg": 10.5,
         "backdrivable": true,
         "backlash_arcmin": null,
         "repeatability_arcmin": null,
         "voltage_v": "24-48",
         "peak_current_a": 16.8,
-        "power_w": null,
+        "power_w": 85,
         "kt_nm_per_a": null,
         "comm": [],
         "control_modes": null,
         "encoder": "Optional Hall-sensor version; bare frameless kit (add own encoder)",
         "integrated_driver": false,
         "ip_rating": null,
-        "notes": "Motor. Frameless inrunner torque motor kit, dia 60 x 23 mm. Rated current 5.6A at 24V. Phase resistance 900 mOhm, inductance 877.5 uH. max_speed is no-load computed from KV120 x 48V (community estimate, not a published datasheet figure). Kt not published; approx 8.27/KV. Needs external FOC driver.",
+        "notes": "Motor. Frameless inrunner torque motor kit, dia 60 x 23 mm. Peak torque 1.63 Nm at 16.8A peak; rated torque 0.57 Nm; rated current 5.6A; 85 W. Phase resistance 900 mOhm, inductance 877.5 uH, 14 pole pairs. max_speed is no-load computed from KV120 x 48V (not a published datasheet figure; rated speed at 48V is ~3190 rpm). Kt not published. Needs external FOC driver.",
         "sources": [
             "https://www.cubemars.com/product/ri60-kv120-frameless-inrunner-torque-motor.html",
             "https://www.robotshop.com/products/cubemars-ri60-kv120-ri-series-frameless-inrunner-torque-motor-w-hall-sensor",
             "https://www.directindustry.com/prod/cubemars/product-217143-2270624.html"
-        ]
+        ],
+        "verified": true
     },
     {
         "id": "cubemars-ri80-v2-kv75",
@@ -84,7 +86,7 @@
         "max_speed_rpm": 2430,
         "gear_ratio": "1:1",
         "weight_g": 411,
-        "torque_density_nm_per_kg": 9.98,
+        "torque_density_nm_per_kg": 10.0,
         "backdrivable": true,
         "backlash_arcmin": null,
         "repeatability_arcmin": null,
@@ -97,12 +99,13 @@
         "encoder": "Optional Hall-sensor version; bare frameless kit (add own encoder)",
         "integrated_driver": false,
         "ip_rating": null,
-        "notes": "Motor. Frameless inrunner torque motor, dia 85 x 82 mm. Rated current 9.4A. max_speed_rpm is the rated speed at 48V (no-load computed would be ~3600 rpm). Kt not published. Needs external FOC driver.",
+        "notes": "Motor. Frameless inrunner torque motor, dia 85 x 82 mm, delta winding, 8 pole pairs. Peak torque 4.1 Nm; rated torque 1.45 Nm; rated current 9.4A. max_speed_rpm is the rated speed at 48V. Kt not published. Needs external FOC driver.",
         "sources": [
             "https://www.cubemars.com/product/ri80-v2-0-kv75-frameless-inrunner-torque-motor.html",
             "https://www.robotshop.com/products/cubemars-ri80-kv75-ri-series-frameless-inrunner-torque-motor",
             "https://www.directindustry.com/prod/cubemars/product-217143-2272307.html"
-        ]
+        ],
+        "verified": true
     },
     {
         "id": "ipower-gm8112-80t",
@@ -119,7 +122,7 @@
         "max_speed_rpm": 420,
         "gear_ratio": "1:1",
         "weight_g": 428,
-        "torque_density_nm_per_kg": 2.06,
+        "torque_density_nm_per_kg": 2.1,
         "backdrivable": true,
         "backlash_arcmin": null,
         "repeatability_arcmin": null,
@@ -132,12 +135,13 @@
         "encoder": "Optional AS5048A magnetic encoder version (GM8112T)",
         "integrated_driver": false,
         "ip_rating": null,
-        "notes": "Motor. Large gimbal/direct-drive motor, 36N/42P, dia 89.5 x 26 mm, hollow shaft 25 mm. Phase resistance 4.2 ohm. Torque figures converted from published 6000-9000 g-cm load torque (0.59-0.88 Nm); no-load current 0.3A, load current 2A. Low-Kv (80T) gimbal winding suited to low-speed direct-drive joints. Price is with-encoder variant (iFlight EU). Needs external FOC/gimbal driver.",
+        "notes": "Motor. Large gimbal/direct-drive motor, 36N/42P, dia 89.5 x 33.4 mm, hollow shaft, weight 428g. Torque figures converted from published load torque (manufacturer quotes 6 kg-cm = 0.59 Nm; higher listings cite up to 9 kg-cm = 0.88 Nm); no-load current 0.3A, load current 2A, phase resistance 4.2 ohm. Low-Kv (80T) gimbal winding suited to low-speed direct-drive joints. Price is with-encoder variant (iFlight EU). Needs external FOC/gimbal driver.",
         "sources": [
             "https://shop.iflight.com/ipower-motor-gm8112-brushless-gimbal-motor-pro195",
             "https://www.alibaba.com/product-detail/IFlight-IPower-GM8112-80T-Gimbal-AS5048A_1601220566314.html",
             "https://iflight-rc.eu/en-us/products/ipower-gm8112-80t-gimbal-motor-with-encoder"
-        ]
+        ],
+        "verified": true
     },
     {
         "id": "maxon-ec-frameless-90-flat-260w",
@@ -167,12 +171,13 @@
         "encoder": "None (frameless rotor/stator kit; add own sensor)",
         "integrated_driver": false,
         "ip_rating": null,
-        "notes": "Motor. Part 542099, dia 90 mm flat frameless BLDC kit (rotor + stator supplied separately, no bearings/shaft). Continuous torque up to ~1 Nm; suited to gearless direct drive. maxon lists this part as NRND (not recommended for new designs). Kt/stall torque not confirmed from a primary datasheet (page fetch blocked); a comparable housed EC 90 flat 260W is rated ~0.96 Nm nominal / ~13.1 Nm stall (RS Components listing).",
+        "notes": "Motor. Part 542099, dia 90 mm flat frameless BLDC kit (rotor + stator supplied separately, no bearings/shaft). maxon states continuous torque up to ~1 Nm; suited to gearless direct drive. maxon lists this part as NRND (not recommended for new designs). Weight and stall/peak torque not confirmed from a primary datasheet (maxon page and datasheet fetch blocked); a comparable housed EC 90 flat 260W (500267) is rated ~0.96 Nm nominal / ~13.1 Nm stall / 5000 rpm (RS Components listing).",
         "sources": [
             "https://www.maxongroup.com/maxon/view/product/542099",
             "https://www.expo21xx.com/news/maxon-brushless-ec-90-flat-motor-with-160-w-or-260-w-of-power/",
             "https://datasheets.globalspec.com/ds/maxon-motor-ag/542099/abc9aff5-cce5-4b70-a592-8dbb20e40d6b"
-        ]
+        ],
+        "verified": false
     },
     {
         "id": "tq-robodrive-ilm85x26",
@@ -202,12 +207,13 @@
         "encoder": "None (frameless stator/rotor kit; add own sensor)",
         "integrated_driver": false,
         "ip_rating": null,
-        "notes": "Motor. Frameless hollow-shaft servo kit, dia 85 x 26 mm. Kt 73 mNm/A at 20C, Km 0.52 Nm/sqrt(W), rated current 39.8A, terminal resistance 27 mOhm, inductance 87 uH, no-load speed 5400 rpm. Nominal torque 2.9 Nm (VSS star-series winding per RoboDrive shop). High-end frameless kit for cobot/humanoid joints; needs external FOC driver.",
+        "notes": "Motor. Frameless hollow-shaft servo kit, dia 85 x 26 mm. Kt 73 mNm/A at 20C, Km 0.52 Nm/sqrt(W), rated current 39.8A, terminal resistance 27 mOhm, inductance 87 uH, no-load speed 5400 rpm. Nominal torque 2.9 Nm (VSS star-series winding, confirmed on the RoboDrive shop). Weight and peak torque not captured (TQ datasheet PDF fetch blocked). High-end frameless kit for cobot/humanoid joints; needs external FOC driver.",
         "sources": [
+            "https://robodriveshop.tq-group.com/en/ILM85x26-VSS/304397-286842",
             "https://www.tq-group.com/en/products/tq-robodrive/servo-kits/ilm85x26/",
-            "https://www.tq-group.com/filedownloads/files/products/robodrive/data-sheets/en/DRVA_DB_Servo-Kits_ILM_EN_Rev0414_Web.pdf",
-            "https://robodriveshop.tq-group.com/en/ILM85x26-VSS/304397-286842"
-        ]
+            "https://www.tq-group.com/filedownloads/files/products/robodrive/data-sheets/en/DRVA_DB_Servo-Kits_ILM_EN_Rev0414_Web.pdf"
+        ],
+        "verified": false
     },
     {
         "id": "allied-motion-megaflux-mf0127",
@@ -237,12 +243,13 @@
         "encoder": "None (frameless rotor/stator kit; add own sensor)",
         "integrated_driver": false,
         "ip_rating": null,
-        "notes": "Motor. Frameless direct-drive brushless torque motor, ~127 mm frame diameter (part of Megaflux MF family, 60-330 mm frames, multiple stack lengths). Per-winding specs (Kt, continuous stall / peak torque, weight) not captured: manufacturer datasheet PDF fetch was blocked by network policy. Family continuous stall torque ranges up to ~181 Nm (standard series). Cite the linked MF0127 datasheet for exact values.",
+        "notes": "Motor. Frameless direct-drive brushless torque motor, 127 mm frame diameter (part of the Megaflux MF family, 60 to 330 mm frames, multiple stack lengths each). Per-winding specs (Kt, continuous stall / peak torque, weight) not captured: manufacturer datasheet PDF fetch was blocked by network policy. Family continuous stall torque spans ~0.3 Nm up to ~2020 Nm across all frames. Cite the linked MF0127 datasheet for exact values.",
         "sources": [
             "https://www.alliedmotion.com/brushless-motors/brushless-direct-drive-torque-motors/megaflux-frameless-direct-drive-torque-motors/",
             "https://www.alliedmotion.com/wp-content/uploads/documents/Megaflux_Frameless_Torque_Motors_MF0127_R7e.pdf",
             "https://allient.com/product/megaflux-series-frameless-torque-motors/"
-        ]
+        ],
+        "verified": false
     },
     {
         "id": "odrive-v36",
@@ -272,11 +279,12 @@
         "encoder": "External incremental/Hall/SPI absolute (no onboard encoder)",
         "integrated_driver": false,
         "ip_rating": null,
-        "notes": "Driver/controller. Dual-axis FOC BLDC controller. Sold in 24V (12-24V) and 56V (12-56V) variants; 120A peak per motor. Classic CAN (not CAN-FD). Now marked NRND (not recommended for new designs); ODrive steers new builds to the S1. Price no longer listed on official store.",
+        "notes": "Driver/controller (not a motor, so no torque/weight rating). Dual-axis FOC BLDC controller. Sold in 24V (12-24V) and 56V (12-56V) variants; 120A peak per motor. Classic CAN (not CAN-FD). Now marked NRND (not recommended for new designs); ODrive steers new builds to the S1. Price no longer listed on the official store.",
         "sources": [
             "https://shop.odriverobotics.com/products/odrive-v36",
             "https://docs.odriverobotics.com/v/latest/hardware/odrive-comparison.html"
-        ]
+        ],
+        "verified": false
     },
     {
         "id": "odrive-s1",
@@ -299,19 +307,20 @@
         "repeatability_arcmin": null,
         "voltage_v": "12-50",
         "peak_current_a": 120,
-        "power_w": 1600,
+        "power_w": 2000,
         "kt_nm_per_a": null,
         "comm": ["CAN-FD", "CAN", "USB", "UART"],
         "control_modes": ["position", "velocity", "torque"],
         "encoder": "Onboard MA702 magnetic encoder; supports SPI/Hall/quadrature/RS485 offboard",
         "integrated_driver": false,
         "ip_rating": null,
-        "notes": "Driver/controller. Single-axis FOC BLDC controller. 12-50V (58V abs max), 40A continuous with heat spreader, 120A peak. 1600W continuous. CAN 2.0B @1Mbps plus experimental CAN-FD @5Mbps; also STEP/DIR, PWM, analog. Trajectory + feed-forward control. Common choice for DIY QDD actuators.",
+        "notes": "Driver/controller (not a motor, so no torque/weight rating). Single-axis FOC BLDC controller. 12-48V nominal (50.5V abs max), 40A continuous with heat spreader, 120A peak (voltage-derated). ~2kW continuous. CAN 2.0B @1Mbps plus experimental CAN-FD @5Mbps; also STEP/DIR, PWM, analog. Trajectory + feed-forward control. Common choice for DIY QDD actuators.",
         "sources": [
             "https://shop.odriverobotics.com/products/odrive-s1",
             "https://docs.odriverobotics.com/v/latest/hardware/s1-datasheet.html",
             "https://docs.odriverobotics.com/v/latest/hardware/odrive-comparison.html"
-        ]
+        ],
+        "verified": false
     },
     {
         "id": "odrive-pro",
@@ -341,12 +350,13 @@
         "encoder": "Onboard MA702 magnetic encoder; supports offboard SPI/Hall/quadrature",
         "integrated_driver": false,
         "ip_rating": null,
-        "notes": "Driver/controller. Single-axis FOC BLDC controller, 12-56V (58V abs max), 70A continuous (with heatsink+fan), 120A peak, ~5kW peak power. Semi-isolated or fully isolated CAN-FD transceiver. Higher-current sibling of the S1; regenerative braking. Volume pricing to ~$214.",
+        "notes": "Driver/controller (not a motor, so no torque/weight rating). Single-axis FOC BLDC controller, 12-56V (58V abs max), 70A continuous (with heatsink+fan), 120A peak, ~5kW peak power. Semi-isolated or fully isolated CAN-FD transceiver. Higher-current sibling of the S1; regenerative braking. Volume pricing to ~$209 at 100 units.",
         "sources": [
             "https://shop.odriverobotics.com/products/odrive-pro",
             "https://docs.odriverobotics.com/v/latest/hardware/pro-datasheet.html",
             "https://docs.odriverobotics.com/v/latest/hardware/odrive-comparison.html"
-        ]
+        ],
+        "verified": false
     },
     {
         "id": "mjbots-moteus-r4-11",
@@ -362,7 +372,7 @@
         "rated_torque_nm": null,
         "max_speed_rpm": null,
         "gear_ratio": null,
-        "weight_g": null,
+        "weight_g": 14.2,
         "torque_density_nm_per_kg": null,
         "backdrivable": null,
         "backlash_arcmin": null,
@@ -376,12 +386,13 @@
         "encoder": "Onboard magnetic encoder (on-axis); STM32G4 MCU",
         "integrated_driver": false,
         "ip_rating": null,
-        "notes": "Driver/controller. Compact single-axis FOC controller designed for QDD/legged robots. 10-44V, 100A peak phase current, 12A uncooled / 32A cooled continuous, ~900W peak @30V. 5Mbps CAN-FD native. Developer kit ~$219. Widely used in low-cost QDD actuator builds.",
+        "notes": "Driver/controller (not a motor; weight_g is the board mass, 14.2g). Compact single-axis FOC controller designed for QDD/legged robots. 10-44V (up to 10S), 100A peak phase current, 12A uncooled / 32A cooled continuous, ~900W peak @30V. 5Mbps CAN-FD native. Board $94; developer kit ~$219. Widely used in low-cost QDD actuator builds.",
         "sources": [
             "https://mjbots.com/products/moteus-r4-11",
             "https://github.com/mjbots/moteus/blob/main/README.md",
             "https://blog.mjbots.com/2022/05/11/moteus-r4-11/"
-        ]
+        ],
+        "verified": false
     },
     {
         "id": "mjbots-moteus-c1",
@@ -397,7 +408,7 @@
         "rated_torque_nm": null,
         "max_speed_rpm": null,
         "gear_ratio": null,
-        "weight_g": null,
+        "weight_g": 8.9,
         "torque_density_nm_per_kg": null,
         "backdrivable": null,
         "backlash_arcmin": null,
@@ -411,12 +422,13 @@
         "encoder": "Onboard magnetic encoder (on-axis)",
         "integrated_driver": false,
         "ip_rating": null,
-        "notes": "Driver/controller. Smaller/lower-power single-axis FOC controller. 10-51V, 20A peak phase current, 5A uncooled / 14A cooled continuous, ~250W peak @28V. 5Mbps CAN-FD. Developer kit ~$149. Good for lighter arm/QDD joints.",
+        "notes": "Driver/controller (not a motor; weight_g is the board mass, 8.9g). Smaller/lower-power single-axis FOC controller. 10-51V (up to 12S), 20A peak phase current, 5A uncooled / 14A cooled continuous, ~250W peak @28V. 5Mbps CAN-FD. Board $69; developer kit ~$149. Good for lighter arm/QDD joints.",
         "sources": [
             "https://mjbots.com/products/moteus-c1",
             "https://blog.mjbots.com/2024/04/30/moteus-c1/",
             "https://github.com/mjbots/moteus/blob/main/README.md"
-        ]
+        ],
+        "verified": false
     },
     {
         "id": "trampa-vesc-6-mkvi",
@@ -437,7 +449,7 @@
         "backdrivable": null,
         "backlash_arcmin": null,
         "repeatability_arcmin": null,
-        "voltage_v": "11.1-48",
+        "voltage_v": "11.1-50",
         "peak_current_a": 120,
         "power_w": null,
         "kt_nm_per_a": null,
@@ -446,12 +458,13 @@
         "encoder": "Sensorless, Hall, ABI, AS5047 SPI encoder support; onboard IMU",
         "integrated_driver": false,
         "ip_rating": null,
-        "notes": "Driver/controller. Open-source VESC-based single-axis FOC controller. 11.1-48V (3S-12S, 60V abs max spikes), 80A continuous / 120A peak (temperature dependent). Ports: USB, CAN, UAVCAN, 2x UART, SPI, I2C. Price ~USD 255 (GBP 200) from Trampa. Classic CAN (not CAN-FD).",
+        "notes": "Driver/controller (not a motor, so no torque/weight rating). Open-source VESC-based single-axis FOC controller. 3S-12S (11.1V nominal to ~50V charged, 60V abs max spikes), 80A continuous / 120A peak (temperature dependent). Ports: USB, CAN, UAVCAN, 2x UART, SPI, I2C. Price ~USD 255 (GBP 200) single-unit from Trampa. Classic CAN (not CAN-FD).",
         "sources": [
             "https://trampa.co.uk/product/vesc6-mk6/",
             "https://trampaboards.com/vesc-6-mkvi--the-amazing-trampa-vesc-6-mkvi--gives-maximum-power-original-p-27536.html",
             "https://trampaboards.com/1-x-vesc-6-mkv--170-tax-each-p-27529.html"
-        ]
+        ],
+        "verified": false
     },
     {
         "id": "trinamic-tmc4671",
@@ -460,7 +473,7 @@
         "category": "frameless_driver",
         "use_cases": ["robot_arm", "diy_qdd", "industrial_servo"],
         "product_url": "https://www.analog.com/en/products/tmc4671.html",
-        "datasheet_url": "https://www.analog.com/en/products/tmc4671.html",
+        "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/TMC4671-LA_datasheet_rev2.08.pdf",
         "price_usd": null,
         "availability": "in_production",
         "peak_torque_nm": null,
@@ -481,11 +494,12 @@
         "encoder": "ABN incremental, Hall, analog/digital, SinCos, SPI absolute (external)",
         "integrated_driver": false,
         "ip_rating": null,
-        "notes": "Driver/controller. Fully integrated hardware-FOC servo controller IC for BLDC/PMSM/stepper/DC (not a turnkey board); paired with a power stage or reference design. Reference designs span voltage/current: TMC4671-TOSV-REF 12-36V up to 6A RMS; TMC4671-LEV-REF up to 55V / ~500W. Control via SPI/UART plus Step/Dir; supports many encoder types. Board/IC price varies by vendor (not listed here).",
+        "notes": "Driver/controller IC (not a motor, so no torque/weight rating). Fully integrated hardware-FOC servo controller IC for BLDC/PMSM/stepper/DC (not a turnkey board); paired with a power stage or reference design. Reference designs span voltage/current: TMC4671-TOSV-REF 12-36V up to 6A RMS; TMC4671-LEV-REF up to 55V / ~500W. Control via SPI/UART plus Step/Dir; PWM 25-100 kHz; supports many encoder types. Board/IC price varies by vendor (not listed here).",
         "sources": [
             "https://www.analog.com/en/products/tmc4671.html",
-            "https://www.mouser.com/ProductDetail/ADI-Trinamic/TMC4671-TOSV-REF?qs=TuK3vfAjtkVCdvFFyfK7eA%3D%3D",
-            "https://www.symmetryelectronics.com/blog/from-trinamic-trinamic-tmc4671-servo-controller-with-field-oriented-control/"
-        ]
+            "https://www.analog.com/media/en/technical-documentation/data-sheets/TMC4671-LA_datasheet_rev2.08.pdf",
+            "https://www.mouser.com/ProductDetail/ADI-Trinamic/TMC4671-TOSV-REF?qs=TuK3vfAjtkVCdvFFyfK7eA%3D%3D"
+        ],
+        "verified": false
     }
 ]

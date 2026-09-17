@@ -1,76 +1,5 @@
 [
     {
-        "id": "robstride-04",
-        "name": "RobStride 04 (RS-04)",
-        "brand": "RobStride",
-        "category": "cycloidal_premium",
-        "use_cases": ["robot_arm", "humanoid_joint", "quadruped_leg"],
-        "product_url": "https://www.robstride.com/products/robStride04",
-        "datasheet_url": "https://www.robstride.com/products/robStride04",
-        "price_usd": null,
-        "availability": "in_production",
-        "peak_torque_nm": 120,
-        "rated_torque_nm": 40,
-        "max_speed_rpm": null,
-        "gear_ratio": "9:1",
-        "weight_g": 1420,
-        "torque_density_nm_per_kg": 84.5,
-        "backdrivable": true,
-        "backlash_arcmin": null,
-        "repeatability_arcmin": null,
-        "voltage_v": "15-60",
-        "peak_current_a": null,
-        "power_w": 700,
-        "kt_nm_per_a": null,
-        "comm": ["CAN"],
-        "control_modes": ["position", "velocity", "torque"],
-        "encoder": "dual magnetic, 14-bit absolute",
-        "integrated_driver": true,
-        "ip_rating": "IP52",
-        "notes": "Top of the RobStride QDD line: four-in-one integrated joint (driver + BLDC motor + planetary reducer + dual magnetic encoders), 120x56mm body. Rated output power 700W +/-10% at 48V. Planetary (not true cycloidal) but marketed as a premium high-torque integrated joint. No-load output speed not published by manufacturer. Price is dealer/quote dependent (retail via AliExpress/resellers, typically a few hundred USD); not confirmed so left null.",
-        "sources": [
-            "https://www.robstride.com/products/robStride04",
-            "https://x.com/RobStride_com/status/1802891697912737824",
-            "https://rcdrone.top/products/robstride-04-qdd-120n-m-integrated-actuator-module-48v-9-1-ratio-dual-magnetic-encoder-ip52-700w-output"
-        ],
-        "verified": true
-    },
-    {
-        "id": "robstride-03",
-        "name": "RobStride 03 (RS-03)",
-        "brand": "RobStride",
-        "category": "cycloidal_premium",
-        "use_cases": ["robot_arm", "humanoid_joint", "quadruped_leg"],
-        "product_url": "https://www.robstride.com/products/robStride03",
-        "datasheet_url": "https://www.robstride.com/products/robStride03",
-        "price_usd": null,
-        "availability": "in_production",
-        "peak_torque_nm": 60,
-        "rated_torque_nm": 20,
-        "max_speed_rpm": 195,
-        "gear_ratio": "9:1",
-        "weight_g": 880,
-        "torque_density_nm_per_kg": 68.2,
-        "backdrivable": true,
-        "backlash_arcmin": null,
-        "repeatability_arcmin": null,
-        "voltage_v": "48",
-        "peak_current_a": null,
-        "power_w": 380,
-        "kt_nm_per_a": null,
-        "comm": ["CAN"],
-        "control_modes": ["position", "velocity", "torque"],
-        "encoder": "dual magnetic, 14-bit absolute",
-        "integrated_driver": true,
-        "ip_rating": "IP52",
-        "notes": "Four-in-one integrated joint (driver + motor + planetary reducer + dual magnetic encoders). 195 rpm no-load output speed, 380W rated output at 48V, 0.6A no-load current, Class B insulation. Voltage listed as 48V rated. Planetary reducer, marketed as premium high-torque integrated joint. Price quote/reseller dependent, left null.",
-        "sources": [
-            "https://www.robstride.com/products/robStride03",
-            "https://openelab.io/blogs/learn/what-is-robstride03-qdd-60n-m-actuator",
-            "https://rcdrone.top/products/robstride-03-qdd-60n-m-integrated-actuator-module-48v-dual-encoders-planetary-reducer-ip52-9-1-ratio"
-        ]
-    },
-    {
         "id": "unitree-m107",
         "name": "M107 Joint Motor",
         "brand": "Unitree Robotics",
@@ -98,11 +27,12 @@
         "encoder": "dual encoder (position + velocity)",
         "integrated_driver": true,
         "ip_rating": null,
-        "notes": "High-torque internal-rotor PMSM joint used across the Unitree H1 humanoid; the same M107 unit is deployed at different gear stages for different joints -- Unitree quotes 360 N.m (knee), 220 N.m (hip), 75 N.m (arm), 45 N.m (ankle). Peak torque here uses the 360 N.m knee figure. 107x74mm, hollow shaft for cable routing, industrial crossed-roller output bearing. Manufacturer states 189 N.m/kg torque density; weight_g (~1.9 kg) is INFERRED from 360 N.m / 189 (N.m/kg) and is not a directly published value. Gear ratio, voltage, comm bus and price are not published for the bare motor (sold as part of H1); left null.",
+        "notes": "High-torque internal-rotor PMSM joint used across the Unitree H1 humanoid; the same M107 unit is deployed at different gear stages for different joints - Unitree quotes 360 N.m (knee), 220 N.m (hip), 75 N.m (arm), 45 N.m (ankle). Peak torque here uses the 360 N.m knee figure. 107x74mm, hollow shaft for cable routing, industrial crossed-roller output bearing. Manufacturer states 189 N.m/kg torque density; weight_g (~1.9 kg) is INFERRED from 360 N.m / 189 (N.m/kg) and is not a directly published value, so verified is false. Gear ratio, voltage, comm bus and price are not published for the bare motor (sold as part of H1); left null.",
         "sources": [
             "https://www.unitree.com/h1/",
             "https://top3dshop.com/product/unitree-robotics-h1-2-humanoid-robot"
-        ]
+        ],
+        "verified": false
     },
     {
         "id": "damiao-dm-j10010-2ec",
@@ -111,7 +41,7 @@
         "category": "cycloidal_premium",
         "use_cases": ["robot_arm", "humanoid_joint", "quadruped_leg"],
         "product_url": "https://store.foxtech.com/dm-j10010-2ec-mit-driven-brushless-servo-joint-motor/",
-        "datasheet_url": "https://store.foxtech.com/dm-j10010-2ec-mit-driven-brushless-servo-joint-motor/",
+        "datasheet_url": "https://github.com/dmBots/DM-J10010-2EC",
         "price_usd": null,
         "availability": "in_production",
         "peak_torque_nm": 150,
@@ -132,11 +62,13 @@
         "encoder": "dual magnetic encoder",
         "integrated_driver": true,
         "ip_rating": null,
-        "notes": "MIT-driven integrated joint motor with built-in gearbox and dual encoders; supports MIT (impedance/torque), position and velocity modes. 100mm-class body, ~100 rpm class output. Peak 150 N.m is the MIT-mode short-duration figure, 40 N.m continuous. Weight not reliably confirmed from primary sources (some resellers list ~1 kg, unverified) so weight_g and torque_density left null to avoid fabrication. Price reseller/quote dependent.",
+        "notes": "MIT-driven integrated joint motor with built-in gearbox and dual encoders; supports MIT (impedance/torque), position and velocity modes. 100mm-class body, ~100 rpm class output, 10:1 reduction. Resellers agree on 40 N.m rated / 150 N.m peak at 48V. Net weight is not stated in the primary datasheet/manual (some resellers imply ~1.6-1.8 kg, unverified) so weight_g and torque_density are left null and verified is false.",
         "sources": [
+            "https://github.com/dmBots/DM-J10010-2EC",
             "https://store.foxtech.com/dm-j10010-2ec-mit-driven-brushless-servo-joint-motor/",
             "https://rcdrone.top/products/damiao-dm-j10010-2ec-servo-motor"
-        ]
+        ],
+        "verified": false
     },
     {
         "id": "damiao-dm-j8009-2ec",
@@ -145,15 +77,15 @@
         "category": "cycloidal_premium",
         "use_cases": ["robot_arm", "exoskeleton", "quadruped_leg"],
         "product_url": "https://www.dronegearup.com/products/damiao-dm-j8009-2ec-24-v-20-n-m-9-1-98-mm-od-dual-encoder-integrated-robot-motor-with-can-1-mbps/",
-        "datasheet_url": "https://manuals.plus/damiao/dm-j8009-2ec-servo-motor-manual",
+        "datasheet_url": "https://github.com/dmBots/DM-J8009-2EC",
         "price_usd": null,
         "availability": "in_production",
         "peak_torque_nm": 40,
         "rated_torque_nm": 20,
         "max_speed_rpm": null,
         "gear_ratio": "9:1",
-        "weight_g": null,
-        "torque_density_nm_per_kg": null,
+        "weight_g": 896,
+        "torque_density_nm_per_kg": 44.6,
         "backdrivable": true,
         "backlash_arcmin": null,
         "repeatability_arcmin": null,
@@ -166,11 +98,13 @@
         "encoder": "dual magnetic encoder",
         "integrated_driver": true,
         "ip_rating": null,
-        "notes": "98mm OD integrated joint motor, MIT driver + dual magnetic encoders, CAN bus at 1 Mbps with telemetry (speed/position/torque/temperature). 20 N.m rated, 40 N.m peak, ~100 rpm rated output speed, 24V. Supports MIT, speed and position modes. Weight not confirmed from a primary source (left null, no torque density computed). DM-J8009P-2EC variant uses a crossed-roller output bearing instead of the deep-groove bearing.",
+        "notes": "98mm OD x 61.7mm integrated joint motor, MIT driver + dual magnetic encoders, CAN bus at 1 Mbps with telemetry (speed/position/torque/temperature). 20 N.m rated, 40 N.m peak, ~100 rpm rated output, 9:1, 24V. Supports MIT, speed and position modes. User manual lists ~896g. DM-J8009P-2EC variant uses a crossed-roller output bearing instead of the deep-groove bearing.",
         "sources": [
+            "https://github.com/dmBots/DM-J8009-2EC",
             "https://www.dronegearup.com/products/damiao-dm-j8009-2ec-24-v-20-n-m-9-1-98-mm-od-dual-encoder-integrated-robot-motor-with-can-1-mbps/",
             "https://manuals.plus/damiao/dm-j8009-2ec-servo-motor-manual"
-        ]
+        ],
+        "verified": true
     },
     {
         "id": "steadywin-gim8115-36",
@@ -200,11 +134,12 @@
         "encoder": "magnetic",
         "integrated_driver": true,
         "ip_rating": null,
-        "notes": "8115-frame BLDC (mini-Cheetah style) with 36:1 planetary reducer and built-in driver; 54 N.m high-ratio variant of the GIM8115 family (also sold as -6/-9). ~30 rpm output, 160W, 36-48V. kt 0.28 N.m/A is the MOTOR-side torque constant (before the gearbox), phase resistance 0.43 ohm, inductance 0.27 mH. Rated (continuous) output torque not separately published (54 N.m is the stall/peak figure). Only a gross shipping weight (~1.2 kg incl. packaging) is listed by resellers, not a net actuator mass, so weight_g and torque_density left null. 36:1 ratio makes it largely non-backdrivable.",
+        "notes": "8115-frame BLDC (mini-Cheetah style) with 36:1 planetary reducer and built-in driver; 54 N.m high-ratio variant of the GIM8115 family (also sold as -6/-9). ~30 rpm output, 160W, 36-48V. kt 0.28 N.m/A is the MOTOR-side torque constant (before the gearbox). Rated (continuous) output torque is not separately published (54 N.m is the stall/peak figure). Only a gross shipping weight (~1.2 kg incl. packaging) is listed by resellers, not a net actuator mass, so weight_g and torque_density are left null and verified is false. 36:1 ratio makes it largely non-backdrivable.",
         "sources": [
             "https://www.alibaba.com/product-detail/Steadywin-MIT-GIM8115-36-Gear-Ratio_1600644941419.html",
             "https://steadywin-motor.com/products/gim6010-6"
-        ]
+        ],
+        "verified": false
     },
     {
         "id": "innfos-sca-qdd-lite-ne30-36",
@@ -219,7 +154,7 @@
         "peak_torque_nm": 10,
         "rated_torque_nm": 2.3,
         "max_speed_rpm": 30,
-        "gear_ratio": "36:1",
+        "gear_ratio": "33.6:1",
         "weight_g": 232,
         "torque_density_nm_per_kg": 43.1,
         "backdrivable": null,
@@ -234,11 +169,12 @@
         "encoder": "absolute encoder",
         "integrated_driver": true,
         "ip_rating": null,
-        "notes": "Smart Compliant Actuator used in the INNFOS Gluon desktop cobot arm; integrates reducer + outer-rotor motor + precision encoder + collision detection + driver. QDD-Lite-NE30-36: 2.3 N.m rated / 10 N.m peak, 30 rpm rated output, 52mm dia x 68.8mm, 232.1g. Directly regulates position/velocity/torque/impedance. This is the smallest/lightest premium joint here (cobot-scale, not heavy-arm). INNFOS branding is largely defunct (innfos.com domain for sale; project continued under Mintasca) so availability marked unknown. Voltage not confirmed from primary source.",
+        "notes": "Smart Compliant Actuator used in the INNFOS Gluon desktop cobot arm; integrates reducer + outer-rotor motor + precision encoder + collision detection + driver. QDD-Lite-NE30-36: 2.3 N.m rated / 10 N.m peak, ~30 rpm rated output, 52mm dia x 68.8mm, ~232g. Despite the -36 designation the actual reduction ratio is 33.6:1. Regulates position/velocity/torque/impedance directly. Smallest/lightest premium joint here (cobot-scale, not heavy-arm). The Gluon arm runs on a 42V supply; per-actuator rated voltage is not separately confirmed so voltage is null. INNFOS branding is largely defunct (project continued under Mintasca) so availability is unknown.",
         "sources": [
-            "https://www.hackster.io/news/innfos-unveils-a-modular-robotic-arm-driven-by-sca-actuators-e436f9b29823",
-            "https://github.com/mintasca/innfos-gluon-controller"
-        ]
+            "https://github.com/mintasca/innfos-gluon-controller",
+            "https://www.hackster.io/news/innfos-unveils-a-modular-robotic-arm-driven-by-sca-actuators-e436f9b29823"
+        ],
+        "verified": true
     },
     {
         "id": "spinea-drivespin-ds110",
@@ -268,11 +204,12 @@
         "encoder": null,
         "integrated_driver": false,
         "ip_rating": null,
-        "notes": "True zero-backlash cycloidal (TwinSpin) rotary actuator: an AC servomotor coupled to a TwinSpin two-disc cycloidal reduction gear with an integrated high radial/axial-load output bearing. The DriveSpin DS series spans ~18-460 N.m rated output torque across sizes; the DS110 is a mid-large frame but Spinea does not publish a single rated-torque/weight number on the public page (varies by servomotor and ratio) so those are left null. Lost motion (backlash) <=1 arcmin, repeatable positioning accuracy <10 arcsec (~0.17 arcmin). Requires an external servo drive (integrated_driver false). Industrial/quote pricing. Not backdrivable.",
+        "notes": "True zero-backlash cycloidal (TwinSpin) rotary actuator: an AC servomotor coupled to a TwinSpin two-disc cycloidal reduction gear with an integrated high radial/axial-load output bearing. The DriveSpin DS series spans ~18-460 N.m rated output torque across sizes; the DS110 is a mid-large frame but Spinea does not publish a single rated-torque/weight number on the public page (varies by servomotor and ratio) so those are left null and verified is false. Lost motion (backlash) <=1 arcmin, repeatable positioning accuracy <10 arcsec (~0.17 arcmin). Requires an external servo drive (integrated_driver false). Industrial/quote pricing. Not backdrivable.",
         "sources": [
             "https://www.spinea.com/en/products/drivespin/standard/ds110",
-            "https://www.spinea.com/en/article/the-very-high-positioning-accuracy-of-the-twinspin%C2%AE-cycloidal-zero-backlash-reducers-is-not-an-accident"
-        ]
+            "https://www.spinea.com/en/products/drivespin/standard"
+        ],
+        "verified": false
     },
     {
         "id": "nabtesco-rv-42n",
@@ -288,8 +225,8 @@
         "rated_torque_nm": 412,
         "max_speed_rpm": null,
         "gear_ratio": "141:1",
-        "weight_g": null,
-        "torque_density_nm_per_kg": null,
+        "weight_g": 6300,
+        "torque_density_nm_per_kg": 327,
         "backdrivable": false,
         "backlash_arcmin": 1,
         "repeatability_arcmin": null,
@@ -302,12 +239,13 @@
         "encoder": null,
         "integrated_driver": false,
         "ip_rating": null,
-        "notes": "Nabtesco RV (Rotate Vector) two-stage cycloidal precision reducer -- the gear used in the shoulder/elbow/base joints of most industrial robots (Nabtesco holds ~60% of that market). This is a GEARBOX, not an integrated actuator: no motor, driver, encoder or voltage of its own (paired with a customer servomotor), hence those fields are null and integrated_driver false. RV-42N: 412 N.m rated output torque, available ratios up to ~185:1 (141:1 shown), <1 arcmin backlash. Peak/momentary max = 5x rated (~2060 N.m); permissible accel/decel torque is lower (~2.5x). Weight varies by ratio and is not a single published value. Quote-only pricing.",
+        "notes": "Nabtesco RV (Rotate Vector) two-stage cycloidal precision reducer - the gear used in the shoulder/elbow/base joints of most industrial robots (Nabtesco holds a large share of that market). This is a GEARBOX, not an integrated actuator: no motor, driver, encoder or voltage of its own (paired with a customer servomotor), hence those fields are null and integrated_driver false. RV-42N: 412 N.m rated output torque, momentary maximum (emergency-stop) torque 5x rated (~2060 N.m), available ratios up to ~185:1 (141:1 shown), <1 arcmin backlash, mass 6.3 kg, OD 159mm. Torque density is computed from momentary max torque over mass. Quote-only pricing.",
         "sources": [
             "https://www.nabtesco.de/en/product/rv-42n",
-            "https://www.directindustry.com/prod/nabtesco-precision-europe/product-17051-2566194.html",
-            "https://precision.nabtesco.com/en/products/detail/RV-N"
-        ]
+            "https://precision.nabtesco.com/en/products/detail/RV-N",
+            "https://www.abi.nl/assets/uploads/Downloads/Aandrijvingen/Precisievertragingen/Nabtesco%20cycloide%20vertragingen/RV-N%20serie/RV-N_Rev.9_EN_no_drw_nabtesco.pdf"
+        ],
+        "verified": true
     },
     {
         "id": "atar-arc-cycloidal-joint",
@@ -321,7 +259,7 @@
         "availability": "in_production",
         "peak_torque_nm": 530,
         "rated_torque_nm": null,
-        "max_speed_rpm": null,
+        "max_speed_rpm": 100,
         "gear_ratio": null,
         "weight_g": null,
         "torque_density_nm_per_kg": null,
@@ -337,10 +275,11 @@
         "encoder": "dual encoder",
         "integrated_driver": true,
         "ip_rating": null,
-        "notes": "Integrated cycloidal joint module line aimed at humanoids/heavy arms: self-developed cycloidal reducer + BLDC motor + driver + dual encoders in one unit. Series-level specs: rated torque range 3-150 N.m across sizes, max torque up to 530 N.m (used as peak here), 24-72V, backlash and repeatability ~1 arcmin, withstands >5x rated momentary overload, CAN-FD + EtherCAT. Per-model rated torque, weight and gear ratio are not published individually (this entry represents the series envelope) so those are null. Low backdrivability by design. Quote/OEM pricing.",
+        "notes": "Integrated cycloidal joint module line aimed at humanoids/heavy arms: self-developed cycloidal reducer + BLDC motor + driver + dual encoders in one unit. Series-level specs: rated torque range 3-150 N.m across sizes, max torque up to 530 N.m (used as peak here), 24-72V, rated speed 80-100 rpm, backlash and repeatability ~1 arcmin, withstands >5x rated momentary overload, CAN-FD + EtherCAT. Per-model rated torque, weight and gear ratio are not published individually (this entry represents the series envelope) so those are null and verified is false. Low backdrivability by design. Quote/OEM pricing.",
         "sources": [
             "https://www.atarrobot.com/cycloidal-robot/arc-serie/Arc-cycloidal-joint-actuators.html",
             "https://atarrobot.com/cycloidal-robot/"
-        ]
+        ],
+        "verified": false
     }
 ]

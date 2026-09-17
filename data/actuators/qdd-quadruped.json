@@ -68,7 +68,8 @@
             "https://www.cubemars.com/product/ak80-6-kv100-robotic-actuator.html",
             "https://store.cubemars.com/products/ak80-6",
             "https://www.digikey.com/en/products/detail/cubemars/AK80-6-KV100/16689764"
-        ]
+        ],
+        "verified": true
     },
     {
         "id": "cubemars-ak70-10",
@@ -85,7 +86,7 @@
         "max_speed_rpm": 310,
         "gear_ratio": "10:1",
         "weight_g": 521,
-        "torque_density_nm_per_kg": null,
+        "torque_density_nm_per_kg": 47.6,
         "backdrivable": true,
         "backlash_arcmin": 8,
         "repeatability_arcmin": null,
@@ -139,7 +140,8 @@
             "https://www.cubemars.com/product/ak60-6-v3-0-kv80-robotic-actuator.html",
             "https://www.robotshop.com/products/cubemars-ak60-6-v30-kv80-robotic-actuator",
             "https://www.cubemars.com/product/ak60-6-v1-1-kv140-robotic-actuator.html"
-        ]
+        ],
+        "verified": true
     },
     {
         "id": "cubemars-ak10-9",
@@ -169,12 +171,13 @@
         "encoder": "14-bit magnetic (motor-side)",
         "integrated_driver": true,
         "ip_rating": null,
-        "notes": "Largest AK-series QDD, for big-dog legs and heavy arms. V3.0 KV60: 53 Nm peak / 18 Nm rated, rated current 10.7A. max_speed_rpm is rated speed at 48V. Earlier V2.0 KV60 rated 48 Nm peak / 18 Nm. Pricing varies widely by retailer/version (RobotShop lists V3.0 KV60 ~$1,140; historical V2 street ~$400-500) so price_usd left null.",
+        "notes": "Largest AK-series QDD, for big-dog legs and heavy arms. V3.0 KV60: 53 Nm peak / 18 Nm rated, no-load 320 rpm / rated 235 rpm at 48V (max_speed_rpm is the rated figure). Earlier V2.0 KV60 rated 48 Nm peak / 18 Nm. Net weight 960 g (V2.0 confirmed at 0.96 kg; V3.0 is the same motor and gearbox with only an updated driver board, so weight is unchanged). Pricing varies widely by retailer/version (RobotShop lists V3.0 KV60 ~$1,140; historical V2 street ~$400-500) so price_usd left null.",
         "sources": [
             "https://www.cubemars.com/product/ak10-9-v3-0-kv60-robotic-actuator.html",
             "https://servodatabase.com/servo/cubemars/ak10-9-v3-0-kv60",
             "https://www.cubemars.com/product/ak10-9-v2-0-kv60-robotic-actuator.html"
-        ]
+        ],
+        "verified": true
     },
     {
         "id": "unitree-go-m8010-6",
@@ -224,14 +227,14 @@
         "availability": "unknown",
         "peak_torque_nm": 16,
         "rated_torque_nm": 3.3,
-        "max_speed_rpm": 400,
+        "max_speed_rpm": 383,
         "gear_ratio": "6:1",
-        "weight_g": 470,
-        "torque_density_nm_per_kg": 34,
+        "weight_g": 507,
+        "torque_density_nm_per_kg": 31.6,
         "backdrivable": true,
-        "backlash_arcmin": 12,
+        "backlash_arcmin": 15,
         "repeatability_arcmin": null,
-        "voltage_v": "10-34",
+        "voltage_v": "10-44",
         "peak_current_a": null,
         "power_w": null,
         "kt_nm_per_a": null,
@@ -240,7 +243,7 @@
         "encoder": "on-board magnetic absolute",
         "integrated_driver": true,
         "ip_rating": null,
-        "notes": "Open-source QDD servo built on the moteus controller (CAN-FD, 5 Mbps). Thermal-limited torque at 24V: 16 Nm peak (<1s), 10 Nm for 60s, 6 Nm for 400s, 3.3 Nm indefinitely (rated_torque_nm uses the indefinite figure). Peak speed 2400 dps (~400 rpm) at 24V, backlash +/-0.2 deg (~12 arcmin). Currently not stocked on mjbots (MOQ 50); was ~$499 as a beta, so price left null. Marked beta by the vendor.",
+        "notes": "Open-source QDD servo built on the moteus controller (CAN-FD, 5 Mbps). Thermal-limited torque at 24V: 16 Nm peak (<1s), 10 Nm for 60s, 6 Nm for 400s, 3.3 Nm indefinitely (rated_torque_nm uses the indefinite figure). Peak speed 2300 dps (~383 rpm) at 24V, 3600 dps at 36V; backlash +/-0.25 deg (~15 arcmin), input 10-44V. Net weight 507 g per the beta 3 product page (the original beta was 470 g). Currently not stocked on mjbots (MOQ 50); was ~$499 as a beta, so price left null. Marked beta by the vendor.",
         "sources": [
             "https://mjbots.com/products/qdd100-beta-3",
             "https://blog.mjbots.com/2021/02/04/qdd100-beta-2/",
@@ -281,7 +284,8 @@
             "https://openelab.io/products/steadywin-gim8108-8-robot-motor",
             "https://rcdrone.top/products/steadywin-gim8108-8-planetary-reducer-servo-motor",
             "https://www.alibaba.com/product-detail/Steadywin-GIM8108-8-Gear-Motor-8_1601153179912.html"
-        ]
+        ],
+        "verified": true
     },
     {
         "id": "steadywin-gim6010-8",
@@ -316,7 +320,8 @@
             "https://openelab.io/products/steadywin-gim6010-8-robot-motor",
             "https://sdalal1.github.io/assets/pdf/SteadyWin_GIM6010-8_Manual_rev1.pdf",
             "https://hackaday.io/project/202366-the-unnamed-spider-bot/log/239239-steadywin-gim6010-8-vs-xiaomi-cybergear-micromotor"
-        ]
+        ],
+        "verified": true
     },
     {
         "id": "xiaomi-cybergear",
