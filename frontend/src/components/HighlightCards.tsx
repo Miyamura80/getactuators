@@ -2,6 +2,7 @@ import type { Actuator } from "../types";
 import { colorForBrand } from "../lib/brands";
 import { BarChart } from "./BarChart";
 import type { BarItem } from "./BarChart";
+import { BrandGlyph } from "./BrandGlyph";
 
 interface Props {
     actuators: Actuator[];
@@ -78,7 +79,7 @@ export function HighlightCards({ actuators, onSelect }: Props) {
             {cards.map((c) => (
                 <section className="hi-card" key={c.key}>
                     <div className="hi-head">
-                        <span className="hi-tag" />
+                        <BrandGlyph className="hi-tag" />
                         <div>
                             <h3>{c.title}</h3>
                             <p>{c.sub}</p>

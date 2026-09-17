@@ -146,21 +146,13 @@ a:hover {
 }
 .block-tag,
 .hi-tag {
-    width: 14px;
-    height: 14px;
-    border: 1.5px solid var(--cyan);
-    position: relative;
     flex: none;
 }
-.block-tag::before,
-.hi-tag::before {
-    content: "";
-    position: absolute;
-    top: 1px;
-    left: 1px;
-    width: 40%;
-    height: 20%;
-    background: var(--cyan);
+.block-tag {
+    margin-top: 2px;
+}
+.hi-tag {
+    margin-top: 1px;
 }
 .block-sub {
     color: var(--muted);

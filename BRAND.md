@@ -17,9 +17,9 @@ shadows. The object itself is the logo.
 
 - Keep the geometry concentric and centered; the rotation arc reads top-right.
 - The keyed shaft is the only solid cyan fill; everything else is stroked.
-- It appears in the hero and the sidebar brand lockup. The small wireframe square
-  with a top-left tag is kept as the secondary motif that tags each section
-  heading (`.block-tag`).
+- It appears in the hero and the sidebar brand lockup. A compact version of the
+  same actuator (`frontend/src/components/BrandGlyph.tsx`) tags each section and
+  highlight-card heading, stripped down to stay legible at ~15px.
 - Implemented as `frontend/src/components/BrandMark.tsx`; the tab favicon is the
   same actuator on a black tile at `frontend/public/favicon.svg`.
 

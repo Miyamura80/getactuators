@@ -7,6 +7,7 @@ import type { FilterState } from "./lib/filter";
 import { Sidebar } from "./components/Sidebar";
 import type { NavItem } from "./components/Sidebar";
 import { Hero } from "./components/Hero";
+import { BrandGlyph } from "./components/BrandGlyph";
 import { HighlightCards } from "./components/HighlightCards";
 import { BarChart } from "./components/BarChart";
 import type { BarItem } from "./components/BarChart";
@@ -120,7 +121,7 @@ export default function App() {
 
                 <section id="highlights" className="block">
                     <h2 className="block-title">
-                        <span className="block-tag" />
+                        <BrandGlyph className="block-tag" />
                         Highlights
                     </h2>
                     <HighlightCards actuators={ACTUATORS} onSelect={openById} />
@@ -128,7 +129,7 @@ export default function App() {
 
                 <section id="rankings" className="block">
                     <h2 className="block-title">
-                        <span className="block-tag" />
+                        <BrandGlyph className="block-tag" />
                         Torque density ranking
                     </h2>
                     <p className="block-sub">
@@ -143,7 +144,7 @@ export default function App() {
 
                 <section id="scatter" className="block">
                     <h2 className="block-title">
-                        <span className="block-tag" />
+                        <BrandGlyph className="block-tag" />
                         Torque density vs Cost
                     </h2>
                     <p className="block-sub">
@@ -158,7 +159,7 @@ export default function App() {
 
                 <section id="table" className="block">
                     <h2 className="block-title">
-                        <span className="block-tag" />
+                        <BrandGlyph className="block-tag" />
                         All actuators
                     </h2>
                     <FilterBar
