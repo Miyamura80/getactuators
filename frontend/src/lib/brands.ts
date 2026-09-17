@@ -1,5 +1,5 @@
 // Provider (brand) identity for chart colors, Artificial-Analysis style.
-// Colors live only on data marks; the UI chrome stays SealGate cyan/grey.
+// Colors live only on data marks; the UI chrome stays cyan/grey.
 
 const CANON: [string, string][] = [
     ["cubemars", "CubeMars"],

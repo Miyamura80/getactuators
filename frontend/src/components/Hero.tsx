@@ -1,4 +1,4 @@
-import { Hackbox } from "./Hackbox";
+import { BrandMark } from "./BrandMark";
 
 interface Props {
     total: number;
@@ -10,7 +10,7 @@ export function Hero({ total, categories, countries }: Props) {
     return (
         <header className="hero">
             <div className="hero-main">
-                <Hackbox size={54} className="hero-mark" />
+                <BrandMark size={54} className="hero-mark" />
                 <h1>
                     Independent analysis
                     <br />

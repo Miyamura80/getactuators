@@ -1,4 +1,4 @@
-import { Hackbox } from "./Hackbox";
+import { BrandMark } from "./BrandMark";
 
 export interface NavItem {
     id: string;
@@ -15,7 +15,7 @@ export function Sidebar({ items, active, onSelect }: Props) {
     return (
         <aside className="sidebar">
             <div className="side-brand">
-                <Hackbox size={26} />
+                <BrandMark size={26} />
                 <span>
                     get<b>actuators</b>
                 </span>

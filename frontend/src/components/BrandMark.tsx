@@ -1,12 +1,11 @@
 interface Props {
     size?: number;
-    // stroke weight scales with size; kept crisp and thin per brand
     className?: string;
 }
 
-// The SealGate "Hackbox": a wireframe square with a solid cyan tag anchored to
+// The getactuators mark: a wireframe square with a solid accent tag anchored to
 // the top-left corner (40% wide x 10% tall), on black. Square corners, no fill.
-export function Hackbox({ size = 40, className }: Props) {
+export function BrandMark({ size = 40, className }: Props) {
     return (
         <svg
             width={size}
