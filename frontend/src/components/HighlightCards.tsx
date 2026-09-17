@@ -1,4 +1,5 @@
 import type { Actuator } from "../types";
+import { colorForBrand } from "../lib/brands";
 import { BarChart } from "./BarChart";
 import type { BarItem } from "./BarChart";
 
@@ -30,6 +31,7 @@ function toItems(list: Actuator[], metric: (a: Actuator) => number, fmt: (v: num
         value: metric(a),
         display: fmt(metric(a)),
         flag: a.country_flag,
+        color: colorForBrand(a.brand),
     }));
 }
 

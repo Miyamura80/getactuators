@@ -4,7 +4,7 @@ export interface BarItem {
     value: number;
     display: string;
     flag: string | null;
-    highlight?: boolean;
+    color: string;
 }
 
 interface Props {
@@ -62,7 +62,8 @@ export function BarChart({ items, onSelect }: Props) {
                             y={baseY - h}
                             width={barW}
                             height={h}
-                            className={it.highlight ? "bar bar-hi" : "bar"}
+                            className="bar"
+                            style={{ fill: it.color }}
                         />
                         <text x={cx} y={baseY - h - 6} className="bar-val" textAnchor="middle">
                             {it.display}

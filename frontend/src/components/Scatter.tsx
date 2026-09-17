@@ -1,4 +1,5 @@
 import type { Actuator } from "../types";
+import { colorForBrand } from "../lib/brands";
 
 interface Props {
     actuators: Actuator[]; // should already be filtered to those with price + density
@@ -94,7 +95,13 @@ export function Scatter({ actuators, onSelect }: Props) {
                     onClick={onSelect ? () => onSelect(p.a.id) : undefined}
                     style={onSelect ? { cursor: "pointer" } : undefined}
                 >
-                    <circle cx={p.x} cy={p.y} r={p.front ? 6 : 4.5} className={p.front ? "dot dot-front" : "dot"} />
+                    <circle
+                        cx={p.x}
+                        cy={p.y}
+                        r={p.front ? 6.5 : 5}
+                        className={p.front ? "dot dot-front" : "dot"}
+                        style={{ fill: colorForBrand(p.a.brand) }}
+                    />
                     {p.front && (
                         <text x={p.x + 9} y={p.y + 4} className="dot-label">
                             {p.a.name} {p.a.country_flag ?? ""}

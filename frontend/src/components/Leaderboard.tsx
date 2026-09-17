@@ -1,6 +1,7 @@
 import type { Actuator, SortDir } from "../types";
 import { CATEGORY_MAP } from "../types";
 import { COLUMNS } from "../lib/columns";
+import { colorForBrand } from "../lib/brands";
 import { list } from "../lib/format";
 import { MetricBar } from "./MetricBar";
 
@@ -84,6 +85,10 @@ export function Leaderboard({
                                 </td>
                                 <td className="col-name">
                                     <span className="rank">{i + 1}</span>
+                                    <span
+                                        className="brand-dot"
+                                        style={{ background: colorForBrand(a.brand) }}
+                                    />
                                     <span className="name-block">
                                         <span className="name">{a.name}</span>
                                         <span className="brand">{a.brand}</span>

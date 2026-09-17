@@ -11,6 +11,8 @@ import { HighlightCards } from "./components/HighlightCards";
 import { BarChart } from "./components/BarChart";
 import type { BarItem } from "./components/BarChart";
 import { Scatter } from "./components/Scatter";
+import { Legend } from "./components/Legend";
+import { colorForBrand, legendFor } from "./lib/brands";
 import { FilterBar } from "./components/FilterBar";
 import { Leaderboard } from "./components/Leaderboard";
 import { DetailPanel } from "./components/DetailPanel";
@@ -65,9 +67,11 @@ export default function App() {
                     value: a.torque_density_nm_per_kg as number,
                     display: `${Math.round(a.torque_density_nm_per_kg as number)}`,
                     flag: a.country_flag,
+                    color: colorForBrand(a.brand),
                 })),
         [rows],
     );
+    const legend = useMemo(() => legendFor(rows.map((a) => a.brand)), [rows]);
 
     useEffect(() => {
         const ids = NAV.map((n) => n.id);
@@ -133,8 +137,9 @@ export default function App() {
                     </h2>
                     <p className="block-sub">
                         Peak N{"·"}m per kg, top 20 of the current filter. Higher is
-                        better.
+                        better. Colored by provider.
                     </p>
+                    <Legend entries={legend} />
                     <div className="chart-scroll">
                         <BarChart items={rankItems} onSelect={openById} />
                     </div>
@@ -147,8 +152,9 @@ export default function App() {
                     </h2>
                     <p className="block-sub">
                         Priced actuators only. The shaded region is high density at low
-                        cost; the dotted line is the Pareto frontier.
+                        cost; the dotted line is the Pareto frontier. Colored by provider.
                     </p>
+                    <Legend entries={legend} />
                     <div className="chart-scroll">
                         <Scatter actuators={rows} onSelect={openById} />
                     </div>

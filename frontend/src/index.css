@@ -239,10 +239,7 @@ a:hover {
     fill: var(--cyan-dim);
 }
 .bar-g:hover .bar {
-    fill: var(--cyan);
-}
-.bar-hi {
-    fill: var(--cyan);
+    opacity: 0.8;
 }
 .bar-val {
     fill: var(--text);
@@ -278,12 +275,12 @@ a:hover {
     stroke-dasharray: 3 3;
 }
 .dot {
-    fill: var(--muted);
-    opacity: 0.8;
+    opacity: 0.85;
 }
 .dot-front {
-    fill: var(--cyan);
     opacity: 1;
+    stroke: #ffffff;
+    stroke-width: 1.5;
 }
 .dot-label {
     fill: var(--text);
@@ -298,6 +295,33 @@ a:hover {
 .axis-label {
     fill: var(--muted);
     font-size: 11px;
+}
+
+/* ---- Legend ------------------------------------------------------------ */
+.legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    margin: 0 0 12px;
+}
+.legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    color: var(--muted);
+    font-family: var(--mono);
+}
+.legend-dot {
+    width: 9px;
+    height: 9px;
+    flex: none;
+}
+.brand-dot {
+    width: 8px;
+    height: 8px;
+    flex: none;
+    display: inline-block;
 }
 
 /* ---- Filter bar -------------------------------------------------------- */
