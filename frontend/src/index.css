@@ -1266,4 +1266,12 @@ table.board {
     .xp-scene {
         transition: none;
     }
+    /* Keep the exploded translation (it is the content) but drop the
+       decorative scroll-driven spin and the hint fade. */
+    .xp-scene {
+        transform: translateY(4vh) rotateX(60deg) rotateZ(-10deg);
+    }
+    .xp-hint {
+        opacity: 1;
+    }
 }

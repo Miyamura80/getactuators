@@ -63,7 +63,10 @@ export function ExplodedView({ id }: Props) {
             window.removeEventListener("resize", onScroll);
             if (raf) cancelAnimationFrame(raf);
         };
-    }, []);
+        // Re-run when the id changes: navigating from the missing-actuator
+        // state to a valid one reuses this component, so the listener has to
+        // re-attach to the newly rendered stage.
+    }, [id]);
 
     if (!actuator) {
         return (

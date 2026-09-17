@@ -10,7 +10,15 @@ function Root() {
     const path = usePath();
     if (path === "/actuators") return <ActuatorsGallery />;
     if (path.startsWith("/actuators/")) {
-        return <ExplodedView id={decodeURIComponent(path.slice("/actuators/".length))} />;
+        const raw = path.slice("/actuators/".length);
+        let id = raw;
+        try {
+            id = decodeURIComponent(raw);
+        } catch {
+            // Malformed percent-encoding: fall back to the raw value, which
+            // routes to the missing-actuator state rather than crashing render.
+        }
+        return <ExplodedView id={id} />;
     }
     return <App />;
 }
