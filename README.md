@@ -28,14 +28,19 @@
 
 ## What is getactuators
 
-getactuators is a searchable directory of actuators used in robotics and motion
-control. Each entry captures the details an engineer needs to compare parts
-quickly: actuator type, drive method, key specs (torque, speed, stroke, force,
-voltage), form factor, and where to source it.
+getactuators aims to be a searchable directory of actuators used in robotics and
+motion control. Each entry is intended to capture the details an engineer needs
+to compare parts quickly: actuator type, drive method, key specs (torque, speed,
+stroke, force, voltage), form factor, and where to source it.
 
 The goal is a single, well-structured catalog you can browse by category and
 filter by the specs that matter for a build, instead of scattering the same
 research across datasheets and spreadsheets every time.
+
+> **Project status:** early scaffolding. `src/index.ts` is a template
+> entrypoint and `frontend/` is a starter Vite + React app. The actuator
+> catalog, its data schema, and the browse/filter UI described below are the
+> roadmap, not yet built.
 
 ## Actuator categories
 
@@ -47,8 +52,8 @@ research across datasheets and spreadsheets every time.
 | **Compliant / soft** | Series-elastic, pneumatic muscle, shape-memory alloy | Safe contact, wearables |
 | **Specialty** | Piezo, voice-coil, harmonic drive | Precision positioning, haptics |
 
-Each catalog entry records the actuator type, drive method, rated specs, form
-factor, interface, and sourcing links.
+Each catalog entry will record the actuator type, drive method, rated specs,
+form factor, interface, and sourcing links.
 
 ## Quick Start
 
@@ -69,7 +74,7 @@ make test
 make ci
 ```
 
-The directory frontend lives in `frontend/` (Vite + React) with its own
+The `frontend/` app (Vite + React, currently a starter scaffold) has its own
 dependency tree:
 
 ```bash
@@ -85,10 +90,14 @@ getactuators/
 +-- src/            Core TypeScript (entrypoint: src/index.ts)
 |   +-- config/     Zod-validated YAML + env config
 +-- tests/          Bun test suites
-+-- frontend/       Directory site (Vite + React, separate deps)
++-- frontend/       Starter app (Vite + React, separate deps)
 +-- scripts/        Utility + asset-generation scripts
 +-- media/          Banner and demo assets
 ```
+
+### Planned architecture
+
+The target shape once the catalog and directory UI land (not yet built):
 
 ```
         Contributors
@@ -129,11 +138,17 @@ globalConfig.features.newUi;
 
 ## Contributing an actuator
 
+The catalog data format is still being defined, so per-entry contributions are
+not open yet. Once it lands, the flow will be:
+
 1. Fork the repo and create a branch.
 2. Add the actuator entry with its type, drive method, specs, form factor, and
    sourcing link.
 3. Run `make ci` and make sure it passes with zero errors.
 4. Open a PR. `main` is protected, so all changes land through squash-and-merge.
+
+Until then, issues and PRs that help shape the schema and the directory UI are
+welcome.
 
 ## Credits
 
