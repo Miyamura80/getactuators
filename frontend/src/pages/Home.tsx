@@ -1,26 +1,20 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { ACTUATORS } from "../lib/data";
 import { num } from "../lib/format";
 import { Link } from "../lib/router";
 import { BrandMark } from "../components/BrandMark";
 import { BrandGlyph } from "../components/BrandGlyph";
-
-type CatKey = "humanoid" | "quadruped" | "robot_arm";
+import { RobotArt } from "../components/RobotArt";
+import type { RobotKind } from "../components/RobotArt";
 
 interface Cat {
-    key: CatKey;
+    key: RobotKind;
     label: string;
     useCase: string;
     hue: number;
     blurb: string;
-    // Photorealistic thumbnail hotlinked from Pexels (free license, commercial
-    // use, no attribution required). null falls back to the rendered tile.
-    photo: string | null;
     feature?: boolean;
 }
-
-const PEXELS = (id: number) =>
-    `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=1200&h=900&fit=crop`;
 
 const CATS: Cat[] = [
     {
@@ -29,7 +23,6 @@ const CATS: Cat[] = [
         useCase: "robot_arm",
         hue: 210,
         blurb: "Precision joints for cobots, manipulators and pick-and-place cells.",
-        photo: PEXELS(34207359),
         feature: true,
     },
     {
@@ -38,7 +31,6 @@ const CATS: Cat[] = [
         useCase: "humanoid_joint",
         hue: 262,
         blurb: "Hip, knee and shoulder joints for bipedal robots.",
-        photo: PEXELS(18799044),
     },
     {
         key: "quadruped",
@@ -46,7 +38,6 @@ const CATS: Cat[] = [
         useCase: "quadruped_leg",
         hue: 152,
         blurb: "High-torque proprioceptive legs for legged robots.",
-        photo: null,
     },
 ];
 
@@ -123,36 +114,25 @@ export function Home() {
 
             <footer className="foot">
                 Community dataset {"·"} v1 sourced from manufacturer pages via web
-                search {"·"} category photos are illustrative stock imagery, not the
-                listed hardware {"·"} verify against datasheets before engineering use.
+                search {"·"} category art is illustrative, not the listed hardware {"·"}
+                verify against datasheets before engineering use.
             </footer>
         </div>
     );
 }
 
 function CatCard({ cat, count }: { cat: Cat; count: number }) {
-    const [failed, setFailed] = useState(cat.photo == null);
     return (
         <Link
             to={`/all?use=${cat.useCase}`}
             className={`cat-card${cat.feature ? " cat-card-lg" : ""}`}
             aria-label={`${cat.label}: ${count} actuators`}
         >
-            <div className="cat-thumb" style={{ ["--hue" as string]: String(cat.hue) }}>
-                {failed ? (
-                    <CatFallback catKey={cat.key} />
-                ) : (
-                    <img
-                        className="cat-img"
-                        src={cat.photo ?? ""}
-                        alt=""
-                        loading="lazy"
-                        onError={() => setFailed(true)}
-                    />
-                )}
+            <div className="cat-thumb">
+                <RobotArt kind={cat.key} hue={cat.hue} />
                 <span className="cat-scrim" />
             </div>
-            <div className="cat-meta">
+            <div className="cat-meta" style={{ ["--hue" as string]: String(cat.hue) }}>
                 <div className="cat-meta-top">
                     <h3 className="cat-name">{cat.label}</h3>
                     <span className="cat-count">{num(count)}</span>
@@ -161,48 +141,5 @@ function CatCard({ cat, count }: { cat: Cat; count: number }) {
                 <span className="cat-go">Explore {cat.label.toLowerCase()} →</span>
             </div>
         </Link>
-    );
-}
-
-// Rendered fallback for a category with no photo (or a failed hotlink): a
-// tinted gradient plate with a simple line glyph of the robot type. Keeps the
-// grid intact and on-brand rather than showing a broken image.
-function CatFallback({ catKey }: { catKey: CatKey }) {
-    return (
-        <div className="cat-fallback">
-            <svg viewBox="0 0 120 120" className="cat-glyph" aria-hidden="true">
-                {catKey === "humanoid" && (
-                    <g fill="none" stroke="var(--cyan)" strokeWidth="4" strokeLinecap="round">
-                        <circle cx="60" cy="26" r="12" />
-                        <line x1="60" y1="38" x2="60" y2="78" />
-                        <line x1="60" y1="48" x2="38" y2="66" />
-                        <line x1="60" y1="48" x2="82" y2="66" />
-                        <line x1="60" y1="78" x2="44" y2="104" />
-                        <line x1="60" y1="78" x2="76" y2="104" />
-                    </g>
-                )}
-                {catKey === "quadruped" && (
-                    <g fill="none" stroke="var(--cyan)" strokeWidth="4" strokeLinecap="round">
-                        <rect x="34" y="44" width="52" height="24" rx="5" />
-                        <line x1="86" y1="50" x2="100" y2="40" />
-                        <circle cx="103" cy="37" r="4" fill="var(--cyan)" />
-                        <line x1="42" y1="68" x2="38" y2="96" />
-                        <line x1="56" y1="68" x2="54" y2="96" />
-                        <line x1="70" y1="68" x2="72" y2="96" />
-                        <line x1="82" y1="68" x2="86" y2="96" />
-                    </g>
-                )}
-                {catKey === "robot_arm" && (
-                    <g fill="none" stroke="var(--cyan)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="34" y="96" width="40" height="12" rx="3" />
-                        <line x1="54" y1="96" x2="54" y2="64" />
-                        <line x1="54" y1="64" x2="86" y2="44" />
-                        <line x1="86" y1="44" x2="82" y2="22" />
-                        <circle cx="54" cy="64" r="6" fill="var(--cyan)" />
-                        <circle cx="86" cy="44" r="6" fill="var(--cyan)" />
-                    </g>
-                )}
-            </svg>
-        </div>
     );
 }
