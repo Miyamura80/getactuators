@@ -59,8 +59,11 @@ export function Home() {
                     </span>
                 </Link>
                 <nav className="page-nav">
-                    <Link to="/" className="page-nav-link" data-on={true}>
-                        Home
+                    <Link to="/" className="page-nav-link">
+                        Leaderboard
+                    </Link>
+                    <Link to="/robots" className="page-nav-link" data-on={true}>
+                        Robot types
                     </Link>
                     <Link to="/all" className="page-nav-link">
                         All actuators
