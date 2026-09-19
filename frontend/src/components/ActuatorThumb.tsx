@@ -22,6 +22,21 @@ function hash(s: string): number {
 // line style. Detail counts (slots, bolts, gear teeth) vary per actuator so
 // the gallery reads as a set of distinct parts rather than one repeated icon.
 export function ActuatorThumb({ actuator, className }: Props) {
+    // Prefer a real product photo when we have one; otherwise fall through to
+    // the deterministic schematic below so every part still renders.
+    if (actuator.image_url) {
+        return (
+            <img
+                src={actuator.image_url}
+                className={className}
+                alt={`${actuator.name} product photo`}
+                loading="lazy"
+                decoding="async"
+                style={{ objectFit: "contain", width: "100%", height: "100%" }}
+            />
+        );
+    }
+
     const h = hash(actuator.id);
     const cat = CATEGORY_MAP[actuator.category];
     const hue = cat?.hue ?? 200;

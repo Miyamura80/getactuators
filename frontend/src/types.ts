@@ -12,6 +12,9 @@ export interface Actuator {
     brand: string;
     category: CategorySlug;
     use_cases: string[];
+    // Real product photo when we have one with rights to show it; absent or
+    // null falls back to the schematic render in ActuatorThumb.
+    image_url?: string | null;
     product_url: string | null;
     datasheet_url: string | null;
     price_usd: number | null;
