@@ -44,7 +44,7 @@
     "country_flag": "🇯🇵",
     "source_url": "https://www.nabtesco.de/en/product/rv-42n",
     "source_domain": "nabtesco.de",
-    "image_url": null
+    "image_url": "/actuator-images/nabtesco-rv-42n.jpg"
   },
   {
     "id": "unitree-m107",
@@ -364,7 +364,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://www.feetechrc.com/products/serial-port-series-steering-gear-page-3",
     "source_domain": "feetechrc.com",
-    "image_url": null
+    "image_url": "/actuator-images/feetech-sts3250.png"
   },
   {
     "id": "dynamixel-xm540-w270-t",
@@ -1112,7 +1112,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://www.hackster.io/news/innfos-unveils-a-modular-robotic-arm-driven-by-sca-actuators-e436f9b29823",
     "source_domain": "hackster.io",
-    "image_url": null
+    "image_url": "/actuator-images/innfos-sca-qdd-lite-ne30-36.jpg"
   },
   {
     "id": "waveshare-st3215",
@@ -1851,7 +1851,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://www.waveshare.com/sc15-servo.htm",
     "source_domain": "waveshare.com",
-    "image_url": null
+    "image_url": "/actuator-images/waveshare-sc15.jpg"
   },
   {
     "id": "cubemars-ak60-6",
