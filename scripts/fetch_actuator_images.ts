@@ -34,12 +34,20 @@ const EXT_BY_TYPE: Record<string, string> = {
     "image/svg+xml": "svg",
 };
 
-async function get(url: string, accept: string): Promise<Response | null> {
+async function get(
+    url: string,
+    accept: string,
+    referer?: string,
+): Promise<Response | null> {
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), 30_000);
     try {
+        const headers: Record<string, string> = { "User-Agent": UA, Accept: accept };
+        // A Referer defeats the hotlink/bot protection some image CDNs apply to
+        // a bare cross-origin request from a datacenter IP.
+        if (referer) headers.Referer = referer;
         const res = await fetch(url, {
-            headers: { "User-Agent": UA, Accept: accept },
+            headers,
             redirect: "follow",
             signal: ctrl.signal,
         });
@@ -94,8 +102,12 @@ function pickImage(html: string, base: string): string | null {
     return null;
 }
 
-async function download(url: string, id: string): Promise<string | null> {
-    const res = await get(url, "image/*");
+async function download(
+    url: string,
+    id: string,
+    referer?: string,
+): Promise<string | null> {
+    const res = await get(url, "image/*", referer);
     if (!res) return null;
     const type = ((res.headers.get("content-type") ?? "").split(";")[0] ?? "")
         .trim()
@@ -134,7 +146,7 @@ async function fetchForRow(row: Actuator): Promise<string | null> {
         if (!res) continue;
         const candidate = pickImage(await res.text(), res.url || page);
         if (!candidate) continue;
-        const saved = await download(candidate, row.id);
+        const saved = await download(candidate, row.id, page);
         if (saved) return saved;
     }
     return null;
@@ -148,7 +160,8 @@ async function resolveImage(
 ): Promise<string | null> {
     const override = overrides[row.id];
     if (override) {
-        const saved = await download(override, row.id);
+        const referer = row.product_url ?? row.source_url ?? undefined;
+        const saved = await download(override, row.id, referer);
         if (saved) return saved;
     }
     const existing = existingFile(row.id);
