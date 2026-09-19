@@ -1,11 +1,17 @@
 name: Fetch Actuator Images
 
-# Manual only. Runs where egress is open (GitHub-hosted runner), crawls each
+# Manual. Runs where egress is open (GitHub-hosted runner), crawls each
 # actuator's cited page for a product photo, self-hosts it under
 # frontend/public, and commits the images plus updated dataset back to the
-# branch it was dispatched on.
+# branch. Trigger via the Actions tab (workflow_dispatch, once this is on the
+# default branch) or, on any branch, by touching .github/fetch-images.trigger
+# and pushing. The workflow's own commit uses GITHUB_TOKEN, which does not
+# start a new run, so it will not loop.
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - ".github/fetch-images.trigger"
 
 permissions:
   contents: write
