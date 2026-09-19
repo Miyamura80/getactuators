@@ -145,7 +145,12 @@ export function AllActuators() {
             {showCompare && (
                 <ComparePanel
                     actuators={compareRows}
-                    onRemove={onToggleCompare}
+                    onRemove={(id) => {
+                        onToggleCompare(id);
+                        // Removing the last row empties the panel; drop back to the
+                        // compare dock so the next selection starts clean.
+                        if (compare.size === 1) setShowCompare(false);
+                    }}
                     onClose={() => setShowCompare(false)}
                 />
             )}
