@@ -35,8 +35,11 @@ export function Sidebar({ items, active, onSelect }: Props) {
                 ))}
             </nav>
             <div className="side-pages">
-                <Link to="/" className="side-page-link">
-                    ← Home
+                <Link to="/robots" className="side-page-link">
+                    Browse by robot type →
+                </Link>
+                <Link to="/all" className="side-page-link">
+                    All actuators (full table) →
                 </Link>
                 <Link to="/actuators" className="side-page-link">
                     Actuator gallery →
