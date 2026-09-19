@@ -8,6 +8,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const DATA = "frontend/src/data/actuators.json";
+const OVERRIDES = "scripts/image_overrides.json";
 const OUT_DIR = "frontend/public/actuator-images";
 const PUBLIC_PREFIX = "/actuator-images";
 const MAX_BYTES = 2_000_000;
@@ -108,6 +109,23 @@ async function download(url: string, id: string): Promise<string | null> {
     return `${PUBLIC_PREFIX}/${file}`;
 }
 
+function loadOverrides(): Record<string, string> {
+    try {
+        return JSON.parse(readFileSync(OVERRIDES, "utf8")) as Record<string, string>;
+    } catch {
+        return {};
+    }
+}
+
+// A photo already committed for this id, if any (keeps re-runs idempotent).
+function existingFile(id: string): string | null {
+    for (const ext of new Set(Object.values(EXT_BY_TYPE))) {
+        if (existsSync(join(OUT_DIR, `${id}.${ext}`)))
+            return `${PUBLIC_PREFIX}/${id}.${ext}`;
+    }
+    return null;
+}
+
 // Crawl a row's cited pages for a product photo and self-host the first hit.
 async function fetchForRow(row: Actuator): Promise<string | null> {
     const pages = [row.product_url, row.source_url].filter(Boolean) as string[];
@@ -122,13 +140,30 @@ async function fetchForRow(row: Actuator): Promise<string | null> {
     return null;
 }
 
+// Resolve one row's photo: a manual override wins, then a photo already on
+// disk (so re-runs do not re-crawl the whole set), then a fresh page crawl.
+async function resolveImage(
+    row: Actuator,
+    overrides: Record<string, string>,
+): Promise<string | null> {
+    const override = overrides[row.id];
+    if (override) {
+        const saved = await download(override, row.id);
+        if (saved) return saved;
+    }
+    const existing = existingFile(row.id);
+    if (existing && row.image_url) return existing;
+    return fetchForRow(row);
+}
+
 async function main(): Promise<void> {
     if (!existsSync(OUT_DIR)) mkdirSync(OUT_DIR, { recursive: true });
     const rows = JSON.parse(readFileSync(DATA, "utf8")) as Actuator[];
+    const overrides = loadOverrides();
 
     let hit = 0;
     for (const row of rows) {
-        const saved = await fetchForRow(row);
+        const saved = await resolveImage(row, overrides);
         row.image_url = saved;
         if (saved) hit++;
         console.log(`${saved ? "OK " : "-- "} ${row.id}${saved ? ` -> ${saved}` : ""}`);
