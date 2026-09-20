@@ -43,7 +43,8 @@
     "country": "Japan",
     "country_flag": "🇯🇵",
     "source_url": "https://www.nabtesco.de/en/product/rv-42n",
-    "source_domain": "nabtesco.de"
+    "source_domain": "nabtesco.de",
+    "image_url": "/actuator-images/nabtesco-rv-42n.jpg"
   },
   {
     "id": "unitree-m107",
@@ -92,7 +93,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://www.unitree.com/h1/",
-    "source_domain": "unitree.com"
+    "source_domain": "unitree.com",
+    "image_url": null
   },
   {
     "id": "myactuator-rmd-x8-120",
@@ -145,7 +147,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://www.robotshop.com/products/myactuator-myactuator-brushless-dc-motor-rmd-x8-120-ethercat-large-torque-120nm-robot-joint-module-large-hollow-planetary-reduction-torque",
-    "source_domain": "robotshop.com"
+    "source_domain": "robotshop.com",
+    "image_url": null
   },
   {
     "id": "robstride-04",
@@ -200,7 +203,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://www.seeedstudio.com/Robostride-04-Actuator-p-6775.html",
-    "source_domain": "seeedstudio.com"
+    "source_domain": "seeedstudio.com",
+    "image_url": "/actuator-images/robstride-04.png"
   },
   {
     "id": "steadywin-gim6010-36",
@@ -253,7 +257,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://steadywin-motor.com/products/planetary-torque-motor-1-36-bipolar-reduction-joint-module-servo-motor-robot",
-    "source_domain": "steadywin-motor.com"
+    "source_domain": "steadywin-motor.com",
+    "image_url": "/actuator-images/steadywin-gim6010-36.jpg"
   },
   {
     "id": "robstride-03",
@@ -307,7 +312,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://www.seeedstudio.com/Robostride-03-Actuator-p-6774.html",
-    "source_domain": "seeedstudio.com"
+    "source_domain": "seeedstudio.com",
+    "image_url": "/actuator-images/robstride-03.png"
   },
   {
     "id": "feetech-sts3250",
@@ -357,7 +363,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://www.feetechrc.com/products/serial-port-series-steering-gear-page-3",
-    "source_domain": "feetechrc.com"
+    "source_domain": "feetechrc.com",
+    "image_url": "/actuator-images/feetech-sts3250.png"
   },
   {
     "id": "dynamixel-xm540-w270-t",
@@ -411,7 +418,8 @@
     "country": "South Korea",
     "country_flag": "🇰🇷",
     "source_url": "https://www.robotis.us/dynamixel-xm540-w270-t/",
-    "source_domain": "robotis.us"
+    "source_domain": "robotis.us",
+    "image_url": "/actuator-images/dynamixel-xm540-w270-t.jpg"
   },
   {
     "id": "dynamixel-xh540-w270-t",
@@ -465,7 +473,8 @@
     "country": "South Korea",
     "country_flag": "🇰🇷",
     "source_url": "https://www.robotis.us/dynamixel-xh540-w270-t/",
-    "source_domain": "robotis.us"
+    "source_domain": "robotis.us",
+    "image_url": "/actuator-images/dynamixel-xh540-w270-t.jpg"
   },
   {
     "id": "steadywin-gim8108-8",
@@ -517,7 +526,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://openelab.io/products/steadywin-gim8108-8-robot-motor",
-    "source_domain": "openelab.io"
+    "source_domain": "openelab.io",
+    "image_url": "/actuator-images/steadywin-gim8108-8.jpg"
   },
   {
     "id": "cubemars-ak10-9",
@@ -570,7 +580,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://www.cubemars.com/product/ak10-9-v3-0-kv60-robotic-actuator.html",
-    "source_domain": "cubemars.com"
+    "source_domain": "cubemars.com",
+    "image_url": "/actuator-images/cubemars-ak10-9.jpg"
   },
   {
     "id": "feetech-sts3215",
@@ -620,7 +631,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://www.feetechrc.com/products/serial-port-series-steering-gear-page-3",
-    "source_domain": "feetechrc.com"
+    "source_domain": "feetechrc.com",
+    "image_url": null
   },
   {
     "id": "dynamixel-h54-200-s500-r",
@@ -671,7 +683,8 @@
     "country": "South Korea",
     "country_flag": "🇰🇷",
     "source_url": "https://docs.robotis.com/docs/dxl/model_reference/pro_series/pro_h_series/h54-200-s500-r/",
-    "source_domain": "docs.robotis.com"
+    "source_domain": "docs.robotis.com",
+    "image_url": null
   },
   {
     "id": "dynamixel-xm430-w350-t",
@@ -724,7 +737,8 @@
     "country": "South Korea",
     "country_flag": "🇰🇷",
     "source_url": "https://www.robotis.us/dynamixel-xm430-w350-t/",
-    "source_domain": "robotis.us"
+    "source_domain": "robotis.us",
+    "image_url": "/actuator-images/dynamixel-xm430-w350-t.jpg"
   },
   {
     "id": "cubemars-ak70-10",
@@ -777,7 +791,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://www.cubemars.com/product/ak70-10-kv100-robotic-actuator.html",
-    "source_domain": "cubemars.com"
+    "source_domain": "cubemars.com",
+    "image_url": "/actuator-images/cubemars-ak70-10.jpg"
   },
   {
     "id": "cubemars-ak80-9",
@@ -830,7 +845,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://www.cubemars.com/product/ak80-9-v3-0-robotic-actuator.html",
-    "source_domain": "cubemars.com"
+    "source_domain": "cubemars.com",
+    "image_url": "/actuator-images/cubemars-ak80-9.jpg"
   },
   {
     "id": "robstride-00",
@@ -883,7 +899,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://www.seeedstudio.com/Robostride-00-Actuator-p-6664.html",
-    "source_domain": "seeedstudio.com"
+    "source_domain": "seeedstudio.com",
+    "image_url": "/actuator-images/robstride-00.png"
   },
   {
     "id": "robstride-01",
@@ -936,7 +953,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://www.seeedstudio.com/Robostride-01-Actuator-p-6773.html",
-    "source_domain": "seeedstudio.com"
+    "source_domain": "seeedstudio.com",
+    "image_url": "/actuator-images/robstride-01.png"
   },
   {
     "id": "unitree-go-m8010-6",
@@ -988,7 +1006,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://shop.unitree.com/products/go1-motor",
-    "source_domain": "shop.unitree.com"
+    "source_domain": "shop.unitree.com",
+    "image_url": "/actuator-images/unitree-go-m8010-6.jpg"
   },
   {
     "id": "damiao-dm-j8009-2ec",
@@ -1040,7 +1059,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://www.dronegearup.com/products/damiao-dm-j8009-2ec-24-v-20-n-m-9-1-98-mm-od-dual-encoder-integrated-robot-motor-with-can-1-mbps/",
-    "source_domain": "dronegearup.com"
+    "source_domain": "dronegearup.com",
+    "image_url": null
   },
   {
     "id": "innfos-sca-qdd-lite-ne30-36",
@@ -1091,7 +1111,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://www.hackster.io/news/innfos-unveils-a-modular-robotic-arm-driven-by-sca-actuators-e436f9b29823",
-    "source_domain": "hackster.io"
+    "source_domain": "hackster.io",
+    "image_url": "/actuator-images/innfos-sca-qdd-lite-ne30-36.jpg"
   },
   {
     "id": "waveshare-st3215",
@@ -1141,7 +1162,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://www.waveshare.com/st3215-servo.htm",
-    "source_domain": "waveshare.com"
+    "source_domain": "waveshare.com",
+    "image_url": null
   },
   {
     "id": "robstride-02",
@@ -1194,7 +1216,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://www.seeedstudio.com/Robostride-02-Actuator-p-6665.html",
-    "source_domain": "seeedstudio.com"
+    "source_domain": "seeedstudio.com",
+    "image_url": "/actuator-images/robstride-02.jpg"
   },
   {
     "id": "harmonic-drive-lpa-20",
@@ -1249,7 +1272,8 @@
     "country": "Japan",
     "country_flag": "🇯🇵",
     "source_url": "https://www.harmonicdrive.net/products/integrated-actuators/integrated-actuators/lpa-integrated-servo-drive",
-    "source_domain": "harmonicdrive.net"
+    "source_domain": "harmonicdrive.net",
+    "image_url": null
   },
   {
     "id": "xiaomi-cybergear",
@@ -1302,7 +1326,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://openelab.io/products/xiaomi-cybergear-micromotor-intelligent-motor",
-    "source_domain": "openelab.io"
+    "source_domain": "openelab.io",
+    "image_url": "/actuator-images/xiaomi-cybergear.jpg"
   },
   {
     "id": "hiwonder-lx-16a",
@@ -1352,7 +1377,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://www.hiwonder.com/products/lx-16a",
-    "source_domain": "hiwonder.com"
+    "source_domain": "hiwonder.com",
+    "image_url": "/actuator-images/hiwonder-lx-16a.jpg"
   },
   {
     "id": "myactuator-rmd-x8-pro-v2",
@@ -1405,7 +1431,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://www.robotshop.com/products/my-actuator-rmd-x8-pro-v2-can-bus-bldc-actuator-w-19-reduction-mc-x-300-o-driver",
-    "source_domain": "robotshop.com"
+    "source_domain": "robotshop.com",
+    "image_url": null
   },
   {
     "id": "mjbots-qdd100",
@@ -1457,7 +1484,8 @@
     "country": "United States",
     "country_flag": "🇺🇸",
     "source_url": "https://mjbots.com/products/qdd100-beta-3",
-    "source_domain": "mjbots.com"
+    "source_domain": "mjbots.com",
+    "image_url": "/actuator-images/mjbots-qdd100.jpg"
   },
   {
     "id": "feetech-scs15",
@@ -1507,7 +1535,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://www.feetechrc.com/en/scs_ttl_Servo.html",
-    "source_domain": "feetechrc.com"
+    "source_domain": "feetechrc.com",
+    "image_url": null
   },
   {
     "id": "dynamixel-xl330-m288-t",
@@ -1561,7 +1590,8 @@
     "country": "South Korea",
     "country_flag": "🇰🇷",
     "source_url": "https://www.robotis.us/dynamixel-xl330-m288-t/",
-    "source_domain": "robotis.us"
+    "source_domain": "robotis.us",
+    "image_url": "/actuator-images/dynamixel-xl330-m288-t.png"
   },
   {
     "id": "steadywin-gim6010-8",
@@ -1612,7 +1642,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://openelab.io/products/steadywin-gim6010-8-robot-motor",
-    "source_domain": "openelab.io"
+    "source_domain": "openelab.io",
+    "image_url": "/actuator-images/steadywin-gim6010-8.jpg"
   },
   {
     "id": "dynamixel-xl430-w250-t",
@@ -1663,7 +1694,8 @@
     "country": "South Korea",
     "country_flag": "🇰🇷",
     "source_url": "https://www.robotis.us/dynamixel-xl430-w250-t/",
-    "source_domain": "robotis.us"
+    "source_domain": "robotis.us",
+    "image_url": "/actuator-images/dynamixel-xl430-w250-t.png"
   },
   {
     "id": "cubemars-ak80-6",
@@ -1716,7 +1748,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://www.cubemars.com/product/ak80-6-kv100-robotic-actuator.html",
-    "source_domain": "cubemars.com"
+    "source_domain": "cubemars.com",
+    "image_url": "/actuator-images/cubemars-ak80-6.jpg"
   },
   {
     "id": "dynamixel-xc430-w150-t",
@@ -1768,7 +1801,8 @@
     "country": "South Korea",
     "country_flag": "🇰🇷",
     "source_url": "https://www.robotis.us/dynamixel-xc430-w150-t/",
-    "source_domain": "robotis.us"
+    "source_domain": "robotis.us",
+    "image_url": "/actuator-images/dynamixel-xc430-w150-t.jpg"
   },
   {
     "id": "waveshare-sc15",
@@ -1816,7 +1850,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://www.waveshare.com/sc15-servo.htm",
-    "source_domain": "waveshare.com"
+    "source_domain": "waveshare.com",
+    "image_url": "/actuator-images/waveshare-sc15.jpg"
   },
   {
     "id": "cubemars-ak60-6",
@@ -1869,7 +1904,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://www.cubemars.com/product/ak60-6-v3-0-kv80-robotic-actuator.html",
-    "source_domain": "cubemars.com"
+    "source_domain": "cubemars.com",
+    "image_url": "/actuator-images/cubemars-ak60-6.jpg"
   },
   {
     "id": "harmonic-drive-fha-14c-100",
@@ -1924,7 +1960,8 @@
     "country": "Japan",
     "country_flag": "🇯🇵",
     "source_url": "https://www.harmonicdrive.net/products/rotary-actuators/hollow-shaft-servo-actuators/fha-mini",
-    "source_domain": "harmonicdrive.net"
+    "source_domain": "harmonicdrive.net",
+    "image_url": null
   },
   {
     "id": "myactuator-rmd-x6-8",
@@ -1977,7 +2014,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://www.robotshop.com/products/myactuator-rmd-x6-v3-can-bus-18-mc-x-300-o-brushless-servo-driver",
-    "source_domain": "robotshop.com"
+    "source_domain": "robotshop.com",
+    "image_url": null
   },
   {
     "id": "cubemars-ri60-kv120",
@@ -2024,7 +2062,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://www.cubemars.com/product/ri60-kv120-frameless-inrunner-torque-motor.html",
-    "source_domain": "cubemars.com"
+    "source_domain": "cubemars.com",
+    "image_url": "/actuator-images/cubemars-ri60-kv120.jpg"
   },
   {
     "id": "cubemars-ri80-v2-kv75",
@@ -2071,7 +2110,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://www.cubemars.com/product/ri80-v2-0-kv75-frameless-inrunner-torque-motor.html",
-    "source_domain": "cubemars.com"
+    "source_domain": "cubemars.com",
+    "image_url": "/actuator-images/cubemars-ri80-v2-kv75.jpg"
   },
   {
     "id": "cubemars-r60-kv115",
@@ -2117,7 +2157,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://www.cubemars.com/goods-943-R60+KV115.html",
-    "source_domain": "cubemars.com"
+    "source_domain": "cubemars.com",
+    "image_url": "/actuator-images/cubemars-r60-kv115.jpg"
   },
   {
     "id": "myactuator-rmd-l-9015",
@@ -2171,7 +2212,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://us.amazon.com/MyActuator-RMD-L-9015-16T-Closed-Loop-Brushless-Turntable/dp/B0CCYHDR1N",
-    "source_domain": "us.amazon.com"
+    "source_domain": "us.amazon.com",
+    "image_url": null
   },
   {
     "id": "ipower-gm8112-80t",
@@ -2217,7 +2259,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://shop.iflight.com/ipower-motor-gm8112-brushless-gimbal-motor-pro195",
-    "source_domain": "shop.iflight.com"
+    "source_domain": "shop.iflight.com",
+    "image_url": "/actuator-images/ipower-gm8112-80t.png"
   },
   {
     "id": "damiao-dm-j10010-2ec",
@@ -2269,7 +2312,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://store.foxtech.com/dm-j10010-2ec-mit-driven-brushless-servo-joint-motor/",
-    "source_domain": "store.foxtech.com"
+    "source_domain": "store.foxtech.com",
+    "image_url": "/actuator-images/damiao-dm-j10010-2ec.jpg"
   },
   {
     "id": "steadywin-gim8115-36",
@@ -2320,7 +2364,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://steadywin-motor.com/products/gim6010-6",
-    "source_domain": "steadywin-motor.com"
+    "source_domain": "steadywin-motor.com",
+    "image_url": "/actuator-images/steadywin-gim8115-36.jpg"
   },
   {
     "id": "spinea-drivespin-ds110",
@@ -2365,7 +2410,8 @@
     "country": "Slovakia",
     "country_flag": "🇸🇰",
     "source_url": "https://www.spinea.com/en/products/drivespin/standard/ds110",
-    "source_domain": "spinea.com"
+    "source_domain": "spinea.com",
+    "image_url": null
   },
   {
     "id": "atar-arc-cycloidal-joint",
@@ -2417,7 +2463,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://www.atarrobot.com/cycloidal-robot/arc-serie/Arc-cycloidal-joint-actuators.html",
-    "source_domain": "atarrobot.com"
+    "source_domain": "atarrobot.com",
+    "image_url": null
   },
   {
     "id": "maxon-ec-frameless-90-flat-260w",
@@ -2463,7 +2510,8 @@
     "country": "Switzerland",
     "country_flag": "🇨🇭",
     "source_url": "https://www.maxongroup.com/maxon/view/product/542099",
-    "source_domain": "maxongroup.com"
+    "source_domain": "maxongroup.com",
+    "image_url": null
   },
   {
     "id": "tq-robodrive-ilm85x26",
@@ -2510,7 +2558,8 @@
     "country": "Germany",
     "country_flag": "🇩🇪",
     "source_url": "https://www.tq-group.com/en/products/tq-robodrive/servo-kits/ilm85x26/",
-    "source_domain": "tq-group.com"
+    "source_domain": "tq-group.com",
+    "image_url": "/actuator-images/tq-robodrive-ilm85x26.jpg"
   },
   {
     "id": "allied-motion-megaflux-mf0127",
@@ -2556,7 +2605,8 @@
     "country": "United States",
     "country_flag": "🇺🇸",
     "source_url": "https://www.alliedmotion.com/brushless-motors/brushless-direct-drive-torque-motors/megaflux-frameless-direct-drive-torque-motors/",
-    "source_domain": "alliedmotion.com"
+    "source_domain": "alliedmotion.com",
+    "image_url": "/actuator-images/allied-motion-megaflux-mf0127.jpg"
   },
   {
     "id": "odrive-v36",
@@ -2609,7 +2659,8 @@
     "country": "United States",
     "country_flag": "🇺🇸",
     "source_url": "https://shop.odriverobotics.com/products/odrive-v36",
-    "source_domain": "shop.odriverobotics.com"
+    "source_domain": "shop.odriverobotics.com",
+    "image_url": "/actuator-images/odrive-v36.jpg"
   },
   {
     "id": "odrive-s1",
@@ -2665,7 +2716,8 @@
     "country": "United States",
     "country_flag": "🇺🇸",
     "source_url": "https://shop.odriverobotics.com/products/odrive-s1",
-    "source_domain": "shop.odriverobotics.com"
+    "source_domain": "shop.odriverobotics.com",
+    "image_url": "/actuator-images/odrive-s1.jpg"
   },
   {
     "id": "odrive-pro",
@@ -2720,7 +2772,8 @@
     "country": "United States",
     "country_flag": "🇺🇸",
     "source_url": "https://shop.odriverobotics.com/products/odrive-pro",
-    "source_domain": "shop.odriverobotics.com"
+    "source_domain": "shop.odriverobotics.com",
+    "image_url": "/actuator-images/odrive-pro.jpg"
   },
   {
     "id": "mjbots-moteus-r4-11",
@@ -2773,7 +2826,8 @@
     "country": "United States",
     "country_flag": "🇺🇸",
     "source_url": "https://mjbots.com/products/moteus-r4-11",
-    "source_domain": "mjbots.com"
+    "source_domain": "mjbots.com",
+    "image_url": "/actuator-images/mjbots-moteus-r4-11.jpg"
   },
   {
     "id": "mjbots-moteus-c1",
@@ -2825,7 +2879,8 @@
     "country": "United States",
     "country_flag": "🇺🇸",
     "source_url": "https://mjbots.com/products/moteus-c1",
-    "source_domain": "mjbots.com"
+    "source_domain": "mjbots.com",
+    "image_url": "/actuator-images/mjbots-moteus-c1.jpg"
   },
   {
     "id": "trampa-vesc-6-mkvi",
@@ -2881,7 +2936,8 @@
     "country": "United Kingdom",
     "country_flag": "🇬🇧",
     "source_url": "https://trampa.co.uk/product/vesc6-mk6/",
-    "source_domain": "trampa.co.uk"
+    "source_domain": "trampa.co.uk",
+    "image_url": null
   },
   {
     "id": "trinamic-tmc4671",
@@ -2935,7 +2991,8 @@
     "country": "Germany",
     "country_flag": "🇩🇪",
     "source_url": "https://www.analog.com/en/products/tmc4671.html",
-    "source_domain": "analog.com"
+    "source_domain": "analog.com",
+    "image_url": null
   },
   {
     "id": "harmonic-drive-sha-cg",
@@ -2990,7 +3047,8 @@
     "country": "Japan",
     "country_flag": "🇯🇵",
     "source_url": "https://www.harmonicdrive.net/products/rotary-actuators/hollow-shaft-servo-actuators/sha-cg",
-    "source_domain": "harmonicdrive.net"
+    "source_domain": "harmonicdrive.net",
+    "image_url": null
   },
   {
     "id": "harmonic-drive-cha-series",
@@ -3043,7 +3101,8 @@
     "country": "Japan",
     "country_flag": "🇯🇵",
     "source_url": "https://harmonicdrive.de/en/products/servo-actuators-with-hollow-shaft/cha",
-    "source_domain": "harmonicdrive.de"
+    "source_domain": "harmonicdrive.de",
+    "image_url": "/actuator-images/harmonic-drive-cha-series.png"
   },
   {
     "id": "leaderdrive-lhs",
@@ -3089,7 +3148,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://www.gigager.net/showroom/leaderdrive-lhs-i-series-harmonic-drive-speed-reducer-for-high-precision.html",
-    "source_domain": "gigager.net"
+    "source_domain": "gigager.net",
+    "image_url": "/actuator-images/leaderdrive-lhs.webp"
   },
   {
     "id": "leaderdrive-lhd",
@@ -3134,7 +3194,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://www.gigager.net/showroom/leaderdrive-lhd-series-harmonic-drive-speed-reducer-for-robot-arms.html",
-    "source_domain": "gigager.net"
+    "source_domain": "gigager.net",
+    "image_url": "/actuator-images/leaderdrive-lhd.jpg"
   },
   {
     "id": "leaderdrive-lcs",
@@ -3180,7 +3241,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://aifitlab.com/products/leaderdrive-lcs-i-strain-wave-gear",
-    "source_domain": "aifitlab.com"
+    "source_domain": "aifitlab.com",
+    "image_url": "/actuator-images/leaderdrive-lcs.jpg"
   },
   {
     "id": "nidec-flexwave-wpg",
@@ -3228,7 +3290,8 @@
     "country": "Japan",
     "country_flag": "🇯🇵",
     "source_url": "https://www.nidec-dtc.com/product/wpg-gearhead/",
-    "source_domain": "nidec-dtc.com"
+    "source_domain": "nidec-dtc.com",
+    "image_url": "/actuator-images/nidec-flexwave-wpg.jpg"
   },
   {
     "id": "nidec-smart-flexwave-srh",
@@ -3275,7 +3338,8 @@
     "country": "Japan",
     "country_flag": "🇯🇵",
     "source_url": "https://www.nidec-dtc.com/product/srh-series-wpu-srh-bd/",
-    "source_domain": "nidec-dtc.com"
+    "source_domain": "nidec-dtc.com",
+    "image_url": "/actuator-images/nidec-smart-flexwave-srh.jpg"
   },
   {
     "id": "myactuator-rmd-x10-s2-v3",
@@ -3328,7 +3392,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://www.robotshop.com/products/myactuator-rmd-x10-s2-v3-bldc-can-bus-135mc-x-500-o-brushless-servo-driver",
-    "source_domain": "robotshop.com"
+    "source_domain": "robotshop.com",
+    "image_url": null
   },
   {
     "id": "lkmtech-mg5010e-i36-v3",
@@ -3381,7 +3446,8 @@
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://makerselectronics.com/product/lkmtech-mg5010e-i36-24v-brushless-dc-motor-dual-encoder/",
-    "source_domain": "makerselectronics.com"
+    "source_domain": "makerselectronics.com",
+    "image_url": "/actuator-images/lkmtech-mg5010e-i36-v3.jpg"
   },
   {
     "id": "dynamixel-ph54-200-s500-r",
@@ -3435,7 +3501,8 @@
     "country": "South Korea",
     "country_flag": "🇰🇷",
     "source_url": "https://www.robotis.us/dynamixel-ph54-200-s500-r/",
-    "source_domain": "robotis.us"
+    "source_domain": "robotis.us",
+    "image_url": "/actuator-images/dynamixel-ph54-200-s500-r.png"
   },
   {
     "id": "dynamixel-pm54-060-s250-r",
@@ -3489,6 +3556,7 @@
     "country": "South Korea",
     "country_flag": "🇰🇷",
     "source_url": "https://www.robotis.us/dynamixel-pm54-060-s250-r/",
-    "source_domain": "robotis.us"
+    "source_domain": "robotis.us",
+    "image_url": "/actuator-images/dynamixel-pm54-060-s250-r.png"
   }
 ]
