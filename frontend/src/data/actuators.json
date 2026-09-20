@@ -148,7 +148,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://www.robotshop.com/products/myactuator-myactuator-brushless-dc-motor-rmd-x8-120-ethercat-large-torque-120nm-robot-joint-module-large-hollow-planetary-reduction-torque",
     "source_domain": "robotshop.com",
-    "image_url": "/actuator-images/myactuator-rmd-x8-120.webp"
+    "image_url": null
   },
   {
     "id": "robstride-04",
@@ -2015,7 +2015,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://www.robotshop.com/products/myactuator-rmd-x6-v3-can-bus-18-mc-x-300-o-brushless-servo-driver",
     "source_domain": "robotshop.com",
-    "image_url": "/actuator-images/myactuator-rmd-x6-8.webp"
+    "image_url": null
   },
   {
     "id": "cubemars-ri60-kv120",
@@ -3393,7 +3393,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://www.robotshop.com/products/myactuator-rmd-x10-s2-v3-bldc-can-bus-135mc-x-500-o-brushless-servo-driver",
     "source_domain": "robotshop.com",
-    "image_url": "/actuator-images/myactuator-rmd-x10-s2-v3.webp"
+    "image_url": null
   },
   {
     "id": "lkmtech-mg5010e-i36-v3",
