@@ -15,7 +15,9 @@
         "ci": "bun run lint && bun run deadcode && bun run typecheck && bun run lint:links",
         "test": "bun test",
         "test:fast": "bun test --timeout 5000",
-        "test:watch": "bun test --watch"
+        "test:watch": "bun test --watch",
+        "images:fetch": "bun run scripts/fetch_actuator_images.ts",
+        "images:optimize": "bun run scripts/optimize_actuator_images.ts"
     },
     "devDependencies": {
         "@biomejs/biome": "^1.9.0",
