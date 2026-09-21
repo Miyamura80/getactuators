@@ -34,8 +34,15 @@ export function CopyLinkButton({ path, label, className }: Props) {
                 ta.style.opacity = "0";
                 document.body.appendChild(ta);
                 ta.select();
-                document.execCommand("copy");
-                document.body.removeChild(ta);
+                let ok = false;
+                try {
+                    ok = document.execCommand("copy");
+                } finally {
+                    document.body.removeChild(ta);
+                }
+                // execCommand reports failure by returning false, not by
+                // throwing; treat that as a failed copy so the catch handles it.
+                if (!ok) throw new Error("copy command rejected");
             }
             setCopied(true);
             if (timer.current) clearTimeout(timer.current);

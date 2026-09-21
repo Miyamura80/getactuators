@@ -109,7 +109,14 @@ function RobotCard({ robot, active }: { robot: Robot; active: boolean }) {
 function hashRobotId(): string | null {
     const h = window.location.hash;
     if (!h.startsWith("#")) return null;
-    const id = decodeURIComponent(h.slice(1));
+    let id: string;
+    try {
+        id = decodeURIComponent(h.slice(1));
+    } catch {
+        // Malformed percent-encoding: ignore the target rather than throwing
+        // out of the effect, matching main.tsx's handling of bad paths.
+        return null;
+    }
     return ROBOTS.some((r) => r.id === id) ? id : null;
 }
 

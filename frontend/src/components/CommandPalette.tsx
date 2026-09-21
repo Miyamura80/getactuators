@@ -39,7 +39,7 @@ function buildIndex(): Item[] {
         name: a.name,
         sub: `${a.brand} · ${CATEGORY_MAP[a.category]?.label ?? a.category}`,
         to: `/all?sel=${encodeURIComponent(a.id)}`,
-        hay: `${a.name} ${a.brand} ${a.category} ${(a.notes ?? "")}`.toLowerCase(),
+        hay: `${a.name} ${a.brand} ${a.category} ${CATEGORY_MAP[a.category]?.label ?? ""} ${a.notes ?? ""}`.toLowerCase(),
     }));
     // Robots first (small, curated set), then the actuator catalog.
     return [...robots, ...actuators];
@@ -106,14 +106,22 @@ export function CommandPalette() {
     const onInputKey = (e: ReactKeyboardEvent) => {
         if (e.key === "ArrowDown") {
             e.preventDefault();
-            setActive((a) => Math.min(a + 1, results.length - 1));
+            // Clamp to >= 0 so an ArrowDown on an empty result list cannot park
+            // `active` at -1 and swallow the next Enter once results return.
+            setActive((a) => Math.max(0, Math.min(a + 1, results.length - 1)));
         } else if (e.key === "ArrowUp") {
             e.preventDefault();
             setActive((a) => Math.max(a - 1, 0));
         } else if (e.key === "Enter") {
             e.preventDefault();
             go(results[active]);
-        } else if (e.key === "Escape") {
+        }
+    };
+
+    // Escape is handled at the dialog level (below) so it closes the palette
+    // whatever control inside has focus, not just the input.
+    const onDialogKey = (e: ReactKeyboardEvent) => {
+        if (e.key === "Escape") {
             e.preventDefault();
             setOpen(false);
         }
@@ -146,6 +154,7 @@ export function CommandPalette() {
                         aria-modal="true"
                         aria-label="Search actuators and robots"
                         onClick={(e) => e.stopPropagation()}
+                        onKeyDown={onDialogKey}
                     >
                         <div className="cmdk-input-row">
                             <span className="cmdk-input-icon" aria-hidden="true">
