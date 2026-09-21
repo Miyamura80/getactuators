@@ -7,8 +7,9 @@ import { Home } from "./pages/Home";
 import { AllActuators } from "./pages/AllActuators";
 import { ActuatorsGallery } from "./pages/ActuatorsGallery";
 import { ExplodedView } from "./pages/ExplodedView";
+import { CommandPalette } from "./components/CommandPalette";
 
-function Root() {
+function Page() {
     const path = usePath();
     if (path === "/all") return <AllActuators />;
     if (path === "/robots" || path === "/robot") return <Home />;
@@ -25,6 +26,17 @@ function Root() {
         return <ExplodedView id={id} />;
     }
     return <App />;
+}
+
+function Root() {
+    // The command palette lives outside the page switch so Cmd+K works on every
+    // route and its jumps survive page changes.
+    return (
+        <>
+            <Page />
+            <CommandPalette />
+        </>
+    );
 }
 
 createRoot(document.getElementById("root") as HTMLElement).render(

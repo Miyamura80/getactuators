@@ -1,7 +1,10 @@
+import { useEffect, useState } from "react";
 import type { Robot } from "../types";
 import { ROBOTS, ROBOT_CREDIT, motorCount, resolveJoints } from "../lib/robots";
 import { num, price } from "../lib/format";
+import { useLocationKey } from "../lib/router";
 import { BrandGlyph } from "./BrandGlyph";
+import { CopyLinkButton } from "./CopyLinkButton";
 import { RobotArt } from "./RobotArt";
 
 // Price shown as a single value or a range when the product has variants.
@@ -13,11 +16,11 @@ function priceLabel(r: Robot): string {
     return price(r.price_usd);
 }
 
-function RobotCard({ robot }: { robot: Robot }) {
+function RobotCard({ robot, active }: { robot: Robot; active: boolean }) {
     const joints = resolveJoints(robot);
     const total = motorCount(robot);
     return (
-        <article className="robot-card">
+        <article id={`robot-${robot.id}`} className="robot-card" data-active={active}>
             <div className="robot-thumb">
                 <RobotArt kind="robot_arm" hue={210} />
                 <span className="robot-dof">{robot.dof}-DOF</span>
@@ -26,7 +29,13 @@ function RobotCard({ robot }: { robot: Robot }) {
             <div className="robot-body">
                 <div className="robot-head">
                     <h3 className="robot-name">{robot.name}</h3>
-                    <span className="robot-price">{priceLabel(robot)}</span>
+                    <div className="robot-head-right">
+                        <span className="robot-price">{priceLabel(robot)}</span>
+                        <CopyLinkButton
+                            path={`/robots#${robot.id}`}
+                            label={`Copy link to ${robot.name}`}
+                        />
+                    </div>
                 </div>
                 <p className="robot-brand">
                     {robot.country_flag} {robot.brand}
@@ -96,7 +105,35 @@ function RobotCard({ robot }: { robot: Robot }) {
     );
 }
 
+// Strip the leading "#robot-" from the current hash, if it points at a card.
+function hashRobotId(): string | null {
+    const h = window.location.hash;
+    if (!h.startsWith("#")) return null;
+    const id = decodeURIComponent(h.slice(1));
+    return ROBOTS.some((r) => r.id === id) ? id : null;
+}
+
 export function RobotShowcase() {
+    const locKey = useLocationKey();
+    // The card the current hash points at, briefly highlighted after a jump.
+    const [active, setActive] = useState<string | null>(null);
+
+    // On any location change (hard load, back/forward, or a palette jump that
+    // pushes /robots#<id>), scroll the targeted card into view and flash it.
+    // biome-ignore lint/correctness/useExhaustiveDependencies: locKey is the trigger; the effect reads live location, not a stale closure.
+    useEffect(() => {
+        const id = hashRobotId();
+        if (!id) {
+            setActive(null);
+            return;
+        }
+        setActive(id);
+        const el = document.getElementById(`robot-${id}`);
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+        const t = setTimeout(() => setActive(null), 1800);
+        return () => clearTimeout(t);
+    }, [locKey]);
+
     return (
         <section className="home-robots">
             <h2 className="block-title">
@@ -110,7 +147,7 @@ export function RobotShowcase() {
 
             <div className="robot-grid">
                 {ROBOTS.map((r) => (
-                    <RobotCard key={r.id} robot={r} />
+                    <RobotCard key={r.id} robot={r} active={active === r.id} />
                 ))}
             </div>
 

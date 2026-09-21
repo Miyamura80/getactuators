@@ -1699,3 +1699,268 @@ table.board {
         justify-content: flex-start;
     }
 }
+
+/* ---- Deeplinks: copy-link buttons + robot anchor highlight ------------- */
+.drawer-head-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+.copy-link {
+    border: 1px solid var(--line-strong);
+    background: var(--black);
+    color: var(--text);
+    width: 34px;
+    height: 34px;
+    border-radius: 2px;
+    font-size: 14px;
+    line-height: 1;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition:
+        border-color 0.15s ease,
+        color 0.15s ease;
+}
+.copy-link:hover {
+    border-color: var(--cyan);
+    color: var(--cyan);
+}
+.copy-link[data-copied="true"] {
+    border-color: var(--green);
+    color: var(--green);
+}
+.robot-head-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+.robot-head-right .copy-link {
+    width: 28px;
+    height: 28px;
+    font-size: 12.5px;
+    opacity: 0;
+    transition:
+        opacity 0.15s ease,
+        border-color 0.15s ease,
+        color 0.15s ease;
+}
+.robot-card:hover .robot-head-right .copy-link,
+.robot-head-right .copy-link:focus-visible,
+.robot-head-right .copy-link[data-copied="true"] {
+    opacity: 1;
+}
+.robot-card {
+    scroll-margin-top: 88px;
+}
+.robot-card[data-active="true"] {
+    border-color: var(--cyan);
+    box-shadow: 0 0 0 1px var(--cyan), 0 0 22px color-mix(in oklab, var(--cyan) 40%, transparent);
+}
+
+/* ---- Command palette (Cmd/Ctrl+K) ------------------------------------- */
+.cmdk-trigger {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 16;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 13px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--panel) 90%, transparent);
+    backdrop-filter: blur(6px);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 13px;
+    cursor: pointer;
+    transition: border-color 0.15s ease;
+}
+.cmdk-trigger:hover {
+    border-color: var(--cyan);
+}
+.cmdk-trigger-icon {
+    font-size: 15px;
+    color: var(--cyan);
+}
+.cmdk-trigger-kbd {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    padding: 1px 5px;
+}
+.cmdk-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 12vh 16px 16px;
+}
+.cmdk-panel {
+    width: min(560px, 100%);
+    max-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--panel);
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+}
+.cmdk-input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--line);
+}
+.cmdk-input-icon {
+    font-size: 17px;
+    color: var(--cyan);
+}
+.cmdk-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+}
+.cmdk-input::placeholder {
+    color: var(--muted);
+}
+.cmdk-esc {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    padding: 2px 6px;
+}
+.cmdk-list {
+    list-style: none;
+    margin: 0;
+    padding: 6px;
+    overflow-y: auto;
+    flex: 1;
+}
+.cmdk-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    color: var(--text);
+    text-align: left;
+    cursor: pointer;
+}
+.cmdk-item[data-active="true"] {
+    background: var(--panel-2);
+}
+.cmdk-kind {
+    flex-shrink: 0;
+    width: 66px;
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    text-align: center;
+    padding: 3px 0;
+    border-radius: 5px;
+    border: 1px solid var(--line-strong);
+    color: var(--muted);
+}
+.cmdk-kind[data-kind="robot"] {
+    color: hsl(210 70% 78%);
+    border-color: color-mix(in oklab, hsl(210 70% 78%) 45%, var(--line-strong));
+}
+.cmdk-kind[data-kind="actuator"] {
+    color: var(--cyan-dim);
+    border-color: color-mix(in oklab, var(--cyan-dim) 40%, var(--line-strong));
+}
+.cmdk-item-text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+.cmdk-name {
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.cmdk-sub {
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.cmdk-go {
+    flex-shrink: 0;
+    color: var(--muted);
+    font-size: 13px;
+    opacity: 0;
+}
+.cmdk-item[data-active="true"] .cmdk-go {
+    opacity: 1;
+    color: var(--cyan);
+}
+.cmdk-empty {
+    padding: 22px 14px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+}
+.cmdk-foot {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 9px 14px;
+    border-top: 1px solid var(--line);
+    font-size: 11.5px;
+    color: var(--muted);
+}
+.cmdk-foot span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.cmdk-foot span:last-child {
+    margin-left: auto;
+}
+.cmdk-foot kbd {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    padding: 1px 5px;
+    color: var(--text);
+}
+@media (max-width: 560px) {
+    .cmdk-trigger-text {
+        display: none;
+    }
+    .cmdk-trigger {
+        right: 14px;
+        bottom: 14px;
+    }
+}

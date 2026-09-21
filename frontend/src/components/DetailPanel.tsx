@@ -1,6 +1,7 @@
 import type { Actuator } from "../types";
 import { CATEGORY_MAP } from "../types";
 import { bool, dash, list, num, price, voltage } from "../lib/format";
+import { CopyLinkButton } from "./CopyLinkButton";
 
 interface Props {
     actuator: Actuator | null;
@@ -61,9 +62,15 @@ export function DetailPanel({ actuator, onClose }: Props) {
                         <h2>{a.name}</h2>
                         <p className="drawer-brand">{a.brand}</p>
                     </div>
-                    <button type="button" className="drawer-close" onClick={onClose} aria-label="Close">
-                        {"×"}
-                    </button>
+                    <div className="drawer-head-actions">
+                        <CopyLinkButton
+                            path={`/all?sel=${encodeURIComponent(a.id)}`}
+                            label={`Copy link to ${a.name}`}
+                        />
+                        <button type="button" className="drawer-close" onClick={onClose} aria-label="Close">
+                            {"×"}
+                        </button>
+                    </div>
                 </header>
 
                 {a.verified ? (
