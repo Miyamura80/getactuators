@@ -59,7 +59,7 @@
             "price_usd": 2999,
             "price_max_usd": null,
             "product_url": "https://i2rt.com/products/yam-6-dof-arm",
-            "image_url": null,
+            "image_url": "https://cdn.shopify.com/s/files/1/0733/1276/4161/files/st0_768396f1-edfb-4839-96c1-f7b5dffa214a.png?v=1788854436&width=800",
             "summary": "Low-cost 6-DOF manipulator built for imitation learning and teleoperation data collection. CNC 6061 billet frame, integrated cross-roller bearings, 95 mm patent-pending gripper.",
             "joints": [
                 { "role": "Shoulder (J1-J3)", "motor": "dm-j4340", "count": 3 },
@@ -84,7 +84,7 @@
             "price_usd": 3499,
             "price_max_usd": null,
             "product_url": "https://i2rt.com/products/yam-pro-6-dof-arm-copy",
-            "image_url": null,
+            "image_url": "https://cdn.shopify.com/s/files/1/0733/1276/4161/files/pro_040dcf3b-dd9b-4986-a663-e54c87b29eb3.png?v=1788852701&width=800",
             "summary": "Same motor set and SDK as the base YAM; the control-law difference is a stiffer J4 position gain plus build refinements. Interchangeable with Standard and Ultra in the SDK.",
             "joints": [
                 { "role": "Shoulder (J1-J3)", "motor": "dm-j4340", "count": 3 },
@@ -109,7 +109,7 @@
             "price_usd": 4299,
             "price_max_usd": 4399,
             "product_url": "https://i2rt.com/products/yam-ultra-6-dof-arm",
-            "image_url": null,
+            "image_url": "https://cdn.shopify.com/s/files/1/0733/1276/4161/files/U3_f6f30271-34c3-4ef0-9318-f94f0a6e0bfa.png?v=1788854602&width=800",
             "summary": "Enhanced build of the 6-DOF YAM with the same Damiao motor chain and SDK as Standard and Pro, tuned for higher-duty data collection.",
             "joints": [
                 { "role": "Shoulder (J1-J3)", "motor": "dm-j4340", "count": 3 },
@@ -134,7 +134,7 @@
             "price_usd": 4999,
             "price_max_usd": null,
             "product_url": "https://i2rt.com/products/big-yam-6-dof-arm",
-            "image_url": null,
+            "image_url": "https://cdn.shopify.com/s/files/1/0733/1276/4161/files/big_2bedd4e1-ac7e-4ba2-8a6a-b37c1083d9ea.png?v=1788852245&width=800",
             "summary": "Heavier-payload 6-DOF variant. Uses DM6248 motors at the shoulders with substantially different control gains and a reversed joint 2; the only YAM whose SDK gains differ meaningfully from Standard.",
             "joints": [
                 { "role": "Shoulder (J1-J2)", "motor": "dm-j6248", "count": 2 },
@@ -160,7 +160,7 @@
             "price_usd": 4999,
             "price_max_usd": 9999,
             "product_url": "https://i2rt.com/products/yam-7dof",
-            "image_url": null,
+            "image_url": "https://cdn.shopify.com/s/files/1/0733/1276/4161/files/20260907-162753_7f3b3435-75e4-42a4-8e32-d523a54fedf3.png?v=1789443103&width=800",
             "summary": "7-DOF member of the YAM family with an added redundant joint for richer wrist orientation. Per-joint motor list not published in the SDK docs yet.",
             "joints": [],
             "sources": ["https://i2rt.com/products/yam-7dof"]
@@ -178,7 +178,7 @@
             "price_usd": 2999,
             "price_max_usd": null,
             "product_url": "https://i2rt.com/products/yam-leader",
-            "image_url": null,
+            "image_url": "https://cdn.shopify.com/s/files/1/0733/1276/4161/files/leader0_42d0baf9-0fac-416d-836c-a81d996c5a4a.png?v=1788852470&width=800",
             "summary": "Teleoperation leader arm: the operator backdrives it to puppeteer a follower YAM (GELLO-style). Runs the same motor-chain SDK; its joint motor list is not published separately.",
             "joints": [],
             "sources": ["https://i2rt.com/products/yam-leader"]

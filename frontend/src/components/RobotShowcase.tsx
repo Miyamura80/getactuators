@@ -21,8 +21,18 @@ function RobotCard({ robot, active }: { robot: Robot; active: boolean }) {
     const total = motorCount(robot);
     return (
         <article id={`robot-${robot.id}`} className="robot-card" data-active={active}>
-            <div className="robot-thumb">
-                <RobotArt kind="robot_arm" hue={210} />
+            <div className="robot-thumb" data-photo={robot.image_url ? "true" : "false"}>
+                {robot.image_url ? (
+                    <img
+                        className="robot-photo"
+                        src={robot.image_url}
+                        alt={`${robot.name} robot arm by ${robot.brand}`}
+                        loading="lazy"
+                        decoding="async"
+                    />
+                ) : (
+                    <RobotArt kind="robot_arm" hue={210} />
+                )}
                 <span className="robot-dof">{robot.dof}-DOF</span>
             </div>
 
