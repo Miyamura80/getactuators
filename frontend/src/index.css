@@ -1459,13 +1459,31 @@ table.board {
 }
 .robot-thumb {
     position: relative;
-    aspect-ratio: 16 / 7;
+    aspect-ratio: 4 / 3;
     border-bottom: 1px solid var(--line);
     background: var(--black);
+}
+/* Real product photos ship on a light studio backdrop, so give the tile a
+   soft light panel and let the whole arm show (contain) rather than crop it. */
+.robot-thumb[data-photo="true"] {
+    background: radial-gradient(
+        120% 100% at 50% 0%,
+        #f5f7f9 0%,
+        #e5eaef 62%,
+        #d3dae1 100%
+    );
 }
 .robot-thumb > svg {
     width: 100%;
     height: 100%;
+    display: block;
+}
+.robot-photo {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 12px;
     display: block;
 }
 .robot-dof {
