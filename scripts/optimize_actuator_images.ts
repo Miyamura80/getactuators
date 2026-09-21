@@ -42,8 +42,16 @@ function baseOf(file: string): string {
 // its name changed, and return the new basename. Null for non-raster inputs.
 async function toWebp(file: string): Promise<string | null> {
     if (!RASTER.has(extOf(file))) return null;
-    const target = `${baseOf(file)}.webp`;
     const src = join(OUT_DIR, file);
+    // A WebP already within bounds is left byte-for-byte as is, so repeated
+    // runs never re-encode (and progressively degrade) the same photo.
+    if (extOf(file) === "webp") {
+        const meta = await sharp(src).metadata();
+        const w = meta.width ?? 0;
+        const h = meta.height ?? 0;
+        if (w > 0 && h > 0 && w <= MAX_EDGE && h <= MAX_EDGE) return file;
+    }
+    const target = `${baseOf(file)}.webp`;
     const buf = await sharp(src)
         .rotate() // honour EXIF orientation before metadata is dropped
         .resize(MAX_EDGE, MAX_EDGE, { fit: "inside", withoutEnlargement: true })
@@ -62,9 +70,19 @@ async function main(): Promise<void> {
     // extension changes (png/jpg -> webp).
     const byId = new Map<string, string>();
     for (const file of files) {
-        before += statSync(join(OUT_DIR, file)).size;
-        const out = await toWebp(file);
+        const srcSize = statSync(join(OUT_DIR, file)).size;
+        // Skip and log a single unprocessable image (corrupt download, lying
+        // content-type) rather than aborting and losing the whole batch's
+        // freshly fetched, valid images.
+        let out: string | null;
+        try {
+            out = await toWebp(file);
+        } catch (err) {
+            console.warn(`skip ${file}: ${(err as Error).message}`);
+            continue;
+        }
         if (!out) continue;
+        before += srcSize;
         after += statSync(join(OUT_DIR, out)).size;
         byId.set(baseOf(out), out);
         console.log(`${file} -> ${out}`);

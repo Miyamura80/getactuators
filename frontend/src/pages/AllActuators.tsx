@@ -45,7 +45,8 @@ export function AllActuators() {
     // Mirror the active filters into the URL (replaceState, so filtering does
     // not flood the back button) to keep the view shareable and refresh-safe.
     useEffect(() => {
-        const url = `${window.location.pathname}${filtersToQuery(filters)}`;
+        // Keep any #fragment (e.g. #table) so filtering does not scroll-reset.
+        const url = `${window.location.pathname}${filtersToQuery(filters)}${window.location.hash}`;
         window.history.replaceState(window.history.state, "", url);
     }, [filters]);
 

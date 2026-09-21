@@ -82,7 +82,10 @@ export function filtersFromQuery(search: string): FilterState {
         search: p.get("q") ?? "",
         categories: new Set(cats),
         useCases: new Set(uses),
-        sortKey: sort && COLUMN_MAP[sort] ? sort : DEFAULT_FILTERS.sortKey,
+        // Object.hasOwn, not COLUMN_MAP[sort]: a crafted ?sort=toString would
+        // otherwise match an inherited prototype member and crash applyFilters.
+        sortKey:
+            sort && Object.hasOwn(COLUMN_MAP, sort) ? sort : DEFAULT_FILTERS.sortKey,
         sortDir: dir === "asc" || dir === "desc" ? dir : DEFAULT_FILTERS.sortDir,
     };
 }

@@ -17,7 +17,8 @@
         "test:fast": "bun test --timeout 5000",
         "test:watch": "bun test --watch",
         "images:fetch": "bun run scripts/fetch_actuator_images.ts",
-        "images:optimize": "bun run scripts/optimize_actuator_images.ts"
+        "images:optimize": "bun run scripts/optimize_actuator_images.ts",
+        "images:sync": "bun run scripts/fetch_actuator_images.ts && bun run scripts/optimize_actuator_images.ts"
     },
     "devDependencies": {
         "@biomejs/biome": "^1.9.0",

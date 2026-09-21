@@ -124,7 +124,6 @@ export interface Robot {
 }
 
 export interface RobotCredit {
-    text: string;
     name: string;
     org: string;
     org_url: string;
