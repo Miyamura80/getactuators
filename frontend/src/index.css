@@ -1874,16 +1874,17 @@ table.board {
 }
 .cmdk-kind {
     flex-shrink: 0;
-    width: 66px;
-    font-family: var(--mono);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    text-align: center;
-    padding: 3px 0;
-    border-radius: 5px;
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 7px;
     border: 1px solid var(--line-strong);
     color: var(--muted);
+}
+.cmdk-kind svg {
+    display: block;
 }
 .cmdk-kind[data-kind="robot"] {
     color: hsl(210 70% 78%);

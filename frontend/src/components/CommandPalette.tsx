@@ -9,6 +9,7 @@ import { ACTUATORS } from "../lib/data";
 import { ROBOTS } from "../lib/robots";
 import { CATEGORY_MAP } from "../types";
 import { navigate } from "../lib/router";
+import { ActuatorIcon, RobotIcon } from "./PaletteIcons";
 
 // One searchable entry. `to` is the item's canonical deeplink; `hay` is the
 // pre-lowercased text every query term must match.
@@ -178,8 +179,13 @@ export function CommandPalette() {
                                         <span
                                             className="cmdk-kind"
                                             data-kind={it.kind}
+                                            title={it.kind === "robot" ? "Robot" : "Actuator"}
                                         >
-                                            {it.kind === "robot" ? "Robot" : "Actuator"}
+                                            {it.kind === "robot" ? (
+                                                <RobotIcon size={20} />
+                                            ) : (
+                                                <ActuatorIcon size={18} />
+                                            )}
                                         </span>
                                         <span className="cmdk-item-text">
                                             <span className="cmdk-name">{it.name}</span>
