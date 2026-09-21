@@ -1,0 +1,188 @@
+{
+    "credit": {
+        "text": "Actuator loadout compiled with info from Reece O'Mahoney (UnitZero), which uses the YAM arms.",
+        "name": "Reece O'Mahoney",
+        "org": "UnitZero",
+        "org_url": "https://unitzero.ai"
+    },
+    "motors": {
+        "dm-j4310": {
+            "id": "dm-j4310",
+            "name": "Damiao DM-J4310-2EC",
+            "brand": "Damiao (DMBots)",
+            "rated_torque_nm": 3,
+            "peak_torque_nm": 7,
+            "rated_speed_rpm": 120,
+            "gear_ratio": "10:1",
+            "weight_g": 300,
+            "torque_density_nm_per_kg": 23.3,
+            "product_url": "https://damiao.enactic.ai/en/products/hardware/dm-j4310-2ec-v1.1/",
+            "actuator_id": null
+        },
+        "dm-j4340": {
+            "id": "dm-j4340",
+            "name": "Damiao DM-J4340-2EC",
+            "brand": "Damiao (DMBots)",
+            "rated_torque_nm": 9,
+            "peak_torque_nm": 27,
+            "rated_speed_rpm": 36,
+            "gear_ratio": "40:1",
+            "weight_g": 362,
+            "torque_density_nm_per_kg": 74.6,
+            "product_url": "https://robotopian.com/products/damiao-dm-j4340-2ec-servo-motor",
+            "actuator_id": null
+        },
+        "dm-j6248": {
+            "id": "dm-j6248",
+            "name": "Damiao DM-J6248-2EC",
+            "brand": "Damiao (DMBots)",
+            "rated_torque_nm": 30,
+            "peak_torque_nm": 97,
+            "rated_speed_rpm": 40,
+            "gear_ratio": "48:1",
+            "weight_g": 628,
+            "torque_density_nm_per_kg": 154.5,
+            "product_url": "https://aifitlab.com/products/damiao-dm-j6248p-2ec-motor",
+            "actuator_id": null
+        }
+    },
+    "robots": [
+        {
+            "id": "i2rt-yam",
+            "name": "YAM",
+            "brand": "i2RT Robotics",
+            "country": "China",
+            "country_flag": "🇨🇳",
+            "dof": 6,
+            "payload_kg": 2,
+            "reach_mm": 750,
+            "weight_kg": 5.02,
+            "price_usd": 2999,
+            "price_max_usd": null,
+            "product_url": "https://i2rt.com/products/yam-6-dof-arm",
+            "image_url": null,
+            "summary": "Low-cost 6-DOF manipulator built for imitation learning and teleoperation data collection. CNC 6061 billet frame, integrated cross-roller bearings, 95 mm patent-pending gripper.",
+            "joints": [
+                { "role": "Shoulder (J1-J3)", "motor": "dm-j4340", "count": 3 },
+                { "role": "Elbow + wrist (J4-J6)", "motor": "dm-j4310", "count": 3 }
+            ],
+            "sources": [
+                "https://i2rt.com/products/yam-6-dof-arm",
+                "https://doc.i2rt.com/products/yam-standard.html",
+                "https://github.com/uynitsuj/robots_realtime"
+            ]
+        },
+        {
+            "id": "i2rt-yam-pro",
+            "name": "YAM Pro",
+            "brand": "i2RT Robotics",
+            "country": "China",
+            "country_flag": "🇨🇳",
+            "dof": 6,
+            "payload_kg": 2,
+            "reach_mm": 750,
+            "weight_kg": null,
+            "price_usd": 3499,
+            "price_max_usd": null,
+            "product_url": "https://i2rt.com/products/yam-pro-6-dof-arm-copy",
+            "image_url": null,
+            "summary": "Same motor set and SDK as the base YAM; the control-law difference is a stiffer J4 position gain plus build refinements. Interchangeable with Standard and Ultra in the SDK.",
+            "joints": [
+                { "role": "Shoulder (J1-J3)", "motor": "dm-j4340", "count": 3 },
+                { "role": "Elbow + wrist (J4-J6)", "motor": "dm-j4310", "count": 3 }
+            ],
+            "sources": [
+                "https://i2rt.com/products/yam-pro-6-dof-arm-copy",
+                "https://doc.i2rt.com/products/yam-pro.html",
+                "https://github.com/uynitsuj/robots_realtime"
+            ]
+        },
+        {
+            "id": "i2rt-yam-ultra-2",
+            "name": "YAM Ultra 2",
+            "brand": "i2RT Robotics",
+            "country": "China",
+            "country_flag": "🇨🇳",
+            "dof": 6,
+            "payload_kg": 2,
+            "reach_mm": 750,
+            "weight_kg": null,
+            "price_usd": 4299,
+            "price_max_usd": 4399,
+            "product_url": "https://i2rt.com/products/yam-ultra-6-dof-arm",
+            "image_url": null,
+            "summary": "Enhanced build of the 6-DOF YAM with the same Damiao motor chain and SDK as Standard and Pro, tuned for higher-duty data collection.",
+            "joints": [
+                { "role": "Shoulder (J1-J3)", "motor": "dm-j4340", "count": 3 },
+                { "role": "Elbow + wrist (J4-J6)", "motor": "dm-j4310", "count": 3 }
+            ],
+            "sources": [
+                "https://i2rt.com/products/yam-ultra-6-dof-arm",
+                "https://doc.i2rt.com/products/yam-ultra.html",
+                "https://github.com/uynitsuj/robots_realtime"
+            ]
+        },
+        {
+            "id": "i2rt-big-yam",
+            "name": "BIG YAM",
+            "brand": "i2RT Robotics",
+            "country": "China",
+            "country_flag": "🇨🇳",
+            "dof": 6,
+            "payload_kg": null,
+            "reach_mm": null,
+            "weight_kg": null,
+            "price_usd": 4999,
+            "price_max_usd": null,
+            "product_url": "https://i2rt.com/products/big-yam-6-dof-arm",
+            "image_url": null,
+            "summary": "Heavier-payload 6-DOF variant. Uses DM6248 motors at the shoulders with substantially different control gains and a reversed joint 2; the only YAM whose SDK gains differ meaningfully from Standard.",
+            "joints": [
+                { "role": "Shoulder (J1-J2)", "motor": "dm-j6248", "count": 2 },
+                { "role": "Upper arm (J3-J4)", "motor": "dm-j4340", "count": 2 },
+                { "role": "Wrist (J5-J6)", "motor": "dm-j4310", "count": 2 }
+            ],
+            "sources": [
+                "https://i2rt.com/products/big-yam-6-dof-arm",
+                "https://doc.i2rt.com/products/yam-big.html",
+                "https://github.com/uynitsuj/robots_realtime"
+            ]
+        },
+        {
+            "id": "i2rt-yam-7",
+            "name": "YAM 7",
+            "brand": "i2RT Robotics",
+            "country": "China",
+            "country_flag": "🇨🇳",
+            "dof": 7,
+            "payload_kg": null,
+            "reach_mm": null,
+            "weight_kg": null,
+            "price_usd": 4999,
+            "price_max_usd": 9999,
+            "product_url": "https://i2rt.com/products/yam-7dof",
+            "image_url": null,
+            "summary": "7-DOF member of the YAM family with an added redundant joint for richer wrist orientation. Per-joint motor list not published in the SDK docs yet.",
+            "joints": [],
+            "sources": ["https://i2rt.com/products/yam-7dof"]
+        },
+        {
+            "id": "i2rt-yam-leader",
+            "name": "YAM Leader",
+            "brand": "i2RT Robotics",
+            "country": "China",
+            "country_flag": "🇨🇳",
+            "dof": 6,
+            "payload_kg": null,
+            "reach_mm": null,
+            "weight_kg": null,
+            "price_usd": 2999,
+            "price_max_usd": null,
+            "product_url": "https://i2rt.com/products/yam-leader",
+            "image_url": null,
+            "summary": "Teleoperation leader arm: the operator backdrives it to puppeteer a follower YAM (GELLO-style). Runs the same motor-chain SDK; its joint motor list is not published separately.",
+            "joints": [],
+            "sources": ["https://i2rt.com/products/yam-leader"]
+        }
+    ]
+}

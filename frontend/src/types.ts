@@ -81,6 +81,61 @@ export const USE_CASE_LABELS: Record<string, string> = {
     cobot: "Cobot",
 };
 
+// A real robot that ships with actuators, cross-referenced to the parts we
+// track. Kept separate from Actuator so the leaderboard stays a parts catalog.
+export interface RobotMotor {
+    id: string;
+    name: string;
+    brand: string;
+    rated_torque_nm: number | null;
+    peak_torque_nm: number | null;
+    rated_speed_rpm: number | null;
+    gear_ratio: string | null;
+    weight_g: number | null;
+    torque_density_nm_per_kg: number | null;
+    product_url: string | null;
+    // Set when this motor also exists as a row in the actuators dataset.
+    actuator_id: string | null;
+}
+
+export interface RobotJoint {
+    role: string;
+    motor: string; // key into RobotData.motors
+    count: number;
+}
+
+export interface Robot {
+    id: string;
+    name: string;
+    brand: string;
+    country: string | null;
+    country_flag: string | null;
+    dof: number;
+    payload_kg: number | null;
+    reach_mm: number | null;
+    weight_kg: number | null;
+    price_usd: number | null;
+    price_max_usd: number | null;
+    product_url: string | null;
+    image_url?: string | null;
+    summary: string;
+    joints: RobotJoint[];
+    sources: string[];
+}
+
+export interface RobotCredit {
+    text: string;
+    name: string;
+    org: string;
+    org_url: string;
+}
+
+export interface RobotData {
+    credit: RobotCredit;
+    motors: Record<string, RobotMotor>;
+    robots: Robot[];
+}
+
 export type SortDir = "asc" | "desc";
 
 export interface ColumnDef {

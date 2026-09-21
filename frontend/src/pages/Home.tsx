@@ -6,6 +6,7 @@ import { BrandMark } from "../components/BrandMark";
 import { BrandGlyph } from "../components/BrandGlyph";
 import { RobotArt } from "../components/RobotArt";
 import type { RobotKind } from "../components/RobotArt";
+import { RobotShowcase } from "../components/RobotShowcase";
 
 interface Cat {
     key: RobotKind;
@@ -103,6 +104,8 @@ export function Home() {
                     ))}
                 </div>
             </section>
+
+            <RobotShowcase />
 
             <Link to="/all" className="all-cta">
                 <span className="all-cta-kicker">The full dataset</span>
