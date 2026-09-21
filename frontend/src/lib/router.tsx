@@ -10,9 +10,11 @@ const NAV_EVENT = "ga:navigate";
 
 function subscribe(cb: () => void): () => void {
     window.addEventListener("popstate", cb);
+    window.addEventListener("hashchange", cb);
     window.addEventListener(NAV_EVENT, cb);
     return () => {
         window.removeEventListener("popstate", cb);
+        window.removeEventListener("hashchange", cb);
         window.removeEventListener(NAV_EVENT, cb);
     };
 }
@@ -25,13 +27,27 @@ export function usePath(): string {
     );
 }
 
+// Full-URL snapshot (path + query + hash). Components that care about the
+// query string or hash (deeplinked selection, hash-anchored scroll) subscribe
+// to this so query/hash-only changes wake them even when the pathname is stable.
+export function useLocationKey(): string {
+    return useSyncExternalStore(
+        subscribe,
+        () => window.location.href,
+        () => "",
+    );
+}
+
 export function navigate(to: string): void {
-    if (to === window.location.pathname) {
-        window.scrollTo({ top: 0 });
+    // A hash target scrolls itself to the anchor, so skip the reset-to-top that
+    // top-level page changes want. A bare same-path click still resets to top.
+    const hasHash = to.includes("#");
+    if (to === `${window.location.pathname}${window.location.search}${window.location.hash}`) {
+        if (!hasHash) window.scrollTo({ top: 0 });
         return;
     }
     window.history.pushState({}, "", to);
-    window.scrollTo({ top: 0 });
+    if (!hasHash) window.scrollTo({ top: 0 });
     window.dispatchEvent(new Event(NAV_EVENT));
 }
 

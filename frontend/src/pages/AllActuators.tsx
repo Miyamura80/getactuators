@@ -9,7 +9,7 @@ import {
     filtersToQuery,
 } from "../lib/filter";
 import type { FilterState } from "../lib/filter";
-import { Link } from "../lib/router";
+import { Link, useLocationKey } from "../lib/router";
 import { BrandMark } from "../components/BrandMark";
 import { BrandGlyph } from "../components/BrandGlyph";
 import { FilterBar } from "../components/FilterBar";
@@ -21,18 +21,40 @@ const COMPARE_MAX = 4;
 
 // The whole filter/search/sort state lives in the URL so a filtered view is
 // shareable and survives a refresh (the robot-type tiles' /all?use=<tag>
-// deep-link is one case of this). Read once for the initial state; the effect
-// below keeps the URL in sync from there.
+// deep-link is one case of this). The open detail drawer rides in the same URL
+// as ?sel=<id>, so every actuator has a shareable deeplink. Read once for the
+// initial state; the effects below keep state and URL in sync from there.
 function initialFilters(): FilterState {
     if (typeof window === "undefined") return DEFAULT_FILTERS;
     return filtersFromQuery(window.location.search);
 }
 
+function actuatorFromQuery(search: string): Actuator | null {
+    const id = new URLSearchParams(search).get("sel");
+    return id ? (ACTUATORS.find((a) => a.id === id) ?? null) : null;
+}
+
+// Build the page URL from the current filters plus the selected actuator, so a
+// single writer owns the query string. filtersToQuery drops defaults; ?sel is
+// merged on top and the hash is preserved (filtering must not scroll-reset).
+function buildUrl(filters: FilterState, selId: string | null): string {
+    const params = new URLSearchParams(filtersToQuery(filters));
+    if (selId) params.set("sel", selId);
+    else params.delete("sel");
+    const q = params.toString();
+    return `${window.location.pathname}${q ? `?${q}` : ""}${window.location.hash}`;
+}
+
 export function AllActuators() {
     const [filters, setFilters] = useState<FilterState>(initialFilters);
-    const [selected, setSelected] = useState<Actuator | null>(null);
+    const [selected, setSelected] = useState<Actuator | null>(() =>
+        typeof window === "undefined"
+            ? null
+            : actuatorFromQuery(window.location.search),
+    );
     const [compare, setCompare] = useState<Set<string>>(new Set());
     const [showCompare, setShowCompare] = useState(false);
+    const locKey = useLocationKey();
 
     const counts = useMemo(() => categoryCounts(), []);
     const useCases = useMemo(() => allUseCases(), []);
@@ -42,13 +64,25 @@ export function AllActuators() {
         return m;
     }, []);
 
-    // Mirror the active filters into the URL (replaceState, so filtering does
-    // not flood the back button) to keep the view shareable and refresh-safe.
+    // Resync state from the URL on external navigation (back/forward, or a
+    // command-palette jump that pushes ?sel while we are already on /all). The
+    // writer below uses replaceState (no event), so this never fires in a loop.
+    // biome-ignore lint/correctness/useExhaustiveDependencies: locKey is the trigger; we intentionally read live location, not stale closures.
     useEffect(() => {
-        // Keep any #fragment (e.g. #table) so filtering does not scroll-reset.
-        const url = `${window.location.pathname}${filtersToQuery(filters)}${window.location.hash}`;
-        window.history.replaceState(window.history.state, "", url);
-    }, [filters]);
+        setFilters(filtersFromQuery(window.location.search));
+        setSelected(actuatorFromQuery(window.location.search));
+    }, [locKey]);
+
+    // Mirror the active filters + open drawer into the URL (replaceState, so
+    // filtering does not flood the back button) to keep the view shareable and
+    // refresh-safe. Single writer of the query string.
+    useEffect(() => {
+        window.history.replaceState(
+            window.history.state,
+            "",
+            buildUrl(filters, selected?.id ?? null),
+        );
+    }, [filters, selected]);
 
     const rows = useMemo(() => applyFilters(ACTUATORS, filters), [filters]);
     const compareRows = useMemo(
