@@ -28,8 +28,14 @@ jobs:
 
       - uses: oven-sh/setup-bun@v2
 
+      - name: Install dependencies
+        run: bun install
+
       - name: Fetch and self-host product photos
         run: bun run scripts/fetch_actuator_images.ts
+
+      - name: Optimize product photos
+        run: bun run scripts/optimize_actuator_images.ts
 
       - name: Commit results
         run: |

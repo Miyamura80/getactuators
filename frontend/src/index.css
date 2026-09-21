@@ -1434,6 +1434,193 @@ table.board {
     opacity: 1;
     transform: translateY(0);
 }
+.home-robots {
+    padding: 44px 0 8px;
+    border-top: 1px solid var(--line);
+    margin-top: 40px;
+}
+.robot-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+    margin-top: 18px;
+}
+.robot-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--panel);
+    overflow: hidden;
+    transition: border-color 0.15s ease;
+}
+.robot-card:hover {
+    border-color: var(--cyan);
+}
+.robot-thumb {
+    position: relative;
+    aspect-ratio: 16 / 7;
+    border-bottom: 1px solid var(--line);
+    background: var(--black);
+}
+.robot-thumb > svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+.robot-dof {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--cyan);
+    background: color-mix(in oklab, var(--black) 70%, transparent);
+    border: 1px solid var(--line-strong);
+    border-radius: 5px;
+    padding: 2px 7px;
+}
+.robot-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px;
+}
+.robot-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+}
+.robot-name {
+    margin: 0;
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+.robot-price {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    color: hsl(210 70% 78%);
+    white-space: nowrap;
+}
+.robot-brand {
+    margin: -4px 0 0;
+    font-size: 12.5px;
+    color: var(--muted);
+}
+.robot-summary {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text);
+    opacity: 0.9;
+}
+.robot-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    margin: 2px 0;
+    padding: 10px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+}
+.robot-stats > div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.robot-stats dt {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+}
+.robot-stats dd {
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+}
+.robot-loadout-label {
+    display: block;
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    margin-bottom: 6px;
+}
+.motor-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.motor-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+        "name role"
+        "torque torque";
+    gap: 1px 10px;
+    padding: 7px 9px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--panel-2, var(--black));
+}
+.motor-name {
+    grid-area: name;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--cyan);
+    text-decoration: none;
+}
+.motor-name:hover {
+    text-decoration: underline;
+}
+.motor-role {
+    grid-area: role;
+    font-size: 11.5px;
+    color: var(--muted);
+    text-align: right;
+}
+.motor-torque {
+    grid-area: torque;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--text);
+    opacity: 0.85;
+}
+.motor-unknown {
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--muted);
+    font-style: italic;
+}
+.robot-link {
+    align-self: flex-start;
+    color: var(--cyan);
+    font-size: 12.5px;
+    font-weight: 600;
+    text-decoration: none;
+}
+.robot-link:hover {
+    text-decoration: underline;
+}
+.robot-credit {
+    margin: 20px 0 0;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--muted);
+}
+.robot-credit a {
+    color: var(--cyan);
+}
+
 .all-cta {
     all: unset;
     cursor: pointer;

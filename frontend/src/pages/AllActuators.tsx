@@ -1,8 +1,13 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Actuator } from "../types";
 import { ACTUATORS, allUseCases, categoryCounts, maxValue } from "../lib/data";
 import { COLUMNS } from "../lib/columns";
-import { applyFilters, DEFAULT_FILTERS } from "../lib/filter";
+import {
+    applyFilters,
+    DEFAULT_FILTERS,
+    filtersFromQuery,
+    filtersToQuery,
+} from "../lib/filter";
 import type { FilterState } from "../lib/filter";
 import { Link } from "../lib/router";
 import { BrandMark } from "../components/BrandMark";
@@ -14,14 +19,13 @@ import { ComparePanel } from "../components/ComparePanel";
 
 const COMPARE_MAX = 4;
 
-// The robot-type tiles link here as /all?use=<tag> to open on a pre-filtered
-// table. The query is read once for the initial state; the filter bar owns it
-// afterwards.
+// The whole filter/search/sort state lives in the URL so a filtered view is
+// shareable and survives a refresh (the robot-type tiles' /all?use=<tag>
+// deep-link is one case of this). Read once for the initial state; the effect
+// below keeps the URL in sync from there.
 function initialFilters(): FilterState {
     if (typeof window === "undefined") return DEFAULT_FILTERS;
-    const use = new URLSearchParams(window.location.search).get("use");
-    if (!use) return DEFAULT_FILTERS;
-    return { ...DEFAULT_FILTERS, useCases: new Set(use.split(",").filter(Boolean)) };
+    return filtersFromQuery(window.location.search);
 }
 
 export function AllActuators() {
@@ -37,6 +41,14 @@ export function AllActuators() {
         for (const c of COLUMNS) if (c.bar) m[c.key] = maxValue(ACTUATORS, c.value);
         return m;
     }, []);
+
+    // Mirror the active filters into the URL (replaceState, so filtering does
+    // not flood the back button) to keep the view shareable and refresh-safe.
+    useEffect(() => {
+        // Keep any #fragment (e.g. #table) so filtering does not scroll-reset.
+        const url = `${window.location.pathname}${filtersToQuery(filters)}${window.location.hash}`;
+        window.history.replaceState(window.history.state, "", url);
+    }, [filters]);
 
     const rows = useMemo(() => applyFilters(ACTUATORS, filters), [filters]);
     const compareRows = useMemo(
