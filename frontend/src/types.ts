@@ -35,8 +35,9 @@ export interface Actuator {
     power_w: number | null;
     kt_nm_per_a: number | null;
 
-    comm: string[];
-    control_modes: string[];
+    // null means "not documented" (distinct from [] = "documented as none").
+    comm: string[] | null;
+    control_modes: string[] | null;
     encoder: string | null;
     integrated_driver: boolean | null;
     ip_rating: string | null;
