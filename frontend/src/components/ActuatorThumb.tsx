@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { Actuator } from "../types";
 import { CATEGORY_MAP } from "../types";
 import { colorForBrand } from "../lib/brands";
@@ -22,9 +23,13 @@ function hash(s: string): number {
 // line style. Detail counts (slots, bolts, gear teeth) vary per actuator so
 // the gallery reads as a set of distinct parts rather than one repeated icon.
 export function ActuatorThumb({ actuator, className }: Props) {
+    const [failed, setFailed] = useState(false);
+
     // Prefer a real product photo when we have one; otherwise fall through to
-    // the deterministic schematic below so every part still renders.
-    if (actuator.image_url) {
+    // the deterministic schematic below so every part still renders. A photo
+    // that fails to load (e.g. a rotated or 404'd URL) also falls through
+    // rather than leaving a broken-image icon.
+    if (actuator.image_url && !failed) {
         // Own class rather than the SVG's: the schematic gets its height from a
         // square viewBox, but an <img> needs an explicit aspect-ratio or the
         // thumb box collapses to zero height.
@@ -35,6 +40,7 @@ export function ActuatorThumb({ actuator, className }: Props) {
                 alt={`${actuator.name} product photo`}
                 loading="lazy"
                 decoding="async"
+                onError={() => setFailed(true)}
             />
         );
     }
