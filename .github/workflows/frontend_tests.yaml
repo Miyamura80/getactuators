@@ -1,0 +1,32 @@
+name: Frontend Tests
+
+on:
+  push:
+    branches:
+      - '**'
+    paths-ignore:
+      - '.github/workflows/**'
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+jobs:
+  frontend_tests:
+    if: github.event_name == 'pull_request' || github.event.pull_request == null
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+      with:
+        submodules: 'recursive'
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - uses: oven-sh/setup-bun@v2
+
+    - name: Install frontend dependencies
+      run: bun install
+      working-directory: frontend
+
+    - name: Run frontend tests
+      run: bun test
+      working-directory: frontend
