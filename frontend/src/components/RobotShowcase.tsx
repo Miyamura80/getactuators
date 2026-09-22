@@ -16,25 +16,37 @@ function priceLabel(r: Robot): string {
     return price(r.price_usd);
 }
 
+// Thumbnail: prefer the real product photo, but fall back to the schematic
+// render if the (hotlinked) image is missing or fails to load, so a rotated
+// or 404'd CDN URL never shows a broken-image icon.
+function RobotThumb({ robot }: { robot: Robot }) {
+    const [failed, setFailed] = useState(false);
+    const showPhoto = Boolean(robot.image_url) && !failed;
+    return (
+        <div className="robot-thumb" data-photo={showPhoto ? "true" : "false"}>
+            {showPhoto ? (
+                <img
+                    className="robot-photo"
+                    src={robot.image_url ?? undefined}
+                    alt={`${robot.name} robot arm by ${robot.brand}`}
+                    loading="lazy"
+                    decoding="async"
+                    onError={() => setFailed(true)}
+                />
+            ) : (
+                <RobotArt kind="robot_arm" hue={210} />
+            )}
+            <span className="robot-dof">{robot.dof}-DOF</span>
+        </div>
+    );
+}
+
 function RobotCard({ robot, active }: { robot: Robot; active: boolean }) {
     const joints = resolveJoints(robot);
     const total = motorCount(robot);
     return (
         <article id={`robot-${robot.id}`} className="robot-card" data-active={active}>
-            <div className="robot-thumb" data-photo={robot.image_url ? "true" : "false"}>
-                {robot.image_url ? (
-                    <img
-                        className="robot-photo"
-                        src={robot.image_url}
-                        alt={`${robot.name} robot arm by ${robot.brand}`}
-                        loading="lazy"
-                        decoding="async"
-                    />
-                ) : (
-                    <RobotArt kind="robot_arm" hue={210} />
-                )}
-                <span className="robot-dof">{robot.dof}-DOF</span>
-            </div>
+            <RobotThumb robot={robot} />
 
             <div className="robot-body">
                 <div className="robot-head">

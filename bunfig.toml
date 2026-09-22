@@ -1,0 +1,7 @@
+# Scope the root `bun test` run to the backend test suite. The frontend is a
+# separate dependency tree (its deps are not installed by the root `bun install`),
+# and every other root tool (biome, knip, tsc, dependency-cruiser) already
+# excludes it, so root `bun test` must not auto-discover frontend/tests either.
+# Frontend tests run from within frontend/ (see .github/workflows/frontend_tests.yaml).
+[test]
+root = "tests"
