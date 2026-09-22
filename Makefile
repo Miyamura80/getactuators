@@ -187,5 +187,10 @@ check_ai_writing: check_bun ## Check for AI-written content
 	@bun run scripts/check_ai_writing.ts
 	@echo "$(GREEN)✅ AI writing check completed.$(RESET)"
 
+validate_data: check_bun ## Validate actuator + robot datasets (report only, non-blocking)
+	@echo "$(YELLOW)🔍 Validating datasets...$(RESET)"
+	@bun run scripts/validate_actuators.ts
+	@echo "$(GREEN)✅ Dataset validation completed.$(RESET)"
+
 ci: lint deadcode typecheck tech_debt duplicate_code import_lint lint_links check_ai_writing sync-agent-config-check ## Run all CI checks
 	@echo "$(GREEN)✅ CI checks completed.$(RESET)"
