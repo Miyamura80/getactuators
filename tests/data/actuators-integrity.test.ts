@@ -68,6 +68,13 @@ function isNumberOrNull(value: unknown): boolean {
     return value === null || (typeof value === "number" && Number.isFinite(value));
 }
 
+// Mirrors `string[] | null` in frontend/src/types.ts: null (not documented) or
+// an array whose every element is a string. Anything else is a contract break.
+function isStringArrayOrNull(value: unknown): boolean {
+    if (value === null) return true;
+    return Array.isArray(value) && value.every((item) => typeof item === "string");
+}
+
 describe("actuators dataset integrity", () => {
     test("dataset is a non-empty array", () => {
         expect(Array.isArray(rows)).toBe(true);
@@ -128,6 +135,13 @@ describe("actuators dataset integrity", () => {
             for (const field of NUMERIC_FIELDS) {
                 expect(isNumberOrNull(row[field])).toBe(true);
             }
+        }
+    });
+
+    test("comm and control_modes are each a string array or null", () => {
+        for (const row of rows) {
+            expect(isStringArrayOrNull(row.comm)).toBe(true);
+            expect(isStringArrayOrNull(row.control_modes)).toBe(true);
         }
     });
 
