@@ -1994,9 +1994,13 @@ table.board {
     gap: 48px;
     align-items: start;
 }
+.agents-intro h1 .block-tag {
+    /* Pin the glyph to the first line when the title wraps. */
+    margin-top: 0.3em;
+}
 .agents-intro h1 {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 12px;
     margin: 0;
     font-size: clamp(28px, 4vw, 42px);
