@@ -55,6 +55,37 @@ research across datasheets and spreadsheets every time.
 Each catalog entry will record the actuator type, drive method, rated specs,
 form factor, interface, and sourcing links.
 
+## MCP server
+
+The catalog is served as a public MCP server at `https://getactuators.com/mcp`
+(Streamable HTTP, stateless, no auth, read-only). It speaks both the
+2026-07-28 revision (`server/discover`) and the 2025-era `initialize`
+handshake. A second surface at `https://getactuators.com/mcp/docs` serves the
+reference docs (`search_docs`, `get_doc_page`).
+
+```bash
+# Claude Code
+claude mcp add --transport http getactuators https://getactuators.com/mcp
+```
+
+```json
+// Cursor (~/.cursor/mcp.json), Windsurf uses "serverUrl" instead of "url"
+{ "mcpServers": { "getactuators": { "url": "https://getactuators.com/mcp" } } }
+```
+
+| Tool | Answers |
+|------|---------|
+| `recommend_actuators` | Ranked picks for a job (use case, torque, mass, budget) with reasons |
+| `search_actuators` | Filter and sort by category, brand, use case, torque, mass, price |
+| `get_actuator` / `compare_actuators` | Full specs; 2-10 units side by side (renders as an MCP App card) |
+| `list_actuator_categories` / `list_brands` | Valid filter values with counts |
+| `list_robots` / `get_robot` / `find_robots_using_actuator` | Robots and the motors in each joint |
+
+Resources: `catalog://actuators`, `catalog://robots`, `catalog://categories`,
+`actuator://{id}`, `robot://{id}`. Discovery: `/.well-known/mcp/server-card.json`,
+`/.well-known/mcp.json`; registry metadata in [`server.json`](server.json) and
+[`smithery.yaml`](smithery.yaml). Code lives in `src/mcp/`.
+
 ## Quick Start
 
 ```bash

@@ -1,0 +1,17 @@
+# Smithery listing for the getactuators MCP server.
+# The public server is already hosted at https://getactuators.com/mcp
+# (Streamable HTTP, anonymous, read-only), so the preferred Smithery listing
+# publishes that URL directly. This file also lets Smithery build and run the
+# same server from the repo's Dockerfile: the app listens on $PORT and serves
+# MCP at /mcp (catalog) and /mcp/docs (documentation).
+runtime: "container"
+build:
+  dockerfile: "Dockerfile"
+  dockerBuildPath: "."
+startCommand:
+  type: "http"
+  transport: "streamable-http"
+  path: "/mcp"
+  configSchema:
+    type: "object"
+    properties: {}
