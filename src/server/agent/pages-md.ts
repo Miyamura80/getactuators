@@ -37,7 +37,7 @@ export function catalogStats(): string {
 export function faqItems(): FaqItem[] {
     return [
         {
-            q: "What is getactuators?",
+            q: "What is actuatorlist?",
             a: `A free, open directory of robot actuators: ${catalogStats()}. Every entry lists peak and rated torque, weight, torque density, price where public, and the sources the numbers came from.`,
         },
         {
@@ -86,8 +86,8 @@ export function homeBody(): string {
     const densest = topBy("torque_density_nm_per_kg", undefined, 10);
     const value = cheapestPerNm(5);
     return [
-        "# getactuators: compare robot actuators by torque, weight and price",
-        `getactuators is an independent, open catalog of the actuators that move robots: quasi-direct-drive motors, integrated joints, smart servos, harmonic and cycloidal reducers, and frameless motor kits. It holds ${catalogStats()}. Robot builders use it to shortlist actuators for quadruped legs, humanoid joints and robot arms by the numbers that decide a build: peak torque, weight, torque density and price.`,
+        "# actuatorlist: compare robot actuators by torque, weight and price",
+        `actuatorlist is an independent, open catalog of the actuators that move robots: quasi-direct-drive motors, integrated joints, smart servos, harmonic and cycloidal reducers, and frameless motor kits. It holds ${catalogStats()}. Robot builders use it to shortlist actuators for quadruped legs, humanoid joints and robot arms by the numbers that decide a build: peak torque, weight, torque density and price.`,
         `## Browse the catalog\n\n${bullets([
             `${mdLink("Leaderboard", absoluteUrl("/"))}: torque density rankings and a torque versus cost scatter.`,
             `${mdLink("All actuators", absoluteUrl("/all"))}: every entry in one sortable table.`,
@@ -118,7 +118,7 @@ export function allBody(): string {
     const list = [...ACTUATORS].sort((a, b) => a.name.localeCompare(b.name));
     return [
         "# All robot actuators",
-        `Every actuator in the getactuators catalog (${ACTUATORS.length} entries), alphabetical. Unknown values read n/a; price reads quote only when no public USD price exists. Follow a name for the full spec sheet.`,
+        `Every actuator in the actuatorlist catalog (${ACTUATORS.length} entries), alphabetical. Unknown values read n/a; price reads quote only when no public USD price exists. Follow a name for the full spec sheet.`,
         actuatorTable(list),
     ].join("\n\n");
 }

@@ -8,6 +8,8 @@ interface CompiledRoute {
 
 function compile(route: Route): CompiledRoute {
     const keys: string[] = [];
+    // "*" matches every path (host-level routes such as the legacy redirect).
+    if (route.path === "*") return { route, regex: /^/, keys };
     const pattern = route.path
         .split("/")
         .map((seg) => {

@@ -38,12 +38,12 @@ jobs:
         run: cp src/config/global-config.yaml src/config/production-config.yaml dist/
 
       - name: Package build artifact
-        run: tar -czf "getactuators-${GITHUB_REF_NAME}.tar.gz" -C dist .
+        run: tar -czf "actuatorlist-${GITHUB_REF_NAME}.tar.gz" -C dist .
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: getactuators-*.tar.gz
+          files: actuatorlist-*.tar.gz
           generate_release_notes: true
           draft: false
           prerelease: false

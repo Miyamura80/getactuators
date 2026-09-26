@@ -108,10 +108,10 @@ export function AllActuators() {
     return (
         <div className="gallery-page">
             <header className="page-bar">
-                <Link to="/" className="page-brand" aria-label="getactuators home">
+                <Link to="/" className="page-brand" aria-label="actuatorlist home">
                     <BrandMark size={24} />
                     <span>
-                        get<b>actuators</b>.com
+                        <b>actuator</b>list.com
                     </span>
                 </Link>
                 <nav className="page-nav">

@@ -42,11 +42,11 @@ bun run src/index.ts # Run TypeScript files
 - **tests/** - Test files (bun test)
 - **frontend/** - Frontend app (Vite/React, separate dependency tree)
 - **src/server/** - Bun server for the site and its agent surfaces. Add a surface by adding a module to `src/server/routes/` (auto-discovered). Markdown, llms.txt, JSON-LD and `/.well-known` builders live in `src/server/agent/`.
-- **skills/getactuators/SKILL.md** - public agent skill, served at `/.well-known/agent-skills/getactuators/SKILL.md` (its digest is computed at runtime).
+- **skills/actuatorlist/SKILL.md** - public agent skill, served at `/.well-known/agent-skills/actuatorlist/SKILL.md` (its digest is computed at runtime).
 
 ## Public agent surfaces
 
-The deployed site (getactuators.com) is built for AI agents as well as people. If you are an agent using the catalog rather than editing this repo, start at `https://getactuators.com/llms.txt`. Other entry points: the MCP server at `/mcp` (Streamable HTTP, no auth), the REST API at `/api` with `/openapi.json`, `/agents.md`, `/auth.md`, `/pricing.md`, and a markdown twin of every page (append `.md` or send `Accept: text/markdown`). Keep these working when changing `src/server/`: `tests/server/agent-*.test.ts` covers them.
+The deployed site (actuatorlist.com) is built for AI agents as well as people. If you are an agent using the catalog rather than editing this repo, start at `https://actuatorlist.com/llms.txt`. Other entry points: the MCP server at `/mcp` (Streamable HTTP, no auth), the REST API at `/api` with `/openapi.json`, `/agents.md`, `/auth.md`, `/pricing.md`, and a markdown twin of every page (append `.md` or send `Accept: text/markdown`). Keep these working when changing `src/server/`: `tests/server/agent-*.test.ts` covers them.
 
 ## Code Style
 

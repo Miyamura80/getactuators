@@ -8,7 +8,8 @@ export type Handler = (
 export interface Route {
     // Omit to match every method.
     method?: string | string[];
-    // Exact path ("/llms.txt") or a pattern with :params ("/api/v1/actuators/:id").
+    // Exact path ("/llms.txt"), a pattern with :params ("/api/v1/actuators/:id"),
+    // or "*" to match every path.
     path: string;
     handler: Handler;
 }

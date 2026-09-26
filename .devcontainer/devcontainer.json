@@ -1,5 +1,5 @@
 {
-    "name": "Getactuators DevContainer",
+    "name": "actuatorlist DevContainer",
     "image": "mcr.microsoft.com/devcontainers/base:bookworm",
     "features": {
         "ghcr.io/devcontainers/features/common-utils:1": {

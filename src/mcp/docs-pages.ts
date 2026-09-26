@@ -46,11 +46,11 @@ const FIELDS: [string, string][] = [
 
 const overview: DocPage = {
     id: "overview",
-    title: "What getactuators is",
+    title: "What actuatorlist is",
     description: "Scope, audience, and the ways to read the catalog.",
-    markdown: `# getactuators
+    markdown: `# actuatorlist
 
-getactuators (${SITE_URL}) is a free, open, spec-level catalog of robot actuators and of the robots that use them. It covers QDD / proprioceptive motors, integrated joint modules, smart servos, harmonic and cycloidal reducers, and frameless motor kits. Robot records map each joint to its motor.
+actuatorlist (${SITE_URL}) is a free, open, spec-level catalog of robot actuators and of the robots that use them. It covers QDD / proprioceptive motors, integrated joint modules, smart servos, harmonic and cycloidal reducers, and frameless motor kits. Robot records map each joint to its motor.
 
 ## Ways to read the data
 
@@ -95,13 +95,13 @@ const mcp: DocPage = {
     id: "mcp",
     title: "Connecting to the MCP server",
     description: "Endpoint, client setup, and the list of catalog tools.",
-    markdown: `# getactuators MCP server
+    markdown: `# actuatorlist MCP server
 
 Endpoint: ${absoluteUrl(MCP_PATH)} (Streamable HTTP, stateless, no auth). Server card: ${absoluteUrl("/.well-known/mcp/server-card.json")}.
 
 ## Connect
 
-- Claude Code: \`claude mcp add --transport http getactuators ${absoluteUrl(MCP_PATH)}\`
+- Claude Code: \`claude mcp add --transport http actuatorlist ${absoluteUrl(MCP_PATH)}\`
 - Cursor, Windsurf, VS Code and other clients: add a remote server with url ${absoluteUrl(MCP_PATH)}.
 
 ## Tools

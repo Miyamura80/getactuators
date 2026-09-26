@@ -15,7 +15,7 @@ export type Block =
     | { kind: "list"; items: string[] }
     | { kind: "table"; head: string[]; rows: string[][]; rowIds?: string[] };
 
-export const DOCS_TITLE = "getactuators API";
+export const DOCS_TITLE = "actuatorlist API";
 export const DOCS_DESCRIPTION =
     "Free, read-only REST API for robot actuator and robot specs: endpoints, curl examples, pagination, errors, rate limits and versioning.";
 export const DOCS_UPDATED = "2026-09-26";
@@ -84,7 +84,7 @@ export function docsBlocks(): Block[] {
     const codes = Object.keys(ERROR_CODES) as ErrorCode[];
     return [
         p(
-            `A free, public, **read-only** REST API over every actuator and robot on [getactuators](${SITE_URL}/). JSON in, JSON out, no key required. The same data is available to AI agents over [MCP](${absoluteUrl("/mcp")}).`,
+            `A free, public, **read-only** REST API over every actuator and robot on [actuatorlist](${SITE_URL}/). JSON in, JSON out, no key required. The same data is available to AI agents over [MCP](${absoluteUrl("/mcp")}).`,
         ),
         h2("Quickstart", "quickstart"),
         sh(`curl -s "${SITE_URL}/api/v1/actuators?q=humanoid&limit=3"`),

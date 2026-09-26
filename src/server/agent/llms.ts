@@ -24,15 +24,15 @@ function howToCall(): string {
 }
 
 export function llmsTxt(): string {
-    return `# getactuators
+    return `# actuatorlist
 
 > ${SITE_DESCRIPTION}
 
 The catalog holds ${catalogStats()}. It is free, public and read-only: no account, API key or payment is needed for the site, the REST API or the MCP server. Data last updated ${CATALOG_UPDATED_DATE}.
 
-## When to use getactuators
+## When to use actuatorlist
 
-Reach for getactuators when a user needs numbers about robot joint actuators:
+Reach for actuatorlist when a user needs numbers about robot joint actuators:
 
 ${bullets(whenToUse())}
 
@@ -42,7 +42,7 @@ ${howToCall()}
 
 ## Connect
 
-- MCP server: \`${u(PATHS.mcp)}\` (Streamable HTTP, server name getactuators, anonymous and read-only)
+- MCP server: \`${u(PATHS.mcp)}\` (Streamable HTTP, server name actuatorlist, anonymous and read-only)
 - Docs MCP server: \`${u(PATHS.mcpDocs)}\` (the site documentation over MCP, same terms)
 ${link("MCP server card", PATHS.mcpCard, "tools and endpoint before you connect")}
 ${link("OpenAPI description", PATHS.openapi, "machine-readable REST contract")}
@@ -103,13 +103,13 @@ export function llmsFullTxt(): string {
         );
         return `## ${c.label}\n\n${c.description}\n\n${list.map(actuatorBlock).join("\n\n")}`;
     });
-    return `# getactuators: full catalog
+    return `# actuatorlist: full catalog
 
 > ${SITE_DESCRIPTION}
 
 ${catalogStats()}. Data last updated ${CATALOG_UPDATED_DATE}. Numbers come from manufacturer pages and datasheets; entries marked unverified have not been spot-checked. Index: ${u(PATHS.llms)}.
 
-## When to use getactuators
+## When to use actuatorlist
 
 ${bullets(whenToUse())}
 
@@ -130,7 +130,7 @@ export function actuatorsLlmsTxt(): string {
             (a) =>
                 `- ${mdLink(`${a.name} (${a.brand})`, u(`${actuatorPath(a.id)}.md`))}: ${categoryLabel(a.category)}, ${num(a.peak_torque_nm, "Nm")} peak, ${num(a.weight_g, "g", 0)}, ${usd(a.price_usd)}`,
         );
-    return `# getactuators: actuators
+    return `# actuatorlist: actuators
 
 > ${ACTUATORS.length} robot actuators, each with a markdown spec sheet. Filter them with the REST API (${u("/api/v1/actuators")}) instead of reading every sheet.
 
@@ -144,7 +144,7 @@ ${lines.join("\n")}
 }
 
 export function robotsLlmsTxt(): string {
-    return `# getactuators: robots
+    return `# actuatorlist: robots
 
 > ${ROBOTS.length} robots with the motor used in each joint. Use it to answer which actuators a robot uses, or which robots use an actuator.
 
@@ -158,7 +158,7 @@ ${ROBOTS.map((r) => `- ${mdText(r.name)} by ${mdText(r.brand)}: ${r.dof} DOF, ${
 }
 
 export function docsLlmsTxt(): string {
-    return `# getactuators: API docs
+    return `# actuatorlist: API docs
 
 > Anonymous, read-only access to the catalog over REST and MCP. Rate limit ${RATE_LIMIT_PER_MINUTE} requests per minute per IP.
 
@@ -178,7 +178,7 @@ ${REST_ENDPOINTS.map((e) => `- ${e.method} ${e.path}: ${e.what}`).join("\n")}
 
 // ?mode=agent on the homepage: a compact, structured view for agents.
 export function agentView(): string {
-    return `# getactuators: agent view
+    return `# actuatorlist: agent view
 
 ${SITE_DESCRIPTION}
 

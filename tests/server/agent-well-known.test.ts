@@ -52,14 +52,14 @@ describe("agent skills index", () => {
         );
         const [skill] = index.skills as Json[];
         expect(skill?.type).toBe("skill-md");
-        expect(skill?.name).toBe("getactuators");
+        expect(skill?.name).toBe("actuatorlist");
         const res = await get(String(skill?.url));
         expect(res.headers.get("content-type")).toStartWith("text/markdown");
         const bytes = new Uint8Array(await res.arrayBuffer());
         const hex = new Bun.CryptoHasher("sha256").update(bytes).digest("hex");
         expect(skill?.digest).toBe(`sha256:${hex}`);
         expect(new TextDecoder().decode(bytes)).toStartWith(
-            "---\nname: getactuators\n",
+            "---\nname: actuatorlist\n",
         );
     });
 });

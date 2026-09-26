@@ -1,6 +1,6 @@
 # Scripts
 
-Utility and initialization scripts for the Getactuators project.
+Utility and initialization scripts for the actuatorlist project.
 
 ## Asset Generation
 

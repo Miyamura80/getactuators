@@ -14,12 +14,12 @@ import {
 // The body tells the caller where to go next instead of just failing.
 
 const TITLE = "Page not found";
-const DESCRIPTION = "There is no page at this address on getactuators.";
+const DESCRIPTION = "There is no page at this address on actuatorlist.";
 
 function body(pathname: string): string {
     return [
         `# ${TITLE}`,
-        `Nothing lives at \`${pathname.replace(/`/g, "")}\` on getactuators. The catalog pages, API and agent documents are listed below.`,
+        `Nothing lives at \`${pathname.replace(/`/g, "")}\` on actuatorlist. The catalog pages, API and agent documents are listed below.`,
         bullets([
             mdLink("Leaderboard (home)", absoluteUrl("/")),
             mdLink("All actuators", absoluteUrl("/all")),

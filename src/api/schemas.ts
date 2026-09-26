@@ -67,7 +67,7 @@ export const ActuatorSchema = named(
             country_flag: str("Flag emoji for country."),
             source_url: str("Primary source URL."),
             source_domain: str("Domain of source_url."),
-            url: z.string().describe("Human-readable page on getactuators.com."),
+            url: z.string().describe("Human-readable page on actuatorlist.com."),
             api_url: z.string().describe("Canonical API URL of this resource."),
         })
         .describe("A robot actuator with its published specifications."),

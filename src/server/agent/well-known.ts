@@ -14,7 +14,7 @@ const SKILL_FILE = join(
     "..",
     "..",
     "skills",
-    "getactuators",
+    "actuatorlist",
     "SKILL.md",
 );
 
@@ -36,10 +36,10 @@ export async function skillsIndex(): Promise<Record<string, unknown>> {
         skills: bytes
             ? [
                   {
-                      name: "getactuators",
+                      name: "actuatorlist",
                       type: "skill-md",
                       description:
-                          "Find, rank and compare robot actuators (torque, weight, price) and the motors in real robots via the getactuators REST API or MCP server.",
+                          "Find, rank and compare robot actuators (torque, weight, price) and the motors in real robots via the actuatorlist REST API or MCP server.",
                       url: PATHS.skill,
                       digest: `sha256:${sha256(bytes)}`,
                   },
@@ -88,60 +88,60 @@ export function ardManifest(): Record<string, unknown> {
         specVersion: "0.91",
         publisher: { name: SITE_NAME, url: SITE_URL },
         entries: [
-            entry("mcp", "getactuators", {
-                displayName: "getactuators MCP server",
+            entry("mcp", "actuatorlist", {
+                displayName: "actuatorlist MCP server",
                 type: "application/mcp-server-card+json",
                 url: u(PATHS.mcpCard),
                 description: `Anonymous, read-only MCP server (Streamable HTTP at ${u(PATHS.mcp)}) over the robot actuator catalog.`,
                 representativeQueries: QUERIES,
                 capabilities: [...MCP_TOOLS],
             }),
-            entry("mcp", "getactuators-docs", {
-                displayName: "getactuators docs MCP server",
+            entry("mcp", "actuatorlist-docs", {
+                displayName: "actuatorlist docs MCP server",
                 type: "application/mcp-server-card+json",
                 data: {
-                    name: "getactuators-docs",
+                    name: "actuatorlist-docs",
                     description:
-                        "The getactuators site and API documentation over MCP.",
+                        "The actuatorlist site and API documentation over MCP.",
                     serverUrl: u(PATHS.mcpDocs),
                     remotes: [{ type: "streamable-http", url: u(PATHS.mcpDocs) }],
                 },
-                description: `Anonymous MCP server (Streamable HTTP at ${u(PATHS.mcpDocs)}) for reading the getactuators documentation.`,
+                description: `Anonymous MCP server (Streamable HTTP at ${u(PATHS.mcpDocs)}) for reading the actuatorlist documentation.`,
                 representativeQueries: [
-                    "how do I filter getactuators by torque",
-                    "what does the getactuators API return for an actuator",
+                    "how do I filter actuatorlist by torque",
+                    "what does the actuatorlist API return for an actuator",
                 ],
             }),
             entry("api", "rest", {
-                displayName: "getactuators REST API",
+                displayName: "actuatorlist REST API",
                 type: "application/vnd.oai.openapi+json",
                 url: u(PATHS.openapi),
                 description:
                     "JSON REST API for actuators, robots, categories and brands. No key required.",
                 representativeQueries: QUERIES.slice(0, 3),
             }),
-            entry("agent", "getactuators", {
-                displayName: "getactuators agent card",
+            entry("agent", "actuatorlist", {
+                displayName: "actuatorlist agent card",
                 type: "application/a2a-agent-card+json",
                 url: u(PATHS.agentCard),
                 description:
                     "A2A agent card describing the catalog's skills; calls go to the MCP server.",
                 representativeQueries: QUERIES.slice(0, 2),
             }),
-            entry("skill", "getactuators", {
-                displayName: "getactuators agent skill",
+            entry("skill", "actuatorlist", {
+                displayName: "actuatorlist agent skill",
                 type: "application/ai-skill+md",
                 url: u(PATHS.skill),
                 description:
-                    "SKILL.md that teaches an agent to pick and compare actuators with getactuators.",
+                    "SKILL.md that teaches an agent to pick and compare actuators with actuatorlist.",
                 representativeQueries: QUERIES.slice(0, 2),
             }),
             entry("docs", "llms-txt", {
-                displayName: "getactuators llms.txt",
+                displayName: "actuatorlist llms.txt",
                 type: "text/plain",
                 url: u(PATHS.llms),
                 description:
-                    "Index of every agent-facing document and page on getactuators.",
+                    "Index of every agent-facing document and page on actuatorlist.",
                 representativeQueries: [
                     "robot actuator database for AI agents",
                     "open dataset of robot joint motors with specs",

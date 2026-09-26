@@ -26,7 +26,7 @@ const API_INDEX: Operation = {
     example: "/api",
     handler: () =>
         json({
-            name: "getactuators API",
+            name: "actuatorlist API",
             version: "v1",
             description: SITE_DESCRIPTION,
             auth: "none (public, anonymous, read-only)",

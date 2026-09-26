@@ -11,9 +11,9 @@ import { robotTools } from "./tools/robots";
 // instance is built per HTTP request (see ./http.ts), which is cheap because
 // the catalog is an in-memory import.
 
-export const SERVER_NAME = "getactuators";
-export const REGISTRY_NAME = "io.github.Miyamura80/getactuators";
-export const SERVER_TITLE = "getactuators: robot actuator catalog";
+export const SERVER_NAME = "actuatorlist";
+export const REGISTRY_NAME = "io.github.Miyamura80/actuatorlist";
+export const SERVER_TITLE = "actuatorlist: robot actuator catalog";
 export const SERVER_VERSION = pkg.version;
 export const SERVER_DESCRIPTION =
     "Spec-level data on robot actuators (QDD motors, integrated joints, smart servos, harmonic and cycloidal reducers), the robots that use them, and the motors in each robot joint. Free, anonymous and read-only.";
@@ -26,7 +26,7 @@ export const CATALOG_TOOLS: readonly ToolDef[] = [
     ...robotTools,
 ];
 
-export const INSTRUCTIONS = `getactuators is an open, read-only catalog of robot actuators and the robots that use them. No account or key is needed and no tool changes anything.
+export const INSTRUCTIONS = `actuatorlist is an open, read-only catalog of robot actuators and the robots that use them. No account or key is needed and no tool changes anything.
 
 Units are encoded in field names: _nm = newton-metres (N.m), _g = grams, _kg = kilograms, _mm = millimetres, _rpm = revolutions per minute, _usd = US dollars, _arcmin = arc-minutes, torque_density_nm_per_kg = peak N.m per kg. A null value means the manufacturer does not document it; never read null as zero, and say it is undocumented.
 

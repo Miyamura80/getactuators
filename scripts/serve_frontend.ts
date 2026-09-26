@@ -5,4 +5,4 @@ import { DIST_DIR } from "@/server/static";
 
 const port = Number(process.env.PORT ?? 3000);
 await startServer(port);
-console.log(`getactuators serving ${DIST_DIR} on :${port}`);
+console.log(`actuatorlist serving ${DIST_DIR} on :${port}`);

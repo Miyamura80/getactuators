@@ -1,7 +1,7 @@
-# getactuators
+# actuatorlist
 
 <p align="center">
-  <img src="media/banner.png" alt="Getactuators" width="400">
+  <img src="media/banner.png" alt="actuatorlist" width="400">
 </p>
 
 <p align="center">
@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="#what-is-getactuators">What is it</a> •
+  <a href="#what-is-actuatorlist">What is it</a> •
   <a href="#actuator-categories">Categories</a> •
   <a href="#quick-start">Quick Start</a> •
   <a href="#project-layout">Project Layout</a> •
@@ -26,9 +26,9 @@
 
 ---
 
-## What is getactuators
+## What is actuatorlist
 
-getactuators aims to be a searchable directory of actuators used in robotics and
+actuatorlist aims to be a searchable directory of actuators used in robotics and
 motion control. Each entry is intended to capture the details an engineer needs
 to compare parts quickly: actuator type, drive method, key specs (torque, speed,
 stroke, force, voltage), form factor, and where to source it.
@@ -44,17 +44,17 @@ research across datasheets and spreadsheets every time.
 
 ## For AI agents
 
-The live catalog at getactuators.com is free, anonymous and read-only for
+The live catalog at actuatorlist.com is free, anonymous and read-only for
 agents as well as people. No key or account is needed.
 
 | Surface | URL |
 |---------|-----|
-| llms.txt index (start here) | `https://getactuators.com/llms.txt` |
-| Whole catalog as text | `https://getactuators.com/llms-full.txt` |
-| MCP server (Streamable HTTP) | `https://getactuators.com/mcp` |
-| REST API + OpenAPI | `https://getactuators.com/api`, `https://getactuators.com/openapi.json` |
-| Agent guide | `https://getactuators.com/agents.md` |
-| Agent skill | `https://getactuators.com/.well-known/agent-skills/getactuators/SKILL.md` (source: `skills/getactuators/SKILL.md`) |
+| llms.txt index (start here) | `https://actuatorlist.com/llms.txt` |
+| Whole catalog as text | `https://actuatorlist.com/llms-full.txt` |
+| MCP server (Streamable HTTP) | `https://actuatorlist.com/mcp` |
+| REST API + OpenAPI | `https://actuatorlist.com/api`, `https://actuatorlist.com/openapi.json` |
+| Agent guide | `https://actuatorlist.com/agents.md` |
+| Agent skill | `https://actuatorlist.com/.well-known/agent-skills/actuatorlist/SKILL.md` (source: `skills/actuatorlist/SKILL.md`) |
 | Discovery catalogs | `/.well-known/ard.json`, `/.well-known/api-catalog`, `/.well-known/agent-card.json` |
 
 Every page also has a markdown twin: append `.md` to its URL or send
@@ -77,20 +77,20 @@ form factor, interface, and sourcing links.
 
 ## MCP server
 
-The catalog is served as a public MCP server at `https://getactuators.com/mcp`
+The catalog is served as a public MCP server at `https://actuatorlist.com/mcp`
 (Streamable HTTP, stateless, no auth, read-only). It speaks both the
 2026-07-28 revision (`server/discover`) and the 2025-era `initialize`
-handshake. A second surface at `https://getactuators.com/mcp/docs` serves the
+handshake. A second surface at `https://actuatorlist.com/mcp/docs` serves the
 reference docs (`search_docs`, `get_doc_page`).
 
 ```bash
 # Claude Code
-claude mcp add --transport http getactuators https://getactuators.com/mcp
+claude mcp add --transport http actuatorlist https://actuatorlist.com/mcp
 ```
 
 ```json
 // Cursor (~/.cursor/mcp.json), Windsurf uses "serverUrl" instead of "url"
-{ "mcpServers": { "getactuators": { "url": "https://getactuators.com/mcp" } } }
+{ "mcpServers": { "actuatorlist": { "url": "https://actuatorlist.com/mcp" } } }
 ```
 
 | Tool | Answers |
@@ -137,7 +137,7 @@ bun run dev
 ## Project Layout
 
 ```
-getactuators/
+actuatorlist/
 +-- src/            Core TypeScript (entrypoint: src/index.ts)
 |   +-- config/     Zod-validated YAML + env config
 +-- tests/          Bun test suites

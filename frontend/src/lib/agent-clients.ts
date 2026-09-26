@@ -6,9 +6,9 @@
 // The server is anonymous and read-only, so every path ends at "the tools
 // appear". There is no sign-in step to describe.
 
-export const SERVER_NAME = "getactuators";
-export const DISPLAY_NAME = "getactuators";
-export const MCP_URL = "https://getactuators.com/mcp";
+export const SERVER_NAME = "actuatorlist";
+export const DISPLAY_NAME = "actuatorlist";
+export const MCP_URL = "https://actuatorlist.com/mcp";
 
 // How much work is left after the visitor acts. "dialog-only" is ChatGPT: the
 // link opens the create dialog but fills nothing in, so the URL is copied to
@@ -150,7 +150,7 @@ export const AGENT_CLIENTS: readonly AgentClient[] = [
         snippet: null,
         steps: [
             "Open Cursor Settings, then MCP",
-            "Add a new server named getactuators",
+            "Add a new server named actuatorlist",
             "Paste the URL above as its url",
         ],
         note: null,
@@ -165,7 +165,7 @@ export const AGENT_CLIENTS: readonly AgentClient[] = [
         steps: [
             "Run MCP: Add Server from the Command Palette",
             "Choose HTTP and paste the URL above",
-            "Name it getactuators",
+            "Name it actuatorlist",
         ],
         note: "The tools show up in Copilot agent mode.",
     },
@@ -179,7 +179,7 @@ export const AGENT_CLIENTS: readonly AgentClient[] = [
         steps: [
             "Settings, Connectors, Advanced settings: turn Developer mode on",
             "Back on Connectors, click Create",
-            "Paste the URL, name it getactuators, Authentication: No authentication",
+            "Paste the URL, name it actuatorlist, Authentication: No authentication",
             "Start a new chat so the tools menu refreshes",
         ],
         note: "Copies the URL, then opens an empty dialog: paste it. Needs Developer mode on.",

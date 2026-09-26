@@ -3,7 +3,7 @@ interface Props {
     className?: string;
 }
 
-// The getactuators mark: a rotary actuator seen end-on. Circular housing with
+// The actuatorlist mark: a rotary actuator seen end-on. Circular housing with
 // four mounting bolt holes, a ring of stator slots, a hub, and a keyed output
 // shaft with a rotation arc. Thin cyan strokes on black, no fill, no gradients.
 export function BrandMark({ size = 40, className }: Props) {

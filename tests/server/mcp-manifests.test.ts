@@ -15,7 +15,7 @@ describe("MCP discovery manifests", () => {
     test("server card has identity, branding, endpoint and every tool", async () => {
         const card = await getJson("/.well-known/mcp/server-card.json");
         expect(card.name).toBe(REGISTRY_NAME);
-        expect(card.displayName).toBe("getactuators");
+        expect(card.displayName).toBe("actuatorlist");
         expect(String(card.description).length).toBeGreaterThan(20);
         expect(card.version).toBe(SERVER_VERSION);
         expect(card.serverUrl).toMatch(/^https?:\/\/.+\/mcp$/);
@@ -47,7 +47,7 @@ describe("MCP discovery manifests", () => {
         expect(registryJson.version).toBe(SERVER_VERSION);
         expect(registryJson.description.length).toBeLessThanOrEqual(100);
         expect(registryJson.remotes).toEqual([
-            { type: "streamable-http", url: "https://getactuators.com/mcp" },
+            { type: "streamable-http", url: "https://actuatorlist.com/mcp" },
         ]);
     });
 });

@@ -75,7 +75,7 @@ export function ExplodedView({ id }: Props) {
                     <Link to="/actuators" className="page-brand">
                         <BrandMark size={24} />
                         <span>
-                            get<b>actuators</b>.com
+                            <b>actuator</b>list.com
                         </span>
                     </Link>
                 </header>
@@ -97,7 +97,7 @@ export function ExplodedView({ id }: Props) {
                 <Link to="/actuators" className="page-brand" aria-label="Back to gallery">
                     <BrandMark size={24} />
                     <span>
-                        get<b>actuators</b>.com
+                        <b>actuator</b>list.com
                     </span>
                 </Link>
                 <nav className="page-nav">

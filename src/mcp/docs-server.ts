@@ -11,9 +11,9 @@ import { ToolInputError, defineTool, registerTools } from "./tool";
 // Second MCP surface (/mcp/docs): the "learn" side. Serves the reference
 // pages as markdown resources and a keyword search over their sections.
 
-export const DOCS_SERVER_NAME = "getactuators-docs";
+export const DOCS_SERVER_NAME = "actuatorlist-docs";
 const MARKDOWN = "text/markdown";
-const pageUri = (id: string) => `docs://getactuators/${id}`;
+const pageUri = (id: string) => `docs://actuatorlist/${id}`;
 
 interface Section {
     page: DocPage;
@@ -53,9 +53,9 @@ function search(query: string, limit: number) {
 
 const searchDocs = defineTool({
     name: "search_docs",
-    title: "Search getactuators docs",
+    title: "Search actuatorlist docs",
     description:
-        "Keyword search over the getactuators reference docs (data fields and units, categories, MCP and REST access). Returns matching sections with excerpts and the page id to open with get_doc_page.",
+        "Keyword search over the actuatorlist reference docs (data fields and units, categories, MCP and REST access). Returns matching sections with excerpts and the page id to open with get_doc_page.",
     input: z.object({
         query: z
             .string()
@@ -86,7 +86,7 @@ const searchDocs = defineTool({
 
 const getDocPage = defineTool({
     name: "get_doc_page",
-    title: "Read a getactuators doc page",
+    title: "Read a actuatorlist doc page",
     description: `Return one reference page as markdown by id. Pages: ${DOC_PAGES.map((p) => p.id).join(", ")}.`,
     input: z.object({
         id: z.string().min(1).max(60).describe("Page id, e.g. data-fields."),
@@ -109,19 +109,19 @@ export function createDocsServer(): McpServer {
     const server = new McpServer(
         {
             name: DOCS_SERVER_NAME,
-            title: "getactuators docs",
+            title: "actuatorlist docs",
             version: SERVER_VERSION,
             icons: [{ src: ICON_URL, mimeType: "image/svg+xml", sizes: ["any"] }],
         },
         {
             instructions:
-                "Reference documentation for the getactuators catalog: field meanings and units, categories, and how to reach the data over MCP and REST. Use search_docs to find a section, get_doc_page or the docs:// resources to read a page. For catalog data itself, use the main server at /mcp.",
+                "Reference documentation for the actuatorlist catalog: field meanings and units, categories, and how to reach the data over MCP and REST. Use search_docs to find a section, get_doc_page or the docs:// resources to read a page. For catalog data itself, use the main server at /mcp.",
         },
     );
     registerTools(server, DOCS_TOOLS);
     server.registerResource(
         "doc-page",
-        new ResourceTemplate("docs://getactuators/{id}", {
+        new ResourceTemplate("docs://actuatorlist/{id}", {
             list: async () => ({
                 resources: DOC_PAGES.map((p) => ({
                     uri: pageUri(p.id),
@@ -132,7 +132,7 @@ export function createDocsServer(): McpServer {
                 })),
             }),
         }),
-        { title: "getactuators doc page", mimeType: MARKDOWN },
+        { title: "actuatorlist doc page", mimeType: MARKDOWN },
         async (uri, { id }) => {
             const p = DOC_PAGES.find((x) => x.id === String(id));
             if (!p) throw new ResourceNotFoundError(uri.href);

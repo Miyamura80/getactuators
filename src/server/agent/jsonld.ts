@@ -59,7 +59,7 @@ export function dataset(): Node {
     return {
         "@type": "Dataset",
         "@id": DATASET_ID,
-        name: "getactuators robot actuator catalog",
+        name: "actuatorlist robot actuator catalog",
         description: `Specifications of ${ACTUATORS.length} robot actuators (QDD motors, integrated joints, smart servos, harmonic and cycloidal reducers) and the robots that use them: torque, speed, weight, torque density, backlash, price and sources.`,
         url: `${SITE_URL}/all`,
         license: MIT,
@@ -110,7 +110,7 @@ export function software(): Node[] {
         },
         {
             "@type": "WebAPI",
-            name: "getactuators REST API",
+            name: "actuatorlist REST API",
             description:
                 "Anonymous, read-only JSON API over the actuator and robot catalog.",
             url: absoluteUrl(PATHS.apiIndex),

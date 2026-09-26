@@ -1,11 +1,11 @@
 ---
-name: getactuators
-description: Find, rank and compare robot actuators (QDD motors, integrated joints, servos, harmonic and cycloidal reducers) by torque, weight and price, and see which motors real robots use, via the free getactuators REST API or MCP server.
+name: actuatorlist
+description: Find, rank and compare robot actuators (QDD motors, integrated joints, servos, harmonic and cycloidal reducers) by torque, weight and price, and see which motors real robots use, via the free actuatorlist REST API or MCP server.
 ---
 
-# getactuators
+# actuatorlist
 
-getactuators is a free, public, read-only catalog of robot actuators and the
+actuatorlist is a free, public, read-only catalog of robot actuators and the
 robots that use them. Each actuator has peak and rated torque, speed, gear
 ratio, weight, torque density, backlash, voltage, bus, encoder, price (when
 public) and source links. No account, API key or payment is needed.
@@ -25,8 +25,8 @@ fluid-power actuators.
 
 ## Option 1: MCP (preferred inside an MCP client)
 
-Add the server `https://getactuators.com/mcp` (Streamable HTTP, name
-`getactuators`, no auth). Every tool is read-only:
+Add the server `https://actuatorlist.com/mcp` (Streamable HTTP, name
+`actuatorlist`, no auth). Every tool is read-only:
 
 - `search_actuators`: filter and sort by category, brand, use case, torque,
   weight and price.
@@ -38,31 +38,31 @@ Add the server `https://getactuators.com/mcp` (Streamable HTTP, name
   motor in each joint.
 
 Resources such as `catalog://actuators` and `actuator://{id}` hold the same
-data. A second server at `https://getactuators.com/mcp/docs` serves the site
+data. A second server at `https://actuatorlist.com/mcp/docs` serves the site
 documentation. The server card is at
-`https://getactuators.com/.well-known/mcp/server-card.json`.
+`https://actuatorlist.com/.well-known/mcp/server-card.json`.
 
 ## Option 2: REST API
 
-Base URL `https://getactuators.com/api/v1`. JSON responses, no
+Base URL `https://actuatorlist.com/api/v1`. JSON responses, no
 Authorization header. The OpenAPI description is at
-`https://getactuators.com/openapi.json`.
+`https://actuatorlist.com/openapi.json`.
 
 ```bash
 # Best torque density for quadruped legs
-curl "https://getactuators.com/api/v1/actuators?use_case=quadruped_leg&sort=torque_density_nm_per_kg&order=desc"
+curl "https://actuatorlist.com/api/v1/actuators?use_case=quadruped_leg&sort=torque_density_nm_per_kg&order=desc"
 
 # At least 20 Nm peak, under 600 g
-curl "https://getactuators.com/api/v1/actuators?min_peak_torque_nm=20&max_weight_g=600"
+curl "https://actuatorlist.com/api/v1/actuators?min_peak_torque_nm=20&max_weight_g=600"
 
 # One actuator
-curl "https://getactuators.com/api/v1/actuators/robstride-02"
+curl "https://actuatorlist.com/api/v1/actuators/robstride-02"
 
 # Side by side
-curl "https://getactuators.com/api/v1/actuators/compare?ids=robstride-02,cubemars-ak80-9"
+curl "https://actuatorlist.com/api/v1/actuators/compare?ids=robstride-02,cubemars-ak80-9"
 
 # Robots and their joint motors
-curl "https://getactuators.com/api/v1/robots"
+curl "https://actuatorlist.com/api/v1/robots"
 ```
 
 Filters on `/actuators`: `q`, `category`, `brand`, `use_case`,
@@ -75,9 +75,9 @@ cases: `quadruped_leg`, `humanoid_joint`, `robot_arm`, `exoskeleton`,
 ## Option 3: markdown
 
 Every page has a markdown twin: append `.md` to the URL (for example
-`https://getactuators.com/actuators/robstride-02.md`) or send
+`https://actuatorlist.com/actuators/robstride-02.md`) or send
 `Accept: text/markdown`. The whole catalog is in
-`https://getactuators.com/llms-full.txt`.
+`https://actuatorlist.com/llms-full.txt`.
 
 ## Working rules
 

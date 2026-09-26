@@ -6,7 +6,7 @@ import { SITE_URL } from "@/server/site";
 // fetches; it talks to the host only over the MCP Apps postMessage protocol
 // (ui/initialize -> ui/notifications/initialized -> ui/notifications/tool-result).
 
-export const COMPARE_VIEW_URI = "ui://getactuators/actuator-compare.html";
+export const COMPARE_VIEW_URI = "ui://actuatorlist/actuator-compare.html";
 export const MCP_APP_MIME = "text/html;profile=mcp-app";
 
 const STYLE = `
@@ -62,7 +62,7 @@ window.addEventListener("message", (ev) => {
     if (msg.id === 1 && msg.result) notify("ui/notifications/initialized", {});
     if (msg.method === "ui/notifications/tool-result") render(msg.params && msg.params.structuredContent);
 });
-rpc("ui/initialize", { appInfo: { name: "getactuators-compare", version: "1.0.0" }, appCapabilities: {}, protocolVersion: "2026-01-26" });
+rpc("ui/initialize", { appInfo: { name: "actuatorlist-compare", version: "1.0.0" }, appCapabilities: {}, protocolVersion: "2026-01-26" });
 `;
 
 const sha256 = (s: string) =>
@@ -88,7 +88,7 @@ export const COMPARE_VIEW_HTML = `<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <meta http-equiv="Content-Security-Policy" content="${CSP}">
-<title>Actuator comparison - getactuators</title>
+<title>Actuator comparison - actuatorlist</title>
 <style>${STYLE}</style>
 </head>
 <body>
