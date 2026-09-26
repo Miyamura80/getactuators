@@ -1,0 +1,84 @@
+import { renderSpaPage, renderStaticPage } from "../agent/html/render";
+import { PATHS } from "../agent/links";
+import { agentView } from "../agent/llms";
+import { authBody, pricingBody } from "../agent/manifests";
+import { mdDocument } from "../agent/md";
+import { htmlResponse, markdownResponse, wantsMarkdown } from "../agent/negotiate";
+import { findPage, findPageForMarkdown, pageMarkdown } from "../agent/pages";
+import type { Handler, Route } from "../types";
+
+// HTML pages and their markdown twins. Each page answers:
+//   Accept: text/markdown or an AI reader's User-Agent -> markdown
+//   /?mode=agent                                         -> agent view (markdown)
+//   anything else                                         -> HTML
+// and every page also serves `<path>.md` directly.
+
+const page: Handler = async (req) => {
+    const url = new URL(req.url);
+    const found = findPage(url.pathname);
+    if (!found) return null;
+    if (found.path === "/" && url.searchParams.get("mode") === "agent") {
+        return markdownResponse(
+            mdDocument(
+                {
+                    title: "getactuators agent view",
+                    description: "Endpoints, auth and capabilities for AI agents.",
+                    canonical: "/",
+                },
+                agentView(),
+            ),
+        );
+    }
+    if (wantsMarkdown(req)) return markdownResponse(pageMarkdown(found));
+    const html =
+        found.kind === "spa" ? await renderSpaPage(found) : renderStaticPage(found);
+    return htmlResponse(html);
+};
+
+const twin: Handler = (req) => {
+    const found = findPageForMarkdown(new URL(req.url).pathname);
+    return found ? markdownResponse(pageMarkdown(found)) : null;
+};
+
+function doc(path: string, title: string, description: string, body: () => string) {
+    return {
+        method: "GET",
+        path,
+        handler: () =>
+            markdownResponse(
+                mdDocument({ title, description, canonical: path }, body()),
+            ),
+    } satisfies Route;
+}
+
+const PAGE_PATHS = [
+    "/",
+    "/index.html",
+    "/all",
+    "/actuators",
+    "/actuators/:id",
+    "/robots",
+    "/robot",
+    PATHS.agentsPage,
+    "/about",
+    "/contact",
+    "/privacy",
+];
+
+export const routes: Route[] = [
+    doc(
+        PATHS.authMd,
+        "getactuators auth.md",
+        "No credentials needed: anonymous, read-only access to the REST API and MCP server.",
+        authBody,
+    ),
+    doc(
+        PATHS.pricingMd,
+        "getactuators pricing",
+        "getactuators is free: one plan, no keys, 120 requests per minute per IP, MIT License.",
+        pricingBody,
+    ),
+    ...PAGE_PATHS.map((path): Route => ({ method: "GET", path, handler: page })),
+    { method: "GET", path: "/:file", handler: twin },
+    { method: "GET", path: "/actuators/:file", handler: twin },
+];

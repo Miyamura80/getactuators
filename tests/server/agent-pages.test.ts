@@ -1,0 +1,205 @@
+import { describe, expect, test } from "bun:test";
+import { ACTUATORS } from "@/catalog";
+import { SITE_URL } from "@/server/site";
+import { expectFrontmatter, get, getMarkdown, visibleText } from "./agent-helpers";
+
+const PAGES = [
+    "/",
+    "/all",
+    "/actuators",
+    "/robots",
+    "/agents",
+    "/about",
+    "/contact",
+    "/privacy",
+];
+const FIRST = ACTUATORS[0]?.id ?? "";
+
+function jsonLdTypes(html: string): string[] {
+    const m = /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(html);
+    const doc = JSON.parse(m?.[1] ?? "{}") as { "@graph"?: { "@type": string }[] };
+    return (doc["@graph"] ?? []).map((n) => n["@type"]);
+}
+
+describe("markdown negotiation", () => {
+    test("Accept: text/markdown gets markdown on every page, with Vary", async () => {
+        for (const p of [...PAGES, `/actuators/${FIRST}`]) {
+            const res = await getMarkdown(p);
+            expect({ p, type: res.headers.get("content-type") }).toEqual({
+                p,
+                type: "text/markdown; charset=utf-8",
+            });
+            expect(res.headers.get("vary")).toContain("Accept");
+            expectFrontmatter(await res.text());
+        }
+    });
+
+    test("browsers and bare */* clients get HTML, also with Vary", async () => {
+        for (const accept of ["text/html,application/xhtml+xml,*/*;q=0.8", "*/*"]) {
+            const res = await get("/", { accept });
+            expect(res.headers.get("content-type")).toStartWith("text/html");
+            expect(res.headers.get("vary")).toContain("Accept");
+        }
+    });
+
+    test("AI reader user agents get markdown on the homepage", async () => {
+        const res = await get("/", {
+            accept: "text/html",
+            "user-agent":
+                "Mozilla/5.0 (compatible; ClaudeBot/1.0; +claudebot@anthropic.com)",
+        });
+        expect(res.headers.get("content-type")).toStartWith("text/markdown");
+    });
+
+    test("?mode=agent returns the structured agent view", async () => {
+        const body = await (await get("/?mode=agent")).text();
+        expect(body).toContain("auth: none");
+        expect(body).toContain(`${SITE_URL}/mcp`);
+        expect(body).toContain("## Capabilities");
+    });
+});
+
+describe("markdown twins", () => {
+    test("every page and standalone doc has a .md URL with frontmatter", async () => {
+        const twins = [
+            "/index.md",
+            "/all.md",
+            "/actuators.md",
+            "/robots.md",
+            "/agents.md",
+            "/about.md",
+            "/contact.md",
+            "/privacy.md",
+            "/auth.md",
+            "/pricing.md",
+            `/actuators/${FIRST}.md`,
+        ];
+        for (const p of twins) {
+            const res = await get(p);
+            expect({ p, status: res.status }).toEqual({ p, status: 200 });
+            expect(res.headers.get("content-type")).toBe(
+                "text/markdown; charset=utf-8",
+            );
+            expectFrontmatter(await res.text());
+        }
+    });
+
+    test("auth.md walks the auth.md sections without inventing endpoints", async () => {
+        const body = await (await get("/auth.md")).text();
+        for (const h of [
+            "Discover",
+            "Pick a method",
+            "Register",
+            "Use the access_token",
+            "Errors",
+            "Revocation",
+        ]) {
+            expect(body).toContain(`## ${h}`);
+        }
+        expect(body).not.toMatch(/oauth-authorization-server|token_endpoint/);
+    });
+
+    test("pricing.md states the free plan and rate limit", async () => {
+        const body = await (await get("/pricing.md")).text();
+        expect(body).toContain("$0");
+        expect(body).toContain("120 requests per minute per IP");
+        expect(body).toContain("MIT License");
+    });
+});
+
+describe("HTML pages", () => {
+    test("homepage carries metadata, JSON-LD and prerendered content", async () => {
+        const res = await get("/");
+        const html = await res.text();
+        expect(html).toContain('<html lang="en"');
+        expect(html).toContain(`<link rel="canonical" href="${SITE_URL}/">`);
+        expect(html).toContain(
+            '<link rel="alternate" type="text/markdown" href="/index.md"',
+        );
+        expect(html).toMatch(/<meta property="og:image" content="https:\/\//);
+        expect(html).toContain('<meta property="og:type" content="website">');
+        const types = jsonLdTypes(html);
+        for (const t of [
+            "WebSite",
+            "Organization",
+            "Dataset",
+            "SoftwareApplication",
+            "FAQPage",
+        ]) {
+            expect(types).toContain(t);
+        }
+        const root = /<div id="root">([\s\S]*)<\/div>\s*<\/body>/.exec(html)?.[1] ?? "";
+        expect(root).toContain("<h1>");
+        expect(visibleText(root).length).toBeGreaterThan(500);
+    });
+
+    test("actuator pages have their own title, Product JSON-LD and breadcrumbs", async () => {
+        const a = ACTUATORS[0];
+        const html = await (await get(`/actuators/${a?.id}`)).text();
+        expect(html).toContain(`<title>${a?.name}`);
+        const types = jsonLdTypes(html);
+        expect(types).toContain("Product");
+        expect(types).toContain("BreadcrumbList");
+    });
+
+    test("trust pages are real pages with at least 500 characters", async () => {
+        for (const p of ["/about", "/contact", "/privacy"]) {
+            const res = await get(p);
+            expect(res.status).toBe(200);
+            const html = await res.text();
+            const main = /<main[^>]*>([\s\S]*)<\/main>/.exec(html)?.[1] ?? "";
+            expect(visibleText(main).length).toBeGreaterThan(500);
+        }
+    });
+
+    test("Link header advertises discovery documents and appends to existing values", async () => {
+        const link = (await get("/")).headers.get("link") ?? "";
+        for (const rel of [
+            "sitemap",
+            "alternate",
+            "service-desc",
+            "api-catalog",
+            "describedby",
+        ]) {
+            expect(link).toContain(`rel="${rel}"`);
+        }
+        const { hooks } = await import("@/server/routes/link-headers");
+        const hook = hooks[0];
+        if (!hook) throw new Error("no hook");
+        const res = await hook(
+            new Request("http://localhost/about"),
+            new Response("x", {
+                headers: { "content-type": "text/html", link: '</x>; rel="preload"' },
+            }),
+        );
+        expect(res.headers.get("link")).toStartWith('</x>; rel="preload", ');
+        const api = await hook(
+            new Request("http://localhost/api/v1/actuators"),
+            new Response("{}", { headers: { "content-type": "text/html" } }),
+        );
+        expect(api.headers.get("link")).toBeNull();
+    });
+});
+
+describe("real 404s", () => {
+    test("unknown pages 404 with HTML or markdown", async () => {
+        const html = await get("/definitely-not-a-page");
+        expect(html.status).toBe(404);
+        expect(html.headers.get("content-type")).toStartWith("text/html");
+        const md = await getMarkdown("/definitely-not-a-page");
+        expect(md.status).toBe(404);
+        expect(md.headers.get("content-type")).toStartWith("text/markdown");
+        expect(await md.text()).toContain("/llms.txt");
+    });
+
+    test("unknown actuator ids 404 while known ones are 200", async () => {
+        expect((await get("/actuators/not-a-real-actuator")).status).toBe(404);
+        expect((await get(`/actuators/${FIRST}`)).status).toBe(200);
+    });
+
+    test("unknown API paths get problem+json", async () => {
+        const res = await get("/api/definitely-not-here");
+        expect(res.status).toBe(404);
+        expect(res.headers.get("content-type")).toStartWith("application/problem+json");
+    });
+});
