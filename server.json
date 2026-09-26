@@ -1,0 +1,25 @@
+{
+    "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+    "name": "io.github.Miyamura80/getactuators",
+    "title": "getactuators",
+    "description": "Read-only specs for robot actuators, the robots that use them, and the motors in each joint.",
+    "version": "0.1.0",
+    "websiteUrl": "https://getactuators.com",
+    "repository": {
+        "url": "https://github.com/Miyamura80/getactuators",
+        "source": "github"
+    },
+    "icons": [
+        {
+            "src": "https://getactuators.com/favicon.svg",
+            "mimeType": "image/svg+xml",
+            "sizes": ["any"]
+        }
+    ],
+    "remotes": [
+        {
+            "type": "streamable-http",
+            "url": "https://getactuators.com/mcp"
+        }
+    ]
+}
