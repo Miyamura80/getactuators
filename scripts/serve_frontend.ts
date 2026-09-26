@@ -1,21 +1,8 @@
-// Minimal static file server for the built frontend, for Railway.
-// Serves frontend/dist and falls back to index.html for unknown paths.
+// Railway entrypoint: serves the built frontend plus the agent-facing routes
+// in src/server/routes/ (see src/server/app.ts for the request pipeline).
+import { startServer } from "@/server/app";
+import { DIST_DIR } from "@/server/static";
 
-const DIST = "frontend/dist";
 const port = Number(process.env.PORT ?? 3000);
-
-Bun.serve({
-    port,
-    async fetch(req) {
-        const url = new URL(req.url);
-        const path = url.pathname === "/" ? "/index.html" : url.pathname;
-        const asset = Bun.file(`${DIST}${path}`);
-        if (await asset.exists()) return new Response(asset);
-        // SPA fallback
-        return new Response(Bun.file(`${DIST}/index.html`), {
-            headers: { "content-type": "text/html; charset=utf-8" },
-        });
-    },
-});
-
-console.log(`getactuators serving ${DIST} on :${port}`);
+await startServer(port);
+console.log(`getactuators serving ${DIST_DIR} on :${port}`);
