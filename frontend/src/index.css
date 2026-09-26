@@ -1983,3 +1983,305 @@ table.board {
         bottom: 14px;
     }
 }
+
+/* ---- /agents: MCP connect page ----------------------------------------- */
+.agents-grid {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 46px 28px 120px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 440px);
+    gap: 48px;
+    align-items: start;
+}
+.agents-intro h1 .block-tag {
+    /* Pin the glyph to the first line when the title wraps. */
+    margin-top: 0.3em;
+}
+.agents-intro h1 {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin: 0;
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+}
+.agents-lede {
+    color: var(--muted);
+    margin: 12px 0 0;
+    max-width: 52ch;
+    font-size: 15px;
+    line-height: 1.5;
+}
+.agents-h2 {
+    margin: 34px 0 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+.agents-tools {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+}
+.agents-tools li {
+    display: grid;
+    grid-template-columns: minmax(0, 220px) minmax(0, 1fr);
+    gap: 14px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 13px;
+}
+.agents-tools code {
+    font-family: var(--mono);
+    color: var(--cyan);
+    font-size: 12.5px;
+    overflow-wrap: anywhere;
+}
+.agents-tools span {
+    color: var(--muted);
+}
+.agents-other {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    margin: 22px 0 0;
+    font-family: var(--mono);
+    font-size: 12px;
+}
+.agents-other span {
+    color: var(--muted);
+}
+.agents-connect {
+    position: sticky;
+    top: 78px;
+}
+
+/* Connect widget */
+.cw {
+    border: 1px solid var(--cyan-dim);
+    background: var(--panel);
+    padding: 16px;
+    min-width: 0;
+}
+.cw-label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+}
+.cw-code {
+    display: flex;
+    align-items: stretch;
+    border: 1px solid var(--line-strong);
+    background: var(--black);
+    min-width: 0;
+}
+.cw-code code,
+.cw-code pre {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    padding: 10px 12px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+}
+.cw-url code {
+    color: var(--cyan);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.cw-code pre {
+    color: var(--text);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    line-height: 1.55;
+    max-height: 260px;
+    overflow-y: auto;
+}
+.cw-copy {
+    all: unset;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    width: 42px;
+    flex-shrink: 0;
+    border-left: 1px solid var(--line-strong);
+    color: var(--muted);
+    font-size: 14px;
+}
+.cw-copy:hover,
+.cw-copy:focus-visible {
+    color: var(--cyan);
+    background: var(--panel-2);
+}
+.cw-copy[data-copied="true"] {
+    color: var(--green);
+}
+.cw-picker {
+    position: relative;
+    margin-top: 16px;
+}
+.cw-toggle,
+.cw-option {
+    all: unset;
+    box-sizing: border-box;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 44px;
+    padding: 0 12px;
+    font-size: 14px;
+}
+.cw-toggle {
+    border: 1px solid var(--line-strong);
+    background: var(--black);
+    color: var(--text);
+    font-weight: 600;
+}
+.cw-toggle:hover,
+.cw-toggle:focus-visible,
+.cw-toggle[aria-expanded="true"] {
+    border-color: var(--cyan-dim);
+}
+.cw-toggle-name,
+.cw-option-name {
+    flex: 1;
+    min-width: 0;
+}
+.cw-caret {
+    color: var(--muted);
+}
+.cw-logo {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    background: currentColor;
+}
+.cw-menu {
+    position: absolute;
+    z-index: 30;
+    left: 0;
+    right: 0;
+    margin: 4px 0 0;
+    padding: 4px 0;
+    list-style: none;
+    border: 1px solid var(--cyan-dim);
+    background: var(--panel-2);
+    max-height: 320px;
+    overflow-y: auto;
+}
+.cw-option {
+    color: var(--muted);
+}
+.cw-option:hover,
+.cw-option:focus-visible,
+.cw-option[data-on="true"] {
+    color: var(--text);
+    background: var(--black);
+}
+.cw-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+.cw-badge[data-effort="one-click"] {
+    color: var(--cyan);
+}
+.cw-panel {
+    margin-top: 16px;
+}
+.cw-install {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 46px;
+    padding: 0 16px;
+    background: var(--cyan);
+    color: var(--black);
+    font-weight: 700;
+    font-size: 14px;
+    border-radius: 2px;
+    text-align: center;
+}
+.cw-install:hover {
+    text-decoration: none;
+    background: var(--text);
+}
+.cw-note {
+    margin: 10px 0 0;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--muted);
+}
+.cw-panel > .cw-note:first-child {
+    margin: 0 0 8px;
+}
+.cw-steps {
+    margin-top: 12px;
+    font-size: 13px;
+}
+.cw-steps summary {
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 12.5px;
+    text-decoration: underline dotted;
+    text-underline-offset: 4px;
+}
+.cw-steps summary:hover {
+    color: var(--cyan);
+}
+.cw-steps ol {
+    margin: 10px 0 0;
+    padding-left: 20px;
+    color: var(--muted);
+    line-height: 1.55;
+}
+
+/* Phones: heading and lede first, then the widget, then the tool list. The
+   intro box dissolves (display: contents) so its children can be reordered
+   around the widget. */
+@media (max-width: 860px) {
+    .agents-grid {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 28px 16px 90px;
+        gap: 0;
+    }
+    .agents-intro {
+        display: contents;
+    }
+    .agents-connect {
+        position: static;
+        order: 1;
+        margin-top: 22px;
+    }
+    .agents-h2,
+    .agents-tools,
+    .agents-other {
+        order: 2;
+    }
+    .agents-tools li {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 2px;
+    }
+}
+@media (max-width: 560px) {
+    .page-nav {
+        flex-wrap: wrap;
+    }
+}

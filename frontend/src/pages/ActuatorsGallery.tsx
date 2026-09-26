@@ -65,6 +65,9 @@ export function ActuatorsGallery() {
                     <Link to="/actuators" className="page-nav-link" data-on={true}>
                         Gallery
                     </Link>
+                    <Link to="/agents" className="page-nav-link">
+                        Agents
+                    </Link>
                 </nav>
             </header>
 

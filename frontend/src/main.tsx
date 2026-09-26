@@ -8,12 +8,15 @@ import { AllActuators } from "./pages/AllActuators";
 import { ActuatorsGallery } from "./pages/ActuatorsGallery";
 import { ExplodedView } from "./pages/ExplodedView";
 import { CommandPalette } from "./components/CommandPalette";
+import { Agents } from "./pages/Agents";
+import { registerWebMcp } from "./lib/webmcp";
 
 function Page() {
     const path = usePath();
     if (path === "/all") return <AllActuators />;
     if (path === "/robots" || path === "/robot") return <Home />;
     if (path === "/actuators") return <ActuatorsGallery />;
+    if (path === "/agents") return <Agents />;
     if (path.startsWith("/actuators/")) {
         const raw = path.slice("/actuators/".length);
         let id = raw;
@@ -38,6 +41,9 @@ function Root() {
         </>
     );
 }
+
+// Hands read-only catalog tools to in-browser agents; a no-op without WebMCP.
+registerWebMcp();
 
 createRoot(document.getElementById("root") as HTMLElement).render(
     <StrictMode>

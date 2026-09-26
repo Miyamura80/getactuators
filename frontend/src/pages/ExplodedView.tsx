@@ -107,6 +107,9 @@ export function ExplodedView({ id }: Props) {
                     <Link to="/all" className="page-nav-link">
                         All actuators
                     </Link>
+                    <Link to="/agents" className="page-nav-link">
+                        Agents
+                    </Link>
                 </nav>
             </header>
 
