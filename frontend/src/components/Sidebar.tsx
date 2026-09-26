@@ -44,6 +44,9 @@ export function Sidebar({ items, active, onSelect }: Props) {
                 <Link to="/actuators" className="side-page-link">
                     Actuator gallery →
                 </Link>
+                <Link to="/agents" className="side-page-link">
+                    AI agents (MCP) →
+                </Link>
             </div>
             <p className="side-note">
                 v1 dataset {"·"} sourced from manufacturer pages via web search.
