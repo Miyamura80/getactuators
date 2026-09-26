@@ -42,6 +42,26 @@ research across datasheets and spreadsheets every time.
 > catalog, its data schema, and the browse/filter UI described below are the
 > roadmap, not yet built.
 
+## For AI agents
+
+The live catalog at getactuators.com is free, anonymous and read-only for
+agents as well as people. No key or account is needed.
+
+| Surface | URL |
+|---------|-----|
+| llms.txt index (start here) | `https://getactuators.com/llms.txt` |
+| Whole catalog as text | `https://getactuators.com/llms-full.txt` |
+| MCP server (Streamable HTTP) | `https://getactuators.com/mcp` |
+| REST API + OpenAPI | `https://getactuators.com/api`, `https://getactuators.com/openapi.json` |
+| Agent guide | `https://getactuators.com/agents.md` |
+| Agent skill | `https://getactuators.com/.well-known/agent-skills/getactuators/SKILL.md` (source: `skills/getactuators/SKILL.md`) |
+| Discovery catalogs | `/.well-known/ard.json`, `/.well-known/api-catalog`, `/.well-known/agent-card.json` |
+
+Every page also has a markdown twin: append `.md` to its URL or send
+`Accept: text/markdown`. The server code for these surfaces lives in
+`src/server/` (route modules in `src/server/routes/`, content builders in
+`src/server/agent/`).
+
 ## Actuator categories
 
 | Category | Examples | Typical use |

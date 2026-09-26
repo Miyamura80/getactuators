@@ -10,11 +10,3 @@ export async function serveAsset(pathname: string): Promise<Response | null> {
     if (await file.exists()) return new Response(file);
     return null;
 }
-
-// SPA shell for client-routed paths.
-export function serveSpaShell(status = 200): Response {
-    return new Response(Bun.file(`${DIST_DIR}/index.html`), {
-        status,
-        headers: { "content-type": "text/html; charset=utf-8" },
-    });
-}

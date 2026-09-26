@@ -1,11 +1,14 @@
+import { notFound } from "./agent/not-found";
 import { type Registry, loadRegistry } from "./registry";
 import { createRouter } from "./router";
-import { serveAsset, serveSpaShell } from "./static";
+import { serveAsset } from "./static";
 
 export type FetchHandler = (req: Request) => Promise<Response>;
 
 // Request pipeline: registered routes (in order, first non-null wins), then a
-// built static asset, then the SPA shell. Response hooks run on all of them.
+// built static asset, then a real 404. SPA paths are registered routes
+// (routes/pages.ts), so an unknown path is never answered with the app shell.
+// Response hooks run on every response.
 export function createHandler(registry: Registry): FetchHandler {
     const match = createRouter(registry.routes);
     const resolve = async (req: Request): Promise<Response> => {
@@ -17,7 +20,7 @@ export function createHandler(registry: Registry): FetchHandler {
             const asset = await serveAsset(new URL(req.url).pathname);
             if (asset) return asset;
         }
-        return serveSpaShell();
+        return notFound(req);
     };
     return async (req) => {
         let res = await resolve(req);
