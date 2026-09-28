@@ -89,13 +89,39 @@ describe("A2A agent card", () => {
 });
 
 describe("API catalog (RFC 9727)", () => {
-    test("is a linkset pointing at the OpenAPI description", async () => {
+    async function catalog(): Promise<Json[]> {
         const res = await get("/.well-known/api-catalog");
         expect(res.headers.get("content-type")).toBe(
             'application/linkset+json; profile="https://www.rfc-editor.org/info/rfc9727"',
         );
-        const body = (await res.json()) as { linkset: Json[] };
-        const desc = body.linkset[0]?.["service-desc"] as Json[];
+        return ((await res.json()) as { linkset: Json[] }).linkset;
+    }
+
+    test("first entry is anchored at the catalog and lists every API as an item", async () => {
+        const [first] = await catalog();
+        expect(first?.anchor).toBe(`${SITE_URL}/.well-known/api-catalog`);
+        const items = first?.item as Json[];
+        expect(items.map((i) => i.href)).toEqual([
+            `${SITE_URL}/api/v1`,
+            `${SITE_URL}/mcp`,
+            `${SITE_URL}/mcp/docs`,
+        ]);
+    });
+
+    test("every item has its own entry with a service-doc", async () => {
+        const linkset = await catalog();
+        const items = linkset[0]?.item as Json[];
+        for (const { href } of items) {
+            const entry = linkset.find((e) => e.anchor === href);
+            expect(entry).toBeDefined();
+            expect((entry?.["service-doc"] as Json[]).length).toBeGreaterThan(0);
+        }
+    });
+
+    test("the REST API entry points at the OpenAPI description", async () => {
+        const linkset = await catalog();
+        const rest = linkset.find((e) => e.anchor === `${SITE_URL}/api/v1`);
+        const desc = rest?.["service-desc"] as Json[];
         expect(desc[0]?.href).toBe(`${SITE_URL}/openapi.json`);
     });
 });

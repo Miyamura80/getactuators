@@ -99,13 +99,7 @@ export function ardManifest(): Record<string, unknown> {
             entry("mcp", "actuatorlist-docs", {
                 displayName: "actuatorlist docs MCP server",
                 type: "application/mcp-server-card+json",
-                data: {
-                    name: "actuatorlist-docs",
-                    description:
-                        "The actuatorlist site and API documentation over MCP.",
-                    serverUrl: u(PATHS.mcpDocs),
-                    remotes: [{ type: "streamable-http", url: u(PATHS.mcpDocs) }],
-                },
+                url: u(PATHS.mcpDocsCard),
                 description: `Anonymous MCP server (Streamable HTTP at ${u(PATHS.mcpDocs)}) for reading the actuatorlist documentation.`,
                 representativeQueries: [
                     "how do I filter actuatorlist by torque",
@@ -205,11 +199,22 @@ export function agentCard(): Record<string, unknown> {
     };
 }
 
+// RFC 9727 section 4: the first linkset entry is anchored at the catalog itself
+// and lists every API as an "item" link (RFC 9264 linkset+json). Each API then
+// gets its own entry carrying its service-desc / service-doc relations.
 export function apiCatalog(): Record<string, unknown> {
     return {
         linkset: [
             {
-                anchor: u("/api/v1"),
+                anchor: u(PATHS.apiCatalog),
+                item: [
+                    { href: u(PATHS.apiBase), type: "application/json" },
+                    { href: u(PATHS.mcp) },
+                    { href: u(PATHS.mcpDocs) },
+                ],
+            },
+            {
+                anchor: u(PATHS.apiBase),
                 "service-desc": [
                     {
                         href: u(PATHS.openapi),
@@ -225,6 +230,10 @@ export function apiCatalog(): Record<string, unknown> {
             {
                 anchor: u(PATHS.mcp),
                 "service-desc": [{ href: u(PATHS.mcpCard), type: "application/json" }],
+                "service-doc": [{ href: u(PATHS.agentsMd), type: "text/markdown" }],
+            },
+            {
+                anchor: u(PATHS.mcpDocs),
                 "service-doc": [{ href: u(PATHS.agentsMd), type: "text/markdown" }],
             },
         ],

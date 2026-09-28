@@ -1,7 +1,13 @@
 import { describe, expect, test } from "bun:test";
 import { ACTUATORS } from "@/catalog";
 import { SITE_URL } from "@/server/site";
-import { expectFrontmatter, get, getMarkdown, visibleText } from "./agent-helpers";
+import {
+    expectFrontmatter,
+    expectLeadingHeading,
+    get,
+    getMarkdown,
+    visibleText,
+} from "./agent-helpers";
 
 const PAGES = [
     "/",
@@ -60,18 +66,15 @@ describe("markdown negotiation", () => {
 });
 
 describe("markdown twins", () => {
-    test("every page and standalone doc has a .md URL with frontmatter", async () => {
+    test("every page has a .md URL with frontmatter", async () => {
         const twins = [
             "/index.md",
             "/all.md",
             "/actuators.md",
             "/robots.md",
-            "/agents.md",
             "/about.md",
             "/contact.md",
             "/privacy.md",
-            "/auth.md",
-            "/pricing.md",
             `/actuators/${FIRST}.md`,
         ];
         for (const p of twins) {
@@ -81,6 +84,20 @@ describe("markdown twins", () => {
                 "text/markdown; charset=utf-8",
             );
             expectFrontmatter(await res.text());
+        }
+    });
+
+    test("standalone agent docs start with an H1, not frontmatter", async () => {
+        for (const p of ["/agents.md", "/auth.md", "/pricing.md"]) {
+            const res = await get(p);
+            expect({ p, status: res.status }).toEqual({ p, status: 200 });
+            expect(res.headers.get("content-type")).toBe(
+                "text/markdown; charset=utf-8",
+            );
+            const body = await res.text();
+            expect({ p, head: body.slice(0, 2) }).toEqual({ p, head: "# " });
+            expect(body).not.toStartWith("---");
+            expectLeadingHeading(body);
         }
     });
 
@@ -104,6 +121,12 @@ describe("markdown twins", () => {
         expect(body).toContain("$0");
         expect(body).toContain("120 requests per minute per IP");
         expect(body).toContain("MIT License");
+        expect(body).toStartWith("# actuatorlist pricing\n");
+        expect(body).toContain("| Free | $0 |");
+        expect(body).toContain("There are no paid plans");
+        expect(body).toContain("/mcp/docs");
+        expect(body).toContain("/llms.txt");
+        expect(body).not.toMatch(/\$\d+\s*\/\s*mo|Pro plan|Enterprise plan/i);
     });
 });
 

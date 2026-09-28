@@ -85,29 +85,40 @@ export function authBody(): string {
 export function pricingBody(): string {
     return [
         "# actuatorlist pricing",
-        "> actuatorlist is free. One plan, no paid tiers, no keys, no trial clock.",
+        "> actuatorlist is free. There is one plan, Free at $0. No paid plans, tiers, add-ons or trials exist, and no API key or account is needed.",
         `## Plans\n\n${mdTable(
-            ["Plan", "Price", "Who it is for"],
-            [["Free", "$0, forever", "Everyone: people, scripts and AI agents"]],
-        )}`,
+            ["Plan", "Price", "Billing", "API key", "Rate limit", "Who it is for"],
+            [
+                [
+                    "Free",
+                    "$0",
+                    "none",
+                    "not required",
+                    `${RATE_LIMIT_PER_MINUTE} requests per minute per IP (REST API)`,
+                    "Everyone: people, scripts and AI agents",
+                ],
+            ],
+        )}\n\nThis is the only plan. There are no paid plans, higher tiers, usage-based charges or enterprise contracts, and nothing to upgrade to.`,
         `## What the free plan includes\n\n${bullets([
             `The full catalog: ${catalogStats()}.`,
             "The website, including the leaderboard, all-actuators table, gallery and robot pages.",
             `The REST API at ${u(PATHS.apiIndex)} with an OpenAPI description at ${u(PATHS.openapi)}.`,
-            `The MCP server at ${u(PATHS.mcp)} for Claude, ChatGPT, Cursor and other MCP clients.`,
-            `Markdown twins of every page, ${u(PATHS.llms)} and ${u(PATHS.llmsFull)}.`,
+            `The MCP servers: the catalog server at ${u(PATHS.mcp)} and the docs server at ${u(PATHS.mcpDocs)}, for Claude, ChatGPT, Cursor and other MCP clients.`,
+            `Markdown surfaces: a markdown twin of every page, ${u(PATHS.llms)}, ${u(PATHS.llmsFull)} and this document.`,
+            "Read-only access to everything above, anonymously.",
             "Commercial use, as permitted by the MIT License.",
         ])}`,
         `## Limits\n\n${mdTable(
             ["Limit", "Value"],
             [
                 [
-                    "API rate limit",
-                    `${RATE_LIMIT_PER_MINUTE} requests per minute per IP`,
+                    "REST API rate limit",
+                    `${RATE_LIMIT_PER_MINUTE} requests per minute per IP (HTTP 429 with Retry-After when exceeded)`,
                 ],
                 ["Monthly quota", "none"],
                 ["API key", "not required"],
-                ["Account", "not required"],
+                ["Account or sign-up", "not required"],
+                ["Payment method", "not required"],
                 ["Write access", "none (read-only; corrections via GitHub)"],
                 ["Uptime SLA", "none (best effort)"],
             ],

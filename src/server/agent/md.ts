@@ -1,9 +1,11 @@
 import { absoluteUrl } from "../site";
 import { CATALOG_UPDATED_AT } from "./freshness";
 
-// Shared markdown building blocks. Every served markdown document opens with a
-// frontmatter block (title, description, canonical, last-updated) and then an
-// H1, so agents get document metadata without scraping.
+// Shared markdown building blocks. Page twins open with a frontmatter block
+// (title, description, canonical, last-updated) and then an H1, so agents get
+// document metadata without scraping. Standalone agent documents (agents.md,
+// auth.md, pricing.md) are read by checkers that expect the very first line to
+// be an H1, so they carry the same metadata in a trailing line instead.
 
 export interface MdMeta {
     title: string;
@@ -31,6 +33,16 @@ export function frontmatter(meta: MdMeta): string {
 // Frontmatter + body. The body must start with the document's H1.
 export function mdDocument(meta: MdMeta, body: string): string {
     return `${frontmatter(meta)}${body.trim()}\n`;
+}
+
+// Body first (its first line must be the H1), then a metadata footer. No
+// frontmatter, so the response opens with "# ".
+export function mdStandalone(meta: MdMeta, body: string): string {
+    const text = body.trim();
+    if (!text.startsWith("# "))
+        throw new Error(`${meta.canonical}: body must start with an H1`);
+    const footer = `Canonical: ${absoluteUrl(meta.canonical)}. Last updated: ${CATALOG_UPDATED_AT}.`;
+    return `${text}\n\n${footer}\n`;
 }
 
 // Drop the frontmatter block (used when rendering a markdown body to HTML).

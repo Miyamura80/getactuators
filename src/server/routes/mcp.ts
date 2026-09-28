@@ -1,6 +1,12 @@
 import { createDocsServer } from "@/mcp/docs-server";
 import { createMcpEndpoint } from "@/mcp/http";
-import { mcpDiscovery, serverCard } from "@/mcp/manifests";
+import {
+    DOCS_SERVER_CARD_PATH,
+    SERVER_CARD_PATH,
+    docsServerCard,
+    mcpDiscovery,
+    serverCard,
+} from "@/mcp/manifests";
 import { createCatalogServer } from "@/mcp/server";
 import type { Route } from "../types";
 
@@ -21,10 +27,11 @@ const manifest = (body: unknown) => () =>
 export const routes: Route[] = [
     { path: "/mcp", handler: (req) => catalogEndpoint(req) },
     { path: "/mcp/docs", handler: (req) => docsEndpoint(req) },
+    { method: "GET", path: SERVER_CARD_PATH, handler: manifest(serverCard()) },
     {
         method: "GET",
-        path: "/.well-known/mcp/server-card.json",
-        handler: manifest(serverCard()),
+        path: DOCS_SERVER_CARD_PATH,
+        handler: manifest(docsServerCard()),
     },
     { method: "GET", path: "/.well-known/mcp.json", handler: manifest(mcpDiscovery()) },
     { method: "GET", path: "/.well-known/mcp", handler: manifest(mcpDiscovery()) },

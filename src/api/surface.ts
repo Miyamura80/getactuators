@@ -24,22 +24,26 @@ const API_INDEX: Operation = {
     response: ApiIndexSchema,
     errors: [],
     example: "/api",
-    handler: () =>
-        json({
-            name: "actuatorlist API",
-            version: "v1",
-            description: SITE_DESCRIPTION,
-            auth: "none (public, anonymous, read-only)",
-            docs: absoluteUrl("/docs/api"),
-            openapi: absoluteUrl("/openapi.json"),
-            mcp: absoluteUrl("/mcp"),
-            endpoints: API_OPERATIONS.map((op) => ({
-                method: op.method,
-                path: op.path,
-                summary: op.summary,
-            })),
-        }),
+    handler: () => json(apiIndexData()),
 };
+
+// Body of the /api index (JSON), also rendered as its markdown twin.
+export function apiIndexData() {
+    return {
+        name: "actuatorlist API",
+        version: "v1",
+        description: SITE_DESCRIPTION,
+        auth: "none (public, anonymous, read-only)",
+        docs: absoluteUrl("/docs/api"),
+        openapi: absoluteUrl("/openapi.json"),
+        mcp: absoluteUrl("/mcp"),
+        endpoints: API_OPERATIONS.map((op) => ({
+            method: op.method,
+            path: op.path,
+            summary: op.summary,
+        })),
+    };
+}
 
 const OPENAPI_DOC: Operation = {
     operationId: "get_openapi_spec",
