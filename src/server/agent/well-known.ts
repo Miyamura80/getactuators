@@ -99,13 +99,7 @@ export function ardManifest(): Record<string, unknown> {
             entry("mcp", "actuatorlist-docs", {
                 displayName: "actuatorlist docs MCP server",
                 type: "application/mcp-server-card+json",
-                data: {
-                    name: "actuatorlist-docs",
-                    description:
-                        "The actuatorlist site and API documentation over MCP.",
-                    serverUrl: u(PATHS.mcpDocs),
-                    remotes: [{ type: "streamable-http", url: u(PATHS.mcpDocs) }],
-                },
+                url: u(PATHS.mcpDocsCard),
                 description: `Anonymous MCP server (Streamable HTTP at ${u(PATHS.mcpDocs)}) for reading the actuatorlist documentation.`,
                 representativeQueries: [
                     "how do I filter actuatorlist by torque",

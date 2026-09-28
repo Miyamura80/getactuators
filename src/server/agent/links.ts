@@ -1,3 +1,4 @@
+import { CATALOG_TOOLS } from "@/mcp/server";
 import { SITE_URL } from "../site";
 
 // Public URLs of every agent-facing surface, in one place so llms.txt, the
@@ -20,6 +21,7 @@ export const PATHS = {
     mcp: "/mcp",
     mcpDocs: "/mcp/docs",
     mcpCard: "/.well-known/mcp/server-card.json",
+    mcpDocsCard: "/.well-known/mcp/docs-server-card.json",
     apiCatalog: "/.well-known/api-catalog",
     ard: "/.well-known/ard.json",
     agentCard: "/.well-known/agent-card.json",
@@ -70,17 +72,8 @@ export const REST_ENDPOINTS: readonly Endpoint[] = [
     { method: "GET", path: "/api/v1/brands", what: "Brands in the catalog" },
 ];
 
-// Tools exposed by the product MCP server (routes/mcp.ts).
-export const MCP_TOOLS: readonly string[] = [
-    "search_actuators",
-    "get_actuator",
-    "compare_actuators",
-    "recommend_actuators",
-    "list_actuator_categories",
-    "list_brands",
-    "list_robots",
-    "get_robot",
-    "find_robots_using_actuator",
-];
+// Tools exposed by the catalog MCP server (routes/mcp.ts), read from the
+// registered tool definitions so every manifest stays in sync with /mcp.
+export const MCP_TOOLS: readonly string[] = CATALOG_TOOLS.map((t) => t.name);
 
 export const RATE_LIMIT_PER_MINUTE = 120;
