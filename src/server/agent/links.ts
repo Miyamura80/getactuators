@@ -14,6 +14,7 @@ export const PATHS = {
     feed: "/feeds/actuators.jsonl",
     openapi: "/openapi.json",
     apiIndex: "/api",
+    apiBase: "/api/v1",
     apiDocs: "/docs/api",
     apiDocsMd: "/docs/api.md",
     mcp: "/mcp",

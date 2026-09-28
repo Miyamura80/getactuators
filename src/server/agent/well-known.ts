@@ -205,11 +205,22 @@ export function agentCard(): Record<string, unknown> {
     };
 }
 
+// RFC 9727 section 4: the first linkset entry is anchored at the catalog itself
+// and lists every API as an "item" link (RFC 9264 linkset+json). Each API then
+// gets its own entry carrying its service-desc / service-doc relations.
 export function apiCatalog(): Record<string, unknown> {
     return {
         linkset: [
             {
-                anchor: u("/api/v1"),
+                anchor: u(PATHS.apiCatalog),
+                item: [
+                    { href: u(PATHS.apiBase), type: "application/json" },
+                    { href: u(PATHS.mcp) },
+                    { href: u(PATHS.mcpDocs) },
+                ],
+            },
+            {
+                anchor: u(PATHS.apiBase),
                 "service-desc": [
                     {
                         href: u(PATHS.openapi),
@@ -225,6 +236,10 @@ export function apiCatalog(): Record<string, unknown> {
             {
                 anchor: u(PATHS.mcp),
                 "service-desc": [{ href: u(PATHS.mcpCard), type: "application/json" }],
+                "service-doc": [{ href: u(PATHS.agentsMd), type: "text/markdown" }],
+            },
+            {
+                anchor: u(PATHS.mcpDocs),
                 "service-doc": [{ href: u(PATHS.agentsMd), type: "text/markdown" }],
             },
         ],
