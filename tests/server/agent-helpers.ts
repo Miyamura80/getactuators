@@ -55,6 +55,18 @@ export function expectFrontmatter(md: string): void {
     if (fences % 2 !== 0) throw new Error("unbalanced code fences");
 }
 
+// Standalone agent documents (agents.md, auth.md, pricing.md): the very first
+// bytes are an H1, with metadata in a trailing footer instead of frontmatter.
+export function expectLeadingHeading(md: string): void {
+    if (!md.startsWith("# "))
+        throw new Error(`does not start with "# ":\n${md.slice(0, 200)}`);
+    if (!/\nCanonical: https?:\/\/\S+\. Last updated: \S+\.\n$/.test(md)) {
+        throw new Error("missing canonical / last-updated footer");
+    }
+    const fences = md.split("\n").filter((l) => /^\s*(```|~~~)/.test(l)).length;
+    if (fences % 2 !== 0) throw new Error("unbalanced code fences");
+}
+
 // Visible text of an HTML fragment (tags stripped, whitespace collapsed).
 export function visibleText(html: string): string {
     return html

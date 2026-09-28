@@ -1,8 +1,8 @@
 import { renderSpaPage, renderStaticPage } from "../agent/html/render";
 import { PATHS } from "../agent/links";
 import { agentView } from "../agent/llms";
-import { authBody, pricingBody } from "../agent/manifests";
-import { mdDocument } from "../agent/md";
+import { agentsBody, authBody, pricingBody } from "../agent/manifests";
+import { mdDocument, mdStandalone } from "../agent/md";
 import { htmlResponse, markdownResponse, wantsMarkdown } from "../agent/negotiate";
 import { findPage, findPageForMarkdown, pageMarkdown } from "../agent/pages";
 import type { Handler, Route } from "../types";
@@ -46,7 +46,7 @@ function doc(path: string, title: string, description: string, body: () => strin
         path,
         handler: () =>
             markdownResponse(
-                mdDocument({ title, description, canonical: path }, body()),
+                mdStandalone({ title, description, canonical: path }, body()),
             ),
     } satisfies Route;
 }
@@ -65,7 +65,15 @@ const PAGE_PATHS = [
     "/privacy",
 ];
 
+// Standalone agent documents open with their H1 (no frontmatter). /agents.md
+// is registered before the generic `/:file` twin so it gets the same shape.
 export const routes: Route[] = [
+    doc(
+        PATHS.agentsMd,
+        "actuatorlist for AI agents",
+        "Connect an AI agent to actuatorlist: MCP server, REST API, markdown twins and llms.txt. No key needed.",
+        agentsBody,
+    ),
     doc(
         PATHS.authMd,
         "actuatorlist auth.md",
