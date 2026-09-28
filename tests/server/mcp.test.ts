@@ -50,7 +50,7 @@ describe("MCP /mcp handshake", () => {
         const body = (await res.json()) as { result: Record<string, unknown> };
         const info = body.result.serverInfo as Record<string, unknown>;
         expect(body.result.protocolVersion).toBe(PROTOCOL);
-        expect(info.name).toBe("getactuators");
+        expect(info.name).toBe("actuatorlist");
         expect(typeof info.version).toBe("string");
         const instructions = body.result.instructions as string;
         expect(instructions).toContain("N.m");

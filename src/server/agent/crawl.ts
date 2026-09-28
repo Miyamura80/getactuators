@@ -36,7 +36,7 @@ const AI_AGENTS = [
 const SIGNAL = "Content-Signal: search=yes, ai-input=yes, ai-train=yes";
 
 export function robotsTxt(): string {
-    return `# robots.txt for getactuators
+    return `# robots.txt for actuatorlist
 # The whole catalog is public. AI agents and crawlers are welcome to search,
 # answer from and train on it. Start at ${absoluteUrl(PATHS.llms)}.
 

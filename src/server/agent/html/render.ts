@@ -18,7 +18,7 @@ const FALLBACK_SHELL = `<!doctype html>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="" />
-    <title>getactuators</title>
+    <title>actuatorlist</title>
   </head>
   <body>
     <div id="root"></div>

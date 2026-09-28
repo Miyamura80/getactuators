@@ -1,6 +1,6 @@
-# getactuators Brand
+# actuatorlist Brand
 
-The getactuators visual identity is instrument-grade: it should read like a HUD,
+The actuatorlist visual identity is instrument-grade: it should read like a HUD,
 a terminal, or a circuit-board schematic, not a consumer marketing page. The site
 is a data tool for robot builders, so the design stays precise, modular, and
 "always on." When a choice makes the page feel warmer, softer, or more

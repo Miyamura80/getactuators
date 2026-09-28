@@ -30,7 +30,7 @@ for (const mode of ["legacy", "auto"] as const) {
     describe(`SDK client (${mode} negotiation)`, () => {
         test("connects, lists tools and calls one", async () => {
             const client = await connect(mode);
-            expect(client.getServerVersion()?.name).toBe("getactuators");
+            expect(client.getServerVersion()?.name).toBe("actuatorlist");
             expect(client.getInstructions()).toContain("recommend_actuators");
             const { tools } = await client.listTools();
             expect(tools.length).toBe(9);

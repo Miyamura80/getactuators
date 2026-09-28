@@ -19,8 +19,8 @@ import {
 
 describe("agent client install formats", () => {
     test("server contract", () => {
-        expect(SERVER_NAME).toBe("getactuators");
-        expect(MCP_URL).toBe("https://getactuators.com/mcp");
+        expect(SERVER_NAME).toBe("actuatorlist");
+        expect(MCP_URL).toBe("https://actuatorlist.com/mcp");
     });
 
     test("Cursor link carries base64 JSON, URL-encoded", () => {
@@ -37,7 +37,7 @@ describe("agent client install formats", () => {
     test("VS Code link uses the https redirect with a type/url JSON config", () => {
         const url = new URL(vscodeLink());
         expect(url.origin + url.pathname).toBe("https://vscode.dev/redirect/mcp/install");
-        expect(url.searchParams.get("name")).toBe("getactuators");
+        expect(url.searchParams.get("name")).toBe("actuatorlist");
         expect(JSON.parse(url.searchParams.get("config") ?? "")).toEqual({
             type: "http",
             url: MCP_URL,
@@ -60,17 +60,17 @@ describe("agent client install formats", () => {
 
     test("CLI commands", () => {
         expect(claudeCodeCommand()).toBe(
-            "claude mcp add --transport http --scope user getactuators https://getactuators.com/mcp",
+            "claude mcp add --transport http --scope user actuatorlist https://actuatorlist.com/mcp",
         );
-        expect(codexCommand()).toBe("codex mcp add getactuators --url https://getactuators.com/mcp");
+        expect(codexCommand()).toBe("codex mcp add actuatorlist --url https://actuatorlist.com/mcp");
         expect(geminiCommand()).toBe(
-            "gemini mcp add --transport http getactuators https://getactuators.com/mcp",
+            "gemini mcp add --transport http actuatorlist https://actuatorlist.com/mcp",
         );
     });
 
     test("Windsurf config uses serverUrl", () => {
         expect(JSON.parse(windsurfConfig())).toEqual({
-            mcpServers: { getactuators: { serverUrl: MCP_URL } },
+            mcpServers: { actuatorlist: { serverUrl: MCP_URL } },
         });
     });
 });

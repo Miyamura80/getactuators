@@ -33,8 +33,8 @@ export function serverCard() {
         $schema:
             "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
         name: REGISTRY_NAME,
-        title: "getactuators",
-        displayName: "getactuators",
+        title: "actuatorlist",
+        displayName: "actuatorlist",
         description: SERVER_DESCRIPTION,
         version: SERVER_VERSION,
         websiteUrl: SITE_URL,
@@ -79,7 +79,7 @@ export function mcpDiscovery() {
         servers: [
             {
                 name: SERVER_NAME,
-                title: "getactuators catalog",
+                title: "actuatorlist catalog",
                 url: MCP_URL,
                 transport: "streamable-http",
                 serverCard: absoluteUrl("/.well-known/mcp/server-card.json"),
@@ -88,7 +88,7 @@ export function mcpDiscovery() {
             },
             {
                 name: DOCS_SERVER_NAME,
-                title: "getactuators documentation",
+                title: "actuatorlist documentation",
                 url: DOCS_MCP_URL,
                 transport: "streamable-http",
                 authentication: auth,

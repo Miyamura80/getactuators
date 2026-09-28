@@ -25,7 +25,7 @@ describe("MCP resources", () => {
         expect(uris).toContain("catalog://actuators");
         expect(uris).toContain("catalog://robots");
         expect(uris).toContain("catalog://categories");
-        expect(uris).toContain("ui://getactuators/actuator-compare.html");
+        expect(uris).toContain("ui://actuatorlist/actuator-compare.html");
         expect(resources.length).toBe(4 + ACTUATORS.length + ROBOTS.length);
         for (const r of resources) {
             expect(r.mimeType).toBeTruthy();
@@ -57,7 +57,7 @@ describe("MCP resources", () => {
     });
 
     test("MCP App view is a self-contained, CSP-scoped HTML page", async () => {
-        const out = (await read("ui://getactuators/actuator-compare.html"))
+        const out = (await read("ui://actuatorlist/actuator-compare.html"))
             .result as unknown as ReadResult & {
             contents: { _meta?: { ui?: { csp?: { connectDomains?: string[] } } } }[];
         };
@@ -87,7 +87,7 @@ describe("docs MCP surface (/mcp/docs)", () => {
             "/mcp/docs",
         );
         const info = res.result?.serverInfo as { name: string };
-        expect(info.name).toBe("getactuators-docs");
+        expect(info.name).toBe("actuatorlist-docs");
         expect(res.result?.instructions).toBeTruthy();
     });
 

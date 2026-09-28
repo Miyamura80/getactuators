@@ -21,7 +21,7 @@ const page: Handler = async (req) => {
         return markdownResponse(
             mdDocument(
                 {
-                    title: "getactuators agent view",
+                    title: "actuatorlist agent view",
                     description: "Endpoints, auth and capabilities for AI agents.",
                     canonical: "/",
                 },
@@ -68,14 +68,14 @@ const PAGE_PATHS = [
 export const routes: Route[] = [
     doc(
         PATHS.authMd,
-        "getactuators auth.md",
+        "actuatorlist auth.md",
         "No credentials needed: anonymous, read-only access to the REST API and MCP server.",
         authBody,
     ),
     doc(
         PATHS.pricingMd,
-        "getactuators pricing",
-        "getactuators is free: one plan, no keys, 120 requests per minute per IP, MIT License.",
+        "actuatorlist pricing",
+        "actuatorlist is free: one plan, no keys, 120 requests per minute per IP, MIT License.",
         pricingBody,
     ),
     ...PAGE_PATHS.map((path): Route => ({ method: "GET", path, handler: page })),

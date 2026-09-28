@@ -23,7 +23,7 @@ export const PATHS = {
     ard: "/.well-known/ard.json",
     agentCard: "/.well-known/agent-card.json",
     skillsIndex: "/.well-known/agent-skills/index.json",
-    skill: "/.well-known/agent-skills/getactuators/SKILL.md",
+    skill: "/.well-known/agent-skills/actuatorlist/SKILL.md",
     agentsPage: "/agents",
     agentsMd: "/agents.md",
     authMd: "/auth.md",

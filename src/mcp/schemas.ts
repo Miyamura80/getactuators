@@ -70,7 +70,7 @@ export const actuatorSummarySchema = z.object({
     backdrivable: z.boolean().nullable(),
     integrated_driver: z.boolean().nullable(),
     verified: z.boolean(),
-    page_url: z.string().describe("Human-readable page on getactuators.com."),
+    page_url: z.string().describe("Human-readable page on actuatorlist.com."),
 });
 
 export const actuatorSchema = actuatorSummarySchema.extend({

@@ -93,9 +93,9 @@ describe("llms.txt", () => {
         const res = await get("/llms.txt");
         expect(res.headers.get("content-type")).toStartWith("text/plain");
         const body = await res.text();
-        expect(body).toStartWith("# getactuators");
+        expect(body).toStartWith("# actuatorlist");
         expect(body.length).toBeLessThan(30_000);
-        expect(body).toContain("## When to use getactuators");
+        expect(body).toContain("## When to use actuatorlist");
         expect(body).toMatch(/quadruped leg/);
         for (const p of [
             "/llms-full.txt",
@@ -130,7 +130,7 @@ describe("llms.txt", () => {
         for (const p of ["/actuators/llms.txt", "/robots/llms.txt", "/docs/llms.txt"]) {
             const res = await get(p);
             expect(res.status).toBe(200);
-            expect(await res.text()).toStartWith("# getactuators:");
+            expect(await res.text()).toStartWith("# actuatorlist:");
         }
     });
 });

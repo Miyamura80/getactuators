@@ -58,7 +58,7 @@ const STATIC_PAGES: Page[] = [
     {
         path: "/",
         kind: "spa",
-        title: "getactuators: robot actuator leaderboard and spec database",
+        title: "actuatorlist: robot actuator leaderboard and spec database",
         description: `${SITE_DESCRIPTION} Compare torque, weight, torque density and price.`,
         body: homeBody,
         jsonLd: () => [
@@ -97,23 +97,23 @@ const STATIC_PAGES: Page[] = [
     sub(
         PATHS.agentsPage,
         "spa",
-        "getactuators for AI agents",
-        "Connect an AI agent to getactuators: MCP server, REST API, markdown twins and llms.txt. No key needed.",
+        "actuatorlist for AI agents",
+        "Connect an AI agent to actuatorlist: MCP server, REST API, markdown twins and llms.txt. No key needed.",
         agentsBody,
         "WebPage",
     ),
     sub(
         "/about",
         "static",
-        "About getactuators",
-        "Who runs getactuators, where the actuator data comes from and how it is verified.",
+        "About actuatorlist",
+        "Who runs actuatorlist, where the actuator data comes from and how it is verified.",
         aboutBody,
         "AboutPage",
     ),
     sub(
         "/contact",
         "static",
-        "Contact getactuators",
+        "Contact actuatorlist",
         "Report wrong actuator data, contribute entries or ask about the API through GitHub.",
         contactBody,
         "ContactPage",
@@ -121,8 +121,8 @@ const STATIC_PAGES: Page[] = [
     sub(
         "/privacy",
         "static",
-        "Privacy at getactuators",
-        "No accounts, no cookies, no analytics: what happens to your data when you visit getactuators.",
+        "Privacy at actuatorlist",
+        "No accounts, no cookies, no analytics: what happens to your data when you visit actuatorlist.",
         privacyBody,
         "WebPage",
     ),

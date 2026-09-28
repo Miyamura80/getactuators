@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* ---- getactuators brand tokens (dark, black-dominant) ----------------- */
+/* ---- actuatorlist brand tokens (dark, black-dominant) ----------------- */
 :root {
     --black: #000000;
     --panel: #0a0a0a;

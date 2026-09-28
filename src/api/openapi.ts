@@ -185,12 +185,12 @@ export function buildOpenApi(operations: readonly Operation[]): Json {
     return {
         openapi: "3.1.0",
         info: {
-            title: "getactuators API",
+            title: "actuatorlist API",
             version: `${API_VERSION}.0.0`,
             summary:
-                "Read-only REST API over the getactuators robot actuator and robot catalog.",
+                "Read-only REST API over the actuatorlist robot actuator and robot catalog.",
             description: `Free, anonymous, read-only access to every actuator and robot on ${SITE_URL}. No API key, no account, no writes: production is safe to call, so there is no separate sandbox.\n\n**Rate limits:** ${RATE_LIMIT} requests per ${RATE_WINDOW_S}s per client IP, reported in \`RateLimit\`/\`RateLimit-Policy\` and \`X-RateLimit-*\` headers; a 429 carries \`Retry-After\`.\n\n**Errors:** RFC 9457 \`application/problem+json\` with a stable \`code\`.\n\n**Versioning and deprecation:** ${DEPRECATION_POLICY}`,
-            contact: { name: "getactuators on GitHub", url: `${REPO_URL}/issues` },
+            contact: { name: "actuatorlist on GitHub", url: `${REPO_URL}/issues` },
             license: { name: "MIT", identifier: "MIT" },
             "x-deprecation-policy": DEPRECATION_POLICY,
         },

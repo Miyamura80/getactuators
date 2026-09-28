@@ -14,7 +14,7 @@ const OTHER_WAYS: { href: string; label: string }[] = [
     { href: "/auth.md", label: "auth.md (none needed)" },
 ];
 
-const TITLE = "Connect getactuators to your AI agent (MCP)";
+const TITLE = "Connect actuatorlist to your AI agent (MCP)";
 
 export function Agents() {
     useEffect(() => {
@@ -28,10 +28,10 @@ export function Agents() {
     return (
         <div className="agents-page">
             <header className="page-bar">
-                <Link to="/" className="page-brand" aria-label="getactuators home">
+                <Link to="/" className="page-brand" aria-label="actuatorlist home">
                     <BrandMark size={24} />
                     <span>
-                        get<b>actuators</b>.com
+                        <b>actuator</b>list.com
                     </span>
                 </Link>
                 <nav className="page-nav">
@@ -57,7 +57,7 @@ export function Agents() {
                 <section className="agents-intro">
                     <h1>
                         <BrandGlyph className="block-tag" />
-                        Add getactuators to your agent
+                        Add actuatorlist to your agent
                     </h1>
                     <p className="agents-lede">
                         The whole actuator and robot catalog as a free, read-only MCP

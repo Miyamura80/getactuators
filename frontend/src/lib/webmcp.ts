@@ -41,7 +41,7 @@ interface ModelContext {
     provideContext?: (init: { tools: WebMcpTool[] }) => unknown;
 }
 
-const SITE = "https://getactuators.com";
+const SITE = "https://actuatorlist.com";
 const MAX_LIMIT = 50;
 
 function result(data: unknown, isError = false): ToolResult {
@@ -155,7 +155,7 @@ export function buildTools(): WebMcpTool[] {
             name: "search_actuators",
             title: "Search actuators",
             description:
-                "Search the getactuators catalog of robot actuators. Filter by free text, category, minimum peak torque, maximum weight or price; sort by a spec. Returns compact rows with ids.",
+                "Search the actuatorlist catalog of robot actuators. Filter by free text, category, minimum peak torque, maximum weight or price; sort by a spec. Returns compact rows with ids.",
             annotations: { readOnlyHint: true },
             inputSchema: {
                 type: "object",
@@ -237,7 +237,7 @@ export function buildTools(): WebMcpTool[] {
             name: "get_mcp_install",
             title: "Get MCP install instructions",
             description:
-                "How to add the getactuators MCP server (anonymous, streamable HTTP) to an AI client: a deep link or the command/config to use.",
+                "How to add the actuatorlist MCP server (anonymous, streamable HTTP) to an AI client: a deep link or the command/config to use.",
             annotations: { readOnlyHint: true },
             inputSchema: {
                 type: "object",

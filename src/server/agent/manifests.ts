@@ -34,12 +34,12 @@ function whenNotToUse(): string[] {
 
 export function agentsBody(): string {
     return [
-        "# getactuators for AI agents",
-        `getactuators is a free, read-only catalog of robot actuators with ${catalogStats()}. Everything a person can see on the site is available to agents as JSON, MCP tools or markdown, with no account, key or payment.`,
-        `## When to use getactuators\n\n${bullets(whenToUse())}`,
+        "# actuatorlist for AI agents",
+        `actuatorlist is a free, read-only catalog of robot actuators with ${catalogStats()}. Everything a person can see on the site is available to agents as JSON, MCP tools or markdown, with no account, key or payment.`,
+        `## When to use actuatorlist\n\n${bullets(whenToUse())}`,
         `## When not to use it\n\n${bullets(whenNotToUse())}`,
         `## MCP server\n\n${bullets([
-            `Endpoint: ${u(PATHS.mcp)} (Streamable HTTP, server name getactuators)`,
+            `Endpoint: ${u(PATHS.mcp)} (Streamable HTTP, server name actuatorlist)`,
             "Authentication: none. Connect anonymously; every tool is read-only.",
             `Server card: ${u(PATHS.mcpCard)}`,
             `Tools: ${MCP_TOOLS.join(", ")}. All are read-only.`,
@@ -64,8 +64,8 @@ export function agentsBody(): string {
 
 export function authBody(): string {
     return [
-        "# getactuators auth.md",
-        `> How an agent authenticates to getactuators: it does not need to. The REST API (${u(PATHS.apiIndex)}) and the MCP server (${u(PATHS.mcp)}) are public, anonymous and read-only.`,
+        "# actuatorlist auth.md",
+        `> How an agent authenticates to actuatorlist: it does not need to. The REST API (${u(PATHS.apiIndex)}) and the MCP server (${u(PATHS.mcp)}) are public, anonymous and read-only.`,
         `## Discover\n\nThere is no authorization server, so there is no OAuth protected-resource metadata and no agent_auth block to fetch. The machine-readable descriptions of what you can call are ${u(PATHS.openapi)} (REST) and ${u(PATHS.mcpCard)} (MCP). No endpoint answers 401 or sends a WWW-Authenticate challenge.`,
         "## Pick a method\n\nOne method is supported: anonymous access. In auth.md terms the only identity type is anonymous; identity_assertion, service_auth and ID-JAG exchanges are not used because nothing is gated.",
         "## Register\n\nNo registration. There is no client registration endpoint, no API key to request and no account to create.",
@@ -84,8 +84,8 @@ export function authBody(): string {
 
 export function pricingBody(): string {
     return [
-        "# getactuators pricing",
-        "> getactuators is free. One plan, no paid tiers, no keys, no trial clock.",
+        "# actuatorlist pricing",
+        "> actuatorlist is free. One plan, no paid tiers, no keys, no trial clock.",
         `## Plans\n\n${mdTable(
             ["Plan", "Price", "Who it is for"],
             [["Free", "$0, forever", "Everyone: people, scripts and AI agents"]],
@@ -112,8 +112,8 @@ export function pricingBody(): string {
                 ["Uptime SLA", "none (best effort)"],
             ],
         )}`,
-        `## License\n\nThe code and dataset are published under the MIT License in ${REPO_URL}. You can copy, cache or redistribute the data; keep the license notice and cite getactuators as the source.`,
-        "## Costs you might still see\n\nActuator prices in the catalog are list prices from public manufacturer or retailer pages, in USD. getactuators does not sell hardware and takes no commission. Entries without a public price read quote only.",
+        `## License\n\nThe code and dataset are published under the MIT License in ${REPO_URL}. You can copy, cache or redistribute the data; keep the license notice and cite actuatorlist as the source.`,
+        "## Costs you might still see\n\nActuator prices in the catalog are list prices from public manufacturer or retailer pages, in USD. actuatorlist does not sell hardware and takes no commission. Entries without a public price read quote only.",
         `## Questions\n\nOpen an issue at ${REPO_URL}/issues. Agent guide: ${u(PATHS.agentsMd)}. Authentication details: ${u(PATHS.authMd)}.`,
     ].join("\n\n");
 }

@@ -113,7 +113,7 @@ describe("developer docs", () => {
         const res = await get("/docs/api");
         expect(res.headers.get("content-type")).toContain("text/html");
         const html = await res.text();
-        expect(html).toContain("<h1>getactuators API</h1>");
+        expect(html).toContain("<h1>actuatorlist API</h1>");
         for (const op of API_OPERATIONS)
             expect(html).toContain(`id="${op.operationId}"`);
         expect(html).toContain('id="error-not-found"');
@@ -127,7 +127,7 @@ describe("developer docs", () => {
         expect(md.startsWith("---\ntitle: ")).toBe(true);
         expect(md).toContain("\ncanonical: ");
         expect(md).toContain("\nlast-updated: ");
-        expect(md).toContain("\n# getactuators API\n");
+        expect(md).toContain("\n# actuatorlist API\n");
         expect(md).toContain("curl -s");
     });
 
