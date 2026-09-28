@@ -39,6 +39,15 @@ export function wantsMarkdown(req: Request): boolean {
     return isMarkdownBot(req);
 }
 
+// Accept-only variant for data endpoints (the REST API): markdown only when the
+// client names text/markdown and ranks it at least as high as `rival`. No
+// User-Agent sniffing, so API clients always get JSON unless they ask.
+export function acceptsMarkdownOver(req: Request, rival: string): boolean {
+    const accept = req.headers.get("accept") ?? "";
+    const md = quality(accept, "text/markdown", true);
+    return md > 0 && md >= quality(accept, rival, false);
+}
+
 export const NEGOTIATED_VARY = "Accept, User-Agent";
 
 const CACHE_CONTROL = "public, max-age=300";
