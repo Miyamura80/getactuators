@@ -130,6 +130,21 @@ a:hover {
     font-size: 15px;
     line-height: 1.5;
 }
+.hero-main {
+    flex: 0 1 auto;
+    min-width: 0;
+}
+.hero-art {
+    flex: 1 1 360px;
+    max-width: 600px;
+    min-width: 0;
+}
+.hero-art canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 960 / 600;
+}
 /* ---- Blocks ------------------------------------------------------------ */
 .block {
     padding: 34px 0 8px;
