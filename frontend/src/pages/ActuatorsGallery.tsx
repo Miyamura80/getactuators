@@ -3,7 +3,7 @@ import type { Actuator } from "../types";
 import { CATEGORY_MAP } from "../types";
 import { ACTUATORS } from "../lib/data";
 import { num } from "../lib/format";
-import { Link, navigate } from "../lib/router";
+import { Link } from "../lib/router";
 import { ActuatorThumb } from "../components/ActuatorThumb";
 import { BrandMark } from "../components/BrandMark";
 import { BrandGlyph } from "../components/BrandGlyph";
@@ -99,11 +99,10 @@ export function ActuatorsGallery() {
 function GalleryCard({ actuator, size }: { actuator: Actuator; size: Size }) {
     const cat = CATEGORY_MAP[actuator.category];
     return (
-        <button
-            type="button"
+        <Link
+            to={`/actuators/${encodeURIComponent(actuator.id)}`}
             className="bento-card"
             data-size={size}
-            onClick={() => navigate(`/actuators/${actuator.id}`)}
         >
             <div className="bento-thumb">
                 <ActuatorThumb actuator={actuator} className="thumb-svg" />
@@ -132,6 +131,6 @@ function GalleryCard({ actuator, size }: { actuator: Actuator; size: Size }) {
                 </div>
             </div>
             <span className="bento-go">Explode →</span>
-        </button>
+        </Link>
     );
 }

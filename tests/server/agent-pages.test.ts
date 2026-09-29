@@ -1,6 +1,10 @@
 import { describe, expect, test } from "bun:test";
 import { ACTUATORS } from "@/catalog";
+import { documentTitle } from "@/server/agent/html/head";
+import { findPage } from "@/server/agent/pages";
 import { SITE_URL } from "@/server/site";
+import homeCapture from "../../frontend/tests/fixtures/home.json";
+import productCapture from "../../frontend/tests/fixtures/product.json";
 import {
     expectFrontmatter,
     expectLeadingHeading,
@@ -131,6 +135,71 @@ describe("markdown twins", () => {
 });
 
 describe("HTML pages", () => {
+    test("frontend mount captures match the actual server markup and FAQ graph", async () => {
+        for (const capture of [homeCapture, productCapture]) {
+            const html = await (await get(capture.path)).text();
+            expect(/<div id="root">[\s\S]*?<\/section>/.exec(html)?.[0]).toBe(
+                capture.body,
+            );
+            const graph = JSON.parse(
+                /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(
+                    html,
+                )?.[1] ?? "{}",
+            )["@graph"] as Record<string, unknown>[];
+            expect(graph.find((node) => node["@type"] === "FAQPage") ?? null).toEqual(
+                capture.faq,
+            );
+        }
+    });
+
+    test("document navigation targets have matching heads in either visit order", async () => {
+        const paths = [
+            ...PAGES,
+            `/actuators/${FIRST}`,
+            `/actuators/${ACTUATORS.at(-1)?.id}`,
+        ];
+        for (const path of [...paths, ...paths.toReversed()]) {
+            const page = findPage(path);
+            if (!page) throw new Error(`Missing page: ${path}`);
+            const response = await get(path);
+            expect(response.status).toBe(200);
+            let title = "";
+            let description = "";
+            let canonical = "";
+            let jsonLd = "";
+            new HTMLRewriter()
+                .on("title", {
+                    text: (chunk) => {
+                        title += chunk.text;
+                    },
+                })
+                .on('meta[name="description"]', {
+                    element: (el) => {
+                        description = el.getAttribute("content") ?? "";
+                    },
+                })
+                .on('link[rel="canonical"]', {
+                    element: (el) => {
+                        canonical = el.getAttribute("href") ?? "";
+                    },
+                })
+                .on('script[type="application/ld+json"]', {
+                    text: (chunk) => {
+                        jsonLd += chunk.text;
+                    },
+                })
+                .transform(await response.text());
+            expect(title).toBe(documentTitle(page.title));
+            expect(description).toBe(page.description);
+            expect(canonical).toBe(`${SITE_URL}${page.path}`);
+            const nodes = JSON.parse(jsonLd)["@graph"] as Record<string, unknown>[];
+            expect(nodes).toEqual(page.jsonLd());
+            expect(nodes.some((node) => node["@type"] === "Product")).toBe(
+                path.startsWith("/actuators/"),
+            );
+        }
+    });
+
     test("homepage carries metadata, JSON-LD and prerendered content", async () => {
         const res = await get("/");
         const html = await res.text();
@@ -151,9 +220,22 @@ describe("HTML pages", () => {
         ]) {
             expect(types).toContain(t);
         }
-        const root = /<div id="root">([\s\S]*)<\/div>\s*<\/body>/.exec(html)?.[1] ?? "";
-        expect(root).toContain("<h1>");
-        expect(visibleText(root).length).toBeGreaterThan(500);
+        let rootText = "";
+        let rootHeading = false;
+        new HTMLRewriter()
+            .on("#root", {
+                text: (chunk) => {
+                    rootText += chunk.text;
+                },
+            })
+            .on("#root h1", {
+                element: () => {
+                    rootHeading = true;
+                },
+            })
+            .transform(html);
+        expect(rootHeading).toBe(true);
+        expect(rootText.length).toBeGreaterThan(500);
     });
 
     test("actuator pages have their own title, Product JSON-LD and breadcrumbs", async () => {

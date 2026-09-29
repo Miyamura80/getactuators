@@ -88,7 +88,7 @@ export function actuatorBody(a: Actuator): string {
         (u, i, all): u is string => Boolean(u) && all.indexOf(u) === i,
     );
     if (sources.length > 0) {
-        sections.push(`## Sources\n\n${bullets(sources.map((u) => `<${u}>`))}`);
+        sections.push(`## Sources\n\n${bullets(sources.map((u) => mdLink(u, u)))}`);
     }
     if (similar.length > 0) {
         sections.push(
