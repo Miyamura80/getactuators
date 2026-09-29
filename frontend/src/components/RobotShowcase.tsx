@@ -16,7 +16,7 @@ function priceLabel(r: Robot): string {
     return price(r.price_usd);
 }
 
-// Thumbnail: prefer the real product photo, but fall back to the schematic
+// Thumbnail: prefer the real product photo, but fall back to the 3D
 // render if the (hotlinked) image is missing or fails to load, so a rotated
 // or 404'd CDN URL never shows a broken-image icon.
 function RobotThumb({ robot }: { robot: Robot }) {
