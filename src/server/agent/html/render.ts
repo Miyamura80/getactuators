@@ -1,7 +1,7 @@
 import { DIST_DIR } from "../../static";
 import { graph } from "../jsonld";
 import { type Page, markdownPath } from "../pages";
-import { pageBody } from "./body";
+import { markdownToHtml, pageBody } from "./body";
 import { type HeadMeta, documentTitle, esc, headTags } from "./head";
 import { PAGE_CSS } from "./style";
 
@@ -47,12 +47,26 @@ function headMeta(page: Page, noindex = false): HeadMeta {
     };
 }
 
-// The built SPA shell with the page's metadata, JSON-LD and a prerendered copy
-// of its content inside #root. main.tsx mounts with createRoot, which replaces
-// the prerendered children on first render.
+// React owns #root, whose fallback is replaced on mount (not hydrated).
+// Catalog facts and homepage FAQ live in visible siblings, rendered from the
+// same markdown as the agent twins (FAQ answers also supply JSON-LD). React's
+// visuals stay intact without discarding that substantive content.
 export async function renderSpaPage(page: Page): Promise<string> {
     const meta = headMeta(page);
-    const prerender = `<div class="ga-page">${pageBody(page.body())}</div>`;
+    const body = page.body();
+    const marker =
+        page.ogType === "product"
+            ? "\n\n## Specifications"
+            : page.path === "/"
+              ? "\n\n## Frequently asked questions"
+              : null;
+    const split = marker === null ? -1 : body.indexOf(marker);
+    const fallback = split < 0 ? body : body.slice(0, split);
+    const content = split < 0 ? "" : body.slice(split);
+    const prerender = `<div class="ga-page">${pageBody(fallback)}</div>`;
+    const persistent = content
+        ? `<section class="ga-page" id="catalog-content" aria-label="Catalog details"><div class="ga-main">${markdownToHtml(content)}</div></section>`
+        : "";
     const rewriter = new HTMLRewriter()
         .on("html", {
             element: (el) => {
@@ -79,6 +93,7 @@ export async function renderSpaPage(page: Page): Promise<string> {
         .on("div#root", {
             element: (el) => {
                 el.setInnerContent(prerender, { html: true });
+                if (persistent) el.after(persistent, { html: true });
             },
         });
     return rewriter.transform(await loadShell());

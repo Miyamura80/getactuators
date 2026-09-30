@@ -91,7 +91,11 @@ export function Leaderboard({
                                             style={{ background: colorForBrand(a.brand) }}
                                         />
                                         <span className="name-block">
-                                            <span className="name">
+                                            <a
+                                                className="name"
+                                                href={`/actuators/${encodeURIComponent(a.id)}`}
+                                                onClick={(e) => e.stopPropagation()}
+                                            >
                                                 {a.name}
                                                 {a.verified && (
                                                     <span
@@ -101,7 +105,7 @@ export function Leaderboard({
                                                         {"✓"}
                                                     </span>
                                                 )}
-                                            </span>
+                                            </a>
                                             <span className="brand">{a.brand}</span>
                                         </span>
                                     </div>

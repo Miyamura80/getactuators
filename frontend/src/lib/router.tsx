@@ -1,10 +1,9 @@
 import type { ReactNode } from "react";
 import { useSyncExternalStore } from "react";
 
-// Minimal history-based router. The site is small enough that pulling in a
-// routing library would be more moving parts than the two extra pages need.
-// The Railway server already serves an SPA fallback, so real paths resolve
-// on hard refresh.
+// Minimal history store for same-page filters, selection and hash anchors.
+// Pathname changes use full documents so the server remains the single source
+// of route metadata and substantive catalog content.
 
 const NAV_EVENT = "ga:navigate";
 
@@ -39,6 +38,15 @@ export function useLocationKey(): string {
 }
 
 export function navigate(to: string): void {
+    const target = new URL(to, window.location.href);
+    // Indexable route changes are document navigations: the server owns both
+    // the head (including JSON-LD) and the persistent catalog/FAQ content.
+    // Native history back/forward restores that document, including via BFCache.
+    // Only query/hash state within a page remains client-side.
+    if (target.origin !== window.location.origin || target.pathname !== window.location.pathname) {
+        window.location.assign(to);
+        return;
+    }
     // A hash target scrolls itself to the anchor, so skip the reset-to-top that
     // top-level page changes want. A bare same-path click still resets to top.
     const hasHash = to.includes("#");
@@ -64,7 +72,9 @@ export function Link({ to, className, children, ...rest }: LinkProps) {
             href={to}
             className={className}
             onClick={(e) => {
-                if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                const target = new URL(to, window.location.href);
+                if (target.origin !== window.location.origin || target.pathname !== window.location.pathname) return;
                 e.preventDefault();
                 navigate(to);
             }}

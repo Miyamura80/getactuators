@@ -64,7 +64,7 @@ export function DetailPanel({ actuator, onClose }: Props) {
                     </div>
                     <div className="drawer-head-actions">
                         <CopyLinkButton
-                            path={`/all?sel=${encodeURIComponent(a.id)}`}
+                            path={`/actuators/${encodeURIComponent(a.id)}`}
                             label={`Copy link to ${a.name}`}
                         />
                         <button type="button" className="drawer-close" onClick={onClose} aria-label="Close">
