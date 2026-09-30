@@ -135,6 +135,24 @@ describe("markdown twins", () => {
 });
 
 describe("HTML pages", () => {
+    test("product specifications provide a focusable native fragment target", async () => {
+        const html = await (await get(`/actuators/${FIRST}`)).text();
+        const targets: { tabindex: string | null; label: string | null }[] = [];
+        new HTMLRewriter()
+            .on("section#catalog-content", {
+                element: (el) => {
+                    targets.push({
+                        tabindex: el.getAttribute("tabindex"),
+                        label: el.getAttribute("aria-label"),
+                    });
+                },
+            })
+            .transform(html);
+        expect(targets).toEqual([
+            { tabindex: "-1", label: "Specifications and catalog details" },
+        ]);
+    });
+
     test("frontend mount captures match the actual server markup and FAQ graph", async () => {
         for (const capture of [homeCapture, productCapture]) {
             const html = await (await get(capture.path)).text();
