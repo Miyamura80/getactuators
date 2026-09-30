@@ -1,32 +1,19 @@
 import { useEffect, useRef } from "react";
-import {
-    drawRobotArt,
-    robotArtStyleFromSearch,
-    type RobotArtFraming,
-    type RobotKind,
-} from "../lib/robot-art";
+import { drawRobotArt, type RobotArtFraming, type RobotKind } from "../lib/robot-art";
 
 export type { RobotKind };
 
 // Category robot render: a real-scale 3D model (UR5e-class arm, G1-class
-// humanoid, Go2-class quadruped) drawn to a canvas that fills its parent.
-// It is a still image, so it only repaints when the box changes size.
-export function RobotArt({
-    kind,
-    hue,
-    framing = "tile",
-}: {
-    kind: RobotKind;
-    hue: number;
-    framing?: RobotArtFraming;
-}) {
+// humanoid, Go2-class quadruped) drawn as an X-ray engineering drawing that
+// shows every actuator, on a canvas that fills its parent. It is a still
+// image, so it only repaints when the box changes size.
+export function RobotArt({ kind, framing = "tile" }: { kind: RobotKind; framing?: RobotArtFraming }) {
     const ref = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
         const cv = ref.current;
         const ctx = cv?.getContext("2d");
         if (!cv || !ctx) return;
-        const style = robotArtStyleFromSearch(window.location.search);
         let raf = 0;
         let size = "";
         const paint = () => {
@@ -37,7 +24,7 @@ export function RobotArt({
             size = `${w}x${h}`;
             cv.width = w;
             cv.height = h;
-            drawRobotArt(ctx, w, h, { kind, style, framing, hue });
+            drawRobotArt(ctx, w, h, kind, framing);
         };
         const schedule = () => {
             cancelAnimationFrame(raf);
@@ -55,7 +42,7 @@ export function RobotArt({
             cancelAnimationFrame(raf);
             ro?.disconnect();
         };
-    }, [kind, hue, framing]);
+    }, [kind, framing]);
 
     return <canvas ref={ref} className="cat-art" aria-hidden="true" />;
 }

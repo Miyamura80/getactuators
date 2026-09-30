@@ -34,7 +34,7 @@ function RobotThumb({ robot }: { robot: Robot }) {
                     onError={() => setFailed(true)}
                 />
             ) : (
-                <RobotArt kind="robot_arm" hue={210} />
+                <RobotArt kind="robot_arm" />
             )}
             <span className="robot-dof">{robot.dof}-DOF</span>
         </div>

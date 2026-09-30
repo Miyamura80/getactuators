@@ -1,17 +1,31 @@
 // Mesh builder for the robot art: every robot is assembled from a handful of
-// primitives (frustum tubes, joint drums, superquadric shells) placed in world
-// space by the model's forward kinematics.
+// primitives (frustum tubes, joint drums, superquadric shells, boxes) placed
+// in world space by the model's forward kinematics. Joints get a detailed
+// actuator from `motor()`.
 import { V, basis, type Vec3 } from "./math";
 
+// "act*" materials belong to actuators: housing, dark (cap, fins, gear
+// plate), bright (flange, hub) and bolts.
 export type Material =
     | "shell"
     | "dark"
-    | "act"
     | "metal"
     | "rubber"
     | "glass"
     | "accent"
-    | "accent2";
+    | "accent2"
+    | "act"
+    | "actD"
+    | "actB"
+    | "actK";
+
+export const isActuator = (m: Mesh) => m.mat.startsWith("act");
+
+// Joint data carried by an actuator: name and typical peak torque (N·m).
+export interface JointTag {
+    jn: string;
+    nm: number;
+}
 
 export interface Mesh {
     v: Vec3[];
@@ -20,11 +34,32 @@ export interface Mesh {
     c: Vec3;
     part: number;
     edges?: Map<string, number[]>;
+    joint?: JointTag & { c: Vec3; ax: Vec3 };
+    mid?: number;
 }
 
 export interface Label {
     p: Vec3;
     text: string;
+}
+
+export interface Motor extends JointTag {
+    mid: number;
+    c: Vec3;
+    a: Vec3;
+    r: number;
+    L: number;
+}
+
+// Line work drawn on an actuator: gear teeth, the keyed shaft, a rotation
+// arrow and (seen through the housing) the stator slots.
+export interface Detail {
+    kind: "gear" | "planet" | "key" | "arc" | "stator";
+    mid: number;
+    pts: Vec3[];
+    c: Vec3;
+    n: Vec3;
+    closed: boolean;
 }
 
 interface TubeOpts {
@@ -47,12 +82,18 @@ interface LinkOpts extends SqOpts {
 
 const signedPow = (w: number, e: number) => Math.sign(w) * Math.abs(w) ** e;
 
+// Axial offsets (in motor lengths) of each stage in the exploded view.
+const EXPLODE = { cap: -0.9, body: 0, stage: 0.9, output: 1.8 } as const;
+type Stage = keyof typeof EXPLODE;
+
 export class Scene {
     meshes: Mesh[] = [];
     labels: Label[] = [];
-    // End effector or foot, for motion traces.
+    motors: Motor[] = [];
+    details: Detail[] = [];
+    // End effector or foot.
     tip: Vec3 = [0, 0, 0];
-    private part = 0;
+    part = 0;
 
     private add(v: Vec3[], f: number[][], mat: Material): Mesh {
         let c: Vec3 = [0, 0, 0];
@@ -62,7 +103,7 @@ export class Scene {
         return m;
     }
 
-    // Start a new rigid part (used to group meshes for the exploded view).
+    // Start a new rigid part.
     next(): this {
         this.part++;
         return this;
@@ -150,5 +191,90 @@ export class Scene {
 
     ball(c: Vec3, r: number, mat: Material): Mesh {
         return this.sq(c, [[1, 0, 0], [0, 1, 0], [0, 0, 1]], [r, r, r], 1, 1, mat, { nu: 16, nv: 10 });
+    }
+
+    // Plain 8-vertex box, cheap enough for cooling fins.
+    cuboid(c: Vec3, axes: [Vec3, Vec3, Vec3], s: Vec3, mat: Material): Mesh {
+        const v: Vec3[] = [];
+        for (const i of [-1, 1])
+            for (const j of [-1, 1])
+                for (const k of [-1, 1])
+                    v.push(V.add(c, V.add(V.mul(axes[0], i * s[0]), V.add(V.mul(axes[1], j * s[1]), V.mul(axes[2], k * s[2])))));
+        const f = [
+            [0, 1, 3, 2],
+            [4, 6, 7, 5],
+            [0, 4, 5, 1],
+            [2, 3, 7, 6],
+            [0, 2, 6, 4],
+            [1, 5, 7, 3],
+        ];
+        return this.add(v, f, mat);
+    }
+
+    // Detailed rotary actuator centred on c, output face toward `ax`: encoder
+    // cap, finned housing, planetary stage, flange with a bolt circle, hub and
+    // keyed shaft. `explode` > 0 slides the stages apart along the axis.
+    motor(c: Vec3, ax: Vec3, r: number, L: number, tag: JointTag, explode = 0): Motor {
+        const a = V.norm(ax);
+        const [ex, , ez] = basis(a);
+        const mid = this.motors.length;
+        const shift = (st: Stage) => V.mul(a, L * explode * EXPLODE[st]);
+        const own = (m: Mesh, st: Stage) => {
+            const o = shift(st);
+            if (explode) {
+                m.v = m.v.map((p) => V.add(p, o));
+                m.c = V.add(m.c, o);
+            }
+            m.joint = { ...tag, c, ax: a };
+            m.mid = mid;
+        };
+        const at = (base: Vec3, k: number) => V.add(base, V.mul(a, L * k));
+        const radial = (t: number, rr: number) => V.add(V.mul(ex, Math.cos(t) * rr), V.mul(ez, Math.sin(t) * rr));
+        const back = at(c, -0.5);
+        const front = at(c, 0.5);
+
+        own(this.tube(back, at(back, 0.1), r * 0.8, r * 0.8, "actD"), "cap");
+        own(this.tube(at(back, 0.1), front, r, r, "act"), "body");
+        for (let i = 0; i < 18; i++) {
+            const d = radial((i / 18) * Math.PI * 2, 1);
+            own(this.cuboid(V.add(at(c, -0.06), V.mul(d, r * 1.05)), [d, a, V.cross(d, a)], [r * 0.07, L * 0.3, r * 0.022], "actD"), "body");
+        }
+        const flangeTop = at(front, 0.12);
+        own(this.tube(front, flangeTop, r * 0.55, r * 0.55, "actB"), "output");
+        own(this.tube(flangeTop, at(front, 0.2), r * 0.2, r * 0.2, "actB"), "output");
+        for (let i = 0; i < 6; i++) {
+            const p = V.add(flangeTop, radial((i / 6) * Math.PI * 2 + 0.5, r * 0.4));
+            own(this.tube(p, V.add(p, V.mul(a, L * 0.03)), r * 0.065, r * 0.065, "actK", { n: 8 }), "output");
+        }
+        if (explode) own(this.tube(front, at(front, 0.05), r * 0.95, r * 0.95, "actD"), "stage");
+
+        // Toothed ring of n teeth, radius R, tooth height amp, centred at off.
+        const ring = (o: Vec3, R: number, n: number, amp: number, rot = 0, off: Vec3 = [0, 0, 0]) => {
+            const pts: Vec3[] = [];
+            for (let i = 0; i < n * 4; i++) {
+                const q = i % 4;
+                pts.push(V.add(V.add(o, off), radial(rot + (i / (n * 4)) * Math.PI * 2, R + (q === 1 || q === 2 ? amp : 0))));
+            }
+            return pts;
+        };
+        const detail = (kind: Detail["kind"], st: Stage, pts: Vec3[], plane: Vec3, closed = true) => {
+            const o = shift(st);
+            this.details.push({ kind, mid, pts: pts.map((p) => V.add(p, o)), c: V.add(plane, o), n: a, closed });
+        };
+        const face = at(front, explode ? 0.05 : 1e-3);
+        detail("gear", "stage", ring(face, r * 0.92, 40, -r * 0.06), face);
+        for (let k = 0; k < 3; k++) detail("planet", "stage", ring(face, r * 0.11, 10, r * 0.035, 0.2, radial(k * 2.094 + 0.3, r * 0.72)), face);
+        if (explode) detail("planet", "stage", ring(face, r * 0.2, 8, r * 0.05), face);
+        const hubFace = at(front, 0.2 + 1e-3);
+        const key = [0, 1, 2, 3].map((i) => V.add(hubFace, radial(Math.PI / 4 + (i * Math.PI) / 2, r * 0.1)));
+        detail("key", "output", key, hubFace);
+        const arcPlane = at(front, 0.08);
+        const arc = Array.from({ length: 25 }, (_, i) => V.add(arcPlane, radial(-0.4 + (i / 24) * 1.9, r * 1.32)));
+        detail("arc", "output", arc, arcPlane, false);
+        detail("stator", "body", ring(c, r * 0.8, 12, -r * 0.14), c);
+
+        const m: Motor = { ...tag, mid, c, a, r, L };
+        this.motors.push(m);
+        return m;
     }
 }

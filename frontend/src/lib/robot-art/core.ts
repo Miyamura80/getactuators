@@ -1,16 +1,8 @@
-// Projection, face building, framing and shared drawing helpers. Rendering is
-// a painter's algorithm over flat-shaded faces: good enough at thumbnail
-// size, and it keeps the output crisp and dependency-free (no WebGL).
+// Projection, face building, framing and edge extraction. Rendering is a
+// painter's algorithm over flat faces: good enough at thumbnail size, and it
+// keeps the output crisp and dependency-free (no WebGL).
 import { V, type Vec3 } from "./math";
 import type { Mesh, Scene } from "./scene";
-
-export type Rgb = [number, number, number];
-export const CYAN: Rgb = [195, 255, 253];
-
-export const rgb = (c: Rgb, a?: number) =>
-    a == null ? `rgb(${c[0] | 0},${c[1] | 0},${c[2] | 0})` : `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${a})`;
-export const mix = (a: Rgb, b: Rgb, t: number): Rgb => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
-export const clamp01 = (x: number) => Math.max(0, Math.min(1, x));
 
 export interface CamSpec {
     yaw: number;
@@ -59,9 +51,6 @@ export interface Face {
     all: Face[];
 }
 
-type Offset = (m: Mesh) => Vec3;
-const noOffset: Offset = () => [0, 0, 0];
-
 // Newell's method: a robust normal for any planar-ish polygon.
 function newell(pts: Vec3[]): Vec3 {
     let n: Vec3 = [0, 0, 0];
@@ -73,13 +62,12 @@ function newell(pts: Vec3[]): Vec3 {
     return n;
 }
 
-export function buildFaces(scene: Scene, cam: Camera, offset: Offset = noOffset): Face[] {
+export function buildFaces(scene: Scene, cam: Camera): Face[] {
     const out: Face[] = [];
     for (const m of scene.meshes) {
-        const o = offset(m);
-        const wv = m.v.map((p) => V.add(p, o));
+        const wv = m.v;
         const cv = wv.map((p) => cam.to(p));
-        const mc = V.add(m.c, o);
+        const mc = m.c;
         const list: Face[] = [];
         m.f.forEach((f, fi) => {
             const pts = f.map((i) => wv[i]);
@@ -98,8 +86,6 @@ export function buildFaces(scene: Scene, cam: Camera, offset: Offset = noOffset)
     return out;
 }
 
-export const frontToBack = (faces: Face[]) => faces.filter((x) => x.front).sort((a, b) => b.z - a.z);
-
 export interface Box {
     x: number;
     y: number;
@@ -116,16 +102,15 @@ export interface Frame {
 }
 
 // Scale and place the projected robot(s) inside a pixel box.
-export function fit(scenes: Scene[], cam: Camera, box: Box, offset: Offset = noOffset): Frame {
+export function fit(scenes: Scene[], cam: Camera, box: Box): Frame {
     let x0 = 1e9;
     let y0 = 1e9;
     let x1 = -1e9;
     let y1 = -1e9;
     for (const s of scenes)
         for (const m of s.meshes) {
-            const o = offset(m);
             for (const p of m.v) {
-                const q = cam.to(V.add(p, o));
+                const q = cam.to(p);
                 x0 = Math.min(x0, q[0]);
                 x1 = Math.max(x1, q[0]);
                 y0 = Math.min(y0, q[1]);
@@ -138,22 +123,6 @@ export function fit(scenes: Scene[], cam: Camera, box: Box, offset: Offset = noO
     return { P: (q) => [ox + q[0] * sc, oy + q[1] * sc], bounds: [ox + x0 * sc, oy + y0 * sc, ox + x1 * sc, oy + y1 * sc] };
 }
 
-export interface Lights {
-    key: Vec3;
-    fill: Vec3;
-    rim: Vec3;
-}
-
-// Studio lights fixed relative to the camera: key upper left, fill right, rim behind.
-export function lights(cam: Camera): Lights {
-    const back = V.mul(cam.fw, -1);
-    return {
-        key: V.norm(V.add(V.add(V.mul(cam.rt, -0.55), V.mul(cam.up, 0.85)), V.mul(back, 0.55))),
-        fill: V.norm(V.add(V.mul(cam.rt, 0.8), V.mul(back, 0.4))),
-        rim: V.norm(V.add(V.add(V.mul(cam.rt, 0.6), V.mul(cam.up, 0.35)), V.mul(back, -0.75))),
-    };
-}
-
 export function polyPath(ctx: CanvasRenderingContext2D, fc: Face, fr: Frame): void {
     ctx.beginPath();
     fc.s.forEach((q, i) => {
@@ -162,16 +131,6 @@ export function polyPath(ctx: CanvasRenderingContext2D, fc: Face, fr: Frame): vo
         else ctx.moveTo(x, y);
     });
     ctx.closePath();
-}
-
-// Fill a face and stroke it in the same colour to hide anti-aliasing seams.
-export function paint(ctx: CanvasRenderingContext2D, fc: Face, fr: Frame, color: string): void {
-    polyPath(ctx, fc, fr);
-    ctx.fillStyle = color;
-    ctx.fill();
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 0.6;
-    ctx.stroke();
 }
 
 function edgeMap(m: Mesh): Map<string, number[]> {
@@ -225,39 +184,4 @@ export function strokeEdges(ctx: CanvasRenderingContext2D, fc: Face, fr: Frame, 
         ctx.lineTo(b[0], b[1]);
         ctx.stroke();
     }
-}
-
-// Floor shadow: every face projected onto y = 0 along a light from above.
-export function floorShadow(ctx: CanvasRenderingContext2D, scene: Scene, cam: Camera, fr: Frame, color: string, alpha: number, blur: number): void {
-    const { width: W, height: H } = ctx.canvas;
-    const oc = document.createElement("canvas");
-    oc.width = W;
-    oc.height = H;
-    const o = oc.getContext("2d");
-    if (!o) return;
-    const ls = V.norm([0.25, 1, 0.35]);
-    o.fillStyle = color;
-    for (const m of scene.meshes)
-        for (const f of m.f) {
-            o.beginPath();
-            f.forEach((i, k) => {
-                const p = m.v[i];
-                const [x, y] = fr.P(cam.to(V.sub(p, V.mul(ls, p[1] / ls[1]))));
-                if (k) o.lineTo(x, y);
-                else o.moveTo(x, y);
-            });
-            o.fill();
-        }
-    ctx.save();
-    ctx.globalAlpha = alpha;
-    if (blur) ctx.filter = `blur(${blur}px)`;
-    ctx.drawImage(oc, 0, 0);
-    ctx.restore();
-}
-
-// Deterministic 0..1 noise, so point clouds are identical on every paint.
-export function hash(a: number, b: number): number {
-    let h = (a * 374761393 + b * 668265263) | 0;
-    h = (h ^ (h >>> 13)) * 1274126177;
-    return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
 }

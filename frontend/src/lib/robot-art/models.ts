@@ -3,8 +3,15 @@
 //   arm       - UR5e-class 6-DOF cobot, gripper pointing down
 //   humanoid  - Unitree G1-class biped, about 1.3 m tall
 //   quadruped - Unitree Go2-class dog, knees bent backwards
-import { M, type Mat4, type Vec3 } from "./math";
+// Every joint carries a detailed actuator with its name and a typical peak
+// torque for the reference robot class.
+import { M, type Mat4, V, type Vec3 } from "./math";
 import { Scene } from "./scene";
+
+// A joint actuator sized to the drum it replaces (radius r, length L).
+function joint(s: Scene, c: Vec3, axis: Vec3, r: number, L: number, jn: string, nm: number): void {
+    s.motor(c, axis, r * 0.92, L * 0.9, { jn, nm });
+}
 
 const X: Vec3 = [1, 0, 0];
 const Y: Vec3 = [0, 1, 0];
@@ -33,49 +40,49 @@ export function arm(q: ArmPose = {}): Scene {
     s.tube([0, 0, 0], [0, 0.014, 0], 0.1, 0.1, "dark");
     s.tube([0, 0.014, 0], [0, 0.03, 0], 0.075, 0.075, "metal");
     s.tube([0, 0.03, 0], [0, 0.1, 0], 0.064, 0.064, "shell");
-    s.tube([0, 0.1, 0], [0, 0.116, 0], 0.066, 0.066, "act");
+    s.tube([0, 0.1, 0], [0, 0.116, 0], 0.066, 0.066, "shell");
     s.label([0, 0.108, 0.066], "J1 BASE");
 
     const F1 = M.chain(M.T(0, 0.116, 0), M.Ry(q1));
     s.next();
     s.tube(M.p(F1, [0, 0, 0]), M.p(F1, [0, 0.05, 0]), 0.062, 0.062, "shell");
     s.drum(M.p(F1, [0, 0.1, 0.01]), M.d(F1, Z), 0.064, 0.16, "shell");
-    s.drum(M.p(F1, [0, 0.1, -0.075]), M.d(F1, Z), 0.066, 0.014, "act");
+    s.drum(M.p(F1, [0, 0.1, -0.075]), M.d(F1, Z), 0.066, 0.014, "shell");
 
     // Upper arm between the shoulder (J2) and elbow (J3) housings.
     const F2 = M.chain(F1, M.T(0, 0.1, 0.14), M.Rz(q2));
     s.next();
     s.drum(M.p(F2, [0, 0, 0]), M.d(F2, Z), 0.064, 0.12, "shell");
-    s.drum(M.p(F2, [0, 0, 0.067]), M.d(F2, Z), 0.066, 0.014, "act");
+    s.drum(M.p(F2, [0, 0, 0.067]), M.d(F2, Z), 0.066, 0.014, "shell");
     s.label(M.p(F2, [0, 0, 0.07]), "J2 SHOULDER");
     s.tube(M.p(F2, [0.04, 0, 0]), M.p(F2, [L1 - 0.04, 0, 0]), 0.046, 0.046, "shell");
     s.drum(M.p(F2, [L1, 0, 0]), M.d(F2, Z), 0.054, 0.11, "shell");
-    s.drum(M.p(F2, [L1, 0, 0.061]), M.d(F2, Z), 0.056, 0.012, "act");
+    s.drum(M.p(F2, [L1, 0, 0.061]), M.d(F2, Z), 0.056, 0.012, "shell");
 
     // Forearm out to the first wrist joint.
     const F3 = M.chain(F2, M.T(L1, 0, -0.115), M.Rz(q3));
     s.next();
     s.drum(M.p(F3, [0, 0, 0]), M.d(F3, Z), 0.052, 0.1, "shell");
-    s.drum(M.p(F3, [0, 0, -0.056]), M.d(F3, Z), 0.054, 0.012, "act");
+    s.drum(M.p(F3, [0, 0, -0.056]), M.d(F3, Z), 0.054, 0.012, "shell");
     s.label(M.p(F3, [0, 0, -0.06]), "J3 ELBOW");
     s.tube(M.p(F3, [0.035, 0, 0]), M.p(F3, [L2 - 0.03, 0, 0]), 0.037, 0.037, "shell");
     s.drum(M.p(F3, [L2, 0, 0]), M.d(F3, Z), 0.044, 0.09, "shell");
-    s.drum(M.p(F3, [L2, 0, -0.05]), M.d(F3, Z), 0.045, 0.01, "act");
+    s.drum(M.p(F3, [L2, 0, -0.05]), M.d(F3, Z), 0.045, 0.01, "shell");
 
     // Wrist: three compact joints with alternating axes.
     const F4 = M.chain(F3, M.T(L2, 0, 0.095), M.Rz(q4));
     s.next();
     s.drum(M.p(F4, [0, 0, 0]), M.d(F4, Z), 0.044, 0.1, "shell");
-    s.drum(M.p(F4, [0, 0, 0.055]), M.d(F4, Z), 0.045, 0.01, "act");
+    s.drum(M.p(F4, [0, 0, 0.055]), M.d(F4, Z), 0.045, 0.01, "shell");
     s.tube(M.p(F4, [0, -0.03, 0]), M.p(F4, [0, -0.07, 0]), 0.04, 0.04, "shell");
     s.drum(M.p(F4, [0, -0.1, 0]), M.d(F4, X), 0.044, 0.1, "shell");
-    s.drum(M.p(F4, [0.055, -0.1, 0]), M.d(F4, X), 0.045, 0.01, "act");
+    s.drum(M.p(F4, [0.055, -0.1, 0]), M.d(F4, X), 0.045, 0.01, "shell");
     s.label(M.p(F4, [0.06, -0.1, 0]), "J4-J6 WRIST");
 
     const F5 = M.chain(F4, M.T(0, -0.1, 0), M.Rx(q5));
     s.next();
     s.drum(M.p(F5, [0, -0.075, 0]), M.d(F5, Y), 0.044, 0.07, "shell");
-    s.drum(M.p(F5, [0, -0.115, 0]), M.d(F5, Y), 0.045, 0.01, "act");
+    s.drum(M.p(F5, [0, -0.115, 0]), M.d(F5, Y), 0.045, 0.01, "shell");
     s.tube(M.p(F5, [0, -0.12, 0]), M.p(F5, [0, -0.13, 0]), 0.032, 0.032, "metal");
 
     // Parallel gripper on the tool flange.
@@ -87,6 +94,14 @@ export function arm(q: ArmPose = {}): Scene {
         s.link(M.p(F6, [0, -0.07, z]), M.p(F6, [0, -0.13, z]), 0.014, 0.03, "metal", { hint: M.d(F6, Z), e1: 0.3, e2: 0.3 });
     }
     s.tip = M.p(F6, [0, -0.13, 0]);
+
+    // The drives inside the housings (UR5e: size-3 joints 150 N·m, wrists 28 N·m).
+    s.motor([0, 0.06, 0], Y, 0.052, 0.085, { jn: "J1 BASE", nm: 150 });
+    s.motor(M.p(F2, [0, 0, -0.01]), M.d(F2, Z), 0.052, 0.1, { jn: "J2 SHOULDER", nm: 150 });
+    s.motor(M.p(F2, [L1, 0, -0.005]), M.d(F2, Z), 0.045, 0.09, { jn: "J3 ELBOW", nm: 150 });
+    s.motor(M.p(F3, [L2, 0, 0]), M.d(F3, Z), 0.036, 0.075, { jn: "J4 WRIST 1", nm: 28 });
+    s.motor(M.p(F4, [0, -0.1, 0]), M.d(F4, X), 0.036, 0.08, { jn: "J5 WRIST 2", nm: 28 });
+    s.motor(M.p(F5, [0, -0.07, 0]), M.d(F5, [0, -1, 0]), 0.036, 0.055, { jn: "J6 WRIST 3", nm: 28 });
     return s;
 }
 
@@ -114,18 +129,17 @@ export function humanoid(q: HumanoidPose = {}): Scene {
         [-1, hipR, kneeR],
     ]) {
         s.next();
-        s.drum(M.p(P, [0, 0, side * 0.1]), Y, 0.045, 0.06, "act");
+        joint(s, M.p(P, [0, 0, side * 0.1]), Y, 0.045, 0.06, "HIP", 88);
         const H = M.chain(P, M.T(0, -0.06, side * 0.1), M.Rz(hip));
-        s.drum(M.p(H, [0, 0, 0]), M.d(H, Z), 0.058, 0.085, "act");
-        s.drum(M.p(H, [0, 0, side * 0.045]), M.d(H, Z), 0.059, 0.008, "accent2");
+        joint(s, M.p(H, [0, 0, 0]), V.mul(M.d(H, Z), side), 0.058, 0.085, "HIP", 88);
         s.link(M.p(H, [0.005, -0.02, 0]), M.p(H, [0.005, -0.28, 0]), 0.1, 0.115, "shell", { hint: M.d(H, Z), e1: 0.45, e2: 0.4, taper: [1.15, 1.1] });
         const K = M.chain(H, M.T(0, -0.3, 0), M.Rz(knee));
-        s.drum(M.p(K, [0, 0, 0]), M.d(K, Z), 0.052, 0.1, "act");
+        joint(s, M.p(K, [0, 0, 0]), V.mul(M.d(K, Z), side), 0.052, 0.1, "KNEE", 120);
         s.link(M.p(K, [-0.008, -0.03, 0]), M.p(K, [-0.004, -0.28, 0]), 0.075, 0.085, "dark", { hint: M.d(K, Z), e1: 0.45, e2: 0.45, taper: [1.2, 1.15] });
         s.link(M.p(K, [0.03, -0.06, 0]), M.p(K, [0.028, -0.2, 0]), 0.06, 0.03, "shell", { hint: M.d(K, Z), e1: 0.4, e2: 0.4 });
         // Ankle counter-rotates so the sole stays flat on the floor.
         const A = M.chain(K, M.T(0, -0.3, 0), M.Rz(-(hip + knee)));
-        s.drum(M.p(A, [0, 0, 0]), M.d(A, Z), 0.03, 0.07, "dark");
+        joint(s, M.p(A, [0, 0, 0]), V.mul(M.d(A, Z), side), 0.03, 0.07, "ANKLE", 50);
         s.box(M.p(A, [0.035, -0.045, 0]), axesOf(A), [0.11, 0.024, 0.045], "dark", 0.3, 0.35);
         s.box(M.p(A, [0.035, -0.066, 0]), axesOf(A), [0.112, 0.006, 0.047], "rubber", 0.2, 0.35);
         if (side === 1) {
@@ -138,7 +152,7 @@ export function humanoid(q: HumanoidPose = {}): Scene {
     s.next();
     s.drum(M.p(P, [0, 0.02, 0]), Y, 0.075, 0.1, "dark");
     s.box(M.p(P, [0, -0.02, 0]), PA, [0.07, 0.05, 0.14], "dark", 0.4, 0.4);
-    s.drum(M.p(P, [0, 0.1, 0]), Y, 0.07, 0.05, "act");
+    joint(s, M.p(P, [0, 0.1, 0]), Y, 0.07, 0.05, "WAIST", 88);
     s.label(M.p(P, [0.07, 0.1, 0]), "WAIST");
     s.box(M.p(P, [0, 0.17, 0]), PA, [0.07, 0.06, 0.1], "dark", 0.5, 0.45);
     s.sq(M.p(P, [0, 0.31, 0]), PA, [0.1, 0.13, 0.16], 0.4, 0.45, "shell", { taper: [1.05, 1.12] });
@@ -152,11 +166,11 @@ export function humanoid(q: HumanoidPose = {}): Scene {
     ]) {
         s.next();
         const S = M.chain(P, M.T(0, 0.4, side * 0.2), M.Rz(sh), M.Rx(side * 0.12));
-        s.drum(M.p(S, [0, 0, 0]), M.d(S, Z), 0.05, 0.08, "act");
-        s.drum(M.p(S, [0, -0.055, side * 0.02]), M.d(S, Y), 0.042, 0.05, "act");
+        joint(s, M.p(S, [0, 0, 0]), V.mul(M.d(S, Z), side), 0.05, 0.08, "SHOULDER", 25);
+        joint(s, M.p(S, [0, -0.055, side * 0.02]), M.d(S, Y), 0.042, 0.05, "SHOULDER", 25);
         s.link(M.p(S, [0, -0.08, side * 0.02]), M.p(S, [0, -0.22, side * 0.02]), 0.068, 0.072, "shell", { hint: M.d(S, Z), e1: 0.5, e2: 0.5 });
         const E = M.chain(S, M.T(0, -0.24, side * 0.02), M.Rz(el));
-        s.drum(M.p(E, [0, 0, 0]), M.d(E, Z), 0.042, 0.075, "act");
+        joint(s, M.p(E, [0, 0, 0]), V.mul(M.d(E, Z), side), 0.042, 0.075, "ELBOW", 25);
         s.link(M.p(E, [0, -0.02, 0]), M.p(E, [0, -0.19, 0]), 0.058, 0.06, "dark", { hint: M.d(E, Z), e1: 0.5, e2: 0.5, taper: [1.1, 1.1] });
         s.box(M.p(E, [0.005, -0.245, 0]), axesOf(E), [0.035, 0.045, 0.018], "dark", 0.5, 0.5);
         if (side === 1) {
@@ -204,10 +218,10 @@ export function quadruped(q: QuadrupedPose = {}): Scene {
         for (const side of [1, -1]) {
             s.next();
             const hx = fx * 0.19;
-            s.drum(M.p(B, [hx, -0.005, side * 0.085]), X, 0.046, 0.085, "act");
+            joint(s, M.p(B, [hx, -0.005, side * 0.085]), V.mul(X, fx), 0.046, 0.085, "HIP AB/AD", 24);
             const hp = M.p(B, [hx, -0.01, side * 0.155]);
-            s.drum(hp, Z, 0.05, 0.06, "act");
-            s.drum(M.p(B, [hx, -0.01, side * 0.19]), Z, 0.052, 0.012, "accent2");
+            joint(s, hp, V.mul(Z, side), 0.05, 0.06, "THIGH", 24);
+            joint(s, M.p(B, [hx, -0.01, side * 0.2]), V.mul(Z, side), 0.05, 0.035, "KNEE", 45);
             const [dx, dy] = feet[i++];
             const foot: Vec3 = [hp[0] + dx, 0.022 + dy, hp[2]];
             const vx = foot[0] - hp[0];

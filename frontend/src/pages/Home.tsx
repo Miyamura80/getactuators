@@ -138,7 +138,7 @@ function CatCard({ cat, count }: { cat: Cat; count: number }) {
             aria-label={`${cat.label}: ${count} actuators`}
         >
             <div className="cat-thumb">
-                <RobotArt kind={cat.key} hue={cat.hue} framing={cat.feature ? "card-lg" : "card"} />
+                <RobotArt kind={cat.key} framing={cat.feature ? "card-lg" : "card"} />
                 <span className="cat-scrim" />
             </div>
             <div className="cat-meta" style={{ ["--hue" as string]: String(cat.hue) }}>
