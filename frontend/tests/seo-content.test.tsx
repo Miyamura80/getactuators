@@ -40,6 +40,35 @@ test("product catalog facts survive React mount alongside the exploded visual", 
     expect(related.some((item) => document.querySelector(`a[href="https://actuatorlist.com/actuators/${encodeURIComponent(item.id)}"]`))).toBe(true);
 });
 
+test("product heading offers a native jump to persistent specifications", () => {
+    const a = ACTUATORS.find((item) => item.notes && item.sources.length && item.use_cases.length)!;
+    const root = loadPage(`/actuators/${encodeURIComponent(a.id)}`);
+    const target = document.getElementById("catalog-content")!;
+    const view = render(<ExplodedView id={a.id} />, { container: root });
+    const link = view.getByRole("link", { name: "Jump to specifications" });
+    expect(link.getAttribute("href")).toBe("#catalog-content");
+    expect(link.closest(".xp-heading")?.querySelector("h1")?.textContent).toBe(a.name);
+    expect(document.querySelectorAll("#catalog-content")).toHaveLength(1);
+    expect(root.contains(target)).toBe(false);
+    expect(target.querySelector("h2")?.textContent).toBe("Specifications");
+    expect(target.querySelector("table")).not.toBeNull();
+    expect(target.closest(".xp-stage")).toBeNull();
+    const click = new MouseEvent("click", { bubbles: true, cancelable: true, button: 0 });
+    link.dispatchEvent(click);
+    expect(click.defaultPrevented).toBe(false);
+});
+
+test("persistent specifications accept focus without entering the tab order", () => {
+    const a = ACTUATORS.find((item) => item.notes && item.sources.length && item.use_cases.length)!;
+    const root = loadPage(`/actuators/${encodeURIComponent(a.id)}`);
+    render(<ExplodedView id={a.id} />, { container: root });
+    const target = document.getElementById("catalog-content")!;
+    expect(target.getAttribute("tabindex")).toBe("-1");
+    expect(target.getAttribute("aria-label")).toBe("Specifications and catalog details");
+    target.focus();
+    expect(document.activeElement).toBe(target);
+});
+
 test("homepage FAQ remains visible and equivalent to JSON-LD after React mount", async () => {
     const root = await loadPage("/");
     const faq = homePage.faq!;

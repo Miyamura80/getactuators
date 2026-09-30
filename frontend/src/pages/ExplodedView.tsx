@@ -121,6 +121,9 @@ export function ExplodedView({ id }: Props) {
                         </p>
                         <h1>{actuator.name}</h1>
                         <p className="xp-hint">Scroll to pull it apart</p>
+                        <a className="xp-specs-jump" href="#catalog-content">
+                            Jump to specifications
+                        </a>
                     </div>
 
                     <div className="xp-viewport">

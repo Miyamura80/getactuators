@@ -65,7 +65,7 @@ export async function renderSpaPage(page: Page): Promise<string> {
     const content = split < 0 ? "" : body.slice(split);
     const prerender = `<div class="ga-page">${pageBody(fallback)}</div>`;
     const persistent = content
-        ? `<section class="ga-page" id="catalog-content" aria-label="Catalog details"><div class="ga-main">${markdownToHtml(content)}</div></section>`
+        ? `<section class="ga-page" id="catalog-content" ${page.ogType === "product" ? 'tabindex="-1" aria-label="Specifications and catalog details"' : 'aria-label="Catalog details"'}><div class="ga-main">${markdownToHtml(content)}</div></section>`
         : "";
     const rewriter = new HTMLRewriter()
         .on("html", {
