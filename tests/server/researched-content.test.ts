@@ -2,6 +2,24 @@ import { expect, test } from "bun:test";
 import { findPage } from "@/server/agent/pages";
 import { get } from "./agent-helpers";
 
+// Backend CI does not build frontend/dist. Exercise the same asset route in
+// an isolated process using checked-in public assets, without mutating the
+// cached DIST_DIR in the rest of the server tests.
+async function targetStatus(path: string): Promise<number> {
+    if (!path.startsWith("/actuator-images/")) return (await get(path)).status;
+    const child = Bun.spawnSync({
+        cmd: [
+            process.execPath,
+            "--eval",
+            `import { get } from "./tests/server/agent-helpers"; console.log((await get(${JSON.stringify(path)})).status);`,
+        ],
+        cwd: process.cwd(),
+        env: { ...process.env, DIST_DIR: "frontend/public" },
+    });
+    expect(child.exitCode, child.stderr.toString()).toBe(0);
+    return Number(child.stdout.toString().trim());
+}
+
 test("all root-relative editorial links and images resolve through the real server", async () => {
     const targets = new Set<string>();
     for (const path of editorial) {
@@ -19,7 +37,7 @@ test("all root-relative editorial links and images resolve through the real serv
     }
     expect(targets.size).toBeGreaterThan(10);
     for (const target of targets) {
-        expect((await get(target)).status, target).toBe(200);
+        expect(await targetStatus(target), target).toBe(200);
     }
 });
 
@@ -252,7 +270,7 @@ test("editorial product photos use correct local assets, descriptive alt text an
             const photo = photos.find((p) => p.src === `/actuator-images/${id}.webp`);
             expect(photo?.alt).toMatch(/product photo/i);
             expect(links).toContain(`/actuators/${id}`);
-            expect((await get(`/actuator-images/${id}.webp`)).status).toBe(200);
+            expect(await targetStatus(`/actuator-images/${id}.webp`)).toBe(200);
         }
         expect(html).toContain("Manufacturer/distributor product image");
         expect(html).toContain("not a measured test");
