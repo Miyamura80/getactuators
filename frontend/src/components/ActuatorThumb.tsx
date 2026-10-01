@@ -6,6 +6,7 @@ import { colorForBrand } from "../lib/brands";
 interface Props {
     actuator: Actuator;
     className?: string;
+    priority?: boolean;
 }
 
 // Deterministic small hash so every actuator gets a stable, distinct render
@@ -22,7 +23,7 @@ function hash(s: string): number {
 // A stylised actuator seen end-on, drawn in the brand's thin-cyan-on-black
 // line style. Detail counts (slots, bolts, gear teeth) vary per actuator so
 // the gallery reads as a set of distinct parts rather than one repeated icon.
-export function ActuatorThumb({ actuator, className }: Props) {
+export function ActuatorThumb({ actuator, className, priority = false }: Props) {
     const [failed, setFailed] = useState(false);
 
     // Prefer a real product photo when we have one; otherwise fall through to
@@ -38,8 +39,9 @@ export function ActuatorThumb({ actuator, className }: Props) {
                 src={actuator.image_url}
                 className="actuator-photo"
                 alt={`${actuator.name} product photo`}
-                loading="lazy"
-                decoding="async"
+                loading={priority ? "eager" : "lazy"}
+                fetchPriority={priority ? "high" : undefined}
+                decoding={priority ? "auto" : "async"}
                 onError={() => setFailed(true)}
             />
         );

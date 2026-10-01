@@ -1,3 +1,5 @@
+import { ACTUATORS } from "@/catalog";
+import { galleryCards } from "@/catalog/gallery";
 import { DIST_DIR } from "../../static";
 import { graph } from "../jsonld";
 import { type Page, markdownPath } from "../pages";
@@ -85,6 +87,19 @@ export async function renderSpaPage(page: Page): Promise<string> {
         })
         .on("head", {
             element: (el) => {
+                // One tiny, already optimized photo: discover the leading gallery
+                // image while the application bundle is still downloading. Do not
+                // preload later cards (especially on a narrow mobile viewport).
+                const firstPhoto =
+                    page.path === "/actuators"
+                        ? galleryCards(ACTUATORS)[0]?.a.image_url
+                        : null;
+                if (firstPhoto) {
+                    el.append(
+                        `<link rel="preload" as="image" href="${esc(firstPhoto)}" fetchpriority="high">\n`,
+                        { html: true },
+                    );
+                }
                 el.append(`${headTags(meta)}\n<style>${PAGE_CSS}</style>\n`, {
                     html: true,
                 });

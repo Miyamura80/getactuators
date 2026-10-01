@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { galleryCards, type GallerySize } from "../../../src/catalog/gallery";
 import type { Actuator } from "../types";
 import { CATEGORY_MAP } from "../types";
 import { ACTUATORS } from "../lib/data";
@@ -8,40 +9,10 @@ import { ActuatorThumb } from "../components/ActuatorThumb";
 import { BrandMark } from "../components/BrandMark";
 import { BrandGlyph } from "../components/BrandGlyph";
 
-type Size = "lg" | "wide" | "sm";
-
-// Bento rhythm: the densest and highest-torque parts earn the big tiles so the
-// grid has a focal point, everything else fills in around them.
-function sizeFor(rankByDensity: number, rankByTorque: number): Size {
-    if (rankByDensity < 4) return "lg";
-    if (rankByTorque < 10) return "wide";
-    return "sm";
-}
+type Size = GallerySize;
 
 export function ActuatorsGallery() {
-    const cards = useMemo(() => {
-        const byDensity = [...ACTUATORS]
-            .filter((a) => a.torque_density_nm_per_kg != null)
-            .sort(
-                (a, b) =>
-                    (b.torque_density_nm_per_kg ?? 0) - (a.torque_density_nm_per_kg ?? 0),
-            )
-            .map((a) => a.id);
-        const byTorque = [...ACTUATORS]
-            .filter((a) => a.peak_torque_nm != null)
-            .sort((a, b) => (b.peak_torque_nm ?? 0) - (a.peak_torque_nm ?? 0))
-            .map((a) => a.id);
-        const dRank = new Map(byDensity.map((id, i) => [id, i]));
-        const tRank = new Map(byTorque.map((id, i) => [id, i]));
-
-        return ACTUATORS.map((a) => ({
-            a,
-            size: sizeFor(dRank.get(a.id) ?? 999, tRank.get(a.id) ?? 999),
-        })).sort((x, y) => {
-            const order: Record<Size, number> = { lg: 0, wide: 1, sm: 2 };
-            return order[x.size] - order[y.size];
-        });
-    }, []);
+    const cards = useMemo(() => galleryCards(ACTUATORS), []);
 
     return (
         <div className="gallery-page">
@@ -86,8 +57,8 @@ export function ActuatorsGallery() {
             </section>
 
             <div className="bento">
-                {cards.map(({ a, size }) => (
-                    <GalleryCard key={a.id} actuator={a} size={size} />
+                {cards.map(({ a, size }, index) => (
+                    <GalleryCard key={a.id} actuator={a} size={size} priority={index === 0} />
                 ))}
             </div>
 
@@ -99,7 +70,7 @@ export function ActuatorsGallery() {
     );
 }
 
-function GalleryCard({ actuator, size }: { actuator: Actuator; size: Size }) {
+function GalleryCard({ actuator, size, priority }: { actuator: Actuator; size: Size; priority: boolean }) {
     const cat = CATEGORY_MAP[actuator.category];
     return (
         <Link
@@ -108,7 +79,7 @@ function GalleryCard({ actuator, size }: { actuator: Actuator; size: Size }) {
             data-size={size}
         >
             <div className="bento-thumb">
-                <ActuatorThumb actuator={actuator} className="thumb-svg" />
+                <ActuatorThumb actuator={actuator} className="thumb-svg" priority={priority} />
             </div>
             <div className="bento-meta">
                 <span
