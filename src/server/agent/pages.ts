@@ -116,7 +116,7 @@ const STATIC_PAGES: Page[] = [
         "/privacy",
         "static",
         "Privacy at actuatorlist",
-        "No accounts, no cookies, no analytics: what happens to your data when you visit actuatorlist.",
+        "No accounts or advertising: optional opt-in analytics, browser preferences and what happens when you visit actuatorlist.",
         privacyBody,
         "WebPage",
     ),

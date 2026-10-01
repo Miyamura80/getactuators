@@ -187,7 +187,11 @@ export function AllActuators() {
                         type="button"
                         className="primary"
                         disabled={compare.size < 2}
-                        onClick={() => setShowCompare(true)}
+                        onClick={() => {
+                            if (compareRows.length < 2) return;
+                            window.dispatchEvent(new CustomEvent("actuatorlist:compare", { detail: { action: "open", productIds: compareRows.map((a) => a.id) } }));
+                            setShowCompare(true);
+                        }}
                     >
                         Compare
                     </button>
@@ -198,6 +202,7 @@ export function AllActuators() {
                 <ComparePanel
                     actuators={compareRows}
                     onRemove={(id) => {
+                        window.dispatchEvent(new CustomEvent("actuatorlist:compare", { detail: { action: "update", productIds: compareRows.filter((a) => a.id !== id).map((a) => a.id) } }));
                         onToggleCompare(id);
                         // Removing the last row empties the panel; drop back to the
                         // compare dock so the next selection starts clean.

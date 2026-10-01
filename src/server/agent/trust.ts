@@ -36,7 +36,9 @@ export function privacyBody(): string {
     return [
         "# Privacy at actuatorlist",
         "actuatorlist has no accounts, no sign-up forms, no newsletter and no payments, so it never asks for personal information. This page lists everything that does happen when you visit.",
-        `## Cookies and tracking\n\nThe site sets no cookies and runs no analytics, advertising or tracking scripts. The web app does not write to your browser's local storage.`,
+        "## Cookies and tracking\n\nOptional Google Analytics (GA4) is available only when configured by the site operator and only after you choose Allow analytics. Without a configured measurement ID there is no analytics banner or collection. Rejecting analytics sends no analytics events or cookieless pings. We respect Do Not Track and Global Privacy Control. Advertising storage, advertising personalization and Google signals are disabled.",
+        "Analytics uses cookies after opt-in and sends page paths and catalog product IDs for manufacturer/datasheet clicks, comparison actions and guide-to-product visits. Query strings, fragments, search text, link text, clipboard contents and user IDs are not included in our event parameters. Google receives network request details including your IP address and browser information when analytics is allowed.",
+        "The browser stores only your explicit analytics preference in local storage. Use the Analytics preferences button to change your choice or withdraw consent at any time; rejection stops further site analytics events and attempts to remove accessible GA cookies on this host and parent domains. It cannot recall information already sent to Google. If storage is unavailable, your choice applies only to the current page.",
         `## Requests to other services\n\n${bullets([
             "Fonts load from Google Fonts (fonts.googleapis.com and fonts.gstatic.com), so Google receives your IP address and browser details when the page loads. See Google's privacy policy for how it handles those requests.",
             "Some robot photos load from the manufacturer's own image host, which receives the same request details.",

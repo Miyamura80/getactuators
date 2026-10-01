@@ -5,6 +5,7 @@ import { agentsBody, authBody, pricingBody } from "../agent/manifests";
 import { mdDocument, mdStandalone } from "../agent/md";
 import { htmlResponse, markdownResponse, wantsMarkdown } from "../agent/negotiate";
 import { findPage, findPageForMarkdown, pageMarkdown } from "../agent/pages";
+import { measurementHtml } from "../measurement";
 import type { Handler, Route } from "../types";
 
 // HTML pages and their markdown twins. Each page answers:
@@ -32,7 +33,7 @@ const page: Handler = async (req) => {
     if (wantsMarkdown(req)) return markdownResponse(pageMarkdown(found));
     const html =
         found.kind === "spa" ? await renderSpaPage(found) : renderStaticPage(found);
-    return htmlResponse(html);
+    return htmlResponse(measurementHtml(html, found.path));
 };
 
 const twin: Handler = (req) => {
