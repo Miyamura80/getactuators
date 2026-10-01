@@ -27,13 +27,37 @@ function photo(
     return `<article class="ga-photo-card"><a class="ga-photo-link" href="/actuators/${id}"><img src="/actuator-images/${id}.webp" alt="${alt} product photo" width="320" height="320"></a><div class="ga-photo-copy"><h2><a href="/actuators/${id}">${name}</a></h2><dl class="ga-spec-grid">${chips}</dl><p class="ga-photo-note"><span class="ga-badge">Manufacturer spec</span> ${citation}. ${note}</p></div></article>`;
 }
 
+// Original 24-unit engineering pictograms; paths stay inline and decorative.
+const nodeIcons = {
+    Bus: "M3 7h16v12H3zM19 11h2v4h-2M6 13h4m-2-2v4m5-2h3",
+    Driver: "M7 7h10v10H7zM3 8h4m-4 4h4m-4 4h4m10-8h4m-4 4h4m-4 4h4M8 3v4m4-4v4m4-4v4M8 17v4m4-4v4m4-4v4M10 14l4-4",
+    Motor: "M5 6h13v12H5zM2 9h3m-3 6h3m13-3h4M9 9v6l3-4 3 4V9",
+    Gearbox:
+        "M9 3h6l1 3 3 1 2 5-2 5-3 1-1 3H9l-1-3-3-1-2-5 2-5 3-1zM15 12a3 3 0 1 1-6 0 3 3 0 1 1 6 0",
+    Output: "M2 10h8v4H2zM10 7h4v10h-4zM14 12h8m-4-4 4 4-4 4",
+    Winding:
+        "M2 16h2V8a2 2 0 0 1 4 0v8a2 2 0 0 0 4 0V8a2 2 0 0 1 4 0v8a2 2 0 0 0 4 0h2",
+    Housing: "M3 7l9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4M12 11v10M6 12v3m12-3v3",
+    Ambient: "M2 7h14a3 3 0 1 0-3-3M2 12h17m-3-3 3 3-3 3M2 17h9a3 3 0 1 1-3 3",
+    Rotor: "M19 12a7 7 0 1 1-14 0 7 7 0 1 1 14 0M14 12a2 2 0 1 1-4 0 2 2 0 1 1 4 0M12 5v3m7 4h-3m-4 7v-3m-7-4h3",
+    Load: "M8 7V5a4 4 0 0 1 8 0v2M6 7h12l3 14H3zM9 12h6m-3-3v6",
+    Encoder:
+        "M16 12a6 6 0 1 1-12 0 6 6 0 1 1 12 0M10 6v3m-6 3h3m3 6v-3M18 6h4v12h-4M13 10l2-2m-2 6 2 2",
+    Reference:
+        "M3 3h18v18H3zM3 7h4m-4 4h3m-3 4h4M18 13a4 4 0 1 1-8 0 4 4 0 1 1 8 0M14 7v12m-6-6h12",
+    Sim: "M2 3h20v14H2zM8 21h8m-4-4v4M5 13l4-6 5 7 5-5",
+    Identify: "M16 10a7 7 0 1 1-14 0 7 7 0 1 1 14 0M14 15l7 7M5 11h2V8h3v4h3",
+    Validate: "M7 4H4v18h16V4h-3M8 2h8v4H8zM7 13l3 3 7-7",
+} as const;
+
 // Original conceptual schematics. No measured axes, fitted curves or scores.
 function diagram(
     kind: "energy" | "thermal" | "precision" | "model",
     title: string,
 ): string {
-    const box = (x: number, y: number, text: string) =>
-        `<rect x="${x}" y="${y}" width="96" height="48" rx="7"/><text x="${x + 48}" y="${y + 29}" text-anchor="middle">${text}</text>`;
+    // Stack a 24-unit pictogram above the unchanged label, including on mobile.
+    const box = (x: number, y: number, text: keyof typeof nodeIcons) =>
+        `<rect x="${x}" y="${y}" width="96" height="48" rx="7"/><g data-icon="${text}" aria-hidden="true" transform="translate(${x + 36} ${y + 2})" fill="none" stroke="#c3fffd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${nodeIcons[text]}"/></g><text x="${x + 48}" y="${y + 42}" text-anchor="middle">${text}</text>`;
     const right = (x: number, y: number) => `<path d="M${x} ${y}h18m-6-5 6 5-6 5"/>`;
     let drawing: string;
     if (kind === "energy") {
