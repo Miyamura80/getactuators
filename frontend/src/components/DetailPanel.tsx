@@ -96,12 +96,12 @@ export function DetailPanel({ actuator, onClose }: Props) {
 
                 <div className="drawer-links">
                     {a.product_url && (
-                        <a href={a.product_url} target="_blank" rel="noopener noreferrer">
+                        <a href={a.product_url} data-measure-event="manufacturer_click" data-product-id={a.id} data-measure-surface="drawer" target="_blank" rel="noopener noreferrer">
                             Product page
                         </a>
                     )}
                     {a.datasheet_url && (
-                        <a href={a.datasheet_url} target="_blank" rel="noopener noreferrer">
+                        <a href={a.datasheet_url} data-measure-event="datasheet_click" data-product-id={a.id} data-measure-surface="drawer" target="_blank" rel="noopener noreferrer">
                             Datasheet
                         </a>
                     )}
