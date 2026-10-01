@@ -1,5 +1,20 @@
 # Tests
 
+## Editorial link checking
+
+The Markdown checker skips root-relative site URLs: it treats them as external
+HTTP URLs without a running application and cannot validate routes added in an
+unmerged PR. `tests/server/researched-content.test.ts` instead extracts every
+root-relative editorial link and image from real rendered HTML and requests it
+through the server. Sitemap resolution is also covered by the discovery tests.
+
+One exact external URL is exempted from availability checking: the CyberGear
+Chinese-manual mirror on roboticscv.com has an expired TLS certificate at the
+October 1, 2026 review. This is not a certificate bypass or proof the link is
+healthy. The content visibly discloses its third-party, unauthenticated origin
+and reduced provenance confidence. Replace the exemption when a verified,
+manufacturer-origin copy becomes available; other external links remain checked.
+
 ## Writing tests
 
 Tests are written using `bun:test`. To add a new test, create a `.test.ts` file in the `tests` directory.

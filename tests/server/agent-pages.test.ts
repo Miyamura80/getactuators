@@ -5,6 +5,7 @@ import { findPage } from "@/server/agent/pages";
 import { SITE_URL } from "@/server/site";
 import homeCapture from "../../frontend/tests/fixtures/home.json";
 import productCapture from "../../frontend/tests/fixtures/product.json";
+import researchedCaptures from "../../frontend/tests/fixtures/researched.json";
 import {
     expectFrontmatter,
     expectLeadingHeading,
@@ -154,7 +155,8 @@ describe("HTML pages", () => {
     });
 
     test("frontend mount captures match the actual server markup and FAQ graph", async () => {
-        for (const capture of [homeCapture, productCapture]) {
+        expect(researchedCaptures).toHaveLength(5);
+        for (const capture of [homeCapture, productCapture, ...researchedCaptures]) {
             const html = await (await get(capture.path)).text();
             expect(/<div id="root">[\s\S]*?<\/section>/.exec(html)?.[0]).toBe(
                 capture.body,

@@ -129,6 +129,7 @@ export default function App() {
                 </Link>
 
                 <footer className="foot">
+                    <a href="/guides">Engineering guides</a> {"·"}
                     Community dataset {"·"} v1 sourced from manufacturer pages via web
                     search {"·"} every row links its source {"·"} verify against
                     datasheets before engineering use.

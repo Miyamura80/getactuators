@@ -4,6 +4,7 @@ import { actuatorPath, actuatorSummary, categoryLabel } from "./catalog-md";
 import { CATALOG_UPDATED_AT } from "./freshness";
 import { PATHS } from "./links";
 import type { FaqItem } from "./pages-md";
+import { productSummary } from "./product-content";
 
 // schema.org JSON-LD builders. Pages combine these into one @graph.
 
@@ -200,7 +201,9 @@ export function product(a: Actuator): Node {
             ...property("Weight", a.weight_g, "g"),
             ...property("Torque density", a.torque_density_nm_per_kg, "Nm/kg"),
             ...property("Max speed", a.max_speed_rpm, "rpm"),
-            ...property("Backlash", a.backlash_arcmin, "arcmin"),
+            ...(productSummary(a.id)
+                ? []
+                : property("Backlash", a.backlash_arcmin, "arcmin")),
         ],
     };
     if (a.image_url) node.image = toAbsolute(a.image_url);

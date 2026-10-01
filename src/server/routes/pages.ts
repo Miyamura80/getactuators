@@ -63,6 +63,9 @@ const PAGE_PATHS = [
     "/about",
     "/contact",
     "/privacy",
+    "/guides",
+    "/guides/:slug",
+    "/comparisons/:slug",
 ];
 
 // Standalone agent documents open with their H1 (no frontmatter). /agents.md
@@ -89,4 +92,6 @@ export const routes: Route[] = [
     ...PAGE_PATHS.map((path): Route => ({ method: "GET", path, handler: page })),
     { method: "GET", path: "/:file", handler: twin },
     { method: "GET", path: "/actuators/:file", handler: twin },
+    { method: "GET", path: "/guides/:file", handler: twin },
+    { method: "GET", path: "/comparisons/:file", handler: twin },
 ];

@@ -75,6 +75,9 @@ export function Home() {
                     <Link to="/agents" className="page-nav-link">
                         Agents
                     </Link>
+                    <a href="/guides" className="page-nav-link">
+                        Guides
+                    </a>
                 </nav>
             </header>
 
