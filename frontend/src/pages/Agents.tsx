@@ -50,6 +50,9 @@ export function Agents() {
                     <Link to="/agents" className="page-nav-link" data-on={true}>
                         Agents
                     </Link>
+                    <a href="/guides" className="page-nav-link">
+                        Guides
+                    </a>
                 </nav>
             </header>
 

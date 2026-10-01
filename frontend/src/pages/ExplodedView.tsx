@@ -89,7 +89,9 @@ export function ExplodedView({ id }: Props) {
         );
     }
 
-    const mid = (PARTS.length - 1) / 2;
+    const reducerFamily = ["leaderdrive-lcs", "leaderdrive-lhd", "leaderdrive-lhs", "nidec-flexwave-wpg", "nidec-smart-flexwave-srh"].includes(id);
+    const parts = reducerFamily ? PARTS.filter((part) => !["rotor", "stator", "encoder"].includes(part.kind)) : PARTS;
+    const mid = (parts.length - 1) / 2;
 
     return (
         <div className="exploded-page">
@@ -110,6 +112,9 @@ export function ExplodedView({ id }: Props) {
                     <Link to="/agents" className="page-nav-link">
                         Agents
                     </Link>
+                    <a href="/guides" className="page-nav-link">
+                        Guides
+                    </a>
                 </nav>
             </header>
 
@@ -120,7 +125,7 @@ export function ExplodedView({ id }: Props) {
                             {actuator.country_flag} {actuator.brand}
                         </p>
                         <h1>{actuator.name}</h1>
-                        <p className="xp-hint">Scroll to pull it apart</p>
+                        <p className="xp-hint">{reducerFamily ? "Generic reducer illustration; configuration-specific internals vary. No motor included." : "Scroll to pull it apart"}</p>
                         <a className="xp-specs-jump" href="#catalog-content">
                             Jump to specifications
                         </a>
@@ -128,7 +133,7 @@ export function ExplodedView({ id }: Props) {
 
                     <div className="xp-viewport">
                         <div className="xp-scene">
-                            {PARTS.map((part, i) => (
+                            {parts.map((part, i) => (
                                 <div
                                     key={part.kind}
                                     className="xp-part"
@@ -141,11 +146,11 @@ export function ExplodedView({ id }: Props) {
                     </div>
 
                     <ol className="xp-callouts">
-                        {PARTS.map((part, i) => (
+                        {parts.map((part, i) => (
                             <li
                                 key={part.kind}
                                 className="xp-callout"
-                                style={{ ["--s" as string]: (i / PARTS.length).toFixed(3) }}
+                                style={{ ["--s" as string]: (i / parts.length).toFixed(3) }}
                             >
                                 <span className="xp-callout-idx">
                                     {String(i + 1).padStart(2, "0")}

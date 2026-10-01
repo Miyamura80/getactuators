@@ -78,10 +78,13 @@ function priority(path: string): string {
 }
 
 export function sitemapXml(): string {
-    const paths = [...allPages().map((p) => p.path), ...EXTRA_URLS];
-    const entries = paths.map(
+    const pages = [
+        ...allPages(),
+        ...EXTRA_URLS.map((path) => ({ path, updatedAt: CATALOG_UPDATED_AT })),
+    ];
+    const entries = pages.map(
         (p) =>
-            `  <url>\n    <loc>${xmlEscape(absoluteUrl(p))}</loc>\n    <lastmod>${CATALOG_UPDATED_AT}</lastmod>\n    <priority>${priority(p)}</priority>\n  </url>`,
+            `  <url>\n    <loc>${xmlEscape(absoluteUrl(p.path))}</loc>\n    <lastmod>${p.updatedAt ?? CATALOG_UPDATED_AT}</lastmod>\n    <priority>${priority(p.path)}</priority>\n  </url>`,
     );
     return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

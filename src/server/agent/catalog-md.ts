@@ -2,6 +2,11 @@ import { ACTUATORS, type Actuator, CATEGORIES, type Robot } from "@/catalog";
 import { resolveJoints, robotsUsingActuator } from "@/catalog/query";
 import { absoluteUrl } from "../site";
 import { bullets, humanize, mdLink, mdTable, mdText, num, usd } from "./md";
+import {
+    engineeringNotes,
+    engineeringSources,
+    productSummary,
+} from "./product-content";
 
 // Markdown fragments describing catalog records. Shared by the page twins,
 // llms-full.txt and the prerendered HTML.
@@ -20,6 +25,8 @@ export function actuatorLabel(a: Actuator): string {
 }
 
 export function actuatorSummary(a: Actuator): string {
+    const researched = productSummary(a.id);
+    if (researched) return researched;
     const parts = [
         `${categoryLabel(a.category)} actuator from ${a.brand}${a.country ? ` (${a.country})` : ""}.`,
         `Peak torque ${num(a.peak_torque_nm, "Nm")}, rated ${num(a.rated_torque_nm, "Nm")},`,
@@ -57,7 +64,18 @@ function specRows(a: Actuator): string[][] {
         ["Availability", a.availability ? humanize(a.availability) : "n/a"],
         ["Data status", a.verified ? "verified against sources" : "unverified"],
     ];
-    return rows.map(([k, v]) => [k, mdText(v)]);
+    return rows.map(([k, v]) => {
+        if (
+            productSummary(a.id) &&
+            (k === "Backlash" || k === "Backdrivable" || k === "Encoder")
+        ) {
+            return [
+                k,
+                "Legacy catalog placeholder; not a measured family rating. See engineering notes.",
+            ];
+        }
+        return [k, mdText(v)];
+    });
 }
 
 function similarTo(a: Actuator, limit = 5): Actuator[] {
@@ -75,7 +93,7 @@ export function actuatorBody(a: Actuator): string {
     const sections = [
         `# ${mdText(a.name)} by ${mdText(a.brand)}`,
         `> ${mdText(actuatorSummary(a))}`,
-        `## Specifications\n\n${mdTable(["Spec", "Value"], specRows(a))}`,
+        `## Specifications\n\n${mdTable(["Spec", "Value"], specRows(a))}${a.id === "cubemars-ak80-9" ? "\n\n**Legacy catalog / revision conflict:** retained catalog fields are not revalidated by this editorial review. Catalog mass is 485 g and motor-side encoder is 14-bit; the [reviewed V3.0 KV100 model page](https://www.cubemars.com/product/ak80-9-v3-0-robotic-actuator.html) lists 490 g and 16-bit inner sensing, while the [AK family manual V3.2.0](https://www.cubemars.com/data/cms/202602/ak-series-prodcut-manual-v3-2-0-for-ak-3-0-robotic-actuator.pdf) lists 21-bit. Confirm the installed revision before using these values or derived torque density; the documentation discrepancy is unresolved." : ""}`,
         `## Use cases\n\n${bullets(a.use_cases.map(humanize))}`,
     ];
     if (robots.length > 0) {
@@ -83,10 +101,21 @@ export function actuatorBody(a: Actuator): string {
             `## Robots that use it\n\n${bullets(robots.map((r) => `${mdText(r.name)} by ${mdText(r.brand)}: ${mdText(r.summary)}`))}`,
         );
     }
-    if (a.notes) sections.push(`## Notes\n\n${mdText(a.notes)}`);
-    const sources = [a.product_url, a.datasheet_url, ...a.sources].filter(
-        (u, i, all): u is string => Boolean(u) && all.indexOf(u) === i,
-    );
+    if (a.notes && !productSummary(a.id))
+        sections.push(`## Notes\n\n${mdText(a.notes)}`);
+    const engineering = engineeringNotes(a.id);
+    if (engineering) sections.push(engineering);
+    if (a.id === "cubemars-ak80-9" || a.id === "xiaomi-cybergear") {
+        sections.push(
+            "## Engineering comparison\n\nRead the [AK80-9 V3.0 KV100 versus original CyberGear comparison](/comparisons/cubemars-ak80-9-vs-xiaomi-cybergear) for source-qualified efficiency, thermal duty, precision and modeling boundaries. Hardware/firmware identity and unresolved document conflicts matter; this is not a matched bench test. See the [selection guide](/guides/robot-actuator-selection) for a proposed validation protocol.",
+        );
+    }
+    const sources = [
+        ...engineeringSources(a.id),
+        a.product_url,
+        a.datasheet_url,
+        ...a.sources,
+    ].filter((u, i, all): u is string => Boolean(u) && all.indexOf(u) === i);
     if (sources.length > 0) {
         sections.push(`## Sources\n\n${bullets(sources.map((u) => mdLink(u, u)))}`);
     }

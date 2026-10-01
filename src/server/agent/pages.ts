@@ -7,6 +7,7 @@ import {
     actuatorSummary,
     categoryLabel,
 } from "./catalog-md";
+import { EDITORIAL_PAGES } from "./editorial";
 import * as ld from "./jsonld";
 import { PATHS } from "./links";
 import { agentsBody } from "./manifests";
@@ -20,16 +21,8 @@ import { aboutBody, contactBody, privacyBody } from "./trust";
 // "spa" pages are the React app's routes: the server enriches the built shell.
 // "static" pages are rendered entirely on the server.
 
-export interface Page {
-    path: string;
-    kind: "spa" | "static";
-    title: string;
-    description: string;
-    ogType?: "website" | "product" | "article";
-    image?: string;
-    body: () => string;
-    jsonLd: () => Record<string, unknown>[];
-}
+export type { Page } from "./page-types";
+import type { Page } from "./page-types";
 
 const HOME: ld.Crumb = { name: "Home", path: "/" };
 
@@ -55,6 +48,7 @@ function sub(
 }
 
 const STATIC_PAGES: Page[] = [
+    ...EDITORIAL_PAGES,
     {
         path: "/",
         kind: "spa",
@@ -187,7 +181,12 @@ export function markdownPath(page: Page): string {
 
 export function pageMarkdown(page: Page): string {
     return mdDocument(
-        { title: page.title, description: page.description, canonical: page.path },
+        {
+            title: page.title,
+            description: page.description,
+            canonical: page.path,
+            updatedAt: page.updatedAt,
+        },
         page.body(),
     );
 }

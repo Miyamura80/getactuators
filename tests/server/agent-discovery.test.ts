@@ -42,7 +42,7 @@ describe("sitemap.xml", () => {
         expect(urls.length).toBeGreaterThan(ACTUATORS.length);
         for (const u of urls) {
             expect(u).toMatch(
-                /<lastmod>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z<\/lastmod>/,
+                /<lastmod>\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d+)?Z)?<\/lastmod>/,
             );
         }
         for (const a of ACTUATORS) {

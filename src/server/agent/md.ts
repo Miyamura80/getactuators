@@ -12,6 +12,7 @@ export interface MdMeta {
     description: string;
     // Canonical path of the page the document describes ("/actuators/x").
     canonical: string;
+    updatedAt?: string;
 }
 
 function yamlString(s: string): string {
@@ -24,7 +25,7 @@ export function frontmatter(meta: MdMeta): string {
         `title: ${yamlString(meta.title)}`,
         `description: ${yamlString(meta.description)}`,
         `canonical: ${absoluteUrl(meta.canonical)}`,
-        `last-updated: ${CATALOG_UPDATED_AT}`,
+        `last-updated: ${meta.updatedAt ?? CATALOG_UPDATED_AT}`,
         "---",
         "",
     ].join("\n");

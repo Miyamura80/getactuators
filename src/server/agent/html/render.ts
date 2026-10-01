@@ -102,10 +102,17 @@ export async function renderSpaPage(page: Page): Promise<string> {
 export interface StandaloneDoc {
     meta: HeadMeta;
     markdown: string;
+    editorial?: boolean;
+    visual?: string;
 }
 
 // A complete server-rendered document in the site's look.
-export function renderStandalone({ meta, markdown }: StandaloneDoc): string {
+export function renderStandalone({
+    meta,
+    markdown,
+    editorial = false,
+    visual,
+}: StandaloneDoc): string {
     return `<!doctype html>
 <html lang="en">
   <head>
@@ -119,13 +126,18 @@ export function renderStandalone({ meta, markdown }: StandaloneDoc): string {
     ${headTags(meta)}
     <style>${PAGE_CSS}</style>
   </head>
-  <body class="ga-page">
-${pageBody(markdown)}
+  <body class="ga-page${editorial ? " ga-editorial" : ""}">
+${pageBody(markdown, editorial, visual)}
   </body>
 </html>
 `;
 }
 
 export function renderStaticPage(page: Page): string {
-    return renderStandalone({ meta: headMeta(page), markdown: page.body() });
+    return renderStandalone({
+        meta: headMeta(page),
+        markdown: page.body(),
+        editorial: page.layout === "editorial",
+        visual: page.visual?.(),
+    });
 }
