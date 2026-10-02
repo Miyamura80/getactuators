@@ -69,14 +69,26 @@ test("persistent specifications accept focus without entering the tab order", ()
     expect(document.activeElement).toBe(target);
 });
 
-test("homepage FAQ remains visible and equivalent to JSON-LD after React mount", async () => {
+test("homepage FAQ remains available in closed disclosures equivalent to JSON-LD after React mount", async () => {
     const root = await loadPage("/");
+    const persistent = document.getElementById("catalog-content")!;
     const faq = homePage.faq!;
     render(<App />, { container: root });
     expect(root.querySelector(".hero")).not.toBeNull();
-    for (const question of faq.mainEntity) {
-        expect(document.body.textContent).toContain(question.name);
-        expect(document.body.textContent).toContain(question.acceptedAnswer.text);
+    expect(document.getElementById("catalog-content")).toBe(persistent);
+    expect(root.contains(persistent)).toBe(false);
+    const items = persistent.querySelectorAll<HTMLDetailsElement>("details.ga-faq-item");
+    expect(items).toHaveLength(faq.mainEntity.length);
+    for (const [index, question] of faq.mainEntity.entries()) {
+        const item = items[index]!;
+        expect(item.open).toBe(false);
+        expect(item.querySelector("summary h3")?.textContent).toBe(question.name);
+        expect(item.querySelector("p")?.textContent).toBe(question.acceptedAnswer.text);
         expect(Array.from(document.querySelectorAll("h3")).filter((h) => h.textContent === question.name)).toHaveLength(1);
+        // DOM state only: native pointer/keyboard activation is checked in Chromium.
+        item.open = true;
+        expect(item.hasAttribute("open")).toBe(true);
+        item.open = false;
+        expect(item.hasAttribute("open")).toBe(false);
     }
 });

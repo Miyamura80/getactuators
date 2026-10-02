@@ -56,6 +56,13 @@ export const PAGE_CSS = `
 .ga-editorial .ga-methodology summary{cursor:pointer;color:#c3fffd;font-weight:600;padding:.5rem 0}
 .ga-editorial .ga-methodology summary:focus-visible{outline:2px solid #c3fffd;outline-offset:3px}
 @media(max-width:800px){.ga-editorial .ga-dashboard .ga-product-pair{grid-template-columns:minmax(0,1fr)}.ga-editorial .ga-dashboard .ga-photo-card img{width:240px;height:240px}.ga-editorial .ga-spec-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.ga-page .ga-faq-item{border-bottom:1px solid #242424}
+.ga-page .ga-faq-item summary{box-sizing:border-box;min-height:44px;padding:.75rem .5rem;cursor:pointer}
+.ga-page .ga-faq-item summary h3{display:inline;margin:0;font-size:1rem;font-weight:600;line-height:1.5}
+.ga-page .ga-faq-item summary::marker{color:#c3fffd}
+.ga-page .ga-faq-item summary:hover{background:#0a0a0a}
+.ga-page .ga-faq-item summary:focus-visible{outline:2px solid #c3fffd;outline-offset:3px}
+.ga-page .ga-faq-item>p{margin:.25rem .5rem 1rem}
 .ga-page h1{font-size:2rem;line-height:1.2}
 .ga-page h2{border-top:1px solid #242424;padding-top:1.5rem;margin-top:2rem}
 .ga-page p,.ga-page li,.ga-page td{color:#9ba4a6}

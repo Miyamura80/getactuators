@@ -1,7 +1,10 @@
 import { describe, expect, test } from "bun:test";
 import { ACTUATORS } from "@/catalog";
+import { markdownToHtml } from "@/server/agent/html/body";
 import { documentTitle } from "@/server/agent/html/head";
+import { mdText } from "@/server/agent/md";
 import { findPage } from "@/server/agent/pages";
+import { faqItems } from "@/server/agent/pages-md";
 import { SITE_URL } from "@/server/site";
 import homeCapture from "../../frontend/tests/fixtures/home.json";
 import productCapture from "../../frontend/tests/fixtures/product.json";
@@ -136,6 +139,51 @@ describe("markdown twins", () => {
 });
 
 describe("HTML pages", () => {
+    test("homepage serves seven closed native FAQ disclosures with complete canonical answers", async () => {
+        const html = await (await get("/")).text();
+        const content = html.split('id="catalog-content"')[1] ?? "";
+        const items = [
+            ...content.matchAll(
+                /<details class="ga-faq-item"([^>]*)><summary>(<h3>[\s\S]*?<\/h3>)<\/summary>([\s\S]*?)<\/details>/g,
+            ),
+        ];
+        const canonical = faqItems();
+        expect(items).toHaveLength(7);
+        expect(items).toHaveLength(canonical.length);
+        for (const [index, item] of items.entries()) {
+            const faq = canonical[index];
+            if (!faq) throw new Error(`Missing canonical FAQ ${index}`);
+            expect(item[1]).toBe(""); // No open attribute or exclusive grouping.
+            expect(item[2]).toBe(markdownToHtml(`### ${faq.q}`).trim());
+            expect(item[3]?.trim()).toBe(markdownToHtml(mdText(faq.a)).trim());
+        }
+        expect(content.match(/<h3>/g)).toHaveLength(canonical.length);
+        const graph = JSON.parse(
+            /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(
+                html,
+            )?.[1] ?? "{}",
+        )["@graph"];
+        expect(
+            graph
+                .find((node: { "@type": string }) => node["@type"] === "FAQPage")
+                .mainEntity.map(
+                    (question: { name: string; acceptedAnswer: { text: string } }) => ({
+                        q: question.name,
+                        a: question.acceptedAnswer.text,
+                    }),
+                ),
+        ).toEqual(canonical);
+        expect(await (await get("/index.md")).text()).not.toContain("<details");
+        for (const path of [
+            `/actuators/${FIRST}`,
+            "/guides/robot-actuator-selection",
+        ]) {
+            expect(await (await get(path)).text()).not.toContain(
+                '<details class="ga-faq-item"',
+            );
+        }
+    });
+
     test("product specifications provide a focusable native fragment target", async () => {
         const html = await (await get(`/actuators/${FIRST}`)).text();
         const targets: { tabindex: string | null; label: string | null }[] = [];
