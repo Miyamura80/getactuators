@@ -51,10 +51,7 @@ export function Sidebar({ items, active, onSelect }: Props) {
                     Engineering guides →
                 </a>
             </div>
-            <p className="side-note">
-                v1 dataset {"·"} sourced from manufacturer pages via web search.
-                Verify against datasheets before design use.
-            </p>
+            <p className="side-note">alpha</p>
         </aside>
     );
 }
