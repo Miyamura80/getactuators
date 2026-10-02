@@ -17,8 +17,9 @@ export function Sidebar({ items, active, onSelect }: Props) {
         <aside className="sidebar">
             <Link to="/" className="side-brand" aria-label="actuatorlist home">
                 <BrandMark size={26} />
-                <span>
-                    <b>actuator</b>list.com
+                <span className="side-wordmark">
+                    <span><b>actuator</b>list.com</span>
+                    <span className="alpha-tag">alpha</span>
                 </span>
             </Link>
             <nav>
@@ -51,10 +52,6 @@ export function Sidebar({ items, active, onSelect }: Props) {
                     Engineering guides →
                 </a>
             </div>
-            <p className="side-note">
-                v1 dataset {"·"} sourced from manufacturer pages via web search.
-                Verify against datasheets before design use.
-            </p>
         </aside>
     );
 }
