@@ -38,8 +38,13 @@ function ExplodedCanvas() {
         const resize = () => {
             const dpr = Math.min(window.devicePixelRatio || 1, 2);
             const w = cv.clientWidth || EXPLODED_W;
-            cv.width = Math.round(w * dpr);
-            cv.height = Math.round(w * (EXPLODED_H / EXPLODED_W) * dpr);
+            const width = Math.round(w * dpr);
+            const height = Math.round(w * (EXPLODED_H / EXPLODED_W) * dpr);
+            // Observing CSS size must not repeatedly reset an unchanged canvas.
+            if (cv.width !== width || cv.height !== height) {
+                cv.width = width;
+                cv.height = height;
+            }
             ctx.setTransform(cv.width / EXPLODED_W, 0, 0, cv.height / EXPLODED_H, 0, 0);
         };
         const loop = (t: number) => {
@@ -60,6 +65,9 @@ function ExplodedCanvas() {
         start();
         motion.addEventListener("change", start);
         window.addEventListener("resize", onResize);
+        const ro =
+            typeof ResizeObserver === "undefined" ? null : new ResizeObserver(onResize);
+        ro?.observe(cv);
         const io =
             typeof IntersectionObserver === "undefined"
                 ? null
@@ -76,6 +84,7 @@ function ExplodedCanvas() {
             cancelAnimationFrame(raf);
             motion.removeEventListener("change", start);
             window.removeEventListener("resize", onResize);
+            ro?.disconnect();
             io?.disconnect();
         };
     }, []);
