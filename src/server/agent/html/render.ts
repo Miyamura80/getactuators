@@ -66,8 +66,17 @@ export async function renderSpaPage(page: Page): Promise<string> {
     const fallback = split < 0 ? body : body.slice(0, split);
     const content = split < 0 ? "" : body.slice(split);
     const prerender = `<div class="ga-page">${pageBody(fallback)}</div>`;
+    let persistentHtml = markdownToHtml(content);
+    if (page.path === "/") {
+        // Wrap the generated FAQ only: keep Markdown escaping, links and answers
+        // intact, outside React's root, with native no-JavaScript interaction.
+        persistentHtml = persistentHtml.replace(
+            /(<h3>[\s\S]*?<\/h3>)([\s\S]*?)(?=<h[23]>|$)/g,
+            '<details class="ga-faq-item"><summary>$1</summary>$2</details>',
+        );
+    }
     const persistent = content
-        ? `<section class="ga-page" id="catalog-content" ${page.ogType === "product" ? 'tabindex="-1" aria-label="Specifications and catalog details"' : 'aria-label="Catalog details"'}><div class="ga-main">${markdownToHtml(content)}</div></section>`
+        ? `<section class="ga-page" id="catalog-content" ${page.ogType === "product" ? 'tabindex="-1" aria-label="Specifications and catalog details"' : 'aria-label="Catalog details"'}><div class="ga-main">${persistentHtml}</div></section>`
         : "";
     const rewriter = new HTMLRewriter()
         .on("html", {
