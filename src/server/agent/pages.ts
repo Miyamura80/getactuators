@@ -12,7 +12,14 @@ import * as ld from "./jsonld";
 import { PATHS } from "./links";
 import { agentsBody } from "./manifests";
 import { mdDocument } from "./md";
-import { allBody, faqItems, galleryBody, homeBody, robotsBody } from "./pages-md";
+import {
+    allBody,
+    faqItems,
+    faqSection,
+    galleryBody,
+    homeBody,
+    robotsBody,
+} from "./pages-md";
 import { actuatorSeoTitle } from "./seo-titles";
 import { aboutBody, contactBody, privacyBody } from "./trust";
 
@@ -49,6 +56,20 @@ function sub(
 }
 
 const STATIC_PAGES: Page[] = [
+    {
+        ...sub(
+            "/faq",
+            "static",
+            "Frequently asked questions",
+            "Answers about robot actuators, catalog sources and free API access.",
+            () => `# Frequently asked questions\n\n${faqSection()}`,
+            "FAQPage",
+        ),
+        jsonLd: () => [
+            ld.faqPage(faqItems()),
+            ld.breadcrumbs([HOME, { name: "FAQ", path: "/faq" }]),
+        ],
+    },
     ...EDITORIAL_PAGES,
     {
         path: "/",
@@ -62,7 +83,6 @@ const STATIC_PAGES: Page[] = [
             ld.organization(),
             ld.dataset(),
             ...ld.software(),
-            ld.faqPage(faqItems()),
             ld.itemList(
                 "Highest torque density actuators",
                 queryActuators({ sort: "torque_density_nm_per_kg" }).slice(0, 10),

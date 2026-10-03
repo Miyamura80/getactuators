@@ -23,7 +23,13 @@ def get(path):
         return response.read().decode(), response.headers
 
 
-assert home.count('<details class="ga-faq-item">') == 7, "Missing FAQ disclosures"
+assert 'class="ga-faq-item"' not in home, "Homepage still includes FAQ answers"
+faq, _ = get("/faq")
+assert faq.count('<details class="ga-faq-item">') == 7, "Missing FAQ disclosures"
+assert 'rel="canonical" href="https://actuatorlist.com/faq"' in faq
+assert "Frequently asked questions" in get("/faq.md")[0]
+assert "Frequently asked questions" not in get("/index.md")[0]
+assert "https://actuatorlist.com/faq" in get("/sitemap.xml")[0]
 assert 'data-ga4-id' not in home, "Analytics must default off in smoke image"
 assets = re.findall(r'src="(/assets/[^" ]+\.js)"', home)
 assert assets, "No production application bundle"
@@ -46,7 +52,7 @@ with urlopen(base + "/actuator-images/nabtesco-rv-42n.webp", timeout=10) as resp
     assert response.read(), "Empty leading gallery photo"
 assert get("/actuators/cubemars-ak80-9")[0].find("Specifications") >= 0
 assert "actuatorlist.analytics.v1" in get("/measurement.js")[0]
-assert "Frequently asked questions" in get("/index.md")[0]
+assert 'class="site-footer"' in home and 'class="site-header"' in home
 try:
     get("/not-a-real-route-smoke-test")
     raise AssertionError("Unknown route returned 200")

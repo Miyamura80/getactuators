@@ -139,9 +139,8 @@ describe("markdown twins", () => {
 });
 
 describe("HTML pages", () => {
-    test("homepage serves seven closed native FAQ disclosures with complete canonical answers", async () => {
-        const html = await (await get("/")).text();
-        const content = html.split('id="catalog-content"')[1] ?? "";
+    test("FAQ page serves seven closed native FAQ disclosures with complete canonical answers", async () => {
+        const content = await (await get("/faq")).text();
         const items = [
             ...content.matchAll(
                 /<details class="ga-faq-item"([^>]*)><summary>(<h3>[\s\S]*?<\/h3>)<\/summary>([\s\S]*?)<\/details>/g,
@@ -160,7 +159,7 @@ describe("HTML pages", () => {
         expect(content.match(/<h3>/g)).toHaveLength(canonical.length);
         const graph = JSON.parse(
             /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(
-                html,
+                content,
             )?.[1] ?? "{}",
         )["@graph"];
         expect(
@@ -206,7 +205,7 @@ describe("HTML pages", () => {
         expect(researchedCaptures).toHaveLength(5);
         for (const capture of [homeCapture, productCapture, ...researchedCaptures]) {
             const html = await (await get(capture.path)).text();
-            expect(/<div id="root">[\s\S]*?<\/section>/.exec(html)?.[0]).toBe(
+            expect(/<div id="root">[\s\S]*?(?=<script|<\/body>)/.exec(html)?.[0]).toBe(
                 capture.body,
             );
             const graph = JSON.parse(
@@ -279,13 +278,7 @@ describe("HTML pages", () => {
         expect(html).toMatch(/<meta property="og:image" content="https:\/\//);
         expect(html).toContain('<meta property="og:type" content="website">');
         const types = jsonLdTypes(html);
-        for (const t of [
-            "WebSite",
-            "Organization",
-            "Dataset",
-            "SoftwareApplication",
-            "FAQPage",
-        ]) {
+        for (const t of ["WebSite", "Organization", "Dataset", "SoftwareApplication"]) {
             expect(types).toContain(t);
         }
         let rootText = "";

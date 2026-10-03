@@ -125,6 +125,8 @@ export function software(): Node[] {
 export function faqPage(items: FaqItem[]): Node {
     return {
         "@type": "FAQPage",
+        "@id": `${absoluteUrl("/faq")}#faq`,
+        url: absoluteUrl("/faq"),
         mainEntity: items.map((f) => ({
             "@type": "Question",
             name: f.q,

@@ -1,3 +1,5 @@
+import { PublicHeader } from "../components/PublicHeader";
+import { PublicFooter } from "../components/PublicFooter";
 import { useMemo } from "react";
 import { ACTUATORS } from "../lib/data";
 import { num } from "../lib/format";
@@ -42,7 +44,7 @@ const CATS: Cat[] = [
     },
 ];
 
-export function Home() {
+export function Home({ menuOpen = false }: { menuOpen?: boolean }) {
     const counts = useMemo(() => {
         const m = new Map<string, number>();
         for (const a of ACTUATORS)
@@ -52,34 +54,7 @@ export function Home() {
 
     return (
         <div className="home-page">
-            <header className="page-bar">
-                <Link to="/" className="page-brand" aria-label="actuatorlist home">
-                    <BrandMark size={24} />
-                    <span>
-                        <b>actuator</b>list.com
-                    </span>
-                </Link>
-                <nav className="page-nav">
-                    <Link to="/" className="page-nav-link">
-                        Leaderboard
-                    </Link>
-                    <Link to="/robots" className="page-nav-link" data-on={true}>
-                        Robot types
-                    </Link>
-                    <Link to="/all" className="page-nav-link">
-                        All actuators
-                    </Link>
-                    <Link to="/actuators" className="page-nav-link">
-                        Gallery
-                    </Link>
-                    <Link to="/agents" className="page-nav-link">
-                        Agents
-                    </Link>
-                    <a href="/guides" className="page-nav-link">
-                        Guides
-                    </a>
-                </nav>
-            </header>
+            <PublicHeader path="/robots" initialOpen={menuOpen} />
 
             <section className="home-hero">
                 <BrandMark size={54} className="hero-mark" />
@@ -124,11 +99,12 @@ export function Home() {
                 </span>
             </Link>
 
-            <footer className="foot">
+            <p className="foot">
                 Community dataset {"·"} v1 sourced from manufacturer pages via web
                 search {"·"} category art is illustrative, not the listed hardware {"·"}
                 verify against datasheets before engineering use.
-            </footer>
+            </p>
+                <PublicFooter />
         </div>
     );
 }

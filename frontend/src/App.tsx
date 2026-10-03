@@ -1,3 +1,5 @@
+import { PublicHeader } from "./components/PublicHeader";
+import { PublicFooter } from "./components/PublicFooter";
 import { useEffect, useMemo, useState } from "react";
 import { ACTUATORS } from "./lib/data";
 import { Sidebar } from "./components/Sidebar";
@@ -20,7 +22,7 @@ const NAV: NavItem[] = [
     { id: "scatter", label: "Torque vs Cost" },
 ];
 
-export default function App() {
+export default function App({ menuOpen = false }: { menuOpen?: boolean }) {
     const [selected, setSelected] = useState<Actuator | null>(null);
     const [active, setActive] = useState("highlights");
 
@@ -73,6 +75,8 @@ export default function App() {
     };
 
     return (
+        <>
+        <PublicHeader path="/" initialOpen={menuOpen} />
         <div className="shell">
             <Sidebar items={NAV} active={active} onSelect={goTo} />
 
@@ -128,15 +132,17 @@ export default function App() {
                     </span>
                 </Link>
 
-                <footer className="foot">
+                <p className="foot">
                     <a href="/guides">Engineering guides</a> {"·"}
                     Community dataset {"·"} v1 sourced from manufacturer pages via web
                     search {"·"} every row links its source {"·"} verify against
                     datasheets before engineering use.
-                </footer>
+                </p>
             </main>
 
             <DetailPanel actuator={selected} onClose={() => setSelected(null)} />
         </div>
+        <PublicFooter />
+        </>
     );
 }
