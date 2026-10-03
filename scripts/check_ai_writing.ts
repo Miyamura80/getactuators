@@ -21,6 +21,8 @@ const SKIP_PATH_PREFIXES = [
     ["docs", ".next"],
     ["docs", "node_modules"],
     ["frontend", "node_modules"],
+    // Generated gallery HTML and bundled dependencies are not authored prose.
+    ["frontend", "dist"],
 ];
 
 const SKIP_SUFFIXES = new Set([

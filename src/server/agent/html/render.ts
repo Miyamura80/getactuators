@@ -49,7 +49,7 @@ function headMeta(page: Page, noindex = false): HeadMeta {
     };
 }
 
-// React owns #root, whose fallback is replaced on mount (not hydrated).
+// React owns #root: only the built gallery is hydrated; other fallbacks mount.
 // Catalog facts and homepage FAQ live in visible siblings, rendered from the
 // same markdown as the agent twins (FAQ answers also supply JSON-LD). React's
 // visuals stay intact without discarding that substantive content.
@@ -65,7 +65,15 @@ export async function renderSpaPage(page: Page): Promise<string> {
     const split = marker === null ? -1 : body.indexOf(marker);
     const fallback = split < 0 ? body : body.slice(0, split);
     const content = split < 0 ? "" : body.slice(split);
-    const prerender = `<div class="ga-page">${pageBody(fallback)}</div>`;
+    const fallbackHtml = `<div class="ga-page">${pageBody(fallback)}</div>`;
+    // Built with the frontend's own React tree; no React dependency at runtime.
+    // Bare/backend-only checkouts keep the existing catalog fallback.
+    const galleryFile = Bun.file(`${DIST_DIR}/actuators.html`);
+    const galleryHtml =
+        page.path === "/actuators" && (await galleryFile.exists())
+            ? await galleryFile.text()
+            : null;
+    const prerender = galleryHtml ?? fallbackHtml;
     let persistentHtml = markdownToHtml(content);
     if (page.path === "/") {
         // Wrap the generated FAQ only: keep Markdown escaping, links and answers
@@ -117,6 +125,15 @@ export async function renderSpaPage(page: Page): Promise<string> {
         .on("div#root", {
             element: (el) => {
                 el.setInnerContent(prerender, { html: true });
+                if (galleryHtml) {
+                    el.setAttribute("data-gallery-prerender", "true");
+                    // Keep the original catalog text available without a second
+                    // visible gallery or discarding the Markdown-equivalent facts.
+                    el.after(
+                        `<details class="ga-page"><summary>Catalog details</summary>${fallbackHtml}</details>`,
+                        { html: true },
+                    );
+                }
                 if (persistent) el.after(persistent, { html: true });
             },
         });
