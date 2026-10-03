@@ -1,6 +1,7 @@
 import { expect, test } from "bun:test";
 import { createHash } from "node:crypto";
 import { ACTUATORS } from "@/catalog";
+import { CATALOG_UPDATED_DATE } from "@/server/agent/freshness";
 import { documentTitle } from "@/server/agent/html/head";
 import { allPages, findPage, pageMarkdown } from "@/server/agent/pages";
 import { get } from "./agent-helpers";
@@ -19,6 +20,16 @@ async function expectTitles(path: string, title: string) {
 
 function sha256(value: string) {
     return createHash("sha256").update(value).digest("hex");
+}
+
+// Freshness is resolved from env, git history or filesystem mtime. Shallow CI
+// checkouts need not resolve the same date as the clean-main capture. Normalize
+// only this specific catalog-freshness sentence; preserve every other byte.
+function snapshotContent(value: string) {
+    return value.replace(
+        `The catalog was last updated on ${CATALOG_UPDATED_DATE}.`,
+        `The catalog was last updated on ${baseline.catalogUpdatedDate}.`,
+    );
 }
 
 // Captured from the clean main baseline before implementation. Only expected
@@ -42,14 +53,19 @@ test("the full catalog has distinct reviewed metadata without content changes", 
             title: original.title,
         });
         expect(page.description).toBe(original.description);
-        expect(sha256(page.body())).toBe(original.bodySha256);
+        if (page.path === "/about") {
+            expect(page.body()).toContain(
+                `The catalog was last updated on ${CATALOG_UPDATED_DATE}.`,
+            );
+        }
+        expect(sha256(snapshotContent(page.body()))).toBe(original.bodySha256);
         const html = await expectTitles(page.path, documentTitle(page.title));
         const content =
             /<section class="ga-page" id="catalog-content"[^>]*>[\s\S]*?<\/section>|<main class="ga-main">[\s\S]*?<\/main>/.exec(
                 html,
             )?.[0];
         expect(content).toBeDefined();
-        expect(sha256(content ?? "")).toBe(original.htmlContentSha256);
+        expect(sha256(snapshotContent(content ?? ""))).toBe(original.htmlContentSha256);
         expect(html).toContain(
             `<link rel="canonical" href="https://actuatorlist.com${page.path}">`,
         );
