@@ -5,6 +5,8 @@ WORKDIR /app
 COPY frontend/package.json frontend/bun.lock ./frontend/
 RUN cd frontend && bun install --frozen-lockfile
 COPY frontend ./frontend
+# The gallery ordering helper is shared by the browser and server.
+COPY src/catalog/gallery.ts ./src/catalog/gallery.ts
 RUN cd frontend && bun run build
 
 FROM oven/bun:1 AS runtime
