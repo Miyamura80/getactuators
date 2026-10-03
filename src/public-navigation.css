@@ -107,12 +107,23 @@
         margin-left: auto;
     }
     .site-menu > summary {
-        display: list-item;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        list-style: none;
         cursor: pointer;
-        padding: 9px 12px;
+        width: 44px;
+        height: 44px;
+        padding: 0;
         border: 1px solid #444;
         border-radius: 6px;
         font-size: 13px;
+    }
+    .site-menu > summary::marker {
+        content: "";
+    }
+    .site-menu > summary::-webkit-details-marker {
+        display: none;
     }
     .site-menu::details-content {
         content-visibility: hidden;
@@ -124,7 +135,7 @@
         content-visibility: visible;
     }
     .site-menu[open] > summary {
-        width: fit-content;
+        width: 44px;
         margin: 0 0 0 auto;
     }
     .site-menu:not([open]) > nav {
@@ -150,6 +161,16 @@
         grid-template-columns: 1fr 1fr;
     }
 }
+/* Grouped footers own the page's bottom spacing; remove legacy reserves. */
+.gallery-page:has(> .site-footer),
+.home-page:has(> .site-footer) {
+    padding-bottom: 0;
+}
+.agents-page > .agents-grid,
+.shell > .content {
+    padding-bottom: 24px;
+}
+
 /* The homepage sidebar is local section navigation, not a second public header. */
 .shell > .sidebar {
     top: 24px;

@@ -15,7 +15,7 @@ test("static and fallback public headers expose native mobile navigation and act
         expect(html).toContain('<header class="site-header">');
         expect(html).toContain('<details class="site-menu">');
         expect(html).toContain(
-            '<summary aria-controls="public-navigation">Menu</summary>',
+            '<summary aria-label="Menu" aria-controls="public-navigation"><svg',
         );
         if (path !== "/about")
             expect(html).toContain(`href="${path}" aria-current="page"`);
@@ -25,9 +25,11 @@ test("static and fallback public headers expose native mobile navigation and act
 
 test("product footer follows the persistent specifications rather than the transient app root", async () => {
     const html = await (await get("/actuators/cubemars-ak80-9")).text();
-    expect(html.indexOf('<footer class="site-footer"')).toBeGreaterThan(
-        html.indexOf('id="catalog-content"'),
-    );
+    const sectionStart = html.indexOf('id="catalog-content"');
+    const sectionEnd = html.indexOf("</section>", sectionStart);
+    expect(sectionStart).toBeGreaterThan(-1);
+    expect(sectionEnd).toBeGreaterThan(sectionStart);
+    expect(html.indexOf('<footer class="site-footer"')).toBeGreaterThan(sectionEnd);
     expect([...html.matchAll(/<footer class="site-footer"/g)]).toHaveLength(1);
 });
 

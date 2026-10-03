@@ -38,6 +38,17 @@ test("homepage footer is a page-level landmark outside its main content", () => 
     expect(Boolean(view.container.querySelector("footer.site-footer")?.closest("main"))).toBe(false);
 });
 
+test("mobile menu Escape closes the disclosure and returns focus to its icon", () => {
+    const view = render(<PublicHeader path="/" />);
+    const menu = view.container.querySelector("details")!;
+    const summary = menu.querySelector("summary")!;
+    menu.open = true;
+    menu.querySelector<HTMLAnchorElement>("nav a")!.focus();
+    fireEvent.keyDown(menu, { key: "Escape" });
+    expect(menu.open).toBe(false);
+    expect(document.activeElement === summary).toBe(true);
+});
+
 test("resizing to desktop resets the native mobile menu", () => {
     const view = render(<PublicHeader path="/" />);
     const menu = view.container.querySelector("details")!;
@@ -54,7 +65,9 @@ test("public SPA headers share native mobile disclosure and active route links",
         expect(header).not.toBeNull();
         const menu = header.querySelector("details")!;
         expect(menu.open).toBe(false);
-        expect(menu.querySelector("summary")?.textContent).toBe("Menu");
+        expect(menu.querySelector("summary")?.textContent).toBe("");
+        expect(menu.querySelector("summary")?.getAttribute("aria-label")).toBe("Menu");
+        expect(Boolean(menu.querySelector('summary svg[aria-hidden="true"] path'))).toBe(true);
         expect(header.querySelector(`a[href="${path}"][aria-current="page"]`)).not.toBeNull();
         expect(header.querySelector(".alpha-tag")?.textContent).toBe("alpha");
         for (const link of header.querySelectorAll("nav a")) {
