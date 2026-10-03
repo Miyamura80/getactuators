@@ -1,0 +1,25 @@
+name: Production Docker Build
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  docker_build_smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - name: Build the production Dockerfile
+        run: docker build -t actuatorlist:ci .
+      - name: Smoke the production image
+        run: |
+          trap 'docker logs actuatorlist-ci; docker rm -f actuatorlist-ci' EXIT
+          docker run -d --name actuatorlist-ci -e PORT=3000 -e GA4_MEASUREMENT_ID= -p 127.0.0.1:3000:3000 actuatorlist:ci
+          python3 scripts/check_docker_smoke.py http://127.0.0.1:3000
