@@ -1,6 +1,6 @@
 import { ACTUATORS, getActuator } from "@/catalog";
 import { queryActuators } from "@/catalog/query";
-import { SITE_DESCRIPTION } from "../site";
+
 import {
     actuatorBody,
     actuatorPath,
@@ -54,7 +54,8 @@ const STATIC_PAGES: Page[] = [
         path: "/",
         kind: "spa",
         title: "actuatorlist: robot actuator leaderboard and spec database",
-        description: `${SITE_DESCRIPTION} Compare torque, weight, torque density and price.`,
+        description:
+            "Compare robot actuators by torque, weight, torque density and price. Browse QDD motors, integrated joints, smart servos and reducers.",
         body: homeBody,
         jsonLd: () => [
             ld.website(),
@@ -136,7 +137,10 @@ function actuatorPage(id: string): Page | null {
         path,
         kind: "spa",
         title,
-        description: actuatorSummary(a),
+        description:
+            a.id === "harmonic-drive-cha-series"
+                ? "Harmonic Drive CHA hollow-shaft servo actuator family. Torque, mass and price are unspecified in this catalog; confirm model-specific data."
+                : actuatorSummary(a),
         ogType: "product",
         image: a.image_url ?? undefined,
         body: () => actuatorBody(a),
