@@ -309,7 +309,9 @@ describe("HTML pages", () => {
     test("actuator pages have their own title, Product JSON-LD and breadcrumbs", async () => {
         const a = ACTUATORS[0];
         const html = await (await get(`/actuators/${a?.id}`)).text();
-        expect(html).toContain(`<title>${a?.name}`);
+        expect(html).toContain(
+            "<title>Nabtesco RV-42N cycloidal reducer specs | actuatorlist</title>",
+        );
         const types = jsonLdTypes(html);
         expect(types).toContain("Product");
         expect(types).toContain("BreadcrumbList");
