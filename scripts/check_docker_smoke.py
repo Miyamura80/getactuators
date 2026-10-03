@@ -33,6 +33,17 @@ for asset in assets:
     assert "hero-content" in get(re.search(r'href="(/assets/[^" ]+\.css)"', home).group(1))[0]
 gallery, _ = get("/actuators")
 assert 'rel="preload" as="image" href="/actuator-images/nabtesco-rv-42n.webp"' in gallery
+# These are raw HTTP bytes, before the application bundle can run.
+assert 'data-gallery-prerender="true"' in gallery, "Missing gallery hydration marker"
+assert gallery.count('class="bento-card"') == 68, "Missing initial gallery cards"
+photos = re.findall(r'<img\b[^>]*class="actuator-photo"[^>]*>', gallery)
+assert len(photos) == 49, "Missing initial gallery product photos"
+assert sum('loading="eager"' in photo and 'fetchPriority="high"' in photo for photo in photos) == 1
+assert sum('loading="lazy"' in photo and 'decoding="async"' in photo for photo in photos) == 48
+assert len(re.findall(r'<link\b[^>]*rel="preload"[^>]*as="image"', gallery)) == 1, "Duplicate gallery preload"
+with urlopen(base + "/actuator-images/nabtesco-rv-42n.webp", timeout=10) as response:
+    assert response.status == 200 and response.headers.get_content_type() == "image/webp"
+    assert response.read(), "Empty leading gallery photo"
 assert get("/actuators/cubemars-ak80-9")[0].find("Specifications") >= 0
 assert "actuatorlist.analytics.v1" in get("/measurement.js")[0]
 assert "Frequently asked questions" in get("/index.md")[0]
@@ -41,4 +52,4 @@ try:
     raise AssertionError("Unknown route returned 200")
 except HTTPError as error:
     assert error.code == 404, error.code
-print("Production Docker smoke passed: startup, homepage/FAQ, built JS/CSS, gallery preload, product, measurement asset, Markdown and genuine 404.")
+print("Production Docker smoke passed: startup, homepage/FAQ, built JS/CSS, initial gallery (68 cards/49 photos, one preload), product, measurement asset, Markdown and genuine 404.")
