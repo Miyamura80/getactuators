@@ -1,3 +1,5 @@
+import { PublicHeader } from "../components/PublicHeader";
+import { PublicFooter } from "../components/PublicFooter";
 import { useMemo } from "react";
 import { galleryCards, type GallerySize } from "../../../src/catalog/gallery";
 import type { Actuator } from "../types";
@@ -6,44 +8,16 @@ import { ACTUATORS } from "../lib/data";
 import { num } from "../lib/format";
 import { Link } from "../lib/router";
 import { ActuatorThumb } from "../components/ActuatorThumb";
-import { BrandMark } from "../components/BrandMark";
 import { BrandGlyph } from "../components/BrandGlyph";
 
 type Size = GallerySize;
 
-export function ActuatorsGallery() {
+export function ActuatorsGallery({ menuOpen = false }: { menuOpen?: boolean }) {
     const cards = useMemo(() => galleryCards(ACTUATORS), []);
 
     return (
         <div className="gallery-page">
-            <header className="page-bar">
-                <Link to="/" className="page-brand" aria-label="actuatorlist home">
-                    <BrandMark size={24} />
-                    <span>
-                        <b>actuator</b>list.com
-                    </span>
-                </Link>
-                <nav className="page-nav">
-                    <Link to="/" className="page-nav-link">
-                        Leaderboard
-                    </Link>
-                    <Link to="/robots" className="page-nav-link">
-                        Robot types
-                    </Link>
-                    <Link to="/all" className="page-nav-link">
-                        All actuators
-                    </Link>
-                    <Link to="/actuators" className="page-nav-link" data-on={true}>
-                        Gallery
-                    </Link>
-                    <Link to="/agents" className="page-nav-link">
-                        Agents
-                    </Link>
-                    <a href="/guides" className="page-nav-link">
-                        Guides
-                    </a>
-                </nav>
-            </header>
+            <PublicHeader path="/actuators" initialOpen={menuOpen} />
 
             <section className="gallery-hero">
                 <h1>
@@ -62,10 +36,11 @@ export function ActuatorsGallery() {
                 ))}
             </div>
 
-            <footer className="foot">
+            <p className="foot">
                 Renders are schematic, generated from each part's category, not
                 manufacturer photography. Specs link back to sources on the leaderboard.
-            </footer>
+            </p>
+                <PublicFooter />
         </div>
     );
 }

@@ -1,5 +1,6 @@
 import { ACTUATORS } from "@/catalog";
 import { galleryCards } from "@/catalog/gallery";
+import { publicFooter } from "../../../public-navigation";
 import { DIST_DIR } from "../../static";
 import { graph } from "../jsonld";
 import { type Page, markdownPath } from "../pages";
@@ -56,16 +57,11 @@ function headMeta(page: Page, noindex = false): HeadMeta {
 export async function renderSpaPage(page: Page): Promise<string> {
     const meta = headMeta(page);
     const body = page.body();
-    const marker =
-        page.ogType === "product"
-            ? "\n\n## Specifications"
-            : page.path === "/"
-              ? "\n\n## Frequently asked questions"
-              : null;
+    const marker = page.ogType === "product" ? "\n\n## Specifications" : null;
     const split = marker === null ? -1 : body.indexOf(marker);
     const fallback = split < 0 ? body : body.slice(0, split);
     const content = split < 0 ? "" : body.slice(split);
-    const fallbackHtml = `<div class="ga-page">${pageBody(fallback)}</div>`;
+    const fallbackHtml = `<div class="ga-page">${pageBody(fallback, false, undefined, page.path, !content)}</div>`;
     // Built with the frontend's own React tree; no React dependency at runtime.
     // Bare/backend-only checkouts keep the existing catalog fallback.
     const galleryFile = Bun.file(`${DIST_DIR}/actuators.html`);
@@ -74,17 +70,9 @@ export async function renderSpaPage(page: Page): Promise<string> {
             ? await galleryFile.text()
             : null;
     const prerender = galleryHtml ?? fallbackHtml;
-    let persistentHtml = markdownToHtml(content);
-    if (page.path === "/") {
-        // Wrap the generated FAQ only: keep Markdown escaping, links and answers
-        // intact, outside React's root, with native no-JavaScript interaction.
-        persistentHtml = persistentHtml.replace(
-            /(<h3>[\s\S]*?<\/h3>)([\s\S]*?)(?=<h[23]>|$)/g,
-            '<details class="ga-faq-item"><summary>$1</summary>$2</details>',
-        );
-    }
+    const persistentHtml = markdownToHtml(content);
     const persistent = content
-        ? `<section class="ga-page" id="catalog-content" ${page.ogType === "product" ? 'tabindex="-1" aria-label="Specifications and catalog details"' : 'aria-label="Catalog details"'}><div class="ga-main">${persistentHtml}</div></section>`
+        ? `<section class="ga-page" id="catalog-content" ${page.ogType === "product" ? 'tabindex="-1" aria-label="Specifications and catalog details"' : 'aria-label="Catalog details"'}><div class="ga-main">${persistentHtml}</div></section>${publicFooter()}`
         : "";
     const rewriter = new HTMLRewriter()
         .on("html", {
@@ -164,7 +152,7 @@ export function renderStandalone({
     <style>${PAGE_CSS}</style>
   </head>
   <body class="ga-page${editorial ? " ga-editorial" : ""}">
-${pageBody(markdown, editorial, visual)}
+${pageBody(markdown, editorial, visual, meta.path)}
   </body>
 </html>
 `;

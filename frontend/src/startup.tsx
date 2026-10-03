@@ -10,12 +10,12 @@ import { CommandPalette } from "./components/CommandPalette";
 import { Agents } from "./pages/Agents";
 import { GalleryRoot } from "./GalleryRoot";
 
-function Page() {
+function Page({ menuOpen }: { menuOpen: boolean }) {
     const path = usePath();
-    if (path === "/all") return <AllActuators />;
-    if (path === "/robots" || path === "/robot") return <Home />;
-    if (path === "/actuators") return <ActuatorsGallery />;
-    if (path === "/agents") return <Agents />;
+    if (path === "/all") return <AllActuators menuOpen={menuOpen} />;
+    if (path === "/robots" || path === "/robot") return <Home menuOpen={menuOpen} />;
+    if (path === "/actuators") return <ActuatorsGallery menuOpen={menuOpen} />;
+    if (path === "/agents") return <Agents menuOpen={menuOpen} />;
     if (path.startsWith("/actuators/")) {
         const raw = path.slice("/actuators/".length);
         let id = raw;
@@ -25,17 +25,17 @@ function Page() {
             // Malformed percent-encoding: fall back to the raw value, which
             // routes to the missing-actuator state rather than crashing render.
         }
-        return <ExplodedView id={id} />;
+        return <ExplodedView id={id} menuOpen={menuOpen} />;
     }
-    return <App />;
+    return <App menuOpen={menuOpen} />;
 }
 
-function Root() {
+function Root({ menuOpen }: { menuOpen: boolean }) {
     // The command palette lives outside the page switch so Cmd+K works on every
     // route and its jumps survive page changes.
     return (
         <>
-            <Page />
+            <Page menuOpen={menuOpen} />
             <CommandPalette />
         </>
     );
@@ -50,14 +50,15 @@ export function mountApp(container: HTMLElement): ReactRoot {
         return hydrateRoot(
             container,
             <StrictMode>
-                <GalleryRoot />
+                <GalleryRoot menuOpen={container.querySelector<HTMLDetailsElement>(".site-menu")?.open ?? false} />
             </StrictMode>,
         );
     }
+    const menuOpen = container.querySelector<HTMLDetailsElement>(".site-menu")?.open ?? false;
     const root = createRoot(container);
     root.render(
         <StrictMode>
-            <Root />
+            <Root menuOpen={menuOpen} />
         </StrictMode>,
     );
     return root;

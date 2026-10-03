@@ -67,7 +67,7 @@ export function faqItems(): FaqItem[] {
     ];
 }
 
-function faqSection(): string {
+export function faqSection(): string {
     return faqItems()
         .map((f) => `### ${f.q}\n\n${mdText(f.a)}`)
         .join("\n\n");
@@ -110,7 +110,6 @@ export function homeBody(): string {
             `MCP server (Streamable HTTP, no auth): ${absoluteUrl(PATHS.mcp)}`,
             "Every page has a markdown twin: append .md or send Accept: text/markdown.",
         ])}`,
-        `## Frequently asked questions\n\n${faqSection()}`,
     ].join("\n\n");
 }
 

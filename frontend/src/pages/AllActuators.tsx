@@ -1,3 +1,5 @@
+import { PublicHeader } from "../components/PublicHeader";
+import { PublicFooter } from "../components/PublicFooter";
 import { useEffect, useMemo, useState } from "react";
 import type { Actuator } from "../types";
 import { ACTUATORS, allUseCases, categoryCounts, maxValue } from "../lib/data";
@@ -9,8 +11,7 @@ import {
     filtersToQuery,
 } from "../lib/filter";
 import type { FilterState } from "../lib/filter";
-import { Link, useLocationKey } from "../lib/router";
-import { BrandMark } from "../components/BrandMark";
+import { useLocationKey } from "../lib/router";
 import { BrandGlyph } from "../components/BrandGlyph";
 import { FilterBar } from "../components/FilterBar";
 import { Leaderboard } from "../components/Leaderboard";
@@ -45,7 +46,7 @@ function buildUrl(filters: FilterState, selId: string | null): string {
     return `${window.location.pathname}${q ? `?${q}` : ""}${window.location.hash}`;
 }
 
-export function AllActuators() {
+export function AllActuators({ menuOpen = false }: { menuOpen?: boolean }) {
     const [filters, setFilters] = useState<FilterState>(initialFilters);
     const [selected, setSelected] = useState<Actuator | null>(() =>
         typeof window === "undefined"
@@ -107,34 +108,7 @@ export function AllActuators() {
 
     return (
         <div className="gallery-page">
-            <header className="page-bar">
-                <Link to="/" className="page-brand" aria-label="actuatorlist home">
-                    <BrandMark size={24} />
-                    <span>
-                        <b>actuator</b>list.com
-                    </span>
-                </Link>
-                <nav className="page-nav">
-                    <Link to="/" className="page-nav-link">
-                        Leaderboard
-                    </Link>
-                    <Link to="/robots" className="page-nav-link">
-                        Robot types
-                    </Link>
-                    <Link to="/all" className="page-nav-link" data-on={true}>
-                        All actuators
-                    </Link>
-                    <Link to="/actuators" className="page-nav-link">
-                        Gallery
-                    </Link>
-                    <Link to="/agents" className="page-nav-link">
-                        Agents
-                    </Link>
-                    <a href="/guides" className="page-nav-link">
-                        Guides
-                    </a>
-                </nav>
-            </header>
+            <PublicHeader path="/all" initialOpen={menuOpen} />
 
             <section className="gallery-hero">
                 <h1>
@@ -169,11 +143,12 @@ export function AllActuators() {
                 />
             </section>
 
-            <footer className="foot">
+            <p className="foot">
                 Community dataset {"·"} v1 sourced from manufacturer pages via web
                 search {"·"} every row links its source {"·"} verify against
                 datasheets before engineering use.
-            </footer>
+            </p>
+                <PublicFooter />
 
             {compare.size > 0 && !showCompare && (
                 <div className="compare-dock">

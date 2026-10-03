@@ -20,6 +20,8 @@ test("gallery startup reuses every initial card and photo instead of replacing t
     );
     document.body.innerHTML = `<div id="root" data-gallery-prerender="true">${html}</div>`;
     const root = document.getElementById("root")!;
+    const menu = root.querySelector<HTMLDetailsElement>(".site-menu")!;
+    menu.open = true; // Native interaction before the application script arrives.
     const cards = [...root.querySelectorAll(".bento-card")];
     const photos = [...root.querySelectorAll(".bento-thumb img")];
     // Happy DOM reports complete=true/zero dimensions without loading images.
@@ -40,6 +42,9 @@ test("gallery startup reuses every initial card and photo instead of replacing t
         expect(afterCards.every((node, i) => node === cards[i])).toBe(true);
         expect(afterPhotos.length).toBe(photos.length);
         expect(afterPhotos.every((node, i) => node === photos[i])).toBe(true);
+        expect(root.querySelector(".site-menu")).toBe(menu);
+        expect(menu.open).toBe(true);
+        expect(menu.querySelector("summary")?.getAttribute("aria-expanded")).toBe("true");
         expect(root.querySelectorAll(".gallery-page")).toHaveLength(1);
         expect(errors).not.toHaveBeenCalled();
         const click = new MouseEvent("click", {

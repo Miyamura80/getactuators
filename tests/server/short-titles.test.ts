@@ -5,6 +5,7 @@ import { CATALOG_UPDATED_DATE } from "@/server/agent/freshness";
 import { pageBody } from "@/server/agent/html/body";
 import { documentTitle } from "@/server/agent/html/head";
 import { allPages, findPage, pageMarkdown } from "@/server/agent/pages";
+import { faqSection } from "@/server/agent/pages-md";
 import { get } from "./agent-helpers";
 import baseline from "./short-titles-baseline.json";
 
@@ -36,7 +37,9 @@ function snapshotContent(value: string) {
 // Captured from the clean main baseline before implementation. Only expected
 // metadata labels differ; hashes lock down original content, not head markup.
 test("the full catalog has distinct reviewed metadata without content changes", async () => {
-    const pages = allPages();
+    const registered = allPages();
+    expect(registered).toHaveLength(80);
+    const pages = registered.filter((page) => page.path !== "/faq");
     expect(ACTUATORS).toHaveLength(68);
     expect(pages).toHaveLength(79);
     expect(pages.map((page) => page.path)).toEqual(
@@ -59,7 +62,11 @@ test("the full catalog has distinct reviewed metadata without content changes", 
                 `The catalog was last updated on ${CATALOG_UPDATED_DATE}.`,
             );
         }
-        expect(sha256(snapshotContent(page.body()))).toBe(original.bodySha256);
+        const originalBody =
+            page.path === "/"
+                ? `${page.body()}\n\n## Frequently asked questions\n\n${faqSection()}`
+                : page.body();
+        expect(sha256(snapshotContent(originalBody))).toBe(original.bodySha256);
         const html = await expectTitles(page.path, documentTitle(page.title));
         // The approved gallery replaces its transient Markdown fallback with
         // real cards. Still lock its canonical prose rendering to the original

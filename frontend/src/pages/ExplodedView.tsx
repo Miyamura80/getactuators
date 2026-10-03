@@ -1,11 +1,12 @@
+import { PublicHeader } from "../components/PublicHeader";
 import { useEffect, useRef } from "react";
 import { ACTUATORS } from "../lib/data";
 import { num, price } from "../lib/format";
 import { Link } from "../lib/router";
-import { BrandMark } from "../components/BrandMark";
 
 interface Props {
     id: string;
+    menuOpen?: boolean;
 }
 
 type Kind =
@@ -35,7 +36,7 @@ const PARTS: PartDef[] = [
     { kind: "encoder", label: "Encoder + rear cap", blurb: "Reads angle for commutation and closed-loop control." },
 ];
 
-export function ExplodedView({ id }: Props) {
+export function ExplodedView({ id, menuOpen = false }: Props) {
     const actuator = ACTUATORS.find((a) => a.id === id);
     const stageRef = useRef<HTMLDivElement>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
@@ -71,14 +72,7 @@ export function ExplodedView({ id }: Props) {
     if (!actuator) {
         return (
             <div className="exploded-page">
-                <header className="page-bar">
-                    <Link to="/actuators" className="page-brand">
-                        <BrandMark size={24} />
-                        <span>
-                            <b>actuator</b>list.com
-                        </span>
-                    </Link>
-                </header>
+                <PublicHeader path="/actuators" initialOpen={menuOpen} />
                 <div className="xp-missing">
                     <p>No actuator with id "{id}".</p>
                     <Link to="/actuators" className="page-nav-link">
@@ -95,28 +89,7 @@ export function ExplodedView({ id }: Props) {
 
     return (
         <div className="exploded-page">
-            <header className="page-bar">
-                <Link to="/actuators" className="page-brand" aria-label="Back to gallery">
-                    <BrandMark size={24} />
-                    <span>
-                        <b>actuator</b>list.com
-                    </span>
-                </Link>
-                <nav className="page-nav">
-                    <Link to="/actuators" className="page-nav-link">
-                        ← Gallery
-                    </Link>
-                    <Link to="/all" className="page-nav-link">
-                        All actuators
-                    </Link>
-                    <Link to="/agents" className="page-nav-link">
-                        Agents
-                    </Link>
-                    <a href="/guides" className="page-nav-link">
-                        Guides
-                    </a>
-                </nav>
-            </header>
+            <PublicHeader path="/actuators" initialOpen={menuOpen} />
 
             <div className="xp-scroll" ref={scrollRef}>
                 <div className="xp-stage" ref={stageRef}>

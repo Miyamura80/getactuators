@@ -19,7 +19,7 @@ for (const [name, path] of targets) {
     const page = findPage(path);
     if (!page) throw new Error(`Missing page: ${path}`);
     const html = await renderSpaPage(page);
-    const body = /<div id="root">[\s\S]*?<\/section>/.exec(html)?.[0];
+    const body = /<div id="root">[\s\S]*?(?=<script|<\/body>)/.exec(html)?.[0];
     if (!body) throw new Error(`No persistent catalog section: ${path}`);
     const faq = page.jsonLd().find((node) => node["@type"] === "FAQPage") ?? null;
     if (name === "researched") researched.push({ path, body, faq });

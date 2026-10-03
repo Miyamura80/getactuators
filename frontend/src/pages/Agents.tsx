@@ -1,9 +1,9 @@
+import { PublicHeader } from "../components/PublicHeader";
+import { PublicFooter } from "../components/PublicFooter";
 import { useEffect } from "react";
 import { BrandGlyph } from "../components/BrandGlyph";
-import { BrandMark } from "../components/BrandMark";
 import { ConnectWidget } from "../components/ConnectWidget";
 import { MCP_TOOLS } from "../lib/agent-clients";
-import { Link } from "../lib/router";
 
 // Machine-readable doors besides MCP. Plain anchors: these are server routes,
 // not SPA pages, so the client router must not intercept them.
@@ -16,7 +16,7 @@ const OTHER_WAYS: { href: string; label: string }[] = [
 
 const TITLE = "Connect actuatorlist to your AI agent (MCP)";
 
-export function Agents() {
+export function Agents({ menuOpen = false }: { menuOpen?: boolean }) {
     useEffect(() => {
         const prev = document.title;
         document.title = TITLE;
@@ -27,34 +27,7 @@ export function Agents() {
 
     return (
         <div className="agents-page">
-            <header className="page-bar">
-                <Link to="/" className="page-brand" aria-label="actuatorlist home">
-                    <BrandMark size={24} />
-                    <span>
-                        <b>actuator</b>list.com
-                    </span>
-                </Link>
-                <nav className="page-nav">
-                    <Link to="/" className="page-nav-link">
-                        Leaderboard
-                    </Link>
-                    <Link to="/robots" className="page-nav-link">
-                        Robot types
-                    </Link>
-                    <Link to="/all" className="page-nav-link">
-                        All actuators
-                    </Link>
-                    <Link to="/actuators" className="page-nav-link">
-                        Gallery
-                    </Link>
-                    <Link to="/agents" className="page-nav-link" data-on={true}>
-                        Agents
-                    </Link>
-                    <a href="/guides" className="page-nav-link">
-                        Guides
-                    </a>
-                </nav>
-            </header>
+            <PublicHeader path="/agents" initialOpen={menuOpen} />
 
             <div className="agents-grid">
                 <section className="agents-intro">
@@ -91,6 +64,7 @@ export function Agents() {
                     <ConnectWidget />
                 </section>
             </div>
+            <PublicFooter />
         </div>
     );
 }
