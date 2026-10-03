@@ -1,0 +1,560 @@
+{
+    "baseline": "23873417a60ae70b290de0d36ca29d8f407ff725",
+    "catalogUpdatedDate": "2026-09-23",
+    "pages": [
+        {
+            "path": "/guides",
+            "title": "Robot actuator engineering guides",
+            "description": "Source-backed selection guides and actuator comparisons: efficiency, thermal duty, output precision and sim2real modeling, with explicit unknowns.",
+            "bodySha256": "5dedd74a6e49e1f57f7ac0d59682195e9f83fa3f78a959286fcaf779bbad8988",
+            "htmlContentSha256": "132c1b034b33f050a6b943b9006d6fc4a8c9efb3752660725f1aad455a28dcca"
+        },
+        {
+            "path": "/guides/robot-actuator-selection",
+            "title": "Robot actuator selection guide",
+            "description": "Select robot actuators using mission efficiency, installed thermal duty, measured output precision and validated sim2real models, not peak torque or encoder bits alone.",
+            "bodySha256": "208511bffeece4d973fc0ba5a16238ccb6c445197e6d46e6ce463d27ea05aa8d",
+            "htmlContentSha256": "759339d42e6e05453d529af869b1befd8b6c4c5e60a0703070edc83e7f86ade7"
+        },
+        {
+            "path": "/comparisons/cubemars-ak80-9-vs-xiaomi-cybergear",
+            "title": "CubeMars AK80-9 V3.0 KV100 vs Xiaomi CyberGear",
+            "description": "Compare AK80-9 V3.0 KV100 and original 24 V CyberGear: source-qualified ratings, thermal overload conditions, encoder conflicts and unproven performance rankings.",
+            "bodySha256": "c073edfacf7b58a9aac27bbd36964e5b5ae70b605c4ce29044b989636187245d",
+            "htmlContentSha256": "8880b49fa7898749346b621080dcd9b5cae5523028db60508d150d5de7934590"
+        },
+        {
+            "path": "/",
+            "title": "actuatorlist: robot actuator leaderboard and spec database",
+            "description": "Open, spec-level directory of robot actuators (QDD motors, integrated joints, smart servos, harmonic and cycloidal reducers) and the robots that use them. Compare torque, weight, torque density and price.",
+            "bodySha256": "232688801ad73f144d20071c2636b286642fccd3991185b652f9ec50c00e2cdd",
+            "htmlContentSha256": "14648cd18b65109df7030208b82dddd538af804fde856a4d94bebb2021e414c5"
+        },
+        {
+            "path": "/all",
+            "title": "All robot actuators",
+            "description": "Every actuator in the catalog (68) in one table: peak torque, weight, torque density and price.",
+            "bodySha256": "bf50f642392ea9211d2a811b2e6ccd51001f1b448cd86a9e99f12b8ee7d9c7ec",
+            "htmlContentSha256": "44ca5847a50d6db09afd0a7f94cdc197bab3b64a0bb1ea7232eb127b0ef88f1a"
+        },
+        {
+            "path": "/actuators",
+            "title": "Actuator gallery by category",
+            "description": "Robot actuators grouped by drive type: QDD, integrated joints, smart servos, harmonic, cycloidal and frameless kits.",
+            "bodySha256": "0dea912bf8873f38f038991f135ac4e453df71a2ed9cbfe8edf1c8e0c4a8912c",
+            "htmlContentSha256": "78611ef3efcd03b7ba24f48276c28583353b5b45958f4e6d1d15e9cb72693d7a"
+        },
+        {
+            "path": "/robots",
+            "title": "Robots and the actuators inside them",
+            "description": "Which motor sits in each joint of real robot arms and legged robots, linked to actuator specs.",
+            "bodySha256": "98602d09a644c3bf8b9c8b3d3ace6a1b25d4609a455c1a2c86b3611ea88a8efd",
+            "htmlContentSha256": "e9422d142a160182df9e18882a27aff65a3b35cd34d5d51f2a7f455f3d83b5e2"
+        },
+        {
+            "path": "/agents",
+            "title": "actuatorlist for AI agents",
+            "description": "Connect an AI agent to actuatorlist: MCP server, REST API, markdown twins and llms.txt. No key needed.",
+            "bodySha256": "56ca4ebca291d5c5d74796e6f8b45fe0b3b248be88d0343d3610ac66aea11dcd",
+            "htmlContentSha256": "76bb8d094f57c672b937bbda715d09e0a23305a5b538a2b33af207c25a39b11d"
+        },
+        {
+            "path": "/about",
+            "title": "About actuatorlist",
+            "description": "Who runs actuatorlist, where the actuator data comes from and how it is verified.",
+            "bodySha256": "5ac8eb8acc963e60069121d03dda29790226129bb35dac51572b8402560ffb0a",
+            "htmlContentSha256": "f1dbcd6e3f36a8fbdcadb3b42b4bc05897d434fe718cfbd67e598e15a0b30211"
+        },
+        {
+            "path": "/contact",
+            "title": "Contact actuatorlist",
+            "description": "Report wrong actuator data, contribute entries or ask about the API through GitHub.",
+            "bodySha256": "7ea6c8ed9e97d145a05ca209c80a548c898228914be885e632d3e393d26a06de",
+            "htmlContentSha256": "503d7ab31f54f990a71f5b50b93a1feedc9a1786b3c675ccd5f0d2fb6cc7a913"
+        },
+        {
+            "path": "/privacy",
+            "title": "Privacy at actuatorlist",
+            "description": "No accounts or advertising: optional opt-in analytics, browser preferences and what happens when you visit actuatorlist.",
+            "bodySha256": "19f7c6efeada83fcd9a862616bb0d0264c4b51f33ab1bdfc3c96fd4de9fd1095",
+            "htmlContentSha256": "c619a93506ef446150a02364841c6cf75bdcdb8b5ca5109bfa9b35a67371d147"
+        },
+        {
+            "path": "/actuators/allied-motion-megaflux-mf0127",
+            "title": "Allied Motion Megaflux MF0127 frameless specs",
+            "description": "Frameless + Driver actuator from Allied Motion / Allient (United States). Peak torque n/a, rated n/a, weight n/a, torque density n/a, price quote only.",
+            "bodySha256": "c1ececed99364b5e46377f7aefc63751a55d6ed50b0b0667ffeef80736e9918d",
+            "htmlContentSha256": "fcf42fa7357634360eeca05549b8482b9b25fe5adbd7aa161f318f19a1f9d1aa"
+        },
+        {
+            "path": "/actuators/atar-arc-cycloidal-joint",
+            "title": "ATAR Robot Arc Series Cycloidal Joint specs",
+            "description": "Cycloidal / Premium actuator from ATAR Robot (China). Peak torque 530 Nm, rated n/a, weight n/a, torque density n/a, price quote only.",
+            "bodySha256": "ed9a9b0019065a9fe8a7ec732ead280b8014617f64402e822d2aed37b8feec68",
+            "htmlContentSha256": "ba7fb9635acc910a476c8cd4029be57444f25832f96e4b95dbe5a8693503a6cd"
+        },
+        {
+            "path": "/actuators/cubemars-ak10-9",
+            "title": "CubeMars AK10-9 (V3.0 KV60) specs",
+            "description": "QDD / Proprioceptive actuator from CubeMars (T-Motor) (China). Peak torque 53 Nm, rated 18 Nm, weight 960 g, torque density 55.2 Nm/kg, price quote only.",
+            "bodySha256": "0e6dc11bb89d18c89263a9684a174fa1ff44c46823de3915d0951bb526393e07",
+            "htmlContentSha256": "e9c0877477e632ad726058dc5542e06281d733b39898d5714d5b92f263ae8eec"
+        },
+        {
+            "path": "/actuators/cubemars-ak60-6",
+            "title": "CubeMars AK60-6 (V3.0 KV80) specs",
+            "description": "QDD / Proprioceptive actuator from CubeMars (T-Motor) (China). Peak torque 9 Nm, rated 3 Nm, weight 380 g, torque density 23.7 Nm/kg, price $427.",
+            "bodySha256": "2cd4983b73bf6e6d64cc6935d7cc623889cc593ca2f341e29c4344f149ef5606",
+            "htmlContentSha256": "4c71573edbb25b6805f81af418e162d34d1c4b49d21edca12321e0fc9140873e"
+        },
+        {
+            "path": "/actuators/cubemars-ak70-10",
+            "title": "CubeMars AK70-10 (KV100) specs",
+            "description": "QDD / Proprioceptive actuator from CubeMars (T-Motor) (China). Peak torque 24.8 Nm, rated 8.3 Nm, weight 521 g, torque density 47.6 Nm/kg, price $399.",
+            "bodySha256": "045b5b27f31469a90902e9cea8833f4c3136abf229a3201528743398f4c5a0c1",
+            "htmlContentSha256": "e84cc61ae1e62055295ab74d064aadadbb8c2a3c86578ea2f6bdd8a91ac3845e"
+        },
+        {
+            "path": "/actuators/cubemars-ak80-6",
+            "title": "CubeMars AK80-6 (KV100) specs",
+            "description": "QDD / Proprioceptive actuator from CubeMars (T-Motor) (China). Peak torque 12 Nm, rated 6 Nm, weight 485 g, torque density 24.7 Nm/kg, price $470.",
+            "bodySha256": "3411a542ff073b101f00a68948d5d48546ac9d09e53b31660784f0d59c5c11c0",
+            "htmlContentSha256": "387b264e6557d247feba99ffe620ddbaaef011aa7ed6291d3fc5f17b218a13dd"
+        },
+        {
+            "path": "/actuators/cubemars-ak80-9",
+            "title": "CubeMars AK80-9 (V3.0 KV100) specs",
+            "description": "QDD / Proprioceptive actuator from CubeMars (T-Motor) (China). Peak torque 22 Nm, rated 9 Nm, weight 485 g, torque density 45.4 Nm/kg, price $580.",
+            "bodySha256": "ce39e04dd7413f3f0b50de16deca6b8a6b103cb32e14819e46431a61d5e6abbc",
+            "htmlContentSha256": "097494cf91d72827ed924064255c3213762bcad61992bebbd1e86d0437ae0071"
+        },
+        {
+            "path": "/actuators/cubemars-r60-kv115",
+            "title": "CubeMars R60 KV115 specs",
+            "description": "Frameless + Driver actuator from CubeMars (T-Motor) (China). Peak torque 2.3 Nm, rated 0.8 Nm, weight 248 g, torque density 9.3 Nm/kg, price quote only.",
+            "bodySha256": "905555da59046d39ce0ebc399fae25d5cd926603e28e911d8d61c6ac462e7163",
+            "htmlContentSha256": "c1c755ade15974c95d27de34ff66cbc19d10e59c332688e87cd9f59ab3727146"
+        },
+        {
+            "path": "/actuators/cubemars-ri60-kv120",
+            "title": "CubeMars RI60 KV120 specs",
+            "description": "Frameless + Driver actuator from CubeMars (T-Motor) (China). Peak torque 1.6 Nm, rated 0.6 Nm, weight 156 g, torque density 10.5 Nm/kg, price quote only.",
+            "bodySha256": "c8a7e41dc8be429d46e61e597482f9d1e6c8050b19378bb017b59f27ee269373",
+            "htmlContentSha256": "3d33da7501f0ed7c2594aec60543c0ba8d8e068a6bf41e2dccc29358ae8d2cf6"
+        },
+        {
+            "path": "/actuators/cubemars-ri80-v2-kv75",
+            "title": "CubeMars RI80 V2.0 KV75 specs",
+            "description": "Frameless + Driver actuator from CubeMars (T-Motor) (China). Peak torque 4.1 Nm, rated 1.4 Nm, weight 411 g, torque density 10 Nm/kg, price quote only.",
+            "bodySha256": "d843dc01e26fd5b063ff64010e421407a07eff5c2e3506c8d15267214bfaf101",
+            "htmlContentSha256": "d6dd225628f0d555b2ac0ab0eb7bb6c30650c70f7612d188a825bfdf8333258f"
+        },
+        {
+            "path": "/actuators/damiao-dm-j10010-2ec",
+            "title": "DAMIAO DM-J10010-2EC specs",
+            "description": "Cycloidal / Premium actuator from DAMIAO (DMBots) (China). Peak torque 150 Nm, rated 40 Nm, weight n/a, torque density n/a, price $357.",
+            "bodySha256": "a4e956534d5856621377d9a9657c99ad3bcf45e5fdfa4eedfc6f953ce59d5597",
+            "htmlContentSha256": "4be24297e93cdf5d4d0b911003a9aa64d94c2ab1e22721a736c23a91c67fd3db"
+        },
+        {
+            "path": "/actuators/damiao-dm-j8009-2ec",
+            "title": "DAMIAO DM-J8009-2EC specs",
+            "description": "Cycloidal / Premium actuator from DAMIAO (DMBots) (China). Peak torque 40 Nm, rated 20 Nm, weight 896 g, torque density 44.6 Nm/kg, price $385.",
+            "bodySha256": "83559e435de6063519645e1c2e30459cb632ae38566a737224b4d1ad21f58b56",
+            "htmlContentSha256": "617b6ba45f38050ed2f7a913001d533e48e220dcefa5c5f4795f769155c5e017"
+        },
+        {
+            "path": "/actuators/dynamixel-h54-200-s500-r",
+            "title": "Dynamixel H54-200-S500-R PRO specs",
+            "description": "Smart Servo actuator from Robotis (Dynamixel) (South Korea). Peak torque 44.7 Nm, rated n/a, weight 855 g, torque density 52.3 Nm/kg, price quote only.",
+            "bodySha256": "cfd2551a09b1848a97e4b798c3dd13baa58dff7e635b11ffd7001204596f4b6e",
+            "htmlContentSha256": "ef4f005300d59ff380a8098ca5d768af76105930a061dd7a302012db10d2ce97"
+        },
+        {
+            "path": "/actuators/dynamixel-ph54-200-s500-r",
+            "title": "Dynamixel PH54-200-S500-R Pro+ specs",
+            "description": "Smart Servo actuator from Robotis (Dynamixel) (South Korea). Peak torque n/a, rated 44.7 Nm, weight 855 g, torque density n/a, price $3,542.",
+            "bodySha256": "63e244092714383223b376064ca4d38b0ee1f8327d29949eb446f3f0d579aeb3",
+            "htmlContentSha256": "b975c3e095ae32dc9dd4f5de83cf5f583da67602b60e34f843c528a4e7ee88c1"
+        },
+        {
+            "path": "/actuators/dynamixel-pm54-060-s250-r",
+            "title": "Dynamixel PM54-060-S250-R Pro+ specs",
+            "description": "Smart Servo actuator from Robotis (Dynamixel) (South Korea). Peak torque n/a, rated 10.1 Nm, weight 855 g, torque density n/a, price $2,196.",
+            "bodySha256": "2fa975107ca4f651f4dcf4a498c617e42a0a2f9f33364a2ca3c2e71e17013b4a",
+            "htmlContentSha256": "78d3753fd76f7775763e107ed6f2d65417140bfdf10e70cc92bc058a0ed8c119"
+        },
+        {
+            "path": "/actuators/dynamixel-xc430-w150-t",
+            "title": "Dynamixel XC430-W150-T specs",
+            "description": "Smart Servo actuator from Robotis (Dynamixel) (South Korea). Peak torque 1.6 Nm, rated n/a, weight 65 g, torque density 24.6 Nm/kg, price $138.",
+            "bodySha256": "ab56641dfda1796091dd4179c021881481f29a9f240fd6e06587f537cbefd0a1",
+            "htmlContentSha256": "e251a1b8f6be6b34476ba3026b983f1f34427117f29b131fb344f77a41d2a83d"
+        },
+        {
+            "path": "/actuators/dynamixel-xh540-w270-t",
+            "title": "Dynamixel XH540-W270-T specs",
+            "description": "Smart Servo actuator from Robotis (Dynamixel) (South Korea). Peak torque 9.9 Nm, rated n/a, weight 165 g, torque density 60 Nm/kg, price $621.",
+            "bodySha256": "59f9798f385b3bacd3a50af24aa91549f07778760e753646ca57ab732e9ffe2d",
+            "htmlContentSha256": "6e52ca76df7e7c06d4176388beb116568a1b9083b9ff1a0e5d9f28ed7920a1e5"
+        },
+        {
+            "path": "/actuators/dynamixel-xl330-m288-t",
+            "title": "Dynamixel XL330-M288-T specs",
+            "description": "Smart Servo actuator from Robotis (Dynamixel) (South Korea). Peak torque 0.5 Nm, rated n/a, weight 18 g, torque density 28.9 Nm/kg, price $24.",
+            "bodySha256": "08ad0dec1a1a69f9cfe72c952f0c0017673bb1aa96a518a0217fd14bb0e6494c",
+            "htmlContentSha256": "3ddc8efa993e442870e5cdce996ede071f76259a1d0a5d07f30db251d30fd88f"
+        },
+        {
+            "path": "/actuators/dynamixel-xl430-w250-t",
+            "title": "Dynamixel XL430-W250-T specs",
+            "description": "Smart Servo actuator from Robotis (Dynamixel) (South Korea). Peak torque 1.5 Nm, rated n/a, weight 57 g, torque density 26.2 Nm/kg, price $50.",
+            "bodySha256": "fa2d650489b2be7680346bc7ca6c66a85f535b73d91c1ac6b2fa5461cdb70812",
+            "htmlContentSha256": "cfa7ba1098d8a89a435be6446d9c3cf202f4a75504f5f52e463a61dcec0d2c2b"
+        },
+        {
+            "path": "/actuators/dynamixel-xm430-w350-t",
+            "title": "Dynamixel XM430-W350-T specs",
+            "description": "Smart Servo actuator from Robotis (Dynamixel) (South Korea). Peak torque 4.1 Nm, rated n/a, weight 82 g, torque density 50 Nm/kg, price $290.",
+            "bodySha256": "4d9b716150123e5a011152a6ea346c239859cc2b1a644ccccf9dfd4f7d36b25b",
+            "htmlContentSha256": "d655718afe3748e44b77f2518c5111ce57ffa3cb4280c16df1fee7a5b4e215a0"
+        },
+        {
+            "path": "/actuators/dynamixel-xm540-w270-t",
+            "title": "Dynamixel XM540-W270-T specs",
+            "description": "Smart Servo actuator from Robotis (Dynamixel) (South Korea). Peak torque 10.6 Nm, rated n/a, weight 165 g, torque density 64.2 Nm/kg, price $483.",
+            "bodySha256": "f07d64f9c23b80d10ba9c5c0f51101217da77b30db4966db3461cde413bd485d",
+            "htmlContentSha256": "4aafe2a10f1a46439e0a53cad2e4ab0114a40c11f3d4198d561db16b90721700"
+        },
+        {
+            "path": "/actuators/feetech-scs15",
+            "title": "Feetech SCS15 specs",
+            "description": "Smart Servo actuator from Feetech (China). Peak torque 1.7 Nm, rated n/a, weight 56 g, torque density 29.8 Nm/kg, price $25.",
+            "bodySha256": "9e7b3c9ec7821bfedd962181df031933599c258deb554f78cb517ac0c6acba24",
+            "htmlContentSha256": "4407f5565237cb3b0f75698046b3aa641357d4c3004f4da662dc0cadb7154b7e"
+        },
+        {
+            "path": "/actuators/feetech-sts3215",
+            "title": "Feetech STS3215 (12V) specs",
+            "description": "Smart Servo actuator from Feetech (China). Peak torque 2.9 Nm, rated n/a, weight 55 g, torque density 53.5 Nm/kg, price $16.",
+            "bodySha256": "59b79a11ced803ebcef1a5c1d6e295c0f0a341b8e9a0b253f9474cb973abf095",
+            "htmlContentSha256": "4409730765fd5aa460fcc5e3b3e4d1e85a32d4b77c0a7048c9b91993697f1212"
+        },
+        {
+            "path": "/actuators/feetech-sts3250",
+            "title": "Feetech STS3250 (12V) specs",
+            "description": "Smart Servo actuator from Feetech (China). Peak torque 4.9 Nm, rated n/a, weight 75 g, torque density 65.8 Nm/kg, price $28.",
+            "bodySha256": "95b023f9ae2f2be73d246909f37649f874253bf2fd4507e666ffa26c9729a3e5",
+            "htmlContentSha256": "2c09089433796ef75909344a2e031f6d227c668e5cac51017df70db93b1e41eb"
+        },
+        {
+            "path": "/actuators/harmonic-drive-cha-series",
+            "title": "Harmonic Drive CHA series specs",
+            "description": "Harmonic / Precision actuator from Harmonic Drive (Harmonic Drive SE / LLC) (Japan). Peak torque n/a, rated n/a, weight n/a, torque density n/a, price quote only.",
+            "bodySha256": "1258af497724176adb02ba6e557840974cf7fd7326c21181208cbe5aaa7a325b",
+            "htmlContentSha256": "1e87e0af8f6dafe38ab86f9f653ee9371a4cd2e4ded9fd05b5df616c1594e33d"
+        },
+        {
+            "path": "/actuators/harmonic-drive-fha-14c-100",
+            "title": "Harmonic Drive FHA-14C-100 (FHA-C Mini) specs",
+            "description": "Harmonic / Precision actuator from Harmonic Drive LLC (Japan). Peak torque 28 Nm, rated 6.8 Nm, weight 1650 g, torque density 17 Nm/kg, price quote only.",
+            "bodySha256": "4419f3e01c8a4c81bb878d886c638d2094c3a2b67959ffd1d8dd976cef239d7f",
+            "htmlContentSha256": "118b97513ff315b2361e010f1cd3fff4fc29652068b928587eb52255e749d200"
+        },
+        {
+            "path": "/actuators/harmonic-drive-lpa-20",
+            "title": "Harmonic Drive LPA-20 specs",
+            "description": "Harmonic / Precision actuator from Harmonic Drive LLC (Japan). Peak torque 57 Nm, rated 16.9 Nm, weight 1400 g, torque density 40.7 Nm/kg, price quote only.",
+            "bodySha256": "a5a156e27f858fae3e5b94c3abdd8dc00d3ff1cad520939f6c0e4acb8adea7c7",
+            "htmlContentSha256": "0d9f6812be28b1ac476d29e1be55080bc86bfc94f764d35bcf678665759fe9d1"
+        },
+        {
+            "path": "/actuators/harmonic-drive-sha-cg",
+            "title": "Harmonic Drive SHA-CG series specs",
+            "description": "Harmonic / Precision actuator from Harmonic Drive LLC (Japan). Peak torque n/a, rated n/a, weight n/a, torque density n/a, price quote only.",
+            "bodySha256": "3009a8768dfe1318bf5d39fb50048c686171daed97352a92490697d1a2e940cf",
+            "htmlContentSha256": "a78f1bb6c9197221818bd5f9dc7d7fe8d57898ff633ddec2d695499d70a3a442"
+        },
+        {
+            "path": "/actuators/hiwonder-lx-16a",
+            "title": "Hiwonder LX-16A specs",
+            "description": "Smart Servo actuator from Hiwonder (LewanSoul) (China). Peak torque 1.9 Nm, rated n/a, weight 52 g, torque density 36.7 Nm/kg, price $19.",
+            "bodySha256": "e374bf9519f2b5f4acc1dfc5a04374b5fa7cbea1a717ea349bda9d01cc07d8f9",
+            "htmlContentSha256": "6b0eeed039f4bb936e2a00af250f03ff4a1b8cbec612bfacaabbf004dc7f6c34"
+        },
+        {
+            "path": "/actuators/innfos-sca-qdd-lite-ne30-36",
+            "title": "INNFOS SCA QDD-Lite-NE30-36 specs",
+            "description": "Cycloidal / Premium actuator from INNFOS (Mintasca) (China). Peak torque 10 Nm, rated 2.3 Nm, weight 232 g, torque density 43.1 Nm/kg, price quote only.",
+            "bodySha256": "1e15da7b1d7c185e8dad49712071c355c1488b420b02756951dec10411a2bec8",
+            "htmlContentSha256": "6b77e19daf4b85ec2a9abe1737d9ccdb40c17a0ffe36919b025b433354832e81"
+        },
+        {
+            "path": "/actuators/ipower-gm8112-80t",
+            "title": "iPower GM8112-80T specs",
+            "description": "Frameless + Driver actuator from iPower Motor (iFlight) (China). Peak torque 0.9 Nm, rated 0.6 Nm, weight 428 g, torque density 2.1 Nm/kg, price $178.",
+            "bodySha256": "bfdbc95886e9f383ab943c72e47fded4bdf4a52ebb392334beea23a48ed637c4",
+            "htmlContentSha256": "e87d268d0f1780d84d82c8931c87f0de3513d07e197c36e443d5e9f6024002f4"
+        },
+        {
+            "path": "/actuators/leaderdrive-lcs",
+            "title": "Leaderdrive LCS series cup-type reducer specs",
+            "description": "Leaderdrive LCS cup-shaped strain-wave reducer family with keyed or Oldham-coupled input options; select frame, ratio and input variant.",
+            "bodySha256": "19226ae85ec46963c4a04100f81188de44fa8e8ef910510f634bc88ba4d22028",
+            "htmlContentSha256": "0f76c7c93b1dadb10f8b03fb5e74e6bf552d50fcc71b67923e2c525d33f9e9f4"
+        },
+        {
+            "path": "/actuators/leaderdrive-lhd",
+            "title": "Leaderdrive LHD series hollow-shaft reducer specs",
+            "description": "Leaderdrive LHD ultra-flat hollow-shaft strain-wave reducer family for constrained axial packaging, with direct or supported hollow-input variants.",
+            "bodySha256": "bcb96c205ab4d0139df49a20f138bee56a077665b8a2ab5a954d8c6a9c9d4c45",
+            "htmlContentSha256": "df6e65fe0d9c775605be8f4b8ffa4df80960b3c9e6c7ffa919613a898d07c122"
+        },
+        {
+            "path": "/actuators/leaderdrive-lhs",
+            "title": "Leaderdrive LHS series strain-wave reducer specs",
+            "description": "Leaderdrive LHS hat-type strain-wave reducer family with keyed, coupled, supported hollow-input and input-shaft integration options.",
+            "bodySha256": "e6392de65b4f4e579d7db7c1acec88a973c25622b07c64c74a77a2b41d9f506b",
+            "htmlContentSha256": "e0ae3c7d0bda5c83f2b54f86fee9510055c23a245d2fafeb82c358400523eeb3"
+        },
+        {
+            "path": "/actuators/lkmtech-mg5010e-i36-v3",
+            "title": "LKMTech MG5010E-i36 V3 specs",
+            "description": "Integrated Joint actuator from LKMTech (LKTECH / Shanghai Lingkong) (China). Peak torque 25 Nm, rated 13 Nm, weight n/a, torque density n/a, price quote only.",
+            "bodySha256": "3027dd09f853d44cbef5927c5c2411f348336442b1e537132bcfc43f89a8968c",
+            "htmlContentSha256": "0dfe5ba84d81b60646dc2d92887083b0bd709f68bf351a860e396c1c2cacdedd"
+        },
+        {
+            "path": "/actuators/maxon-ec-frameless-90-flat-260w",
+            "title": "maxon EC frameless 90 flat (260 W) specs",
+            "description": "Frameless + Driver actuator from maxon (Switzerland). Peak torque 9.8 Nm, rated 1 Nm, weight 814 g, torque density 12 Nm/kg, price quote only.",
+            "bodySha256": "fcb556c7cc06060f0cf5f3c358b4dde9291499ffa9badf6c43b0dee6a460a010",
+            "htmlContentSha256": "498ad14a5238814d44e65c9ed5614f0a9512e875d410e0b1ef551323b2d13cf7"
+        },
+        {
+            "path": "/actuators/mjbots-moteus-c1",
+            "title": "mjbots moteus c1 specs",
+            "description": "Frameless + Driver actuator from mjbots (United States). Peak torque n/a, rated n/a, weight 9 g, torque density n/a, price $69.",
+            "bodySha256": "02c156b4d07392c3a5785f61c8d7224dcce0f4d81e256133949e24e5c4ed9b72",
+            "htmlContentSha256": "6a1bf8d04d278ba55188fa0c28b7e9c74e7d60f5b4429210376ba8ee1a449784"
+        },
+        {
+            "path": "/actuators/mjbots-moteus-r4-11",
+            "title": "mjbots moteus r4.11 specs",
+            "description": "Frameless + Driver actuator from mjbots (United States). Peak torque n/a, rated n/a, weight 14 g, torque density n/a, price $94.",
+            "bodySha256": "f1fe33f5e1d75b5666a8f681925658447534ca7d4c5762b0d161c3e51df404ac",
+            "htmlContentSha256": "b2ed6750a9318bc5223037e822fc4bdafee1a44cb9e8d59ebbac4eac43bbab17"
+        },
+        {
+            "path": "/actuators/mjbots-qdd100",
+            "title": "mjbots qdd100 beta 3 specs",
+            "description": "QDD / Proprioceptive actuator from mjbots (United States). Peak torque 16 Nm, rated 3.3 Nm, weight 507 g, torque density 31.6 Nm/kg, price $879.",
+            "bodySha256": "7451ff0705e2d2063f8c440c80fbe54a1d4fdc51c8f5cbf2b3b998331c34a099",
+            "htmlContentSha256": "6b0feea12961036a1c4886c8adf80b7d022747ef8a05c538191a6d463a69dde8"
+        },
+        {
+            "path": "/actuators/myactuator-rmd-l-9015",
+            "title": "MyActuator RMD-L-9015-16T specs",
+            "description": "Integrated Joint actuator from MyActuator (China). Peak torque 3.4 Nm, rated 1.6 Nm, weight 650 g, torque density 5.2 Nm/kg, price quote only.",
+            "bodySha256": "13d77d05834f929e01efa5a1269d3b5131bf56f3544abd0a2b0631eec7dd1a45",
+            "htmlContentSha256": "e253d907d3631b3d61746b4411e25fa14d85aaa0532f9e14c2989e9e8476da2f"
+        },
+        {
+            "path": "/actuators/myactuator-rmd-x10-s2-v3",
+            "title": "MyActuator RMD-X10-S2 V3 (1:35) specs",
+            "description": "Integrated Joint actuator from MyActuator (China). Peak torque 100 Nm, rated 50 Nm, weight n/a, torque density n/a, price $625.",
+            "bodySha256": "3730a7cb73d6d83aca43a43d8433a91d4c97095053cde642276413ad3b3ef0f8",
+            "htmlContentSha256": "39960e42f0804d19c85a53cd80f4f4d65f8ec7393bb92d442b97c093f8f1a8a5"
+        },
+        {
+            "path": "/actuators/myactuator-rmd-x6-8",
+            "title": "MyActuator RMD-X6-8 V3 specs",
+            "description": "Integrated Joint actuator from MyActuator (China). Peak torque 8 Nm, rated 4.5 Nm, weight 490 g, torque density 16.3 Nm/kg, price $355.",
+            "bodySha256": "490a8962bb13c01115fe9d8780ddb8401bf1f53fb5b32ee5c0264ed915da4ff3",
+            "htmlContentSha256": "bf5795b36b5f0a23b70e4aee2b3bc2e2c7b547cb502a229f584b78a60eee750a"
+        },
+        {
+            "path": "/actuators/myactuator-rmd-x8-120",
+            "title": "MyActuator RMD-X8-120 specs",
+            "description": "Integrated Joint actuator from MyActuator (China). Peak torque 120 Nm, rated 43 Nm, weight 1400 g, torque density 85.7 Nm/kg, price $645.",
+            "bodySha256": "565e9e004c838f380ea8deed0d3dd199b53651b3be73104b9ee1b10e26b63e35",
+            "htmlContentSha256": "3a4f5efc792d61c92776c425fc5190c5089faf2a8c8103861014aa31ee81afa6"
+        },
+        {
+            "path": "/actuators/myactuator-rmd-x8-pro-v2",
+            "title": "MyActuator RMD-X8 Pro V2 (1:9) specs",
+            "description": "Integrated Joint actuator from MyActuator (China). Peak torque 25 Nm, rated 13 Nm, weight 710 g, torque density 35.2 Nm/kg, price $557.24.",
+            "bodySha256": "d344dd6e4c465d6596d4bc60711023a701debdb77bd3823f8139b52185fbbdd5",
+            "htmlContentSha256": "7b0093f20194e304e023f28a2ea61037503b553c584fd4623b32d4c47960eb2a"
+        },
+        {
+            "path": "/actuators/nabtesco-rv-42n",
+            "title": "Nabtesco RV-42N cycloidal reducer specs",
+            "description": "Cycloidal / Premium actuator from Nabtesco (Japan). Peak torque 2060 Nm, rated 412 Nm, weight 6300 g, torque density 327 Nm/kg, price quote only.",
+            "bodySha256": "c75ea179fb895b6df192d4bf72908b3e09165b8a5b5fcf7cc1c419b6dd72792f",
+            "htmlContentSha256": "41cb4da0c424b1e7fe402e9d12e9d210772e80cdb2ad4bb4979ec31e3fb50618"
+        },
+        {
+            "path": "/actuators/nidec-flexwave-wpg",
+            "title": "Nidec FLEXWAVE WPG gearhead specs",
+            "description": "Nidec FLEXWAVE WPG housed, supported strain-wave gearhead for an externally selected motor; frame, ratio and motor mount code define the configuration.",
+            "bodySha256": "eeb298a6b3085e15dc17f5bad161cd48505a44bb1973692df57c6138d3c7dbfe",
+            "htmlContentSha256": "582e49ed180c384987f92b6f3b8727a0491975c0ae83ee08461aeb2e39429024"
+        },
+        {
+            "path": "/actuators/nidec-smart-flexwave-srh",
+            "title": "Nidec Smart-FLEXWAVE SRH reducer specs",
+            "description": "Nidec Smart-FLEXWAVE SRH sensorized hollow-shaft reducer with torque and internal-temperature sensing; distinguish WPU-SRH-BD from bare WPU-SRH.",
+            "bodySha256": "7757a3fba92f8262403cf8cb0d8fb7eb034dab3fd4cd61dc328f145b294b2f28",
+            "htmlContentSha256": "dc49890d0ffdc31f2370276967680d64d455732d9a2b1e489f7e5de9a009b74d"
+        },
+        {
+            "path": "/actuators/odrive-pro",
+            "title": "ODrive Pro specs",
+            "description": "Frameless + Driver actuator from ODrive Robotics (United States). Peak torque n/a, rated n/a, weight n/a, torque density n/a, price $229.",
+            "bodySha256": "1f229cc9244c3ab23a88986998e6d944ed868ac75ee18c88eba991a41ea2802c",
+            "htmlContentSha256": "7cdbe004929fe1ba176920af656c6dd2d0fe44d11474df738ab0f9758602565f"
+        },
+        {
+            "path": "/actuators/odrive-s1",
+            "title": "ODrive S1 specs",
+            "description": "Frameless + Driver actuator from ODrive Robotics (United States). Peak torque n/a, rated n/a, weight n/a, torque density n/a, price $149.",
+            "bodySha256": "829b9ace00a2286b7ce1d0e985477537c5bc1b98ea255c2e6ba8074da8f6ae2e",
+            "htmlContentSha256": "1b76954f8eb4ba760fb2c2464402de73c1a671ef2e31d97b5e7a518325645faf"
+        },
+        {
+            "path": "/actuators/odrive-v36",
+            "title": "ODrive v3.6 specs",
+            "description": "Frameless + Driver actuator from ODrive Robotics (United States). Peak torque n/a, rated n/a, weight n/a, torque density n/a, price $259.",
+            "bodySha256": "a9031eb1c5ab69cb5d617457f81bd0c59d4548356f4afd7f2268fda2000ce62d",
+            "htmlContentSha256": "9d04435d3bfaea2d84a0e97eb9b70517b5dbf7c83ead1f54e6ba6c7c9194db20"
+        },
+        {
+            "path": "/actuators/robstride-00",
+            "title": "RobStride 00 specs",
+            "description": "Integrated Joint actuator from RobStride (China). Peak torque 14 Nm, rated n/a, weight 310 g, torque density 45.2 Nm/kg, price $125.",
+            "bodySha256": "8377fee8df4d6587493d2338db49d97b3509ddf01cb7d5ccd664e5f08e42d610",
+            "htmlContentSha256": "7907ca102182c4cf323b7966db6b0038493ee4e0069d0f25a47a42f937c5d19e"
+        },
+        {
+            "path": "/actuators/robstride-01",
+            "title": "RobStride 01 specs",
+            "description": "Integrated Joint actuator from RobStride (China). Peak torque 17 Nm, rated 7 Nm, weight 380 g, torque density 44.7 Nm/kg, price $143.99.",
+            "bodySha256": "790b24fdce64ff8271450edc5b4c385b34965b5473d5a96385bb645c4567730f",
+            "htmlContentSha256": "eda9a1ba4162e6cc70439b37324cf437e15be740ab784d5bcd28c09fc0fa722a"
+        },
+        {
+            "path": "/actuators/robstride-02",
+            "title": "RobStride 02 specs",
+            "description": "Integrated Joint actuator from RobStride (China). Peak torque 17 Nm, rated 6 Nm, weight 405 g, torque density 42 Nm/kg, price $160.99.",
+            "bodySha256": "a79b96ffd297600e09b21edd8afc02f6e751d290e0d84719266dc5ed661dcef3",
+            "htmlContentSha256": "4ad3e787e5131ff8841a0da995e11c30e1f1259801368ccee5bbf09b1c575fae"
+        },
+        {
+            "path": "/actuators/robstride-03",
+            "title": "RobStride 03 specs",
+            "description": "Integrated Joint actuator from RobStride (China). Peak torque 60 Nm, rated 21 Nm, weight 900 g, torque density 66.7 Nm/kg, price $249.99.",
+            "bodySha256": "a782d55fee1ce83ee01cdf5fb55c920bfeab4047d04c156c0b238c8451e1f4bc",
+            "htmlContentSha256": "07b3757cc6dd683df7276436e1824e8580c35f52716515f137fa7d23b751102b"
+        },
+        {
+            "path": "/actuators/robstride-04",
+            "title": "RobStride 04 specs",
+            "description": "Integrated Joint actuator from RobStride (China). Peak torque 120 Nm, rated 40 Nm, weight 1420 g, torque density 84.5 Nm/kg, price $255.",
+            "bodySha256": "70aaf802bfbaaf8cd4b203c55556ca48385e51e35fadc7a5a70d1d3b483ba765",
+            "htmlContentSha256": "b82f6edeb35e6af31e1cb3423912fa5631e709c246420dd79fad7bd113cda122"
+        },
+        {
+            "path": "/actuators/spinea-drivespin-ds110",
+            "title": "Spinea DriveSpin DS110 specs",
+            "description": "Cycloidal / Premium actuator from Spinea (Cone Drive) (Slovakia). Peak torque 244 Nm, rated 122 Nm, weight n/a, torque density n/a, price quote only.",
+            "bodySha256": "9cbdc922765893a98aa431269847452bbbea35edf57438ac91b14f38a88c9cc1",
+            "htmlContentSha256": "5e134b865f031f4e4ae993bd657c090bdc39c13732c486e633f3318501e3eb95"
+        },
+        {
+            "path": "/actuators/steadywin-gim6010-36",
+            "title": "Steadywin GIM6010-36 (48V) specs",
+            "description": "Integrated Joint actuator from Steadywin (China). Peak torque 41 Nm, rated 18 Nm, weight 574 g, torque density 71.4 Nm/kg, price quote only.",
+            "bodySha256": "74ca9d7b1f15ed115da7ff58fbd2bb875971397b95435267625f1dd22edfc3b2",
+            "htmlContentSha256": "e537f3f866c244730c7ff25db5fca3b1ca168ef6c4b98a3b0ccd993e6b4a49ce"
+        },
+        {
+            "path": "/actuators/steadywin-gim6010-8",
+            "title": "Steadywin GIM6010-8 specs",
+            "description": "QDD / Proprioceptive actuator from Steadywin (China). Peak torque 11 Nm, rated 5 Nm, weight 388 g, torque density 28.4 Nm/kg, price quote only.",
+            "bodySha256": "51265552a4d7a399f8c9d5060915e6ca969c5b306c3cbdb01e796df751d41e3f",
+            "htmlContentSha256": "9e8f75523df0584a4fe39c8750b5f9e2159a973241a2495ac6b3a741afef1e77"
+        },
+        {
+            "path": "/actuators/steadywin-gim8108-8",
+            "title": "Steadywin GIM8108-8 specs",
+            "description": "QDD / Proprioceptive actuator from Steadywin (China). Peak torque 22 Nm, rated 7.5 Nm, weight 375 g, torque density 58.7 Nm/kg, price quote only.",
+            "bodySha256": "4e33d4568d7b90be821a17f2d70ab2cbfe6a08b1a7001ac777eb87e766cb447e",
+            "htmlContentSha256": "0d93439c13ab19d4bcea4ebded12af0143304dc04e413fdc5ff7cd7066983701"
+        },
+        {
+            "path": "/actuators/steadywin-gim8115-36",
+            "title": "SteadyWin GIM8115-36 specs",
+            "description": "Cycloidal / Premium actuator from SteadyWin (China). Peak torque 54 Nm, rated n/a, weight n/a, torque density n/a, price quote only.",
+            "bodySha256": "91f56f2365ec79222731833f92b623c2ef81e4c47c143cc7105521bedc6e20ef",
+            "htmlContentSha256": "1ac10a61299a0d093e90608aaff7d5c0eb352542f6db176b3f39c89d22febf62"
+        },
+        {
+            "path": "/actuators/tq-robodrive-ilm85x26",
+            "title": "TQ-RoboDrive ILM85x26 specs",
+            "description": "Frameless + Driver actuator from TQ-Systems (RoboDrive) (Germany). Peak torque 9.4 Nm, rated 2.9 Nm, weight 670 g, torque density 14 Nm/kg, price quote only.",
+            "bodySha256": "fef5b39a0d94329866aefa806b9d15665ddcf1451ebda482f9601e16446fc6a7",
+            "htmlContentSha256": "68c984bc68ab5a7a2fe63ad703e51161d1f044c6fff7b07cb8f18a42bd9769f6"
+        },
+        {
+            "path": "/actuators/trampa-vesc-6-mkvi",
+            "title": "Trampa VESC 6 MkVI specs",
+            "description": "Frameless + Driver actuator from Trampa / VESC Project (United Kingdom). Peak torque n/a, rated n/a, weight n/a, torque density n/a, price $255.",
+            "bodySha256": "d44643c2503145d059d2c13f36120905954c0e9545f59f9a136251ff0238255e",
+            "htmlContentSha256": "98da7801c77d5c93fe18cfe664c35bd24c6a6ebb1fea3ecda60fb793cb504759"
+        },
+        {
+            "path": "/actuators/trinamic-tmc4671",
+            "title": "Trinamic TMC4671 FOC controller specs",
+            "description": "Frameless + Driver actuator from Trinamic (Analog Devices) (Germany). Peak torque n/a, rated n/a, weight n/a, torque density n/a, price quote only.",
+            "bodySha256": "a2f4376727378182be70201ddde8fe9477f773df85bcf58a2c3e200c9a79245c",
+            "htmlContentSha256": "002b5c65018ec366643af779bb4d7cfdd091620c453f2ca9d2b0daeaf346d3a2"
+        },
+        {
+            "path": "/actuators/unitree-go-m8010-6",
+            "title": "Unitree GO-M8010-6 specs",
+            "description": "QDD / Proprioceptive actuator from Unitree (China). Peak torque 23.7 Nm, rated n/a, weight 530 g, torque density 44.7 Nm/kg, price $369.",
+            "bodySha256": "6bd27e18be450bf1438aaa81daf885609be8c6ada645bd047a3b8383d1c7d0dc",
+            "htmlContentSha256": "1c66c6831e826ceaa3634113a44ecba7961c66b31b2aa938c13b1c380c0d1600"
+        },
+        {
+            "path": "/actuators/unitree-m107",
+            "title": "Unitree M107 Joint Motor specs",
+            "description": "Cycloidal / Premium actuator from Unitree Robotics (China). Peak torque 360 Nm, rated n/a, weight 1900 g, torque density 189.5 Nm/kg, price quote only.",
+            "bodySha256": "c3ab807b819ef5768fdf0ca30ae0453d353ab8dadbbe06596208efd25b022ed8",
+            "htmlContentSha256": "5de2f787f67abc6effb504fd481707243b2911bc829ed6fcf398b0495f4866a1"
+        },
+        {
+            "path": "/actuators/waveshare-sc15",
+            "title": "Waveshare SC15 specs",
+            "description": "Smart Servo actuator from Waveshare (Feetech OEM) (China). Peak torque 1.7 Nm, rated n/a, weight 70 g, torque density 23.9 Nm/kg, price quote only.",
+            "bodySha256": "c63d5847c575769acc52fc9ff7e3fa682bf714ec21bcff80666a854594db7d29",
+            "htmlContentSha256": "338a99da6ff722b6b623fa840bfb6944b080531fe85ea9f599dc3843dadb28ae"
+        },
+        {
+            "path": "/actuators/waveshare-st3215",
+            "title": "Waveshare ST3215 specs",
+            "description": "Smart Servo actuator from Waveshare (Feetech OEM) (China). Peak torque 2.9 Nm, rated n/a, weight 69 g, torque density 42.6 Nm/kg, price $17.",
+            "bodySha256": "de452ca3a1ab1cdde1968302327521473d0a06df743c38bf8cf4c6bc939dca90",
+            "htmlContentSha256": "d6fbb558faece680e26315daca0123d651dba9e9345f1fd985572c2ce59cf482"
+        },
+        {
+            "path": "/actuators/xiaomi-cybergear",
+            "title": "Xiaomi CyberGear specs",
+            "description": "QDD / Proprioceptive actuator from Xiaomi (China). Peak torque 12 Nm, rated 4 Nm, weight 317 g, torque density 37.9 Nm/kg, price quote only.",
+            "bodySha256": "854c01560acc198f2eb58d185e6c17d1c8c38a05ab4e3af89a62c30ee04ce969",
+            "htmlContentSha256": "c1ef03000b3b5b6884ad5d4f1566198046cc035213b51caef4ae1cf330f74a95"
+        }
+    ],
+    "catalogSha256": "8445ff165c64e54874d71b1a3f61c0c02e553c3d71293ac4b1577a3928d05cb4"
+}

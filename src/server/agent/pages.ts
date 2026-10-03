@@ -13,6 +13,7 @@ import { PATHS } from "./links";
 import { agentsBody } from "./manifests";
 import { mdDocument } from "./md";
 import { allBody, faqItems, galleryBody, homeBody, robotsBody } from "./pages-md";
+import { actuatorSeoTitle } from "./seo-titles";
 import { aboutBody, contactBody, privacyBody } from "./trust";
 
 // Every HTML page the site serves, with the metadata and markdown body shared
@@ -130,7 +131,7 @@ function actuatorPage(id: string): Page | null {
     const a = getActuator(id);
     if (!a) return null;
     const path = actuatorPath(a.id);
-    const title = `${a.name} by ${a.brand}: specs, torque and price`;
+    const title = actuatorSeoTitle(a);
     return {
         path,
         kind: "spa",

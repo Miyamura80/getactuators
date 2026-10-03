@@ -16,10 +16,11 @@ const comparison = readFileSync(
 function article(
     path: string,
     description: string,
+    title: string,
     body: string,
     visual: () => string,
 ): Page {
-    const title = body.split("\n")[0]?.replace(/^# /, "") ?? "";
+    const headline = body.split("\n")[0]?.replace(/^# /, "") ?? "";
     return {
         path,
         kind: "static",
@@ -35,7 +36,7 @@ function article(
                 "@type": "TechArticle",
                 "@id": `${absoluteUrl(path)}#article`,
                 url: absoluteUrl(path),
-                headline: title,
+                headline,
                 description,
                 inLanguage: "en",
                 author: { "@type": "Organization", name: "actuatorlist" },
@@ -45,7 +46,7 @@ function article(
             breadcrumbs([
                 { name: "Home", path: "/" },
                 { name: "Engineering guides", path: "/guides" },
-                { name: title, path },
+                { name: headline, path },
             ]),
         ],
     };
@@ -91,12 +92,14 @@ Read family-level engineering notes for [Leaderdrive LCS](/actuators/leaderdrive
     article(
         "/guides/robot-actuator-selection",
         "Select robot actuators using mission efficiency, installed thermal duty, measured output precision and validated sim2real models, not peak torque or encoder bits alone.",
+        "Robot actuator selection guide",
         guide,
         guideDashboard,
     ),
     article(
         "/comparisons/cubemars-ak80-9-vs-xiaomi-cybergear",
         "Compare AK80-9 V3.0 KV100 and original 24 V CyberGear: source-qualified ratings, thermal overload conditions, encoder conflicts and unproven performance rankings.",
+        "CubeMars AK80-9 V3.0 KV100 vs Xiaomi CyberGear",
         comparison,
         comparisonDashboard,
     ),

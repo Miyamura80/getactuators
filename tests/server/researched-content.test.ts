@@ -112,7 +112,7 @@ test("editorial routes serve static indexed HTML, source links, matching JSONLD 
                 graph.find(
                     (node: Record<string, unknown>) => node["@type"] === "TechArticle",
                 ).headline,
-            ).toBe(page.title);
+            ).toBe(page.body().split("\n")[0]?.replace(/^# /, ""));
             expect(html).toMatch(/href="https:\/\/arxiv.org\/pdf\//);
             expect(html).not.toMatch(/\[\d+\]/);
             expect(page.body().split(/\s+/).length).toBeGreaterThan(
