@@ -91,14 +91,14 @@ Read family-level engineering notes for [Leaderdrive LCS](/actuators/leaderdrive
     },
     article(
         "/guides/robot-actuator-selection",
-        "Select robot actuators using mission efficiency, installed thermal duty, measured output precision and validated sim2real models, not peak torque or encoder bits alone.",
+        "Choose robot actuators using efficiency, thermal duty, precision and sim2real evidence. Separate published specifications from unmeasured performance.",
         "Robot actuator selection guide",
         guide,
         guideDashboard,
     ),
     article(
         "/comparisons/cubemars-ak80-9-vs-xiaomi-cybergear",
-        "Compare AK80-9 V3.0 KV100 and original 24 V CyberGear: source-qualified ratings, thermal overload conditions, encoder conflicts and unproven performance rankings.",
+        "CubeMars AK80-9 V3.0 KV100 vs original 24 V Xiaomi CyberGear: efficiency, thermal duty, encoder conflicts and sim2real limits. Not a bench test.",
         "CubeMars AK80-9 V3.0 KV100 vs Xiaomi CyberGear",
         comparison,
         comparisonDashboard,

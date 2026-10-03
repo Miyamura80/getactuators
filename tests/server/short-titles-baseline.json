@@ -12,21 +12,21 @@
         {
             "path": "/guides/robot-actuator-selection",
             "title": "Robot actuator selection guide",
-            "description": "Select robot actuators using mission efficiency, installed thermal duty, measured output precision and validated sim2real models, not peak torque or encoder bits alone.",
+            "description": "Choose robot actuators using efficiency, thermal duty, precision and sim2real evidence. Separate published specifications from unmeasured performance.",
             "bodySha256": "208511bffeece4d973fc0ba5a16238ccb6c445197e6d46e6ce463d27ea05aa8d",
             "htmlContentSha256": "759339d42e6e05453d529af869b1befd8b6c4c5e60a0703070edc83e7f86ade7"
         },
         {
             "path": "/comparisons/cubemars-ak80-9-vs-xiaomi-cybergear",
             "title": "CubeMars AK80-9 V3.0 KV100 vs Xiaomi CyberGear",
-            "description": "Compare AK80-9 V3.0 KV100 and original 24 V CyberGear: source-qualified ratings, thermal overload conditions, encoder conflicts and unproven performance rankings.",
+            "description": "CubeMars AK80-9 V3.0 KV100 vs original 24 V Xiaomi CyberGear: efficiency, thermal duty, encoder conflicts and sim2real limits. Not a bench test.",
             "bodySha256": "c073edfacf7b58a9aac27bbd36964e5b5ae70b605c4ce29044b989636187245d",
             "htmlContentSha256": "8880b49fa7898749346b621080dcd9b5cae5523028db60508d150d5de7934590"
         },
         {
             "path": "/",
             "title": "actuatorlist: robot actuator leaderboard and spec database",
-            "description": "Open, spec-level directory of robot actuators (QDD motors, integrated joints, smart servos, harmonic and cycloidal reducers) and the robots that use them. Compare torque, weight, torque density and price.",
+            "description": "Compare robot actuators by torque, weight, torque density and price. Browse QDD motors, integrated joints, smart servos and reducers.",
             "bodySha256": "232688801ad73f144d20071c2636b286642fccd3991185b652f9ec50c00e2cdd",
             "htmlContentSha256": "14648cd18b65109df7030208b82dddd538af804fde856a4d94bebb2021e414c5"
         },
@@ -250,7 +250,7 @@
         {
             "path": "/actuators/harmonic-drive-cha-series",
             "title": "Harmonic Drive CHA series specs",
-            "description": "Harmonic / Precision actuator from Harmonic Drive (Harmonic Drive SE / LLC) (Japan). Peak torque n/a, rated n/a, weight n/a, torque density n/a, price quote only.",
+            "description": "Harmonic Drive CHA hollow-shaft servo actuator family. Torque, mass and price are unspecified in this catalog; confirm model-specific data.",
             "bodySha256": "1258af497724176adb02ba6e557840974cf7fd7326c21181208cbe5aaa7a325b",
             "htmlContentSha256": "1e87e0af8f6dafe38ab86f9f653ee9371a4cd2e4ded9fd05b5df616c1594e33d"
         },
