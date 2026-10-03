@@ -127,12 +127,8 @@ export async function renderSpaPage(page: Page): Promise<string> {
                 el.setInnerContent(prerender, { html: true });
                 if (galleryHtml) {
                     el.setAttribute("data-gallery-prerender", "true");
-                    // Keep the original catalog text available without a second
-                    // visible gallery or discarding the Markdown-equivalent facts.
-                    el.after(
-                        `<details class="ga-page"><summary>Catalog details</summary>${fallbackHtml}</details>`,
-                        { html: true },
-                    );
+                    // The real gallery is the no-JavaScript fallback too. Keep
+                    // the loaded page unchanged; canonical Markdown stays intact.
                 }
                 if (persistent) el.after(persistent, { html: true });
             },

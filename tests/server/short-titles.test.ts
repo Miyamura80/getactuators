@@ -2,6 +2,7 @@ import { expect, test } from "bun:test";
 import { createHash } from "node:crypto";
 import { ACTUATORS } from "@/catalog";
 import { CATALOG_UPDATED_DATE } from "@/server/agent/freshness";
+import { pageBody } from "@/server/agent/html/body";
 import { documentTitle } from "@/server/agent/html/head";
 import { allPages, findPage, pageMarkdown } from "@/server/agent/pages";
 import { get } from "./agent-helpers";
@@ -60,9 +61,21 @@ test("the full catalog has distinct reviewed metadata without content changes", 
         }
         expect(sha256(snapshotContent(page.body()))).toBe(original.bodySha256);
         const html = await expectTitles(page.path, documentTitle(page.title));
+        // The approved gallery replaces its transient Markdown fallback with
+        // real cards. Still lock its canonical prose rendering to the original
+        // hash, and require the served tree; never regenerate golden hashes.
+        const builtGallery =
+            page.path === "/actuators" &&
+            html.includes('data-gallery-prerender="true"');
+        if (builtGallery) {
+            expect([...html.matchAll(/class="bento-card(?: [^"]*)?"/g)]).toHaveLength(
+                68,
+            );
+            expect(html).not.toContain("<summary>Catalog details</summary>");
+        }
         const content =
             /<section class="ga-page" id="catalog-content"[^>]*>[\s\S]*?<\/section>|<main class="ga-main">[\s\S]*?<\/main>/.exec(
-                html,
+                builtGallery ? pageBody(page.body()) : html,
             )?.[0];
         expect(content).toBeDefined();
         expect(sha256(snapshotContent(content ?? ""))).toBe(original.htmlContentSha256);

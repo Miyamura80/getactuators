@@ -38,7 +38,9 @@ test("only the gallery serves the built React markup in its initial root", async
         expect(pages[0]).toContain(
             `<div id="root" data-gallery-prerender="true">${gallery}</div>`,
         );
-        expect(pages[0]).toContain("Catalog details");
+        // Earlier rendering must not add a visible disclosure after the gallery.
+        expect(pages[0]).not.toContain("<summary>Catalog details</summary>");
+        expect(pages[0]).not.toContain('<details class="ga-page">');
         for (const page of pages.slice(1)) {
             expect(page).not.toContain("data-gallery-prerender");
             expect(page).not.toContain('class="bento-card"');
