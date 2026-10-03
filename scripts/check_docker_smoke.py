@@ -11,7 +11,7 @@ for attempt in range(40):
         with urlopen(base + "/", timeout=2) as response:
             home = response.read().decode()
         break
-    except (URLError, TimeoutError):
+    except (URLError, TimeoutError, ConnectionError):
         if attempt == 39:
             raise
         time.sleep(0.5)
