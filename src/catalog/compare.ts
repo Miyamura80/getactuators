@@ -1,3 +1,4 @@
+import { type EngineeringTopic, engineeringEvidenceFor } from "./engineering-evidence";
 // Shared display adapter only: catalog values are not newly validated measurements.
 import { evidenceFor, fieldCaveat } from "./evidence";
 export interface CompareActuator {
@@ -48,6 +49,26 @@ function qualified(a: CompareActuator, field: string, displayed: string): string
     const note = fieldCaveat({ id: a.id, verified: a.verified }, field);
     return note ? `${displayed}: ${note}` : displayed;
 }
+function engineeringDisplay(a: CompareActuator, topic: EngineeringTopic): string {
+    const evidence = engineeringEvidenceFor(a.id);
+    if (!evidence) return UNKNOWN;
+    const item = evidence.topics[topic];
+    const source = "Source: model/topic scope & sources.";
+    if (topic === "thermal") {
+        const condition =
+            a.id === "xiaomi-cybergear"
+                ? "Vendor overload table: 24 rpm / 25 °C / 120 °C winding endpoint; mirror provenance limited."
+                : a.id === "myactuator-rmd-x8-pro-v2"
+                  ? "Current 10 N·m rating: 24 °C ambient / 60 °C rise; not confirmed for legacy 13 N·m."
+                  : "Motor/MOS temperature telemetry only; not a thermal-duty measurement.";
+        return `${condition} Repeated duty/recovery unknown. ${source}`;
+    }
+    if (topic === "efficiency")
+        return `${UNKNOWN}. ${item.status === "manufacturer" ? "A manufacturer curve is available; boundary and revision unconfirmed." : "No complete bus-to-output map established."} ${source}`;
+    if (topic === "precision")
+        return `${UNKNOWN}. Resolution/backlash are not loaded accuracy. ${source}`;
+    return `${UNKNOWN}. ${item.status === "research" ? "Exploratory identification only; no portable validation." : "CAD available; not calibrated dynamics."} ${source}`;
+}
 export const COMPARE_SPECS: {
     label: string;
     display: (a: CompareActuator) => string;
@@ -55,18 +76,22 @@ export const COMPARE_SPECS: {
     { label: "Peak torque (catalog)", display: (a) => value(a.peak_torque_nm, " N·m") },
     {
         label: "Rated torque (catalog)",
-        display: (a) => value(a.rated_torque_nm, " N·m"),
+        display: (a) =>
+            qualified(a, "rated_torque_nm", value(a.rated_torque_nm, " N·m")),
     },
     {
         label: "Maximum speed (catalog)",
-        display: (a) => value(a.max_speed_rpm, " rpm"),
+        display: (a) => qualified(a, "max_speed_rpm", value(a.max_speed_rpm, " rpm")),
     },
     {
         label: "Mass",
         display: (a) => qualified(a, "weight_g", value(a.weight_g, " g")),
     },
     { label: "Gear ratio", display: (a) => value(a.gear_ratio) },
-    { label: "Voltage", display: (a) => value(a.voltage_v, " V") },
+    {
+        label: "Voltage",
+        display: (a) => qualified(a, "voltage_v", value(a.voltage_v, " V")),
+    },
     {
         label: "Price (catalog, not a live quote)",
         display: (a) => value(a.price_usd, " USD"),
@@ -75,10 +100,15 @@ export const COMPARE_SPECS: {
         label: "Encoder (resolution is not accuracy)",
         display: (a) => qualified(a, "encoder", value(a.encoder)),
     },
-    ...[
-        "Complete actuator efficiency",
-        "Cooling / thermal duty",
-        "Loaded repeatability",
-        "Calibrated simulation model",
-    ].map((label) => ({ label, display: () => UNKNOWN })),
+    ...(
+        [
+            ["Complete actuator efficiency", "efficiency"],
+            ["Cooling / thermal duty", "thermal"],
+            ["Loaded repeatability", "precision"],
+            ["Calibrated simulation model", "modeling"],
+        ] as const
+    ).map(([label, topic]) => ({
+        label,
+        display: (a: CompareActuator) => engineeringDisplay(a, topic),
+    })),
 ];

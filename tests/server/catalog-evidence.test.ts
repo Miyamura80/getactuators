@@ -33,16 +33,15 @@ test("all products publish bounded evidence status rather than blanket verificat
     for (const a of ACTUATORS) {
         const body = actuatorBody(a);
         expect(body).not.toContain("verified against sources");
-        const label =
-            a.id === "cubemars-ak80-9"
-                ? "Revision conflict: unresolved"
-                : /^(leaderdrive-(lcs|lhd|lhs)|nidec-(flexwave-wpg|smart-flexwave-srh))$/.test(
-                        a.id,
-                    )
-                  ? "Family-level evidence: confirm variant"
-                  : a.verified
-                    ? "Catalog headline specs spot-checked: confirm revision"
-                    : "Unverified catalog: confirm sources";
+        const label = ["cubemars-ak80-9", "myactuator-rmd-x8-pro-v2"].includes(a.id)
+            ? "Revision conflict: unresolved"
+            : /^(leaderdrive-(lcs|lhd|lhs)|nidec-(flexwave-wpg|smart-flexwave-srh))$/.test(
+                    a.id,
+                )
+              ? "Family-level evidence: confirm variant"
+              : a.verified
+                ? "Catalog headline specs spot-checked: confirm revision"
+                : "Unverified catalog: confirm sources";
         expect(body).toContain(`| Data status | ${label} |`);
         const html = await (await get(`/actuators/${a.id}`)).text();
         expect(html).toContain(label);

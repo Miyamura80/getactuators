@@ -1073,7 +1073,7 @@ table.board {
 }
 .compare-page { max-width: 1440px; padding: 0 20px; margin: auto; }
 .compare-products { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 12px; }
-.compare-products article { min-width: 0; border: 1px solid var(--line); border-radius: 8px; padding: 16px; background: var(--panel); }
+.compare-products > article { min-width: 0; border: 1px solid var(--line); border-radius: 8px; padding: 16px; background: var(--panel); }
 .compare-photo { height: 260px; display: grid; place-items: center; overflow: hidden; }
 .compare-photo img { width: 100%; height: 260px; min-height: 0; object-fit: contain; }
 .compare-page h1 { font-size: clamp(28px, 4vw, 44px); font-weight: 700; margin: 28px 0 12px; }
@@ -1195,6 +1195,50 @@ table.board {
 .bento-card:hover .bento-go {
     opacity: 1;
     transform: translateY(0);
+}
+
+/* ---- Compact engineering evidence (editorial surfaces only) ------------ */
+.engineering-evidence { min-width: 0; margin: 24px 0; }
+.exploded-page > .engineering-evidence { max-width: 1440px; margin: 24px auto; padding: 0 20px; }
+.engineering-evidence header h2, .engineering-evidence header h3 { margin: 0; font-size: 20px; font-weight: 700; }
+.engineering-evidence header p, .engineering-revision { color: var(--muted); font-size: 12px; line-height: 1.5; margin: 8px 0 12px; }
+.engineering-revision { border-left: 2px solid var(--line-strong); padding-left: 10px; }
+.engineering-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    align-items: start;
+}
+.engineering-card { min-width: 0; padding: 14px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--panel-2); }
+.engineering-topic { display: flex; gap: 8px; align-items: center; }
+.engineering-topic svg { width: 28px; height: 28px; flex: none; color: var(--cyan-dim); }
+.engineering-topic h3, .engineering-topic h4 { margin: 0; font-size: 15px; font-weight: 600; }
+.engineering-status { display: inline-block; margin-top: 10px; padding: 3px 7px; border: 1px solid var(--line-strong); border-radius: 4px; color: var(--text); font: 10px/1.4 var(--mono); background: var(--panel); }
+.engineering-card p { font-size: 13px; line-height: 1.55; margin: 12px 0; overflow-wrap: anywhere; }
+.engineering-card .engineering-gap { color: var(--muted); font-size: 11px; margin: 8px 0; }
+.engineering-evidence summary { cursor: pointer; min-height: 44px; padding: 12px 0; font-size: 12px; color: var(--cyan); }
+.engineering-evidence summary:focus-visible, .engineering-sources a:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+.engineering-card details { border-top: 1px solid var(--line); }
+.engineering-sources { margin: 0; padding-left: 16px; }
+.engineering-sources li { margin: 8px 0; font-size: 12px; }
+.engineering-sources a, .engineering-sources small { display: block; overflow-wrap: anywhere; }
+.engineering-sources small { color: var(--muted); margin-top: 4px; line-height: 1.5; }
+.engineering-limits { margin-top: 8px; }
+.engineering-limits p { color: var(--muted); font-size: 12px; line-height: 1.55; }
+.engineering-evidence--compact { margin: 14px 0 0; border-top: 1px solid var(--line); padding-top: 12px; }
+.engineering-evidence--compact header h3 { font-size: 14px; }
+.engineering-evidence--compact .engineering-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.engineering-evidence--compact .engineering-card { padding: 8px 10px; }
+.engineering-evidence--compact .engineering-topic svg { width: 22px; height: 22px; }
+.engineering-evidence--compact .engineering-topic h4 { font-size: 13px; }
+.engineering-evidence--compact .engineering-status { margin-top: 6px; }
+.engineering-evidence--compact details { margin-top: 6px; }
+@media (max-width: 1000px) {
+    .engineering-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+    .engineering-grid { grid-template-columns: 1fr; }
+    .exploded-page > .engineering-evidence { padding: 0 12px; }
 }
 
 /* ---- Exploded 3D page -------------------------------------------------- */
