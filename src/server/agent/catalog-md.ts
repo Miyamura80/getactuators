@@ -76,13 +76,22 @@ function specRows(a: Actuator): string[][] {
             ];
         }
         const fields: Record<string, string> = {
+            "Peak torque": "peak_torque_nm",
+            "Rated torque": "rated_torque_nm",
+            "Max speed": "max_speed_rpm",
+            "Gear ratio": "gear_ratio",
+            Price: "price_usd",
+            "Price per Nm": "price_per_nm",
+            Voltage: "voltage_v",
+            "Peak current": "peak_current_a",
             Weight: "weight_g",
             Encoder: "encoder",
             "Torque density": "torque_density_nm_per_kg",
             Backdrivable: "backdrivable",
             Backlash: "backlash_arcmin",
         };
-        const caveat = k === "Data status" ? undefined : fieldCaveat(a, fields[k] ?? k);
+        const field = fields[k];
+        const caveat = field ? fieldCaveat(a, field) : undefined;
         return [k, mdText(`${v}${caveat ? `: ${caveat}` : ""}`)];
     });
 }

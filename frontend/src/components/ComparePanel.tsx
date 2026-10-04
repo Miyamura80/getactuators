@@ -54,7 +54,20 @@ export function ComparePanel({ actuators, onRemove, onClose }: Props) {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td className="rowlabel">Data status</td>{actuators.map((a) => <td key={a.id}>{evidenceFor(a).label}{evidenceFor(a).caveats.map((note) => <small key={note}>{note}</small>)}</td>)}</tr>
+                        <tr>
+                            <td className="rowlabel">Data status</td>
+                            {actuators.map((a) => {
+                                const evidence = evidenceFor(a);
+                                return (
+                                    <td key={a.id}>
+                                        <span title={evidence.label}>{evidence.label}</span>
+                                        {evidence.caveats.map((note) => (
+                                            <small className="compare-evidence-caveat" title={note} key={note}>{" "}{note}</small>
+                                        ))}
+                                    </td>
+                                );
+                            })}
+                        </tr>
                         {COLUMNS.map((c) => {
                             const winners = bestIds(actuators, c);
                             return (

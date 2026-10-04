@@ -76,6 +76,14 @@ function productSnapshotRows(
     value: string,
 ): [string, string] {
     const fields: Record<string, string> = {
+        "Peak torque": "peak_torque_nm",
+        "Rated torque": "rated_torque_nm",
+        "Max speed": "max_speed_rpm",
+        "Gear ratio": "gear_ratio",
+        Price: "price_usd",
+        "Price per Nm": "price_per_nm",
+        Voltage: "voltage_v",
+        "Peak current": "peak_current_a",
         Weight: "weight_g",
         Encoder: "encoder",
         "Torque density": "torque_density_nm_per_kg",
@@ -88,9 +96,7 @@ function productSnapshotRows(
         ? "Legacy catalog placeholder; not a measured family rating. See engineering notes."
         : value;
     const caveat =
-        label === "Data status" || placeholder
-            ? undefined
-            : fieldCaveat(a, fields[label] ?? label);
+        !fields[label] || placeholder ? undefined : fieldCaveat(a, fields[label]!);
     const currentValue =
         label === "Data status"
             ? evidenceFor(a).label

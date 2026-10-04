@@ -561,6 +561,15 @@ table.board {
     margin-left: 6px;
     font-size: 12px;
 }
+.evidence-note {
+    margin: 14px 0 0;
+    padding: 8px 12px;
+    background: var(--panel-2);
+    color: var(--text);
+    font-size: 12px;
+    border: 1px solid var(--line-strong);
+    font-family: var(--mono);
+}
 .verified-note {
     margin: 14px 0 0;
     padding: 8px 12px;
@@ -839,6 +848,12 @@ table.board {
     background: var(--panel);
     font-family: var(--sans);
 }
+.compare-evidence-caveat {
+    display: block;
+    margin-top: 6px;
+    color: var(--muted);
+    line-height: 1.5;
+}
 .compare-table td[data-best="true"] {
     color: var(--cyan);
     font-weight: 700;
@@ -1038,6 +1053,24 @@ table.board {
 .pick-tray li { display: flex; gap: 6px; align-items: center; font-size: 12px; }
 .pick-mini { width: 40px; height: 40px; overflow: hidden; }
 .pick-tray button, .pick-tray a { min-height: 44px; padding: 8px; }
+.pick-tray a.primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 44px;
+    padding: 8px 16px;
+    border: 1px solid var(--cyan);
+    border-radius: 4px;
+    background: var(--cyan);
+    color: var(--black);
+    font-weight: 600;
+    text-decoration: none;
+}
+.pick-tray a.primary:focus-visible {
+    outline: 2px solid var(--cyan);
+    outline-offset: 3px;
+}
 .compare-page { max-width: 1440px; padding: 0 20px; margin: auto; }
 .compare-products { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 12px; }
 .compare-products article { min-width: 0; border: 1px solid var(--line); border-radius: 8px; padding: 16px; background: var(--panel); }

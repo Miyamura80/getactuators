@@ -12,6 +12,10 @@ const reducerFamilies = new Set([
     "nidec-smart-flexwave-srh",
 ]);
 
+export function isReducerFamily(id: string): boolean {
+    return reducerFamilies.has(id);
+}
+
 export function fieldCaveat(a: EvidenceRecord, field: string): string | undefined {
     if (
         a.id === "cubemars-ak80-9" &&

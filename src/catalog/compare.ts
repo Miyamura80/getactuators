@@ -2,6 +2,7 @@
 import { evidenceFor, fieldCaveat } from "./evidence";
 export interface CompareActuator {
     id: string;
+    verified: boolean;
     name: string;
     image_url?: string | null;
     peak_torque_nm: number | null;
@@ -32,19 +33,19 @@ export function validatedCompareIds(
     return ids.sort();
 }
 export function revisionNote(a: CompareActuator): string {
-    const evidence = evidenceFor({ id: a.id, verified: false });
+    const evidence = evidenceFor({ id: a.id, verified: a.verified });
     if (a.id === "cubemars-ak80-9")
         return `${evidence.label}. ${evidence.caveats.join(" ")} Catalog entry names V3.0 KV100; retained values are not confirmed V3.0 specifications.`;
     if (evidence.label.startsWith("Family-level"))
         return `${evidence.label}. ${evidence.caveats.join(" ")} Reducer/sensor assembly, not an integrated motor and drive.`;
     if (a.id === "xiaomi-cybergear")
         return "Original 24 V, 7.75:1, 317 g catalog entry; not a newer or different CyberGear revision.";
-    return "Catalog entry only; confirm the exact revision and operating conditions with the linked source.";
+    return `${evidence.label}. ${evidence.caveats.join(" ")} Catalog entry only; confirm the exact revision and operating conditions with the linked source.`;
 }
 const value = (v: string | number | null, unit = "") =>
     v == null ? UNKNOWN : `${v}${unit}`;
 function qualified(a: CompareActuator, field: string, displayed: string): string {
-    const note = fieldCaveat({ id: a.id, verified: false }, field);
+    const note = fieldCaveat({ id: a.id, verified: a.verified }, field);
     return note ? `${displayed}: ${note}` : displayed;
 }
 export const COMPARE_SPECS: {

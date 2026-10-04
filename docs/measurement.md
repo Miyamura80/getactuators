@@ -30,7 +30,7 @@ All custom events include sanitized `source_path`, `page_location`, `page_referr
 | --- | --- | --- | --- |
 | `manufacturer_click` | Primary catalog product link in a drawer/product page, or explicitly reviewed primary product source in editorial content | `product_id` | Manufacturer/product research intent, not a sale; inherited catalog product links can be retailers |
 | `datasheet_click` | Primary catalog datasheet link or exact reviewed comparative manual link | `product_id` | Engineering research intent; mirrored manuals are source-qualified, not treated as manufacturer domains |
-| `compare_open` | Actual Compare control activation with 2–4 distinct selected catalog products on `/all`, `/actuators` or `/compare` | `product_id_1`…`product_id_4`, `product_count` | Comparison engagement, not revenue |
+| `compare_open` | Actual Compare control activation with 2–4 distinct selected catalog products on `/all` or `/actuators` | `product_id_1`…`product_id_4`, `product_count` | Comparison engagement, not revenue |
 | `compare_update` | User removes a row from an open comparison, leaving 1–3 products | Same ID fields and count | Continued comparison usage; selection toggles and renders do not emit |
 | `guide_product_click` | Guide/comparison anchor to its matching known catalog product | `product_id`, sanitized `destination_path` | Editorial contribution to product discovery; ordinary gallery links do not emit |
 

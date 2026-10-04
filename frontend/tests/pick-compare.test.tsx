@@ -9,11 +9,11 @@ afterEach(cleanup);
 test("gallery picks are separate accessible controls with a compact shareable tray", async () => {
     (window as unknown as { happyDOM: { setURL: (url: string) => void } }).happyDOM.setURL("http://localhost/actuators");
     const view = render(<ActuatorsGallery />);
-    expect(view.container.querySelectorAll("input[type=checkbox]")).toHaveLength(68);
+    expect(view.container.querySelectorAll("input[type=checkbox]")).toHaveLength(ACTUATORS.length);
     const boxes = view.getAllByRole("checkbox", { name: /^Compare / });
-    expect(boxes).toHaveLength(68);
+    expect(boxes).toHaveLength(ACTUATORS.length);
     expect(boxes.every(box => !box.closest("a"))).toBe(true);
-    expect(view.container.querySelectorAll("a.bento-card")).toHaveLength(68);
+    expect(view.container.querySelectorAll("a.bento-card")).toHaveLength(ACTUATORS.length);
     fireEvent.click(boxes[0]);
     expect(view.getByRole("button", { name: "Compare" }).hasAttribute("disabled")).toBe(true);
     fireEvent.click(boxes[1]);
@@ -39,7 +39,7 @@ test("gallery restores silently, caps at four, preserves other query state and f
     window.addEventListener("actuatorlist:compare", listener);
     try {
         const view = render(<ActuatorsGallery />);
-        expect(view.getAllByRole("checkbox").filter(b => b.hasAttribute("disabled"))).toHaveLength(64);
+        expect(view.getAllByRole("checkbox").filter(b => b.hasAttribute("disabled"))).toHaveLength(ACTUATORS.length - ids.length);
         expect(events).toEqual([]);
         fireEvent.click(view.getAllByRole("button", { name: /^Remove / })[0]);
         expect(events).toHaveLength(1);

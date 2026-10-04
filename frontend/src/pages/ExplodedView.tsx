@@ -1,5 +1,5 @@
 import { PublicHeader } from "../components/PublicHeader";
-import { evidenceFor, fieldCaveat } from "../../../src/catalog/evidence";
+import { evidenceFor, fieldCaveat, isReducerFamily } from "../../../src/catalog/evidence";
 import { useEffect, useRef } from "react";
 import { ACTUATORS } from "../lib/data";
 import { num, price } from "../lib/format";
@@ -72,7 +72,7 @@ export function ExplodedView({ id, menuOpen = false }: Props) {
         );
     }
 
-    const reducerFamily = ["leaderdrive-lcs", "leaderdrive-lhd", "leaderdrive-lhs", "nidec-flexwave-wpg", "nidec-smart-flexwave-srh"].includes(id);
+    const reducerFamily = isReducerFamily(id);
     const parts = PARTS.map((part) => part.kind === "boundary" ? {
         ...part,
         blurb: reducerFamily

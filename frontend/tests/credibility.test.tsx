@@ -6,7 +6,7 @@ import { ExplodedView } from "../src/pages/ExplodedView";
 
 import { DetailPanel } from "../src/components/DetailPanel";
 import { ComparePanel } from "../src/components/ComparePanel";
-import { evidenceFor } from "../../src/catalog/evidence";
+import { evidenceFor, isReducerFamily } from "../../src/catalog/evidence";
 
 afterEach(cleanup);
 
@@ -45,7 +45,7 @@ test("conflicting fields and reducer placeholders are qualified beside their val
 });
 
 test("product visual headers qualify conflict and family spec chips", () => {
-    for (const a of ACTUATORS.filter((a) => a.id === "cubemars-ak80-9" || /^(leaderdrive-|nidec-)/.test(a.id))) {
+    for (const a of ACTUATORS.filter((a) => a.id === "cubemars-ak80-9" || isReducerFamily(a.id))) {
         const view = render(<ExplodedView id={a.id} />);
         expect(view.container.querySelector('.xp-heading')?.textContent).toContain(evidenceFor(a).label);
         for (const label of a.id === "cubemars-ak80-9" ? ['Weight', 'Torque density'] : ['Rated torque', 'Weight']) {

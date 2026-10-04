@@ -49,6 +49,8 @@ export function DetailPanel({ actuator, onClose }: Props) {
     if (!actuator) return null;
     const a = actuator;
     const cat = CATEGORY_MAP[a.category];
+    const evidence = evidenceFor(a);
+    const evidenceClass = evidence.label.startsWith("Catalog headline specs spot-checked:") ? "verified-note" : "evidence-note";
     return (
         <div className="drawer-scrim" onClick={onClose}>
             <aside
@@ -79,8 +81,8 @@ export function DetailPanel({ actuator, onClose }: Props) {
                     </div>
                 </header>
 
-                <p className="verified-note">{evidenceFor(a).label}</p>
-                {evidenceFor(a).caveats.map((note) => <p className="drawer-notes" key={note}>{note}</p>)}
+                <p className={evidenceClass}>{evidence.label}</p>
+                {evidence.caveats.map((note) => <p className="drawer-notes" key={note}>{note}</p>)}
 
                 <dl className="spec-grid">
                     {specs(a).map((s) => (

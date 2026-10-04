@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ACTUATORS } from "./data";
 
-const known = new Set(ACTUATORS.map(a => a.id));
+const known: ReadonlyMap<string, (typeof ACTUATORS)[number]> = new Map(ACTUATORS.map(a => [a.id, a]));
 export function selectedIds(search: string): string[] {
     const values = new URLSearchParams(search).getAll("compare");
     if (values.length !== 1 || values[0].length > 512) return [];
@@ -42,5 +42,9 @@ export function useCompareSelection() {
         if (ids.includes(id)) update(ids.filter(value => value !== id));
         else if (ids.length < 4) update([...ids, id]);
     };
-    return { ids, ready, toggle, update, rows: ACTUATORS.filter(a => ids.includes(a.id)) };
+    const rows = ids.flatMap(id => {
+        const row = known.get(id);
+        return row ? [row] : [];
+    });
+    return { ids, ready, toggle, update, rows };
 }
