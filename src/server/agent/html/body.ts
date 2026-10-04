@@ -33,6 +33,21 @@ export function pageBody(
             '<details class="ga-faq-item"><summary>$1</summary>$2</details>',
         );
     }
+    if (!editorial && visual) {
+        // Figure-led guide: the visual follows the lede and links into the
+        // sections below, so every h2 gets a stable id from its text.
+        content = content.replace(/<h2>([^<]+)<\/h2>/g, (_, text: string) => {
+            const id = text
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, "-")
+                .replace(/^-|-$/g, "");
+            return `<h2 id="${id}">${text}</h2>`;
+        });
+        content = content.replace(
+            /(<h1>[\s\S]*?<\/h1>\s*<p>[\s\S]*?<\/p>)/,
+            `$1${visual}`,
+        );
+    }
     if (editorial) {
         // Generated Markdown only; raw HTML remains disabled above.
         content = content.replace(
