@@ -1,3 +1,4 @@
+import { evidenceFor, fieldCaveat } from "../../../src/catalog/evidence";
 import type { Actuator } from "../types";
 import { CATEGORY_MAP } from "../types";
 import { bool, dash, list, num, price, voltage } from "../lib/format";
@@ -12,6 +13,11 @@ interface Spec {
     label: string;
     value: string;
 }
+
+const evidenceFields: Record<string, string> = {
+    Weight: "weight_g", Encoder: "encoder", "Torque density": "torque_density_nm_per_kg",
+    Backdrivable: "backdrivable", Backlash: "backlash_arcmin",
+};
 
 function specs(a: Actuator): Spec[] {
     return [
@@ -73,21 +79,14 @@ export function DetailPanel({ actuator, onClose }: Props) {
                     </div>
                 </header>
 
-                {a.verified ? (
-                    <p className="verified-note" title="Headline specs spot-checked against manufacturer/reseller pages">
-                        {"✓"} Headline specs spot-checked against manufacturer sources (Sep 2026)
-                    </p>
-                ) : (
-                    <p className="unverified" title="Sourced from web search, not a direct datasheet read">
-                        Specs sourced from web search {"·"} verify against the datasheet before design use
-                    </p>
-                )}
+                <p className="verified-note">{evidenceFor(a).label}</p>
+                {evidenceFor(a).caveats.map((note) => <p className="drawer-notes" key={note}>{note}</p>)}
 
                 <dl className="spec-grid">
                     {specs(a).map((s) => (
                         <div className="spec" key={s.label}>
                             <dt>{s.label}</dt>
-                            <dd>{s.value}</dd>
+                            <dd>{s.value}{fieldCaveat(a, evidenceFields[s.label] ?? s.label) && <small style={{ display: "block" }}>{fieldCaveat(a, evidenceFields[s.label] ?? s.label)}</small>}</dd>
                         </div>
                     ))}
                 </dl>

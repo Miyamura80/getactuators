@@ -1,3 +1,4 @@
+import { compareBody, compareVisual } from "../agent/compare";
 import { renderSpaPage, renderStaticPage } from "../agent/html/render";
 import { PATHS } from "../agent/links";
 import { agentView } from "../agent/llms";
@@ -30,15 +31,33 @@ const page: Handler = async (req) => {
             ),
         );
     }
-    if (wantsMarkdown(req)) return markdownResponse(pageMarkdown(found));
+    const selected =
+        found.path === "/compare"
+            ? { ...found, body: () => compareBody(url.search) }
+            : found;
+    if (wantsMarkdown(req)) return markdownResponse(pageMarkdown(selected));
     const html =
-        found.kind === "spa" ? await renderSpaPage(found) : renderStaticPage(found);
+        found.kind === "spa"
+            ? await renderSpaPage(
+                  selected,
+                  found.path === "/compare" ? compareVisual(url.search) : undefined,
+              )
+            : renderStaticPage(found);
     return htmlResponse(measurementHtml(html, found.path));
 };
 
 const twin: Handler = (req) => {
-    const found = findPageForMarkdown(new URL(req.url).pathname);
-    return found ? markdownResponse(pageMarkdown(found)) : null;
+    const url = new URL(req.url);
+    const found = findPageForMarkdown(url.pathname);
+    return found
+        ? markdownResponse(
+              pageMarkdown(
+                  found.path === "/compare"
+                      ? { ...found, body: () => compareBody(url.search) }
+                      : found,
+              ),
+          )
+        : null;
 };
 
 function doc(path: string, title: string, description: string, body: () => string) {
@@ -56,6 +75,7 @@ const PAGE_PATHS = [
     "/",
     "/index.html",
     "/all",
+    "/compare",
     "/actuators",
     "/actuators/:id",
     "/robots",

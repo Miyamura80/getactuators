@@ -1,11 +1,15 @@
 import { expect, test } from "bun:test";
 import { createHash } from "node:crypto";
-import { ACTUATORS } from "@/catalog";
+import { ACTUATORS, type Actuator } from "@/catalog";
+import { evidenceFor, fieldCaveat } from "@/catalog/evidence";
+import { actuatorPath, categoryLabel } from "@/server/agent/catalog-md";
 import { CATALOG_UPDATED_DATE } from "@/server/agent/freshness";
-import { pageBody } from "@/server/agent/html/body";
+import { markdownToHtml, pageBody } from "@/server/agent/html/body";
 import { documentTitle } from "@/server/agent/html/head";
+import { humanize, mdText, num, usd } from "@/server/agent/md";
 import { allPages, findPage, pageMarkdown } from "@/server/agent/pages";
 import { faqSection } from "@/server/agent/pages-md";
+import { productSummary } from "@/server/agent/product-content";
 import { get } from "./agent-helpers";
 import baseline from "./short-titles-baseline.json";
 
@@ -34,12 +38,189 @@ function snapshotContent(value: string) {
     );
 }
 
+// Old specification values recovered with git show HEAD:src/server/agent/catalog-md.ts.
+// Normalize only complete, unique specification rows. The original golden hashes
+// still protect all surrounding prose (including the existing AK revision note).
+function legacyBoolean(value: boolean | null): string {
+    if (value === null) return "n/a";
+    return value ? "yes" : "no";
+}
+
+function legacyProductRows(a: Actuator): [string, string][] {
+    return [
+        ["Category", categoryLabel(a.category)],
+        ["Peak torque", num(a.peak_torque_nm, "Nm")],
+        ["Rated torque", num(a.rated_torque_nm, "Nm")],
+        ["Max speed", num(a.max_speed_rpm, "rpm", 0)],
+        ["Gear ratio", a.gear_ratio ?? "n/a"],
+        ["Weight", num(a.weight_g, "g", 0)],
+        ["Torque density", num(a.torque_density_nm_per_kg, "Nm/kg")],
+        ["Price", usd(a.price_usd)],
+        ["Price per Nm", a.price_per_nm === null ? "n/a" : `$${num(a.price_per_nm)}`],
+        ["Backdrivable", legacyBoolean(a.backdrivable)],
+        ["Backlash", num(a.backlash_arcmin, "arcmin")],
+        ["Voltage", a.voltage_v === null ? "n/a" : `${a.voltage_v} V`],
+        ["Peak current", num(a.peak_current_a, "A")],
+        ["Communication", a.comm?.join(", ") || "n/a"],
+        ["Control modes", a.control_modes?.join(", ") || "n/a"],
+        ["Encoder", a.encoder ?? "n/a"],
+        ["Integrated driver", legacyBoolean(a.integrated_driver)],
+        ["Availability", a.availability ? humanize(a.availability) : "n/a"],
+        ["Data status", a.verified ? "verified against sources" : "unverified"],
+    ];
+}
+
+function productSnapshotRows(
+    a: Actuator,
+    label: string,
+    value: string,
+): [string, string] {
+    const fields: Record<string, string> = {
+        Weight: "weight_g",
+        Encoder: "encoder",
+        "Torque density": "torque_density_nm_per_kg",
+        Backdrivable: "backdrivable",
+        Backlash: "backlash_arcmin",
+    };
+    const placeholder =
+        productSummary(a.id) && ["Backlash", "Backdrivable", "Encoder"].includes(label);
+    const oldValue = placeholder
+        ? "Legacy catalog placeholder; not a measured family rating. See engineering notes."
+        : value;
+    const caveat =
+        label === "Data status" || placeholder
+            ? undefined
+            : fieldCaveat(a, fields[label] ?? label);
+    const currentValue =
+        label === "Data status"
+            ? evidenceFor(a).label
+            : `${oldValue}${caveat ? `: ${caveat}` : ""}`;
+    const oldRow = `\n| ${label} | ${mdText(oldValue)} |\n`;
+    const currentRow = `\n| ${label} | ${mdText(currentValue)} |\n`;
+    return [oldRow, currentRow];
+}
+
+function snapshotProduct(body: string, a: Actuator): string {
+    let normalized = body;
+    const replacements: [string, string][] = [];
+    for (const [label, value] of legacyProductRows(a)) {
+        const [oldRow, currentRow] = productSnapshotRows(a, label, value);
+        // Data status is the final table row, still followed by two newlines.
+        expect(body.split(currentRow)).toHaveLength(2);
+        if (currentRow !== oldRow) {
+            expect(body).not.toContain(oldRow);
+            normalized = normalized.replace(currentRow, oldRow);
+            replacements.push([oldRow, currentRow]);
+        }
+    }
+    // Reversibility proves normalization changed only the listed exact cells.
+    let restored = normalized;
+    for (const [oldRow, currentRow] of replacements) {
+        expect(restored.split(oldRow)).toHaveLength(2);
+        restored = restored.replace(oldRow, currentRow);
+    }
+    expect(restored).toBe(body);
+    return normalized;
+}
+
+async function expectCatalogPage(
+    page: ReturnType<typeof allPages>[number],
+    original: (typeof baseline.pages)[number],
+) {
+    expect({ path: page.path, title: page.title }).toEqual({
+        path: original.path,
+        title: original.title,
+    });
+    expect(page.description).toBe(original.description);
+    if (page.path === "/about") {
+        expect(page.body()).toContain(
+            `The catalog was last updated on ${CATALOG_UPDATED_DATE}.`,
+        );
+    }
+    const currentBody = page.body();
+    const actuator = ACTUATORS.find((a) => actuatorPath(a.id) === page.path);
+    const preservedBody = actuator
+        ? snapshotProduct(currentBody, actuator)
+        : currentBody;
+    const originalBody =
+        page.path === "/"
+            ? `${preservedBody}\n\n## Frequently asked questions\n\n${faqSection()}`
+            : preservedBody;
+    expect(sha256(snapshotContent(originalBody))).toBe(original.bodySha256);
+    const html = await expectTitles(page.path, documentTitle(page.title));
+    // The approved gallery replaces its transient Markdown fallback with
+    // real cards. Still lock its canonical prose rendering to the original
+    // hash, and require the served tree; never regenerate golden hashes.
+    const builtGallery =
+        page.path === "/actuators" && html.includes('data-gallery-prerender="true"');
+    if (builtGallery) {
+        expect([...html.matchAll(/class="bento-card(?: [^"]*)?"/g)]).toHaveLength(68);
+        expect(html).not.toContain("<summary>Catalog details</summary>");
+    }
+    const contentPattern =
+        /<section class="ga-page" id="catalog-content"[^>]*>[\s\S]*?<\/section>|<main class="ga-main">[\s\S]*?<\/main>/;
+    const content = contentPattern.exec(
+        builtGallery ? pageBody(currentBody) : html,
+    )?.[0];
+    expect(content).toBeDefined();
+    if (actuator) {
+        // Check the real HTTP response against today's Markdown independently
+        // of the narrow backwards normalization used for golden hashes.
+        const split = currentBody.indexOf("\n\n## Specifications");
+        expect(split).toBeGreaterThan(0);
+        const currentRendering = contentPattern.exec(
+            pageBody(currentBody.slice(0, split)),
+        )?.[0];
+        expect(currentRendering).toBeDefined();
+        expect(content).toBe(currentRendering);
+        const persistent =
+            /<section class="ga-page" id="catalog-content"[^>]*>([\s\S]*?)<\/section>/.exec(
+                html,
+            );
+        expect(persistent).not.toBeNull();
+        expect(persistent?.[1]).toBe(
+            `<div class="ga-main">${markdownToHtml(currentBody.slice(split))}</div>`,
+        );
+    }
+    const preservedContent = actuator
+        ? contentPattern.exec(
+              pageBody(
+                  preservedBody.slice(
+                      0,
+                      preservedBody.indexOf("\n\n## Specifications"),
+                  ),
+              ),
+          )?.[0]
+        : content;
+    expect(preservedContent).toBeDefined();
+    expect(sha256(snapshotContent(preservedContent ?? ""))).toBe(
+        original.htmlContentSha256,
+    );
+    expect(html).toContain(
+        `<link rel="canonical" href="https://actuatorlist.com${page.path}">`,
+    );
+    expect(html).toContain(
+        `<meta name="description" content="${Bun.escapeHTML(original.description)}"`,
+    );
+    expect(html).toContain(
+        `<meta property="og:description" content="${Bun.escapeHTML(original.description)}">`,
+    );
+    expect(html).toContain(
+        `<meta name="twitter:description" content="${Bun.escapeHTML(original.description)}">`,
+    );
+    expect(pageMarkdown(page)).toContain(`title: ${JSON.stringify(page.title)}`);
+    const item = page.jsonLd().find((node) => node["@type"] === "ItemPage");
+    if (item) expect(item.name).toBe(page.title);
+}
+
 // Captured from the clean main baseline before implementation. Only expected
 // metadata labels differ; hashes lock down original content, not head markup.
 test("the full catalog has distinct reviewed metadata without content changes", async () => {
     const registered = allPages();
-    expect(registered).toHaveLength(80);
-    const pages = registered.filter((page) => page.path !== "/faq");
+    expect(registered).toHaveLength(81);
+    const pages = registered.filter(
+        (page) => page.path !== "/faq" && page.path !== "/compare",
+    );
     expect(ACTUATORS).toHaveLength(68);
     expect(pages).toHaveLength(79);
     expect(pages.map((page) => page.path)).toEqual(
@@ -52,55 +233,7 @@ test("the full catalog has distinct reviewed metadata without content changes", 
     for (const [index, page] of pages.entries()) {
         const original = baseline.pages[index];
         if (!original) throw new Error(`Missing baseline for ${page.path}`);
-        expect({ path: page.path, title: page.title }).toEqual({
-            path: original.path,
-            title: original.title,
-        });
-        expect(page.description).toBe(original.description);
-        if (page.path === "/about") {
-            expect(page.body()).toContain(
-                `The catalog was last updated on ${CATALOG_UPDATED_DATE}.`,
-            );
-        }
-        const originalBody =
-            page.path === "/"
-                ? `${page.body()}\n\n## Frequently asked questions\n\n${faqSection()}`
-                : page.body();
-        expect(sha256(snapshotContent(originalBody))).toBe(original.bodySha256);
-        const html = await expectTitles(page.path, documentTitle(page.title));
-        // The approved gallery replaces its transient Markdown fallback with
-        // real cards. Still lock its canonical prose rendering to the original
-        // hash, and require the served tree; never regenerate golden hashes.
-        const builtGallery =
-            page.path === "/actuators" &&
-            html.includes('data-gallery-prerender="true"');
-        if (builtGallery) {
-            expect([...html.matchAll(/class="bento-card(?: [^"]*)?"/g)]).toHaveLength(
-                68,
-            );
-            expect(html).not.toContain("<summary>Catalog details</summary>");
-        }
-        const content =
-            /<section class="ga-page" id="catalog-content"[^>]*>[\s\S]*?<\/section>|<main class="ga-main">[\s\S]*?<\/main>/.exec(
-                builtGallery ? pageBody(page.body()) : html,
-            )?.[0];
-        expect(content).toBeDefined();
-        expect(sha256(snapshotContent(content ?? ""))).toBe(original.htmlContentSha256);
-        expect(html).toContain(
-            `<link rel="canonical" href="https://actuatorlist.com${page.path}">`,
-        );
-        expect(html).toContain(
-            `<meta name="description" content="${Bun.escapeHTML(original.description)}"`,
-        );
-        expect(html).toContain(
-            `<meta property="og:description" content="${Bun.escapeHTML(original.description)}">`,
-        );
-        expect(html).toContain(
-            `<meta name="twitter:description" content="${Bun.escapeHTML(original.description)}">`,
-        );
-        expect(pageMarkdown(page)).toContain(`title: ${JSON.stringify(page.title)}`);
-        const item = page.jsonLd().find((node) => node["@type"] === "ItemPage");
-        if (item) expect(item.name).toBe(page.title);
+        await expectCatalogPage(page, original);
     }
 });
 

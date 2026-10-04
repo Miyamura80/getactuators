@@ -4,13 +4,14 @@ export const PUBLIC_LINKS = [
     ["/robots", "Robot types"],
     ["/all", "All actuators"],
     ["/actuators", "Gallery"],
+    ["/compare", "Compare"],
     ["/guides", "Guides"],
     ["/agents", "Agents"],
     ["/faq", "FAQ"],
 ] as const;
 
 export const FOOTER_GROUPS = [
-    { label: "Catalog", links: PUBLIC_LINKS.slice(0, 4) },
+    { label: "Catalog", links: PUBLIC_LINKS.slice(0, 5) },
     {
         label: "Resources",
         links: [

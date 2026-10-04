@@ -1027,6 +1027,36 @@ table.board {
     grid-auto-flow: dense;
     gap: 14px;
 }
+.bento-pick { position: relative; min-width: 0; display: flex; }
+.bento-pick[data-size="lg"] { grid-column: span 2; grid-row: span 2; }
+.bento-pick[data-size="wide"] { grid-column: span 2; }
+.bento-pick > .bento-card { flex: 1; min-width: 0; }
+.bento-pick > label { position: absolute; top: 8px; right: 8px; z-index: 2; padding: 8px; border-radius: 6px; background: var(--panel); }
+.bento-pick input { width: 20px; height: 20px; accent-color: var(--cyan); }
+.pick-tray { position: sticky; bottom: 12px; z-index: 10; display: flex; align-items: center; gap: 12px; padding: 12px; margin-top: 20px; background: var(--panel); border: 1px solid var(--cyan); border-radius: 8px; box-shadow: 0 8px 30px #0008; }
+.pick-tray ul { display: flex; flex: 1; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 0; }
+.pick-tray li { display: flex; gap: 6px; align-items: center; font-size: 12px; }
+.pick-mini { width: 40px; height: 40px; overflow: hidden; }
+.pick-tray button, .pick-tray a { min-height: 44px; padding: 8px; }
+.compare-page { max-width: 1440px; padding: 0 20px; margin: auto; }
+.compare-products { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 12px; }
+.compare-products article { min-width: 0; border: 1px solid var(--line); border-radius: 8px; padding: 16px; background: var(--panel); }
+.compare-photo { height: 260px; display: grid; place-items: center; overflow: hidden; }
+.compare-photo img { width: 100%; height: 260px; min-height: 0; object-fit: contain; }
+.compare-page h1 { font-size: clamp(28px, 4vw, 44px); font-weight: 700; margin: 28px 0 12px; }
+.compare-products button { display: inline-block; min-height: 44px; padding: 8px 16px; margin: 8px; border: 1px solid var(--line); border-radius: 6px; cursor: pointer; }
+.compare-products h2 { font-size: 20px; min-height: 48px; }
+.compare-products > article > a > img { height: 260px; width: 100%; object-fit: contain; }
+.compare-spec-scroll { overflow-x: auto; margin: 20px 0; }
+.compare-specs { width: 100%; min-width: 620px; table-layout: fixed; border-collapse: collapse; }
+.compare-specs caption { text-align: left; padding-bottom: 12px; color: var(--muted); }
+.compare-specs th, .compare-specs td { padding: 12px; border-bottom: 1px solid var(--line); text-align: left; overflow-wrap: anywhere; }
+.compare-specs thead th { color: var(--cyan); }
+.compare-products dl { margin: 0; }
+.compare-products dl > div { padding: 10px 0; min-height: 76px; border-top: 1px solid var(--line); }
+.compare-products dt { font-size: 12px; color: var(--muted); }
+.compare-products dd { margin: 6px 0 0; font-size: 15px; }
+@media (max-width: 700px) { .compare-products { grid-template-columns: 1fr; } .compare-page { padding: 0 12px; } .pick-tray { flex-wrap: wrap; gap: 8px; } .pick-tray ul { flex-basis: 100%; } .pick-mini { display: none; } }
 .bento-card {
     all: unset;
     cursor: pointer;

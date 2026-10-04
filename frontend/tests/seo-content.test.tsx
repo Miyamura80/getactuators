@@ -32,7 +32,8 @@ test("product catalog facts survive React mount alongside the exploded visual", 
     const specifications = document.getElementById("catalog-content")!;
     expect(Boolean(specifications.compareDocumentPosition(footer) & Node.DOCUMENT_POSITION_FOLLOWING)).toBe(true);
     expect(document.body.textContent).toContain(a.notes!);
-    expect(document.body.textContent).toContain(a.verified ? "verified against sources" : "unverified");
+    expect(document.body.textContent).toContain(a.verified ? "Catalog headline specs spot-checked: confirm revision" : "Unverified catalog: confirm sources");
+    expect(document.body.textContent).not.toContain("verified against sources");
     expect(document.body.textContent).toContain("Use cases");
     for (const useCase of a.use_cases) {
         expect(document.body.textContent).toContain(useCase.replaceAll("_", " "));

@@ -1,4 +1,5 @@
 import { ACTUATORS, type Actuator, CATEGORIES, type Robot } from "@/catalog";
+import { evidenceFor, fieldCaveat } from "@/catalog/evidence";
 import { resolveJoints, robotsUsingActuator } from "@/catalog/query";
 import { absoluteUrl } from "../site";
 import { bullets, humanize, mdLink, mdTable, mdText, num, usd } from "./md";
@@ -62,19 +63,27 @@ function specRows(a: Actuator): string[][] {
             a.integrated_driver === null ? "n/a" : a.integrated_driver ? "yes" : "no",
         ],
         ["Availability", a.availability ? humanize(a.availability) : "n/a"],
-        ["Data status", a.verified ? "verified against sources" : "unverified"],
+        ["Data status", evidenceFor(a).label],
     ];
     return rows.map(([k, v]) => {
         if (
             productSummary(a.id) &&
-            (k === "Backlash" || k === "Backdrivable" || k === "Encoder")
+            ["Backlash", "Backdrivable", "Encoder"].includes(k)
         ) {
             return [
                 k,
                 "Legacy catalog placeholder; not a measured family rating. See engineering notes.",
             ];
         }
-        return [k, mdText(v)];
+        const fields: Record<string, string> = {
+            Weight: "weight_g",
+            Encoder: "encoder",
+            "Torque density": "torque_density_nm_per_kg",
+            Backdrivable: "backdrivable",
+            Backlash: "backlash_arcmin",
+        };
+        const caveat = k === "Data status" ? undefined : fieldCaveat(a, fields[k] ?? k);
+        return [k, mdText(`${v}${caveat ? `: ${caveat}` : ""}`)];
     });
 }
 
