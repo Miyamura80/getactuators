@@ -22,6 +22,7 @@ import {
     robotsBody,
 } from "./pages-md";
 import { actuatorSeoTitle } from "./seo-titles";
+import { TOOL_PAGES } from "./tools";
 import { aboutBody, contactBody, privacyBody } from "./trust";
 
 // Every HTML page the site serves, with the metadata and markdown body shared
@@ -79,6 +80,7 @@ const STATIC_PAGES: Page[] = [
         ],
     },
     ...EDITORIAL_PAGES,
+    ...TOOL_PAGES,
     {
         path: "/",
         kind: "spa",
