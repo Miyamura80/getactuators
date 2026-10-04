@@ -49,3 +49,23 @@ test("motor torque calculator has a markdown twin, sitemap entry and footer link
         `<a href="${MOTOR_TORQUE_PATH}">Motor torque calculator</a>`,
     );
 });
+
+test("robot arm calculator is a separate indexable tool with its method below", async () => {
+    const path = "/tools/robot-arm-torque-calculator";
+    expect(findPage(path)?.description.length).toBeLessThanOrEqual(160);
+    const html = await (await get(path)).text();
+    expect(html).toContain(
+        "<title>Robot arm torque calculator: holding torque per joint | actuatorlist</title>",
+    );
+    const persistent =
+        /<section class="ga-page" id="catalog-content"[^>]*>[\s\S]*?<\/section>/.exec(
+            html,
+        )?.[0] ?? "";
+    expect(persistent).toContain("<h2>How the calculation works</h2>");
+    expect(persistent).toContain("Not motion torque.");
+    expect(persistent).toContain("No universal margin.");
+    expect(await (await get(`${path}.md`)).text()).toContain("| Shoulder | 33.9 N·m |");
+    expect(await (await get("/sitemap.xml")).text()).toContain(
+        `https://actuatorlist.com${path}`,
+    );
+});

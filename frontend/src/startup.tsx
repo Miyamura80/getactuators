@@ -10,6 +10,7 @@ import { CommandPalette } from "./components/CommandPalette";
 import { Agents } from "./pages/Agents";
 import { GalleryRoot } from "./GalleryRoot";
 import { Compare } from "./pages/Compare";
+import { ARM_TORQUE_PATH, ArmTorqueCalculator } from "./pages/ArmTorqueCalculator";
 import { MOTOR_TORQUE_PATH, MotorTorqueCalculator } from "./pages/MotorTorqueCalculator";
 
 function Page({ menuOpen }: { menuOpen: boolean }) {
@@ -19,6 +20,7 @@ function Page({ menuOpen }: { menuOpen: boolean }) {
     if (path === "/robots" || path === "/robot") return <Home menuOpen={menuOpen} />;
     if (path === "/actuators") return <ActuatorsGallery menuOpen={menuOpen} />;
     if (path === "/agents") return <Agents menuOpen={menuOpen} />;
+    if (path === ARM_TORQUE_PATH) return <ArmTorqueCalculator menuOpen={menuOpen} />;
     if (path === MOTOR_TORQUE_PATH) return <MotorTorqueCalculator menuOpen={menuOpen} />;
     if (path.startsWith("/actuators/")) {
         const raw = path.slice("/actuators/".length);

@@ -6,7 +6,7 @@ A humanoid has no single right actuator. The knee, the ankle and the wrist load 
 
 The reference robot is **hypothetical**: 1.5 m tall, 50 kg, carrying 1 kg in one hand. Every torque below is a **static engineering estimate** (mass × g × horizontal lever arm) for one stated pose, rounded to one decimal place. Static torque is a floor, not a requirement: walking, stairs, recovery steps and impacts add dynamic torque that depends on your gait and controller, and that this guide does not estimate.
 
-Each shortlist screens catalog entries tagged for humanoid joints. An entry passes when its documented rated torque covers the estimate (listed first) or, failing that, its documented peak torque does (short duty only). Undocumented torque never passes. Use the [motor torque calculator](/tools/motor-torque-calculator) to screen the whole catalog at your own torque and speed, and the [actuator selection guide](/guides/robot-actuator-selection) for the efficiency, thermal, precision and sim2real checks a shortlist does not settle.
+Each shortlist screens catalog entries tagged for humanoid joints. An entry passes when its documented rated torque covers the estimate (listed first) or, failing that, its documented peak torque does (short duty only). Undocumented torque never passes. Use the [robot arm torque calculator](/tools/robot-arm-torque-calculator) to size your own arm joint by joint, the [motor torque calculator](/tools/motor-torque-calculator) to screen the whole catalog at your own torque and speed, and the [actuator selection guide](/guides/robot-actuator-selection) for the efficiency, thermal, precision and sim2real checks a shortlist does not settle.
 
 ## Shoulder
 

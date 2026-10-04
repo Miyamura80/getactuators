@@ -1,4 +1,5 @@
 import { ACTUATORS } from "../lib/data";
+import type { Actuator } from "../types";
 import { compareHref } from "../lib/compare-selection";
 import { fmt } from "../lib/motor-torque";
 import {
@@ -14,12 +15,17 @@ export function RequirementShortlist({
     torqueNm,
     speedRpm,
     heading,
+    limit = 6,
+    onUse,
 }: {
     torqueNm: number;
     speedRpm?: number;
     heading: string;
+    limit?: number;
+    // Offer a per-row action, e.g. feed this actuator's mass back into a model.
+    onUse?: { label: (a: Actuator) => string; act: (a: Actuator) => void };
 }) {
-    const list = shortlist(ACTUATORS, { torqueNm, speedRpm });
+    const list = shortlist(ACTUATORS, { torqueNm, speedRpm }, limit);
     const picks = list.rows.slice(0, 4).map((r) => r.actuator.id);
     return (
         <section className="req-list" aria-labelledby="req-list-title">
@@ -52,6 +58,11 @@ export function RequirementShortlist({
                                     {speed !== "none" && <span className={`req-tag tag-speed-${speed}`}>{SPEED_FIT_LABEL[speed]}</span>}
                                     {note && <span className="req-tag tag-note">{note}</span>}
                                 </p>
+                                {onUse && a.weight_g != null && (
+                                    <button type="button" className="req-use" onClick={() => onUse.act(a)}>
+                                        {onUse.label(a)}
+                                    </button>
+                                )}
                             </li>
                         );
                     })}

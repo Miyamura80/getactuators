@@ -39,6 +39,8 @@ function tool(
 
 export const MOTOR_TORQUE_PATH = "/tools/motor-torque-calculator";
 
+export const ARM_TORQUE_PATH = "/tools/robot-arm-torque-calculator";
+
 export const TOOL_PAGES: Page[] = [
     tool(
         MOTOR_TORQUE_PATH,
@@ -46,5 +48,12 @@ export const TOOL_PAGES: Page[] = [
         "Calculate motor torque from power and RPM, or power and speed from torque. SI and imperial units, gearbox losses, and robot actuators that match.",
         "motor-torque-calculator.md",
         "\n\n## How the calculator works",
+    ),
+    tool(
+        ARM_TORQUE_PATH,
+        "Robot arm torque calculator: holding torque per joint",
+        "Calculate static holding torque at each robot arm joint from link lengths, masses and payload, then screen catalog actuators joint by joint.",
+        "robot-arm-torque-calculator.md",
+        "\n\n## How the calculation works",
     ),
 ];
