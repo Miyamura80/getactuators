@@ -1,6 +1,7 @@
 import { PublicHeader } from "../components/PublicHeader";
 import { PublicFooter } from "../components/PublicFooter";
 import { ActuatorThumb } from "../components/ActuatorThumb";
+import { EngineeringEvidencePanel } from "../components/EngineeringEvidencePanel";
 import { compareEvent, useCompareSelection } from "../lib/compare-selection";
 import { COMPARE_SPECS, revisionNote } from "../../../src/catalog/compare";
 
@@ -25,6 +26,7 @@ export function Compare({ menuOpen = false }: { menuOpen?: boolean }) {
                     <p>{revisionNote(a)}</p>
                     <a href={`/actuators/${a.id}`}>Catalog and sources</a>
                     <button type="button" aria-label={`Remove ${a.name}`} onClick={() => remove(a.id)}>Remove</button>
+                    <EngineeringEvidencePanel id={a.id} compact />
                 </article>)}
             </div>
             {selection.rows.length >= 2 && <div className="compare-spec-scroll" role="region" aria-label="Comparison specifications" tabIndex={0}>

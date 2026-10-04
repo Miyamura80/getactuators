@@ -10,6 +10,7 @@ import { humanize, mdText, num, usd } from "@/server/agent/md";
 import { allPages, findPage, pageMarkdown } from "@/server/agent/pages";
 import { faqSection } from "@/server/agent/pages-md";
 import { productSummary } from "@/server/agent/product-content";
+import approvedEngineering from "../catalog/engineering-approved.json";
 import { get } from "./agent-helpers";
 import baseline from "./short-titles-baseline.json";
 
@@ -95,14 +96,23 @@ function productSnapshotRows(
     const oldValue = placeholder
         ? "Legacy catalog placeholder; not a measured family rating. See engineering notes."
         : value;
-    const caveat =
-        !fields[label] || placeholder ? undefined : fieldCaveat(a, fields[label]!);
+    const field = fields[label];
+    const caveat = !field || placeholder ? undefined : fieldCaveat(a, field);
     const currentValue =
         label === "Data status"
             ? evidenceFor(a).label
             : `${oldValue}${caveat ? `: ${caveat}` : ""}`;
     const oldRow = `\n| ${label} | ${mdText(oldValue)} |\n`;
-    const currentRow = `\n| ${label} | ${mdText(currentValue)} |\n`;
+    const approvedMyRows: Record<string, string> =
+        approvedEngineering["myactuator-rmd-x8-pro-v2"].rows;
+    const approvedRow =
+        a.id === "myactuator-rmd-x8-pro-v2" ? approvedMyRows[label] : undefined;
+    const currentRow =
+        a.id === "myactuator-rmd-x8-pro-v2"
+            ? approvedRow
+                ? `\n${approvedRow}\n`
+                : oldRow
+            : `\n| ${label} | ${mdText(currentValue)} |\n`;
     return [oldRow, currentRow];
 }
 
@@ -126,6 +136,22 @@ function snapshotProduct(body: string, a: Actuator): string {
         restored = restored.replace(oldRow, currentRow);
     }
     expect(restored).toBe(body);
+    return snapshotEngineering(normalized, a.id);
+}
+
+function snapshotEngineering(body: string, id: string): string {
+    const approved = approvedEngineering[id as keyof typeof approvedEngineering];
+    if (!approved) {
+        expect(body).not.toContain("## Engineering evidence");
+        return body;
+    }
+    const inserted = `\n\n${approved.section}`;
+    const anchor = "\n\n## Sources\n\n";
+    expect(body.split(inserted)).toHaveLength(2);
+    expect(body).toContain(`${inserted}${anchor}`);
+    const normalized = body.replace(`${inserted}${anchor}`, anchor);
+    expect(normalized.split(anchor)).toHaveLength(2);
+    expect(normalized.replace(anchor, `${inserted}${anchor}`)).toBe(body);
     return normalized;
 }
 

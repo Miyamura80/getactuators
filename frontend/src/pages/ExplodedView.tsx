@@ -1,4 +1,5 @@
 import { PublicHeader } from "../components/PublicHeader";
+import { EngineeringEvidencePanel } from "../components/EngineeringEvidencePanel";
 import { evidenceFor, fieldCaveat, isReducerFamily } from "../../../src/catalog/evidence";
 import { useEffect, useRef } from "react";
 import { ACTUATORS } from "../lib/data";
@@ -147,6 +148,7 @@ export function ExplodedView({ id, menuOpen = false }: Props) {
                     </div>
                 </div>
             </div>
+            <EngineeringEvidencePanel id={id} />
         </div>
     );
 }
