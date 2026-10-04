@@ -54,7 +54,7 @@ function headMeta(page: Page, noindex = false): HeadMeta {
 // Catalog facts and homepage FAQ live in visible siblings, rendered from the
 // same markdown as the agent twins (FAQ answers also supply JSON-LD). React's
 // visuals stay intact without discarding that substantive content.
-export async function renderSpaPage(page: Page): Promise<string> {
+export async function renderSpaPage(page: Page, visual?: string): Promise<string> {
     const meta = headMeta(page);
     const body = page.body();
     const marker = page.ogType === "product" ? "\n\n## Specifications" : null;
@@ -69,7 +69,7 @@ export async function renderSpaPage(page: Page): Promise<string> {
         page.path === "/actuators" && (await galleryFile.exists())
             ? await galleryFile.text()
             : null;
-    const prerender = galleryHtml ?? fallbackHtml;
+    const prerender = galleryHtml ?? visual ?? fallbackHtml;
     const persistentHtml = markdownToHtml(content);
     const persistent = content
         ? `<section class="ga-page" id="catalog-content" ${page.ogType === "product" ? 'tabindex="-1" aria-label="Specifications and catalog details"' : 'aria-label="Catalog details"'}><div class="ga-main">${persistentHtml}</div></section>${publicFooter()}`

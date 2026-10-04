@@ -6,7 +6,7 @@ COPY frontend/package.json frontend/bun.lock ./frontend/
 RUN cd frontend && bun install --frozen-lockfile
 COPY frontend ./frontend
 # The gallery ordering helper is shared by the browser and server.
-COPY src/catalog/gallery.ts ./src/catalog/gallery.ts
+COPY src/catalog/gallery.ts src/catalog/evidence.ts src/catalog/compare.ts ./src/catalog/
 COPY src/public-navigation.ts src/public-navigation.css ./src/
 RUN cd frontend && bun run build
 

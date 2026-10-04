@@ -126,6 +126,33 @@ test("comparison action uses distinct catalog IDs, bounded surfaces and no extra
     expect(commands(w).find((c) => c[1] === "compare_open")?.[2]).toEqual({ product_id_1: "cubemars-ak80-9", product_id_2: "xiaomi-cybergear", product_count: 2, source_path: "https://actuatorlist.com/all", surface: "comparison", page_location: "https://actuatorlist.com/all", page_referrer: "", transport_type: "beacon" });
     await w.happyDOM.close();
 });
+test("gallery and dedicated comparison actions are measured only on bounded comparison routes", async () => {
+    const w = await browser({ consent: "granted" });
+    const dispatch = (action: string, productIds = ["cubemars-ak80-9", "xiaomi-cybergear"]) =>
+        w.dispatchEvent(new w.CustomEvent("actuatorlist:compare", { detail: { action, productIds } }));
+    for (const path of ["/actuators", "/compare"]) {
+        w.history.pushState(null, "", `${path}?private=1#secret`);
+        dispatch("open");
+        dispatch("update", ["xiaomi-cybergear"]);
+    }
+    const events = commands(w).filter((c) => c[1] === "compare_open" || c[1] === "compare_update");
+    expect(events.map((c) => c[1])).toEqual(["compare_open", "compare_update", "compare_open", "compare_update"]);
+    expect(events.map((c) => (c[2] as Record<string, unknown>).source_path)).toEqual([
+        "https://actuatorlist.com/actuators", "https://actuatorlist.com/actuators",
+        "https://actuatorlist.com/compare", "https://actuatorlist.com/compare",
+    ]);
+    for (const path of ["/", "/faq", "/actuators/cubemars-ak80-9", "/comparisons/cubemars-ak80-9-vs-xiaomi-cybergear"]) {
+        w.history.pushState(null, "", path);
+        dispatch("open");
+    }
+    expect(commands(w).filter((c) => c[1] === "compare_open")).toHaveLength(2);
+    click(w, "Analytics preferences"); click(w, "Reject");
+    w.history.pushState(null, "", "/compare");
+    dispatch("open");
+    expect(commands(w).filter((c) => c[1] === "compare_open")).toHaveLength(0);
+    await w.happyDOM.close();
+});
+
 test("page views count canonical pathname changes only after consent, and resuming never duplicates the current view", async () => {
     const w = await browser();
     w.history.pushState(null, "", "/actuators?q=private");

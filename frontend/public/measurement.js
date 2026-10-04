@@ -135,7 +135,7 @@
         if (!detail || !["open", "update"].includes(detail.action) || !Array.isArray(detail.productIds)) return;
         const ids = [...new Set(detail.productIds)];
         if (ids.length > 4 || ids.length < (detail.action === "open" ? 2 : 1) || !ids.every((value) => products.has(value))) return;
-        if (location.pathname !== "/all") return;
+        if (!["/all", "/actuators", "/compare"].includes(location.pathname)) return;
         const productParams = Object.fromEntries(ids.sort().map((value, index) => [`product_id_${index + 1}`, value]));
         emit(`compare_${detail.action}`, { ...productParams, product_count: ids.length, surface: "comparison" });
     });

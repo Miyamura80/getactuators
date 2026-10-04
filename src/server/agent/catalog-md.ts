@@ -1,4 +1,5 @@
 import { ACTUATORS, type Actuator, CATEGORIES, type Robot } from "@/catalog";
+import { evidenceFor, fieldCaveat } from "@/catalog/evidence";
 import { resolveJoints, robotsUsingActuator } from "@/catalog/query";
 import { absoluteUrl } from "../site";
 import { bullets, humanize, mdLink, mdTable, mdText, num, usd } from "./md";
@@ -62,19 +63,36 @@ function specRows(a: Actuator): string[][] {
             a.integrated_driver === null ? "n/a" : a.integrated_driver ? "yes" : "no",
         ],
         ["Availability", a.availability ? humanize(a.availability) : "n/a"],
-        ["Data status", a.verified ? "verified against sources" : "unverified"],
+        ["Data status", evidenceFor(a).label],
     ];
     return rows.map(([k, v]) => {
         if (
             productSummary(a.id) &&
-            (k === "Backlash" || k === "Backdrivable" || k === "Encoder")
+            ["Backlash", "Backdrivable", "Encoder"].includes(k)
         ) {
             return [
                 k,
                 "Legacy catalog placeholder; not a measured family rating. See engineering notes.",
             ];
         }
-        return [k, mdText(v)];
+        const fields: Record<string, string> = {
+            "Peak torque": "peak_torque_nm",
+            "Rated torque": "rated_torque_nm",
+            "Max speed": "max_speed_rpm",
+            "Gear ratio": "gear_ratio",
+            Price: "price_usd",
+            "Price per Nm": "price_per_nm",
+            Voltage: "voltage_v",
+            "Peak current": "peak_current_a",
+            Weight: "weight_g",
+            Encoder: "encoder",
+            "Torque density": "torque_density_nm_per_kg",
+            Backdrivable: "backdrivable",
+            Backlash: "backlash_arcmin",
+        };
+        const field = fields[k];
+        const caveat = field ? fieldCaveat(a, field) : undefined;
+        return [k, mdText(`${v}${caveat ? `: ${caveat}` : ""}`)];
     });
 }
 

@@ -1,6 +1,8 @@
 import { PublicHeader } from "../components/PublicHeader";
 import { PublicFooter } from "../components/PublicFooter";
 import { useMemo } from "react";
+import { useCompareSelection } from "../lib/compare-selection";
+import { CompareTray } from "../components/CompareTray";
 import { galleryCards, type GallerySize } from "../../../src/catalog/gallery";
 import type { Actuator } from "../types";
 import { CATEGORY_MAP } from "../types";
@@ -14,6 +16,7 @@ type Size = GallerySize;
 
 export function ActuatorsGallery({ menuOpen = false }: { menuOpen?: boolean }) {
     const cards = useMemo(() => galleryCards(ACTUATORS), []);
+    const selection = useCompareSelection();
 
     return (
         <div className="gallery-page">
@@ -32,7 +35,10 @@ export function ActuatorsGallery({ menuOpen = false }: { menuOpen?: boolean }) {
 
             <div className="bento">
                 {cards.map(({ a, size }, index) => (
-                    <GalleryCard key={a.id} actuator={a} size={size} priority={index === 0} />
+                    <div key={a.id} className="bento-pick" data-size={size}>
+                        <GalleryCard actuator={a} size={size} priority={index === 0} />
+                        <label className="pick-control"><input type="checkbox" aria-label={`Compare ${a.name}`} checked={selection.ids.includes(a.id)} disabled={!selection.ready || (selection.ids.length === 4 && !selection.ids.includes(a.id))} onChange={() => selection.toggle(a.id)} />Pick</label>
+                    </div>
                 ))}
             </div>
 
@@ -40,6 +46,8 @@ export function ActuatorsGallery({ menuOpen = false }: { menuOpen?: boolean }) {
                 Renders are schematic, generated from each part's category, not
                 manufacturer photography. Specs link back to sources on the leaderboard.
             </p>
+                <CompareTray rows={selection.rows} remove={selection.toggle} clear={() => selection.update([])} />
+                <noscript>Picking requires JavaScript. Open product links for specifications, or use a shared /compare?compare=id,id URL.</noscript>
                 <PublicFooter />
         </div>
     );

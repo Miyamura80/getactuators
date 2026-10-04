@@ -1,3 +1,4 @@
+import { evidenceFor, fieldCaveat } from "../../../src/catalog/evidence";
 import type { Actuator } from "../types";
 import { COLUMNS } from "../lib/columns";
 
@@ -53,6 +54,20 @@ export function ComparePanel({ actuators, onRemove, onClose }: Props) {
                         </tr>
                     </thead>
                     <tbody>
+                        <tr>
+                            <td className="rowlabel">Data status</td>
+                            {actuators.map((a) => {
+                                const evidence = evidenceFor(a);
+                                return (
+                                    <td key={a.id}>
+                                        <span title={evidence.label}>{evidence.label}</span>
+                                        {evidence.caveats.map((note) => (
+                                            <small className="compare-evidence-caveat" title={note} key={note}>{" "}{note}</small>
+                                        ))}
+                                    </td>
+                                );
+                            })}
+                        </tr>
                         {COLUMNS.map((c) => {
                             const winners = bestIds(actuators, c);
                             return (
@@ -65,9 +80,10 @@ export function ComparePanel({ actuators, onRemove, onClose }: Props) {
                                         <td
                                             key={a.id}
                                             className="num"
-                                            data-best={winners.has(a.id)}
+                                            data-best={winners.has(a.id) && !fieldCaveat(a, c.key)}
                                         >
                                             {c.display(a)}
+                                            {fieldCaveat(a, c.key) && <small style={{ display: "block" }}>{fieldCaveat(a, c.key)}</small>}
                                         </td>
                                     ))}
                                 </tr>

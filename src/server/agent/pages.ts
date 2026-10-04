@@ -1,5 +1,6 @@
 import { ACTUATORS, getActuator } from "@/catalog";
 import { queryActuators } from "@/catalog/query";
+import { compareBody } from "./compare";
 
 import {
     actuatorBody,
@@ -56,6 +57,13 @@ function sub(
 }
 
 const STATIC_PAGES: Page[] = [
+    sub(
+        "/compare",
+        "spa",
+        "Compare actuators",
+        "Pick two to four robot actuators for a visual, shareable specification comparison with source and revision caveats.",
+        compareBody,
+    ),
     {
         ...sub(
             "/faq",

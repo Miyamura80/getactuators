@@ -9,10 +9,12 @@ import { ExplodedView } from "./pages/ExplodedView";
 import { CommandPalette } from "./components/CommandPalette";
 import { Agents } from "./pages/Agents";
 import { GalleryRoot } from "./GalleryRoot";
+import { Compare } from "./pages/Compare";
 
 function Page({ menuOpen }: { menuOpen: boolean }) {
     const path = usePath();
     if (path === "/all") return <AllActuators menuOpen={menuOpen} />;
+    if (path === "/compare") return <Compare menuOpen={menuOpen} />;
     if (path === "/robots" || path === "/robot") return <Home menuOpen={menuOpen} />;
     if (path === "/actuators") return <ActuatorsGallery menuOpen={menuOpen} />;
     if (path === "/agents") return <Agents menuOpen={menuOpen} />;

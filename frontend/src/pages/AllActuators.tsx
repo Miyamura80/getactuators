@@ -12,6 +12,7 @@ import {
 } from "../lib/filter";
 import type { FilterState } from "../lib/filter";
 import { useLocationKey } from "../lib/router";
+import { selectedIds } from "../lib/compare-selection";
 import { BrandGlyph } from "../components/BrandGlyph";
 import { FilterBar } from "../components/FilterBar";
 import { Leaderboard } from "../components/Leaderboard";
@@ -38,10 +39,13 @@ function actuatorFromQuery(search: string): Actuator | null {
 // Build the page URL from the current filters plus the selected actuator, so a
 // single writer owns the query string. filtersToQuery drops defaults; ?sel is
 // merged on top and the hash is preserved (filtering must not scroll-reset).
-function buildUrl(filters: FilterState, selId: string | null): string {
-    const params = new URLSearchParams(filtersToQuery(filters));
+function buildUrl(filters: FilterState, selId: string | null, compare: Set<string>): string {
+    const params = new URLSearchParams(window.location.search);
+    for (const key of ["q", "cat", "use", "sort", "dir", "sel", "compare"]) params.delete(key);
+    new URLSearchParams(filtersToQuery(filters)).forEach((value, key) => params.set(key, value));
     if (selId) params.set("sel", selId);
-    else params.delete("sel");
+    const ids = selectedIds(`?compare=${encodeURIComponent([...compare].join(","))}`);
+    if (ids.length) params.set("compare", ids.join(","));
     const q = params.toString();
     return `${window.location.pathname}${q ? `?${q}` : ""}${window.location.hash}`;
 }
@@ -53,7 +57,9 @@ export function AllActuators({ menuOpen = false }: { menuOpen?: boolean }) {
             ? null
             : actuatorFromQuery(window.location.search),
     );
-    const [compare, setCompare] = useState<Set<string>>(new Set());
+    const [compare, setCompare] = useState<Set<string>>(() =>
+        new Set(typeof window === "undefined" ? [] : selectedIds(window.location.search)),
+    );
     const [showCompare, setShowCompare] = useState(false);
     const locKey = useLocationKey();
 
@@ -65,25 +71,17 @@ export function AllActuators({ menuOpen = false }: { menuOpen?: boolean }) {
         return m;
     }, []);
 
-    // Resync state from the URL on external navigation (back/forward, or a
-    // command-palette jump that pushes ?sel while we are already on /all). The
-    // writer below uses replaceState (no event), so this never fires in a loop.
+    // Resync all URL-owned state on external navigation (back/forward, or a
+    // command-palette jump while already on /all). User-action writers do not
+    // emit navigation events, and restoration never writes history.
     // biome-ignore lint/correctness/useExhaustiveDependencies: locKey is the trigger; we intentionally read live location, not stale closures.
     useEffect(() => {
         setFilters(filtersFromQuery(window.location.search));
         setSelected(actuatorFromQuery(window.location.search));
+        const restored = new Set(selectedIds(window.location.search));
+        setCompare(restored);
+        if (!restored.size) setShowCompare(false);
     }, [locKey]);
-
-    // Mirror the active filters + open drawer into the URL (replaceState, so
-    // filtering does not flood the back button) to keep the view shareable and
-    // refresh-safe. Single writer of the query string.
-    useEffect(() => {
-        window.history.replaceState(
-            window.history.state,
-            "",
-            buildUrl(filters, selected?.id ?? null),
-        );
-    }, [filters, selected]);
 
     const rows = useMemo(() => applyFilters(ACTUATORS, filters), [filters]);
     const compareRows = useMemo(
@@ -91,20 +89,39 @@ export function AllActuators({ menuOpen = false }: { menuOpen?: boolean }) {
         [compare],
     );
 
-    const onSort = (key: string) =>
-        setFilters((f) => ({
-            ...f,
-            sortKey: key,
-            sortDir: f.sortKey === key ? (f.sortDir === "asc" ? "desc" : "asc") : "desc",
-        }));
+    const onSort = (key: string) => onFiltersChange({
+        ...filters,
+        sortKey: key,
+        sortDir: filters.sortKey === key ? (filters.sortDir === "asc" ? "desc" : "asc") : "desc",
+    });
 
-    const onToggleCompare = (id: string) =>
-        setCompare((prev) => {
-            const next = new Set(prev);
-            if (next.has(id)) next.delete(id);
-            else if (next.size < COMPARE_MAX) next.add(id);
-            return next;
-        });
+    // User actions alone write history. Restoration never writes, avoiding
+    // stale-state effects that overwrite a back/forward target.
+    const writeUrl = (nextFilters: FilterState, nextSelected: Actuator | null, nextCompare: Set<string>, push = false) => {
+        const url = buildUrl(nextFilters, nextSelected?.id ?? null, nextCompare);
+        if (url === `${window.location.pathname}${window.location.search}${window.location.hash}`) return;
+        window.history[push ? "pushState" : "replaceState"](window.history.state, "", url);
+    };
+    const onFiltersChange = (next: FilterState) => {
+        writeUrl(next, selected, compare);
+        setFilters(next);
+    };
+    const onSelect = (next: Actuator | null) => {
+        writeUrl(filters, next, compare);
+        setSelected(next);
+    };
+    const updateCompare = (next: Set<string>) => {
+        writeUrl(filters, selected, next, true);
+        setCompare(next);
+    };
+    const onToggleCompare = (id: string) => {
+        if (!ACTUATORS.some(a => a.id === id)) return;
+        const next = new Set(compare);
+        if (next.has(id)) next.delete(id);
+        else if (next.size < COMPARE_MAX) next.add(id);
+        else return;
+        updateCompare(next);
+    };
 
     return (
         <div className="gallery-page">
@@ -128,8 +145,8 @@ export function AllActuators({ menuOpen = false }: { menuOpen?: boolean }) {
                     useCases={useCases}
                     total={ACTUATORS.length}
                     shown={rows.length}
-                    onChange={setFilters}
-                    onReset={() => setFilters(DEFAULT_FILTERS)}
+                    onChange={onFiltersChange}
+                    onReset={() => onFiltersChange(DEFAULT_FILTERS)}
                 />
                 <Leaderboard
                     rows={rows}
@@ -139,7 +156,7 @@ export function AllActuators({ menuOpen = false }: { menuOpen?: boolean }) {
                     compare={compare}
                     onSort={onSort}
                     onToggleCompare={onToggleCompare}
-                    onSelect={setSelected}
+                    onSelect={onSelect}
                 />
             </section>
 
@@ -155,7 +172,7 @@ export function AllActuators({ menuOpen = false }: { menuOpen?: boolean }) {
                     <span>
                         {compare.size} selected {compare.size >= COMPARE_MAX && "(max)"}
                     </span>
-                    <button type="button" onClick={() => setCompare(new Set())}>
+                    <button type="button" onClick={() => updateCompare(new Set())}>
                         Clear
                     </button>
                     <button
@@ -187,7 +204,7 @@ export function AllActuators({ menuOpen = false }: { menuOpen?: boolean }) {
                 />
             )}
 
-            <DetailPanel actuator={selected} onClose={() => setSelected(null)} />
+            <DetailPanel actuator={selected} onClose={() => onSelect(null)} />
         </div>
     );
 }

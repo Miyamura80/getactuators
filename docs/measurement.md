@@ -1,6 +1,6 @@
 # Measurement readiness
 
-Status: implementation only; collection is disabled by default. The owner created a GA4 web stream and supplied public Measurement ID `G-VVX9NFVHF9` on October 1, 2026. The intended production runtime setting is `GA4_MEASUREMENT_ID=G-VVX9NFVHF9`, but this change does not set production variables, deploy, or connect OpenSEO. Local tests exercise the actual bootstrap in a simulated DOM; they do not prove delivery to Google Analytics.
+Status: opt-in measurement is configured in production for public Measurement ID `G-VVX9NFVHF9`. The connected GA4 property is `properties/556916127`, web stream `15933465459`, for `https://actuatorlist.com`. First-party Analytics page-performance reports retrieved October 4, 2026 contain processed page views for October 2–3 (property timezone `Etc/GMT`); this establishes historical page-view ingestion, not delivery of every custom event. Enhanced Measurement remains intentionally disabled. The gallery/dedicated-comparison event extension in this branch is not deployed yet. Custom-event Realtime/DebugView confirmation remains pending authenticated Analytics access; the browser currently reaches Google Sign in. Local event/consent tests are not substitutes for that reporting check.
 
 ## Owner activation checklist
 
@@ -30,7 +30,7 @@ All custom events include sanitized `source_path`, `page_location`, `page_referr
 | --- | --- | --- | --- |
 | `manufacturer_click` | Primary catalog product link in a drawer/product page, or explicitly reviewed primary product source in editorial content | `product_id` | Manufacturer/product research intent, not a sale; inherited catalog product links can be retailers |
 | `datasheet_click` | Primary catalog datasheet link or exact reviewed comparative manual link | `product_id` | Engineering research intent; mirrored manuals are source-qualified, not treated as manufacturer domains |
-| `compare_open` | Actual Compare button click with 2–4 distinct selected catalog products | `product_id_1`…`product_id_4`, `product_count` | Comparison engagement, not revenue |
+| `compare_open` | Actual Compare control activation with 2–4 distinct selected catalog products on `/all` or `/actuators` | `product_id_1`…`product_id_4`, `product_count` | Comparison engagement, not revenue |
 | `compare_update` | User removes a row from an open comparison, leaving 1–3 products | Same ID fields and count | Continued comparison usage; selection toggles and renders do not emit |
 | `guide_product_click` | Guide/comparison anchor to its matching known catalog product | `product_id`, sanitized `destination_path` | Editorial contribution to product discovery; ordinary gallery links do not emit |
 
