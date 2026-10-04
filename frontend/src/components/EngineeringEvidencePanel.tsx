@@ -1,3 +1,4 @@
+import { ACTUATORS } from "../lib/data";
 import { engineeringEvidenceFor } from "../../../src/catalog/engineering-evidence";
 
 const STATUS = { manufacturer: "Manufacturer document", research: "Exploratory report", unknown: "Unknown" };
@@ -20,7 +21,7 @@ export function EngineeringEvidencePanel({ id, compact = false }: { id: string; 
     const evidence = engineeringEvidenceFor(id);
     const Heading = compact ? "h3" : "h2";
     const TopicHeading = compact ? "h4" : "h3";
-    return <section className={`engineering-evidence${compact ? " engineering-evidence--compact" : ""}`} aria-label="Engineering evidence" data-actuator-id={id}>
+    return <section className={`engineering-evidence${compact ? " engineering-evidence--compact" : ""}`} aria-label={`Engineering evidence for ${ACTUATORS.find(a => a.id === id)?.name ?? id}`} data-actuator-id={id}>
         <header><Heading>Engineering evidence</Heading>{!compact && <p>Unknown is not zero. Document evidence, not lab validation.</p>}</header>
         {evidence && <p className="engineering-revision">{evidence.revision}</p>}
         <div className="engineering-grid">
@@ -32,13 +33,13 @@ export function EngineeringEvidencePanel({ id, compact = false }: { id: string; 
                         <svg role="img" aria-label={`${topic.label} topic`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={topic.path} /></svg>
                         <TopicHeading>{topic.label}</TopicHeading>
                     </div>
-                    <span className="engineering-status">{STATUS[status]}</span>
-                    <p className="engineering-gap">{LIMITS[topic.key]}</p>
+                    <span className="engineering-status">{item ? STATUS[status] : "Not reviewed"}</span>
+                    <p className="engineering-gap">{item ? LIMITS[topic.key] : "No reviewed model-specific evidence."}</p>
                     {!compact && <p className="engineering-summary">{item?.summary ?? "No reviewed model-specific evidence."}</p>}
                     <details>
                         <summary>Scope & sources</summary>
                         {compact && <p className="engineering-summary">{item?.summary ?? "No reviewed model-specific evidence."}</p>}
-                        <p>{item?.scope ?? "Not established in the reviewed sources."}</p>
+                        <p>{item?.scope ?? "No model-specific source review has been completed."}</p>
                         {!!item?.sources.length && <ul className="engineering-sources">{item.sources.map(source => <li key={`${source.url}-${source.locator}`}>
                             <a href={source.url}>{source.label}</a><small>{source.locator}</small>
                         </li>)}</ul>}

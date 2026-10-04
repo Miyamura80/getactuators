@@ -53,7 +53,7 @@ function engineeringDisplay(a: CompareActuator, topic: EngineeringTopic): string
     const evidence = engineeringEvidenceFor(a.id);
     if (!evidence) return UNKNOWN;
     const item = evidence.topics[topic];
-    const source = "Source: product evidence and conditions.";
+    const source = "Source: model/topic scope & sources.";
     if (topic === "thermal") {
         const condition =
             a.id === "xiaomi-cybergear"

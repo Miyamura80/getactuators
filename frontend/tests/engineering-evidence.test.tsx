@@ -6,6 +6,18 @@ import { readFileSync } from "node:fs";
 import { ExplodedView } from "../src/pages/ExplodedView";
 import { EngineeringEvidencePanel } from "../src/components/EngineeringEvidencePanel";
 
+import { DetailPanel } from "../src/components/DetailPanel";
+import { ACTUATORS } from "../src/lib/data";
+
+test("MYACT product power row preserves the catalog value beside its revision conflict", () => {
+    const actuator = ACTUATORS.find(a => a.id === "myactuator-rmd-x8-pro-v2")!;
+    const view = render(<DetailPanel actuator={actuator} onClose={() => {}} />);
+    const power = Array.from(view.container.querySelectorAll(".spec")).find(row => row.querySelector("dt")?.textContent === "Power")!;
+    expect(power.querySelector("dd")?.textContent).toContain("166 W");
+    expect(power.querySelector("dd small")?.textContent).toContain("125 W");
+    expect(power.querySelector("dd small")?.textContent).toContain("Revision conflict");
+});
+
 import { engineeringEvidenceFor } from "../../src/catalog/engineering-evidence";
 
 const researchedIds = ["cubemars-ak80-9", "xiaomi-cybergear", "myactuator-rmd-x8-pro-v2"];
@@ -81,10 +93,26 @@ test("all three researched actuators render real shared evidence with exact sour
     }
 });
 
+test("unreviewed models do not inherit reviewed dossier gaps in compact or full panels", () => {
+    for (const compact of [false, true]) {
+        const view = render(<EngineeringEvidencePanel id="unresearched-actuator" compact={compact} />);
+        expect(view.getAllByText("Not reviewed")).toHaveLength(4);
+        for (const card of view.container.querySelectorAll(".engineering-card")) {
+            expect(card.querySelector(".engineering-gap")?.textContent).toBe("No reviewed model-specific evidence.");
+            expect(card.querySelector(".engineering-gap")?.closest("details") === null).toBe(true);
+            expect(card.textContent).not.toContain("Not established in the reviewed sources.");
+        }
+        for (const gap of ["Bus-to-output map: unknown", "Repeated duty / recovery: unknown", "Loaded accuracy / repeatability: unknown", "Validated model: unknown"]) {
+            expect(view.container.textContent).not.toContain(gap);
+        }
+        cleanup();
+    }
+});
+
 test("missing evidence stays unknown with labeled glyphs and native disclosures", () => {
     const view = render(<EngineeringEvidencePanel id="unresearched-actuator" />);
     expect(view.container.querySelectorAll(".engineering-card")).toHaveLength(4);
-    expect(view.getAllByText("Unknown")).toHaveLength(4);
+    expect(view.getAllByText("Not reviewed")).toHaveLength(4);
     for (const name of ["Efficiency", "Thermal duty", "Loaded precision", "Modeling"]) {
         expect(view.getByRole("img", { name: `${name} topic` }).tagName.toLowerCase()).toBe("svg");
     }
@@ -94,7 +122,16 @@ test("missing evidence stays unknown with labeled glyphs and native disclosures"
     expect(view.container.textContent).not.toContain("winner");
 });
 
+test("comparison evidence regions have distinct actual model names", () => {
+    (window as unknown as { happyDOM: { setURL(url: string): void } }).happyDOM.setURL(`http://localhost/compare?compare=${researchedIds.join(",")}`);
+    const view = render(<Compare />);
+    for (const id of researchedIds) {
+        const name = ACTUATORS.find(a => a.id === id)!.name;
+        expect(view.queryAllByRole("region", { name: `Engineering evidence for ${name}` })).toHaveLength(1);
+    }
+});
+
 test("selected researched product mounts a compact engineering overview", () => {
     const view = render(<ExplodedView id="cubemars-ak80-9" />);
-    expect(view.queryByRole("region", { name: "Engineering evidence" }) !== null).toBe(true);
+    expect(view.queryByRole("region", { name: `Engineering evidence for ${ACTUATORS.find(a => a.id === "cubemars-ak80-9")!.name}` }) !== null).toBe(true);
 });

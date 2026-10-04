@@ -9,6 +9,18 @@ test("production browser build copies the transitive engineering registry", () =
     const buildStage = dockerfile.split("FROM oven/bun:1 AS runtime")[0];
     expect(buildStage).toContain("src/catalog/engineering-evidence.ts");
 });
+test("MYACT printed curve arithmetic discrepancy is disclosed without correcting source values", async () => {
+    const { engineeringEvidenceFor } = await import("@/catalog/engineering-evidence");
+    const item = engineeringEvidenceFor("myactuator-rmd-x8-pro-v2")?.topics.efficiency;
+    if (!item) throw new Error("Missing MYACT efficiency evidence");
+    expect(item.summary).toContain("source arithmetic discrepancy");
+    expect(item.summary).toContain("182.21 W");
+    expect(item.summary).toContain("81.21%");
+    expect(item.summary).toContain("181.30 W");
+    expect(item.summary).toContain("80.8%");
+    expect(item.scope).toContain("not a coherent verified operating point");
+});
+
 import approved from "./engineering-approved.json";
 
 test("source locators distinguish family driver tables and STEP HEADER identity", async () => {
@@ -47,7 +59,7 @@ test("researched evidence is revision scoped without converting unknowns to vali
     expect(cg?.topics.modeling.status).toBe("research");
     const my = engineeringEvidenceFor("myactuator-rmd-x8-pro-v2");
     expect(my?.topics.efficiency.summary).toBe(
-        "Current X8-25 curve prints 80.8% at 7.19 N·m, 242.0 rpm, 47.99 V and 4.676 A (224.36 W input, 181.30 W output).",
+        "Current X8-25 curve prints 80.8%, 7.19 N·m, 242.0 rpm, 47.99 V, 4.676 A, 224.36 W input and 181.30 W output; source arithmetic discrepancy: torque × angular speed gives 182.21 W and 81.21% of printed input, not the printed output/efficiency.",
     );
     expect(my?.topics.efficiency.scope).toContain("legacy catalog unit");
     expect(my?.topics.thermal.scope).toContain("not the legacy 13 N·m rating");

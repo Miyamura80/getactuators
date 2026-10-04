@@ -15,6 +15,7 @@ interface Spec {
 }
 
 const evidenceFields: Record<string, string> = {
+    Power: "power_w",
     Weight: "weight_g", Encoder: "encoder", "Torque density": "torque_density_nm_per_kg",
     Backdrivable: "backdrivable", Backlash: "backlash_arcmin",
 };

@@ -176,8 +176,8 @@ const evidence: Record<string, EngineeringEvidence> = {
             efficiency: {
                 status: "manufacturer",
                 summary:
-                    "Current X8-25 curve prints 80.8% at 7.19 N·m, 242.0 rpm, 47.99 V and 4.676 A (224.36 W input, 181.30 W output).",
-                scope: "Current characteristic sweep only; applicability to the legacy catalog unit is unconfirmed. Electrical metering location, driver/cable loss boundary, thermal state, dwell and uncertainty are unspecified; not a verified bus-to-output map or continuous-duty guarantee.",
+                    "Current X8-25 curve prints 80.8%, 7.19 N·m, 242.0 rpm, 47.99 V, 4.676 A, 224.36 W input and 181.30 W output; source arithmetic discrepancy: torque × angular speed gives 182.21 W and 81.21% of printed input, not the printed output/efficiency.",
+                scope: "Printed values are retained, not corrected; not a coherent verified operating point. Current characteristic sweep only; applicability to the legacy catalog unit is unconfirmed. Electrical metering location, driver/cable loss boundary, thermal state, dwell and uncertainty are unspecified; not a verified bus-to-output map or continuous-duty guarantee.",
                 sources: [
                     source(
                         "X8-25 product archive",
