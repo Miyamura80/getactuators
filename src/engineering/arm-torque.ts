@@ -1,7 +1,15 @@
+// Shared by the calculator page, the /robots diagram and the MCP tool: pure
+// math and URL state, no browser or server dependencies.
+//
 // Static holding torque for a planar serial arm held horizontal: the worst
 // gravity case for every pitch joint at once. Each joint must hold every link,
 // actuator and payload outboard of it: τ_i = g · Σ m_k · (x_k − x_i).
 // Motion (inertia × acceleration), friction and thermal duty are not modeled.
+
+import { ACTUATORS } from "../catalog";
+import { candidateRows, shortlist } from "../catalog/shortlist";
+
+export const ARM_TORQUE_PATH = "/tools/robot-arm-torque-calculator";
 
 export const G = 9.80665;
 
@@ -52,7 +60,9 @@ export function jointLoads(arm: Arm): JointLoad[] {
     const loads: JointLoad[] = [];
     let x = 0;
     for (const l of arm.links) {
-        const moment = masses.filter((m) => m.x > x).reduce((sum, m) => sum + m.kg * (m.x - x), 0);
+        const moment = masses
+            .filter((m) => m.x > x)
+            .reduce((sum, m) => sum + m.kg * (m.x - x), 0);
         loads.push({ x, torqueNm: G * moment });
         x += l.length;
     }
@@ -63,7 +73,13 @@ export function validArm(arm: Arm): boolean {
     const ok = (v: number) => Number.isFinite(v) && v >= 0;
     return (
         arm.links.length > 0 &&
-        arm.links.every((l) => ok(l.mass) && ok(l.actuatorMass) && Number.isFinite(l.length) && l.length > 0) &&
+        arm.links.every(
+            (l) =>
+                ok(l.mass) &&
+                ok(l.actuatorMass) &&
+                Number.isFinite(l.length) &&
+                l.length > 0,
+        ) &&
         ok(arm.payload) &&
         arm.comFraction >= 0 &&
         arm.comFraction <= 1
@@ -71,7 +87,10 @@ export function validArm(arm: Arm): boolean {
 }
 
 export function jointName(i: number, n: number): string {
-    const names = n <= 3 ? ["Shoulder", "Elbow", "Wrist"] : ["Shoulder", "Elbow", "Wrist 1", "Wrist 2"];
+    const names =
+        n <= 3
+            ? ["Shoulder", "Elbow", "Wrist"]
+            : ["Shoulder", "Elbow", "Wrist 1", "Wrist 2"];
     return names[i] ?? `Joint ${i + 1}`;
 }
 
@@ -131,7 +150,8 @@ export function armToQuery(arm: Arm): string {
     p.set("m", arm.links.map((l) => l.mass).join(","));
     p.set("a", arm.links.map((l) => l.actuatorMass).join(","));
     p.set("p", String(arm.payload));
-    if (arm.comFraction !== 0.5) p.set("com", String(Math.round(arm.comFraction * 100)));
+    if (arm.comFraction !== 0.5)
+        p.set("com", String(Math.round(arm.comFraction * 100)));
     return `?${p.toString().replaceAll("%2C", ",")}`;
 }
 
@@ -142,13 +162,49 @@ export function armFromQuery(search: string): Arm {
     const a = nums(p.get("a"));
     const payload = Number(p.get("p"));
     const com = p.has("com") ? Number(p.get("com")) / 100 : 0.5;
-    if (!L || !m || !a || L.length !== m.length || L.length !== a.length || L.length > MAX_LINKS) return DEFAULT_ARM;
+    if (
+        !L ||
+        !m ||
+        !a ||
+        L.length !== m.length ||
+        L.length !== a.length ||
+        L.length > MAX_LINKS
+    )
+        return DEFAULT_ARM;
     const arm: Arm = {
         payload: Number.isFinite(payload) && payload >= 0 ? payload : 0,
         comFraction: com,
-        links: L.map((length, i) => ({ length, mass: m[i] ?? 0, actuatorMass: a[i] ?? 0 })),
+        links: L.map((length, i) => ({
+            length,
+            mass: m[i] ?? 0,
+            actuatorMass: a[i] ?? 0,
+        })),
     };
     return validArm(arm) ? arm : DEFAULT_ARM;
 }
 
 export { MAX_LINKS };
+
+// One serializable answer for agent surfaces (MCP and WebMCP): holding torque
+// per joint, the catalog screen for each, and the calculator path that opens
+// this exact arm. Paths are site-relative.
+export const ARM_ASSUMPTIONS =
+    "Arm straight and horizontal; gravity only; each link's mass at the stated fraction of its length; actuator masses at the joints they drive; payload at the tip. Holding is continuous duty: compare with rated torque. Inertia × acceleration, friction and margins are not included.";
+
+export function armReport(arm: Arm, limit = 5) {
+    return {
+        assumptions: ARM_ASSUMPTIONS,
+        joints: jointLoads(arm).map((load, i) => {
+            const list = shortlist(ACTUATORS, { torqueNm: load.torqueNm }, limit);
+            return {
+                number: i + 1,
+                name: jointName(i, arm.links.length),
+                position_m: Math.round(load.x * 1000) / 1000,
+                holding_torque_nm: Math.round(load.torqueNm * 100) / 100,
+                screen_total: list.total,
+                shortlist: candidateRows(list),
+            };
+        }),
+        calculator_path: `${ARM_TORQUE_PATH}${armToQuery(arm)}`,
+    };
+}

@@ -72,6 +72,7 @@ ${link("Robots", "/robots.md", "robots with per-joint motors")}
 ${link("Humanoid robot actuators", "/guides/humanoid-robot-actuators.md", "static torque per joint (pose and arithmetic shown) and catalog actuators that reach it; same data from the MCP tool humanoid_joint_requirements and, on the page, WebMCP tools get_humanoid_joint_requirements and show_humanoid_joint")}
 ${link("Robot actuator selection guide", "/guides/robot-actuator-selection.md", "efficiency, thermal duty, precision and sim2real checks")}
 ${link("Motor torque calculator", "/tools/motor-torque-calculator.md", "torque, power and speed relation, units and worked examples")}
+${link("Robot arm torque calculator", "/tools/robot-arm-torque-calculator.md", "static holding torque per joint; same model from the MCP tool arm_holding_torque and, on the page, WebMCP tools calculate_arm_holding_torque, set_arm_model and select_arm_joint")}
 
 ## About
 

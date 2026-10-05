@@ -18,6 +18,7 @@ import { ACTUATORS } from "./data";
 import { DEFAULT_FILTERS, applyFilters } from "./filter";
 import { navigate } from "./router";
 import { ROBOTS, motorCount, resolveJoints } from "./robots";
+import { type Arm, MAX_LINKS, armReport, validArm } from "../../../src/engineering/arm-torque";
 
 type Args = Record<string, unknown>;
 
@@ -44,7 +45,7 @@ interface ModelContext {
 const SITE = "https://actuatorlist.com";
 const MAX_LIMIT = 50;
 
-function result(data: unknown, isError = false): ToolResult {
+export function result(data: unknown, isError = false): ToolResult {
     return {
         content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
         structuredContent: data,
@@ -146,6 +147,66 @@ export function listRobots(query?: string) {
     }));
 }
 
+// Arm model from untyped tool arguments, or an error message for the agent.
+export function armFromArgs(args: Args): Arm | string {
+    const links = Array.isArray(args.links) ? args.links : [];
+    if (links.length < 1 || links.length > MAX_LINKS) return `links: 1 to ${MAX_LINKS} items`;
+    const arm: Arm = {
+        payload: numOrNull(args.payload_kg) ?? 0,
+        comFraction: numOrNull(args.com_fraction) ?? 0.5,
+        links: links.map((raw, i) => {
+            const l = (raw ?? {}) as Args;
+            return {
+                length: numOrNull(l.length_m) ?? 0,
+                mass: numOrNull(l.mass_kg) ?? 0,
+                actuatorMass: i === links.length - 1 ? 0 : (numOrNull(l.actuator_mass_kg) ?? 0),
+            };
+        }),
+    };
+    return validArm(arm) ? arm : "Lengths must be above 0, masses 0 or more, com_fraction 0 to 1";
+}
+
+// armReport with absolute URLs, as every other tool result here returns.
+export function armResult(arm: Arm) {
+    const report = armReport(arm);
+    return {
+        assumptions: report.assumptions,
+        joints: report.joints.map((j) => ({
+            ...j,
+            shortlist: j.shortlist.map(({ page_path, ...c }) => ({ ...c, page_url: `${SITE}${page_path}` })),
+        })),
+        calculator_url: `${SITE}${report.calculator_path}`,
+    };
+}
+
+export const ARM_INPUT_SCHEMA = {
+    type: "object",
+    properties: {
+        links: {
+            type: "array",
+            minItems: 1,
+            maxItems: MAX_LINKS,
+            description: "From the base outward",
+            items: {
+                type: "object",
+                properties: {
+                    length_m: { type: "number", exclusiveMinimum: 0 },
+                    mass_kg: { type: "number", minimum: 0 },
+                    actuator_mass_kg: {
+                        type: "number",
+                        minimum: 0,
+                        description: "Actuator at this link's far end; ignored on the last link",
+                    },
+                },
+                required: ["length_m", "mass_kg"],
+            },
+        },
+        payload_kg: { type: "number", minimum: 0, description: "Payload plus gripper at the tip" },
+        com_fraction: { type: "number", minimum: 0, maximum: 1, description: "Link mass position, default 0.5" },
+    },
+    required: ["links", "payload_kg"],
+};
+
 const CATEGORY_ENUM = CATEGORIES.map((c) => c.slug);
 const ID_SCHEMA = { type: "string", description: "Actuator id, as returned by search_actuators" };
 
@@ -234,6 +295,18 @@ export function buildTools(): WebMcpTool[] {
             },
         },
         {
+            name: "calculate_arm_holding_torque",
+            title: "Robot arm holding torque",
+            description:
+                "Static holding moment (N·m) at each pitch joint of a 1 to 4 link arm held horizontal, from link lengths, masses, actuator masses and payload, with catalog actuators per joint and a calculator URL. Gravity only.",
+            annotations: { readOnlyHint: true },
+            inputSchema: ARM_INPUT_SCHEMA,
+            async execute(args) {
+                const arm = armFromArgs(args);
+                return typeof arm === "string" ? result({ error: arm }, true) : result(armResult(arm));
+            },
+        },
+        {
             name: "get_mcp_install",
             title: "Get MCP install instructions",
             description:
@@ -267,6 +340,20 @@ function getModelContext(): ModelContext | null {
     const doc = (document as unknown as { modelContext?: ModelContext }).modelContext;
     const nav = (navigator as unknown as { modelContext?: ModelContext }).modelContext;
     return doc ?? nav ?? null;
+}
+
+// Tools that only make sense while one page is mounted (they drive its UI).
+// Returns a cleanup that unregisters them; needs registerTool's AbortSignal.
+export function registerPageTools(tools: WebMcpTool[]): () => void {
+    const mc = typeof document === "undefined" ? null : getModelContext();
+    if (!mc || typeof mc.registerTool !== "function") return () => {};
+    const controller = new AbortController();
+    try {
+        for (const t of tools) mc.registerTool(t, { signal: controller.signal });
+    } catch {
+        // Same policy as registerWebMcp: never break the page.
+    }
+    return () => controller.abort();
 }
 
 let registered = false;

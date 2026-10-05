@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { ARM_TORQUE_PATH } from "@/engineering/arm-torque";
 import { breadcrumbs, webApplication, webPage } from "./jsonld";
 import type { Page } from "./page-types";
 
@@ -38,8 +39,6 @@ function tool(
 }
 
 export const MOTOR_TORQUE_PATH = "/tools/motor-torque-calculator";
-
-export const ARM_TORQUE_PATH = "/tools/robot-arm-torque-calculator";
 
 export const TOOL_PAGES: Page[] = [
     tool(

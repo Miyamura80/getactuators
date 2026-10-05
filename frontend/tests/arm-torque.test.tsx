@@ -1,7 +1,7 @@
 import "./happydom";
 import { afterEach, expect, test } from "bun:test";
 import { cleanup, fireEvent, render } from "@testing-library/react";
-import { type Arm, DEFAULT_ARM, G, armFromQuery, armToQuery, jointLoads } from "../src/lib/arm-torque";
+import { type Arm, DEFAULT_ARM, G, armFromQuery, armToQuery, jointLoads } from "../../src/engineering/arm-torque";
 import { ArmTorqueCalculator } from "../src/pages/ArmTorqueCalculator";
 
 afterEach(cleanup);

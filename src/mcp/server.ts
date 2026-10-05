@@ -40,6 +40,7 @@ Which tool to use:
 - One actuator in full: get_actuator. Two to ten side by side, with the winner per metric: compare_actuators.
 - Robots: list_robots, get_robot (joints resolved to motors and catalog actuator ids), find_robots_using_actuator.
 - Sizing a humanoid: humanoid_joint_requirements gives a static torque estimate per joint (stated pose and arithmetic) and the catalog actuators that reach it. Treat estimates as a floor, not a dynamic requirement.
+- Sizing a robot arm: arm_holding_torque takes link lengths, masses, actuator masses and payload and returns static holding torque per joint, catalog actuators per joint and a calculator_url the user can open.
 Bulk snapshots are also exposed as resources (catalog://actuators, catalog://robots, catalog://categories, actuator://{id}, robot://{id}). Website: ${SITE_URL}.`;
 
 export function createCatalogServer(): McpServer {

@@ -264,4 +264,5 @@ export const MCP_TOOLS: readonly { name: string; does: string }[] = [
     { name: "list_actuator_categories", does: "QDD, harmonic, cycloidal and the rest" },
     { name: "list_brands", does: "Every manufacturer in the dataset" },
     { name: "humanoid_joint_requirements", does: "Static torque per humanoid joint, with matching actuators" },
+    { name: "arm_holding_torque", does: "Holding torque per arm joint from links and payload" },
 ];

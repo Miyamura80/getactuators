@@ -1,5 +1,5 @@
-import type { Arm, JointLoad } from "../lib/arm-torque";
-import { jointName, pointMasses } from "../lib/arm-torque";
+import type { Arm, JointLoad } from "../../../src/engineering/arm-torque";
+import { jointName, pointMasses } from "../../../src/engineering/arm-torque";
 import { fmt } from "../lib/motor-torque";
 
 // A free-body diagram of the arm held horizontal: links to scale, a weight

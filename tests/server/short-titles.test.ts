@@ -34,7 +34,10 @@ function sha256(value: string) {
 // only this specific catalog-freshness sentence; preserve every other byte.
 // MCP tools added after the capture are listed in the /agents tool line; drop
 // only those names so the rest of that line stays locked.
-const TOOLS_ADDED_AFTER_BASELINE = ["humanoid_joint_requirements"];
+const TOOLS_ADDED_AFTER_BASELINE = [
+    "humanoid_joint_requirements",
+    "arm_holding_torque",
+];
 function snapshotContent(value: string) {
     let out = value.replace(
         `The catalog was last updated on ${CATALOG_UPDATED_DATE}.`,

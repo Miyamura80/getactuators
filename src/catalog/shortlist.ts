@@ -105,3 +105,20 @@ export const SPEED_FIT_LABEL: Record<SpeedFit, string> = {
 export function integrationNote(a: ShortlistActuator): string | null {
     return a.integrated_driver === false ? "Drive electronics not included" : null;
 }
+
+// Serializable shortlist rows for agent surfaces (MCP, WebMCP). Paths are
+// site-relative; callers add the host where they need absolute URLs.
+export function candidateRows(list: Shortlist) {
+    return list.rows.map(({ actuator: a, torque }) => ({
+        id: a.id,
+        name: a.name,
+        brand: a.brand,
+        rated_torque_nm: a.rated_torque_nm,
+        peak_torque_nm: a.peak_torque_nm,
+        weight_g: a.weight_g,
+        fit: torque,
+        fit_label: TORQUE_FIT_LABEL[torque],
+        note: integrationNote(a),
+        page_path: `/actuators/${encodeURIComponent(a.id)}`,
+    }));
+}

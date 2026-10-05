@@ -6,6 +6,7 @@ import { useLocationKey } from "../lib/router";
 import { BrandGlyph } from "./BrandGlyph";
 import { CopyLinkButton } from "./CopyLinkButton";
 import { RobotArt } from "./RobotArt";
+import { RobotJointChain } from "./RobotJointChain";
 
 // Price shown as a single value or a range when the product has variants.
 function priceLabel(r: Robot): string {
@@ -85,9 +86,10 @@ function RobotCard({ robot, active }: { robot: Robot; active: boolean }) {
 
                 <div className="robot-loadout">
                     <span className="robot-loadout-label">Actuator loadout</span>
+                    <RobotJointChain joints={joints} reachMm={robot.reach_mm} payloadKg={robot.payload_kg} name={robot.name} />
                     {joints.length > 0 ? (
                         <ul className="motor-list">
-                            {joints.map((j) => (
+                            {joints.map((j, g) => (
                                 <li key={j.role} className="motor-row">
                                     <a
                                         className="motor-name"
@@ -95,6 +97,7 @@ function RobotCard({ robot, active }: { robot: Robot; active: boolean }) {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >
+                                        <span className="motor-ball" aria-hidden="true">{g + 1}</span>
                                         {j.count}× {j.motor.name}
                                     </a>
                                     <span className="motor-role">{j.role}</span>

@@ -101,6 +101,7 @@ claude mcp add --transport http actuatorlist https://actuatorlist.com/mcp
 | `list_actuator_categories` / `list_brands` | Valid filter values with counts |
 | `list_robots` / `get_robot` / `find_robots_using_actuator` | Robots and the motors in each joint |
 | `humanoid_joint_requirements` | Static torque per humanoid joint (pose and arithmetic shown) with matching actuators |
+| `arm_holding_torque` | Holding torque per arm joint from links, masses and payload, with actuators and a calculator link |
 
 Resources: `catalog://actuators`, `catalog://robots`, `catalog://categories`,
 `actuator://{id}`, `robot://{id}`. Discovery: `/.well-known/mcp/server-card.json`,

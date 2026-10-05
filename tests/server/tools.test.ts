@@ -69,3 +69,41 @@ test("robot arm calculator is a separate indexable tool with its method below", 
         `https://actuatorlist.com${path}`,
     );
 });
+
+test("arm_holding_torque MCP tool matches the calculator and links back to it", async () => {
+    const { CATALOG_TOOLS } = await import("@/mcp/server");
+    const tool = CATALOG_TOOLS.find((t) => t.name === "arm_holding_torque");
+    if (!tool) throw new Error("tool missing");
+    const out = tool.run({
+        links: [
+            { length_m: 0.4, mass_kg: 1.2, actuator_mass_kg: 1 },
+            { length_m: 0.35, mass_kg: 0.8, actuator_mass_kg: 0.5 },
+            // Ignored: the payload sits on the last link's far end.
+            { length_m: 0.12, mass_kg: 0.3, actuator_mass_kg: 9 },
+        ],
+        payload_kg: 2,
+        com_fraction: 0.5,
+        limit: 3,
+    } as never) as {
+        joints: {
+            name: string;
+            holding_torque_nm: number;
+            shortlist: { page_url: string; fit: string }[];
+        }[];
+        calculator_url: string;
+    };
+    expect(out.joints.map((j) => [j.name, j.holding_torque_nm])).toEqual([
+        ["Shoulder", 33.91],
+        ["Elbow", 13.51],
+        ["Wrist", 2.53],
+    ]);
+    expect(out.joints[0]?.shortlist[0]?.page_url).toStartWith(
+        "https://actuatorlist.com/actuators/",
+    );
+    expect(out.calculator_url).toBe(
+        "https://actuatorlist.com/tools/robot-arm-torque-calculator?L=0.4,0.35,0.12&m=1.2,0.8,0.3&a=1,0.5,0&p=2",
+    );
+    const llms = await (await get("/llms.txt")).text();
+    expect(llms).toContain("/tools/robot-arm-torque-calculator.md");
+    expect(llms).toContain("arm_holding_torque");
+});

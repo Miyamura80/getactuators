@@ -1,12 +1,7 @@
 // Relative imports (no "@/" alias, no server-only modules): the browser
 // bundle reuses this data for WebMCP and the /robots joint map.
 import { ACTUATORS } from "../../catalog";
-import {
-    type Shortlist,
-    TORQUE_FIT_LABEL,
-    integrationNote,
-    shortlist,
-} from "../../catalog/shortlist";
+import { type Shortlist, candidateRows, shortlist } from "../../catalog/shortlist";
 
 // Static joint-torque estimates for a hypothetical 1.5 m, 50 kg humanoid
 // carrying 1 kg in one hand. Each one is mass × g × horizontal lever arm for
@@ -152,18 +147,7 @@ export function humanoidJointRequirements(jointId?: string, limit = 5) {
             pose: j.pose,
             working: `${j.working} = ${j.torqueNm.toFixed(1)} N·m`,
             screen_total: list.total,
-            shortlist: list.rows.map(({ actuator: a, torque }) => ({
-                id: a.id,
-                name: a.name,
-                brand: a.brand,
-                rated_torque_nm: a.rated_torque_nm,
-                peak_torque_nm: a.peak_torque_nm,
-                weight_g: a.weight_g,
-                fit: torque,
-                fit_label: TORQUE_FIT_LABEL[torque],
-                note: integrationNote(a),
-                page_path: `/actuators/${encodeURIComponent(a.id)}`,
-            })),
+            shortlist: candidateRows(list),
             section_path: `${HUMANOID_GUIDE_PATH}#${j.id}`,
         };
     });

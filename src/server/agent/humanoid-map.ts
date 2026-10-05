@@ -75,28 +75,30 @@ function figure(): string {
     return body + pins;
 }
 
-function balloon(j: Joint): string {
+function balloon(j: Joint, base: string): string {
     const c = CALLOUT[j.id];
     if (!c) return "";
     const [x, y] = c.at;
     const bx = c.side === "l" ? 30 : 290;
     const by = y;
     const elbowX = c.side === "l" ? bx + 14 : bx - 14;
-    return `<a class="jm-callout jm-${j.id}" href="#${j.id}" aria-label="${j.n}. ${j.name}: ${j.torqueNm} N·m static estimate"><path class="jm-leader" d="M${elbowX} ${by}L${x} ${y}"/><circle class="jm-dot" cx="${x}" cy="${y}" r="2.5"/>${pin(c.at, j.id)}<circle class="jm-balloon" cx="${bx}" cy="${by}" r="14"/><text x="${bx}" y="${by + 4.5}" text-anchor="middle">${j.n}</text></a>`;
+    return `<a class="jm-callout jm-${j.id}" href="${base}#${j.id}" aria-label="${j.n}. ${j.name}: ${j.torqueNm} N·m static estimate"><path class="jm-leader" d="M${elbowX} ${by}L${x} ${y}"/><circle class="jm-dot" cx="${x}" cy="${y}" r="2.5"/>${pin(c.at, j.id)}<circle class="jm-balloon" cx="${bx}" cy="${by}" r="14"/><text x="${bx}" y="${by + 4.5}" text-anchor="middle">${j.n}</text></a>`;
 }
 
-function bomRow(j: Joint): string {
+function bomRow(j: Joint, base: string): string {
     const list = jointShortlist(j, Number.POSITIVE_INFINITY);
     const rated = list.rows.filter((r) => r.torque === "rated").length;
     const screen = list.total
         ? `${list.total} pass${rated ? `, ${rated} rated` : ", peak only"}`
         : "none documented";
-    return `<tr class="jm-${j.id}"><td><a href="#${j.id}" class="jm-num">${j.n}</a></td><th scope="row"><a href="#${j.id}">${j.name}</a></th><td>${j.dof.split(" ")[0]}</td><td class="jm-val">${j.torqueNm.toFixed(1)}</td><td>${screen}</td></tr>`;
+    return `<tr class="jm-${j.id}"><td><a href="${base}#${j.id}" class="jm-num">${j.n}</a></td><th scope="row"><a href="${base}#${j.id}">${j.name}</a></th><td>${j.dof.split(" ")[0]}</td><td class="jm-val">${j.torqueNm.toFixed(1)}</td><td>${screen}</td></tr>`;
 }
 
-export function humanoidJointMap(): string {
-    const svg = `<svg class="jm-figure" viewBox="0 0 320 520" role="img" aria-labelledby="jm-title"><title id="jm-title">Humanoid joint map: seven numbered actuated joints from shoulder to ankle</title>${figure()}${JOINTS.map(balloon).join("")}<text class="jm-scale" x="160" y="508" text-anchor="middle">REFERENCE: 1.5 m, 50 kg, 1 kg in hand (hypothetical)</text></svg>`;
-    const table = `<table class="jm-bom"><caption>Bill of joints · static estimates</caption><thead><tr><th scope="col">#</th><th scope="col">Joint</th><th scope="col">DOF</th><th scope="col">N·m</th><th scope="col">Catalog screen</th></tr></thead><tbody>${JOINTS.map(bomRow).join("")}</tbody></table>`;
+// `base` prefixes every link: "" on the guide itself, the guide's path when
+// the map is shown elsewhere (the /robots page).
+export function humanoidJointMap(base = ""): string {
+    const svg = `<svg class="jm-figure" viewBox="0 0 320 520" role="img" aria-labelledby="jm-title"><title id="jm-title">Humanoid joint map: seven numbered actuated joints from shoulder to ankle</title>${figure()}${JOINTS.map((j) => balloon(j, base)).join("")}<text class="jm-scale" x="160" y="508" text-anchor="middle">REFERENCE: 1.5 m, 50 kg, 1 kg in hand (hypothetical)</text></svg>`;
+    const table = `<table class="jm-bom"><caption>Bill of joints · static estimates</caption><thead><tr><th scope="col">#</th><th scope="col">Joint</th><th scope="col">DOF</th><th scope="col">N·m</th><th scope="col">Catalog screen</th></tr></thead><tbody>${JOINTS.map((j) => bomRow(j, base)).join("")}</tbody></table>`;
     const notes = `<p class="jm-note">Static torque is a floor: gait, stairs and impacts add dynamic load this map does not estimate. Screens count humanoid-tagged catalog entries whose documented rated or peak torque reaches the estimate.</p>`;
     return `<div class="jm">${svg}<div class="jm-side">${table}${notes}</div></div>`;
 }

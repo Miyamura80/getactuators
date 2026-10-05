@@ -10,7 +10,8 @@ import { CommandPalette } from "./components/CommandPalette";
 import { Agents } from "./pages/Agents";
 import { GalleryRoot } from "./GalleryRoot";
 import { Compare } from "./pages/Compare";
-import { ARM_TORQUE_PATH, ArmTorqueCalculator } from "./pages/ArmTorqueCalculator";
+import { ArmTorqueCalculator } from "./pages/ArmTorqueCalculator";
+import { ARM_TORQUE_PATH } from "../../src/engineering/arm-torque";
 import { MOTOR_TORQUE_PATH, MotorTorqueCalculator } from "./pages/MotorTorqueCalculator";
 
 function Page({ menuOpen }: { menuOpen: boolean }) {

@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { PublicHeader } from "../components/PublicHeader";
 import { ArmDiagram } from "../components/ArmDiagram";
 import { RequirementShortlist } from "../components/RequirementShortlist";
 import {
+    ARM_TORQUE_PATH,
     type Arm,
     type Link,
     MAX_LINKS,
@@ -12,11 +13,11 @@ import {
     jointLoads,
     jointName,
     validArm,
-} from "../lib/arm-torque";
+} from "../../../src/engineering/arm-torque";
 import { fmt } from "../lib/motor-torque";
+import { ARM_INPUT_SCHEMA, armFromArgs, armResult, registerPageTools, result as toolResult } from "../lib/webmcp";
 import "./tools.css";
 
-export const ARM_TORQUE_PATH = "/tools/robot-arm-torque-calculator";
 
 // A numeric input that keeps the visitor's text ("0.", "") while typing and
 // follows the value when it changes from outside (a preset or "use mass").
@@ -77,6 +78,52 @@ export function ArmTorqueCalculator({ menuOpen = false }: { menuOpen?: boolean }
     useEffect(() => {
         window.history.replaceState(window.history.state, "", `${window.location.pathname}${armToQuery(arm)}${window.location.hash}`);
     }, [arm]);
+
+    // WebMCP: while this page is open an in-browser agent can load an arm
+    // into the calculator and pick the joint whose shortlist is shown.
+    const armRef = useRef(arm);
+    useEffect(() => {
+        armRef.current = arm;
+    }, [arm]);
+    useEffect(
+        () =>
+            registerPageTools([
+                {
+                    name: "set_arm_model",
+                    title: "Load an arm into the calculator",
+                    description:
+                        "Replace the arm on this page (links, masses, payload) so the user sees its diagram and holding torque per joint. Returns the same result as calculate_arm_holding_torque.",
+                    inputSchema: ARM_INPUT_SCHEMA,
+                    async execute(args) {
+                        const next = armFromArgs(args);
+                        if (typeof next === "string") return toolResult({ error: next }, true);
+                        setArm(next);
+                        setActive(0);
+                        return toolResult(armResult(next));
+                    },
+                },
+                {
+                    name: "select_arm_joint",
+                    title: "Show actuators for a joint",
+                    description: "Select a joint (1 = nearest the base) so the page lists catalog actuators for its holding torque. Returns that joint's result.",
+                    annotations: { readOnlyHint: true },
+                    inputSchema: {
+                        type: "object",
+                        properties: { joint: { type: "integer", minimum: 1, maximum: MAX_LINKS } },
+                        required: ["joint"],
+                    },
+                    async execute(args) {
+                        const i = Number(args.joint) - 1;
+                        const joints = armResult(armRef.current).joints;
+                        const j = joints[i];
+                        if (!j) return toolResult({ error: `joint must be 1 to ${joints.length}` }, true);
+                        setActive(i);
+                        return toolResult(j);
+                    },
+                },
+            ]),
+        [],
+    );
 
     const ok = validArm(arm);
     const loads = useMemo(() => (ok ? jointLoads(arm) : []), [arm, ok]);
