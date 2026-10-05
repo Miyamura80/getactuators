@@ -221,20 +221,18 @@ body:has(.tool-page) #catalog-content table { max-width: 860px; }
 .arm-fig .draft-fig { min-width: 560px; }
 .fb-dim path { fill: none; stroke: rgba(195, 255, 253, 0.35); stroke-width: 0.8; }
 .fb-dim text { fill: var(--muted); font: 9px var(--mono); }
-.fb-weight circle { fill: var(--muted); }
-.fb-weight path { fill: none; stroke: var(--muted); stroke-width: 1.1; stroke-linejoin: round; }
-.fb-weight.payload path { stroke: var(--text); }
-.fb-wlabel { fill: var(--muted); font: 9px var(--mono); paint-order: stroke; stroke: #000; stroke-width: 3px; }
-.fb-wlabel.payload { fill: var(--text); }
-.fb-joint { cursor: pointer; outline: none; }
+.fb-load circle { fill: var(--muted); }
+.fb-load path { fill: none; stroke: rgba(155, 164, 166, 0.75); stroke-width: 0.9; stroke-linejoin: round; }
+.fb-load-label { fill: var(--muted); font: 9px var(--mono); paint-order: stroke; stroke: #000; stroke-width: 4px; }
+.fb-load.payload circle { fill: var(--text); }
+.fb-load.payload path { stroke: var(--text); }
+.fb-load-label.payload { fill: var(--text); font-weight: 600; }
+.fb-joint { outline: none; }
 .fb-hit { fill: transparent; }
-.fb-ring { fill: none; stroke: rgba(195, 255, 253, 0.35); stroke-width: 0.8; stroke-dasharray: 2 2; }
-.fb-lead { fill: none; stroke: rgba(195, 255, 253, 0.35); stroke-width: 0.8; }
-.fb-tau { fill: var(--muted); font: 600 11px var(--mono); paint-order: stroke; stroke: #000; stroke-width: 3px; }
-.fb-joint:hover .fb-ring, .fb-joint:focus-visible .fb-ring { stroke: var(--text); }
-.fb-joint.on .fb-ring { stroke: var(--cyan); stroke-dasharray: none; stroke-width: 1.4; }
-.fb-joint.on .fb-lead { stroke: var(--cyan); }
-.fb-joint.on .fb-tau { fill: var(--cyan); }
+.fb-joint.on .jm-balloon { fill: var(--cyan); }
+.fb-joint.on .jm-n { fill: #000; }
+.fb-joint.on .jm-leader { stroke: var(--cyan); }
+.fb-joint.on .jm-name { fill: var(--cyan); }
 
 .arm-inputs { padding: 16px 20px 20px; display: flex; flex-direction: column; gap: 10px; }
 .arm-row { display: grid; grid-template-columns: 140px repeat(3, minmax(0, 1fr)); gap: 12px; align-items: center; }
