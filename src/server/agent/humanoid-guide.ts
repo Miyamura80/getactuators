@@ -9,8 +9,6 @@ import {
     jointShortlist,
     undocumentedHumanoidEntries,
 } from "./humanoid-joints";
-import { humanoidJointMap } from "./humanoid-map";
-import { humanoidWebMcpScript } from "./humanoid-webmcp";
 import { breadcrumbs } from "./jsonld";
 import { mdLink, num } from "./md";
 import type { Page } from "./page-types";
@@ -85,14 +83,17 @@ const UPDATED = "2026-10-04";
 
 export const HUMANOID_GUIDE: Page = {
     path: HUMANOID_GUIDE_PATH,
-    kind: "static",
+    // The joint map is a React figure drawn by the /robots renderer; the
+    // guide text from "How to read this guide" on stays below it.
+    kind: "spa",
+    persistentFrom: "\n\n## How to read this guide",
+    persistentLabel: "Method, joint estimates and shortlists",
+    headingIds: true,
     title: TITLE,
     description: DESCRIPTION,
     ogType: "article",
     updatedAt: UPDATED,
     body: humanoidGuideBody,
-    // The map, plus WebMCP tools for in-browser agents.
-    visual: () => `${humanoidJointMap()}${humanoidWebMcpScript()}`,
     jsonLd: () => {
         const headline = template.split("\n")[0]?.replace(/^# /, "") ?? TITLE;
         return [

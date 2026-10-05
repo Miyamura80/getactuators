@@ -19,6 +19,7 @@ import { DEFAULT_FILTERS, applyFilters } from "./filter";
 import { navigate } from "./router";
 import { ROBOTS, motorCount, resolveJoints } from "./robots";
 import { type Arm, MAX_LINKS, armReport, validArm } from "../../../src/engineering/arm-torque";
+import { JOINTS, humanoidJointRequirements } from "../../../src/server/agent/humanoid-joints";
 
 type Args = Record<string, unknown>;
 
@@ -166,6 +167,11 @@ export function armFromArgs(args: Args): Arm | string {
     return validArm(arm) ? arm : "Lengths must be above 0, masses 0 or more, com_fraction 0 to 1";
 }
 
+// Shortlist rows carry site paths; tool results give absolute URLs.
+function absoluteRows<T extends { page_path: string }>(rows: T[]) {
+    return rows.map(({ page_path, ...c }) => ({ ...c, page_url: `${SITE}${page_path}` }));
+}
+
 // armReport with absolute URLs, as every other tool result here returns.
 export function armResult(arm: Arm) {
     const report = armReport(arm);
@@ -173,7 +179,7 @@ export function armResult(arm: Arm) {
         assumptions: report.assumptions,
         joints: report.joints.map((j) => ({
             ...j,
-            shortlist: j.shortlist.map(({ page_path, ...c }) => ({ ...c, page_url: `${SITE}${page_path}` })),
+            shortlist: absoluteRows(j.shortlist),
         })),
         calculator_url: `${SITE}${report.calculator_path}`,
     };
@@ -304,6 +310,33 @@ export function buildTools(): WebMcpTool[] {
             async execute(args) {
                 const arm = armFromArgs(args);
                 return typeof arm === "string" ? result({ error: arm }, true) : result(armResult(arm));
+            },
+        },
+        {
+            name: "get_humanoid_joint_requirements",
+            title: "Humanoid joint requirements",
+            description:
+                "Static torque estimate (N·m) per humanoid joint for a stated hypothetical 50 kg robot, with pose, arithmetic and catalog actuators that reach it (rated fits before peak-only). Omit joint for all seven.",
+            annotations: { readOnlyHint: true },
+            inputSchema: {
+                type: "object",
+                properties: { joint: { type: "string", enum: JOINTS.map((j) => j.id) } },
+            },
+            async execute(args) {
+                const id = str(args.joint);
+                if (id && !JOINTS.some((j) => j.id === id)) {
+                    return result({ error: `Unknown joint "${id}"`, joints: JOINTS.map((j) => j.id) }, true);
+                }
+                const data = humanoidJointRequirements(id || undefined);
+                return result({
+                    ...data,
+                    joints: data.joints.map(({ section_path, shortlist, ...j }) => ({
+                        ...j,
+                        section_url: `${SITE}${section_path}`,
+                        shortlist: absoluteRows(shortlist),
+                    })),
+                    guide_url: `${SITE}${data.guide_path}`,
+                });
             },
         },
         {

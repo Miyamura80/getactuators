@@ -4,7 +4,6 @@ import { cleanup, render, waitFor } from "@testing-library/react";
 import { DEFAULT_ARM, armToQuery } from "../../src/engineering/arm-torque";
 import { buildTools, type WebMcpTool } from "../src/lib/webmcp";
 import { ArmTorqueCalculator } from "../src/pages/ArmTorqueCalculator";
-import { Home } from "../src/pages/Home";
 
 afterEach(() => {
     cleanup();
@@ -58,19 +57,4 @@ test("the calculator registers page tools that drive its UI and unregister on un
     expect((await tools[1]?.execute({ joint: 2 }))?.isError).toBe(true);
     view.unmount();
     expect(signals.every((s) => s.aborted)).toBe(true);
-});
-
-test("/robots shows the guide's joint map, the calculator's arm and per-robot joint chains", () => {
-    setUrl("http://localhost/robots");
-    const view = render(<Home />);
-    const map = view.container.querySelector(".diagram-humanoid .jm");
-    expect(map).not.toBeNull();
-    expect(map?.querySelector('a.jm-callout[href="/guides/humanoid-robot-actuators#knee"]')).not.toBeNull();
-    expect(view.getByRole("img", { name: /^Free-body diagram: Shoulder 33\.9 N·m/ })).toBeTruthy();
-    expect(view.getByRole("link", { name: "Open this arm in the calculator →" }).getAttribute("href")).toBe(
-        `/tools/robot-arm-torque-calculator${armToQuery(DEFAULT_ARM)}`,
-    );
-    const chain = view.getByRole("img", { name: /^BIG YAM joint chain: 1\. 2 × Damiao DM-J6248-2EC/ });
-    expect(chain.querySelectorAll(".arm-housing")).toHaveLength(6);
-    expect(chain.textContent).toContain("1,100 mm reach");
 });

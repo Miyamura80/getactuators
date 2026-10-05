@@ -9,7 +9,6 @@ import { BrandGlyph } from "../components/BrandGlyph";
 import { RobotArt } from "../components/RobotArt";
 import type { RobotKind } from "../components/RobotArt";
 import { RobotShowcase } from "../components/RobotShowcase";
-import { JointDiagrams } from "../components/JointDiagrams";
 
 interface Cat {
     key: RobotKind;
@@ -86,8 +85,6 @@ export function Home({ menuOpen = false }: { menuOpen?: boolean }) {
                     ))}
                 </div>
             </section>
-
-            <JointDiagrams />
 
             <RobotShowcase />
 

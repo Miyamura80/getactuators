@@ -18,6 +18,18 @@ export function markdownToHtml(md: string): string {
         .replace(/<\/table>/g, "</table></div>");
 }
 
+// Stable ids from heading text ("## Knee" -> id="knee") so figures and other
+// pages can link into a section.
+export function withHeadingIds(html: string): string {
+    return html.replace(/<h2>([^<]+)<\/h2>/g, (_, text: string) => {
+        const id = text
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-|-$/g, "");
+        return `<h2 id="${id}">${text}</h2>`;
+    });
+}
+
 // Page body: nav, the rendered markdown as <main>, footer.
 export function pageBody(
     md: string,
@@ -31,21 +43,6 @@ export function pageBody(
         content = content.replace(
             /(<h3>[\s\S]*?<\/h3>)([\s\S]*?)(?=<h[23]>|$)/g,
             '<details class="ga-faq-item"><summary>$1</summary>$2</details>',
-        );
-    }
-    if (!editorial && visual) {
-        // Figure-led guide: the visual follows the lede and links into the
-        // sections below, so every h2 gets a stable id from its text.
-        content = content.replace(/<h2>([^<]+)<\/h2>/g, (_, text: string) => {
-            const id = text
-                .toLowerCase()
-                .replace(/[^a-z0-9]+/g, "-")
-                .replace(/^-|-$/g, "");
-            return `<h2 id="${id}">${text}</h2>`;
-        });
-        content = content.replace(
-            /(<h1>[\s\S]*?<\/h1>\s*<p>[\s\S]*?<\/p>)/,
-            `$1${visual}`,
         );
     }
     if (editorial) {

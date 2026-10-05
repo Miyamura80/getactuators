@@ -13,5 +13,7 @@ export interface Page {
     // React mounts (rendered below #root). Product pages use "## Specifications".
     persistentFrom?: string;
     persistentLabel?: string;
+    // Give persistent h2s ids from their text, for in-page links.
+    headingIds?: boolean;
     jsonLd: () => Record<string, unknown>[];
 }

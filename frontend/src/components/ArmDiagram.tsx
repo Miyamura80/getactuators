@@ -1,18 +1,140 @@
+import { useMemo } from "react";
 import type { Arm, JointLoad } from "../../../src/engineering/arm-torque";
 import { jointName, pointMasses } from "../../../src/engineering/arm-torque";
+import type { CamSpec } from "../lib/robot-art/core";
+import { freeBodyArm } from "../lib/robot-art/free-body";
 import { fmt } from "../lib/motor-torque";
+import { DraftingFigure, type Project } from "./DraftingFigure";
 
-// A free-body diagram of the arm held horizontal: links to scale, a weight
-// arrow at every point mass, and the holding moment at each joint. The
-// drawing is the model: every arrow is one term of the torque sum.
+// The arm held horizontal, drawn by the /robots X-ray renderer from the
+// calculator's own model, with the free-body diagram on top: a weight arrow
+// at every point mass and the holding moment at each joint. Each arrow is one
+// term of the torque sum.
 
 const W = 640;
-const X0 = 70;
-const SPAN = 500;
-const Y = 96;
-const GROUND = 220;
-const H = 246;
-const BAR = 12;
+const H = 320;
+const BOX = { x: 40, y: 112, w: 560, h: 196, ay: 0.4 };
+
+interface Weight {
+    kg: number;
+    x: number;
+    y: number;
+    last: boolean;
+}
+
+// Arrow length grows with mass; crowded arrows step down, and a label runs
+// left of its arrow when the next arrow would cross it.
+function layoutWeights(points: Weight[]) {
+    const shown = points.filter((p) => p.kg > 0);
+    const heaviest = Math.max(...shown.map((p) => p.kg), 0.001);
+    const out: (Weight & { drop: number; left: boolean })[] = [];
+    for (const [i, p] of shown.entries()) {
+        const prev = out[i - 1];
+        const base = 18 + 34 * Math.sqrt(p.kg / heaviest);
+        const drop = prev && p.x - prev.x < 46 ? Math.max(base, prev.drop + 18) : base;
+        const next = shown[i + 1];
+        out.push({ ...p, drop, left: Boolean(next && next.x - p.x < 46) });
+    }
+    return out;
+}
+
+function Overlay({
+    arm,
+    loads,
+    active,
+    onSelect,
+    project,
+    geo,
+}: {
+    arm: Arm;
+    loads: JointLoad[];
+    active: number;
+    onSelect: (i: number) => void;
+    project: Project;
+    geo: ReturnType<typeof freeBodyArm>;
+}) {
+    const n = arm.links.length;
+    const at = (x: number) => project([x, geo.height, 0]);
+    const masses = pointMasses(arm);
+    const top = Math.min(...geo.joints.map((j) => project(j)[1])) - 66;
+    // Dimension stations: every joint, then the tip.
+    const stations = [...geo.joints.map((j) => project(j)[0]), project(geo.tip)[0]];
+    const weights = layoutWeights(
+        masses.map((m, i) => {
+            const last = i === masses.length - 1;
+            const [x, y] = last ? project(geo.payload) : at(m.x);
+            return { kg: m.kg, x, y, last };
+        }),
+    );
+    return (
+        <>
+            <text className="jm-head" x={12} y={20}>
+                {n} PITCH JOINTS · HELD HORIZONTAL
+            </text>
+            <text className="jm-sub" x={12} y={32}>
+                GRAVITY ONLY · LINK MASS AT {Math.round(arm.comFraction * 100)}% OF EACH LINK
+            </text>
+            {arm.links.map((l, i) => {
+                const a = stations[i] ?? 0;
+                const b = stations[i + 1] ?? a;
+                return (
+                    <g key={`dim-${i}`} className="fb-dim">
+                        <path d={`M${a} ${top + 6}V${top - 6}M${b} ${top + 6}V${top - 6}M${a} ${top}H${b}`} />
+                        <text x={(a + b) / 2} y={top - 5} textAnchor="middle">
+                            {fmt(l.length)} m
+                        </text>
+                    </g>
+                );
+            })}
+            {weights.map((w, i) => (
+                <g key={`w-${i}`} className={w.last ? "fb-weight payload" : "fb-weight"}>
+                    <circle cx={w.x} cy={w.y} r={1.8} />
+                    <path d={`M${w.x} ${w.y + 4}V${w.y + w.drop}m-3.5 -6l3.5 6l3.5 -6`} />
+                </g>
+            ))}
+            {weights.map((w, i) => (
+                <text
+                    key={`wl-${i}`}
+                    className={w.last ? "fb-wlabel payload" : "fb-wlabel"}
+                    x={w.left ? w.x - 5 : w.x + 5}
+                    y={w.y + w.drop + 11}
+                    textAnchor={w.left ? "end" : "start"}
+                >
+                    {fmt(w.kg)} kg
+                </text>
+            ))}
+            {loads.map((l, i) => {
+                const [cx, cy] = project(geo.joints[i] ?? [0, 0, 0]);
+                const on = i === active;
+                return (
+                    // biome-ignore lint/a11y/useSemanticElements: an SVG group cannot be a <button>; it carries role, tabIndex and key handling.
+                    <g
+                        key={`j-${i}`}
+                        className={on ? "fb-joint on" : "fb-joint"}
+                        role="button"
+                        tabIndex={0}
+                        aria-label={`${jointName(i, n)}: ${fmt(l.torqueNm)} N·m. Show actuators`}
+                        aria-pressed={on}
+                        onClick={() => onSelect(i)}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                                e.preventDefault();
+                                onSelect(i);
+                            }
+                        }}
+                    >
+                        <circle className="fb-hit" cx={cx} cy={cy} r={24} />
+                        <circle className="fb-ring" cx={cx} cy={cy} r={20} />
+                        <path className="fb-lead" d={`M${cx} ${cy - 20}V${top + 32}`} />
+                        <text className="fb-tau" x={cx} y={top + 26} textAnchor="middle">
+                            τ{i + 1} {fmt(l.torqueNm)} N·m
+                        </text>
+                    </g>
+                );
+            })}
+        </>
+    );
+}
 
 export function ArmDiagram({
     arm,
@@ -25,113 +147,26 @@ export function ArmDiagram({
     active: number;
     onSelect: (i: number) => void;
 }) {
-    const total = arm.links.reduce((s, l) => s + l.length, 0) || 1;
-    const k = SPAN / total;
-    const px = (x: number) => X0 + x * k;
-    const masses = pointMasses(arm);
-    const heaviest = Math.max(...masses.map((m) => m.kg), 0.001);
-    const tip = px(total);
-    const weights: { m: (typeof masses)[number]; x: number; drop: number; last: boolean }[] = [];
-    let prevX = Number.NEGATIVE_INFINITY;
-    let prevDrop = 0;
-    masses.forEach((m, i) => {
-        if (m.kg <= 0) return;
-        const x = px(m.x);
-        const base = 16 + 40 * Math.sqrt(m.kg / heaviest);
-        const drop = x - prevX < 48 ? Math.max(base, prevDrop + 20) : base;
-        weights.push({ m, x, drop, last: i === masses.length - 1 });
-        prevX = x;
-        prevDrop = drop;
-    });
+    const geo = useMemo(() => freeBodyArm(arm), [arm]);
+    const cam = useMemo<CamSpec>(() => {
+        const span = Math.max(geo.length, 0.4);
+        return { yaw: 0.32, pitch: 0.14, dist: span * 2.8, target: [span / 2, geo.height * 0.6, 0] };
+    }, [geo]);
     const n = arm.links.length;
     const label = `Free-body diagram: ${loads.map((l, i) => `${jointName(i, n)} ${fmt(l.torqueNm)} N·m`).join(", ")}`;
-
     return (
-        <figure className="arm-fig">
-            <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={label}>
-                <defs>
-                    <marker id="arm-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
-                        <path d="M0 0L8 4L0 8z" className="arm-arrowhead" />
-                    </marker>
-                    <marker id="arm-turn" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-                        <path d="M0 0L8 4L0 8z" className="arm-turnhead" />
-                    </marker>
-                </defs>
-
-                {/* Ground and pedestal */}
-                <path className="arm-ground" d={`M${X0 - 46} ${GROUND}H${X0 + 46}`} />
-                {[0, 1, 2, 3, 4, 5].map((i) => (
-                    <path key={i} className="arm-hatch" d={`M${X0 - 40 + i * 16} ${GROUND}l-10 10`} />
-                ))}
-                <path className="arm-pedestal" d={`M${X0 - 16} ${GROUND}V${Y + 16}h32V${GROUND}`} />
-
-                {/* Length dimensions above the arm */}
-                {arm.links.map((l, i) => {
-                    const a = px(arm.links.slice(0, i).reduce((s, x) => s + x.length, 0));
-                    const b = a + l.length * k;
-                    return (
-                        <g key={`dim-${i}`} className="arm-dim">
-                            <path d={`M${a} ${Y - 30}V${Y - 44}M${b} ${Y - 30}V${Y - 44}M${a} ${Y - 38}H${b}`} />
-                            <text x={(a + b) / 2} y={Y - 46} textAnchor="middle">{fmt(l.length)} m</text>
-                        </g>
-                    );
-                })}
-
-                {/* Links */}
-                <rect className="arm-link" x={X0} y={Y - BAR / 2} width={SPAN} height={BAR} />
-
-                {/* Weight arrows: one per point mass, length grows with mass.
-                    Labels step down when masses crowd together. */}
-                {weights.map(({ x, drop, last }, i) => (
-                    <g key={`w-${i}`} className={last ? "arm-weight payload" : "arm-weight"}>
-                        <circle cx={x} cy={Y} r={2.5} />
-                        <path d={`M${x} ${Y + BAR}V${Y + BAR + drop}`} markerEnd="url(#arm-arrow)" />
-                    </g>
-                ))}
-                {/* Labels after every arrow, with a halo, so no line strikes through them. */}
-                {weights.map(({ m, x, drop, last }, i) => (
-                    <text key={`wl-${i}`} className={last ? "arm-wlabel payload" : "arm-wlabel"} x={x + 5} y={Y + BAR + drop + 12}>
-                        {fmt(m.kg)} kg
-                    </text>
-                ))}
-
-                {/* Payload block at the tip */}
-                <rect className="arm-payload" x={tip - 9} y={Y - 9} width={18} height={18} />
-
-                {/* Joints with their holding moment */}
-                {loads.map((l, i) => {
-                    const cx = px(l.x);
-                    const on = i === active;
-                    return (
-                        <g
-                            key={`j-${i}`}
-                            className={on ? "arm-joint on" : "arm-joint"}
-                            role="button"
-                            tabIndex={0}
-                            aria-label={`${jointName(i, n)}: ${fmt(l.torqueNm)} N·m. Show actuators`}
-                            aria-pressed={on}
-                            onClick={() => onSelect(i)}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter" || e.key === " ") {
-                                    e.preventDefault();
-                                    onSelect(i);
-                                }
-                            }}
-                        >
-                            <circle className="arm-hit" cx={cx} cy={Y} r={26} />
-                            <path className="arm-moment" d={`M${cx - 17} ${Y - 9}A19 19 0 1 1 ${cx + 9} ${Y + 17}`} markerEnd="url(#arm-turn)" />
-                            <circle className="arm-housing" cx={cx} cy={Y} r={11} />
-                            <circle className="arm-shaft" cx={cx} cy={Y} r={3.5} />
-                            <text className="arm-tau" x={cx} y={Y - 62} textAnchor="middle">
-                                τ{i + 1} {fmt(l.torqueNm)} N·m
-                            </text>
-                        </g>
-                    );
-                })}
-                <text className="arm-caption" x={W / 2} y={H - 4} textAnchor="middle">
-                    Arm held horizontal · gravity only · link mass at {Math.round(arm.comFraction * 100)}% of each link
-                </text>
-            </svg>
-        </figure>
+        <div className="arm-fig">
+            <DraftingFigure
+                scene={geo.scene}
+                cam={cam}
+                box={BOX}
+                W={W}
+                H={H}
+                label={label}
+                overlay={(project) => (
+                    <Overlay arm={arm} loads={loads} active={active} onSelect={onSelect} project={project} geo={geo} />
+                )}
+            />
+        </div>
     );
 }
