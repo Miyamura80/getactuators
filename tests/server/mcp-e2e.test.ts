@@ -33,7 +33,7 @@ for (const mode of ["legacy", "auto"] as const) {
             expect(client.getServerVersion()?.name).toBe("actuatorlist");
             expect(client.getInstructions()).toContain("recommend_actuators");
             const { tools } = await client.listTools();
-            expect(tools.length).toBe(9);
+            expect(tools.length).toBe(10);
             const res = await client.callTool({
                 name: "search_actuators",
                 arguments: { category: "smart_servo", limit: 2 },

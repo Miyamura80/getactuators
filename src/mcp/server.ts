@@ -5,6 +5,7 @@ import { registerResources } from "./resources";
 import { type ToolDef, registerTools } from "./tool";
 import { actuatorTools } from "./tools/actuators";
 import { compareTools } from "./tools/compare";
+import { engineeringTools } from "./tools/engineering";
 import { robotTools } from "./tools/robots";
 
 // The public catalog MCP server: anonymous, read-only, stateless. A fresh
@@ -24,6 +25,7 @@ export const CATALOG_TOOLS: readonly ToolDef[] = [
     ...actuatorTools,
     ...compareTools,
     ...robotTools,
+    ...engineeringTools,
 ];
 
 export const INSTRUCTIONS = `actuatorlist is an open, read-only catalog of robot actuators and the robots that use them. No account or key is needed and no tool changes anything.
@@ -37,6 +39,7 @@ Which tool to use:
 - Filtering or sorting the catalog: search_actuators. Discover valid filter values with list_actuator_categories (category slugs, use-case tags) and list_brands.
 - One actuator in full: get_actuator. Two to ten side by side, with the winner per metric: compare_actuators.
 - Robots: list_robots, get_robot (joints resolved to motors and catalog actuator ids), find_robots_using_actuator.
+- Sizing a humanoid: humanoid_joint_requirements gives a static torque estimate per joint (stated pose and arithmetic) and the catalog actuators that reach it. Treat estimates as a floor, not a dynamic requirement.
 Bulk snapshots are also exposed as resources (catalog://actuators, catalog://robots, catalog://categories, actuator://{id}, robot://{id}). Website: ${SITE_URL}.`;
 
 export function createCatalogServer(): McpServer {

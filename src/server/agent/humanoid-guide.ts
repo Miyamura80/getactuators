@@ -3,12 +3,14 @@ import { TORQUE_FIT_LABEL, integrationNote } from "@/catalog/shortlist";
 import { absoluteUrl } from "../site";
 import { actuatorPath } from "./catalog-md";
 import {
+    HUMANOID_GUIDE_PATH,
     JOINTS,
     type Joint,
     jointShortlist,
     undocumentedHumanoidEntries,
 } from "./humanoid-joints";
 import { humanoidJointMap } from "./humanoid-map";
+import { humanoidWebMcpScript } from "./humanoid-webmcp";
 import { breadcrumbs } from "./jsonld";
 import { mdLink, num } from "./md";
 import type { Page } from "./page-types";
@@ -17,7 +19,7 @@ import type { Page } from "./page-types";
 // estimate and catalog screen are generated from the catalog so the HTML, the
 // .md twin and the map never disagree with the data.
 
-export const HUMANOID_GUIDE_PATH = "/guides/humanoid-robot-actuators";
+export { HUMANOID_GUIDE_PATH };
 
 const template = readFileSync(
     new URL("./content/humanoid-robot-actuators.md", import.meta.url),
@@ -89,7 +91,8 @@ export const HUMANOID_GUIDE: Page = {
     ogType: "article",
     updatedAt: UPDATED,
     body: humanoidGuideBody,
-    visual: humanoidJointMap,
+    // The map, plus WebMCP tools for in-browser agents.
+    visual: () => `${humanoidJointMap()}${humanoidWebMcpScript()}`,
     jsonLd: () => {
         const headline = template.split("\n")[0]?.replace(/^# /, "") ?? TITLE;
         return [

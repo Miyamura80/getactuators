@@ -67,3 +67,62 @@ test("humanoid guide serves a linked joint map, article metadata and a twin", as
         `https://actuatorlist.com${HUMANOID_GUIDE_PATH}`,
     );
 });
+
+test("agents get the same joint data over MCP, WebMCP and llms.txt", async () => {
+    const { humanoidJointRequirements } = await import(
+        "@/server/agent/humanoid-joints"
+    );
+    const { CATALOG_TOOLS } = await import("@/mcp/server");
+    const tool = CATALOG_TOOLS.find((t) => t.name === "humanoid_joint_requirements");
+    if (!tool) throw new Error("tool missing");
+    const out = tool.run({ joint: "knee", limit: 3 } as never) as {
+        joints: {
+            static_torque_nm: number;
+            shortlist: { page_url: string }[];
+            section_url: string;
+        }[];
+        guide_url: string;
+    };
+    expect(out.joints).toHaveLength(1);
+    expect(out.joints[0]?.static_torque_nm).toBe(69.1);
+    expect(out.joints[0]?.section_url).toBe(
+        `https://actuatorlist.com${HUMANOID_GUIDE_PATH}#knee`,
+    );
+    expect(out.joints[0]?.shortlist[0]?.page_url).toStartWith(
+        "https://actuatorlist.com/actuators/",
+    );
+
+    // The page embeds the same data and registers two read-only WebMCP tools.
+    const html = await (await get(HUMANOID_GUIDE_PATH)).text();
+    const json =
+        /<script type="application\/json" id="humanoid-joints-data">([\s\S]*?)<\/script>/.exec(
+            html,
+        )?.[1] ?? "";
+    expect(JSON.parse(json)).toEqual(humanoidJointRequirements(undefined, 5));
+    const script =
+        /<script>(\(function\(\)\{var mc=[\s\S]*?)<\/script>/.exec(html)?.[1] ?? "";
+    const registered: {
+        name: string;
+        execute: (a: unknown) => Promise<{ structuredContent: { joints: unknown[] } }>;
+    }[] = [];
+    const location = { hash: "", href: "" };
+    const document = {
+        modelContext: {
+            registerTool: (t: (typeof registered)[number]) => registered.push(t),
+        },
+        getElementById: () => ({ textContent: json }),
+    };
+    new Function("document", "navigator", "location", script)(document, {}, location);
+    expect(registered.map((t) => t.name)).toEqual([
+        "get_humanoid_joint_requirements",
+        "show_humanoid_joint",
+    ]);
+    const knee = await registered[0]?.execute({ joint: "knee" });
+    expect(knee?.structuredContent.joints).toHaveLength(1);
+    await registered[1]?.execute({ joint: "ankle" });
+    expect(location.hash).toBe("ankle");
+
+    const llms = await (await get("/llms.txt")).text();
+    expect(llms).toContain("/guides/humanoid-robot-actuators.md");
+    expect(llms).toContain("humanoid_joint_requirements");
+});
