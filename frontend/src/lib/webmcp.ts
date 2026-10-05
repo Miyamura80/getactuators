@@ -18,6 +18,7 @@ import { ACTUATORS } from "./data";
 import { DEFAULT_FILTERS, applyFilters } from "./filter";
 import { navigate } from "./router";
 import { ROBOTS, motorCount, resolveJoints } from "./robots";
+import { JOINTS, humanoidJointRequirements } from "../../../src/server/agent/humanoid-joints";
 
 type Args = Record<string, unknown>;
 
@@ -44,7 +45,7 @@ interface ModelContext {
 const SITE = "https://actuatorlist.com";
 const MAX_LIMIT = 50;
 
-function result(data: unknown, isError = false): ToolResult {
+export function result(data: unknown, isError = false): ToolResult {
     return {
         content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
         structuredContent: data,
@@ -234,6 +235,33 @@ export function buildTools(): WebMcpTool[] {
             },
         },
         {
+            name: "get_humanoid_joint_requirements",
+            title: "Humanoid joint requirements",
+            description:
+                "Static torque estimate (N·m) per humanoid joint for a stated hypothetical 50 kg robot, with pose, arithmetic and catalog actuators that reach it (rated fits before peak-only). Omit joint for all seven.",
+            annotations: { readOnlyHint: true },
+            inputSchema: {
+                type: "object",
+                properties: { joint: { type: "string", enum: JOINTS.map((j) => j.id) } },
+            },
+            async execute(args) {
+                const id = str(args.joint);
+                if (id && !JOINTS.some((j) => j.id === id)) {
+                    return result({ error: `Unknown joint "${id}"`, joints: JOINTS.map((j) => j.id) }, true);
+                }
+                const data = humanoidJointRequirements(id || undefined);
+                return result({
+                    ...data,
+                    joints: data.joints.map(({ section_path, shortlist, ...j }) => ({
+                        ...j,
+                        section_url: `${SITE}${section_path}`,
+                        shortlist: shortlist.map(({ page_path, ...c }) => ({ ...c, page_url: `${SITE}${page_path}` })),
+                    })),
+                    guide_url: `${SITE}${data.guide_path}`,
+                });
+            },
+        },
+        {
             name: "get_mcp_install",
             title: "Get MCP install instructions",
             description:
@@ -267,6 +295,20 @@ function getModelContext(): ModelContext | null {
     const doc = (document as unknown as { modelContext?: ModelContext }).modelContext;
     const nav = (navigator as unknown as { modelContext?: ModelContext }).modelContext;
     return doc ?? nav ?? null;
+}
+
+// Tools that only make sense while one page is mounted (they drive its UI).
+// Returns a cleanup that unregisters them; needs registerTool's AbortSignal.
+export function registerPageTools(tools: WebMcpTool[]): () => void {
+    const mc = typeof document === "undefined" ? null : getModelContext();
+    if (!mc || typeof mc.registerTool !== "function") return () => {};
+    const controller = new AbortController();
+    try {
+        for (const t of tools) mc.registerTool(t, { signal: controller.signal });
+    } catch {
+        // Same policy as registerWebMcp: never break the page.
+    }
+    return () => controller.abort();
 }
 
 let registered = false;

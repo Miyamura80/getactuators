@@ -73,33 +73,7 @@ export const PAGE_CSS = `
 .ga-page code,.ga-page pre{font-family:"JetBrains Mono",monospace;background:#0a0a0a}
 .ga-page pre{padding:1rem;overflow-x:auto}
 .ga-page blockquote{border-left:2px solid #c3fffd;margin-left:0;padding-left:1rem}
-.ga-page .jm{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:2rem;align-items:start;margin:2rem 0 1rem;padding:1.5rem;border:1px solid #242424;background:#050505}
-.ga-page .jm-figure{width:100%;height:auto;display:block}
-.ga-page .jm-shell{fill:none;stroke:#383838;stroke-width:1.5}
-.ga-page .jm-link{stroke:#54726f;stroke-width:9;stroke-linecap:round;opacity:.45}
-.ga-page .jm-joint{fill:#000;stroke:#9ba4a6;stroke-width:1.5}
-.ga-page .jm-callout .jm-joint{stroke:#c3fffd}
-.ga-page .jm-leader{stroke:#9ba4a6;stroke-width:1;fill:none}
-.ga-page .jm-dot{fill:#9ba4a6}
-.ga-page .jm-balloon{fill:#000;stroke:#c3fffd;stroke-width:1.5}
-.ga-page .jm-callout text{fill:#c3fffd;font:600 13px "JetBrains Mono",monospace}
-.ga-page .jm-callout:hover .jm-balloon,.ga-page .jm-callout:focus-visible .jm-balloon{fill:#c3fffd}
-.ga-page .jm-callout:hover text,.ga-page .jm-callout:focus-visible text{fill:#000}
-.ga-page .jm-callout:hover .jm-leader{stroke:#c3fffd}
-.ga-page .jm-callout:focus-visible{outline:none}
-.ga-page .jm-scale{fill:#9ba4a6;font:9px "JetBrains Mono",monospace;letter-spacing:.06em}
-.ga-page .jm-bom{width:100%;border-collapse:collapse;font-size:.9rem}
-.ga-page .jm-bom caption{text-align:left;font:600 .7rem "JetBrains Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:#9ba4a6;padding-bottom:.6rem}
-.ga-page .jm-bom th,.ga-page .jm-bom td{border:0;border-bottom:1px solid #242424;padding:.55rem .4rem;text-align:left;vertical-align:middle}
-.ga-page .jm-bom thead th{font:600 .65rem "JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:#9ba4a6}
-.ga-page .jm-bom tbody th a{color:#f9f9f9;font-weight:600}
-.ga-page .jm-bom .jm-val{font-family:"JetBrains Mono",monospace;color:#f9f9f9;text-align:right;font-variant-numeric:tabular-nums}
-.ga-page .jm-bom thead th:nth-child(4){text-align:right}
-.ga-page .jm-num{display:inline-grid;place-items:center;width:1.75rem;height:1.75rem;border:1.5px solid #c3fffd;border-radius:50%;font:600 .8rem "JetBrains Mono",monospace;text-decoration:none}
-.ga-page .jm-bom tbody tr:hover{background:#0a0a0a}
-.ga-page .jm-note{font-size:.8rem;line-height:1.5;margin-top:1rem}
 .ga-page h2[id]{scroll-margin-top:1rem}
-.ga-page:has(#shoulder:target) .jm-shoulder .jm-balloon,.ga-page:has(#elbow:target) .jm-elbow .jm-balloon,.ga-page:has(#wrist:target) .jm-wrist .jm-balloon,.ga-page:has(#waist:target) .jm-waist .jm-balloon,.ga-page:has(#hip:target) .jm-hip .jm-balloon,.ga-page:has(#knee:target) .jm-knee .jm-balloon,.ga-page:has(#ankle:target) .jm-ankle .jm-balloon{fill:#c3fffd}
 .ga-page h2:target{color:#c3fffd}
 .ga-page h2:is(#shoulder,#elbow,#wrist,#waist,#hip,#knee,#ankle)::before{display:inline-grid;place-items:center;width:1.9rem;height:1.9rem;margin-right:.6rem;border:1.5px solid #c3fffd;border-radius:50%;color:#c3fffd;font:600 .95rem "JetBrains Mono",monospace;vertical-align:.15em}
 .ga-page h2#shoulder::before{content:"1"}
@@ -109,7 +83,5 @@ export const PAGE_CSS = `
 .ga-page h2#hip::before{content:"5"}
 .ga-page h2#knee::before{content:"6"}
 .ga-page h2#ankle::before{content:"7"}
-@media(max-width:760px){.ga-page .jm{grid-template-columns:minmax(0,1fr);padding:1rem;gap:1rem}.ga-page .jm-figure{max-width:320px;margin:0 auto}.ga-page .jm-bom th:nth-child(3),.ga-page .jm-bom td:nth-child(3){display:none}.ga-page .jm-bom tbody th a{display:inline-flex;align-items:center;min-height:44px}}
-.ga-page .jm-bom tbody th,.ga-page .jm-bom .jm-val{white-space:nowrap}
 ${NAVIGATION_CSS}
 `.trim();

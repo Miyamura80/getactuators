@@ -173,6 +173,7 @@ export function humanoid(q: HumanoidPose = {}): Scene {
         joint(s, M.p(E, [0, 0, 0]), V.mul(M.d(E, Z), side), 0.042, 0.075, "ELBOW", 25);
         s.link(M.p(E, [0, -0.02, 0]), M.p(E, [0, -0.19, 0]), 0.058, 0.06, "dark", { hint: M.d(E, Z), e1: 0.5, e2: 0.5, taper: [1.1, 1.1] });
         s.box(M.p(E, [0.005, -0.245, 0]), axesOf(E), [0.035, 0.045, 0.018], "dark", 0.5, 0.5);
+        s.anchor(M.p(E, [0.005, -0.245, 0]), "WRIST");
         if (side === 1) {
             s.label(M.p(S, [0, 0, 0.045]), "SHOULDER");
             s.label(M.p(E, [0, 0, 0.04]), "ELBOW");

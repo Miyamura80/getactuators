@@ -35,9 +35,9 @@ test("every shortlisted entry is humanoid-tagged and documents enough torque", (
     );
 });
 
-test("humanoid guide serves a linked joint map, article metadata and a twin", async () => {
+test("humanoid guide is an app page whose guide text stays below the joint map", async () => {
     const page = findPage(HUMANOID_GUIDE_PATH);
-    expect(page?.kind).toBe("static");
+    expect(page?.kind).toBe("spa");
     expect(page?.description.length).toBeLessThanOrEqual(160);
     const response = await get(HUMANOID_GUIDE_PATH);
     expect(response.status).toBe(200);
@@ -45,12 +45,21 @@ test("humanoid guide serves a linked joint map, article metadata and a twin", as
     expect(html).toContain(
         `<link rel="canonical" href="https://actuatorlist.com${HUMANOID_GUIDE_PATH}">`,
     );
-    // The map follows the lede and every balloon targets a real section.
-    expect(html.indexOf('<div class="jm">')).toBeGreaterThan(html.indexOf("</h1>"));
-    for (const j of JOINTS) {
-        expect(html).toContain(`<a class="jm-callout jm-${j.id}" href="#${j.id}"`);
-        expect(html).toContain(`<h2 id="${j.id}">${j.name}</h2>`);
-    }
+    // Before React mounts, #root holds the H1 and lede; the guide text from
+    // "How to read this guide" on persists below it with linkable sections.
+    const root = /<div id="root">([\s\S]*?)<\/div>\s*<section/.exec(html)?.[1] ?? "";
+    expect(root).toContain("<h1>Humanoid robot actuators: what each joint needs");
+    expect(root).not.toContain("How to read this guide");
+    const persistent =
+        /<section class="ga-page" id="catalog-content"[^>]*>[\s\S]*?<\/section>/.exec(
+            html,
+        )?.[0] ?? "";
+    expect(persistent).toContain('aria-label="Method, joint estimates and shortlists"');
+    expect(persistent).toContain(
+        '<h2 id="how-to-read-this-guide">How to read this guide</h2>',
+    );
+    for (const j of JOINTS)
+        expect(persistent).toContain(`<h2 id="${j.id}">${j.name}</h2>`);
     const graph = JSON.parse(
         /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(html)?.[1] ??
             "{}",
@@ -68,10 +77,7 @@ test("humanoid guide serves a linked joint map, article metadata and a twin", as
     );
 });
 
-test("agents get the same joint data over MCP, WebMCP and llms.txt", async () => {
-    const { humanoidJointRequirements } = await import(
-        "@/server/agent/humanoid-joints"
-    );
+test("agents get the joint data over MCP and find it in llms.txt", async () => {
     const { CATALOG_TOOLS } = await import("@/mcp/server");
     const tool = CATALOG_TOOLS.find((t) => t.name === "humanoid_joint_requirements");
     if (!tool) throw new Error("tool missing");
@@ -91,36 +97,6 @@ test("agents get the same joint data over MCP, WebMCP and llms.txt", async () =>
     expect(out.joints[0]?.shortlist[0]?.page_url).toStartWith(
         "https://actuatorlist.com/actuators/",
     );
-
-    // The page embeds the same data and registers two read-only WebMCP tools.
-    const html = await (await get(HUMANOID_GUIDE_PATH)).text();
-    const json =
-        /<script type="application\/json" id="humanoid-joints-data">([\s\S]*?)<\/script>/.exec(
-            html,
-        )?.[1] ?? "";
-    expect(JSON.parse(json)).toEqual(humanoidJointRequirements(undefined, 5));
-    const script =
-        /<script>(\(function\(\)\{var mc=[\s\S]*?)<\/script>/.exec(html)?.[1] ?? "";
-    const registered: {
-        name: string;
-        execute: (a: unknown) => Promise<{ structuredContent: { joints: unknown[] } }>;
-    }[] = [];
-    const location = { hash: "", href: "" };
-    const document = {
-        modelContext: {
-            registerTool: (t: (typeof registered)[number]) => registered.push(t),
-        },
-        getElementById: () => ({ textContent: json }),
-    };
-    new Function("document", "navigator", "location", script)(document, {}, location);
-    expect(registered.map((t) => t.name)).toEqual([
-        "get_humanoid_joint_requirements",
-        "show_humanoid_joint",
-    ]);
-    const knee = await registered[0]?.execute({ joint: "knee" });
-    expect(knee?.structuredContent.joints).toHaveLength(1);
-    await registered[1]?.execute({ joint: "ankle" });
-    expect(location.hash).toBe("ankle");
 
     const llms = await (await get("/llms.txt")).text();
     expect(llms).toContain("/guides/humanoid-robot-actuators.md");
