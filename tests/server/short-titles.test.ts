@@ -32,11 +32,17 @@ function sha256(value: string) {
 // Freshness is resolved from env, git history or filesystem mtime. Shallow CI
 // checkouts need not resolve the same date as the clean-main capture. Normalize
 // only this specific catalog-freshness sentence; preserve every other byte.
+// MCP tools added after the capture are listed in the /agents tool line; drop
+// only those names so the rest of that line stays locked.
+const TOOLS_ADDED_AFTER_BASELINE = ["humanoid_joint_requirements"];
 function snapshotContent(value: string) {
-    return value.replace(
+    let out = value.replace(
         `The catalog was last updated on ${CATALOG_UPDATED_DATE}.`,
         `The catalog was last updated on ${baseline.catalogUpdatedDate}.`,
     );
+    for (const name of TOOLS_ADDED_AFTER_BASELINE)
+        out = out.replaceAll(`, ${name}`, "");
+    return out;
 }
 
 // Old specification values recovered with git show HEAD:src/server/agent/catalog-md.ts.

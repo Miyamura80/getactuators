@@ -263,4 +263,5 @@ export const MCP_TOOLS: readonly { name: string; does: string }[] = [
     { name: "find_robots_using_actuator", does: "Which robots ship a given actuator" },
     { name: "list_actuator_categories", does: "QDD, harmonic, cycloidal and the rest" },
     { name: "list_brands", does: "Every manufacturer in the dataset" },
+    { name: "humanoid_joint_requirements", does: "Static torque per humanoid joint, with matching actuators" },
 ];

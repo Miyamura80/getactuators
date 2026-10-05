@@ -27,6 +27,7 @@ const EXPECTED_TOOLS = [
     "list_robots",
     "get_robot",
     "find_robots_using_actuator",
+    "humanoid_joint_requirements",
 ];
 
 const usedActuator = ACTUATORS.find((a) => robotsUsingActuator(a.id).length > 0);

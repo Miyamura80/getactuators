@@ -36,6 +36,8 @@ Add the server `https://actuatorlist.com/mcp` (Streamable HTTP, name
 - `list_actuator_categories`, `list_brands`: valid filter values.
 - `list_robots`, `get_robot`, `find_robots_using_actuator`: robots and the
   motor in each joint.
+- `humanoid_joint_requirements`: static torque estimate per humanoid joint
+  (stated pose and arithmetic) and the catalog actuators that reach it.
 
 Resources such as `catalog://actuators` and `actuator://{id}` hold the same
 data. A second server at `https://actuatorlist.com/mcp/docs` serves the site

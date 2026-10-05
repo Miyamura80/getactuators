@@ -1,5 +1,12 @@
-import { ACTUATORS } from "@/catalog";
-import { type Shortlist, shortlist } from "@/catalog/shortlist";
+// Relative imports (no "@/" alias, no server-only modules): the browser
+// bundle reuses this data for WebMCP and the /robots joint map.
+import { ACTUATORS } from "../../catalog";
+import {
+    type Shortlist,
+    TORQUE_FIT_LABEL,
+    integrationNote,
+    shortlist,
+} from "../../catalog/shortlist";
 
 // Static joint-torque estimates for a hypothetical 1.5 m, 50 kg humanoid
 // carrying 1 kg in one hand. Each one is mass × g × horizontal lever arm for
@@ -124,4 +131,51 @@ export function undocumentedHumanoidEntries() {
             a.rated_torque_nm == null &&
             a.peak_torque_nm == null,
     );
+}
+
+export const HUMANOID_GUIDE_PATH = "/guides/humanoid-robot-actuators";
+
+export const HUMANOID_ASSUMPTIONS =
+    "Hypothetical humanoid: 1.5 m tall, 50 kg, carrying 1 kg in one hand. Each torque is a static estimate (mass × g × horizontal lever arm) for one stated pose; walking, stairs and impacts add dynamic torque that is not estimated.";
+
+// One serializable answer shared by the MCP tool, the in-page WebMCP tool and
+// tests. Paths are site-relative; callers that need absolute URLs add the host.
+export function humanoidJointRequirements(jointId?: string, limit = 5) {
+    const joints = JOINTS.filter((j) => !jointId || j.id === jointId).map((j) => {
+        const list = jointShortlist(j, limit);
+        return {
+            id: j.id,
+            number: j.n,
+            name: j.name,
+            typical_dof: j.dof,
+            static_torque_nm: j.torqueNm,
+            pose: j.pose,
+            working: `${j.working} = ${j.torqueNm.toFixed(1)} N·m`,
+            screen_total: list.total,
+            shortlist: list.rows.map(({ actuator: a, torque }) => ({
+                id: a.id,
+                name: a.name,
+                brand: a.brand,
+                rated_torque_nm: a.rated_torque_nm,
+                peak_torque_nm: a.peak_torque_nm,
+                weight_g: a.weight_g,
+                fit: torque,
+                fit_label: TORQUE_FIT_LABEL[torque],
+                note: integrationNote(a),
+                page_path: `/actuators/${encodeURIComponent(a.id)}`,
+            })),
+            section_path: `${HUMANOID_GUIDE_PATH}#${j.id}`,
+        };
+    });
+    return {
+        assumptions: HUMANOID_ASSUMPTIONS,
+        screen: "Catalog entries tagged humanoid_joint or humanoid whose documented rated torque (fit=rated) or, failing that, peak torque (fit=peak, short duty only) reaches the estimate. Lightest rated fits first. Undocumented torque never passes.",
+        joints,
+        undocumented: undocumentedHumanoidEntries().map((a) => ({
+            id: a.id,
+            name: a.name,
+            brand: a.brand,
+        })),
+        guide_path: HUMANOID_GUIDE_PATH,
+    };
 }
