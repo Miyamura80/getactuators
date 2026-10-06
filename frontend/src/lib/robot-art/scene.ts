@@ -89,6 +89,8 @@ type Stage = keyof typeof EXPLODE;
 export class Scene {
     meshes: Mesh[] = [];
     labels: Label[] = [];
+    // Named points that are not drawn: hooks for overlays (e.g. a hand).
+    anchors: Label[] = [];
     motors: Motor[] = [];
     details: Detail[] = [];
     // End effector or foot.
@@ -111,6 +113,10 @@ export class Scene {
 
     label(p: Vec3, text: string): void {
         this.labels.push({ p, text });
+    }
+
+    anchor(p: Vec3, text: string): void {
+        this.anchors.push({ p, text });
     }
 
     // Capped frustum from a to b, radius r0 at a and r1 at b.

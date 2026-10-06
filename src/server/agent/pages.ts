@@ -9,6 +9,7 @@ import {
     categoryLabel,
 } from "./catalog-md";
 import { EDITORIAL_PAGES } from "./editorial";
+import { HUMANOID_GUIDE } from "./humanoid-guide";
 import * as ld from "./jsonld";
 import { PATHS } from "./links";
 import { agentsBody } from "./manifests";
@@ -80,6 +81,7 @@ const STATIC_PAGES: Page[] = [
         ],
     },
     ...EDITORIAL_PAGES,
+    HUMANOID_GUIDE,
     ...TOOL_PAGES,
     {
         path: "/",

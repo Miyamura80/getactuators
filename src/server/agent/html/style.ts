@@ -73,5 +73,15 @@ export const PAGE_CSS = `
 .ga-page code,.ga-page pre{font-family:"JetBrains Mono",monospace;background:#0a0a0a}
 .ga-page pre{padding:1rem;overflow-x:auto}
 .ga-page blockquote{border-left:2px solid #c3fffd;margin-left:0;padding-left:1rem}
+.ga-page h2[id]{scroll-margin-top:1rem}
+.ga-page h2:target{color:#c3fffd}
+.ga-page h2:is(#shoulder,#elbow,#wrist,#waist,#hip,#knee,#ankle)::before{display:inline-grid;place-items:center;width:1.9rem;height:1.9rem;margin-right:.6rem;border:1.5px solid #c3fffd;border-radius:50%;color:#c3fffd;font:600 .95rem "JetBrains Mono",monospace;vertical-align:.15em}
+.ga-page h2#shoulder::before{content:"1"}
+.ga-page h2#elbow::before{content:"2"}
+.ga-page h2#wrist::before{content:"3"}
+.ga-page h2#waist::before{content:"4"}
+.ga-page h2#hip::before{content:"5"}
+.ga-page h2#knee::before{content:"6"}
+.ga-page h2#ankle::before{content:"7"}
 ${NAVIGATION_CSS}
 `.trim();
