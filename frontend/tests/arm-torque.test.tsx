@@ -59,7 +59,7 @@ test("choosing a catalog actuator feeds its mass back into the shoulder load", (
     expect(values()).toEqual(["33.9 N·m", "13.5 N·m", "2.53 N·m"]);
     // The shoulder actuator sits on the base: no mass feedback offered.
     expect(view.container.querySelector(".req-use")).toBeNull();
-    fireEvent.click(view.getAllByRole("button", { name: "Show actuators" })[0] as HTMLElement);
+    fireEvent.click(view.getByRole("button", { name: "Show actuators for τ2 Elbow" }));
     expect(view.getByRole("heading", { name: "Actuators for τ2 Elbow" })).toBeTruthy();
     const use = view.container.querySelector(".req-use") as HTMLButtonElement;
     const kg = Number(/Use ([\d.]+) kg/.exec(use.textContent ?? "")?.[1]);

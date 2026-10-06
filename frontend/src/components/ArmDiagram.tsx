@@ -1,4 +1,4 @@
-import { type ReactNode, useMemo } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import type { Arm, JointLoad } from "../../../src/engineering/arm-torque";
 import { jointName, pointMasses } from "../../../src/engineering/arm-torque";
 import type { CamSpec } from "../lib/robot-art/core";
@@ -198,8 +198,28 @@ export function ArmDiagram({ arm, loads, active, onSelect }: Props) {
     }, [geo]);
     const n = arm.links.length;
     const label = `Free-body diagram: ${loads.map((l, i) => `${jointName(i, n)} ${fmt(l.torqueNm)} N·m`).join(", ")}`;
+    // On narrow screens the drawing keeps its scale and scrolls sideways; the
+    // edges fade where more of the arm lies beyond them.
+    const scroller = useRef<HTMLDivElement>(null);
+    const [edges, setEdges] = useState({ left: false, right: false });
+    useEffect(() => {
+        const el = scroller.current;
+        if (!el) return;
+        const update = () =>
+            setEdges({ left: el.scrollLeft > 2, right: el.scrollLeft + el.clientWidth < el.scrollWidth - 2 });
+        update();
+        el.addEventListener("scroll", update, { passive: true });
+        window.addEventListener("resize", update);
+        return () => {
+            el.removeEventListener("scroll", update);
+            window.removeEventListener("resize", update);
+        };
+    }, []);
+    const cls = ["arm-fig", edges.left && "more-left", edges.right && "more-right"].filter(Boolean).join(" ");
     return (
-        <div className="arm-fig">
+        <div className="arm-fig-frame">
+        {/* biome-ignore lint/a11y/noNoninteractiveTabindex: a scrollable region must be reachable by keyboard. */}
+        <div className={cls} ref={scroller} tabIndex={edges.left || edges.right ? 0 : undefined} role="region" aria-label="Arm diagram, scrolls sideways">
             <DraftingFigure
                 scene={geo.scene}
                 cam={cam}
@@ -211,6 +231,14 @@ export function ArmDiagram({ arm, loads, active, onSelect }: Props) {
                     <Overlay arm={arm} loads={loads} active={active} onSelect={onSelect} project={project} geo={geo} />
                 )}
             />
+        </div>
+            {edges.right && !edges.left && (
+                <span className="arm-swipe" aria-hidden="true">
+                    <svg viewBox="0 0 24 12" width={24} height={12}>
+                        <path d="M1 6h21M17 1.5l5 4.5l-5 4.5" />
+                    </svg>
+                </span>
+            )}
         </div>
     );
 }

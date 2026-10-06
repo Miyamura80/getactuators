@@ -221,24 +221,43 @@ export function ArmTorqueCalculator({ menuOpen = false }: { menuOpen?: boolean }
                 {ok ? (
                     <div className="arm-results-wrap">
                     <table className="arm-results">
-                        <caption>Static holding torque, arm horizontal</caption>
+                        <caption>Static holding torque, arm horizontal · motion not modeled</caption>
                         <thead>
                             <tr>
                                 <th scope="col">Joint</th>
                                 <th scope="col">Holding</th>
-                                <th scope="col">Motion</th>
                                 <th scope="col"><span className="sr-only">Actuators</span></th>
                             </tr>
                         </thead>
                         <tbody>
                             {loads.map((l, i) => (
-                                <tr key={i} className={i === joint ? "on" : ""}>
-                                    <th scope="row">τ{i + 1} {jointName(i, n)}</th>
-                                    <td className="arm-val">{fmt(l.torqueNm)} N·m</td>
-                                    <td className="arm-motion">Not modeled</td>
+                                <tr key={i} className={i === joint ? "on" : ""} onClick={() => setActive(i)}>
+                                    <th scope="row">
+                                        <span className="arm-tau">τ{i + 1}</span> {jointName(i, n)}
+                                    </th>
                                     <td>
-                                        <button type="button" aria-pressed={i === joint} onClick={() => setActive(i)}>
-                                            {i === joint ? "Showing actuators" : "Show actuators"}
+                                        <span className="arm-load">
+                                            <span className="arm-val">{fmt(l.torqueNm)} N·m</span>
+                                            {/* Share of the largest joint load: the profile falls toward the tip. */}
+                                            <span className="arm-bar" aria-hidden="true">
+                                                <span style={{ width: `${(l.torqueNm / (loads[0]?.torqueNm || 1)) * 100}%` }} />
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button
+                                            type="button"
+                                            className="arm-pick"
+                                            aria-pressed={i === joint}
+                                            aria-label={`Show actuators for τ${i + 1} ${jointName(i, n)}`}
+                                            title={`Actuators for τ${i + 1} ${jointName(i, n)}`}
+                                            onClick={() => setActive(i)}
+                                        >
+                                            {/* A list with a cursor: the shortlist below follows this joint. */}
+                                            <svg viewBox="0 0 20 20" width={20} height={20} aria-hidden="true">
+                                                <path d="M8 5h9M8 10h9M8 15h9" />
+                                                <path className="arm-pick-dot" d="M3 3.5l3 1.5l-3 1.5z" />
+                                            </svg>
                                         </button>
                                     </td>
                                 </tr>

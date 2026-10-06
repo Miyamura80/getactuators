@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DraftingFigure, type Project } from "../components/DraftingFigure";
 import { PublicHeader } from "../components/PublicHeader";
 import type { CamSpec } from "../lib/robot-art/core";
@@ -48,7 +48,28 @@ function anchorFor(j: Joint, scene: ReturnType<typeof humanoid>, project: Projec
     return pick ?? [W / 2, H / 2];
 }
 
-function Callouts({ scene, project }: { scene: ReturnType<typeof humanoid>; project: Project }) {
+// Which joint is under the pointer or keyboard focus, shared by the drawing
+// and the bill of joints so pointing at one inks its twin.
+interface Focus {
+    focus: string | null;
+    setFocus: (id: string | null) => void;
+}
+
+function focusHandlers(id: string, setFocus: Focus["setFocus"]) {
+    return {
+        onMouseEnter: () => setFocus(id),
+        onMouseLeave: () => setFocus(null),
+        onFocus: () => setFocus(id),
+        onBlur: () => setFocus(null),
+    };
+}
+
+function Callouts({
+    scene,
+    project,
+    focus,
+    setFocus,
+}: { scene: ReturnType<typeof humanoid>; project: Project } & Focus) {
     const used: Record<"l" | "r", number[]> = { l: [], r: [] };
     return (
         <>
@@ -71,8 +92,9 @@ function Callouts({ scene, project }: { scene: ReturnType<typeof humanoid>; proj
                 return (
                     <a
                         key={j.id}
-                        className={`jm-callout jm-${j.id}`}
+                        className={`jm-callout jm-${j.id}${focus === j.id ? " on" : ""}`}
                         href={`#${j.id}`}
+                        {...focusHandlers(j.id, setFocus)}
                         aria-label={`${j.n}. ${j.name}: ${j.torqueNm.toFixed(1)} N·m static estimate`}
                     >
                         <path className="jm-leader" d={`M${x} ${y}L${x + (left ? -8 : 8)} ${by}H${knee}`} />
@@ -98,7 +120,35 @@ function Callouts({ scene, project }: { scene: ReturnType<typeof humanoid>; proj
     );
 }
 
-function BillOfJoints() {
+// One pip per passing catalog entry: filled when its rated torque covers the
+// joint, hollow when only its peak does. No rated fit gets a warning mark.
+function ScreenPips({ total, rated }: { total: number; rated: number }) {
+    const label = total
+        ? `${total} pass: ${rated} rated, ${total - rated} peak only`
+        : "No catalog entry documents this torque";
+    const w = 7;
+    return (
+        <span className="jm-pips" title={label}>
+            <svg viewBox={`0 0 ${Math.max(total, 1) * w + 18} 14`} height={14} width={Math.max(total, 1) * w + 18} role="img" aria-label={label}>
+                {!rated && <path className="jm-warn" d="M6 1.5L11.5 12.5H0.5Z M6 5.5V8.5 M6 10.4V10.6" />}
+                {Array.from({ length: total }, (_, i) => (
+                    <rect
+                        // biome-ignore lint/suspicious/noArrayIndexKey: pips are interchangeable marks.
+                        key={i}
+                        className={i < rated ? "jm-pip rated" : "jm-pip"}
+                        x={(rated ? 0 : 16) + i * w}
+                        y={2}
+                        width={w - 2.5}
+                        height={10}
+                    />
+                ))}
+            </svg>
+            <span className="jm-pips-n" aria-hidden="true">{total}</span>
+        </span>
+    );
+}
+
+function BillOfJoints({ focus, setFocus }: Focus) {
     return (
         <table className="jm-bom">
             <caption>Bill of joints · static estimates</caption>
@@ -116,7 +166,7 @@ function BillOfJoints() {
                     const list = jointShortlist(j, Number.POSITIVE_INFINITY);
                     const rated = list.rows.filter((r) => r.torque === "rated").length;
                     return (
-                        <tr key={j.id} className={`jm-${j.id}`}>
+                        <tr key={j.id} className={`jm-${j.id}${focus === j.id ? " on" : ""}`} {...focusHandlers(j.id, setFocus)}>
                             <td>
                                 <a href={`#${j.id}`} className="jm-num" aria-label={`Joint ${j.n}`}>
                                     {j.n}
@@ -128,9 +178,7 @@ function BillOfJoints() {
                             <td>{j.dof.split(" ")[0]}</td>
                             <td className="jm-val">{j.torqueNm.toFixed(1)}</td>
                             <td>
-                                {list.total
-                                    ? `${list.total} pass${rated ? `, ${rated} rated` : ", peak only"}`
-                                    : "none documented"}
+                                <ScreenPips total={list.total} rated={rated} />
                             </td>
                         </tr>
                     );
@@ -142,6 +190,7 @@ function BillOfJoints() {
 
 export function HumanoidGuide({ menuOpen = false }: { menuOpen?: boolean }) {
     const scene = useMemo(() => humanoid(), []);
+    const [focus, setFocus] = useState<string | null>(null);
 
     // WebMCP: let an in-browser agent bring a joint's section into view.
     useEffect(
@@ -178,7 +227,7 @@ export function HumanoidGuide({ menuOpen = false }: { menuOpen?: boolean }) {
                     <h1>{GUIDE_H1}</h1>
                     <p className="tool-lede">{LEDE}</p>
                 </header>
-                <div className="jm">
+                <div className="jm" data-focus={focus ?? undefined}>
                     <DraftingFigure
                         scene={scene}
                         cam={CAM}
@@ -186,10 +235,10 @@ export function HumanoidGuide({ menuOpen = false }: { menuOpen?: boolean }) {
                         W={W}
                         H={H}
                         label="Humanoid joint map: seven numbered joints, each linking to its section"
-                        overlay={(project) => <Callouts scene={scene} project={project} />}
+                        overlay={(project) => <Callouts scene={scene} project={project} focus={focus} setFocus={setFocus} />}
                     />
                     <div className="jm-side">
-                        <BillOfJoints />
+                        <BillOfJoints focus={focus} setFocus={setFocus} />
                         <p className="jm-note">
                             Static torque is a floor: gait, stairs and impacts add dynamic load this map does not
                             estimate. Screens count humanoid-tagged catalog entries whose documented rated or peak

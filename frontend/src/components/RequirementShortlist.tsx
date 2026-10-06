@@ -2,6 +2,7 @@ import { ACTUATORS } from "../lib/data";
 import type { Actuator } from "../types";
 import { compareHref } from "../lib/compare-selection";
 import { fmt } from "../lib/motor-torque";
+import { DriverGlyph, FitGauge, SpeedGlyph } from "./FitGauge";
 import {
     SPEED_FIT_LABEL,
     TORQUE_FIT_LABEL,
@@ -65,9 +66,12 @@ export function RequirementShortlist({
                                     <div><dt>Mass</dt><dd>{a.weight_g != null ? `${fmt(a.weight_g)} g` : "n/d"}</dd></div>
                                 </dl>
                                 <p className="req-tags">
-                                    <span className={`req-tag tag-${torque}`}>{TORQUE_FIT_LABEL[torque]}</span>
-                                    {speed !== "none" && <span className={`req-tag tag-speed-${speed}`}>{SPEED_FIT_LABEL[speed]}</span>}
-                                    {note && <span className="req-tag tag-note">{note}</span>}
+                                    <FitGauge need={torqueNm} rated={a.rated_torque_nm} peak={a.peak_torque_nm} />
+                                    {speed !== "none" && speedRpm != null && <SpeedGlyph known={speed === "meets"} rpm={speedRpm} />}
+                                    {note && <DriverGlyph />}
+                                    <span className="sr-only">
+                                        {[TORQUE_FIT_LABEL[torque], speed !== "none" ? SPEED_FIT_LABEL[speed] : "", note ?? ""].filter(Boolean).join(". ")}
+                                    </span>
                                 </p>
                                 {onUse && a.weight_g != null && (
                                     <button type="button" className="req-use" onClick={() => onUse.act(a)}>
