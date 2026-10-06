@@ -10,8 +10,9 @@ export type RobotKind = "humanoid" | "quadruped" | "robot_arm";
 
 // "tile": a 4:3 thumbnail with callouts and a loupe. "card" / "card-lg": the
 // wide home category cards, where the title sits bottom left, so the robot is
-// framed on the right and left unannotated.
-export type RobotArtFraming = "tile" | "card" | "card-lg";
+// framed on the right and left unannotated. "plain": a centred 4:3 tile with
+// no callouts, for robots whose real joint counts differ from the generic art.
+export type RobotArtFraming = "tile" | "card" | "card-lg" | "plain";
 
 const BUILD: Record<RobotKind, () => Scene> = { robot_arm: arm, humanoid, quadruped };
 
@@ -32,6 +33,7 @@ const ANNOTATION: Record<RobotKind, Annotation> = {
 function frameBox(kind: RobotKind, framing: RobotArtFraming, W: number, H: number): Box {
     // Tile: callouts on the left, loupe on the right.
     if (framing === "tile") return { x: W * 0.2, y: H * 0.1, w: W * 0.42, h: H * 0.84 };
+    if (framing === "plain") return { x: W * 0.2, y: H * 0.08, w: W * 0.6, h: H * 0.84 };
     // Narrow cards (phones) keep the robot smaller and further right so the
     // title and blurb on the left stay readable.
     const narrow = W / H < 2.4;

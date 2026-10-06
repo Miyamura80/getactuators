@@ -2,8 +2,8 @@
 // URL of the manufacturer's own product photo; this downloads it, resizes it to
 // a WebP under frontend/public/robot-images and rewrites image_url to the local
 // path, so the robots section never hotlinks a CDN that can rotate or block.
-// A robot with no image_url gets its product page's share image (og:image)
-// instead. Robots already pointing at a local path are skipped. Meant to run where
+// A robot with no image_url key gets its product page's share image
+// (og:image) instead; an explicit null opts out and keeps the rendered art. Robots already pointing at a local path are skipped. Meant to run where
 // outbound HTTPS is open (the fetch-images workflow or a local machine).
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -76,6 +76,31 @@ async function shareImage(pageUrl: string): Promise<string | null> {
     }
 }
 
+// Where to download this robot's photo from: its listed remote URL, or the
+// product page's share image when no image_url key is set. Null when there is
+// nothing to fetch (already local, or explicitly opted out with null).
+async function photoSource(robot: Robot): Promise<string | null> {
+    const listed = robot.image_url;
+    if (listed === null) return null;
+    if (listed) return /^https?:\/\//.test(listed) ? listed : null;
+    return robot.product_url ? shareImage(robot.product_url) : null;
+}
+
+// Resize to a bounded WebP and save it; false when the bytes do not decode.
+async function savePhoto(id: string, buf: Buffer): Promise<boolean> {
+    try {
+        const out = await sharp(buf)
+            .rotate()
+            .resize(MAX_EDGE, MAX_EDGE, { fit: "inside", withoutEnlargement: true })
+            .webp({ quality: QUALITY })
+            .toBuffer();
+        writeFileSync(join(OUT_DIR, `${id}.webp`), out);
+        return true;
+    } catch {
+        return false;
+    }
+}
+
 async function main(): Promise<void> {
     // Rewrite URLs in the raw text rather than re-serialising, so the file's
     // hand-kept layout (one-line joint rows) survives.
@@ -85,35 +110,24 @@ async function main(): Promise<void> {
     let saved = 0;
     const failed: string[] = [];
     for (const robot of data.robots) {
-        const listed = robot.image_url;
-        if (listed && !/^https?:\/\//.test(listed)) continue;
-        const src =
-            listed ?? (robot.product_url && (await shareImage(robot.product_url)));
-        if (!src) {
-            failed.push(`${robot.id}: no image_url and no share image`);
+        if (
+            robot.image_url !== undefined &&
+            !/^https?:\/\//.test(robot.image_url ?? "")
+        ) {
             continue;
         }
-        const buf = await download(src, robot.product_url);
-        if (!buf) {
-            failed.push(`${robot.id}: ${src}`);
+        const src = await photoSource(robot);
+        const buf = src ? await download(src, robot.product_url) : null;
+        if (!src || !buf || !(await savePhoto(robot.id, buf))) {
+            failed.push(`${robot.id}: ${src ?? "no image_url and no share image"}`);
             continue;
         }
-        try {
-            const out = await sharp(buf)
-                .rotate()
-                .resize(MAX_EDGE, MAX_EDGE, { fit: "inside", withoutEnlargement: true })
-                .webp({ quality: QUALITY })
-                .toBuffer();
-            writeFileSync(join(OUT_DIR, `${robot.id}.webp`), out);
-            const local = JSON.stringify(`${PUBLIC_PREFIX}/${robot.id}.webp`);
-            const idLine = `"id": ${JSON.stringify(robot.id)},`;
-            raw = listed
-                ? raw.replace(JSON.stringify(listed), local)
-                : raw.replace(idLine, `${idLine}\n            "image_url": ${local},`);
-            saved++;
-        } catch {
-            failed.push(`${robot.id}: not a decodable image (${src})`);
-        }
+        const local = JSON.stringify(`${PUBLIC_PREFIX}/${robot.id}.webp`);
+        const idLine = `"id": ${JSON.stringify(robot.id)},`;
+        raw = robot.image_url
+            ? raw.replace(JSON.stringify(robot.image_url), local)
+            : raw.replace(idLine, `${idLine}\n            "image_url": ${local},`);
+        saved++;
     }
     writeFileSync(DATA, raw);
     console.log(`Robot photos: ${saved} saved to ${OUT_DIR}`);

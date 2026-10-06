@@ -219,8 +219,7 @@
         },
         {
             "id": "1x-neo",
-            "image_fit": "cover",
-            "image_url": "/robot-images/1x-neo.webp",
+            "image_url": null,
             "name": "NEO",
             "brand": "1X Technologies",
             "kind": "humanoid",
