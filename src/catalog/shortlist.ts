@@ -41,6 +41,8 @@ export interface Shortlist<A extends ShortlistActuator = ShortlistActuator> {
     rows: ShortlistRow<A>[];
     // Every catalog entry that passes, before the display limit.
     total: number;
+    // How many of those passed without a documented max speed.
+    unknownSpeed: number;
 }
 
 function torqueFit(a: ShortlistActuator, need: number): TorqueFit | null {
@@ -61,13 +63,22 @@ const SPEED_RANK: Record<SpeedFit, number> = { meets: 0, none: 0, unknown: 1 };
 // Rated fits first, documented speed before unknown speed, then lightest.
 // Missing mass sorts last; ties fall back to the smaller sufficient torque so
 // a 2 kN·m reducer never outranks a joint sized for the job.
+// The torque that earned the fit: rated for rated fits, peak for peak-only.
+function fitTorque(r: ShortlistRow<ShortlistActuator>): number {
+    return (
+        (r.torque === "rated"
+            ? r.actuator.rated_torque_nm
+            : r.actuator.peak_torque_nm) ?? 0
+    );
+}
+
 export function shortlist<A extends ShortlistActuator>(
     catalog: readonly A[],
     req: Requirement,
     limit = 6,
 ): Shortlist<A> {
     if (!(req.torqueNm > 0) || !Number.isFinite(req.torqueNm)) {
-        return { rows: [], total: 0 };
+        return { rows: [], total: 0, unknownSpeed: 0 };
     }
     const uses = req.useCases?.length ? new Set(req.useCases) : null;
     const rows: ShortlistRow<A>[] = [];
@@ -83,10 +94,14 @@ export function shortlist<A extends ShortlistActuator>(
             SPEED_RANK[a.speed] - SPEED_RANK[b.speed] ||
             (a.actuator.weight_g ?? Number.POSITIVE_INFINITY) -
                 (b.actuator.weight_g ?? Number.POSITIVE_INFINITY) ||
-            (a.actuator.peak_torque_nm ?? 0) - (b.actuator.peak_torque_nm ?? 0) ||
+            fitTorque(a) - fitTorque(b) ||
             a.actuator.id.localeCompare(b.actuator.id),
     );
-    return { rows: rows.slice(0, limit), total: rows.length };
+    return {
+        rows: rows.slice(0, limit),
+        total: rows.length,
+        unknownSpeed: rows.filter((r) => r.speed === "unknown").length,
+    };
 }
 
 export const TORQUE_FIT_LABEL: Record<TorqueFit, string> = {

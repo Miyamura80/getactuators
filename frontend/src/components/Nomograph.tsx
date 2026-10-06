@@ -80,7 +80,9 @@ export function Nomograph({ shaft, solved }: { shaft: Shaft | null; solved: Quan
     const path = `M${x0} ${yl + slope * (x0 - X.torque)}L${x1} ${yl + slope * (x1 - X.torque)}`;
     const label = valid
         ? `Nomograph: ${fmt(shaft.torqueNm)} N·m at ${fmt(shaft.speedRpm)} rpm is ${fmt(shaft.powerW)} W`
-        : "Nomograph: enter two values to draw the line";
+        : shaft
+          ? "Nomograph: zero values cannot be shown on this logarithmic scale"
+          : "Nomograph: enter two values to draw the line";
     return (
         <figure className="nomo">
             <svg viewBox={`0 0 ${W} 470`} role="img" aria-label={label}>

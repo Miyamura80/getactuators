@@ -8,6 +8,17 @@ import {
     shortlist,
 } from "../../../src/catalog/shortlist";
 
+// Torque matches, how many leave speed undocumented, and the real sort order.
+function summary(total: number, unknownSpeed: number, torqueNm: number, speedRpm?: number): string {
+    const head = `${total} catalog ${total === 1 ? "entry covers" : "entries cover"} ${fmt(torqueNm)} N·m`;
+    if (!speedRpm) return `${head}. Rated fits first, then lightest.`;
+    const known = total - unknownSpeed;
+    const speed = unknownSpeed
+        ? `${known} ${known === 1 ? "documents" : "document"} ${fmt(speedRpm)} rpm, ${unknownSpeed} ${unknownSpeed === 1 ? "does" : "do"} not document speed`
+        : `all document ${fmt(speedRpm)} rpm`;
+    return `${head}; ${speed}. Rated fits first, then documented speed, then lightest.`;
+}
+
 // The handoff from a computed requirement into the catalog: which documented
 // actuators reach it, how (rated vs peak), and what remains unknown.
 export function RequirementShortlist({
@@ -27,7 +38,7 @@ export function RequirementShortlist({
                 <h2 id="req-list-title">{heading}</h2>
                 <p>
                     {list.total
-                        ? `${list.total} catalog ${list.total === 1 ? "entry reaches" : "entries reach"} ${fmt(torqueNm)} N·m${speedRpm ? ` at ${fmt(speedRpm)} rpm` : ""}. Lightest rated fits first.`
+                        ? summary(list.total, list.unknownSpeed, torqueNm, speedRpm)
                         : `No catalog entry documents ${fmt(torqueNm)} N·m${speedRpm ? ` at ${fmt(speedRpm)} rpm` : ""}. Add a gearbox stage or relax the requirement.`}
                 </p>
             </header>
