@@ -1,1 +1,10 @@
-1 https://cdn.sanity.io/images/qka6yvsc/production/2277cb5f5952be3c4c48b5bd66cafeccddb6ed27-3665x2062.webp
+1 https://cdn.sanity.io/images/qka6yvsc/production/0caf81e13a449a3e7e73d080655e6726e721e4a9-3665x2062.webp
+2 https://cdn.sanity.io/images/qka6yvsc/production/6edcc0bce710ae01d57be983ac87e237da9d38fe-3665x2062.webp
+3 https://cdn.sanity.io/images/qka6yvsc/production/5fd6d7c3fab1c470bb04fa23cf6329761ec953a8-3665x2062.webp
+4 https://www.1x.tech/_next/static/media/neo.134ef894.webp
+5 https://cdn.sanity.io/images/qka6yvsc/production/1054db069547b8a970273c62fa96fb6ae1818e8a-3665x2062.webp
+6 https://cdn.sanity.io/images/qka6yvsc/production/62b1ab57e3f0fc5bfdf27188490de34da3897cf3-3665x2062.webp
+7 https://cdn.sanity.io/images/qka6yvsc/production/fce0909a44a0f2452d54feaf95f26d355c7abb16-3665x2062.webp
+8 https://cdn.sanity.io/images/qka6yvsc/production/3ab4256f43961300cab91496f96c579cf104b997-1440x1760.webp
+9 https://cdn.sanity.io/images/qka6yvsc/production/7d7c76fff5aced119246042ffd9141e8f17d632a-3665x2062.webp
+10 https://cdn.prod.website-files.com/68835962f272eff6d5e9270e/69ce31d6cf60db160f018e25_69bc7f96677b63cfe6637f0c_neo-gamma-by-1x-technologies_NEO_full_M.avif
