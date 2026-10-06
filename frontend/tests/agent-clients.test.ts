@@ -57,7 +57,7 @@ describe("agent client install formats", () => {
         expect(CHATGPT_LINK).toBe("https://chatgpt.com/plugins");
         const text = JSON.stringify(findClient("chatgpt")).toLowerCase();
         expect(text).not.toContain("developer mode");
-        expect(text).toContain("create mcp app");
+        expect(text).toContain("create custom mcp server");
     });
 
     test("Goose link declares streamable HTTP", () => {

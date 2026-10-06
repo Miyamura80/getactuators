@@ -56,7 +56,7 @@ export function claudeLink(url = MCP_URL, name = DISPLAY_NAME): string {
 }
 
 // ChatGPT has no deep link that opens or prefills the create form. Custom MCP
-// servers are added from the Plugins page (Add, then Create MCP App), so this
+// servers are added from the Plugins page (Add, then Create custom MCP server), so this
 // is a plain page link. The old #settings/Connectors?create-connector=true hash
 // route targeted the Settings > Connectors flow, which ChatGPT removed along
 // with the separate Developer mode toggle.
@@ -182,12 +182,12 @@ export const AGENT_CLIENTS: readonly AgentClient[] = [
         snippet: null,
         steps: [
             "Open chatgpt.com/plugins on the web",
-            "Click Add, then Create MCP App",
+            "Click Add, then Create custom MCP server",
             "Name it actuatorlist, paste the URL, Authentication: No authentication",
-            "Tick I understand and want to continue, then click Create",
+            "Tick I understand and want to continue, then click Create as a plugin",
             "Start a new chat so the tools menu refreshes; enable the app from the + menu if needed",
         ],
-        note: "Copies the URL, then opens ChatGPT Plugins: click Add, then Create MCP App, and paste it. Plus, Pro, Business, Enterprise and Edu; on Business, Enterprise and Edu an admin must allow custom MCP connectors first.",
+        note: "Copies the URL, then opens ChatGPT Plugins: click Add, then Create custom MCP server, and paste it. Plus, Pro, Business, Enterprise and Edu; on Business, Enterprise and Edu an admin must allow custom MCP connectors first.",
     },
     {
         id: "codex",
