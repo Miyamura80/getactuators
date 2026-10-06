@@ -17,6 +17,7 @@ export const FOOTER_GROUPS = [
         links: [
             ["/guides", "Engineering guides"],
             ["/guides/robot-actuator-selection", "Actuator selection"],
+            ["/tools/motor-torque-calculator", "Motor torque calculator"],
             ["/comparisons/cubemars-ak80-9-vs-xiaomi-cybergear", "AK80-9 vs CyberGear"],
             ["/faq", "FAQ"],
             ["/agents", "For AI agents"],

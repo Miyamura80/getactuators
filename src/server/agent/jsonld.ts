@@ -122,6 +122,22 @@ export function software(): Node[] {
     ];
 }
 
+// A free in-browser engineering tool (calculator) on its own page.
+export function webApplication(path: string, name: string, description: string): Node {
+    return {
+        "@type": "WebApplication",
+        "@id": `${absoluteUrl(path)}#app`,
+        name,
+        url: absoluteUrl(path),
+        description,
+        applicationCategory: "EngineeringApplication",
+        operatingSystem: "Web",
+        isAccessibleForFree: true,
+        offers: FREE_OFFER,
+        publisher: { "@id": ORG_ID },
+    };
+}
+
 export function faqPage(items: FaqItem[]): Node {
     return {
         "@type": "FAQPage",

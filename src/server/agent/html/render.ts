@@ -57,7 +57,9 @@ function headMeta(page: Page, noindex = false): HeadMeta {
 export async function renderSpaPage(page: Page, visual?: string): Promise<string> {
     const meta = headMeta(page);
     const body = page.body();
-    const marker = page.ogType === "product" ? "\n\n## Specifications" : null;
+    const marker =
+        page.persistentFrom ??
+        (page.ogType === "product" ? "\n\n## Specifications" : null);
     const split = marker === null ? -1 : body.indexOf(marker);
     const fallback = split < 0 ? body : body.slice(0, split);
     const content = split < 0 ? "" : body.slice(split);
@@ -72,7 +74,7 @@ export async function renderSpaPage(page: Page, visual?: string): Promise<string
     const prerender = galleryHtml ?? visual ?? fallbackHtml;
     const persistentHtml = markdownToHtml(content);
     const persistent = content
-        ? `<section class="ga-page" id="catalog-content" ${page.ogType === "product" ? 'tabindex="-1" aria-label="Specifications and catalog details"' : 'aria-label="Catalog details"'}><div class="ga-main">${persistentHtml}</div></section>${publicFooter()}`
+        ? `<section class="ga-page" id="catalog-content" ${page.ogType === "product" ? 'tabindex="-1" aria-label="Specifications and catalog details"' : `tabindex="-1" aria-label="${esc(page.persistentLabel ?? "Catalog details")}"`}><div class="ga-main">${persistentHtml}</div></section>${publicFooter()}`
         : "";
     const rewriter = new HTMLRewriter()
         .on("html", {
