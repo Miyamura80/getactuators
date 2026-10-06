@@ -41,8 +41,8 @@ function ShortlistKey({ speed }: { speed: boolean }) {
                 </div>
                 {speed && (
                     <div>
-                        <dt><SpeedGlyph known={false} /></dt>
-                        <dd>Max speed not documented. Entries with a documented speed below yours are left out.</dd>
+                        <dt><SpeedGlyph known /> <SpeedGlyph known={false} /></dt>
+                        <dd>Max speed documented and fast enough, or not documented.</dd>
                     </div>
                 )}
                 <div>
@@ -89,16 +89,6 @@ export function RequirementShortlist({
                 {list.rows.length > 0 && <ShortlistKey speed={speedRpm != null} />}
             </header>
             {list.rows.length > 0 && (
-                <div className="req-cols" aria-hidden="true">
-                    <span>
-                        <span>Rated</span>
-                        <span>Peak</span>
-                        <span>Max speed</span>
-                        <span>Mass</span>
-                    </span>
-                </div>
-            )}
-            {list.rows.length > 0 && (
                 <ol className="req-rows">
                     {list.rows.map(({ actuator: a, torque, speed }) => {
                         const note = integrationNote(a);
@@ -116,7 +106,7 @@ export function RequirementShortlist({
                                 </dl>
                                 <p className="req-tags">
                                     <FitGauge need={torqueNm} rated={a.rated_torque_nm} peak={a.peak_torque_nm} />
-                                    {speed === "unknown" && <SpeedGlyph known={false} />}
+                                    {speed !== "none" && speedRpm != null && <SpeedGlyph known={speed === "meets"} rpm={speedRpm} />}
                                     {note && <DriverGlyph />}
                                     <span className="sr-only">
                                         {[TORQUE_FIT_LABEL[torque], speed !== "none" ? SPEED_FIT_LABEL[speed] : "", note ?? ""].filter(Boolean).join(". ")}

@@ -141,6 +141,9 @@ function Overlay({ arm, loads, active, onSelect, project, geo }: Props & { proje
             <text className="jm-head" x={12} y={20}>
                 {n} PITCH JOINTS · HELD HORIZONTAL
             </text>
+            <text className="jm-sub" x={12} y={31}>
+                GRAVITY ONLY · LINK MASS AT {Math.round(arm.comFraction * 100)}% OF EACH LINK
+            </text>
 
             {arm.links.map((l, i) => {
                 const a = stations[i] ?? 0;

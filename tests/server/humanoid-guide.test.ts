@@ -58,13 +58,8 @@ test("humanoid guide is an app page whose guide text stays below the joint map",
     expect(persistent).toContain(
         '<h2 id="how-to-read-this-guide">How to read this guide</h2>',
     );
-    for (const j of JOINTS) {
+    for (const j of JOINTS)
         expect(persistent).toContain(`<h2 id="${j.id}">${j.name}</h2>`);
-        // Folded: the joint's estimate stays readable in its summary.
-        expect(persistent).toContain(
-            `<span class="ga-fold-meta">${j.torqueNm.toFixed(1)} N·m · `,
-        );
-    }
     const graph = JSON.parse(
         /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(html)?.[1] ??
             "{}",

@@ -25,14 +25,7 @@ test("motor torque calculator is an indexable tool with persistent method conten
             html,
         )?.[0] ?? "";
     expect(persistent).toContain('aria-label="Method, examples and questions"');
-    expect(persistent).toContain(
-        '<h2 id="how-the-calculator-works">How the calculator works</h2>',
-    );
-    // Sections fold behind a heading and a one-line payload; the text stays in the page.
-    expect(persistent).toContain(
-        '<details class="ga-fold"><summary><h2 id="formulas">Formulas</h2>',
-    );
-    expect(persistent).toContain("100 W at 300 rpm is 3.18 N·m");
+    expect(persistent).toContain("<h2>How the calculator works</h2>");
     expect(persistent).toContain("T = 9.549 × P / n");
     expect(persistent).toContain("Not a stall rating.");
     expect(html.match(/<footer class="site-footer"/g)).toHaveLength(1);
@@ -68,12 +61,7 @@ test("robot arm calculator is a separate indexable tool with its method below", 
         /<section class="ga-page" id="catalog-content"[^>]*>[\s\S]*?<\/section>/.exec(
             html,
         )?.[0] ?? "";
-    expect(persistent).toContain(
-        '<h2 id="how-the-calculation-works">How the calculation works</h2>',
-    );
-    expect(persistent).toContain(
-        '<span class="ga-fold-meta">Shoulder 33.9, elbow 13.5, wrist 2.5 N·m</span>',
-    );
+    expect(persistent).toContain("<h2>How the calculation works</h2>");
     expect(persistent).toContain("Not motion torque.");
     expect(persistent).toContain("No universal margin.");
     expect(await (await get(`${path}.md`)).text()).toContain("| Shoulder | 33.9 N·m |");

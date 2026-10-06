@@ -15,7 +15,6 @@ import {
     stateFromQuery,
     stateToQuery,
 } from "../lib/motor-torque";
-import { useOpenTargetSection } from "../lib/open-target";
 import "./tools.css";
 
 export const MOTOR_TORQUE_PATH = "/tools/motor-torque-calculator";
@@ -76,7 +75,6 @@ function Field({
 
 export function MotorTorqueCalculator({ menuOpen = false }: { menuOpen?: boolean }) {
     const [state, setState] = useState<CalcState>(() => stateFromQuery(window.location.search));
-    useOpenTargetSection();
 
     useEffect(() => {
         const next = `${window.location.pathname}${stateToQuery(state)}${window.location.hash}`;
@@ -102,7 +100,8 @@ export function MotorTorqueCalculator({ menuOpen = false }: { menuOpen?: boolean
                     <p className="tool-kicker">Tool · P = T × ω</p>
                     <h1>Motor torque calculator</h1>
                     <p className="tool-lede">
-                        Any two of torque, power and speed give the third, and the actuators that reach it.
+                        Solve shaft torque, power or speed from the other two. Then see which catalog
+                        actuators reach that operating point.
                     </p>
                 </header>
 
