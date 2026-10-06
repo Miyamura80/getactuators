@@ -1,8 +1,8 @@
 import { expect, test } from "bun:test";
 import { createHash } from "node:crypto";
-import { ACTUATORS, type Actuator } from "@/catalog";
+import { ACTUATORS, type Actuator, ROBOTS } from "@/catalog";
 import { evidenceFor, fieldCaveat } from "@/catalog/evidence";
-import { actuatorPath, categoryLabel } from "@/server/agent/catalog-md";
+import { actuatorPath, categoryLabel, robotSection } from "@/server/agent/catalog-md";
 import { CATALOG_UPDATED_DATE } from "@/server/agent/freshness";
 import { markdownToHtml, pageBody } from "@/server/agent/html/body";
 import { documentTitle } from "@/server/agent/html/head";
@@ -51,7 +51,31 @@ function snapshotContent(value: string) {
         out = removeOnce(out, added);
         out = removeOnce(out, renderedAddition(added));
     }
-    return out;
+    return withoutAddedRobots(out);
+}
+
+// Humanoids added to the robots dataset after the capture. Drop exactly their
+// list rows and sections and restore the robot count; the six original arms
+// and all surrounding prose stay locked.
+const BASELINE_ROBOT_COUNT = 6;
+const ROBOTS_ADDED_AFTER_BASELINE = ROBOTS.filter((r) => r.kind === "humanoid");
+function withoutAddedRobots(body: string): string {
+    expect(ROBOTS).toHaveLength(
+        BASELINE_ROBOT_COUNT + ROBOTS_ADDED_AFTER_BASELINE.length,
+    );
+    let out = body;
+    for (const r of ROBOTS_ADDED_AFTER_BASELINE) {
+        const row = `${mdText(r.name)} by ${mdText(r.brand)}: ${r.dof} DOF, ${usd(r.price_usd)}`;
+        out = removeOnce(out, `- ${row}\n`);
+        out = removeOnce(out, `<li>${Bun.escapeHTML(row)}</li>\n`);
+        const section = robotSection(r);
+        out = removeOnce(out, `${section}\n\n`);
+        out = removeOnce(out, markdownToHtml(section));
+    }
+    return out.replaceAll(
+        `${ROBOTS.length} robots with the motor`,
+        `${BASELINE_ROBOT_COUNT} robots with the motor`,
+    );
 }
 
 // Links to the engineering tools added to the selection guide and comparison
