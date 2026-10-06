@@ -79,14 +79,19 @@ test("public SPA headers share native mobile disclosure and active route links",
     }
 });
 
-test("each public SPA surface has exactly one shared grouped footer and retains its warning", () => {
+test("each public SPA surface has exactly one shared grouped footer", () => {
     for (const page of [<App />, <Home />, <AllActuators />, <ActuatorsGallery />, <Agents />]) {
         const view = render(page);
         expect(view.container.querySelectorAll("footer.site-footer")).toHaveLength(1);
         for (const group of FOOTER_GROUPS) for (const [href, label] of group.links) {
             expect(view.container.querySelector(`footer a[href="${href}"]`)?.textContent).toBe(label);
         }
-        if (view.container.querySelector(".hero")) expect(view.container.textContent).toContain("verify against datasheets before engineering use.");
         cleanup();
     }
+});
+
+test("the full dataset table keeps its datasheet warning", () => {
+    const view = render(<AllActuators />);
+    expect(view.container.textContent).toContain("verify against datasheets before engineering use.");
+    cleanup();
 });

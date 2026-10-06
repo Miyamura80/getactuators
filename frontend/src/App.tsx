@@ -122,22 +122,10 @@ export default function App({ menuOpen = false }: { menuOpen?: boolean }) {
                 </section>
 
                 <Link to="/all" className="all-cta">
-                    <span className="all-cta-kicker">The full dataset</span>
-                    <span className="all-cta-title">
-                        Browse all {ACTUATORS.length} actuators →
-                    </span>
-                    <span className="all-cta-sub">
-                        Sort and filter every rotary actuator by torque, density, price,
-                        speed and more. Every row links back to its source.
-                    </span>
+                    <span className="all-cta-kicker">Full dataset</span>
+                    <span className="all-cta-title">Browse all {ACTUATORS.length} actuators</span>
+                    <span className="all-cta-go" aria-hidden="true">→</span>
                 </Link>
-
-                <p className="foot">
-                    <a href="/guides">Engineering guides</a> {"·"}
-                    Community dataset {"·"} v1 sourced from manufacturer pages via web
-                    search {"·"} every row links its source {"·"} verify against
-                    datasheets before engineering use.
-                </p>
             </main>
 
             <DetailPanel actuator={selected} onClose={() => setSelected(null)} />
