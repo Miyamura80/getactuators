@@ -152,20 +152,23 @@ async function fetchForRow(row: Actuator): Promise<string | null> {
     return null;
 }
 
-// Resolve one row's photo: a manual override wins, then a photo already on
-// disk (so re-runs do not re-crawl the whole set), then a fresh page crawl.
+// Resolve one row's photo: a photo already on disk wins (so re-runs neither
+// re-crawl the whole set nor re-download overrides from CDNs that re-encode on
+// every request, which churned a near-identical file into a commit each run),
+// then a manual override, then a fresh page crawl. To apply a changed override
+// to a row that already has a photo, delete its file first.
 async function resolveImage(
     row: Actuator,
     overrides: Record<string, string>,
 ): Promise<string | null> {
+    const existing = existingFile(row.id);
+    if (existing && row.image_url) return existing;
     const override = overrides[row.id];
     if (override) {
         const referer = row.product_url ?? row.source_url ?? undefined;
         const saved = await download(override, row.id, referer);
         if (saved) return saved;
     }
-    const existing = existingFile(row.id);
-    if (existing && row.image_url) return existing;
     return fetchForRow(row);
 }
 
