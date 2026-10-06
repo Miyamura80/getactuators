@@ -109,19 +109,6 @@
             "product_url": null,
             "actuator_id": null
         },
-        "unitree-g1-knee": {
-            "id": "unitree-g1-knee",
-            "name": "G1 knee joint motor",
-            "brand": "Unitree",
-            "rated_torque_nm": null,
-            "peak_torque_nm": 90,
-            "rated_speed_rpm": null,
-            "gear_ratio": null,
-            "weight_g": null,
-            "torque_density_nm_per_kg": null,
-            "product_url": null,
-            "actuator_id": null
-        },
         "unitree-h2-leg": {
             "id": "unitree-h2-leg",
             "name": "H2 leg joint motor",
@@ -152,6 +139,7 @@
     "robots": [
         {
             "id": "menlo-asimov-1",
+            "image_fit": "cover",
             "name": "Asimov 1",
             "brand": "Menlo Research",
             "kind": "humanoid",
@@ -196,10 +184,8 @@
             "price_max_usd": 21500,
             "product_url": "https://www.unitree.com/g1/",
             "image_url": "/robot-images/unitree-g1.webp",
-            "summary": "Compact 1.32 m, 35 kg humanoid with 23 joints (23 to 43 on the EDU version) driven by low-inertia internal-rotor PMSM joint motors. About 2 hours of battery life.",
-            "joints": [
-                { "role": "Knee", "motor": "unitree-g1-knee", "count": 2 }
-            ],
+            "summary": "Compact 1.32 m, 35 kg humanoid with 23 joints (23 to 43 on the EDU version) driven by low-inertia internal-rotor PMSM joint motors; the knees peak at 90 N·m. About 2 hours of battery life.",
+            "joints": [],
             "sources": [
                 "https://www.unitree.com/g1/",
                 "https://shop.unitree.com/products/unitree-g1"
@@ -233,6 +219,8 @@
         },
         {
             "id": "1x-neo",
+            "image_fit": "cover",
+            "image_url": "/robot-images/1x-neo.webp",
             "name": "NEO",
             "brand": "1X Technologies",
             "kind": "humanoid",

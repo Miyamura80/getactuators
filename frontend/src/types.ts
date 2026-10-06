@@ -126,6 +126,9 @@ export interface Robot {
     price_max_usd: number | null;
     product_url: string | null;
     image_url?: string | null;
+    // "cover" for photos shot on their own backdrop, which should fill the
+    // tile instead of sitting inset on the light studio panel.
+    image_fit?: "contain" | "cover";
     summary: string;
     joints: RobotJoint[];
     sources: string[];

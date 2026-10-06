@@ -1665,6 +1665,10 @@ table.board {
     padding: 12px;
     display: block;
 }
+.robot-thumb[data-fit="cover"] .robot-photo {
+    object-fit: cover;
+    padding: 0;
+}
 .robot-dof {
     position: absolute;
     top: 10px;

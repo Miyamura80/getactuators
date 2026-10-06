@@ -9,7 +9,7 @@ import { RobotArt } from "./RobotArt";
 
 // Price shown as a single value or a range when the product has variants.
 function priceLabel(r: Robot): string {
-    if (r.price_usd == null) return "–";
+    if (r.price_usd == null) return r.kind === "humanoid" ? "Quote" : "–";
     if (r.price_max_usd && r.price_max_usd !== r.price_usd) {
         return `${price(r.price_usd)}–${price(r.price_max_usd)}`;
     }
@@ -34,7 +34,11 @@ function RobotThumb({ robot }: { robot: Robot }) {
     const [failed, setFailed] = useState(false);
     const showPhoto = Boolean(robot.image_url) && !failed;
     return (
-        <div className="robot-thumb" data-photo={showPhoto ? "true" : "false"}>
+        <div
+            className="robot-thumb"
+            data-photo={showPhoto ? "true" : "false"}
+            data-fit={robot.image_fit ?? "contain"}
+        >
             {showPhoto ? (
                 <img
                     className="robot-photo"

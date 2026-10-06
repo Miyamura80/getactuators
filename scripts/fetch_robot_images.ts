@@ -105,10 +105,11 @@ async function main(): Promise<void> {
                 .webp({ quality: QUALITY })
                 .toBuffer();
             writeFileSync(join(OUT_DIR, `${robot.id}.webp`), out);
-            raw = raw.replace(
-                JSON.stringify(src),
-                JSON.stringify(`${PUBLIC_PREFIX}/${robot.id}.webp`),
-            );
+            const local = JSON.stringify(`${PUBLIC_PREFIX}/${robot.id}.webp`);
+            const idLine = `"id": ${JSON.stringify(robot.id)},`;
+            raw = listed
+                ? raw.replace(JSON.stringify(listed), local)
+                : raw.replace(idLine, `${idLine}\n            "image_url": ${local},`);
             saved++;
         } catch {
             failed.push(`${robot.id}: not a decodable image (${src})`);
