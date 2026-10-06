@@ -1,4 +1,5 @@
 import { ACTUATORS, type Actuator, CATEGORIES, ROBOTS } from "@/catalog";
+import { isRankable } from "@/catalog/evidence";
 import { listBrands, queryActuators } from "@/catalog/query";
 import { REPO_URL, absoluteUrl } from "../site";
 import { actuatorLabel, actuatorPath, actuatorTable, robotSection } from "./catalog-md";
@@ -14,21 +15,19 @@ export interface FaqItem {
     a: string;
 }
 
-// Rankings list verified entries only: an unchecked spec must not headline a
-// list. Unverified entries stay in the tables, gallery and API.
 export function topBy(
     field: "torque_density_nm_per_kg",
     useCase?: string,
     n = 5,
 ): Actuator[] {
     return queryActuators({ sort: field, order: "desc", use_case: useCase })
-        .filter((a) => a.verified && a[field] !== null)
+        .filter((a) => isRankable(a) && a[field] !== null)
         .slice(0, n);
 }
 
 function cheapestPerNm(n = 5): Actuator[] {
     return queryActuators({ sort: "price_per_nm", order: "asc" })
-        .filter((a) => a.verified && a.price_per_nm !== null)
+        .filter((a) => isRankable(a) && a.price_per_nm !== null)
         .slice(0, n);
 }
 

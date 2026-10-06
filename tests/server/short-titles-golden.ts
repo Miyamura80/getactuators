@@ -1,7 +1,7 @@
 import { expect, test } from "bun:test";
 import { createHash } from "node:crypto";
 import { ACTUATORS, type Actuator } from "@/catalog";
-import { evidenceFor, fieldCaveat } from "@/catalog/evidence";
+import { evidenceFor, fieldCaveat, gearboxOnlyIds } from "@/catalog/evidence";
 import { actuatorPath, categoryLabel } from "@/server/agent/catalog-md";
 import { CATALOG_UPDATED_DATE } from "@/server/agent/freshness";
 import { markdownToHtml, pageBody } from "@/server/agent/html/body";
@@ -192,16 +192,19 @@ function snapshotEngineering(body: string, id: string): string {
     return normalized;
 }
 
-// The home rankings became verified-only after the capture. Check "/" with
-// every entry treated as verified, which rebuilds the captured rankings; every
-// other byte of the page stays locked.
-async function asIfAllVerified(check: () => Promise<void>) {
+// The home rankings dropped unverified entries and bare gearboxes after the
+// capture. Check "/" with every entry rankable again, which rebuilds the
+// captured rankings; every other byte of the page stays locked.
+async function asCapturedRankings(check: () => Promise<void>) {
     const flags = ACTUATORS.map((a) => a.verified);
+    const gearboxes = [...gearboxOnlyIds];
     for (const a of ACTUATORS) a.verified = true;
+    gearboxOnlyIds.clear();
     try {
         await check();
     } finally {
         for (const [i, a] of ACTUATORS.entries()) a.verified = flags[i] ?? false;
+        for (const id of gearboxes) gearboxOnlyIds.add(id);
     }
 }
 
@@ -329,6 +332,6 @@ test("the full catalog has distinct reviewed metadata without content changes", 
         const original = baseline.pages[index];
         if (!original) throw new Error(`Missing baseline for ${page.path}`);
         const check = () => expectCatalogPage(page, original);
-        await (page.path === "/" ? asIfAllVerified(check) : check());
+        await (page.path === "/" ? asCapturedRankings(check) : check());
     }
 });
