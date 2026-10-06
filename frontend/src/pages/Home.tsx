@@ -89,21 +89,10 @@ export function Home({ menuOpen = false }: { menuOpen?: boolean }) {
             <RobotShowcase />
 
             <Link to="/all" className="all-cta">
-                <span className="all-cta-kicker">The full dataset</span>
-                <span className="all-cta-title">
-                    Browse all {ACTUATORS.length} actuators →
-                </span>
-                <span className="all-cta-sub">
-                    Sort and filter every rotary actuator by torque, density, price,
-                    speed and more. Every row links back to its source.
-                </span>
+                <span className="all-cta-kicker">Full dataset</span>
+                <span className="all-cta-title">Browse all {ACTUATORS.length} actuators</span>
+                <span className="all-cta-go" aria-hidden="true">→</span>
             </Link>
-
-            <p className="foot">
-                Community dataset {"·"} v1 sourced from manufacturer pages via web
-                search {"·"} category art is illustrative, not the listed hardware {"·"}
-                verify against datasheets before engineering use.
-            </p>
                 <PublicFooter />
         </div>
     );
