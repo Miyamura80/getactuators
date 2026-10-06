@@ -165,7 +165,7 @@
             "price_usd": 15000,
             "price_max_usd": 20000,
             "product_url": "https://menlo.ai/asimov-1",
-            "image_url": "/robot-images/menlo-asimov-1.webp",
+            "image_url": "https://menlo.ai/images/asimov-1-front-1.webp",
             "summary": "Open-source 1.2 m, 35 kg biped humanoid for whole-body control and locomotion research, sold as a DIY kit with full BOM, CAD and a MuJoCo sim on GitHub. Rated for 5 kg per arm.",
             "joints": [
                 { "role": "Hip pitch + waist yaw", "motor": "asimov-ec-a6416", "count": 3 },
@@ -246,7 +246,6 @@
             "price_usd": 20000,
             "price_max_usd": null,
             "product_url": "https://www.1x.tech/neo",
-            "image_url": "/robot-images/1x-neo.webp",
             "summary": "Home humanoid with tendon-driven actuation, a soft lattice-polymer body and 22-DOF hands. Weighs 30 kg and carries 25 kg.",
             "joints": [],
             "sources": [

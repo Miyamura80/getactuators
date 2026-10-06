@@ -2,7 +2,8 @@
 // URL of the manufacturer's own product photo; this downloads it, resizes it to
 // a WebP under frontend/public/robot-images and rewrites image_url to the local
 // path, so the robots section never hotlinks a CDN that can rotate or block.
-// Robots already pointing at a local path are skipped. Meant to run where
+// A robot with no image_url gets its product page's share image (og:image)
+// instead. Robots already pointing at a local path are skipped. Meant to run where
 // outbound HTTPS is open (the fetch-images workflow or a local machine).
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -55,6 +56,26 @@ async function download(url: string, referer: string | null): Promise<Buffer | n
     }
 }
 
+// The page's own share-card photo, resolved against the page URL.
+async function shareImage(pageUrl: string): Promise<string | null> {
+    try {
+        const res = await fetch(pageUrl, {
+            headers: { "User-Agent": UA, Accept: "text/html" },
+            redirect: "follow",
+            signal: AbortSignal.timeout(30_000),
+        });
+        if (!res.ok) return null;
+        const html = await res.text();
+        const tag =
+            /<meta[^>]+property=["']og:image["'][^>]*>/i.exec(html)?.[0] ??
+            /<meta[^>]+name=["']twitter:image["'][^>]*>/i.exec(html)?.[0];
+        const content = tag && /content=["']([^"']+)["']/i.exec(tag)?.[1];
+        return content ? new URL(content.replaceAll("&amp;", "&"), res.url).href : null;
+    } catch {
+        return null;
+    }
+}
+
 async function main(): Promise<void> {
     // Rewrite URLs in the raw text rather than re-serialising, so the file's
     // hand-kept layout (one-line joint rows) survives.
@@ -64,8 +85,14 @@ async function main(): Promise<void> {
     let saved = 0;
     const failed: string[] = [];
     for (const robot of data.robots) {
-        const src = robot.image_url;
-        if (!src || !/^https?:\/\//.test(src)) continue;
+        const listed = robot.image_url;
+        if (listed && !/^https?:\/\//.test(listed)) continue;
+        const src =
+            listed ?? (robot.product_url && (await shareImage(robot.product_url)));
+        if (!src) {
+            failed.push(`${robot.id}: no image_url and no share image`);
+            continue;
+        }
         const buf = await download(src, robot.product_url);
         if (!buf) {
             failed.push(`${robot.id}: ${src}`);
