@@ -182,8 +182,7 @@ export const AGENT_CLIENTS: readonly AgentClient[] = [
         snippet: null,
         steps: [
             "Add → Create custom MCP server",
-            "Paste the URL, Authentication: No Auth",
-            "Tick the risk box → Create as a plugin",
+            "Paste the URL, Authentication: No Auth → Create as a plugin",
         ],
         note: "Copies the URL and opens ChatGPT Plugins.",
     },
