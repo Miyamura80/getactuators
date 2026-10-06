@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { PublicHeader } from "../components/PublicHeader";
 import { Nomograph } from "../components/Nomograph";
 import { RequirementShortlist } from "../components/RequirementShortlist";
+import { useToolResultEvent } from "../lib/tool-events";
 import {
     type CalcState,
     type Quantity,
@@ -85,6 +86,11 @@ export function MotorTorqueCalculator({ menuOpen = false }: { menuOpen?: boolean
     const shaft = result.ok ? result.shaft : null;
     const gear = gearboxFrom(state);
     const motor = shaft && gear ? motorSide(shaft, gear) : null;
+
+    useToolResultEvent(
+        JSON.stringify([state.solve, state.values, state.ratio, state.efficiency]),
+        shaft ? state.solve : null,
+    );
 
     const set = (patch: Partial<CalcState>) => setState((s) => ({ ...s, ...patch }));
     const solvedSi = shaft

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { PublicHeader } from "../components/PublicHeader";
 import { ArmDiagram } from "../components/ArmDiagram";
 import { RequirementShortlist } from "../components/RequirementShortlist";
+import { useToolResultEvent } from "../lib/tool-events";
 import {
     ARM_TORQUE_PATH,
     type Arm,
@@ -137,6 +138,7 @@ export function ArmTorqueCalculator({ menuOpen = false }: { menuOpen?: boolean }
 
     const ok = validArm(arm);
     const loads = useMemo(() => (ok ? jointLoads(arm) : []), [arm, ok]);
+    useToolResultEvent(JSON.stringify(arm), loads.length > 0 ? "holding" : null);
     const n = arm.links.length;
     const joint = Math.min(active, n - 1);
     const need = loads[joint]?.torqueNm ?? 0;

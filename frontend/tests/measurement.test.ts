@@ -153,6 +153,37 @@ test("gallery and dedicated comparison actions are measured only on bounded comp
     await w.happyDOM.close();
 });
 
+test("engineering tool events carry the route's tool, an allowlisted quantity and catalog IDs only", async () => {
+    const w = await browser();
+    const dispatch = (detail: object) => w.dispatchEvent(new w.CustomEvent("actuatorlist:tool", { detail }));
+    w.history.pushState(null, "", "/tools/motor-torque-calculator?t=12&n=300");
+    dispatch({ action: "result", quantity: "power" });
+    click(w, "Allow analytics");
+    expect(commands(w).filter((c) => c[1] === "tool_result")).toHaveLength(0);
+    dispatch({ action: "result", quantity: "power", torque: 12 });
+    dispatch({ action: "result", quantity: "12 Nm" });
+    dispatch({ action: "shortlist", target: "product", productIds: ["cubemars-ak80-9"] });
+    dispatch({ action: "shortlist", target: "product", productIds: ["unknown"] });
+    dispatch({ action: "shortlist", target: "compare", productIds: ["xiaomi-cybergear", "cubemars-ak80-9"] });
+    dispatch({ action: "shortlist", target: "compare", productIds: ["cubemars-ak80-9", "cubemars-ak80-9"] });
+    const page = "https://actuatorlist.com/tools/motor-torque-calculator";
+    const base = { source_path: page, page_location: page, page_referrer: "", surface: "tool", transport_type: "beacon" };
+    expect(commands(w).filter((c) => c[0] === "event" && c[1] !== "page_view").map((c) => [c[1], c[2]])).toEqual([
+        ["tool_result", { ...base, tool: "motor-torque", quantity: "power" }],
+        ["tool_shortlist_click", { ...base, tool: "motor-torque", target: "product", product_id: "cubemars-ak80-9" }],
+        ["tool_shortlist_click", { ...base, tool: "motor-torque", target: "compare", product_id_1: "cubemars-ak80-9", product_id_2: "xiaomi-cybergear", product_count: 2 }],
+    ]);
+    w.history.pushState(null, "", "/tools/robot-arm-torque-calculator");
+    dispatch({ action: "result", quantity: "holding" });
+    expect(commands(w).filter((c) => c[1] === "tool_result").map((c) => (c[2] as Record<string, unknown>).tool)).toEqual(["motor-torque", "arm-torque"]);
+    for (const path of ["/all", "/guides/humanoid-robot-actuators", "/tools/unknown"]) {
+        w.history.pushState(null, "", path);
+        dispatch({ action: "result", quantity: "torque" });
+        dispatch({ action: "shortlist", target: "product", productIds: ["cubemars-ak80-9"] });
+    }
+    expect(commands(w).filter((c) => String(c[1]).startsWith("tool_"))).toHaveLength(4);
+    await w.happyDOM.close();
+});
 test("page views count canonical pathname changes only after consent, and resuming never duplicates the current view", async () => {
     const w = await browser();
     w.history.pushState(null, "", "/actuators?q=private");

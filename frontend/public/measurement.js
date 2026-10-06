@@ -139,6 +139,27 @@
         const productParams = Object.fromEntries(ids.sort().map((value, index) => [`product_id_${index + 1}`, value]));
         emit(`compare_${detail.action}`, { ...productParams, product_count: ids.length, surface: "comparison" });
     });
+    // Engineering tools: the tool comes from the route, never from the page, and
+    // no typed input value is sent.
+    const tools = { "/tools/motor-torque-calculator": "motor-torque", "/tools/robot-arm-torque-calculator": "arm-torque" };
+    window.addEventListener("actuatorlist:tool", (event) => {
+        const detail = event.detail;
+        const tool = tools[location.pathname];
+        if (!detail || !tool) return;
+        if (detail.action === "result") {
+            if (!["torque", "power", "speed", "holding"].includes(detail.quantity)) return;
+            emit("tool_result", { tool, quantity: detail.quantity, surface: "tool" });
+        } else if (detail.action === "shortlist" && Array.isArray(detail.productIds)) {
+            const ids = [...new Set(detail.productIds)];
+            if (!ids.length || ids.length > 4 || !ids.every((value) => products.has(value))) return;
+            if (detail.target === "product" && ids.length === 1) {
+                emit("tool_shortlist_click", { tool, target: "product", product_id: ids[0], surface: "tool" });
+            } else if (detail.target === "compare" && ids.length >= 2) {
+                const productParams = Object.fromEntries(ids.sort().map((value, index) => [`product_id_${index + 1}`, value]));
+                emit("tool_shortlist_click", { tool, target: "compare", ...productParams, product_count: ids.length, surface: "tool" });
+            }
+        }
+    });
     window.addEventListener("storage", (event) => {
         if ((event.key === key || event.key === null) && event.newValue !== "granted") reject();
     });

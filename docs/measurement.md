@@ -24,7 +24,7 @@ Page location/referrer and source/destination paths are origin + pathname only (
 
 ## Event dictionary
 
-All custom events include sanitized `source_path`, `page_location`, `page_referrer`, fixed `surface` and beacon transport. Register event-scoped custom dimensions for `product_id`, `surface`, `source_path`, `destination_path` and (if useful) `product_id_1` through `product_id_4`; register `product_count` as a custom metric.
+All custom events include sanitized `source_path`, `page_location`, `page_referrer`, fixed `surface` and beacon transport. Register event-scoped custom dimensions for `product_id`, `surface`, `source_path`, `destination_path`, `tool`, `quantity`, `target` and (if useful) `product_id_1` through `product_id_4`; register `product_count` as a custom metric.
 
 | Event | Trigger | Additional parameters | Interpretation |
 | --- | --- | --- | --- |
@@ -33,8 +33,10 @@ All custom events include sanitized `source_path`, `page_location`, `page_referr
 | `compare_open` | Actual Compare control activation with 2–4 distinct selected catalog products on `/all` or `/actuators` | `product_id_1`…`product_id_4`, `product_count` | Comparison engagement, not revenue |
 | `compare_update` | User removes a row from an open comparison, leaving 1–3 products | Same ID fields and count | Continued comparison usage; selection toggles and renders do not emit |
 | `guide_product_click` | Guide/comparison anchor to its matching known catalog product | `product_id`, sanitized `destination_path` | Editorial contribution to product discovery; ordinary gallery links do not emit |
+| `tool_result` | First valid result after the visitor edits an input on `/tools/motor-torque-calculator` or `/tools/robot-arm-torque-calculator`; once per page view. A result already shown at load (defaults or a shared link) does not emit | `tool` (`motor-torque`, `arm-torque`, from the route), `quantity` (`torque`, `power`, `speed`, `holding`) | Tool use. No typed value, unit or result is sent |
+| `tool_shortlist_click` | Left or middle click on a tool shortlist product link or its "Compare top N" link | `tool`, `target` (`product` or `compare`), then `product_id`, or `product_id_1`…`product_id_4` and `product_count` | Handoff from a computed requirement into the catalog, not a sale |
 
-Surfaces: `drawer`, `product`, `editorial-source`, `editorial`, `comparison`. General research citations, source-list links not matching primary catalog URLs and paper links are not automatically promoted to conversion events. The comparative source allowlist is explicit in `src/server/measurement.ts`; extend it deliberately when primary documents change. Catalog link click counts measure intent, not verified purchase/contact completion.
+Surfaces: `drawer`, `product`, `editorial-source`, `editorial`, `comparison`, `tool`. The humanoid guide's joint shortlists are server-rendered editorial links, so they count as `guide_product_click`. General research citations, source-list links not matching primary catalog URLs and paper links are not automatically promoted to conversion events. The comparative source allowlist is explicit in `src/server/measurement.ts`; extend it deliberately when primary documents change. Catalog link click counts measure intent, not verified purchase/contact completion.
 
 Manual `page_view` sends once on opt-in/current page, then for canonical pathname changes after consent. Query/hash edits, StrictMode renders and duplicate bootstrap executions do not add views. Re-grant on the same page does not replay the prior view. Default GA events such as session start/engagement can still be produced by Google's tag after consent; disabling Enhanced Measurement and real-stream network verification are necessary to audit their payloads.
 
@@ -61,7 +63,8 @@ With the owner's real stream and consent:
 - On the standalone guide/comparison, follow a catalog link: `guide_product_click`; paper citations and gallery links must not produce it.
 - Change query/hash: no view. Navigate a real SPA path: one sanitized view. Audit all collection requests, including Google's automatically collected events, for unwanted URL fields.
 - Withdraw via Analytics preferences: no later site events, GA disable flag true, accessible GA cookies removed, necessary cookies untouched. Check a second tab and delayed/blocked tag. Regrant must not load a second tag or replay old clicks.
-- Verify all five names and intended parameters in the real property's Realtime/DebugView, then verify reporting/custom dimensions. Save dated screenshots/results separately; until this is done, **delivery is unverified**.
+- On each calculator, change an input: one `tool_result`; editing again adds none. Click a shortlist product and the compare link: one `tool_shortlist_click` each.
+- Verify all seven names and intended parameters in the real property's Realtime/DebugView, then verify reporting/custom dimensions. Save dated screenshots/results separately; until this is done, **delivery is unverified**.
 
 ## Weekly Search Console review
 
