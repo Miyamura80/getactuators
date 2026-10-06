@@ -70,9 +70,9 @@ function Logo({ src }: { src: string }) {
     return <span className="cw-logo" style={{ WebkitMask: mask, mask }} aria-hidden="true" />;
 }
 
-function Steps({ steps, label }: { steps: string[]; label: string }) {
+function Steps({ steps, label, open = false }: { steps: string[]; label: string; open?: boolean }) {
     return (
-        <details className="cw-steps">
+        <details className="cw-steps" open={open}>
             <summary>{label}</summary>
             <ol>
                 {steps.map((s) => (
@@ -114,7 +114,8 @@ function Panel({ client }: { client: AgentClient }) {
                 {client.steps && (
                     <Steps
                         steps={client.steps}
-                        label={pageOnly ? "Full click-path" : "If the link does not open"}
+                        label={pageOnly ? "Then, in ChatGPT" : "If the link does not open"}
+                        open={pageOnly}
                     />
                 )}
             </div>

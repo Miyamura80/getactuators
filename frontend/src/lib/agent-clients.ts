@@ -181,13 +181,11 @@ export const AGENT_CLIENTS: readonly AgentClient[] = [
         installUrl: CHATGPT_LINK,
         snippet: null,
         steps: [
-            "Open chatgpt.com/plugins on the web",
-            "Click Add, then Create custom MCP server",
-            "Name it actuatorlist, paste the URL, Authentication: No authentication",
-            "Tick I understand and want to continue, then click Create as a plugin",
-            "Start a new chat so the tools menu refreshes; enable the app from the + menu if needed",
+            "Add → Create custom MCP server",
+            "Paste the URL, Authentication: No Auth",
+            "Tick the risk box → Create as a plugin",
         ],
-        note: "Copies the URL, then opens ChatGPT Plugins: click Add, then Create custom MCP server, and paste it. Plus, Pro, Business, Enterprise and Edu; on Business, Enterprise and Edu an admin must allow custom MCP connectors first.",
+        note: "Copies the URL and opens ChatGPT Plugins.",
     },
     {
         id: "codex",
