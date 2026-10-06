@@ -1,7 +1,6 @@
 import { ACTUATORS } from "../lib/data";
 import type { Actuator } from "../types";
 import { compareHref } from "../lib/compare-selection";
-import { shortlistClick } from "../lib/tool-events";
 import { fmt } from "../lib/motor-torque";
 import { ActuatorThumb } from "./ActuatorThumb";
 import { BrandBadge } from "./BrandBadge";
@@ -62,6 +61,16 @@ function ShortlistKey({ speed }: { speed: boolean }) {
     );
 }
 
+// Shortlist links measured by /measurement.js (tool_shortlist_click). It reads
+// the compare set from the link's own href.
+function measured(productId?: string) {
+    return {
+        "data-measure-event": "tool_shortlist_click",
+        "data-measure-surface": "tool",
+        ...(productId ? { "data-product-id": productId } : {}),
+    };
+}
+
 // The handoff from a computed requirement into the catalog: which documented
 // actuators reach it, how (rated vs peak), and what remains unknown.
 export function RequirementShortlist({
@@ -97,10 +106,10 @@ export function RequirementShortlist({
                         const note = integrationNote(a);
                         return (
                             <li key={a.id} className={`req-row fit-${torque}`}>
-                                <a href={`/actuators/${encodeURIComponent(a.id)}`} className="req-thumb" tabIndex={-1} aria-hidden="true" {...shortlistClick("product", [a.id])}>
+                                <a href={`/actuators/${encodeURIComponent(a.id)}`} className="req-thumb" tabIndex={-1} aria-hidden="true" {...measured(a.id)}>
                                     <ActuatorThumb actuator={a} />
                                 </a>
-                                <a href={`/actuators/${encodeURIComponent(a.id)}`} className="req-name" {...shortlistClick("product", [a.id])}>
+                                <a href={`/actuators/${encodeURIComponent(a.id)}`} className="req-name" {...measured(a.id)}>
                                     <BrandBadge brand={a.brand} />
                                     {a.name}
                                 </a>
@@ -130,7 +139,7 @@ export function RequirementShortlist({
             )}
             <p className="req-actions">
                 {picks.length >= 2 && (
-                    <a className="req-cta" href={compareHref(picks)} {...shortlistClick("compare", picks)}>
+                    <a className="req-cta" href={compareHref(picks)} {...measured()}>
                         Compare top {picks.length} side by side →
                     </a>
                 )}

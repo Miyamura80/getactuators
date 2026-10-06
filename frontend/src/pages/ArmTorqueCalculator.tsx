@@ -138,15 +138,20 @@ export function ArmTorqueCalculator({ menuOpen = false }: { menuOpen?: boolean }
 
     const ok = validArm(arm);
     const loads = useMemo(() => (ok ? jointLoads(arm) : []), [arm, ok]);
-    useToolResultEvent(JSON.stringify(arm), loads.length > 0 ? "holding" : null);
+    const markEdited = useToolResultEvent(loads.length > 0 ? "holding" : null);
+    // Visitor edits only; the page tools above call setArm directly.
+    const editArm = (next: Arm | ((a: Arm) => Arm)) => {
+        markEdited();
+        setArm(next);
+    };
     const n = arm.links.length;
     const joint = Math.min(active, n - 1);
     const need = loads[joint]?.torqueNm ?? 0;
 
     const setLink = (i: number, patch: Partial<Link>) =>
-        setArm((a) => ({ ...a, links: a.links.map((l, j) => (j === i ? { ...l, ...patch } : l)) }));
+        editArm((a) => ({ ...a, links: a.links.map((l, j) => (j === i ? { ...l, ...patch } : l)) }));
     const setCount = (count: number) =>
-        setArm((a) => {
+        editArm((a) => {
             const links = a.links.slice(0, count);
             while (links.length < count) links.push({ length: 0.1, mass: 0.2, actuatorMass: 0 });
             // The new last link carries the payload, not another actuator.
@@ -201,11 +206,11 @@ export function ArmTorqueCalculator({ menuOpen = false }: { menuOpen?: boolean }
                         <div className="arm-row arm-foot">
                             <label className="arm-field">
                                 <span>Payload + gripper</span>
-                                <NumberField label="Payload mass" suffix="kg" value={arm.payload} onValue={(v) => setArm((a) => ({ ...a, payload: v }))} />
+                                <NumberField label="Payload mass" suffix="kg" value={arm.payload} onValue={(v) => editArm((a) => ({ ...a, payload: v }))} />
                             </label>
                             <label className="arm-field">
                                 <span>Link mass acts at</span>
-                                <NumberField label="Link center of mass" suffix="% of length" value={Math.round(arm.comFraction * 100)} onValue={(v) => setArm((a) => ({ ...a, comFraction: Math.min(Math.round(v), 100) / 100 }))} />
+                                <NumberField label="Link center of mass" suffix="% of length" value={Math.round(arm.comFraction * 100)} onValue={(v) => editArm((a) => ({ ...a, comFraction: Math.min(Math.round(v), 100) / 100 }))} />
                             </label>
                             <fieldset className="arm-count">
                                 <legend>Links</legend>
@@ -219,7 +224,7 @@ export function ArmTorqueCalculator({ menuOpen = false }: { menuOpen?: boolean }
                         <div className="calc-examples">
                             <span>Examples</span>
                             {PRESETS.map((p) => (
-                                <button key={p.label} type="button" onClick={() => setArm(p.arm)}>
+                                <button key={p.label} type="button" onClick={() => editArm(p.arm)}>
                                     {p.label}
                                 </button>
                             ))}

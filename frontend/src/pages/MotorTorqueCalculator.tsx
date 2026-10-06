@@ -87,12 +87,12 @@ export function MotorTorqueCalculator({ menuOpen = false }: { menuOpen?: boolean
     const gear = gearboxFrom(state);
     const motor = shaft && gear ? motorSide(shaft, gear) : null;
 
-    useToolResultEvent(
-        JSON.stringify([state.solve, state.values, state.ratio, state.efficiency]),
-        shaft ? state.solve : null,
-    );
+    const markEdited = useToolResultEvent(shaft ? state.solve : null);
 
-    const set = (patch: Partial<CalcState>) => setState((s) => ({ ...s, ...patch }));
+    const set = (patch: Partial<CalcState>) => {
+        markEdited();
+        setState((s) => ({ ...s, ...patch }));
+    };
     const solvedSi = shaft
         ? { torque: shaft.torqueNm, power: shaft.powerW, speed: shaft.speedRpm }[state.solve]
         : null;
