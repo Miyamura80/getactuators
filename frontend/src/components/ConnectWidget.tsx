@@ -70,9 +70,9 @@ function Logo({ src }: { src: string }) {
     return <span className="cw-logo" style={{ WebkitMask: mask, mask }} aria-hidden="true" />;
 }
 
-function Steps({ steps, label }: { steps: string[]; label: string }) {
+function Steps({ steps, label, open = false }: { steps: string[]; label: string; open?: boolean }) {
     return (
-        <details className="cw-steps">
+        <details className="cw-steps" open={open}>
             <summary>{label}</summary>
             <ol>
                 {steps.map((s) => (
@@ -83,7 +83,7 @@ function Steps({ steps, label }: { steps: string[]; label: string }) {
     );
 }
 
-// ChatGPT's link opens an empty dialog, so put the URL on the clipboard first
+// ChatGPT's link only opens its Plugins page, so put the URL on the clipboard first
 // and then navigate. Modified clicks keep their default (new tab) and just copy.
 function copyThenOpen(e: ReactMouseEvent<HTMLAnchorElement>, href: string) {
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) {
@@ -98,23 +98,24 @@ function copyThenOpen(e: ReactMouseEvent<HTMLAnchorElement>, href: string) {
 
 function Panel({ client }: { client: AgentClient }) {
     if (client.installUrl) {
-        const dialogOnly = client.effort === "dialog-only";
+        const pageOnly = client.effort === "page-only";
         const href = client.installUrl;
         return (
             <div className="cw-panel">
                 <a
                     className="cw-install"
                     href={href}
-                    onClick={dialogOnly ? (e) => copyThenOpen(e, href) : undefined}
+                    onClick={pageOnly ? (e) => copyThenOpen(e, href) : undefined}
                 >
                     <Logo src={client.logo} />
-                    {dialogOnly ? `Open ${client.name} connector setup` : `Add to ${client.name}`}
+                    {pageOnly ? `Open ${client.name} Plugins` : `Add to ${client.name}`}
                 </a>
                 {client.note && <p className="cw-note">{client.note}</p>}
                 {client.steps && (
                     <Steps
                         steps={client.steps}
-                        label={dialogOnly ? "Full click-path" : "If the link does not open"}
+                        label={pageOnly ? "Then, in ChatGPT" : "If the link does not open"}
+                        open={pageOnly}
                     />
                 )}
             </div>

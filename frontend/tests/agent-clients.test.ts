@@ -3,6 +3,7 @@
 import { describe, expect, test } from "bun:test";
 import {
     AGENT_CLIENTS,
+    CHATGPT_LINK,
     DEFAULT_CLIENT_ID,
     MCP_URL,
     SERVER_NAME,
@@ -52,6 +53,13 @@ describe("agent client install formats", () => {
         expect(url.searchParams.get("connectorUrl")).toBe(MCP_URL);
     });
 
+    test("ChatGPT link is the plain Plugins page (no prefill deep link exists)", () => {
+        expect(CHATGPT_LINK).toBe("https://chatgpt.com/plugins");
+        const text = JSON.stringify(findClient("chatgpt")).toLowerCase();
+        expect(text).not.toContain("developer mode");
+        expect(text).toContain("create custom mcp server");
+    });
+
     test("Goose link declares streamable HTTP", () => {
         const q = new URLSearchParams(gooseLink().split("?")[1]);
         expect(q.get("type")).toBe("streamable_http");
@@ -85,7 +93,7 @@ describe("client matrix", () => {
     test("every client gives the visitor something to act on", () => {
         for (const c of AGENT_CLIENTS) {
             expect(c.installUrl != null || c.snippet != null).toBe(true);
-            if (c.effort === "one-click" || c.effort === "dialog-only")
+            if (c.effort === "one-click" || c.effort === "page-only")
                 expect(c.installUrl).not.toBeNull();
         }
     });
