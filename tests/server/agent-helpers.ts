@@ -1,3 +1,4 @@
+import { expect } from "bun:test";
 import { type FetchHandler, createHandler } from "@/server/app";
 import { loadRegistry } from "@/server/registry";
 import { SITE_URL } from "@/server/site";
@@ -75,4 +76,16 @@ export function visibleText(html: string): string {
         .replace(/<[^>]+>/g, " ")
         .replace(/\s+/g, " ")
         .trim();
+}
+
+// A served page carries the same title in <title>, og:title and twitter:title.
+export async function expectTitles(path: string, title: string) {
+    const response = await get(path);
+    expect(response.status).toBe(200);
+    const html = await response.text();
+    const escaped = Bun.escapeHTML(title);
+    expect(html).toContain(`<title>${escaped}</title>`);
+    expect(html).toContain(`<meta property="og:title" content="${escaped}">`);
+    expect(html).toContain(`<meta name="twitter:title" content="${escaped}">`);
+    return html;
 }
