@@ -9,6 +9,8 @@ interface Props {
     onSelect: (id: string) => void;
 }
 
+// Verified entries only, as on the server rankings: an unchecked spec must
+// not headline a chart. The leaderboard table below still lists every entry.
 function topBy(
     list: Actuator[],
     metric: (a: Actuator) => number | null,
@@ -16,7 +18,7 @@ function topBy(
     n: number,
 ): Actuator[] {
     return list
-        .filter((a) => metric(a) != null)
+        .filter((a) => a.verified && metric(a) != null)
         .sort((a, b) => {
             const va = metric(a) as number;
             const vb = metric(b) as number;
