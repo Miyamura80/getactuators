@@ -183,6 +183,30 @@ describe("actuators dataset integrity", () => {
         }
     });
 
+    // The catalog JSON is edited by hand, so nothing else derives these.
+    test("torque density and price per Nm are filled whenever their inputs are", () => {
+        const positive = (v: unknown): v is number => typeof v === "number" && v > 0;
+        for (const row of rows) {
+            if (typeof row.peak_torque_nm === "number" && positive(row.weight_g))
+                expect([row.id, row.torque_density_nm_per_kg]).toEqual([
+                    row.id,
+                    expect.any(Number),
+                ]);
+            const priced =
+                typeof row.price_usd === "number" && positive(row.peak_torque_nm);
+            expect([row.id, row.price_per_nm !== null]).toEqual([row.id, priced]);
+        }
+    });
+
+    test("data_source follows verified", () => {
+        for (const row of rows) {
+            expect([row.id, row.data_source]).toEqual([
+                row.id,
+                row.verified ? "spot_checked" : "web_search",
+            ]);
+        }
+    });
+
     test("price per Nm matches price over peak torque when all present", () => {
         for (const row of rows) {
             const { price_per_nm: ppn, price_usd: price, peak_torque_nm: peak } = row;
