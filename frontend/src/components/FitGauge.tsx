@@ -53,8 +53,10 @@ export function FitGauge({
 }
 
 // Small line glyphs in the gauge's stroke weight, each with a tooltip.
-export function SpeedGlyph({ known, rpm }: { known: boolean; rpm: number }) {
-    const label = known ? `Max speed documented at or above ${fmt(rpm)} rpm` : "Max speed not documented";
+export function SpeedGlyph({ known, rpm }: { known: boolean; rpm?: number }) {
+    const label = known
+        ? `Max speed documented${rpm ? ` at or above ${fmt(rpm)} rpm` : ""}`
+        : "Max speed not documented";
     return (
         <svg className={known ? "fit-glyph ok" : "fit-glyph unknown"} viewBox="0 0 20 20" width={20} height={20} role="img" aria-label={label}>
             <title>{label}</title>

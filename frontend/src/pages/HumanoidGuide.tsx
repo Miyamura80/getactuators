@@ -16,7 +16,7 @@ import "./tools.css";
 // Same text as the guide's Markdown (the server fallback and the .md twin).
 const GUIDE_H1 = "Humanoid robot actuators: what each joint needs and which catalog parts reach it";
 const LEDE =
-    "A humanoid has no single right actuator. The knee, the ankle and the wrist load their motors in different ways, so each joint gets its own shortlist. Select a numbered joint on the map to see its static torque estimate and the catalog entries that reach it. Each estimate is a worked example for a hypothetical robot, and the shortlists come straight from the catalog data: where a value is not documented, it is reported as unknown.";
+    "A humanoid has no single right actuator: each joint loads its motor differently. Pick a numbered joint for its static torque estimate and the catalog parts that reach it.";
 
 const W = 400;
 const H = 520;
@@ -113,9 +113,6 @@ function Callouts({
                     </a>
                 );
             })}
-            <text className="jm-sub" x={W / 2} y={H - 10} textAnchor="middle">
-                G1-CLASS DRAWING · ESTIMATES FOR A HYPOTHETICAL 1.5 M, 50 KG ROBOT
-            </text>
         </>
     );
 }
@@ -156,7 +153,6 @@ function BillOfJoints({ focus, setFocus }: Focus) {
                 <tr>
                     <th scope="col">#</th>
                     <th scope="col">Joint</th>
-                    <th scope="col">DOF</th>
                     <th scope="col">N·m</th>
                     <th scope="col">Catalog screen</th>
                 </tr>
@@ -175,7 +171,6 @@ function BillOfJoints({ focus, setFocus }: Focus) {
                             <th scope="row">
                                 <a href={`#${j.id}`}>{j.name}</a>
                             </th>
-                            <td>{j.dof.split(" ")[0]}</td>
                             <td className="jm-val">{j.torqueNm.toFixed(1)}</td>
                             <td>
                                 <ScreenPips total={list.total} rated={rated} />
@@ -239,11 +234,29 @@ export function HumanoidGuide({ menuOpen = false }: { menuOpen?: boolean }) {
                     />
                     <div className="jm-side">
                         <BillOfJoints focus={focus} setFocus={setFocus} />
-                        <p className="jm-note">
-                            Static torque is a floor: gait, stairs and impacts add dynamic load this map does not
-                            estimate. Screens count humanoid-tagged catalog entries whose documented rated or peak
-                            torque reaches the estimate.
-                        </p>
+                        <details className="req-key jm-key">
+                            <summary>
+                                <svg viewBox="0 0 16 16" width={14} height={14} aria-hidden="true">
+                                    <circle cx="8" cy="8" r="6.5" />
+                                    <path d="M8 7v4.5M8 4.6v.1" />
+                                </svg>
+                                Key
+                            </summary>
+                            <dl>
+                                <div>
+                                    <dt><ScreenPips total={3} rated={2} /></dt>
+                                    <dd>One pip per humanoid-tagged entry that reaches the estimate: filled if its rated torque does, hollow if only its peak does.</dd>
+                                </div>
+                                <div>
+                                    <dt><ScreenPips total={2} rated={0} /></dt>
+                                    <dd>No rated fit: peak only, short duty.</dd>
+                                </div>
+                            </dl>
+                            <p>
+                                Estimates are static, for a hypothetical 1.5 m, 50 kg robot. Gait, stairs and impacts
+                                add dynamic load on top. Undocumented values stay unknown.
+                            </p>
+                        </details>
                     </div>
                 </div>
                 <a className="tool-method-link" href="#how-to-read-this-guide">

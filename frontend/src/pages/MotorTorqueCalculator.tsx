@@ -216,8 +216,7 @@ export function MotorTorqueCalculator({ menuOpen = false }: { menuOpen?: boolean
                 </div>
 
                 <p className="calc-boundary">
-                    Mechanical shaft power, not electrical input. A computed torque is a requirement, not a
-                    motor capability or a continuous-duty rating.
+                    Mechanical shaft power, not electrical input. The torque is a requirement, not a motor rating.
                 </p>
 
                 {shaft && shaft.torqueNm > 0 && (

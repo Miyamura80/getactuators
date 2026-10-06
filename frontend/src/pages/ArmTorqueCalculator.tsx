@@ -183,7 +183,14 @@ export function ArmTorqueCalculator({ menuOpen = false }: { menuOpen?: boolean }
                                 <NumberField label={`Link ${i + 1} length`} suffix="m" caption="Length" value={l.length} onValue={(v) => setLink(i, { length: v })} />
                                 <NumberField label={`Link ${i + 1} mass`} suffix="kg" caption="Link mass" value={l.mass} onValue={(v) => setLink(i, { mass: v })} />
                                 {i === n - 1 ? (
-                                    <span className="arm-na">Payload sits here</span>
+                                    <span className="arm-na" title="Payload sits at the tip">
+                                        {/* The claw from the drawing: this link ends at the payload, not a joint. */}
+                                        <svg viewBox="0 0 24 24" width={22} height={22} aria-hidden="true">
+                                            <path d="M3 12h5M8 8l4-3l7 2l-2 3M8 16l4 3l7-2l-2-3" />
+                                            <circle cx="17" cy="12" r="2.5" />
+                                        </svg>
+                                        <span className="sr-only">Payload sits here</span>
+                                    </span>
                                 ) : (
                                     <NumberField label={`${jointName(i + 1, n)} actuator mass`} suffix="kg" caption={`${jointName(i + 1, n)} actuator`} value={l.actuatorMass} onValue={(v) => setLink(i, { actuatorMass: v })} />
                                 )}
@@ -222,7 +229,7 @@ export function ArmTorqueCalculator({ menuOpen = false }: { menuOpen?: boolean }
                     <div className="arm-results-wrap">
                     <table className="arm-results">
                         <caption>Static holding torque, arm horizontal · motion not modeled</caption>
-                        <thead>
+                        <thead className="sr-only">
                             <tr>
                                 <th scope="col">Joint</th>
                                 <th scope="col">Holding</th>
@@ -269,9 +276,8 @@ export function ArmTorqueCalculator({ menuOpen = false }: { menuOpen?: boolean }
                     <p className="calc-error">Lengths must be above zero and masses zero or more.</p>
                 )}
                 <p className="calc-boundary">
-                    Holding torque is a continuous requirement: compare it with rated torque, not peak. Moving the arm
-                    adds inertia × acceleration and friction on top, and a multiplier is your design decision, not a
-                    safety certificate.
+                    Holding torque is continuous: compare it with rated torque, not peak. Motion and safety margin
+                    are not included.
                 </p>
 
                 {ok && need > 0 && (

@@ -1,6 +1,6 @@
 # Humanoid robot actuators: what each joint needs and which catalog parts reach it
 
-A humanoid has no single right actuator. The knee, the ankle and the wrist load their motors in different ways, so each joint gets its own shortlist. Select a numbered joint on the map to see its static torque estimate and the catalog entries that reach it. Each estimate is a worked example for a hypothetical robot, and the shortlists come straight from the catalog data: where a value is not documented, it is reported as unknown.
+A humanoid has no single right actuator: each joint loads its motor differently. Pick a numbered joint for its static torque estimate and the catalog parts that reach it.
 
 ## How to read this guide
 
