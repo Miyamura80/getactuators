@@ -4,7 +4,7 @@ Calculate shaft torque from power and speed, power from torque and speed, or spe
 
 ## How the calculator works
 
-Power, torque and speed on a rotating shaft are tied by one relation: mechanical power equals torque times angular velocity. Enter any two and the calculator returns the third. The same formula applies to brushed DC, brushless (BLDC), stepper and servo motors, and to the output of a geared actuator, because it describes the shaft, not the motor technology.
+Power, torque and speed on a rotating shaft are tied by one relation: mechanical power equals torque times angular velocity. Enter any two and the calculator returns the third. The same formula applies to brushed DC, brushless (BLDC), stepper and servo motors, and to the output of a geared actuator, because it describes the shaft.
 
 The nomograph beside the inputs draws the same relation. Torque and speed sit on logarithmic scales at the edges and power sits midway at half the scale, so one straight line through a torque and a speed crosses the exact power.
 
@@ -17,7 +17,7 @@ The nomograph beside the inputs draws the same relation. Torque and speed sit on
 | lbf·ft, hp, rpm | T = 5252 × P / n | P = T × n / 5252 |
 | lbf·in, hp, rpm | T = 63025 × P / n | P = T × n / 63025 |
 
-The constant 9.549 is 60 / 2π, which converts rpm to rad/s (ω = 2π × n / 60). With ω in rad/s the relation is simply P = T × ω.
+The constant 9.549 is 60 / 2π, which converts rpm to rad/s (ω = 2π × n / 60). With ω in rad/s the relation is P = T × ω.
 
 ## Unit conversions
 
@@ -31,15 +31,15 @@ The constant 9.549 is 60 / 2π, which converts rpm to rad/s (ω = 2π × n / 60)
 
 ## Worked robotics examples
 
-These are example inputs, not published specifications of any robot.
+Inputs are illustrative and describe no specific robot.
 
 ### 7.85 N·m to hold 2 kg at 0.4 m on an arm
 
-A 2 kg mass held horizontally 0.4 m from a shoulder axis needs 2 × 9.807 × 0.4 = 7.85 N·m of holding torque, before the arm's own link and actuator mass. Moving it at 20 rpm takes 7.85 × 20 / 9.549 = 16.4 W of shaft power. Holding still takes zero mechanical power, yet the motor still draws current and heats: holding torque is a thermal requirement, not a power one.
+A 2 kg mass held horizontally 0.4 m from a shoulder axis needs 2 × 9.807 × 0.4 = 7.85 N·m of holding torque, before the arm's own link and actuator mass. Moving it at 20 rpm takes 7.85 × 20 / 9.549 = 16.4 W of shaft power. Holding still takes zero mechanical power, yet the motor still draws current and heats, so size holding torque as a thermal requirement.
 
 ### 377 W for a leg joint at 18 N·m and 200 rpm
 
-A joint that must produce 18 N·m while turning at 200 rpm delivers 18 × 200 / 9.549 = 377 W at the output. That is mechanical output only; the electrical input is higher by the motor and driver losses at that operating point.
+A joint that must produce 18 N·m while turning at 200 rpm delivers 18 × 200 / 9.549 = 377 W at the output. Electrical input is higher by the motor and driver losses at that operating point.
 
 ### 0.637 N·m from a 200 W drive motor at 3000 rpm
 
@@ -47,18 +47,18 @@ A 200 W motor running at 3000 rpm supplies 9.549 × 200 / 3000 = 0.637 N·m at i
 
 ### 2.22 N·m at 1800 rpm behind a 9:1 gearbox
 
-Behind a 9:1 stage with an assumed 90% efficiency, the 18 N·m, 200 rpm leg requirement becomes 18 / (9 × 0.9) = 2.22 N·m at 1800 rpm on the motor shaft, and 377 / 0.9 = 419 W of motor shaft power. The efficiency is an input you choose; it is not a vendor figure and it varies with load, speed and temperature.
+Behind a 9:1 stage with an assumed 90% efficiency, the 18 N·m, 200 rpm leg requirement becomes 18 / (9 × 0.9) = 2.22 N·m at 1800 rpm on the motor shaft, and 377 / 0.9 = 419 W of motor shaft power. You choose the efficiency. Real efficiency varies with load, speed and temperature.
 
 ## What the result does not tell you
 
-- **Mechanical, not electrical.** The power here is shaft power. Electrical input power equals shaft power divided by the combined motor and driver efficiency at that exact torque and speed, which must be measured or taken from a matched efficiency map.
-- **Not a stall rating.** At zero speed the formula gives zero power for any torque, so it cannot produce stall or holding torque. Those are motor ratings set by current and thermal limits.
-- **Not a capability.** A computed torque is a requirement. Whether a motor can deliver it at that speed depends on its torque–speed envelope at your bus voltage, which falls with speed.
-- **Not a duty rating.** Peak torque is usually time-limited. A requirement held continuously must fit under the rated (continuous) torque at the installed cooling and ambient temperature.
+- **Shaft power only.** Electrical input equals shaft power divided by the combined motor and driver efficiency at that torque and speed. Measure it, or read it from a matched efficiency map.
+- **Stall torque is a motor rating.** At zero speed the formula gives zero power for any torque, so it says nothing about stall or holding torque. Current and thermal limits set those.
+- **Check the torque–speed envelope.** A computed torque is a requirement. Whether a motor delivers it at that speed depends on its envelope at your bus voltage, which falls with speed.
+- **Continuous load needs rated torque.** Peak torque is usually time-limited. A load held continuously must fit under the rated torque at the installed cooling and ambient temperature.
 
 ## From requirement to actuator
 
-After a result, the calculator lists catalog actuators that reach the torque. Entries whose documented rated torque covers the requirement come first, then entries where only the peak torque does. When a speed is given, entries whose documented maximum speed is lower are dropped, and entries with no documented speed are marked as unknown rather than passed. Parts sold without drive electronics are labeled. Pick up to four and open them side by side in [Compare](/compare), or read the [actuator selection guide](/guides/robot-actuator-selection) for the efficiency, thermal and precision checks that come next.
+After a result, the calculator lists catalog actuators that reach the torque. Entries whose documented rated torque covers the requirement come first, then entries where only the peak torque does. When a speed is given, entries whose documented maximum speed is lower are dropped, and entries with no documented speed are marked unknown. Parts sold without drive electronics are labeled. Pick up to four and open them side by side in [Compare](/compare), or read the [actuator selection guide](/guides/robot-actuator-selection) for the efficiency, thermal and precision checks that come next.
 
 ## Questions
 
@@ -68,7 +68,7 @@ Divide power by angular speed. In SI units, torque in N·m equals 9.549 × power
 
 ### How do you calculate DC motor torque?
 
-The same way as any rotating shaft: from shaft power and speed. A brushed DC motor's torque is also roughly proportional to current (torque constant Kt × current), but that needs the motor's Kt, which this calculator does not assume.
+The same way as any rotating shaft: from shaft power and speed. A brushed DC motor's torque is also roughly proportional to current (torque constant Kt × current), and that needs the motor's Kt, which this calculator does not ask for.
 
 ### What is the difference between rated and peak torque?
 

@@ -102,10 +102,10 @@ export function foldQuestions(html: string): string {
 // rules out; the explanation opens on tap. Unmatched leads keep the warning
 // triangle, so a new caveat never renders without a mark.
 const LIMIT_ICONS: [RegExp, string][] = [
-    [/electrical/i, "M13 2 4 14h7l-1 8 9-12h-7Z"],
+    [/electrical|shaft power/i, "M13 2 4 14h7l-1 8 9-12h-7Z"],
     [/stall/i, "M8 5v14M16 5v14"],
     [/capability|envelope/i, "M4 4v16h16M7 7c6 0 9 4 11 11"],
-    [/duty|thermal/i, "M10 4a2 2 0 0 1 4 0v10a4 4 0 1 1-4 0ZM12 9v7"],
+    [/duty|thermal|continuous/i, "M10 4a2 2 0 0 1 4 0v10a4 4 0 1 1-4 0ZM12 9v7"],
     [/motion/i, "M20 12a8 8 0 1 1-2.3-5.7M20 3v4h-4"],
     [/rated/i, "M3 9h18v6H3ZM12 9v6"],
     [/margin/i, "M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"],

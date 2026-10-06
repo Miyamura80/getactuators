@@ -276,8 +276,8 @@ export function ArmTorqueCalculator({ menuOpen = false }: { menuOpen?: boolean }
                     <p className="calc-error">Lengths must be above zero and masses zero or more.</p>
                 )}
                 <p className="calc-boundary">
-                    Holding torque is continuous: compare it with rated torque, not peak. Motion and safety margin
-                    are not included.
+                    Holding torque is continuous: compare it with rated torque. Motion and safety margin are left
+                    out.
                 </p>
 
                 {ok && need > 0 && (

@@ -193,7 +193,7 @@ export function armFromQuery(search: string): Arm {
 // per joint, the catalog screen for each, and the calculator path that opens
 // this exact arm. Paths are site-relative.
 export const ARM_ASSUMPTIONS =
-    "Arm straight and horizontal; gravity only; each link's mass at the stated fraction of its length; actuator masses at the joints they drive; payload at the tip. Holding is continuous duty: compare with rated torque. Inertia × acceleration, friction and margins are not included.";
+    "Arm straight and horizontal; gravity only; each link's mass at the stated fraction of its length; actuator masses at the joints they drive; payload at the tip. Holding is continuous duty: compare with rated torque. Inertia × acceleration, friction and margins are left out.";
 
 export function armReport(arm: Arm, limit = 5) {
     return {

@@ -131,7 +131,7 @@ export function undocumentedHumanoidEntries() {
 export const HUMANOID_GUIDE_PATH = "/guides/humanoid-robot-actuators";
 
 export const HUMANOID_ASSUMPTIONS =
-    "Hypothetical humanoid: 1.5 m tall, 50 kg, carrying 1 kg in one hand. Each torque is a static estimate (mass × g × horizontal lever arm) for one stated pose; walking, stairs and impacts add dynamic torque that is not estimated.";
+    "Hypothetical humanoid: 1.5 m tall, 50 kg, carrying 1 kg in one hand. Each torque is a static estimate (mass × g × horizontal lever arm) for one stated pose; walking, stairs and impacts add dynamic torque, which is left out.";
 
 // One serializable answer shared by the MCP tool, the in-page WebMCP tool and
 // tests. Paths are site-relative; callers that need absolute URLs add the host.

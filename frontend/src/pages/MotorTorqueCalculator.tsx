@@ -195,7 +195,7 @@ export function MotorTorqueCalculator({ menuOpen = false }: { menuOpen?: boolean
                             ) : (
                                 state.ratio && <p className="calc-error">Ratio must be above 0 and efficiency 1 to 100%.</p>
                             )}
-                            <p className="calc-note">Efficiency is your input, not a vendor figure. Blank means an ideal 100%.</p>
+                            <p className="calc-note">You set the efficiency. Blank means an ideal 100%.</p>
                         </details>
 
                         <div className="calc-examples">
@@ -216,7 +216,7 @@ export function MotorTorqueCalculator({ menuOpen = false }: { menuOpen?: boolean
                 </div>
 
                 <p className="calc-boundary">
-                    Mechanical shaft power, not electrical input. The torque is a requirement, not a motor rating.
+                    Shaft power and a torque requirement. Check both against the motor's rating.
                 </p>
 
                 {shaft && shaft.torqueNm > 0 && (

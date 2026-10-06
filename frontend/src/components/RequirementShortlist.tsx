@@ -53,8 +53,8 @@ function ShortlistKey({ speed }: { speed: boolean }) {
                 </div>
             </dl>
             <p>
-                Order: rated fits, {speed ? "then documented speed, " : ""}then lightest. n/d means not documented, not
-                zero. A catalog rating is not a torque–speed envelope: confirm the operating point and duty cycle on the
+                Order: rated fits, {speed ? "then documented speed, " : ""}then lightest. n/d means not documented. A
+                catalog rating is one point on the torque–speed curve: confirm the operating point and duty cycle on the
                 datasheet.
             </p>
         </details>

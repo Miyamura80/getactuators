@@ -12,7 +12,7 @@ The masses are each link's own structure, placed at a fraction of its length you
 
 ## Worked example
 
-The "mobile manipulator" preset. These are example inputs, not specifications of any product.
+The "mobile manipulator" preset. Inputs are illustrative and describe no specific product.
 
 | Joint | Holding torque |
 | --- | --- |
@@ -32,7 +32,7 @@ Links of 0.40, 0.35 and 0.12 m weighing 1.2, 0.8 and 0.3 kg, a 1.0 kg elbow actu
 
 ### 0.5 kg more at the wrist adds 3.7 N·m at the shoulder
 
-Adding 0.5 kg to the wrist actuator raises the shoulder requirement by 0.5 × 9.807 × 0.75 = 3.7 N·m and the elbow by 1.7 N·m. Distal mass is expensive, which is why the calculator lets you try real catalog masses at each joint.
+Adding 0.5 kg to the wrist actuator raises the shoulder requirement by 0.5 × 9.807 × 0.75 = 3.7 N·m and the elbow by 1.7 N·m. Distal mass is expensive, so the calculator lets you try catalog masses at each joint.
 
 ## Assumptions you can see and change
 
@@ -43,14 +43,14 @@ Adding 0.5 kg to the wrist actuator raises the shoulder requirement by 0.5 × 9.
 
 ## What the result does not tell you
 
-- **Not motion torque.** Accelerating the arm adds inertia × angular acceleration at every joint, and friction adds more. Neither is modeled. A static calculation does not establish dynamic or thermal suitability.
-- **Compare with rated, not peak.** Holding a load is continuous duty. The shortlist ranks entries whose rated torque covers the holding torque first; a peak-only fit can lift the load briefly but is not shown to hold it.
-- **No universal margin.** A multiplier on top of this result is a design decision tied to your uncertainties, not a safety certificate. Real safety depends on braking, collisions, control and standards that a torque sum does not cover.
+- **Motion torque.** Accelerating the arm adds inertia × angular acceleration at every joint, and friction adds more. Neither is modeled, so dynamic and thermal fit still need checking.
+- **Holding needs rated torque.** Holding a load is continuous duty. The shortlist ranks entries whose rated torque covers the holding torque first. A peak-only fit can lift the load briefly; nothing shows it can hold it.
+- **Safety margin.** A multiplier on this result is a design decision tied to your uncertainties. Safety depends on braking, collisions, control and standards, which a torque sum does not cover.
 - **Gearbox output.** Catalog torques for integrated actuators are output-side values. For a separate motor and reducer, use the [motor torque calculator](/tools/motor-torque-calculator) to reflect the joint requirement back to the motor shaft.
 
 ## From requirement to actuator
 
-Select a joint on the diagram or in the results to screen the catalog at its holding torque. Each candidate shows rated and peak torque, maximum speed and mass, with undocumented values marked "n/d" rather than treated as zero. Use a candidate's mass at that joint to see how it loads the joints behind it, then open the shortlist in [Compare](/compare). For humanoid arms, the [humanoid actuator guide](/guides/humanoid-robot-actuators) gives worked shoulder, elbow and wrist estimates, and the [actuator selection guide](/guides/robot-actuator-selection) covers efficiency, thermal duty and precision.
+Select a joint on the diagram or in the results to screen the catalog at its holding torque. Each candidate shows rated and peak torque, maximum speed and mass, with undocumented values marked "n/d". Use a candidate's mass at that joint to see how it loads the joints behind it, then open the shortlist in [Compare](/compare). For humanoid arms, the [humanoid actuator guide](/guides/humanoid-robot-actuators) gives worked shoulder, elbow and wrist estimates, and the [actuator selection guide](/guides/robot-actuator-selection) covers efficiency, thermal duty and precision.
 
 ## Questions
 
