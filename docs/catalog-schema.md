@@ -1,9 +1,15 @@
 # Actuator data schema (v1)
 
-Each `data/actuators/<category>.json` is a JSON array of actuator objects.
+`frontend/src/data/actuators.json` is the canonical catalog: one JSON array of
+actuator objects, edited directly. Every server surface and the frontend read it.
 Fill every field you can from primary sources (manufacturer datasheet/spec page).
 Use `null` when a value is genuinely unknown. **Never fabricate a number.**
 Every entry must cite its `sources` (datasheet / product page URLs).
+
+`tests/server/short-titles-frozen-actuators.json` and
+`short-titles-frozen-robots.json` are frozen copies that the page-title golden
+hashes are checked against. Leave them alone: edits to `actuators.json` and
+`robots.json` never need the golden hashes touched.
 
 ```jsonc
 {
@@ -56,3 +62,8 @@ Every entry must cite its `sources` (datasheet / product page URLs).
 - Distinguish **peak** vs **continuous** torque; do not mix them.
 - Torque values are at the **output shaft** (after the gearbox).
 - Compute `torque_density_nm_per_kg` from peak torque and weight when both are known.
+- Keep the derived fields in step with their inputs when you edit a row:
+  `torque_density_nm_per_kg` (peak torque / kg, 1 dp), `price_per_nm`
+  (price / peak torque, 2 dp) and `data_source` (`spot_checked` when
+  `verified`, else `web_search`). `tests/data/actuators-integrity.test.ts`
+  fails when they drift.
