@@ -33,19 +33,19 @@ The constant 9.549 is 60 / 2π, which converts rpm to rad/s (ω = 2π × n / 60)
 
 These are example inputs, not published specifications of any robot.
 
-### Holding a payload on an arm
+### 7.85 N·m to hold 2 kg at 0.4 m on an arm
 
 A 2 kg mass held horizontally 0.4 m from a shoulder axis needs 2 × 9.807 × 0.4 = 7.85 N·m of holding torque, before the arm's own link and actuator mass. Moving it at 20 rpm takes 7.85 × 20 / 9.549 = 16.4 W of shaft power. Holding still takes zero mechanical power, yet the motor still draws current and heats: holding torque is a thermal requirement, not a power one.
 
-### A leg joint
+### 377 W for a leg joint at 18 N·m and 200 rpm
 
 A joint that must produce 18 N·m while turning at 200 rpm delivers 18 × 200 / 9.549 = 377 W at the output. That is mechanical output only; the electrical input is higher by the motor and driver losses at that operating point.
 
-### A drive motor
+### 0.637 N·m from a 200 W drive motor at 3000 rpm
 
 A 200 W motor running at 3000 rpm supplies 9.549 × 200 / 3000 = 0.637 N·m at its shaft.
 
-### Through a gearbox
+### 2.22 N·m at 1800 rpm behind a 9:1 gearbox
 
 Behind a 9:1 stage with an assumed 90% efficiency, the 18 N·m, 200 rpm leg requirement becomes 18 / (9 × 0.9) = 2.22 N·m at 1800 rpm on the motor shaft, and 377 / 0.9 = 419 W of motor shaft power. The efficiency is an input you choose; it is not a vendor figure and it varies with load, speed and temperature.
 

@@ -12,13 +12,25 @@ The masses are each link's own structure, placed at a fraction of its length you
 
 ## Worked example
 
-The "mobile manipulator" example has links of 0.40, 0.35 and 0.12 m weighing 1.2, 0.8 and 0.3 kg, a 1.0 kg elbow actuator, a 0.5 kg wrist actuator and a 2 kg payload. These are example inputs, not specifications of any product.
+The "mobile manipulator" preset. These are example inputs, not specifications of any product.
 
-| Joint | Holding torque | Largest term |
-| --- | --- | --- |
-| Shoulder | 33.9 N·m | Payload: 2 × 9.807 × 0.87 = 17.1 N·m |
-| Elbow | 13.5 N·m | Payload: 2 × 9.807 × 0.47 = 9.2 N·m |
-| Wrist | 2.5 N·m | Payload: 2 × 9.807 × 0.12 = 2.4 N·m |
+| Joint | Holding torque |
+| --- | --- |
+| Shoulder | 33.9 N·m |
+| Elbow | 13.5 N·m |
+| Wrist | 2.5 N·m |
+
+### Inputs: three links and a 2 kg payload
+
+Links of 0.40, 0.35 and 0.12 m weighing 1.2, 0.8 and 0.3 kg, a 1.0 kg elbow actuator and a 0.5 kg wrist actuator.
+
+### The payload is the largest term at every joint
+
+- Shoulder: 2 × 9.807 × 0.87 = 17.1 N·m
+- Elbow: 2 × 9.807 × 0.47 = 9.2 N·m
+- Wrist: 2 × 9.807 × 0.12 = 2.4 N·m
+
+### 0.5 kg more at the wrist adds 3.7 N·m at the shoulder
 
 Adding 0.5 kg to the wrist actuator raises the shoulder requirement by 0.5 × 9.807 × 0.75 = 3.7 N·m and the elbow by 1.7 N·m. Distal mass is expensive, which is why the calculator lets you try real catalog masses at each joint.
 

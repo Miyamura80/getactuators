@@ -30,6 +30,22 @@ export function withHeadingIds(html: string): string {
     });
 }
 
+// In a "Worked ..." section each example's h3 already states its result, so
+// the working folds under it: the result stays readable, the arithmetic is
+// one tap away.
+export function foldWorkedExamples(html: string): string {
+    return html.replace(
+        /(<h2[^>]*>Worked[^<]*<\/h2>)([\s\S]*?)(?=<h2[ >]|$)/g,
+        (_, heading: string, section: string) =>
+            heading +
+            section.replace(
+                /(<h3>[\s\S]*?<\/h3>)([\s\S]*?)(?=<h3>|$)/g,
+                (_m: string, title: string, body: string) =>
+                    `<details class="ga-example"><summary>${title}</summary>${body.trim()}</details>\n`,
+            ),
+    );
+}
+
 // Page body: nav, the rendered markdown as <main>, footer.
 export function pageBody(
     md: string,
