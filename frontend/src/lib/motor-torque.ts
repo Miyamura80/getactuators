@@ -86,7 +86,7 @@ export interface Gearbox {
 // Reflect an output-side requirement back to the motor shaft of a gearbox:
 // the motor turns `ratio` times faster and must also cover the stage losses.
 export function motorSide(output: Shaft, g: Gearbox): Shaft | null {
-    if (!(g.ratio > 0) || !(g.efficiency > 0) || g.efficiency > 1) return null;
+    if (!Number.isFinite(g.ratio) || !(g.ratio > 0) || !(g.efficiency > 0) || g.efficiency > 1) return null;
     return {
         torqueNm: output.torqueNm / (g.ratio * g.efficiency),
         speedRpm: output.speedRpm * g.ratio,
@@ -134,7 +134,7 @@ const KEYS: Record<Quantity, [string, string]> = {
 const QUANTITIES: readonly Quantity[] = ["torque", "power", "speed"];
 
 function num(raw: string | null): string {
-    return raw !== null && raw.length <= 24 && /^\d*\.?\d*(e-?\d+)?$/i.test(raw) ? raw : "";
+    return raw !== null && raw.length <= 24 && (raw === "" || /^(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(raw)) ? raw : "";
 }
 
 export function stateFromQuery(search: string): CalcState {

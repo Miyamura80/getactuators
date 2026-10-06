@@ -5,8 +5,10 @@ WORKDIR /app
 COPY frontend/package.json frontend/bun.lock ./frontend/
 RUN cd frontend && bun install --frozen-lockfile
 COPY frontend ./frontend
-# The gallery ordering helper is shared by the browser and server.
-COPY src/catalog/gallery.ts src/catalog/evidence.ts src/catalog/compare.ts src/catalog/engineering-evidence.ts ./src/catalog/
+# Catalog helpers shared by the browser and server (gallery order, evidence,
+# requirement shortlists, humanoid joint estimates).
+COPY src/catalog/gallery.ts src/catalog/evidence.ts src/catalog/compare.ts src/catalog/engineering-evidence.ts src/catalog/shortlist.ts src/catalog/index.ts src/catalog/types.ts ./src/catalog/
+COPY src/server/agent/humanoid-joints.ts ./src/server/agent/
 COPY src/public-navigation.ts src/public-navigation.css ./src/
 RUN cd frontend && bun run build
 

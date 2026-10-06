@@ -50,6 +50,7 @@ describe("shaft relation", () => {
         expect(m?.speedRpm).toBe(1800);
         expect(m?.powerW).toBeCloseTo(418.88, 1);
         expect(motorSide({ torqueNm: 1, speedRpm: 1, powerW: 1 }, { ratio: 9, efficiency: 1.2 })).toBeNull();
+        expect(motorSide({ torqueNm: 1, speedRpm: 1, powerW: 1 }, { ratio: Number.POSITIVE_INFINITY, efficiency: 0.9 })).toBeNull();
     });
 
     test("formats to three significant figures", () => {
@@ -69,6 +70,8 @@ describe("shareable state", () => {
         expect(junk.solve).toBe("torque");
         expect(junk.values.torque).toBe("");
         expect(junk.units.torque).toBe("Nm");
+        expect(stateFromQuery("?solve=power&t=1e%2B3&n=2.5E-1").values).toMatchObject({ torque: "1e+3", speed: "2.5E-1" });
+        expect(stateFromQuery("?solve=power&t=e5&n=.").values).toMatchObject({ torque: "", speed: "" });
     });
 });
 
@@ -85,7 +88,15 @@ describe("catalog handoff", () => {
             if (speed === "unknown") expect(a.max_speed_rpm).toBeNull();
         }
         expect(list.rows.some((r) => r.actuator.max_speed_rpm != null && r.actuator.max_speed_rpm < 200)).toBe(false);
+        expect(list.unknownSpeed).toBe(list.rows.filter((r) => r.speed === "unknown").length);
         expect(shortlist(ACTUATORS, { torqueNm: 0 }).total).toBe(0);
+    });
+
+    test("equal-mass ties fall back to the torque that earned the fit", () => {
+        const base = { brand: "B", category: "c", use_cases: [], max_speed_rpm: null, weight_g: 500, integrated_driver: true };
+        const big = { ...base, id: "a-big", name: "Big", rated_torque_nm: 30, peak_torque_nm: 40 };
+        const small = { ...base, id: "b-small", name: "Small", rated_torque_nm: 20, peak_torque_nm: 90 };
+        expect(shortlist([small, big], { torqueNm: 18 }).rows.map((r) => r.actuator.id)).toEqual(["b-small", "a-big"]);
     });
 });
 
