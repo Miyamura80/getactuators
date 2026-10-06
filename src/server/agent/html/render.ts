@@ -78,13 +78,16 @@ export async function renderSpaPage(page: Page, visual?: string): Promise<string
             ? await galleryFile.text()
             : null;
     const prerender = galleryHtml ?? visual ?? fallbackHtml;
-    const persistentHtml = withSectionIcons(
+    const rendered = withSectionIcons(
         foldWorkedExamples(
             page.headingIds
                 ? withHeadingIds(markdownToHtml(content))
                 : markdownToHtml(content),
         ),
     );
+    const persistentHtml = page.persistentHtml
+        ? page.persistentHtml(rendered)
+        : rendered;
     const persistent = content
         ? `<section class="ga-page" id="catalog-content" ${page.ogType === "product" ? 'tabindex="-1" aria-label="Specifications and catalog details"' : `tabindex="-1" aria-label="${esc(page.persistentLabel ?? "Catalog details")}"`}><div class="ga-main">${persistentHtml}</div></section>${publicFooter()}`
         : "";

@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { TORQUE_FIT_LABEL, integrationNote } from "@/catalog/shortlist";
 import { absoluteUrl } from "../site";
 import { actuatorPath } from "./catalog-md";
+import { partRowsHtml } from "./html/part-rows";
 import {
     HUMANOID_GUIDE_PATH,
     JOINTS,
@@ -76,6 +77,28 @@ export function humanoidGuideBody(): string {
     return body.replace("\n\n## Next steps", `${unknownsNote()}\n\n## Next steps`);
 }
 
+// In the HTML, each joint's catalog list becomes rows with the part's photo,
+// brand badge, spec glyphs and a fit gauge against that joint's estimate.
+// The .md twin keeps the plain list.
+function jointRowsHtml(html: string): string {
+    let out = html;
+    for (const j of JOINTS) {
+        const start = out.indexOf(`<h2 id="${j.id}">`);
+        if (start < 0) continue;
+        const end = out.indexOf("<h2", start + 1);
+        const stop = end < 0 ? out.length : end;
+        const ul = out.indexOf("<ul>", start);
+        if (ul < 0 || ul > stop) continue;
+        const close = out.indexOf("</ul>", ul) + "</ul>".length;
+        const list = jointShortlist(j);
+        out =
+            out.slice(0, ul) +
+            partRowsHtml(list.rows, j.torqueNm, j.id) +
+            out.slice(close);
+    }
+    return out;
+}
+
 const TITLE = "Humanoid robot actuators: joint-by-joint guide";
 const DESCRIPTION =
     "Humanoid robot actuators by joint: static torque estimates for hip, knee, ankle, shoulder, elbow and wrist, with catalog shortlists and open unknowns.";
@@ -89,6 +112,7 @@ export const HUMANOID_GUIDE: Page = {
     persistentFrom: "\n\n## How to read this guide",
     persistentLabel: "Method, joint estimates and shortlists",
     headingIds: true,
+    persistentHtml: jointRowsHtml,
     title: TITLE,
     description: DESCRIPTION,
     ogType: "article",
