@@ -1,12 +1,12 @@
 # Humanoid robot actuators: what each joint needs and which catalog parts reach it
 
-A humanoid has no single right actuator. The knee, the ankle and the wrist load their motors in different ways, so each joint gets its own shortlist. Select a numbered joint on the map to see its static torque estimate and the catalog entries that reach it. Each estimate is a worked example for a hypothetical robot, and the shortlists come straight from the catalog data: where a value is not documented, it is reported as unknown.
+A humanoid has no single right actuator: each joint loads its motor differently. Pick a numbered joint for its static torque estimate and the catalog parts that reach it.
 
 ## How to read this guide
 
-The reference robot is **hypothetical**: 1.5 m tall, 50 kg, carrying 1 kg in one hand. Every torque below is a **static engineering estimate** (mass × g × horizontal lever arm) for one stated pose, rounded to one decimal place. Static torque is a floor, not a requirement: walking, stairs, recovery steps and impacts add dynamic torque that depends on your gait and controller, and that this guide does not estimate.
+The reference robot is **hypothetical**: 1.5 m tall, 50 kg, carrying 1 kg in one hand. Every torque below is a **static engineering estimate** (mass × g × horizontal lever arm) for one stated pose, rounded to one decimal place. Static torque is a floor. Walking, stairs, recovery steps and impacts add dynamic torque that depends on your gait and controller, and this guide does not estimate it.
 
-Each shortlist screens catalog entries tagged for humanoid joints. An entry passes when its documented rated torque covers the estimate (listed first) or, failing that, its documented peak torque does (short duty only). Undocumented torque never passes. Use the [motor torque calculator](/tools/motor-torque-calculator) to screen the whole catalog at your own torque and speed, and the [actuator selection guide](/guides/robot-actuator-selection) for the efficiency, thermal, precision and sim2real checks a shortlist does not settle.
+Each shortlist screens catalog entries tagged for humanoid joints. An entry passes when its documented rated torque covers the estimate (listed first) or, failing that, its documented peak torque does (short duty only). Undocumented torque never passes. Use the [robot arm torque calculator](/tools/robot-arm-torque-calculator) to size your own arm joint by joint, the [motor torque calculator](/tools/motor-torque-calculator) to screen the whole catalog at your own torque and speed, and the [actuator selection guide](/guides/robot-actuator-selection) for the efficiency, thermal, precision and sim2real checks a shortlist does not settle.
 
 ## Shoulder
 
@@ -22,7 +22,7 @@ The elbow carries only the forearm, hand and payload, but its actuator mass hang
 
 ## Wrist
 
-Wrist torque is small; the constraints are size, mass and backlash at the end of a long lever. Every gram here is multiplied by the full arm length at the shoulder.
+Wrist torque is small. Size, mass and backlash at the end of a long lever set the choice. Every gram here is multiplied by the full arm length at the shoulder.
 
 {{joint:wrist}}
 
@@ -54,7 +54,7 @@ The ankle balances the body over the foot, so its torque grows with how far the 
 
 - **Which actuators commercial humanoids use.** Product photos, teardowns and press coverage rarely confirm the exact installed model and revision. This guide treats installed components as unknown unless a manufacturer documents them.
 - **Dynamic and thermal duty.** A joint that holds its static estimate for minutes needs rated (continuous) torque at the installed cooling; peak torque is time-limited. Duty depends on the gait, the controller and the enclosure.
-- **A best joint actuator.** The highest torque density is not the best choice for every joint. Mass at the wrist, backdrivability at the knee and envelope at the ankle pull in different directions.
+- **A best joint actuator.** Each joint trades torque density against something else. Mass at the wrist, backdrivability at the knee and envelope at the ankle pull in different directions.
 - **Torque–speed envelopes.** A catalog rating is one point. Confirm torque at the joint speeds your gait needs, at your bus voltage.
 
 ## Next steps

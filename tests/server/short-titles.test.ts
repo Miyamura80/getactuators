@@ -34,7 +34,10 @@ function sha256(value: string) {
 // only this specific catalog-freshness sentence; preserve every other byte.
 // MCP tools added after the capture are listed in the /agents tool line; drop
 // only those names so the rest of that line stays locked.
-const TOOLS_ADDED_AFTER_BASELINE = ["humanoid_joint_requirements"];
+const TOOLS_ADDED_AFTER_BASELINE = [
+    "humanoid_joint_requirements",
+    "arm_holding_torque",
+];
 function snapshotContent(value: string) {
     let out = value.replace(
         `The catalog was last updated on ${CATALOG_UPDATED_DATE}.`,
@@ -255,13 +258,14 @@ async function expectCatalogPage(
 // metadata labels differ; hashes lock down original content, not head markup.
 test("the full catalog has distinct reviewed metadata without content changes", async () => {
     const registered = allPages();
-    expect(registered).toHaveLength(83);
+    expect(registered).toHaveLength(84);
     // Pages added after the baseline capture have their own tests.
     const added = new Set([
         "/faq",
         "/compare",
         "/tools/motor-torque-calculator",
         "/guides/humanoid-robot-actuators",
+        "/tools/robot-arm-torque-calculator",
     ]);
     const pages = registered.filter((page) => !added.has(page.path));
     expect(ACTUATORS).toHaveLength(68);

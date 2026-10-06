@@ -44,7 +44,7 @@
 }
 .calc-solve label:last-child { border-right: 0; }
 .calc-solve label { position: relative; }
-.calc-solve label.on { background: var(--cyan); color: var(--black); font-weight: 600; }
+.calc-solve label.on { box-shadow: inset 0 0 0 1px var(--cyan); color: var(--cyan); font-weight: 600; }
 .calc-solve input { position: absolute; opacity: 0; pointer-events: none; }
 .calc-solve label:has(input:focus-visible) { outline: 2px solid var(--cyan); outline-offset: 2px; }
 
@@ -140,12 +140,11 @@
 .nomo-pin.solved { fill: var(--cyan); }
 .nomo-tag rect { fill: var(--black); stroke: var(--cyan); stroke-width: 1; }
 .nomo-tag text { fill: var(--cyan); font: 600 10px var(--mono); }
-.nomo-tag.solved rect { fill: var(--cyan); }
-.nomo-tag.solved text { fill: var(--black); }
+.nomo-tag.solved rect { stroke-width: 2; }
 .nomo-foot { fill: var(--muted); font: 10px var(--mono); }
 @media (prefers-reduced-motion: reduce) { .nomo-edge, .nomo-pin { transition: none; } }
 
-.calc-boundary { margin: 0; padding: 12px 16px; border: 1px solid var(--line); border-top: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.calc-boundary { margin: 12px 0 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
 
 /* Catalog handoff: a bill-of-materials style list, not cards. */
 .req-list { margin-top: 32px; }
@@ -161,29 +160,84 @@
     padding: 12px 0;
     border-bottom: 1px solid var(--line);
 }
-.req-row::before { content: counter(req, decimal-leading-zero); grid-area: n; font: 12px var(--mono); color: var(--muted); padding-top: 3px; }
+.req-row { grid-template-columns: 64px minmax(0, 1.3fr) minmax(0, 2fr); }
+/* The part itself, photo or drawn, where the row number used to be. */
+.req-thumb { grid-area: n; align-self: start; display: grid; place-items: center; width: 56px; height: 56px; overflow: hidden; border: 1px solid var(--line); background: #000; }
+.req-thumb .actuator-photo { width: 100%; height: 100%; object-fit: cover; }
+.req-thumb .thumb-svg { width: 100%; height: 100%; max-height: none; }
+.brand-badge { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; font: 400 11px var(--mono); color: var(--muted); }
+.brand-badge svg { flex: none; }
+.brand-badge text { fill: #000; font-family: var(--mono); font-weight: 700; }
+/* Spec glyphs beside each value, matching the fit gauge. */
+.req-specs > div { display: flex; align-items: center; gap: 8px; }
+.req-specs dt { display: flex; }
+.spec-glyph svg { display: block; fill: none; stroke: var(--muted); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.spec-rated svg rect { fill: var(--green); stroke: none; }
+.spec-peak svg path { stroke: var(--cyan-dim); stroke-width: 1.1; }
 .req-name { grid-area: name; font-weight: 600; color: var(--text); min-width: 0; }
 .req-name:hover { color: var(--cyan); }
-.req-brand { display: block; font: 11px var(--mono); color: var(--muted); font-weight: 400; }
+
 .req-specs { grid-area: specs; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 0; }
 .req-specs dt { font: 10px var(--mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
 .req-specs dd { margin: 0; font: 600 14px var(--mono); font-variant-numeric: tabular-nums; }
-.req-tags { grid-area: tags; display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 0; }
-.req-tag { font: 11px var(--mono); padding: 2px 6px; border: 1px solid var(--line-strong); border-radius: 2px; color: var(--muted); }
-.req-tag.tag-rated { border-color: var(--green); color: var(--green); }
-.req-tag.tag-peak { border-color: var(--cyan-dim); color: var(--cyan-dim); }
+.req-tags { grid-area: tags; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 6px 0 0; }
+/* Fit gauge: solid = rated, hatch = peak only, tick = requirement. */
+.fit-gauge { display: block; overflow: visible; }
+.fit-axis { stroke: var(--line-strong); stroke-width: 1; }
+.fit-rated { fill: var(--muted); }
+.fit-gauge.rated .fit-rated { fill: var(--green); }
+.fit-gauge pattern line { stroke: var(--cyan-dim); stroke-width: 1.4; }
+.fit-peak { stroke: var(--cyan-dim); stroke-width: 0.6; }
+.fit-need { fill: var(--text); stroke: var(--text); stroke-width: 1.5; }
+.fit-gauge.peak .fit-need { fill: var(--amber); stroke: var(--amber); }
+.fit-glyph { fill: none; stroke: var(--muted); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.fit-glyph.ok { stroke: var(--green); }
+.fit-glyph.unknown path { stroke-dasharray: 2 2.5; }
+.fit-glyph.unknown text { fill: var(--muted); stroke: none; font: 600 9px var(--mono); }
+.fit-glyph.warn { stroke: var(--amber); }
+/* Hovering one row inks it and lets the others recede. */
+.req-rows:hover .req-row:not(:hover) { opacity: 0.45; }
+.req-row { transition: opacity 160ms ease; }
+.req-row:has(.req-use) { grid-template-areas: "n name specs" "n tags use"; grid-template-columns: 64px minmax(0, 1.3fr) minmax(0, 2fr); }
+.req-use {
+    grid-area: use;
+    justify-self: end;
+    min-height: 44px;
+    padding: 0 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: 2px;
+    background: transparent;
+    color: var(--cyan);
+    font: 12px var(--mono);
+    cursor: pointer;
+}
+.req-use:hover { border-color: var(--cyan); }
 .req-actions { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin: 16px 0 6px; }
 .req-cta { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; background: var(--cyan); color: var(--black); font-weight: 600; border-radius: 2px; }
 .req-cta:hover { text-decoration: none; background: var(--text); }
-.req-caveat { color: var(--muted); font-size: 12px; line-height: 1.5; max-width: 80ch; }
+/* Key: closed by default, opens by click, tap or keyboard. */
+.req-key { margin: 0 0 12px; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.req-key summary { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; cursor: pointer; font: 12px var(--mono); list-style: none; }
+.req-key summary::-webkit-details-marker { display: none; }
+.req-key summary svg { fill: none; stroke: currentColor; stroke-width: 1.3; stroke-linecap: round; }
+.req-key summary:hover, .req-key[open] summary { color: var(--text); }
+.req-key dl { display: grid; gap: 8px; margin: 8px 0; }
+.req-key dl > div { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 12px; align-items: center; }
+.req-key dt { display: flex; gap: 6px; align-items: center; }
+.req-key dd { margin: 0; }
+.req-key p { margin: 0; max-width: 80ch; }
+.jm-key { margin: 12px 0 0; }
+.jm-key dl > div { grid-template-columns: 64px minmax(0, 1fr); }
 .tool-method-link { display: inline-flex; align-items: center; min-height: 44px; margin-top: 8px; font-size: 14px; }
 
 @media (max-width: 820px) {
     .tool-main { padding: 0 16px 16px; }
     .calc-sheet { grid-template-columns: minmax(0, 1fr); }
     .calc-controls { border-right: 0; border-bottom: 1px solid var(--line); padding: 16px; }
-    .req-row { grid-template-columns: 32px minmax(0, 1fr); grid-template-areas: "n name" "n specs" "n tags"; }
+    .req-row { grid-template-columns: 56px minmax(0, 1fr); grid-template-areas: "n name" "n specs" "n tags"; }
     .req-specs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .req-row:has(.req-use) { grid-template-columns: 56px minmax(0, 1fr); grid-template-areas: "n name" "n specs" "n tags" "n use"; }
+    .req-use { justify-self: start; }
 }
 
 /* Method, examples and questions rendered by the server below the tool. */
@@ -197,6 +251,134 @@ body:has(.tool-page) #catalog-content strong { color: var(--text); }
 body:has(.tool-page) #catalog-content td:first-child { font-family: var(--mono); color: var(--text); }
 body:has(.tool-page) #catalog-content table { max-width: 860px; }
 @media (max-width: 820px) { body:has(.tool-page) #catalog-content .ga-main { padding: 16px; } }
+/* Part rows inside the guide text: same look as the calculators' shortlist. */
+body:has(.tool-page) #catalog-content .req-rows { max-width: 900px; margin: 8px 0 12px; }
+body:has(.tool-page) #catalog-content .req-row { max-width: none; line-height: 1.3; }
+body:has(.tool-page) #catalog-content .req-name { color: var(--text); font: 600 15px var(--sans); text-decoration: none; }
+body:has(.tool-page) #catalog-content .req-name:hover { color: var(--cyan); }
+body:has(.tool-page) #catalog-content .brand-badge text { fill: #000; }
+/* Section icons, and warning marks on the "does not tell you" lists. */
+body:has(.tool-page) #catalog-content h2:has(.ga-h2-icon) { display: flex; align-items: center; gap: 12px; }
+.ga-h2-icon { flex: none; fill: none; stroke: var(--cyan); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.ga-ic-limits { stroke: var(--amber); }
+/* Caveats: one chip per limit, glyph and label up front, the reason on tap. */
+#catalog-content ul.ga-limits { list-style: none; padding: 0; margin: 0 0 8px; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 8px; align-items: start; max-width: 72ch; }
+body #catalog-content ul.ga-limits { list-style: none; padding: 0; }
+#catalog-content .ga-limits li { margin: 0; padding: 0; }
+#catalog-content .ga-limit { border: 1px solid var(--line, #2a2a2a); border-radius: 6px; }
+#catalog-content .ga-limit[open] { border-color: var(--amber); }
+#catalog-content .ga-limit summary { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 8px 12px; cursor: pointer; list-style: none; color: var(--text, #f3f3f3); font: 600 14px var(--mono, ui-monospace, monospace); }
+#catalog-content .ga-limit summary::-webkit-details-marker { display: none; }
+#catalog-content .ga-limit summary svg { flex: none; fill: none; stroke: var(--amber); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+#catalog-content .ga-limit summary span { flex: 1; }
+#catalog-content .ga-limit summary::after { content: "+"; flex: none; color: var(--amber); font-weight: 400; transition: transform 160ms ease; }
+#catalog-content .ga-limit[open] summary::after { transform: rotate(45deg); }
+#catalog-content .ga-limit summary:hover span { color: var(--amber); }
+#catalog-content .ga-limit summary:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+#catalog-content .ga-limit p { margin: 0; padding: 0 12px 12px 42px; font-size: 14px; }
+@media (prefers-reduced-motion: reduce) { #catalog-content .ga-limit summary::after { transition: none; } }
+/* Worked examples: the result in the heading, the working one tap below. */
+body:has(.tool-page) #catalog-content .ga-example { border-bottom: 1px solid var(--line); max-width: 72ch; }
+body:has(.tool-page) #catalog-content .ga-example summary { display: flex; align-items: baseline; gap: 12px; min-height: 44px; padding: 10px 0; cursor: pointer; list-style: none; }
+body:has(.tool-page) #catalog-content .ga-example summary::-webkit-details-marker { display: none; }
+body:has(.tool-page) #catalog-content .ga-example summary::before { content: ""; flex: none; width: 6px; height: 6px; border-right: 1.5px solid var(--cyan); border-bottom: 1.5px solid var(--cyan); transform: translateY(-2px) rotate(-45deg); transition: transform 160ms ease; }
+body:has(.tool-page) #catalog-content .ga-example[open] summary::before { transform: translateY(-4px) rotate(45deg); }
+body:has(.tool-page) #catalog-content .ga-example summary h3 { margin: 0; font: 600 15px var(--mono); }
+body:has(.tool-page) #catalog-content .ga-example summary:hover h3 { color: var(--cyan); }
+body:has(.tool-page) #catalog-content .ga-example summary:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+body:has(.tool-page) #catalog-content .ga-example > :not(summary) { margin: 0 0 14px 18px; }
+@media (prefers-reduced-motion: reduce) { body:has(.tool-page) #catalog-content .ga-example summary::before { transition: none; } }
+
+/* Robot arm calculator: the free-body diagram heads the sheet, the model
+   table sits under it like a drawing's parts list. */
+.arm-sheet { border: 1px solid var(--line); border-top: 0; }
+.arm-fig-frame { position: relative; border-bottom: 1px solid var(--line); }
+.arm-fig { margin: 0; overflow-x: auto; scrollbar-width: none; }
+.arm-fig::-webkit-scrollbar { display: none; }
+.arm-fig:focus-visible { outline: 1px solid var(--cyan); outline-offset: -1px; }
+.arm-fig.more-right { mask-image: linear-gradient(to right, #000 82%, transparent); }
+.arm-fig.more-left { mask-image: linear-gradient(to left, #000 82%, transparent); }
+.arm-fig.more-left.more-right { mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent); }
+.arm-swipe { position: absolute; right: 12px; bottom: 12px; display: grid; place-items: center; width: 40px; height: 28px; border: 1px solid var(--cyan); border-radius: 14px; background: #000; pointer-events: none; animation: arm-swipe 1.6s ease-in-out 2; }
+.arm-swipe svg { fill: none; stroke: var(--cyan); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+@keyframes arm-swipe { 50% { transform: translateX(-6px); } }
+@media (prefers-reduced-motion: reduce) { .arm-swipe { animation: none; } }
+/* One joint selected: the others stay legible but step back. */
+.arm-fig svg:has(.fb-joint:hover) .fb-joint:not(:hover):not(.on) { opacity: 0.45; }
+.fb-joint { transition: opacity 160ms ease; }
+.arm-fig .draft-fig { min-width: 560px; }
+.fb-dim path { fill: none; stroke: rgba(195, 255, 253, 0.35); stroke-width: 0.8; }
+.fb-dim text { fill: var(--muted); font: 9px var(--mono); }
+.fb-load circle { fill: var(--muted); }
+.fb-load path { fill: none; stroke: rgba(155, 164, 166, 0.75); stroke-width: 0.9; stroke-linejoin: round; }
+.fb-load-label { fill: var(--muted); font: 9px var(--mono); paint-order: stroke; stroke: #000; stroke-width: 4px; }
+.fb-load.payload circle { fill: var(--text); }
+.fb-load.payload path { stroke: var(--text); }
+.fb-load-label.payload { fill: var(--text); font-weight: 600; }
+.fb-joint { outline: none; }
+.fb-hit { fill: transparent; }
+.fb-joint.on .jm-balloon { stroke-width: 2.4; }
+.fb-joint.on .jm-leader { stroke: var(--cyan); }
+.fb-joint.on .jm-name { fill: var(--cyan); }
+
+.arm-inputs { padding: 16px 20px 20px; display: flex; flex-direction: column; gap: 10px; }
+.arm-row { display: grid; grid-template-columns: 140px repeat(3, minmax(0, 1fr)); gap: 12px; align-items: center; }
+.arm-head { font: 600 11px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.arm-link-name { font: 600 18px var(--mono); }
+.arm-link-name small { display: block; font: 11px var(--mono); color: var(--muted); }
+.arm-num input { font-size: 17px; }
+.arm-num .calc-suffix { font-size: 12px; white-space: nowrap; }
+.arm-cell { display: block; min-width: 0; }
+.arm-cap { display: none; margin-bottom: 4px; font: 600 10px/1 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.arm-na { display: inline-flex; align-items: center; padding-left: 4px; color: var(--muted); }
+.arm-na svg { fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.arm-foot { grid-template-columns: repeat(2, minmax(0, 1fr)) auto; align-items: end; padding-top: 10px; border-top: 1px solid var(--line); }
+.arm-field > span:first-child { display: block; margin-bottom: 6px; font: 600 11px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.arm-count { display: flex; border: 0; padding: 0; margin: 0; }
+.arm-count legend { padding: 0; margin-bottom: 6px; font: 600 11px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.arm-count button { min-width: 44px; min-height: 44px; border: 1px solid var(--line-strong); margin-left: -1px; background: transparent; color: var(--muted); font: 14px var(--mono); cursor: pointer; }
+.arm-count button.on { box-shadow: inset 0 0 0 1px var(--cyan); color: var(--cyan); font-weight: 600; }
+
+.arm-results-wrap { margin-top: 24px; max-width: 100%; overflow-x: auto; }
+.arm-results { width: 100%; border-collapse: collapse; }
+.arm-results caption { text-align: left; padding-bottom: 8px; font: 600 11px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.arm-results th, .arm-results td { padding: 6px 10px; border-bottom: 1px solid var(--line); text-align: left; }
+.arm-results thead th { font: 600 10px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.arm-results tbody th { font-weight: 600; white-space: nowrap; }
+.arm-tau { font: 600 13px var(--mono); color: var(--muted); }
+.arm-results tr.on .arm-tau { color: var(--cyan); }
+.arm-load { display: flex; align-items: center; gap: 14px; }
+.arm-bar { flex: 1; min-width: 40px; max-width: 360px; height: 6px; background: var(--line); }
+.arm-bar span { display: block; height: 100%; background: var(--muted); transition: width 160ms ease; }
+.arm-results tr.on .arm-bar span { background: var(--cyan); }
+.arm-results tbody tr { cursor: pointer; }
+.arm-results tbody tr:hover { background: var(--panel); }
+.arm-results tr.on th, .arm-results tr.on .arm-val { color: var(--cyan); }
+.arm-val { min-width: 9ch; font: 700 20px var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.arm-pick { display: grid; place-items: center; width: 44px; height: 44px; margin-left: auto; border: 1px solid var(--line-strong); border-radius: 2px; background: transparent; cursor: pointer; }
+.arm-pick svg { fill: none; stroke: var(--muted); stroke-width: 1.5; }
+.arm-pick .arm-pick-dot { fill: var(--muted); stroke: none; opacity: 0; }
+.arm-pick:hover svg { stroke: var(--cyan); }
+.arm-pick[aria-pressed="true"] { border-color: var(--cyan); }
+.arm-pick[aria-pressed="true"] svg { stroke: var(--cyan); }
+.arm-pick[aria-pressed="true"] .arm-pick-dot { fill: var(--cyan); opacity: 1; }
+
+
+@media (max-width: 820px) {
+    .arm-inputs { padding: 16px; }
+    .arm-head { display: none; }
+    .arm-cap { display: block; }
+    .arm-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .arm-link-name { grid-column: 1 / -1; }
+    .arm-foot { grid-template-columns: minmax(0, 1fr); }
+    .arm-results th, .arm-results td { padding: 6px 6px; }
+    .arm-val { font-size: 16px; }
+    .arm-load { flex-direction: column; align-items: stretch; gap: 6px; }
+    .arm-bar { flex: none; min-width: 0; }
+    .arm-results tbody th { white-space: normal; }
+}
+
+:root { --amber: #ffb547; }
 
 /* Drafting figures: the /robots X-ray drawing (canvas) with an SVG layer of
    callouts in the same units on top. */
@@ -222,6 +404,14 @@ body:has(.tool-page) #catalog-content table { max-width: 860px; }
 .jm-callout:hover .jm-n, .jm-callout:focus-visible .jm-n { fill: #000; }
 .jm-callout:hover .jm-leader, .jm-callout:hover .jm-ring { stroke: var(--cyan); }
 .jm-callout:hover .jm-name { fill: var(--cyan); }
+.jm-callout.on .jm-balloon { stroke-width: 2.4; }
+.jm-callout.on .jm-leader, .jm-callout.on .jm-ring { stroke: var(--cyan); }
+.jm-callout.on .jm-name { fill: var(--cyan); }
+/* Pointing at one joint, in the drawing or the table, lets the rest recede. */
+.jm-callout, .jm-bom tbody tr { transition: opacity 160ms ease; }
+.jm[data-focus] .jm-callout:not(.on) { opacity: 0.22; }
+.jm[data-focus] .jm-bom tbody tr:not(.on) { opacity: 0.4; }
+.jm-bom tbody tr.on .jm-num { box-shadow: 0 0 0 1px var(--cyan); }
 .jm-callout:focus-visible { outline: none; }
 body:has(#shoulder:target) .jm-shoulder .jm-balloon,
 body:has(#elbow:target) .jm-elbow .jm-balloon,
@@ -229,14 +419,7 @@ body:has(#wrist:target) .jm-wrist .jm-balloon,
 body:has(#waist:target) .jm-waist .jm-balloon,
 body:has(#hip:target) .jm-hip .jm-balloon,
 body:has(#knee:target) .jm-knee .jm-balloon,
-body:has(#ankle:target) .jm-ankle .jm-balloon { fill: var(--cyan); }
-body:has(#shoulder:target) .jm-shoulder .jm-n,
-body:has(#elbow:target) .jm-elbow .jm-n,
-body:has(#wrist:target) .jm-wrist .jm-n,
-body:has(#waist:target) .jm-waist .jm-n,
-body:has(#hip:target) .jm-hip .jm-n,
-body:has(#knee:target) .jm-knee .jm-n,
-body:has(#ankle:target) .jm-ankle .jm-n { fill: #000; }
+body:has(#ankle:target) .jm-ankle .jm-balloon { stroke-width: 2.4; }
 
 .jm-bom { width: 100%; border-collapse: collapse; font-size: 14px; }
 .jm-bom caption { text-align: left; padding-bottom: 10px; font: 600 11px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
@@ -245,14 +428,25 @@ body:has(#ankle:target) .jm-ankle .jm-n { fill: #000; }
 .jm-bom tbody th a { display: inline-flex; align-items: center; min-height: 44px; color: var(--text); font-weight: 600; }
 .jm-bom tbody th, .jm-bom .jm-val { white-space: nowrap; }
 .jm-bom .jm-val { font-family: var(--mono); color: var(--text); text-align: right; font-variant-numeric: tabular-nums; }
-.jm-bom thead th:nth-child(4) { text-align: right; }
-.jm-bom tbody tr:hover { background: var(--panel); }
+.jm-bom thead th:nth-child(3) { text-align: right; }
+.jm-bom tbody th { width: 100%; }
+.jm-bom tbody tr:hover, .jm-bom tbody tr.on { background: var(--panel); }
 .jm-num { display: inline-grid; place-items: center; width: 28px; height: 28px; border: 1.5px solid var(--cyan); border-radius: 50%; font: 600 13px var(--mono); }
 .jm-num:hover { text-decoration: none; background: var(--cyan); color: #000; }
-.jm-note { margin: 14px 0 0; font-size: 13px; line-height: 1.5; color: var(--muted); }
+.jm-pips { display: inline-flex; align-items: center; gap: 8px; }
+.jm-pips svg { display: block; }
+.jm-pip { fill: none; stroke: var(--cyan-dim); stroke-width: 1; }
+.jm-pip.rated { fill: var(--green); stroke: var(--green); }
+.jm-warn { fill: none; stroke: var(--amber); stroke-width: 1.3; stroke-linejoin: round; stroke-linecap: round; }
+.jm-pips-n { font: 12px var(--mono); color: var(--muted); }
+.jm-key .jm-pips-n { display: none; }
 @media (max-width: 820px) {
     .jm { grid-template-columns: minmax(0, 1fr); }
     .jm .draft-fig { border-right: 0; border-bottom: 1px solid var(--line); }
     .jm-side { padding: 16px; }
-    .jm-bom th:nth-child(3), .jm-bom td:nth-child(3) { display: none; }
+    /* The pips carry the count on a phone; the number stays in their label. */
+    .jm-pips-n { display: none; }
+    .req-key dl > div { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+    .jm-pips svg { max-width: 100%; height: auto; }
+    .jm-pips { display: flex; }
 }

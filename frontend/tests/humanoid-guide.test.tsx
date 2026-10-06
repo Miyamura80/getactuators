@@ -1,7 +1,7 @@
 import "./happydom";
 import { afterEach, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
-import { cleanup, render } from "@testing-library/react";
+import { cleanup, render, within } from "@testing-library/react";
 import { JOINTS } from "../../src/server/agent/humanoid-joints";
 import { buildTools, type WebMcpTool } from "../src/lib/webmcp";
 import { HumanoidGuide } from "../src/pages/HumanoidGuide";
@@ -35,7 +35,9 @@ test("the guide draws the /robots humanoid with a numbered link per joint", () =
     }
     const knee = view.getByRole("row", { name: /Knee/ });
     expect(knee.textContent).toContain("69.1");
-    expect(knee.textContent).toContain("peak only");
+    // No rated fit: every pip is hollow and the screen carries a warning mark.
+    expect(within(knee).getByRole("img", { name: /0 rated, \d+ peak only/ })).toBeTruthy();
+    expect(knee.querySelector(".jm-warn")).toBeTruthy();
 });
 
 test("WebMCP: joint data site-wide, and a page tool that scrolls to a joint", async () => {

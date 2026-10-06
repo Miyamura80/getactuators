@@ -15,5 +15,8 @@ export interface Page {
     persistentLabel?: string;
     // Give persistent h2s ids from their text, for in-page links.
     headingIds?: boolean;
+    // Rewrite the rendered persistent HTML (not the .md twin), e.g. to draw a
+    // Markdown list as visual rows.
+    persistentHtml?: (html: string) => string;
     jsonLd: () => Record<string, unknown>[];
 }

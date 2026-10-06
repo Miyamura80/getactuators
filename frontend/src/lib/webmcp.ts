@@ -18,6 +18,7 @@ import { ACTUATORS } from "./data";
 import { DEFAULT_FILTERS, applyFilters } from "./filter";
 import { navigate } from "./router";
 import { ROBOTS, motorCount, resolveJoints } from "./robots";
+import { type Arm, MAX_LINKS, MIN_LINKS, armReport, validArm } from "../../../src/engineering/arm-torque";
 import { JOINTS, humanoidJointRequirements } from "../../../src/server/agent/humanoid-joints";
 
 type Args = Record<string, unknown>;
@@ -147,6 +148,71 @@ export function listRobots(query?: string) {
     }));
 }
 
+// Arm model from untyped tool arguments, or an error message for the agent.
+export function armFromArgs(args: Args): Arm | string {
+    const links = Array.isArray(args.links) ? args.links : [];
+    if (links.length < MIN_LINKS || links.length > MAX_LINKS) return `links: ${MIN_LINKS} to ${MAX_LINKS} items`;
+    const arm: Arm = {
+        payload: numOrNull(args.payload_kg) ?? 0,
+        comFraction: numOrNull(args.com_fraction) ?? 0.5,
+        links: links.map((raw, i) => {
+            const l = (raw ?? {}) as Args;
+            return {
+                length: numOrNull(l.length_m) ?? 0,
+                mass: numOrNull(l.mass_kg) ?? 0,
+                actuatorMass: i === links.length - 1 ? 0 : (numOrNull(l.actuator_mass_kg) ?? 0),
+            };
+        }),
+    };
+    return validArm(arm) ? arm : "Lengths must be above 0, masses 0 or more, com_fraction 0 to 1";
+}
+
+// Shortlist rows carry site paths; tool results give absolute URLs.
+function absoluteRows<T extends { page_path: string }>(rows: T[]) {
+    return rows.map(({ page_path, ...c }) => ({ ...c, page_url: `${SITE}${page_path}` }));
+}
+
+// armReport with absolute URLs, as every other tool result here returns.
+export function armResult(arm: Arm) {
+    const report = armReport(arm);
+    return {
+        assumptions: report.assumptions,
+        joints: report.joints.map((j) => ({
+            ...j,
+            shortlist: absoluteRows(j.shortlist),
+        })),
+        calculator_url: `${SITE}${report.calculator_path}`,
+    };
+}
+
+export const ARM_INPUT_SCHEMA = {
+    type: "object",
+    properties: {
+        links: {
+            type: "array",
+            minItems: MIN_LINKS,
+            maxItems: MAX_LINKS,
+            description: "From the base outward",
+            items: {
+                type: "object",
+                properties: {
+                    length_m: { type: "number", exclusiveMinimum: 0 },
+                    mass_kg: { type: "number", minimum: 0 },
+                    actuator_mass_kg: {
+                        type: "number",
+                        minimum: 0,
+                        description: "Actuator at this link's far end; ignored on the last link",
+                    },
+                },
+                required: ["length_m", "mass_kg"],
+            },
+        },
+        payload_kg: { type: "number", minimum: 0, description: "Payload plus gripper at the tip" },
+        com_fraction: { type: "number", minimum: 0, maximum: 1, description: "Link mass position, default 0.5" },
+    },
+    required: ["links", "payload_kg"],
+};
+
 const CATEGORY_ENUM = CATEGORIES.map((c) => c.slug);
 const ID_SCHEMA = { type: "string", description: "Actuator id, as returned by search_actuators" };
 
@@ -235,6 +301,18 @@ export function buildTools(): WebMcpTool[] {
             },
         },
         {
+            name: "calculate_arm_holding_torque",
+            title: "Robot arm holding torque",
+            description:
+                "Static holding moment (N·m) at each pitch joint of a 2 to 4 link arm held horizontal, from link lengths, masses, actuator masses and payload, with catalog actuators per joint and a calculator URL. Gravity only.",
+            annotations: { readOnlyHint: true },
+            inputSchema: ARM_INPUT_SCHEMA,
+            async execute(args) {
+                const arm = armFromArgs(args);
+                return typeof arm === "string" ? result({ error: arm }, true) : result(armResult(arm));
+            },
+        },
+        {
             name: "get_humanoid_joint_requirements",
             title: "Humanoid joint requirements",
             description:
@@ -255,7 +333,7 @@ export function buildTools(): WebMcpTool[] {
                     joints: data.joints.map(({ section_path, shortlist, ...j }) => ({
                         ...j,
                         section_url: `${SITE}${section_path}`,
-                        shortlist: shortlist.map(({ page_path, ...c }) => ({ ...c, page_url: `${SITE}${page_path}` })),
+                        shortlist: absoluteRows(shortlist),
                     })),
                     guide_url: `${SITE}${data.guide_path}`,
                 });

@@ -55,11 +55,21 @@ test("humanoid guide is an app page whose guide text stays below the joint map",
             html,
         )?.[0] ?? "";
     expect(persistent).toContain('aria-label="Method, joint estimates and shortlists"');
-    expect(persistent).toContain(
-        '<h2 id="how-to-read-this-guide">How to read this guide</h2>',
+    expect(persistent).toMatch(
+        /<h2 id="how-to-read-this-guide"><svg[^>]*>[\s\S]*?<\/svg>How to read this guide<\/h2>/,
     );
     for (const j of JOINTS)
         expect(persistent).toContain(`<h2 id="${j.id}">${j.name}</h2>`);
+    // Each joint's catalog list renders as part rows with a gauge against
+    // that joint's estimate; the knee has no rated fit, so its gauges read peak.
+    expect(persistent.match(/<ol class="req-rows">/g)?.length).toBe(JOINTS.length);
+    expect(persistent).toContain("<span>Dynamic and thermal duty</span></summary>");
+    const knee = persistent.slice(
+        persistent.indexOf('<h2 id="knee">'),
+        persistent.indexOf('<h2 id="ankle">'),
+    );
+    expect(knee).toContain('class="fit-gauge peak"');
+    expect(knee).not.toContain('class="fit-gauge rated"');
     const graph = JSON.parse(
         /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(html)?.[1] ??
             "{}",
@@ -69,6 +79,9 @@ test("humanoid guide is an app page whose guide text stays below the joint map",
             .description,
     ).toBe(page?.description);
     const twin = await (await get(`${HUMANOID_GUIDE_PATH}.md`)).text();
+    // The twin keeps the plain Markdown list.
+    expect(twin).toContain("Peak only: short duty.");
+    expect(twin).not.toContain("req-rows");
     expect(await (await getMarkdown(HUMANOID_GUIDE_PATH)).text()).toBe(twin);
     expect(twin).not.toContain("{{joint:");
     expect(twin).toContain("**Estimate: 69.1 N·m static.**");

@@ -38,6 +38,8 @@ Add the server `https://actuatorlist.com/mcp` (Streamable HTTP, name
   motor in each joint.
 - `humanoid_joint_requirements`: static torque estimate per humanoid joint
   (stated pose and arithmetic) and the catalog actuators that reach it.
+- `arm_holding_torque`: static holding torque per robot-arm joint from link
+  lengths, masses and payload, actuators per joint and a calculator URL.
 
 Resources such as `catalog://actuators` and `actuator://{id}` hold the same
 data. A second server at `https://actuatorlist.com/mcp/docs` serves the site

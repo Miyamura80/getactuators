@@ -25,9 +25,24 @@ test("motor torque calculator is an indexable tool with persistent method conten
             html,
         )?.[0] ?? "";
     expect(persistent).toContain('aria-label="Method, examples and questions"');
-    expect(persistent).toContain("<h2>How the calculator works</h2>");
+    // Each method section carries a line icon before its heading text.
+    expect(persistent).toMatch(
+        /<h2><svg class="ga-h2-icon ga-ic-method"[^>]*>[\s\S]*?<\/svg>How the calculator works<\/h2>/,
+    );
+    // Worked examples lead with the result; the working folds under it.
+    expect(persistent).toContain(
+        '<details class="ga-example"><summary><h3>7.85 N·m to hold 2 kg at 0.4 m on an arm</h3></summary><p>A 2 kg mass',
+    );
     expect(persistent).toContain("T = 9.549 × P / n");
-    expect(persistent).toContain("Not a stall rating.");
+    // Each caveat is a chip: glyph and label up front, the reason on tap.
+    expect(persistent).toMatch(
+        /<ul class="ga-limits">[\s\S]*?<details class="ga-limit"><summary><svg[^>]*><path d="[^"]+"\/><\/svg><span>Stall torque is a motor rating<\/span><\/summary><p>At zero speed/,
+    );
+    expect(persistent.match(/class="ga-limit"/g)).toHaveLength(4);
+    // Questions fold under themselves; the answers stay in the page.
+    expect(persistent).toContain(
+        '<details class="ga-example ga-faq"><summary><h3>Does a gearbox increase power?</h3></summary><p>No.',
+    );
     expect(html.match(/<footer class="site-footer"/g)).toHaveLength(1);
     const graph = JSON.parse(
         /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(html)?.[1] ??
@@ -48,4 +63,68 @@ test("motor torque calculator has a markdown twin, sitemap entry and footer link
     expect(await (await get("/")).text()).toContain(
         `<a href="${MOTOR_TORQUE_PATH}">Motor torque calculator</a>`,
     );
+});
+
+test("robot arm calculator is a separate indexable tool with its method below", async () => {
+    const path = "/tools/robot-arm-torque-calculator";
+    expect(findPage(path)?.description.length).toBeLessThanOrEqual(160);
+    const html = await (await get(path)).text();
+    expect(html).toContain(
+        "<title>Robot arm torque calculator: holding torque per joint | actuatorlist</title>",
+    );
+    const persistent =
+        /<section class="ga-page" id="catalog-content"[^>]*>[\s\S]*?<\/section>/.exec(
+            html,
+        )?.[0] ?? "";
+    expect(persistent).toMatch(
+        /<h2><svg[^>]*>[\s\S]*?<\/svg>How the calculation works<\/h2>/,
+    );
+    // The results table stays open; inputs and working fold.
+    expect(persistent).toMatch(
+        /<h2><svg[^>]*>[\s\S]*?<\/svg>Worked example<\/h2>[\s\S]*?<td>Shoulder<\/td><td>33\.9 N·m<\/td>[\s\S]*?<details class="ga-example">/,
+    );
+    expect(persistent).toContain("<span>Motion torque</span></summary>");
+    expect(persistent).toContain("<span>Safety margin</span></summary>");
+    expect(await (await get(`${path}.md`)).text()).toContain("| Shoulder | 33.9 N·m |");
+    expect(await (await get("/sitemap.xml")).text()).toContain(
+        `https://actuatorlist.com${path}`,
+    );
+});
+
+test("arm_holding_torque MCP tool matches the calculator and links back to it", async () => {
+    const { CATALOG_TOOLS } = await import("@/mcp/server");
+    const tool = CATALOG_TOOLS.find((t) => t.name === "arm_holding_torque");
+    if (!tool) throw new Error("tool missing");
+    const out = tool.run({
+        links: [
+            { length_m: 0.4, mass_kg: 1.2, actuator_mass_kg: 1 },
+            { length_m: 0.35, mass_kg: 0.8, actuator_mass_kg: 0.5 },
+            // Ignored: the payload sits on the last link's far end.
+            { length_m: 0.12, mass_kg: 0.3, actuator_mass_kg: 9 },
+        ],
+        payload_kg: 2,
+        com_fraction: 0.5,
+        limit: 3,
+    } as never) as {
+        joints: {
+            name: string;
+            holding_torque_nm: number;
+            shortlist: { page_url: string; fit: string }[];
+        }[];
+        calculator_url: string;
+    };
+    expect(out.joints.map((j) => [j.name, j.holding_torque_nm])).toEqual([
+        ["Shoulder", 33.91],
+        ["Elbow", 13.51],
+        ["Wrist", 2.53],
+    ]);
+    expect(out.joints[0]?.shortlist[0]?.page_url).toStartWith(
+        "https://actuatorlist.com/actuators/",
+    );
+    expect(out.calculator_url).toBe(
+        "https://actuatorlist.com/tools/robot-arm-torque-calculator?L=0.4,0.35,0.12&m=1.2,0.8,0.3&a=1,0.5,0&p=2",
+    );
+    const llms = await (await get("/llms.txt")).text();
+    expect(llms).toContain("/tools/robot-arm-torque-calculator.md");
+    expect(llms).toContain("arm_holding_torque");
 });

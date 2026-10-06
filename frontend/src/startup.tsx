@@ -10,6 +10,8 @@ import { CommandPalette } from "./components/CommandPalette";
 import { Agents } from "./pages/Agents";
 import { GalleryRoot } from "./GalleryRoot";
 import { Compare } from "./pages/Compare";
+import { ArmTorqueCalculator } from "./pages/ArmTorqueCalculator";
+import { ARM_TORQUE_PATH } from "../../src/engineering/arm-torque";
 import { HumanoidGuide } from "./pages/HumanoidGuide";
 import { HUMANOID_GUIDE_PATH } from "../../src/server/agent/humanoid-joints";
 import { MOTOR_TORQUE_PATH, MotorTorqueCalculator } from "./pages/MotorTorqueCalculator";
@@ -21,6 +23,7 @@ function Page({ menuOpen }: { menuOpen: boolean }) {
     if (path === "/robots" || path === "/robot") return <Home menuOpen={menuOpen} />;
     if (path === "/actuators") return <ActuatorsGallery menuOpen={menuOpen} />;
     if (path === "/agents") return <Agents menuOpen={menuOpen} />;
+    if (path === ARM_TORQUE_PATH) return <ArmTorqueCalculator menuOpen={menuOpen} />;
     if (path === HUMANOID_GUIDE_PATH) return <HumanoidGuide menuOpen={menuOpen} />;
     if (path === MOTOR_TORQUE_PATH) return <MotorTorqueCalculator menuOpen={menuOpen} />;
     if (path.startsWith("/actuators/")) {
