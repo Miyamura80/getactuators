@@ -165,7 +165,7 @@
             "price_usd": 15000,
             "price_max_usd": 20000,
             "product_url": "https://menlo.ai/asimov-1",
-            "image_url": "https://menlo.ai/images/asimov-1-hero.png",
+            "image_url": "/robot-images/menlo-asimov-1.webp",
             "summary": "Open-source 1.2 m, 35 kg biped humanoid for whole-body control and locomotion research, sold as a DIY kit with full BOM, CAD and a MuJoCo sim on GitHub. Rated for 5 kg per arm.",
             "joints": [
                 { "role": "Hip pitch + waist yaw", "motor": "asimov-ec-a6416", "count": 3 },
@@ -195,7 +195,7 @@
             "price_usd": 13500,
             "price_max_usd": 21500,
             "product_url": "https://www.unitree.com/g1/",
-            "image_url": "https://shop.unitree.com/cdn/shop/files/2_3769ceea-b323-4ebc-a1f4-e27a9624706b_1200x1200.jpg?v=1717575246",
+            "image_url": "/robot-images/unitree-g1.webp",
             "summary": "Compact 1.32 m, 35 kg humanoid with 23 joints (23 to 43 on the EDU version) driven by low-inertia internal-rotor PMSM joint motors. About 2 hours of battery life.",
             "joints": [
                 { "role": "Knee", "motor": "unitree-g1-knee", "count": 2 }
@@ -220,7 +220,7 @@
             "price_usd": 29900,
             "price_max_usd": null,
             "product_url": "https://www.unitree.com/H2/",
-            "image_url": "https://shop.unitree.com/cdn/shop/files/3_d9687814-d553-451b-9429-c224a20f3b3a_1200x1200.jpg?v=1769743075",
+            "image_url": "/robot-images/unitree-h2.webp",
             "summary": "Full-size 1.82 m, 70 kg humanoid with 31 DOF, up to 360 N·m at the leg joints and a bionic head. Arms carry about 7 kg rated, 15 kg peak.",
             "joints": [
                 { "role": "Legs", "motor": "unitree-h2-leg", "count": 12 },
@@ -246,7 +246,7 @@
             "price_usd": 20000,
             "price_max_usd": null,
             "product_url": "https://www.1x.tech/neo",
-            "image_url": "https://cdn.sanity.io/images/qka6yvsc/production/ee557c733ef09cd4628692339331fa5abc79239b-1069x2293.webp",
+            "image_url": "/robot-images/1x-neo.webp",
             "summary": "Home humanoid with tendon-driven actuation, a soft lattice-polymer body and 22-DOF hands. Weighs 30 kg and carries 25 kg.",
             "joints": [],
             "sources": [
@@ -269,7 +269,7 @@
             "price_usd": null,
             "price_max_usd": null,
             "product_url": "https://www.booster.tech/booster-t1/",
-            "image_url": "https://www.booster.tech/_astro/specification-t1.CmWYO9Pz_zox76.webp",
+            "image_url": "/robot-images/booster-t1.webp",
             "summary": "Developer humanoid, 1.18 m and about 30 kg, with 23 DOF (31 with grippers, 41 with dexterous hands) and up to 130 N·m peak joint torque. Won RoboCup 2025 AdultSize.",
             "joints": [],
             "sources": [
@@ -291,7 +291,7 @@
             "price_usd": null,
             "price_max_usd": null,
             "product_url": "https://www.booster.tech/booster-k1/",
-            "image_url": "https://www.booster.tech/_astro/specification-k1.CqLuX2Lk_2pgwi9.webp",
+            "image_url": "/robot-images/booster-k1.webp",
             "summary": "Entry-level 95 cm, 19.5 kg humanoid with 22 DOF and up to 60 N·m peak joint torque, sold in Geek, Education and Professional editions. Won RoboCup 2025 KidSize.",
             "joints": [],
             "sources": [
@@ -312,7 +312,7 @@
             "price_usd": 2999,
             "price_max_usd": null,
             "product_url": "https://i2rt.com/products/yam-6-dof-arm",
-            "image_url": "https://cdn.shopify.com/s/files/1/0733/1276/4161/files/st0_768396f1-edfb-4839-96c1-f7b5dffa214a.png?v=1788854436&width=800",
+            "image_url": "/robot-images/i2rt-yam.webp",
             "summary": "Low-cost 6-DOF manipulator built for imitation learning and teleoperation data collection. CNC 6061 billet frame, integrated cross-roller bearings, 95 mm patent-pending gripper.",
             "joints": [
                 { "role": "Shoulder (J1-J3)", "motor": "dm-j4340", "count": 3 },
@@ -338,7 +338,7 @@
             "price_usd": 3499,
             "price_max_usd": null,
             "product_url": "https://i2rt.com/products/yam-pro-6-dof-arm-copy",
-            "image_url": "https://cdn.shopify.com/s/files/1/0733/1276/4161/files/pro_040dcf3b-dd9b-4986-a663-e54c87b29eb3.png?v=1788852701&width=800",
+            "image_url": "/robot-images/i2rt-yam-pro.webp",
             "summary": "Same motor set and SDK as the base YAM; the control-law difference is a stiffer J4 position gain plus build refinements. Interchangeable with Standard and Ultra in the SDK.",
             "joints": [
                 { "role": "Shoulder (J1-J3)", "motor": "dm-j4340", "count": 3 },
@@ -364,7 +364,7 @@
             "price_usd": 4299,
             "price_max_usd": 4399,
             "product_url": "https://i2rt.com/products/yam-ultra-6-dof-arm",
-            "image_url": "https://cdn.shopify.com/s/files/1/0733/1276/4161/files/U3_f6f30271-34c3-4ef0-9318-f94f0a6e0bfa.png?v=1788854602&width=800",
+            "image_url": "/robot-images/i2rt-yam-ultra-2.webp",
             "summary": "Enhanced build of the 6-DOF YAM with the same Damiao motor chain and SDK as Standard and Pro, tuned for higher-duty data collection.",
             "joints": [
                 { "role": "Shoulder (J1-J3)", "motor": "dm-j4340", "count": 3 },
@@ -390,7 +390,7 @@
             "price_usd": 4999,
             "price_max_usd": null,
             "product_url": "https://i2rt.com/products/big-yam-6-dof-arm",
-            "image_url": "https://cdn.shopify.com/s/files/1/0733/1276/4161/files/big_2bedd4e1-ac7e-4ba2-8a6a-b37c1083d9ea.png?v=1788852245&width=800",
+            "image_url": "/robot-images/i2rt-big-yam.webp",
             "summary": "Heavier-payload 6-DOF variant. Uses DM6248 motors at the shoulders with substantially different control gains and a reversed joint 2; the only YAM whose SDK gains differ meaningfully from Standard.",
             "joints": [
                 { "role": "Shoulder (J1-J2)", "motor": "dm-j6248", "count": 2 },
@@ -417,7 +417,7 @@
             "price_usd": 4999,
             "price_max_usd": 9999,
             "product_url": "https://i2rt.com/products/yam-7dof",
-            "image_url": "https://cdn.shopify.com/s/files/1/0733/1276/4161/files/20260907-162753_7f3b3435-75e4-42a4-8e32-d523a54fedf3.png?v=1789443103&width=800",
+            "image_url": "/robot-images/i2rt-yam-7.webp",
             "summary": "7-DOF member of the YAM family with an added redundant joint for richer wrist orientation. Per-joint motor list not published in the SDK docs yet.",
             "joints": [],
             "sources": ["https://i2rt.com/products/yam-7dof"]
@@ -436,7 +436,7 @@
             "price_usd": 2999,
             "price_max_usd": null,
             "product_url": "https://i2rt.com/products/yam-leader",
-            "image_url": "https://cdn.shopify.com/s/files/1/0733/1276/4161/files/leader0_42d0baf9-0fac-416d-836c-a81d996c5a4a.png?v=1788852470&width=800",
+            "image_url": "/robot-images/i2rt-yam-leader.webp",
             "summary": "Teleoperation leader arm: the operator backdrives it to puppeteer a follower YAM (GELLO-style). Runs the same motor-chain SDK; its joint motor list is not published separately.",
             "joints": [],
             "sources": ["https://i2rt.com/products/yam-leader"]
