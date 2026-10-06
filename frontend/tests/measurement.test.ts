@@ -153,6 +153,52 @@ test("gallery and dedicated comparison actions are measured only on bounded comp
     await w.happyDOM.close();
 });
 
+test("tool_result is route-scoped, allowlisted and sent at most once per page view", async () => {
+    const w = await browser();
+    const result = (quantity: unknown) => w.dispatchEvent(new w.CustomEvent("actuatorlist:tool-result", { detail: { quantity } }));
+    const sent = () => commands(w).filter((c) => c[1] === "tool_result").map((c) => c[2] as Record<string, unknown>);
+    w.history.pushState(null, "", "/tools/motor-torque-calculator?t=12&n=300");
+    result("power");
+    click(w, "Allow analytics");
+    result("12 Nm");
+    result("power");
+    result("torque");
+    const page = "https://actuatorlist.com/tools/motor-torque-calculator";
+    expect(sent()).toEqual([{ tool: "motor-torque", quantity: "power", surface: "tool", source_path: page, page_location: page, page_referrer: "", transport_type: "beacon" }]);
+    w.history.pushState(null, "", "/tools/robot-arm-torque-calculator");
+    result("holding");
+    w.history.pushState(null, "", "/tools/motor-torque-calculator");
+    result("speed");
+    for (const path of ["/all", "/guides/humanoid-robot-actuators", "/tools/unknown"]) {
+        w.history.pushState(null, "", path);
+        result("torque");
+    }
+    expect(sent().map((p) => [p.tool, p.quantity])).toEqual([["motor-torque", "power"], ["arm-torque", "holding"], ["motor-torque", "speed"]]);
+    await w.happyDOM.close();
+});
+test("tool shortlist clicks are measured as what each link's href does", async () => {
+    const w = await browser({ consent: "granted" });
+    w.history.pushState(null, "", "/tools/robot-arm-torque-calculator");
+    const page = "https://actuatorlist.com/tools/robot-arm-torque-calculator";
+    const base = { tool: "arm-torque", surface: "tool", source_path: page, page_location: page, page_referrer: "https://actuatorlist.com/all", transport_type: "beacon" };
+    link(w, "tool_shortlist_click", "cubemars-ak80-9", "tool", "/actuators/cubemars-ak80-9").click();
+    link(w, "tool_shortlist_click", "cubemars-ak80-9", "tool", "/actuators/xiaomi-cybergear").click();
+    link(w, "tool_shortlist_click", "unknown", "tool", "/actuators/unknown").click();
+    link(w, "tool_shortlist_click", "cubemars-ak80-9", "drawer", "/actuators/cubemars-ak80-9").click();
+    const compare = (href: string) => { const a = link(w, "tool_shortlist_click", "", "tool", href); delete a.dataset.productId; return a; };
+    compare("/compare?compare=xiaomi-cybergear,cubemars-ak80-9").click();
+    compare("/compare?compare=cubemars-ak80-9,cubemars-ak80-9").click();
+    compare("/compare?compare=cubemars-ak80-9,unknown").click();
+    compare("https://elsewhere.test/compare?compare=xiaomi-cybergear,cubemars-ak80-9").click();
+    expect(commands(w).filter((c) => c[1] === "tool_shortlist_click").map((c) => c[2])).toEqual([
+        { ...base, target: "product", product_id: "cubemars-ak80-9" },
+        { ...base, target: "compare", product_id_1: "cubemars-ak80-9", product_id_2: "xiaomi-cybergear", product_count: 2 },
+    ]);
+    w.history.pushState(null, "", "/all");
+    link(w, "tool_shortlist_click", "cubemars-ak80-9", "tool", "/actuators/cubemars-ak80-9").click();
+    expect(commands(w).filter((c) => c[1] === "tool_shortlist_click")).toHaveLength(2);
+    await w.happyDOM.close();
+});
 test("page views count canonical pathname changes only after consent, and resuming never duplicates the current view", async () => {
     const w = await browser();
     w.history.pushState(null, "", "/actuators?q=private");

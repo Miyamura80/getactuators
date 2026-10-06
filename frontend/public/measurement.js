@@ -20,6 +20,8 @@
     };
     function command() { window.dataLayer.push(arguments); }
     let lastPage;
+    // At most one tool_result per counted page view.
+    let resultSent = false;
     let pageReferrer = canonical(document.referrer);
     function pageView() {
         if (!allowed || privacySignal()) return;
@@ -28,6 +30,7 @@
         const referrer = lastPage || pageReferrer;
         pageReferrer = referrer;
         lastPage = path;
+        resultSent = false;
         command("set", { page_location: path, page_referrer: referrer, page_title: "actuatorlist" });
         command("event", "page_view", { page_location: path, page_referrer: referrer, page_title: "actuatorlist", transport_type: "beacon" });
     }
@@ -110,9 +113,35 @@
         if (!allowed || privacySignal()) return;
         command("event", name, { ...params, source_path: canonical(location.href), page_location: canonical(location.href), page_referrer: pageReferrer, transport_type: "beacon" });
     }
+    // Distinct catalog IDs as sorted product_id_N params, or null when invalid.
+    function productSetParams(rawIds, min) {
+        const ids = [...new Set(rawIds)];
+        if (ids.length < min || ids.length > 4 || !ids.every((value) => products.has(value))) return null;
+        return { ...Object.fromEntries(ids.sort().map((value, index) => [`product_id_${index + 1}`, value])), product_count: ids.length };
+    }
+    // Engineering tools: the tool comes from the route, never from the page, and
+    // no typed input value is sent.
+    const tools = { "/tools/motor-torque-calculator": "motor-torque", "/tools/robot-arm-torque-calculator": "arm-torque" };
+    // A tool shortlist link is measured as what its href does: one catalog
+    // page, or the compare set in its own query.
+    function toolLinkParams(anchor) {
+        const destination = new URL(anchor.href, location.href);
+        if (destination.origin !== location.origin) return null;
+        const id = anchor.dataset.productId;
+        if (id !== undefined) return products.has(id) && destination.pathname === `/actuators/${id}` ? { target: "product", product_id: id } : null;
+        if (destination.pathname !== "/compare") return null;
+        const set = productSetParams((destination.searchParams.get("compare") || "").split(","), 2);
+        return set && { target: "compare", ...set };
+    }
+    function toolClick(anchor) {
+        const tool = tools[location.pathname];
+        const params = tool && anchor.dataset.measureSurface === "tool" ? toolLinkParams(anchor) : null;
+        if (params) emit("tool_shortlist_click", { tool, ...params, surface: "tool" });
+    }
     function clickEvent(event) {
         if (event.type === "auxclick" && event.button !== 1) return;
         const anchor = event.target instanceof Element ? event.target.closest("a[data-measure-event]") : null;
+        if (anchor?.dataset.measureEvent === "tool_shortlist_click") return toolClick(anchor);
         if (!anchor || !products.has(anchor.dataset.productId)) return;
         const name = anchor.dataset.measureEvent;
         const surface = anchor.dataset.measureSurface;
@@ -133,11 +162,17 @@
     window.addEventListener("actuatorlist:compare", (event) => {
         const detail = event.detail;
         if (!detail || !["open", "update"].includes(detail.action) || !Array.isArray(detail.productIds)) return;
-        const ids = [...new Set(detail.productIds)];
-        if (ids.length > 4 || ids.length < (detail.action === "open" ? 2 : 1) || !ids.every((value) => products.has(value))) return;
         if (!["/all", "/actuators", "/compare"].includes(location.pathname)) return;
-        const productParams = Object.fromEntries(ids.sort().map((value, index) => [`product_id_${index + 1}`, value]));
-        emit(`compare_${detail.action}`, { ...productParams, product_count: ids.length, surface: "comparison" });
+        const params = productSetParams(detail.productIds, detail.action === "open" ? 2 : 1);
+        if (params) emit(`compare_${detail.action}`, { ...params, surface: "comparison" });
+    });
+    window.addEventListener("actuatorlist:tool-result", (event) => {
+        const tool = tools[location.pathname];
+        const quantity = event.detail?.quantity;
+        if (!tool || !["torque", "power", "speed", "holding"].includes(quantity)) return;
+        if (!allowed || privacySignal() || resultSent) return;
+        resultSent = true;
+        emit("tool_result", { tool, quantity, surface: "tool" });
     });
     window.addEventListener("storage", (event) => {
         if ((event.key === key || event.key === null) && event.newValue !== "granted") reject();
