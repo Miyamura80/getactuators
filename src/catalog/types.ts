@@ -100,6 +100,8 @@ export interface Robot {
     // "cover" for photos shot on their own backdrop, which should fill the
     // tile instead of sitting inset on the light studio panel.
     image_fit?: "contain" | "cover";
+    // Build-time crop for the photo script; not used at runtime.
+    image_crop?: [number, number, number, number];
     summary: string;
     joints: RobotJoint[];
     sources: string[];

@@ -22,6 +22,9 @@ interface Robot {
     id: string;
     product_url: string | null;
     image_url?: string | null;
+    // Optional [left, top, width, height] as fractions of the source photo,
+    // to cut the robot out of a wider lifestyle shot before resizing.
+    image_crop?: [number, number, number, number];
     [key: string]: unknown;
 }
 
@@ -86,15 +89,29 @@ async function photoSource(robot: Robot): Promise<string | null> {
     return robot.product_url ? shareImage(robot.product_url) : null;
 }
 
-// Resize to a bounded WebP and save it; false when the bytes do not decode.
-async function savePhoto(id: string, buf: Buffer): Promise<boolean> {
+// Crop (if asked), resize to a bounded WebP and save it; false when the bytes do not decode.
+async function savePhoto(robot: Robot, buf: Buffer): Promise<boolean> {
     try {
-        const out = await sharp(buf)
-            .rotate()
+        let img = sharp(buf).rotate();
+        if (robot.image_crop) {
+            const { width = 0, height = 0 } = await sharp(buf).rotate().metadata();
+            const [l, t, w, h] = robot.image_crop;
+            img = sharp(
+                await img
+                    .extract({
+                        left: Math.round(l * width),
+                        top: Math.round(t * height),
+                        width: Math.round(w * width),
+                        height: Math.round(h * height),
+                    })
+                    .toBuffer(),
+            );
+        }
+        const out = await img
             .resize(MAX_EDGE, MAX_EDGE, { fit: "inside", withoutEnlargement: true })
             .webp({ quality: QUALITY })
             .toBuffer();
-        writeFileSync(join(OUT_DIR, `${id}.webp`), out);
+        writeFileSync(join(OUT_DIR, `${robot.id}.webp`), out);
         return true;
     } catch {
         return false;
@@ -118,7 +135,7 @@ async function main(): Promise<void> {
         }
         const src = await photoSource(robot);
         const buf = src ? await download(src, robot.product_url) : null;
-        if (!src || !buf || !(await savePhoto(robot.id, buf))) {
+        if (!src || !buf || !(await savePhoto(robot, buf))) {
             failed.push(`${robot.id}: ${src ?? "no image_url and no share image"}`);
             continue;
         }
