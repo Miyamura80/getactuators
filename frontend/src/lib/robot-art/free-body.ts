@@ -1,15 +1,13 @@
-// The calculator's arm, drawn in the /robots cobot style (UR-class housings,
-// slim link tubes, short base, parallel gripper) but built from the model's
-// own numbers: link lengths to scale, each pitch joint's housing sized by its
-// actuator mass, and the payload block held at the tip, where the
-// calculation puts it.
-import type { Arm } from "../../../../src/engineering/arm-torque";
+// The calculator's arm, drawn in the /robots cobot style (UR-class housings
+// with side caps, slim link tubes, a short pedestal) but built from the
+// model's own numbers: link lengths to scale, each pitch joint's housing
+// sized by its actuator mass, and a claw closed around the payload ball at
+// the tip, where the calculation puts the payload.
+import { type Arm, jointName } from "../../../../src/engineering/arm-torque";
 import type { Vec3 } from "./math";
 import { Scene } from "./scene";
 
-const X: Vec3 = [1, 0, 0];
 const Z: Vec3 = [0, 0, 1];
-const AXES: [Vec3, Vec3, Vec3] = [X, [0, 1, 0], Z];
 
 // Housing radius (m) from actuator mass (kg): cube-root scaling puts a 1 kg
 // joint near a UR elbow (45 mm); clamped so missing masses stay visible.
@@ -28,9 +26,29 @@ export interface FreeBodyGeometry {
     underside: number;
 }
 
+// Two hinged jaws that bow out and hook back in around the payload ball: a
+// pincer drawn in the side plane, mounted on a short palm.
+function claw(s: Scene, palmStart: number, centre: number, h: number, R: number): void {
+    const palm = palmStart + R * 0.45;
+    s.tube([palmStart, h, 0], [palm, h, 0], R * 0.55, R * 0.7, "dark");
+    const w = R * 0.24;
+    for (const sy of [1, -1]) {
+        const hinge: Vec3 = [palm, h + sy * R * 0.5, 0];
+        const knee: Vec3 = [centre - R * 0.15, h + sy * R * 1.28, 0];
+        const tip: Vec3 = [centre + R * 0.78, h + sy * R * 0.42, 0];
+        s.drum(hinge, Z, R * 0.2, R * 0.55, "metal");
+        s.link(hinge, knee, w * 1.15, R * 0.42, "dark", { hint: Z, e1: 0.35, e2: 0.35 });
+        s.drum(knee, Z, R * 0.15, R * 0.48, "metal");
+        s.link(knee, tip, w, R * 0.36, "dark", { hint: Z, e1: 0.35, e2: 0.35, taper: [1, 0.55] });
+    }
+    s.next();
+    s.ball([centre, h, 0], R * 0.92, "shell");
+}
+
 export function freeBodyArm(arm: Arm): FreeBodyGeometry {
     const s = new Scene();
     const length = arm.links.reduce((sum, l) => sum + l.length, 0);
+    const n = arm.links.length;
     // Joint i's actuator is carried by link i - 1. Joint 1 sits on the base
     // (its mass loads nothing), so it is drawn one size up from the largest.
     const masses = arm.links.map((_, i) => (i === 0 ? 0 : (arm.links[i - 1]?.actuatorMass ?? 0)));
@@ -54,27 +72,22 @@ export function freeBodyArm(arm: Arm): FreeBodyGeometry {
         // Housing with its side cap, and the actuator inside it.
         s.drum(c, Z, r * 1.08, r * 2, "shell");
         s.drum([x, h, r * 1.08], Z, r * 1.1, r * 0.2, "shell");
-        s.motor(c, Z, r * 0.9, r * 1.75, { jn: `J${i + 1}`, nm: 0 });
+        s.motor(c, Z, r * 0.9, r * 1.75, { jn: jointName(i, n).toUpperCase(), nm: 0 });
         const end = x + l.length;
-        const last = i === arm.links.length - 1;
-        if (!last) {
+        if (i < n - 1) {
             const rn = radii[i + 1] ?? r;
-            s.tube([x + r * 0.95, h, 0], [end - rn * 0.95, h, 0], Math.min(r, rn) * 0.7, Math.min(r, rn) * 0.7, "shell");
+            const rl = Math.min(r, rn) * 0.7;
+            s.tube([x + r * 0.95, h, 0], [end - rn * 0.95, h, 0], rl, rl, "shell");
         } else {
-            // The gripper ends where the payload sits: the link's far end.
-            const g = Math.max(0.3, Math.min(r / 0.044, (l.length - r * 1.3) / 0.16));
-            const flange = end - 0.15 * g;
-            s.tube([x + r * 0.95, h, 0], [flange - 0.012 * g, h, 0], r * 0.62, r * 0.62, "shell");
-            s.tube([flange - 0.012 * g, h, 0], [flange, h, 0], r * 0.7, r * 0.7, "metal");
+            // Last link out to a tool flange, then the claw. The payload ball
+            // grows with its mass and is centred on the tip.
+            const R = Math.min(0.07, Math.max(0.026, 0.034 * Math.cbrt(Math.max(arm.payload, 0.05))));
+            const flange = Math.max(x + r * 1.4, end - R * 2.3);
+            const rl = r * 0.62;
+            s.tube([x + r * 0.95, h, 0], [flange - 0.014, h, 0], rl, rl, "shell");
+            s.tube([flange - 0.014, h, 0], [flange, h, 0], r * 0.78, r * 0.78, "metal");
             s.next();
-            s.link([flange, h, 0], [flange + 0.07 * g, h, 0], 0.1 * g, 0.055 * g, "dark", { hint: Z, e1: 0.25, e2: 0.25 });
-            const side = Math.min(0.11 * g, Math.max(0.03, 0.045 * Math.cbrt(Math.max(arm.payload, 0.05))));
-            for (const zs of [-1, 1]) {
-                const z = zs * (side * 0.5 + 0.006 * g);
-                s.link([flange + 0.065 * g, h, z], [end + side * 0.35, h, z], 0.014 * g, 0.03 * g, "metal", { hint: Z, e1: 0.3, e2: 0.3 });
-            }
-            s.next();
-            s.box([end, h, 0], AXES, [side * 0.5, side * 0.5, side * 0.5], "dark", 0.2, 0.2);
+            claw(s, flange, end, h, R);
         }
         x = end;
     });
@@ -83,4 +96,3 @@ export function freeBodyArm(arm: Arm): FreeBodyGeometry {
     const underside = h - Math.max(...radii) * 1.1;
     return { scene: s, joints, tip, height: h, length, underside };
 }
-

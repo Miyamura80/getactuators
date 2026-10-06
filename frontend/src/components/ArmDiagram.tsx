@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { type ReactNode, useMemo } from "react";
 import type { Arm, JointLoad } from "../../../src/engineering/arm-torque";
 import { jointName, pointMasses } from "../../../src/engineering/arm-torque";
 import type { CamSpec } from "../lib/robot-art/core";
@@ -8,13 +8,21 @@ import { DraftingFigure, type Project } from "./DraftingFigure";
 
 // The arm held horizontal, drawn by the /robots X-ray renderer from the
 // calculator's own model. The overlay uses the humanoid map's language:
-// numbered joint callouts with their holding torque above, link dimensions
-// on top, and one load arrow per point mass dropping to a label rail below.
+// numbered joint callouts with their holding torque, link dimensions on top,
+// and one load arrow per point mass dropping to label rails below.
 
 const W = 640;
-const H = 300;
-const BOX = { x: 48, y: 126, w: 544, h: 120, ay: 0.5 };
-const CAM_BASE = { yaw: 0.3, pitch: 0.16 };
+const H = 320;
+const BOX = { x: 48, y: 140, w: 544, h: 150, ay: 0.4 };
+
+type Geo = ReturnType<typeof freeBodyArm>;
+
+interface Props {
+    arm: Arm;
+    loads: JointLoad[];
+    active: number;
+    onSelect: (i: number) => void;
+}
 
 interface Load {
     kg: number;
@@ -23,8 +31,8 @@ interface Load {
     payload: boolean;
 }
 
-// Labels sit on rails under the arm: each takes the first rail where it
-// clears every label already there, so crowded wrists stack neatly.
+// Each label takes the first rail where it clears every label already there,
+// so crowded wrists stack neatly.
 function railLoads(loads: Load[], rail: number) {
     const rows: number[][] = [];
     return loads
@@ -37,38 +45,97 @@ function railLoads(loads: Load[], rail: number) {
         });
 }
 
-function Overlay({
-    arm,
-    loads,
+function JointButton({
+    i,
+    n,
+    load,
     active,
     onSelect,
-    project,
-    geo,
+    children,
 }: {
-    arm: Arm;
-    loads: JointLoad[];
+    i: number;
+    n: number;
+    load: JointLoad;
     active: number;
     onSelect: (i: number) => void;
-    project: Project;
-    geo: ReturnType<typeof freeBodyArm>;
+    children: ReactNode;
 }) {
+    return (
+        // biome-ignore lint/a11y/useSemanticElements: an SVG group cannot be a <button>; it carries role, tabIndex and key handling.
+        <g
+            className={i === active ? "jm-callout fb-joint on" : "jm-callout fb-joint"}
+            role="button"
+            tabIndex={0}
+            aria-label={`${jointName(i, n)}: ${fmt(load.torqueNm)} N·m. Show actuators`}
+            aria-pressed={i === active}
+            onClick={() => onSelect(i)}
+            onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onSelect(i);
+                }
+            }}
+        >
+            {children}
+        </g>
+    );
+}
+
+// Numbered balloon above a joint, name and torque beside it. The label flips
+// left when the next joint's balloon is close.
+function Balloon({
+    cx,
+    cy,
+    by,
+    i,
+    n,
+    load,
+    left,
+}: {
+    cx: number;
+    cy: number;
+    by: number;
+    i: number;
+    n: number;
+    load: JointLoad;
+    left: boolean;
+}) {
+    const lx = left ? cx - 17 : cx + 17;
+    const anchor = left ? "end" : "start";
+    return (
+        <>
+            <circle className="fb-hit" cx={cx} cy={(cy + by) / 2} r={28} />
+            <path className="jm-leader" d={`M${cx} ${by + 12}V${cy}`} />
+            <circle className="jm-dot" cx={cx} cy={cy} r={2} />
+            <circle className="jm-balloon" cx={cx} cy={by} r={12} />
+            <text className="jm-n" x={cx} y={by + 4.5} textAnchor="middle">
+                {i + 1}
+            </text>
+            <text className="jm-name" x={lx} y={by - 2} textAnchor={anchor}>
+                {jointName(i, n).toUpperCase()}
+            </text>
+            <text className="jm-val-label" x={lx} y={by + 10} textAnchor={anchor}>
+                {fmt(load.torqueNm)} N·m
+            </text>
+        </>
+    );
+}
+
+function Overlay({ arm, loads, active, onSelect, project, geo }: Props & { project: Project; geo: Geo }) {
     const n = arm.links.length;
     const joints = geo.joints.map(project);
     const tipX = project(geo.tip)[0];
-    const armTop = Math.min(...joints.map(([, y]) => y));
-    const dimY = armTop - 92;
-    const balloonY = armTop - 54;
+    const top = Math.min(...joints.map(([, y]) => y));
     const below = project([geo.length / 2, geo.underside, 0])[1];
+    const stations = [...joints.map(([x]) => x), tipX];
     const masses = pointMasses(arm);
     const rail = railLoads(
         masses.map((m, i) => {
             const [x, y] = project([m.x, geo.height, 0]);
             return { kg: m.kg, x, y, payload: i === masses.length - 1 };
         }),
-        below + 44,
+        below + 40,
     );
-    const stations = [...joints.map(([x]) => x), tipX];
-
     return (
         <>
             <text className="jm-head" x={12} y={20}>
@@ -81,10 +148,11 @@ function Overlay({
             {arm.links.map((l, i) => {
                 const a = stations[i] ?? 0;
                 const b = stations[i + 1] ?? a;
+                const y = top - 100;
                 return (
                     <g key={`dim-${i}`} className="fb-dim">
-                        <path d={`M${a} ${dimY + 5}V${dimY - 5}M${b} ${dimY + 5}V${dimY - 5}M${a} ${dimY}H${b}`} />
-                        <text x={(a + b) / 2} y={dimY - 5} textAnchor="middle">
+                        <path d={`M${a} ${y + 5}V${y - 5}M${b} ${y + 5}V${y - 5}M${a} ${y}H${b}`} />
+                        <text x={(a + b) / 2} y={y - 5} textAnchor="middle">
                             {fmt(l.length)} m
                         </text>
                     </g>
@@ -98,72 +166,35 @@ function Overlay({
                 </g>
             ))}
             {rail.map((l, i) => (
-                <text key={`load-label-${i}`} className={l.payload ? "fb-load-label payload" : "fb-load-label"} x={l.x} y={l.labelY} textAnchor="middle">
+                <text
+                    key={`load-label-${i}`}
+                    className={l.payload ? "fb-load-label payload" : "fb-load-label"}
+                    x={l.x}
+                    y={l.labelY}
+                    textAnchor="middle"
+                >
                     {fmt(l.kg)} kg
                 </text>
             ))}
 
             {loads.map((l, i) => {
                 const [cx, cy] = joints[i] ?? [0, 0];
-                const on = i === active;
-                const name = jointName(i, n).toUpperCase();
-                // Flip the label left when the next joint's balloon is close.
-                const nextX = joints[i + 1]?.[0];
-                const left = nextX !== undefined && nextX - cx < 110;
-                const lx = left ? cx - 17 : cx + 17;
-                const anchor = left ? "end" : "start";
+                const next = joints[i + 1]?.[0];
                 return (
-                    // biome-ignore lint/a11y/useSemanticElements: an SVG group cannot be a <button>; it carries role, tabIndex and key handling.
-                    <g
-                        key={`j-${i}`}
-                        className={on ? "jm-callout fb-joint on" : "jm-callout fb-joint"}
-                        role="button"
-                        tabIndex={0}
-                        aria-label={`${jointName(i, n)}: ${fmt(l.torqueNm)} N·m. Show actuators`}
-                        aria-pressed={on}
-                        onClick={() => onSelect(i)}
-                        onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                                e.preventDefault();
-                                onSelect(i);
-                            }
-                        }}
-                    >
-                        <circle className="fb-hit" cx={cx} cy={(cy + balloonY) / 2} r={30} />
-                        <path className="jm-leader" d={`M${cx} ${balloonY + 12}V${cy}`} />
-                        <circle className="jm-dot" cx={cx} cy={cy} r={2} />
-                        <circle className="jm-balloon" cx={cx} cy={balloonY} r={12} />
-                        <text className="jm-n" x={cx} y={balloonY + 4.5} textAnchor="middle">
-                            {i + 1}
-                        </text>
-                        <text className="jm-name" x={lx} y={balloonY - 2} textAnchor={anchor}>
-                            {name}
-                        </text>
-                        <text className="jm-val-label" x={lx} y={balloonY + 10} textAnchor={anchor}>
-                            {fmt(l.torqueNm)} N·m
-                        </text>
-                    </g>
+                    <JointButton key={i} i={i} n={n} load={l} active={active} onSelect={onSelect}>
+                        <Balloon cx={cx} cy={cy} by={top - 58} i={i} n={n} load={l} left={next !== undefined && next - cx < 110} />
+                    </JointButton>
                 );
             })}
         </>
     );
 }
 
-export function ArmDiagram({
-    arm,
-    loads,
-    active,
-    onSelect,
-}: {
-    arm: Arm;
-    loads: JointLoad[];
-    active: number;
-    onSelect: (i: number) => void;
-}) {
+export function ArmDiagram({ arm, loads, active, onSelect }: Props) {
     const geo = useMemo(() => freeBodyArm(arm), [arm]);
     const cam = useMemo<CamSpec>(() => {
         const span = Math.max(geo.length, 0.35);
-        return { ...CAM_BASE, dist: span * 3.2, target: [span * 0.45, geo.height * 0.7, 0] };
+        return { yaw: 0.3, pitch: 0.16, dist: span * 3.2, target: [span * 0.45, geo.height * 0.7, 0] };
     }, [geo]);
     const n = arm.links.length;
     const label = `Free-body diagram: ${loads.map((l, i) => `${jointName(i, n)} ${fmt(l.torqueNm)} N·m`).join(", ")}`;
