@@ -16,6 +16,17 @@ export function isReducerFamily(id: string): boolean {
     return reducerFamilies.has(id);
 }
 
+// Bare gearboxes: no motor or drive of their own, so their torque and density
+// do not compare with actuators. Mutable only so the golden test can rebuild
+// its pre-filter capture.
+export const gearboxOnlyIds = new Set([...reducerFamilies, "nabtesco-rv-42n"]);
+
+// Rankings list verified actuators only: an unchecked spec or a bare gearbox
+// must not headline a list. Both stay in the tables, gallery and API.
+export function isRankable(a: EvidenceRecord): boolean {
+    return a.verified && !gearboxOnlyIds.has(a.id);
+}
+
 export function fieldCaveat(a: EvidenceRecord, field: string): string | undefined {
     if (
         a.id === "cubemars-ak80-9" &&

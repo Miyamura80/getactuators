@@ -59,7 +59,8 @@ hashes are checked against. Leave them alone: edits to `actuators.json` and
 
 ## Rules
 - Rankings (home top-N lists, home charts, FAQ picks) show `verified` entries
-  only. An unverified entry stays in every table, the gallery and the API.
+  only and leave out bare gearboxes (`gearboxOnlyIds` in
+  `src/catalog/evidence.ts`). Both stay in every table, the gallery and the API.
 - Prefer manufacturer primary sources; note when a spec is a community/measured value.
 - Distinguish **peak** vs **continuous** torque; do not mix them.
 - Torque values are at the **output shaft** (after the gearbox).
