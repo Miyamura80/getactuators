@@ -15,6 +15,7 @@ import {
 } from "./body";
 import { type HeadMeta, documentTitle, esc, headTags } from "./head";
 import { PAGE_CSS } from "./style";
+import { withToolCards } from "./tool-cards";
 
 // HTML for every page: the React shell enriched at serve time (SPA pages) or a
 // complete server-rendered document (trust pages, 404).
@@ -80,13 +81,15 @@ export async function renderSpaPage(page: Page, visual?: string): Promise<string
             ? await galleryFile.text()
             : null;
     const prerender = galleryHtml ?? visual ?? fallbackHtml;
-    const rendered = foldLimits(
-        withSectionIcons(
-            foldQuestions(
-                foldWorkedExamples(
-                    page.headingIds
-                        ? withHeadingIds(markdownToHtml(content))
-                        : markdownToHtml(content),
+    const rendered = withToolCards(
+        foldLimits(
+            withSectionIcons(
+                foldQuestions(
+                    foldWorkedExamples(
+                        page.headingIds
+                            ? withHeadingIds(markdownToHtml(content))
+                            : markdownToHtml(content),
+                    ),
                 ),
             ),
         ),

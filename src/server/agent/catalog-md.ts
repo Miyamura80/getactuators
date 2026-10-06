@@ -9,6 +9,7 @@ import {
     engineeringSources,
     productSummary,
 } from "./product-content";
+import { sizeAJointSection } from "./size-a-joint";
 
 // Markdown fragments describing catalog records. Shared by the page twins,
 // llms-full.txt and the prerendered HTML.
@@ -115,6 +116,8 @@ export function actuatorBody(a: Actuator): string {
         `## Specifications\n\n${mdTable(["Spec", "Value"], specRows(a))}${a.id === "cubemars-ak80-9" ? "\n\n**Legacy catalog / revision conflict:** retained catalog fields are not revalidated by this editorial review. Catalog mass is 485 g and motor-side encoder is 14-bit; the [reviewed V3.0 KV100 model page](https://www.cubemars.com/product/ak80-9-v3-0-robotic-actuator.html) lists 490 g and 16-bit inner sensing, while the [AK family manual V3.2.0](https://www.cubemars.com/data/cms/202602/ak-series-prodcut-manual-v3-2-0-for-ak-3-0-robotic-actuator.pdf) lists 21-bit. Confirm the installed revision before using these values or derived torque density; the documentation discrepancy is unresolved." : ""}`,
         `## Use cases\n\n${bullets(a.use_cases.map(humanize))}`,
     ];
+    const sizing = sizeAJointSection(a);
+    if (sizing) sections.splice(3, 0, sizing);
     if (robots.length > 0) {
         sections.push(
             `## Robots that use it\n\n${bullets(robots.map((r) => `${mdText(r.name)} by ${mdText(r.brand)}: ${mdText(r.summary)}`))}`,

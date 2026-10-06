@@ -6,10 +6,12 @@ import { actuatorPath, categoryLabel } from "@/server/agent/catalog-md";
 import { CATALOG_UPDATED_DATE } from "@/server/agent/freshness";
 import { markdownToHtml, pageBody } from "@/server/agent/html/body";
 import { documentTitle } from "@/server/agent/html/head";
+import { withToolCards } from "@/server/agent/html/tool-cards";
 import { humanize, mdText, num, usd } from "@/server/agent/md";
 import { allPages, findPage, pageMarkdown } from "@/server/agent/pages";
 import { faqSection } from "@/server/agent/pages-md";
 import { productSummary } from "@/server/agent/product-content";
+import { sizeAJointSection } from "@/server/agent/size-a-joint";
 import approvedEngineering from "../catalog/engineering-approved.json";
 import { get } from "./agent-helpers";
 import baseline from "./short-titles-baseline.json";
@@ -45,7 +47,34 @@ function snapshotContent(value: string) {
     );
     for (const name of TOOLS_ADDED_AFTER_BASELINE)
         out = out.replaceAll(`, ${name}`, "");
+    for (const added of LINKS_ADDED_AFTER_BASELINE) {
+        out = removeOnce(out, added);
+        out = removeOnce(out, renderedAddition(added));
+    }
     return out;
+}
+
+// Links to the engineering tools added to the selection guide and comparison
+// after the capture. Each must appear exactly once; the rest stays locked.
+const TOOL_LINKS =
+    " · [Motor torque calculator](/tools/motor-torque-calculator) · [Robot arm torque calculator](/tools/robot-arm-torque-calculator) · [Humanoid robot actuators](/guides/humanoid-robot-actuators)";
+const LINKS_ADDED_AFTER_BASELINE = [
+    TOOL_LINKS,
+    " · [Motor torque calculator](/tools/motor-torque-calculator) · [Humanoid robot actuators](/guides/humanoid-robot-actuators)",
+    "\n\nFor a first static number, the [robot arm torque calculator](/tools/robot-arm-torque-calculator) gives holding torque at each arm joint, the [humanoid actuator guide](/guides/humanoid-robot-actuators) estimates each joint of a 50 kg humanoid, and the [motor torque calculator](/tools/motor-torque-calculator) converts between torque, power and speed. Treat these as floors: the trajectory sets the real requirement.",
+];
+// The same addition as served HTML: a new paragraph renders whole, an inline
+// link run renders inside the existing paragraph.
+function renderedAddition(added: string): string {
+    if (added.startsWith("\n\n")) return markdownToHtml(added.slice(2));
+    const html = markdownToHtml(`x${added}`);
+    return html.slice("<p>x".length, -"</p>\n".length);
+}
+function removeOnce(body: string, added: string): string {
+    const parts = body.split(added);
+    if (parts.length === 1) return body;
+    expect(parts).toHaveLength(2);
+    return parts.join("");
 }
 
 // Old specification values recovered with git show HEAD:src/server/agent/catalog-md.ts.
@@ -145,6 +174,12 @@ function snapshotProduct(body: string, a: Actuator): string {
         restored = restored.replace(oldRow, currentRow);
     }
     expect(restored).toBe(body);
+    // "Size a joint" was added after the capture: remove exactly that section.
+    const sizing = sizeAJointSection(a);
+    if (sizing) {
+        expect(normalized.split(`\n\n${sizing}`)).toHaveLength(2);
+        normalized = normalized.replace(`\n\n${sizing}`, "");
+    }
     return snapshotEngineering(normalized, a.id);
 }
 
@@ -220,7 +255,7 @@ async function expectCatalogPage(
             );
         expect(persistent).not.toBeNull();
         expect(persistent?.[1]).toBe(
-            `<div class="ga-main">${markdownToHtml(currentBody.slice(split))}</div>`,
+            `<div class="ga-main">${withToolCards(markdownToHtml(currentBody.slice(split)))}</div>`,
         );
     }
     const preservedContent = actuator

@@ -128,3 +128,33 @@ test("arm_holding_torque MCP tool matches the calculator and links back to it", 
     expect(llms).toContain("/tools/robot-arm-torque-calculator.md");
     expect(llms).toContain("arm_holding_torque");
 });
+
+test("actuator pages link each tool at that part's own numbers", async () => {
+    const html = await (await get("/actuators/myactuator-rmd-x8-120")).text();
+    const persistent =
+        /<section class="ga-page" id="catalog-content"[^>]*>[\s\S]*?<\/section>/.exec(
+            html,
+        )?.[0] ?? "";
+    // Server-rendered below the app as cards, so crawlers follow the links.
+    expect(persistent).toContain('<h2>Size a joint</h2>\n<ul class="ga-tool-cards">');
+    expect(persistent).toMatch(
+        /<a class="ga-tool-card" href="\/tools\/motor-torque-calculator\?solve=power&amp;t=43&amp;n=127"><svg[^>]*><path d="[^"]+"\/><\/svg><strong>572 W<\/strong><span class="ga-tool-note">of shaft power at its rated 43 N·m and 127 rpm.<\/span><span class="ga-tool-name">Motor torque calculator →<\/span><\/a>/,
+    );
+    expect(persistent).toContain(
+        'href="/tools/robot-arm-torque-calculator?L=0.4,0.35,0.12&amp;m=1.2,0.8,0.3&amp;a=1.4,0.5,0&amp;p=2"',
+    );
+    expect(persistent).toContain("<strong>35.5 N·m</strong>");
+    expect(persistent).toContain('href="/guides/humanoid-robot-actuators#hip"');
+    expect(persistent).toContain("<strong>6 of 7 joints</strong>");
+    expect(persistent.match(/class="ga-tool-card"/g)).toHaveLength(3);
+    // The Markdown twin keeps the plain list.
+    const md = await (await getMarkdown("/actuators/myactuator-rmd-x8-120")).text();
+    expect(md).toContain(
+        "- [Motor torque calculator](/tools/motor-torque-calculator?solve=power&t=43&n=127): **572 W** of shaft power",
+    );
+    // Drives and reducers document no torque or mass: no section.
+    const drive = await (await get("/actuators/odrive-v36")).text();
+    expect(drive).not.toContain("Size a joint");
+    const guide = await (await get("/guides/robot-actuator-selection")).text();
+    expect(guide).toContain('href="/tools/robot-arm-torque-calculator"');
+});

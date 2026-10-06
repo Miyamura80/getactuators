@@ -65,6 +65,15 @@ export const PAGE_CSS = `
 .ga-page .ga-faq-item summary:hover{background:#0a0a0a}
 .ga-page .ga-faq-item summary:focus-visible{outline:2px solid #c3fffd;outline-offset:3px}
 .ga-page .ga-faq-item>p{margin:.25rem .5rem 1rem}
+.ga-page .ga-tool-cards{list-style:none;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,15rem),1fr));gap:.75rem}
+.ga-page .ga-tool-cards li{margin:0}
+.ga-page .ga-tool-card{display:grid;gap:.35rem;height:100%;box-sizing:border-box;padding:1rem;border:1px solid #242424;border-radius:6px;color:inherit;text-decoration:none}
+.ga-page .ga-tool-card:hover,.ga-page .ga-tool-card:focus-visible{border-color:#c3fffd}
+.ga-page .ga-tool-card:focus-visible{outline:2px solid #c3fffd;outline-offset:2px}
+.ga-page .ga-tool-card svg{fill:none;stroke:#c3fffd;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.ga-page .ga-tool-card strong{font:600 1.6rem/1.1 "JetBrains Mono",monospace;color:#f9f9f9}
+.ga-page .ga-tool-note{font-size:.8rem;color:#9ba4a6}
+.ga-page .ga-tool-name{margin-top:auto;font:600 .8rem "JetBrains Mono",monospace;color:#c3fffd}
 .ga-page h1{font-size:2rem;line-height:1.2}
 .ga-page h2{border-top:1px solid #242424;padding-top:1.5rem;margin-top:2rem}
 .ga-page p,.ga-page li,.ga-page td{color:#9ba4a6}

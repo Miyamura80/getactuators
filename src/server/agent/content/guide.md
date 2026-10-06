@@ -20,6 +20,8 @@ The steps below are a **proposed engineering workflow**, not a test campaign alr
 
 Specify required output torque and speed over time, including reversals, acceleration, gravity holding, and disturbance recovery. Define normal operation and exceptional events separately. Record link inertia, payload, bus-voltage range, mounting, airflow, ambient conditions, allowable temperatures, and target positioning errors.
 
+For a first static number, the [robot arm torque calculator](/tools/robot-arm-torque-calculator) gives holding torque at each arm joint, the [humanoid actuator guide](/guides/humanoid-robot-actuators) estimates each joint of a 50 kg humanoid, and the [motor torque calculator](/tools/motor-torque-calculator) converts between torque, power and speed. Treat these as floors: the trajectory sets the real requirement.
+
 Request a torque–speed envelope with voltage and temperature conditions. Do not assume peak torque remains available at the no-load speed. Vendor data can distinguish rated points from separate peak and no-load endpoints; the AK80-9 V3.0 and original CyberGear documentation do so. [CubeMars model specification](https://www.cubemars.com/product/ak80-9-v3-0-robotic-actuator.html) [Original Chinese manual, mirror](https://roboticscv.com/wp-content/uploads/pdf/CyberGear%E5%BE%AE%E7%94%B5%E6%9C%BA%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E%E4%B9%A6.pdf)
 
 **Engineering inference:** retain the lowest-complexity candidate that meets the measured mission envelope with a justified margin. A margin is a design decision tied to uncertainties and risk, not an unexplained universal multiplier.
@@ -124,6 +126,6 @@ For each candidate, publish the exact hardware/firmware revision, rated versus p
 
 ## Continue selecting
 
-[Engineering guides](/guides) · [Actuator catalog](/actuators)
+[Engineering guides](/guides) · [Actuator catalog](/actuators) · [Motor torque calculator](/tools/motor-torque-calculator) · [Robot arm torque calculator](/tools/robot-arm-torque-calculator) · [Humanoid robot actuators](/guides/humanoid-robot-actuators)
 
 Read the [AK80-9 V3.0 versus original CyberGear comparison](/comparisons/cubemars-ak80-9-vs-xiaomi-cybergear) for a version-scoped example.

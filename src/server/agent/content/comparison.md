@@ -90,6 +90,6 @@ For initial screening, AK80-9 V3.0 offers the higher published torque envelope a
 
 ## Continue selecting
 
-[Engineering guides](/guides) · [Actuator catalog](/actuators)
+[Engineering guides](/guides) · [Actuator catalog](/actuators) · [Motor torque calculator](/tools/motor-torque-calculator) · [Humanoid robot actuators](/guides/humanoid-robot-actuators)
 
 See the [selection guide](/guides/robot-actuator-selection) for the full measurement and calibration protocol.
