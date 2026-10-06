@@ -1,5 +1,4 @@
 import { ACTUATORS, getActuator } from "@/catalog";
-import { queryActuators } from "@/catalog/query";
 import { compareBody } from "./compare";
 
 import {
@@ -21,6 +20,7 @@ import {
     galleryBody,
     homeBody,
     robotsBody,
+    topBy,
 } from "./pages-md";
 import { actuatorSeoTitle } from "./seo-titles";
 import { TOOL_PAGES } from "./tools";
@@ -97,7 +97,7 @@ const STATIC_PAGES: Page[] = [
             ...ld.software(),
             ld.itemList(
                 "Highest torque density actuators",
-                queryActuators({ sort: "torque_density_nm_per_kg" }).slice(0, 10),
+                topBy("torque_density_nm_per_kg", undefined, 10),
             ),
         ],
     },

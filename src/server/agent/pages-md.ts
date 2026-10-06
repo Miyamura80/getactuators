@@ -14,15 +14,21 @@ export interface FaqItem {
     a: string;
 }
 
-function topBy(field: "torque_density_nm_per_kg", useCase?: string, n = 5): Actuator[] {
+// Rankings list verified entries only: an unchecked spec must not headline a
+// list. Unverified entries stay in the tables, gallery and API.
+export function topBy(
+    field: "torque_density_nm_per_kg",
+    useCase?: string,
+    n = 5,
+): Actuator[] {
     return queryActuators({ sort: field, order: "desc", use_case: useCase })
-        .filter((a) => a[field] !== null)
+        .filter((a) => a.verified && a[field] !== null)
         .slice(0, n);
 }
 
 function cheapestPerNm(n = 5): Actuator[] {
     return queryActuators({ sort: "price_per_nm", order: "asc" })
-        .filter((a) => a.price_per_nm !== null)
+        .filter((a) => a.verified && a.price_per_nm !== null)
         .slice(0, n);
 }
 

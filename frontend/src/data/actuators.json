@@ -166,7 +166,7 @@
     "availability": "in_production",
     "peak_torque_nm": 120,
     "rated_torque_nm": 40,
-    "max_speed_rpm": null,
+    "max_speed_rpm": 200,
     "gear_ratio": "9:1",
     "weight_g": 1420,
     "torque_density_nm_per_kg": 84.5,
@@ -189,13 +189,14 @@
     "encoder": "dual magnetic",
     "integrated_driver": true,
     "ip_rating": null,
-    "notes": "Largest mainstream RobStride QDD module. 120 N.m peak, 40 N.m rated, 9:1 reduction, size 110x50 mm, 15-60 V driver working voltage, CAN, dual magnetic encoders. Installed mass 1420 g (1.4 kg) per RobStride/Seeed/OpenELAB. Priced at $255 on Seeed Studio (authorized RobStride distributor, USD).",
+    "notes": "Largest mainstream RobStride QDD module. 120 N.m peak, 40 N.m rated, 9:1 reduction, size 110x50 mm, 15-60 V driver working voltage, CAN, dual magnetic encoders. Installed mass 1420 g (1.4 kg) per RobStride/Seeed/OpenELAB. Priced at $255 on Seeed Studio (authorized RobStride distributor, USD). No-load speed 200 rpm +/-10% at 48 V per RobStride RS04 user manual 260713.",
     "sources": [
       "https://x.com/RobStride_com/status/1802891697912737824",
       "https://www.seeedstudio.com/Robostride-04-Actuator-p-6775.html",
       "https://openelab.io/blogs/learn/robstride04-qdd-120n-m-integrated-joint-bldc-gear-motor-complete-guide",
       "https://github.com/RobStride/Product_Information",
-      "https://www.robstride.com/products/robStride04"
+      "https://www.robstride.com/products/robStride04",
+      "https://github.com/RobStride/Product_Information/blob/main/Product%20Literature/RS04/RS04User%20Manual260713.pdf"
     ],
     "verified": true,
     "price_per_nm": 2.13,
@@ -863,8 +864,8 @@
     "price_usd": 125,
     "availability": "in_production",
     "peak_torque_nm": 14,
-    "rated_torque_nm": null,
-    "max_speed_rpm": null,
+    "rated_torque_nm": 5,
+    "max_speed_rpm": 315,
     "gear_ratio": "10:1",
     "weight_g": 310,
     "torque_density_nm_per_kg": 45.2,
@@ -887,11 +888,12 @@
     "encoder": "dual 14-bit magnetic",
     "integrated_driver": true,
     "ip_rating": null,
-    "notes": "Smallest RobStride QDD integrated module. 14 N.m peak, 10:1 reduction, ~170 W, 24-60 V, dual 14-bit encoders, CAN, MIT-mode control. Weight 310 g per RobStride/Seeed/OpenELAB. Rated (continuous) torque not clearly published. Priced at $125 on Seeed Studio (authorized RobStride distributor, USD).",
+    "notes": "Smallest RobStride QDD integrated module. 14 N.m peak, 10:1 reduction, ~170 W, 24-60 V, dual 14-bit encoders, CAN, MIT-mode control. Weight 310 g per RobStride/Seeed/OpenELAB. Priced at $125 on Seeed Studio (authorized RobStride distributor, USD). Rated 5 N.m (tested at 100 rpm, 48 V) and no-load speed 315 rpm +/-10% per RobStride RS00 user manual 260713.",
     "sources": [
       "https://robstride.com/products/robStride00",
       "https://www.seeedstudio.com/Robostride-00-Actuator-p-6664.html",
-      "https://openelab.io/blogs/learn/robstride00-qdd-14n-m-integrated-joint-motor-module-complete-guide"
+      "https://openelab.io/blogs/learn/robstride00-qdd-14n-m-integrated-joint-motor-module-complete-guide",
+      "https://github.com/RobStride/Product_Information/blob/main/Product%20Literature/RS00/RS00User%20Manual260713.pdf"
     ],
     "verified": true,
     "price_per_nm": 8.93,
@@ -918,7 +920,7 @@
     "availability": "in_production",
     "peak_torque_nm": 17,
     "rated_torque_nm": 7,
-    "max_speed_rpm": null,
+    "max_speed_rpm": 315,
     "gear_ratio": "7.75:1",
     "weight_g": 380,
     "torque_density_nm_per_kg": 44.7,
@@ -941,11 +943,12 @@
     "encoder": "single 14-bit magnetic",
     "integrated_driver": true,
     "ip_rating": null,
-    "notes": "Compact 36 V-nominal QDD module (24-48 V range). 17 N.m peak, 7 N.m rated at 100 rpm, 7.75:1 reduction, single magnetic encoder, 380 g per Seeed/OpenELAB. Rated torque quoted at 100 rpm; no-load max speed not published. Priced at $143.99 on Seeed Studio (authorized RobStride distributor, USD).",
+    "notes": "Compact 36 V-nominal QDD module (24-48 V range). 17 N.m peak, 7 N.m rated at 100 rpm, 7.75:1 reduction, single magnetic encoder, 380 g per Seeed/OpenELAB. Rated torque quoted at 100 rpm. Priced at $143.99 on Seeed Studio (authorized RobStride distributor, USD). No-load speed 315 rpm +/-10% at 36 V per RobStride RS01 user manual 260713.",
     "sources": [
       "https://www.seeedstudio.com/Robostride-01-Actuator-p-6773.html",
       "https://openelab.io/blogs/learn/what-is-robstride01-36v-qdd-motor-robot-arms-automation",
-      "https://openelab.io/products/robstride01-qdd-17n-m-integrated-joint-motor-module"
+      "https://openelab.io/products/robstride01-qdd-17n-m-integrated-joint-motor-module",
+      "https://github.com/RobStride/Product_Information/blob/main/Product%20Literature/RS01/RS01User%20Manual260713.pdf"
     ],
     "verified": true,
     "price_per_nm": 8.47,
@@ -1025,7 +1028,7 @@
     "availability": "in_production",
     "peak_torque_nm": 40,
     "rated_torque_nm": 20,
-    "max_speed_rpm": null,
+    "max_speed_rpm": 160,
     "gear_ratio": "9:1",
     "weight_g": 896,
     "torque_density_nm_per_kg": 44.6,
@@ -1047,12 +1050,13 @@
     "encoder": "dual magnetic encoder",
     "integrated_driver": true,
     "ip_rating": null,
-    "notes": "98mm OD x 61.7mm integrated joint motor, MIT driver + dual magnetic encoders, CAN bus at 1 Mbps with telemetry (speed/position/torque/temperature). 20 N.m rated, 40 N.m peak, ~100 rpm rated output, 9:1, 24V. Supports MIT, speed and position modes. User manual lists ~896g. DM-J8009P-2EC variant uses a crossed-roller output bearing instead of the deep-groove bearing. Priced at $385 on Foxtech (authorized DAMIAO distributor, USD).",
+    "notes": "98mm OD x 61.7mm integrated joint motor, MIT driver + dual magnetic encoders, CAN bus at 1 Mbps with telemetry (speed/position/torque/temperature). 20 N.m rated, 40 N.m peak, ~100 rpm rated output, 9:1, 24V. Supports MIT, speed and position modes. User manual lists ~896g. DM-J8009P-2EC variant uses a crossed-roller output bearing instead of the deep-groove bearing. Priced at $385 on Foxtech (authorized DAMIAO distributor, USD). Maximum no-load speed 160 rpm at the 24 V rated voltage (320 rpm at 48 V) per DAMIAO user manual V1.1 specifications table.",
     "sources": [
       "https://github.com/dmBots/DM-J8009-2EC",
       "https://www.dronegearup.com/products/damiao-dm-j8009-2ec-24-v-20-n-m-9-1-98-mm-od-dual-encoder-integrated-robot-motor-with-can-1-mbps/",
       "https://manuals.plus/damiao/dm-j8009-2ec-servo-motor-manual",
-      "https://store.foxtech.com/dm-j8009-2ec-mit-driven-brushless-servo-joint-motor-with-dual-encoders-gear-reduction-for-robotic-arms/"
+      "https://store.foxtech.com/dm-j8009-2ec-mit-driven-brushless-servo-joint-motor-with-dual-encoders-gear-reduction-for-robotic-arms/",
+      "https://github.com/dmBots/DM-J8009-2EC/blob/master/manual/DM-J8009-2EC%20Gear%20Motor%20User%20Manual%20V1.1(4).pdf"
     ],
     "verified": true,
     "price_per_nm": 9.63,
@@ -1182,7 +1186,7 @@
     "availability": "in_production",
     "peak_torque_nm": 17,
     "rated_torque_nm": 6,
-    "max_speed_rpm": null,
+    "max_speed_rpm": 410,
     "gear_ratio": "7.75:1",
     "weight_g": 405,
     "torque_density_nm_per_kg": 42,
@@ -1205,11 +1209,12 @@
     "encoder": "dual 14-bit magnetic",
     "integrated_driver": true,
     "ip_rating": null,
-    "notes": "Dual-encoder sibling of RobStride 01. 17 N.m peak, 6 N.m rated, 7.75:1 reduction, 48 V nominal (24-60 V range), ~170 W, torque constant 1.22 N.m/A, dual 14-bit magnetic encoders, CAN with MIT-mode control. Weight 405 g +/-5 g per Seeed/OpenELAB. Priced at $160.99 on Seeed Studio (authorized RobStride distributor, USD).",
+    "notes": "Dual-encoder sibling of RobStride 01. 17 N.m peak, 6 N.m rated, 7.75:1 reduction, 48 V nominal (24-60 V range), ~170 W, torque constant 1.22 N.m/A, dual 14-bit magnetic encoders, CAN with MIT-mode control. Weight 405 g +/-5 g per Seeed/OpenELAB. Priced at $160.99 on Seeed Studio (authorized RobStride distributor, USD). No-load speed 410 rpm +/-10% at 48 V per RobStride RS02 user manual 260713.",
     "sources": [
       "https://www.seeedstudio.com/Robostride-02-Actuator-p-6665.html",
       "https://openelab.io/blogs/learn/robstride02-qdd-17n-m-joint-motor-module-complete-technical-guide",
-      "https://openelab.io/products/robstride02-qdd-17n-m-joint-motor-module-dual-encoders"
+      "https://openelab.io/products/robstride02-qdd-17n-m-joint-motor-module-dual-encoders",
+      "https://github.com/RobStride/Product_Information/blob/main/Product%20Literature/RS02/RS02User%20Manual260713.pdf"
     ],
     "verified": true,
     "price_per_nm": 9.47,
@@ -2279,10 +2284,10 @@
     "availability": "in_production",
     "peak_torque_nm": 150,
     "rated_torque_nm": 40,
-    "max_speed_rpm": null,
+    "max_speed_rpm": 150,
     "gear_ratio": "10:1",
-    "weight_g": null,
-    "torque_density_nm_per_kg": null,
+    "weight_g": 1485,
+    "torque_density_nm_per_kg": 101,
     "backdrivable": true,
     "backlash_arcmin": null,
     "repeatability_arcmin": null,
@@ -2301,11 +2306,12 @@
     "encoder": "dual magnetic encoder",
     "integrated_driver": true,
     "ip_rating": null,
-    "notes": "MIT-driven integrated joint motor with built-in gearbox and dual encoders; supports MIT (impedance/torque), position and velocity modes. 100mm-class body, ~100 rpm class output, 10:1 reduction. Resellers agree on 40 N.m rated / 150 N.m peak at 48V. Net weight is not stated in the primary datasheet/manual (some resellers imply ~1.6-1.8 kg, unverified) so weight_g and torque_density are left null and verified is false. Priced at $357 on Foxtech (authorized DAMIAO distributor, USD).",
+    "notes": "MIT-driven integrated joint motor with built-in gearbox and dual encoders; supports MIT (impedance/torque), position and velocity modes. 100mm-class body, ~100 rpm class output, 10:1 reduction. Resellers agree on 40 N.m rated / 150 N.m peak at 48V. Left unverified pending an English manufacturer datasheet. Priced at $357 on Foxtech (authorized DAMIAO distributor, USD). Maximum no-load speed 150 rpm (rated 100 rpm) at 48 V and motor weight about 1485 g per DAMIAO DM-J10010-2EC manual V1.0 specifications table.",
     "sources": [
       "https://github.com/dmBots/DM-J10010-2EC",
       "https://store.foxtech.com/dm-j10010-2ec-mit-driven-brushless-servo-joint-motor/",
-      "https://rcdrone.top/products/damiao-dm-j10010-2ec-servo-motor"
+      "https://rcdrone.top/products/damiao-dm-j10010-2ec-servo-motor",
+      "https://github.com/dmBots/DM-J10010-2EC/blob/master/manual/DM-J10010-2EC%E5%87%8F%E9%80%9F%E7%94%B5%E6%9C%BA%E8%AF%B4%E6%98%8E%E4%B9%A6V1.0.pdf"
     ],
     "verified": false,
     "price_per_nm": 2.38,
