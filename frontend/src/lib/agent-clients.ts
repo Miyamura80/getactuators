@@ -10,14 +10,15 @@ export const SERVER_NAME = "actuatorlist";
 export const DISPLAY_NAME = "actuatorlist";
 export const MCP_URL = "https://actuatorlist.com/mcp";
 
-// How much work is left after the visitor acts. "dialog-only" is ChatGPT: the
-// link opens the create dialog but fills nothing in, so the URL is copied to
-// the clipboard on the way out and the promise stays "shortcut", not "1-click".
-export type InstallEffort = "one-click" | "dialog-only" | "command" | "config" | "prompt";
+// How much work is left after the visitor acts. "page-only" is ChatGPT: the
+// link opens the Plugins page and nothing more (no dialog, no prefill), so the
+// URL is copied to the clipboard on the way out and the promise stays
+// "shortcut", not "1-click".
+export type InstallEffort = "one-click" | "page-only" | "command" | "config" | "prompt";
 
 export const EFFORT_BADGE: Record<InstallEffort, string> = {
     "one-click": "1-click",
-    "dialog-only": "shortcut",
+    "page-only": "shortcut",
     command: "command",
     config: "config",
     prompt: "prompt",
@@ -28,7 +29,7 @@ export interface AgentClient {
     name: string;
     logo: string;
     effort: InstallEffort;
-    // Deep link (one-click and dialog-only clients); null otherwise.
+    // Deep link (one-click and page-only clients); null otherwise.
     installUrl: string | null;
     // Text to copy: a shell command, a config file snippet, or a prompt.
     snippet: string | null;
@@ -54,9 +55,12 @@ export function claudeLink(url = MCP_URL, name = DISPLAY_NAME): string {
     return `https://claude.ai/new?${params.toString()}#settings/customize-connectors`;
 }
 
-// ChatGPT has no prefill parameters: this only opens the empty create dialog.
-export const CHATGPT_LINK =
-    "https://chatgpt.com/plugins#settings/Connectors?create-connector=true&redirectAfter=%2Fplugins";
+// ChatGPT has no deep link that opens or prefills the create form. Custom MCP
+// servers are added from the Plugins page (Add, then Create MCP App), so this
+// is a plain page link. The old #settings/Connectors?create-connector=true hash
+// route targeted the Settings > Connectors flow, which ChatGPT removed along
+// with the separate Developer mode toggle.
+export const CHATGPT_LINK = "https://chatgpt.com/plugins";
 
 export function cursorLink(url = MCP_URL, name = SERVER_NAME): string {
     // cursor://anysphere.cursor-deeplink/mcp/install?name=<n>&config=<base64 JSON>
@@ -173,16 +177,17 @@ export const AGENT_CLIENTS: readonly AgentClient[] = [
         id: "chatgpt",
         name: "ChatGPT",
         logo: "/logos/chatgpt.svg",
-        effort: "dialog-only",
+        effort: "page-only",
         installUrl: CHATGPT_LINK,
         snippet: null,
         steps: [
-            "Settings, Connectors, Advanced settings: turn Developer mode on",
-            "Back on Connectors, click Create",
-            "Paste the URL, name it actuatorlist, Authentication: No authentication",
-            "Start a new chat so the tools menu refreshes",
+            "Open chatgpt.com/plugins on the web",
+            "Click Add, then Create MCP App",
+            "Name it actuatorlist, paste the URL, Authentication: No authentication",
+            "Tick I understand and want to continue, then click Create",
+            "Start a new chat so the tools menu refreshes; enable the app from the + menu if needed",
         ],
-        note: "Copies the URL, then opens an empty dialog: paste it. Needs Developer mode on.",
+        note: "Copies the URL, then opens ChatGPT Plugins: click Add, then Create MCP App, and paste it. Plus, Pro, Business, Enterprise and Edu; on Business, Enterprise and Edu an admin must allow custom MCP connectors first.",
     },
     {
         id: "codex",
