@@ -1606,6 +1606,18 @@ table.board {
     border-top: 1px solid var(--line);
     margin-top: 40px;
 }
+.robot-group-title {
+    margin: 28px 0 0;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+}
+.robot-group-title span {
+    color: var(--cyan);
+}
 .robot-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));

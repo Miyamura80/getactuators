@@ -10,6 +10,7 @@ function makeRobot(joints: RobotJoint[]): Robot {
         id: "r",
         name: "Test Robot",
         brand: "Brand",
+        kind: "robot_arm",
         country: null,
         country_flag: null,
         dof: joints.length,

@@ -76,15 +76,22 @@ export interface RobotJoint {
     count: number;
 }
 
+// What kind of machine a catalog robot is; drives the card's stats and
+// fallback art.
+export type RobotKind = "robot_arm" | "humanoid";
+
 export interface Robot {
     id: string;
     name: string;
     brand: string;
+    kind: RobotKind;
     country: string | null;
     country_flag: string | null;
     dof: number;
     payload_kg: number | null;
     reach_mm: number | null;
+    // Standing height, for humanoids.
+    height_m?: number | null;
     weight_kg: number | null;
     price_usd: number | null;
     price_max_usd: number | null;

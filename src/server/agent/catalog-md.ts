@@ -181,9 +181,12 @@ export function robotSection(r: Robot, level = 2): string {
     const h = "#".repeat(level);
     const facts = [
         `Brand: ${mdText(r.brand)}${r.country ? ` (${mdText(r.country)})` : ""}`,
+        ...(r.kind === "humanoid" ? ["Type: Humanoid"] : []),
         `Degrees of freedom: ${r.dof}`,
         `Payload: ${num(r.payload_kg, "kg")}`,
-        `Reach: ${num(r.reach_mm, "mm", 0)}`,
+        r.kind === "humanoid"
+            ? `Height: ${num(r.height_m, "m", 2)}`
+            : `Reach: ${num(r.reach_mm, "mm", 0)}`,
         `Weight: ${num(r.weight_kg, "kg", 2)}`,
         `Price: ${usd(r.price_usd)}${r.price_max_usd ? ` to ${usd(r.price_max_usd)}` : ""}`,
     ];
