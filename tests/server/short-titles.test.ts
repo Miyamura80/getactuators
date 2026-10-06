@@ -289,9 +289,43 @@ async function expectCatalogPage(
     if (item) expect(item.name).toBe(page.title);
 }
 
+// The golden hashes lock content to the catalog as it stood at capture. That
+// check runs in a child process with short-titles-freeze.ts serving the frozen
+// copies (short-titles-catalog.json, short-titles-robots.json), so catalog
+// data can change while the title work stays guarded. Never edit the copies.
+const GOLDEN =
+    "the full catalog has distinct reviewed metadata without content changes";
+const FROZEN = process.env.SHORT_TITLES_FROZEN_CATALOG === "1";
+
+test.skipIf(FROZEN)(
+    "golden content check passes against the frozen catalog",
+    async () => {
+        const child = Bun.spawn(
+            [
+                process.execPath,
+                "test",
+                "--preload",
+                `${import.meta.dir}/short-titles-freeze.ts`,
+                import.meta.path,
+                "-t",
+                `^${GOLDEN}$`,
+            ],
+            {
+                env: { ...process.env, SHORT_TITLES_FROZEN_CATALOG: "1" },
+                stdout: "pipe",
+                stderr: "pipe",
+            },
+        );
+        const output = `${await new Response(child.stdout).text()}${await new Response(child.stderr).text()}`;
+        expect(await child.exited, output).toBe(0);
+        expect(output).toMatch(/\b1 pass\b/);
+    },
+    120_000,
+);
+
 // Captured from the clean main baseline before implementation. Only expected
 // metadata labels differ; hashes lock down original content, not head markup.
-test("the full catalog has distinct reviewed metadata without content changes", async () => {
+test.if(FROZEN)(GOLDEN, async () => {
     const registered = allPages();
     expect(registered).toHaveLength(84);
     // Pages added after the baseline capture have their own tests.

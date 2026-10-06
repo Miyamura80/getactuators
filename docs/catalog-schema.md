@@ -6,6 +6,10 @@ Fill every field you can from primary sources (manufacturer datasheet/spec page)
 Use `null` when a value is genuinely unknown. **Never fabricate a number.**
 Every entry must cite its `sources` (datasheet / product page URLs).
 
+`tests/server/short-titles-catalog.json` and `short-titles-robots.json` are frozen
+copies that the page-title golden hashes are checked against. Leave them alone
+when editing data; data edits never need the golden hashes touched.
+
 ```jsonc
 {
   "id": "cubemars-ak80-9",              // kebab-case unique slug
