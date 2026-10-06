@@ -105,20 +105,32 @@ export interface RobotJoint {
     count: number;
 }
 
+// What kind of machine a catalog robot is; drives the card's stats and
+// fallback art.
+export type RobotKind = "robot_arm" | "humanoid";
+
 export interface Robot {
     id: string;
     name: string;
     brand: string;
+    kind: RobotKind;
     country: string | null;
     country_flag: string | null;
     dof: number;
     payload_kg: number | null;
     reach_mm: number | null;
+    // Standing height, for humanoids.
+    height_m?: number | null;
     weight_kg: number | null;
     price_usd: number | null;
     price_max_usd: number | null;
     product_url: string | null;
     image_url?: string | null;
+    // "cover" for photos shot on their own backdrop, which should fill the
+    // tile instead of sitting inset on the light studio panel.
+    image_fit?: "contain" | "cover";
+    // Build-time crop for the photo script; not used at runtime.
+    image_crop?: [number, number, number, number];
     summary: string;
     joints: RobotJoint[];
     sources: string[];

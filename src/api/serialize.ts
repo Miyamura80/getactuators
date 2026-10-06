@@ -44,8 +44,18 @@ export function serializeActuatorDetail(a: Actuator) {
 }
 
 function robotBase(r: Robot) {
-    const { joints: _joints, ...rest } = r;
-    return { ...rest, image_url: r.image_url ?? null, ...robotRef(r) };
+    const {
+        joints: _joints,
+        image_fit: _imageFit,
+        image_crop: _imageCrop,
+        ...rest
+    } = r;
+    return {
+        ...rest,
+        height_m: r.height_m ?? null,
+        image_url: r.image_url ?? null,
+        ...robotRef(r),
+    };
 }
 
 export function serializeRobot(r: Robot): ApiRobot {

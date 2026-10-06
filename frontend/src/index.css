@@ -1606,6 +1606,18 @@ table.board {
     border-top: 1px solid var(--line);
     margin-top: 40px;
 }
+.robot-group-title {
+    margin: 28px 0 0;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+}
+.robot-group-title span {
+    color: var(--cyan);
+}
 .robot-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -1627,6 +1639,8 @@ table.board {
 .robot-thumb {
     position: relative;
     aspect-ratio: 4 / 3;
+    /* Without this, a portrait photo's intrinsic height overrides the ratio. */
+    overflow: hidden;
     border-bottom: 1px solid var(--line);
     background: var(--black);
 }
@@ -1652,6 +1666,10 @@ table.board {
     object-fit: contain;
     padding: 12px;
     display: block;
+}
+.robot-thumb[data-fit="cover"] .robot-photo {
+    object-fit: cover;
+    padding: 0;
 }
 .robot-dof {
     position: absolute;
@@ -1810,24 +1828,20 @@ table.board {
     all: unset;
     cursor: pointer;
     display: flex;
-    flex-direction: column;
-    gap: 6px;
+    align-items: center;
+    gap: 14px;
     margin-top: 24px;
-    padding: clamp(24px, 4vw, 40px);
+    padding: 14px 18px;
     border: 1px solid var(--line-strong);
-    border-radius: 10px;
-    background: radial-gradient(
-        130% 170% at 100% 0%,
-        color-mix(in oklab, var(--cyan) 13%, var(--panel)),
-        var(--panel) 58%
-    );
+    border-radius: 8px;
+    background: var(--panel);
     transition:
         border-color 0.15s ease,
         transform 0.15s ease;
 }
 .all-cta:hover {
     border-color: var(--cyan);
-    transform: translateY(-2px);
+    transform: translateY(-1px);
 }
 .all-cta:focus-visible {
     outline: 2px solid var(--cyan);
@@ -1835,22 +1849,25 @@ table.board {
 }
 .all-cta-kicker {
     font-family: var(--mono);
-    font-size: 12px;
+    font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--muted);
+    white-space: nowrap;
 }
 .all-cta-title {
-    font-size: clamp(24px, 3.4vw, 38px);
-    font-weight: 800;
-    letter-spacing: -0.02em;
+    flex: 1;
+    font-size: 15px;
+    font-weight: 700;
     color: var(--text);
 }
-.all-cta-sub {
-    color: var(--muted);
-    font-size: 14px;
-    line-height: 1.5;
-    max-width: 62ch;
+.all-cta-go {
+    color: var(--cyan);
+    font-size: 16px;
+    transition: transform 0.15s ease;
+}
+.all-cta:hover .all-cta-go {
+    transform: translateX(3px);
 }
 
 @media (max-width: 860px) {
