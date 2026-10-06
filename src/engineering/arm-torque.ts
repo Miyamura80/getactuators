@@ -69,10 +69,15 @@ export function jointLoads(arm: Arm): JointLoad[] {
     return loads;
 }
 
+// The calculator draws and edits 2 to 4 links; agents get the same range.
+export const MIN_LINKS = 2;
+export const MAX_LINKS = 4;
+
 export function validArm(arm: Arm): boolean {
     const ok = (v: number) => Number.isFinite(v) && v >= 0;
     return (
-        arm.links.length > 0 &&
+        arm.links.length >= MIN_LINKS &&
+        arm.links.length <= MAX_LINKS &&
         arm.links.every(
             (l) =>
                 ok(l.mass) &&
@@ -136,11 +141,12 @@ export const PRESETS: { label: string; arm: Arm }[] = [
 
 export const DEFAULT_ARM: Arm = PRESETS[1]?.arm as Arm;
 
-const MAX_LINKS = 4;
-
 function nums(raw: string | null): number[] | null {
     if (!raw || raw.length > 120) return null;
-    const out = raw.split(",").map(Number);
+    const parts = raw.split(",");
+    // "1," is a truncated vector, not a zero mass.
+    if (parts.some((part) => part.trim() === "")) return null;
+    const out = parts.map(Number);
     return out.every((v) => Number.isFinite(v) && v >= 0) ? out : null;
 }
 
@@ -151,7 +157,7 @@ export function armToQuery(arm: Arm): string {
     p.set("a", arm.links.map((l) => l.actuatorMass).join(","));
     p.set("p", String(arm.payload));
     if (arm.comFraction !== 0.5)
-        p.set("com", String(Math.round(arm.comFraction * 100)));
+        p.set("com", String(Number((arm.comFraction * 100).toFixed(2))));
     return `?${p.toString().replaceAll("%2C", ",")}`;
 }
 
@@ -182,8 +188,6 @@ export function armFromQuery(search: string): Arm {
     };
     return validArm(arm) ? arm : DEFAULT_ARM;
 }
-
-export { MAX_LINKS };
 
 // One serializable answer for agent surfaces (MCP and WebMCP): holding torque
 // per joint, the catalog screen for each, and the calculator path that opens

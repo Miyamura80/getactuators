@@ -19,8 +19,9 @@ import { ARM_INPUT_SCHEMA, armFromArgs, armResult, registerPageTools, result as 
 import "./tools.css";
 
 
-// A numeric input that keeps the visitor's text ("0.", "") while typing and
-// follows the value when it changes from outside (a preset or "use mass").
+// A numeric input that keeps the visitor's text ("0.", "") while typing,
+// follows the value when it changes from outside (a preset or "use mass") and
+// shows the value in use again when left blank or invalid.
 function NumberField({
     value,
     onValue,
@@ -57,6 +58,9 @@ function NumberField({
                         onValue(v);
                     }
                 }}
+                onBlur={() => {
+                    if (Number(text) !== value || text.trim() === "") setText(String(value));
+                }}
             />
             <span className="calc-suffix">{suffix}</span>
         </span>
@@ -76,7 +80,10 @@ export function ArmTorqueCalculator({ menuOpen = false }: { menuOpen?: boolean }
     const [active, setActive] = useState(0);
 
     useEffect(() => {
-        window.history.replaceState(window.history.state, "", `${window.location.pathname}${armToQuery(arm)}${window.location.hash}`);
+        // A temporarily invalid edit (zero length) would reload as the default
+        // arm, so the URL keeps the last valid setup.
+        if (validArm(arm))
+            window.history.replaceState(window.history.state, "", `${window.location.pathname}${armToQuery(arm)}${window.location.hash}`);
     }, [arm]);
 
     // WebMCP: while this page is open an in-browser agent can load an arm
@@ -97,6 +104,9 @@ export function ArmTorqueCalculator({ menuOpen = false }: { menuOpen?: boolean }
                     async execute(args) {
                         const next = armFromArgs(args);
                         if (typeof next === "string") return toolResult({ error: next }, true);
+                        // Update the ref now: select_arm_joint may run before
+                        // the effect that syncs it after the re-render.
+                        armRef.current = next;
                         setArm(next);
                         setActive(0);
                         return toolResult(armResult(next));
@@ -186,7 +196,7 @@ export function ArmTorqueCalculator({ menuOpen = false }: { menuOpen?: boolean }
                             </label>
                             <label className="arm-field">
                                 <span>Link mass acts at</span>
-                                <NumberField label="Link center of mass" suffix="% of length" value={Math.round(arm.comFraction * 100)} onValue={(v) => setArm((a) => ({ ...a, comFraction: Math.min(v, 100) / 100 }))} />
+                                <NumberField label="Link center of mass" suffix="% of length" value={Math.round(arm.comFraction * 100)} onValue={(v) => setArm((a) => ({ ...a, comFraction: Math.min(Math.round(v), 100) / 100 }))} />
                             </label>
                             <fieldset className="arm-count">
                                 <legend>Links</legend>
@@ -209,6 +219,7 @@ export function ArmTorqueCalculator({ menuOpen = false }: { menuOpen?: boolean }
                 </div>
 
                 {ok ? (
+                    <div className="arm-results-wrap">
                     <table className="arm-results">
                         <caption>Static holding torque, arm horizontal</caption>
                         <thead>
@@ -234,6 +245,7 @@ export function ArmTorqueCalculator({ menuOpen = false }: { menuOpen?: boolean }
                             ))}
                         </tbody>
                     </table>
+                    </div>
                 ) : (
                     <p className="calc-error">Lengths must be above zero and masses zero or more.</p>
                 )}

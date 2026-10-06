@@ -45,6 +45,11 @@ test("setups round-trip through the URL and junk falls back to the default", () 
     expect(armFromQuery("?L=0.4,abc&m=1,1&a=0,0&p=1")).toEqual(DEFAULT_ARM);
     expect(armFromQuery("?L=0,0.2&m=1,1&a=0,0&p=1")).toEqual(DEFAULT_ARM);
     expect(armFromQuery("?L=1,1,1,1,1&m=1,1,1,1,1&a=0,0,0,0,0&p=1")).toEqual(DEFAULT_ARM);
+    // One link is outside the supported 2 to 4, and "1," is a truncated vector.
+    expect(armFromQuery("?L=0.4&m=1&a=0&p=1")).toEqual(DEFAULT_ARM);
+    expect(armFromQuery("?L=0.4,0.2&m=1,&a=0,0&p=1")).toEqual(DEFAULT_ARM);
+    // Fractional center-of-mass percentages survive the round trip.
+    expect(armFromQuery(armToQuery({ ...twoLink, comFraction: 0.355 })).comFraction).toBeCloseTo(0.355, 9);
 });
 
 test("choosing a catalog actuator feeds its mass back into the shoulder load", () => {

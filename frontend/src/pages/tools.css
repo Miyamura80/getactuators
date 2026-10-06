@@ -251,7 +251,8 @@ body:has(.tool-page) #catalog-content table { max-width: 860px; }
 .arm-count button { min-width: 44px; min-height: 44px; border: 1px solid var(--line-strong); margin-left: -1px; background: transparent; color: var(--muted); font: 14px var(--mono); cursor: pointer; }
 .arm-count button.on { background: var(--cyan); color: var(--black); font-weight: 600; }
 
-.arm-results { width: 100%; margin-top: 24px; border-collapse: collapse; }
+.arm-results-wrap { margin-top: 24px; max-width: 100%; overflow-x: auto; }
+.arm-results { width: 100%; border-collapse: collapse; }
 .arm-results caption { text-align: left; padding-bottom: 8px; font: 600 11px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 .arm-results th, .arm-results td { padding: 6px 10px; border-bottom: 1px solid var(--line); text-align: left; }
 .arm-results thead th { font: 600 10px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
@@ -271,6 +272,9 @@ body:has(.tool-page) #catalog-content table { max-width: 860px; }
     .arm-link-name { grid-column: 1 / -1; }
     .arm-foot { grid-template-columns: minmax(0, 1fr); }
     .arm-results .arm-motion, .arm-results thead th:nth-child(3) { display: none; }
+    .arm-results th, .arm-results td { padding: 6px 6px; }
+    .arm-val { font-size: 16px; }
+    .arm-results button { padding: 0 8px; font-size: 11px; }
 }
 
 /* Drafting figures: the /robots X-ray drawing (canvas) with an SVG layer of

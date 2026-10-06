@@ -33,7 +33,9 @@ test("site-wide WebMCP computes arm holding torque and rejects bad input", async
     expect(ok.joints.map((j) => j.holding_torque_nm)).toEqual([33.91, 13.51, 2.53]);
     expect(ok.calculator_url).toBe(`https://actuatorlist.com/tools/robot-arm-torque-calculator${armToQuery(DEFAULT_ARM)}`);
     expect((await tool.execute({ links: [], payload_kg: 1 })).isError).toBe(true);
-    expect((await tool.execute({ links: [{ length_m: 0, mass_kg: 1 }], payload_kg: 1 })).isError).toBe(true);
+    expect((await tool.execute({ links: [{ length_m: 0, mass_kg: 1 }, { length_m: 0.2, mass_kg: 1 }], payload_kg: 1 })).isError).toBe(true);
+    // The calculator supports 2 to 4 links.
+    expect((await tool.execute({ links: [{ length_m: 0.5, mass_kg: 1 }], payload_kg: 1 })).isError).toBe(true);
 });
 
 test("the calculator registers page tools that drive its UI and unregister on unmount", async () => {
@@ -48,13 +50,20 @@ test("the calculator registers page tools that drive its UI and unregister on un
     setUrl("http://localhost/tools/robot-arm-torque-calculator");
     const view = render(<ArmTorqueCalculator />);
     expect(tools.map((t) => t.name)).toEqual(["set_arm_model", "select_arm_joint"]);
-    await tools[0]?.execute({ links: [{ length_m: 0.5, mass_kg: 1, actuator_mass_kg: 0 }], payload_kg: 1 });
+    await tools[0]?.execute({
+        links: [
+            { length_m: 0.5, mass_kg: 1, actuator_mass_kg: 0.5 },
+            { length_m: 0.3, mass_kg: 0.5 },
+        ],
+        payload_kg: 1,
+    });
+    // select_arm_joint sees the new arm at once, before React re-renders.
+    const joint = await tools[1]?.execute({ joint: 2 });
+    expect((joint?.structuredContent as { name: string }).name).toBe("Elbow");
+    expect((await tools[1]?.execute({ joint: 3 }))?.isError).toBe(true);
     await waitFor(() =>
-        expect([...view.container.querySelectorAll(".arm-val")].map((e) => e.textContent)).toEqual(["7.35 N·m"]),
+        expect([...view.container.querySelectorAll(".arm-val")].map((e) => e.textContent)).toEqual(["15.9 N·m", "3.68 N·m"]),
     );
-    const joint = await tools[1]?.execute({ joint: 1 });
-    expect((joint?.structuredContent as { name: string }).name).toBe("Shoulder");
-    expect((await tools[1]?.execute({ joint: 2 }))?.isError).toBe(true);
     view.unmount();
     expect(signals.every((s) => s.aborted)).toBe(true);
 });

@@ -1,4 +1,4 @@
-import { type Arm, MAX_LINKS, armReport } from "@/engineering/arm-torque";
+import { type Arm, MAX_LINKS, MIN_LINKS, armReport } from "@/engineering/arm-torque";
 import {
     HUMANOID_GUIDE_PATH,
     JOINTS,
@@ -111,11 +111,11 @@ const armHoldingTorque = defineTool({
     name: "arm_holding_torque",
     title: "Robot arm holding torque per joint",
     description:
-        "Static holding moment (N·m) at each pitch joint of a 1 to 4 link arm held horizontal (the worst gravity case), from link lengths, link masses, actuator masses and payload, plus catalog actuators per joint (rated fits before peak-only). Also returns a shareable calculator URL. Gravity only: inertia, friction and safety margins are not modeled.",
+        "Static holding moment (N·m) at each pitch joint of a 2 to 4 link arm held horizontal (the worst gravity case), from link lengths, link masses, actuator masses and payload, plus catalog actuators per joint (rated fits before peak-only). Also returns a shareable calculator URL. Gravity only: inertia, friction and safety margins are not modeled.",
     input: z.object({
         links: z
             .array(linkSchema)
-            .min(1)
+            .min(MIN_LINKS)
             .max(MAX_LINKS)
             .describe("From the base outward."),
         payload_kg: z

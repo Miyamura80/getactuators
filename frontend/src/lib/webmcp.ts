@@ -18,7 +18,7 @@ import { ACTUATORS } from "./data";
 import { DEFAULT_FILTERS, applyFilters } from "./filter";
 import { navigate } from "./router";
 import { ROBOTS, motorCount, resolveJoints } from "./robots";
-import { type Arm, MAX_LINKS, armReport, validArm } from "../../../src/engineering/arm-torque";
+import { type Arm, MAX_LINKS, MIN_LINKS, armReport, validArm } from "../../../src/engineering/arm-torque";
 import { JOINTS, humanoidJointRequirements } from "../../../src/server/agent/humanoid-joints";
 
 type Args = Record<string, unknown>;
@@ -151,7 +151,7 @@ export function listRobots(query?: string) {
 // Arm model from untyped tool arguments, or an error message for the agent.
 export function armFromArgs(args: Args): Arm | string {
     const links = Array.isArray(args.links) ? args.links : [];
-    if (links.length < 1 || links.length > MAX_LINKS) return `links: 1 to ${MAX_LINKS} items`;
+    if (links.length < MIN_LINKS || links.length > MAX_LINKS) return `links: ${MIN_LINKS} to ${MAX_LINKS} items`;
     const arm: Arm = {
         payload: numOrNull(args.payload_kg) ?? 0,
         comFraction: numOrNull(args.com_fraction) ?? 0.5,
@@ -190,7 +190,7 @@ export const ARM_INPUT_SCHEMA = {
     properties: {
         links: {
             type: "array",
-            minItems: 1,
+            minItems: MIN_LINKS,
             maxItems: MAX_LINKS,
             description: "From the base outward",
             items: {
@@ -304,7 +304,7 @@ export function buildTools(): WebMcpTool[] {
             name: "calculate_arm_holding_torque",
             title: "Robot arm holding torque",
             description:
-                "Static holding moment (N·m) at each pitch joint of a 1 to 4 link arm held horizontal, from link lengths, masses, actuator masses and payload, with catalog actuators per joint and a calculator URL. Gravity only.",
+                "Static holding moment (N·m) at each pitch joint of a 2 to 4 link arm held horizontal, from link lengths, masses, actuator masses and payload, with catalog actuators per joint and a calculator URL. Gravity only.",
             annotations: { readOnlyHint: true },
             inputSchema: ARM_INPUT_SCHEMA,
             async execute(args) {
