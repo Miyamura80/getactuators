@@ -30,6 +30,45 @@ export function withHeadingIds(html: string): string {
     });
 }
 
+// One line icon per kind of section, drawn in the site's stroke style, so the
+// method below a tool can be scanned by shape before it is read.
+const ICON_PATHS: Record<string, string> = {
+    method: "M5 3v18M12 3v18M19 3v18M3 17 21 7",
+    formula: "M17 4H7l6 8-6 8h10",
+    units: "M4 8h15l-3-3M20 16H5l3 3",
+    example: "M3 17 17 3l4 4L7 21ZM7 13l2 2M10 10l2 2M13 7l2 2",
+    limits: "M12 3 22 20H2ZM12 10v4M12 17v.5",
+    assumptions: "M4 7h16M4 17h16M14 4.5v5M8 14.5v5",
+    funnel: "M3 4h18l-7 8v6l-4 2v-8Z",
+    questions:
+        "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18ZM9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.6v.6M12 17v.5",
+    next: "M4 12h15M14 7l5 5-5 5",
+};
+
+const SECTION_ICON: [RegExp, string][] = [
+    [/^How (the calculat|to read)/, "method"],
+    [/^Formulas/, "formula"],
+    [/^Unit conversions/, "units"],
+    [/^Worked/, "example"],
+    [/^What (the result|this guide) does not/, "limits"],
+    [/^Assumptions/, "assumptions"],
+    [/^From requirement/, "funnel"],
+    [/^Questions/, "questions"],
+    [/^Next steps/, "next"],
+];
+
+export function withSectionIcons(html: string): string {
+    return html.replace(
+        /<h2([^>]*)>([^<]+)<\/h2>/g,
+        (whole, attrs: string, text: string) => {
+            const kind = SECTION_ICON.find(([re]) => re.test(text))?.[1];
+            if (!kind) return whole;
+            const icon = `<svg class="ga-h2-icon ga-ic-${kind}" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="${ICON_PATHS[kind]}"/></svg>`;
+            return `<h2${attrs}>${icon}${text}</h2>`;
+        },
+    );
+}
+
 // In a "Worked ..." section each example's h3 already states its result, so
 // the working folds under it: the result stays readable, the arithmetic is
 // one tap away.

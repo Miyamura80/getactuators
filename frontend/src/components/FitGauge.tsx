@@ -52,6 +52,31 @@ export function FitGauge({
     );
 }
 
+// Spec labels drawn in the gauge's own vocabulary: a solid swatch is rated
+// torque, a hatched one is peak, a dial is speed and a weight is mass.
+export type SpecKind = "rated" | "peak" | "speed" | "mass";
+const SPEC_LABEL: Record<SpecKind, string> = {
+    rated: "Rated torque",
+    peak: "Peak torque",
+    speed: "Max speed",
+    mass: "Mass",
+};
+
+export function SpecGlyph({ kind }: { kind: SpecKind }) {
+    const label = SPEC_LABEL[kind];
+    return (
+        <span className={`spec-glyph spec-${kind}`} title={label}>
+            <svg viewBox="0 0 16 12" width={16} height={12} aria-hidden="true">
+                {kind === "rated" && <rect x="1" y="3" width="14" height="6" />}
+                {kind === "peak" && <path d="M1 3h14v6H1ZM3 9l4-6M7 9l4-6M11 9l4-6" />}
+                {kind === "speed" && <path d="M2 10a6 6 0 0 1 12 0M8 10l3-4" />}
+                {kind === "mass" && <path d="M5 4a3 2 0 0 1 6 0M3 5h10l1.5 6h-13Z" />}
+            </svg>
+            <span className="sr-only">{label}</span>
+        </span>
+    );
+}
+
 // Small line glyphs in the gauge's stroke weight, each with a tooltip.
 export function SpeedGlyph({ known, rpm }: { known: boolean; rpm?: number }) {
     const label = known

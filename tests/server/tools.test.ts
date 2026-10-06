@@ -25,7 +25,10 @@ test("motor torque calculator is an indexable tool with persistent method conten
             html,
         )?.[0] ?? "";
     expect(persistent).toContain('aria-label="Method, examples and questions"');
-    expect(persistent).toContain("<h2>How the calculator works</h2>");
+    // Each method section carries a line icon before its heading text.
+    expect(persistent).toMatch(
+        /<h2><svg class="ga-h2-icon ga-ic-method"[^>]*>[\s\S]*?<\/svg>How the calculator works<\/h2>/,
+    );
     // Worked examples lead with the result; the working folds under it.
     expect(persistent).toContain(
         '<details class="ga-example"><summary><h3>7.85 N·m to hold 2 kg at 0.4 m on an arm</h3></summary><p>A 2 kg mass',
@@ -65,10 +68,12 @@ test("robot arm calculator is a separate indexable tool with its method below", 
         /<section class="ga-page" id="catalog-content"[^>]*>[\s\S]*?<\/section>/.exec(
             html,
         )?.[0] ?? "";
-    expect(persistent).toContain("<h2>How the calculation works</h2>");
+    expect(persistent).toMatch(
+        /<h2><svg[^>]*>[\s\S]*?<\/svg>How the calculation works<\/h2>/,
+    );
     // The results table stays open; inputs and working fold.
     expect(persistent).toMatch(
-        /<h2>Worked example<\/h2>[\s\S]*?<td>Shoulder<\/td><td>33\.9 N·m<\/td>[\s\S]*?<details class="ga-example">/,
+        /<h2><svg[^>]*>[\s\S]*?<\/svg>Worked example<\/h2>[\s\S]*?<td>Shoulder<\/td><td>33\.9 N·m<\/td>[\s\S]*?<details class="ga-example">/,
     );
     expect(persistent).toContain("Not motion torque.");
     expect(persistent).toContain("No universal margin.");

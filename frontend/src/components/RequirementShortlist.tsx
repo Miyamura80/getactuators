@@ -2,7 +2,9 @@ import { ACTUATORS } from "../lib/data";
 import type { Actuator } from "../types";
 import { compareHref } from "../lib/compare-selection";
 import { fmt } from "../lib/motor-torque";
-import { DriverGlyph, FitGauge, SpeedGlyph } from "./FitGauge";
+import { ActuatorThumb } from "./ActuatorThumb";
+import { BrandBadge } from "./BrandBadge";
+import { DriverGlyph, FitGauge, SpecGlyph, SpeedGlyph } from "./FitGauge";
 import {
     SPEED_FIT_LABEL,
     TORQUE_FIT_LABEL,
@@ -94,15 +96,18 @@ export function RequirementShortlist({
                         const note = integrationNote(a);
                         return (
                             <li key={a.id} className={`req-row fit-${torque}`}>
+                                <a href={`/actuators/${encodeURIComponent(a.id)}`} className="req-thumb" tabIndex={-1} aria-hidden="true">
+                                    <ActuatorThumb actuator={a} />
+                                </a>
                                 <a href={`/actuators/${encodeURIComponent(a.id)}`} className="req-name">
-                                    <span className="req-brand">{a.brand}</span>
+                                    <BrandBadge brand={a.brand} />
                                     {a.name}
                                 </a>
                                 <dl className="req-specs">
-                                    <div><dt>Rated</dt><dd>{a.rated_torque_nm != null ? `${fmt(a.rated_torque_nm)} N·m` : "n/d"}</dd></div>
-                                    <div><dt>Peak</dt><dd>{a.peak_torque_nm != null ? `${fmt(a.peak_torque_nm)} N·m` : "n/d"}</dd></div>
-                                    <div><dt>Max speed</dt><dd>{a.max_speed_rpm != null ? `${fmt(a.max_speed_rpm)} rpm` : "n/d"}</dd></div>
-                                    <div><dt>Mass</dt><dd>{a.weight_g != null ? `${fmt(a.weight_g)} g` : "n/d"}</dd></div>
+                                    <div><dt><SpecGlyph kind="rated" /></dt><dd>{a.rated_torque_nm != null ? `${fmt(a.rated_torque_nm)} N·m` : "n/d"}</dd></div>
+                                    <div><dt><SpecGlyph kind="peak" /></dt><dd>{a.peak_torque_nm != null ? `${fmt(a.peak_torque_nm)} N·m` : "n/d"}</dd></div>
+                                    <div><dt><SpecGlyph kind="speed" /></dt><dd>{a.max_speed_rpm != null ? `${fmt(a.max_speed_rpm)} rpm` : "n/d"}</dd></div>
+                                    <div><dt><SpecGlyph kind="mass" /></dt><dd>{a.weight_g != null ? `${fmt(a.weight_g)} g` : "n/d"}</dd></div>
                                 </dl>
                                 <p className="req-tags">
                                     <FitGauge need={torqueNm} rated={a.rated_torque_nm} peak={a.peak_torque_nm} />

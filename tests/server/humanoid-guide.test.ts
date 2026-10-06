@@ -55,8 +55,8 @@ test("humanoid guide is an app page whose guide text stays below the joint map",
             html,
         )?.[0] ?? "";
     expect(persistent).toContain('aria-label="Method, joint estimates and shortlists"');
-    expect(persistent).toContain(
-        '<h2 id="how-to-read-this-guide">How to read this guide</h2>',
+    expect(persistent).toMatch(
+        /<h2 id="how-to-read-this-guide"><svg[^>]*>[\s\S]*?<\/svg>How to read this guide<\/h2>/,
     );
     for (const j of JOINTS)
         expect(persistent).toContain(`<h2 id="${j.id}">${j.name}</h2>`);
