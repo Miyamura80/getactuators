@@ -34,7 +34,15 @@ test("motor torque calculator is an indexable tool with persistent method conten
         '<details class="ga-example"><summary><h3>7.85 N·m to hold 2 kg at 0.4 m on an arm</h3></summary><p>A 2 kg mass',
     );
     expect(persistent).toContain("T = 9.549 × P / n");
-    expect(persistent).toContain("Not a stall rating.");
+    // Each caveat is a chip: glyph and label up front, the reason on tap.
+    expect(persistent).toMatch(
+        /<ul class="ga-limits">[\s\S]*?<details class="ga-limit"><summary><svg[^>]*><path d="[^"]+"\/><\/svg><span>Not a stall rating<\/span><\/summary><p>At zero speed/,
+    );
+    expect(persistent.match(/class="ga-limit"/g)).toHaveLength(4);
+    // Questions fold under themselves; the answers stay in the page.
+    expect(persistent).toContain(
+        '<details class="ga-example ga-faq"><summary><h3>Does a gearbox increase power?</h3></summary><p>No.',
+    );
     expect(html.match(/<footer class="site-footer"/g)).toHaveLength(1);
     const graph = JSON.parse(
         /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(html)?.[1] ??
@@ -75,8 +83,8 @@ test("robot arm calculator is a separate indexable tool with its method below", 
     expect(persistent).toMatch(
         /<h2><svg[^>]*>[\s\S]*?<\/svg>Worked example<\/h2>[\s\S]*?<td>Shoulder<\/td><td>33\.9 N·m<\/td>[\s\S]*?<details class="ga-example">/,
     );
-    expect(persistent).toContain("Not motion torque.");
-    expect(persistent).toContain("No universal margin.");
+    expect(persistent).toContain("<span>Not motion torque</span></summary>");
+    expect(persistent).toContain("<span>No universal margin</span></summary>");
     expect(await (await get(`${path}.md`)).text()).toContain("| Shoulder | 33.9 N·m |");
     expect(await (await get("/sitemap.xml")).text()).toContain(
         `https://actuatorlist.com${path}`,

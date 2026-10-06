@@ -261,17 +261,22 @@ body:has(.tool-page) #catalog-content .brand-badge text { fill: #000; }
 body:has(.tool-page) #catalog-content h2:has(.ga-h2-icon) { display: flex; align-items: center; gap: 12px; }
 .ga-h2-icon { flex: none; fill: none; stroke: var(--cyan); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 .ga-ic-limits { stroke: var(--amber); }
-body:has(.tool-page) #catalog-content h2:has(.ga-ic-limits) + ul { list-style: none; padding-left: 0; }
-body:has(.tool-page) #catalog-content h2:has(.ga-ic-limits) + ul li { position: relative; padding-left: 28px; margin-bottom: 8px; }
-body:has(.tool-page) #catalog-content h2:has(.ga-ic-limits) + ul li::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0.25em;
-    width: 16px;
-    height: 16px;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffb547' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3 22 20H2ZM12 10v4M12 17v.5'/%3E%3C/svg%3E") center / contain no-repeat;
-}
+/* Caveats: one chip per limit, glyph and label up front, the reason on tap. */
+#catalog-content ul.ga-limits { list-style: none; padding: 0; margin: 0 0 8px; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 8px; align-items: start; max-width: 72ch; }
+body #catalog-content ul.ga-limits { list-style: none; padding: 0; }
+#catalog-content .ga-limits li { margin: 0; padding: 0; }
+#catalog-content .ga-limit { border: 1px solid var(--line, #2a2a2a); border-radius: 6px; }
+#catalog-content .ga-limit[open] { border-color: var(--amber); }
+#catalog-content .ga-limit summary { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 8px 12px; cursor: pointer; list-style: none; color: var(--text, #f3f3f3); font: 600 14px var(--mono, ui-monospace, monospace); }
+#catalog-content .ga-limit summary::-webkit-details-marker { display: none; }
+#catalog-content .ga-limit summary svg { flex: none; fill: none; stroke: var(--amber); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+#catalog-content .ga-limit summary span { flex: 1; }
+#catalog-content .ga-limit summary::after { content: "+"; flex: none; color: var(--amber); font-weight: 400; transition: transform 160ms ease; }
+#catalog-content .ga-limit[open] summary::after { transform: rotate(45deg); }
+#catalog-content .ga-limit summary:hover span { color: var(--amber); }
+#catalog-content .ga-limit summary:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+#catalog-content .ga-limit p { margin: 0; padding: 0 12px 12px 42px; font-size: 14px; }
+@media (prefers-reduced-motion: reduce) { #catalog-content .ga-limit summary::after { transition: none; } }
 /* Worked examples: the result in the heading, the working one tap below. */
 body:has(.tool-page) #catalog-content .ga-example { border-bottom: 1px solid var(--line); max-width: 72ch; }
 body:has(.tool-page) #catalog-content .ga-example summary { display: flex; align-items: baseline; gap: 12px; min-height: 44px; padding: 10px 0; cursor: pointer; list-style: none; }

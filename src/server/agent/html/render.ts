@@ -5,6 +5,8 @@ import { DIST_DIR } from "../../static";
 import { graph } from "../jsonld";
 import { type Page, markdownPath } from "../pages";
 import {
+    foldLimits,
+    foldQuestions,
     foldWorkedExamples,
     markdownToHtml,
     pageBody,
@@ -78,11 +80,15 @@ export async function renderSpaPage(page: Page, visual?: string): Promise<string
             ? await galleryFile.text()
             : null;
     const prerender = galleryHtml ?? visual ?? fallbackHtml;
-    const rendered = withSectionIcons(
-        foldWorkedExamples(
-            page.headingIds
-                ? withHeadingIds(markdownToHtml(content))
-                : markdownToHtml(content),
+    const rendered = foldLimits(
+        withSectionIcons(
+            foldQuestions(
+                foldWorkedExamples(
+                    page.headingIds
+                        ? withHeadingIds(markdownToHtml(content))
+                        : markdownToHtml(content),
+                ),
+            ),
         ),
     );
     const persistentHtml = page.persistentHtml

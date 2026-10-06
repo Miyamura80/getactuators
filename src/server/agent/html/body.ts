@@ -69,19 +69,68 @@ export function withSectionIcons(html: string): string {
     );
 }
 
-// In a "Worked ..." section each example's h3 already states its result, so
-// the working folds under it: the result stays readable, the arithmetic is
-// one tap away.
-export function foldWorkedExamples(html: string): string {
+// Under `heading`, each h3 and the text after it fold into one <details>:
+// the h3 is the summary, the rest opens on tap. Worked examples state their
+// result in the h3 and questions are their own summary, so neither hides
+// the point.
+function foldH3s(html: string, heading: RegExp, cls: string): string {
     return html.replace(
-        /(<h2[^>]*>Worked[^<]*<\/h2>)([\s\S]*?)(?=<h2[ >]|$)/g,
-        (_, heading: string, section: string) =>
-            heading +
-            section.replace(
-                /(<h3>[\s\S]*?<\/h3>)([\s\S]*?)(?=<h3>|$)/g,
-                (_m: string, title: string, body: string) =>
-                    `<details class="ga-example"><summary>${title}</summary>${body.trim()}</details>\n`,
-            ),
+        /(<h2[^>]*>)([^<]*(?:<svg[\s\S]*?<\/svg>)?[^<]*)(<\/h2>)([\s\S]*?)(?=<h2[ >]|$)/g,
+        (whole, open: string, text: string, close: string, section: string) =>
+            heading.test(text.replace(/<svg[\s\S]*?<\/svg>/, ""))
+                ? open +
+                  text +
+                  close +
+                  section.replace(
+                      /(<h3>[\s\S]*?<\/h3>)([\s\S]*?)(?=<h3>|$)/g,
+                      (_m: string, title: string, body: string) =>
+                          `<details class="${cls}"><summary>${title}</summary>${body.trim()}</details>\n`,
+                  )
+                : whole,
+    );
+}
+
+export function foldWorkedExamples(html: string): string {
+    return foldH3s(html, /^Worked/, "ga-example");
+}
+
+export function foldQuestions(html: string): string {
+    return foldH3s(html, /^Questions/, "ga-example ga-faq");
+}
+
+// Each caveat's bold lead is its chip label, drawn with a glyph for what it
+// rules out; the explanation opens on tap. Unmatched leads keep the warning
+// triangle, so a new caveat never renders without a mark.
+const LIMIT_ICONS: [RegExp, string][] = [
+    [/electrical/i, "M13 2 4 14h7l-1 8 9-12h-7Z"],
+    [/stall/i, "M8 5v14M16 5v14"],
+    [/capability|envelope/i, "M4 4v16h16M7 7c6 0 9 4 11 11"],
+    [/duty|thermal/i, "M10 4a2 2 0 0 1 4 0v10a4 4 0 1 1-4 0ZM12 9v7"],
+    [/motion/i, "M20 12a8 8 0 1 1-2.3-5.7M20 3v4h-4"],
+    [/rated/i, "M3 9h18v6H3ZM12 9v6"],
+    [/margin/i, "M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"],
+    [
+        /gearbox/i,
+        "M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8ZM12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2",
+    ],
+    [/commercial/i, "M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12ZM4 4l16 16"],
+    [/tagged entry/i, "M4 6h16M4 12h10M4 18h5M17 15l4 4M21 15l-4 4"],
+    [/best/i, "M12 4v16M6 20h12M4 8h16M4 8l-2 6h4ZM20 8l-2 6h4Z"],
+];
+const WARN = "M12 3 22 20H2ZM12 10v4M12 17v.5";
+
+export function foldLimits(html: string): string {
+    return html.replace(
+        /(<h2[^>]*>[^<]*<svg class="ga-h2-icon ga-ic-limits"[\s\S]*?<\/h2>\s*)<ul>([\s\S]*?)<\/ul>/g,
+        (_, heading: string, items: string) =>
+            `${heading}<ul class="ga-limits">${items.replace(
+                /<li><strong>([\s\S]*?)<\/strong>\s*([\s\S]*?)<\/li>/g,
+                (_m: string, lead: string, rest: string) => {
+                    const label = lead.replace(/\.$/, "");
+                    const d = LIMIT_ICONS.find(([re]) => re.test(label))?.[1] ?? WARN;
+                    return `<li><details class="ga-limit"><summary><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="${d}"/></svg><span>${label}</span></summary><p>${rest}</p></details></li>`;
+                },
+            )}</ul>`,
     );
 }
 

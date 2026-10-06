@@ -63,6 +63,7 @@ test("humanoid guide is an app page whose guide text stays below the joint map",
     // Each joint's catalog list renders as part rows with a gauge against
     // that joint's estimate; the knee has no rated fit, so its gauges read peak.
     expect(persistent.match(/<ol class="req-rows">/g)?.length).toBe(JOINTS.length);
+    expect(persistent).toContain("<span>Dynamic and thermal duty</span></summary>");
     const knee = persistent.slice(
         persistent.indexOf('<h2 id="knee">'),
         persistent.indexOf('<h2 id="ankle">'),
