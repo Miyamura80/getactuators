@@ -16,6 +16,7 @@ import {
 } from "../../../src/engineering/arm-torque";
 import { fmt } from "../lib/motor-torque";
 import { ARM_INPUT_SCHEMA, armFromArgs, armResult, registerPageTools, result as toolResult } from "../lib/webmcp";
+import { useOpenTargetSection } from "../lib/open-target";
 import "./tools.css";
 
 
@@ -78,6 +79,7 @@ function NumberField({
 export function ArmTorqueCalculator({ menuOpen = false }: { menuOpen?: boolean }) {
     const [arm, setArm] = useState<Arm>(() => armFromQuery(window.location.search));
     const [active, setActive] = useState(0);
+    useOpenTargetSection();
 
     useEffect(() => {
         // A temporarily invalid edit (zero length) would reload as the default
@@ -159,8 +161,7 @@ export function ArmTorqueCalculator({ menuOpen = false }: { menuOpen?: boolean }
                     <p className="tool-kicker">Tool · τ = g · Σ m · x</p>
                     <h1>Robot arm torque calculator</h1>
                     <p className="tool-lede">
-                        Holding torque at every joint of an arm held horizontal, from link lengths, masses and
-                        payload. Then pick actuators per joint and feed their mass back in.
+                        Holding torque at every joint, arm horizontal, and the actuators for each.
                     </p>
                 </header>
 

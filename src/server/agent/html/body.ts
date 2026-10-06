@@ -30,6 +30,26 @@ export function withHeadingIds(html: string): string {
     });
 }
 
+// Each h2 section becomes a closed <details> whose summary is the heading plus
+// a one-line payload, so the page can be scanned without reading it.
+export function foldSections(html: string, meta: Record<string, string>): string {
+    return html.replace(
+        /(<h2 id="([^"]+)">[\s\S]*?<\/h2>)([\s\S]*?)(?=<h2 |$)/g,
+        (_, heading: string, id: string, rest: string) => {
+            const n = (rest.match(/<h3>/g) ?? []).length;
+            const line = (meta[id] ?? "").replace("{n}", String(n));
+            const payload = line
+                ? `<span class="ga-fold-meta">${escapeText(line)}</span>`
+                : "";
+            return `<details class="ga-fold"><summary>${heading}${payload}</summary>${rest.trim()}</details>`;
+        },
+    );
+}
+
+function escapeText(s: string): string {
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
 // Page body: nav, the rendered markdown as <main>, footer.
 export function pageBody(
     md: string,

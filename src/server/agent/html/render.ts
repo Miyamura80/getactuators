@@ -4,7 +4,7 @@ import { publicFooter } from "../../../public-navigation";
 import { DIST_DIR } from "../../static";
 import { graph } from "../jsonld";
 import { type Page, markdownPath } from "../pages";
-import { markdownToHtml, pageBody, withHeadingIds } from "./body";
+import { foldSections, markdownToHtml, pageBody, withHeadingIds } from "./body";
 import { type HeadMeta, documentTitle, esc, headTags } from "./head";
 import { PAGE_CSS } from "./style";
 
@@ -72,9 +72,10 @@ export async function renderSpaPage(page: Page, visual?: string): Promise<string
             ? await galleryFile.text()
             : null;
     const prerender = galleryHtml ?? visual ?? fallbackHtml;
-    const persistentHtml = page.headingIds
+    const withIds = page.headingIds
         ? withHeadingIds(markdownToHtml(content))
         : markdownToHtml(content);
+    const persistentHtml = page.fold ? foldSections(withIds, page.fold()) : withIds;
     const persistent = content
         ? `<section class="ga-page" id="catalog-content" ${page.ogType === "product" ? 'tabindex="-1" aria-label="Specifications and catalog details"' : `tabindex="-1" aria-label="${esc(page.persistentLabel ?? "Catalog details")}"`}><div class="ga-main">${persistentHtml}</div></section>${publicFooter()}`
         : "";

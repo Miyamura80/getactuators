@@ -89,6 +89,22 @@ export const HUMANOID_GUIDE: Page = {
     persistentFrom: "\n\n## How to read this guide",
     persistentLabel: "Method, joint estimates and shortlists",
     headingIds: true,
+    fold: () => ({
+        "how-to-read-this-guide": "Hypothetical 1.5 m, 50 kg robot; static floor",
+        ...Object.fromEntries(
+            JOINTS.map((j) => {
+                const list = jointShortlist(j, Number.POSITIVE_INFINITY);
+                const rated = list.rows.filter((r) => r.torque === "rated").length;
+                const screen = list.total
+                    ? `${list.total} pass, ${rated ? `${rated} rated` : "peak only"}`
+                    : "none documented";
+                return [j.id, `${j.torqueNm.toFixed(1)} N·m · ${screen}`];
+            }),
+        ),
+        "what-this-guide-does-not-establish":
+            "Installed parts, duty, best pick, envelope",
+        "next-steps": "Compare, check sources, selection guide",
+    }),
     title: TITLE,
     description: DESCRIPTION,
     ogType: "article",

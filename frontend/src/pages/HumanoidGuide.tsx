@@ -11,6 +11,7 @@ import {
     type Joint,
     jointShortlist,
 } from "../../../src/server/agent/humanoid-joints";
+import { useOpenTargetSection } from "../lib/open-target";
 import "./tools.css";
 
 // Same text as the guide's Markdown (the server fallback and the .md twin).
@@ -76,9 +77,6 @@ function Callouts({
             <text className="jm-head" x={10} y={18}>
                 {JOINTS.length} JOINTS
             </text>
-            <text className="jm-sub" x={10} y={29}>
-                STATIC ESTIMATES · 50 KG REFERENCE
-            </text>
             {JOINTS.map((j) => {
                 const [x, y] = anchorFor(j, scene, project);
                 const left = LEFT.has(j.id);
@@ -140,7 +138,6 @@ function ScreenPips({ total, rated }: { total: number; rated: number }) {
                     />
                 ))}
             </svg>
-            <span className="jm-pips-n" aria-hidden="true">{total}</span>
         </span>
     );
 }
@@ -148,7 +145,7 @@ function ScreenPips({ total, rated }: { total: number; rated: number }) {
 function BillOfJoints({ focus, setFocus }: Focus) {
     return (
         <table className="jm-bom">
-            <caption>Bill of joints · static estimates</caption>
+            <caption className="sr-only">Bill of joints: static torque estimates and catalog screen</caption>
             <thead>
                 <tr>
                     <th scope="col">#</th>
@@ -186,6 +183,7 @@ function BillOfJoints({ focus, setFocus }: Focus) {
 export function HumanoidGuide({ menuOpen = false }: { menuOpen?: boolean }) {
     const scene = useMemo(() => humanoid(), []);
     const [focus, setFocus] = useState<string | null>(null);
+    useOpenTargetSection();
 
     // WebMCP: let an in-browser agent bring a joint's section into view.
     useEffect(
