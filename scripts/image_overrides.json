@@ -3,5 +3,9 @@
     "innfos-sca-qdd-lite-ne30-36": "https://hackster.imgix.net/uploads/attachments/1027146/_0InfkXtoiQ.blob?auto=compress%2Cformat&w=600&h=450&fit=min",
     "waveshare-sc15": "https://www.waveshare.com/media/catalog/product/s/c/sc15-servo-2.jpg",
     "ipower-gm8112-80t": "https://cdn.iflight.com/store/product/Gimbal-Motor/GM8112/GM8112-1.png",
-    "feetech-sts3250": "https://www.feetechrc.com/cut_298_198/Data/feetechrc/upload/image/ST-3250-C001/1.jpg"
+    "feetech-sts3250": "https://www.feetechrc.com/cut_298_198/Data/feetechrc/upload/image/ST-3250-C001/1.jpg",
+    "dynamixel-h54-200-s500-r": "https://raw.githubusercontent.com/ROBOTIS-GIT/emanual/master/assets/images/dxl/pro/h54-200-s500-r_product.jpg",
+    "feetech-sts3215": "https://raw.githubusercontent.com/mhered/my_SO100ARM/main/BOM/assets/STS3215_servo.jpg",
+    "waveshare-st3215": "https://raw.githubusercontent.com/FredJ21/SpotMicro/main/img/st3215-servo-1.jpg",
+    "damiao-dm-j8009-2ec": "https://aifitlab.com/cdn/shop/files/8009-1.png"
 }
