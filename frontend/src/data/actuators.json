@@ -635,7 +635,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://www.feetechrc.com/products/serial-port-series-steering-gear-page-3",
     "source_domain": "feetechrc.com",
-    "image_url": null
+    "image_url": "/actuator-images/feetech-sts3215.webp"
   },
   {
     "id": "dynamixel-h54-200-s500-r",
@@ -687,7 +687,7 @@
     "country_flag": "🇰🇷",
     "source_url": "https://docs.robotis.com/docs/dxl/model_reference/pro_series/pro_h_series/h54-200-s500-r/",
     "source_domain": "docs.robotis.com",
-    "image_url": null
+    "image_url": "/actuator-images/dynamixel-h54-200-s500-r.webp"
   },
   {
     "id": "dynamixel-xm430-w350-t",
@@ -1067,7 +1067,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://www.dronegearup.com/products/damiao-dm-j8009-2ec-24-v-20-n-m-9-1-98-mm-od-dual-encoder-integrated-robot-motor-with-can-1-mbps/",
     "source_domain": "dronegearup.com",
-    "image_url": null
+    "image_url": "/actuator-images/damiao-dm-j8009-2ec.webp"
   },
   {
     "id": "innfos-sca-qdd-lite-ne30-36",
@@ -1170,7 +1170,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://www.waveshare.com/st3215-servo.htm",
     "source_domain": "waveshare.com",
-    "image_url": null
+    "image_url": "/actuator-images/waveshare-st3215.webp"
   },
   {
     "id": "robstride-02",
