@@ -392,7 +392,7 @@
             "price_max_usd": 21500,
             "product_url": "https://www.unitree.com/g1/",
             "image_url": "/robot-images/unitree-g1.webp",
-            "summary": "Compact 1.32 m, 35 kg humanoid with 23 joints (23 to 43 on the EDU version) driven by low-inertia internal-rotor PMSM joint motors; the knees peak at 90 N·m. About 2 hours of battery life.",
+            "summary": "Compact 1.32 m, 35 kg humanoid with 23 joints (23 to 43 on the EDU version) driven by low-inertia internal-rotor PMSM joint motors. Unitree's spec sheet quotes a 90 N·m knee peak; its published URDF sets the knee and hip-roll limit at 139 N·m, which the joint map uses. About 2 hours of battery life.",
             "joints": [
                 { "role": "Hip pitch + hip yaw + waist yaw", "motor": "unitree-n7520-14p3", "count": 5 },
                 { "role": "Hip roll + knee", "motor": "unitree-n7520-22p5", "count": 4 },
@@ -506,7 +506,7 @@
             "price_max_usd": null,
             "product_url": "https://www.booster.tech/booster-k1/",
             "image_url": "/robot-images/booster-k1.webp",
-            "summary": "Entry-level 95 cm, 19.5 kg humanoid with 22 DOF and up to 60 N·m peak joint torque, sold in Geek, Education and Professional editions. Won RoboCup 2025 KidSize. Joint-map torques are the effort limits in Booster's published URDF, which does not name the motor models.",
+            "summary": "Entry-level 95 cm, 19.5 kg humanoid with 22 DOF, sold in Geek, Education and Professional editions. Won RoboCup 2025 KidSize. Booster's product page quotes up to 60 N·m peak joint torque, but its published URDF sets higher effort limits (knee 112 N·m, hip pitch 68 N·m); the joint map uses the URDF limits, which do not name the motor models.",
             "joints": [
                 { "role": "Head (yaw, pitch)", "motor": "booster-k1-head", "count": 2 },
                 { "role": "Shoulder + elbow", "motor": "booster-k1-arm", "count": 8 },
