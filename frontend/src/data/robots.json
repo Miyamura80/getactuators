@@ -134,6 +134,214 @@
             "torque_density_nm_per_kg": null,
             "product_url": null,
             "actuator_id": null
+        },
+        "unitree-n7520-14p3": {
+            "id": "unitree-n7520-14p3",
+            "name": "Unitree N7520-14.3",
+            "brand": "Unitree",
+            "rated_torque_nm": null,
+            "peak_torque_nm": 88,
+            "rated_speed_rpm": null,
+            "gear_ratio": "14.3:1",
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": null,
+            "actuator_id": null
+        },
+        "unitree-n7520-22p5": {
+            "id": "unitree-n7520-22p5",
+            "name": "Unitree N7520-22.5",
+            "brand": "Unitree",
+            "rated_torque_nm": null,
+            "peak_torque_nm": 139,
+            "rated_speed_rpm": null,
+            "gear_ratio": "22.5:1",
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": null,
+            "actuator_id": null
+        },
+        "unitree-n5020-16": {
+            "id": "unitree-n5020-16",
+            "name": "Unitree N5020-16",
+            "brand": "Unitree",
+            "rated_torque_nm": null,
+            "peak_torque_nm": 25,
+            "rated_speed_rpm": null,
+            "gear_ratio": "16:1",
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": null,
+            "actuator_id": null
+        },
+        "booster-t1-head": {
+            "id": "booster-t1-head",
+            "name": "T1 head joint motor",
+            "brand": "Booster Robotics",
+            "rated_torque_nm": null,
+            "peak_torque_nm": 7,
+            "rated_speed_rpm": null,
+            "gear_ratio": null,
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": null,
+            "actuator_id": null
+        },
+        "booster-t1-arm": {
+            "id": "booster-t1-arm",
+            "name": "T1 arm joint motor",
+            "brand": "Booster Robotics",
+            "rated_torque_nm": null,
+            "peak_torque_nm": 38.3,
+            "rated_speed_rpm": null,
+            "gear_ratio": null,
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": null,
+            "actuator_id": null
+        },
+        "booster-t1-hip-waist": {
+            "id": "booster-t1-hip-waist",
+            "name": "T1 hip roll/yaw and waist joint motor",
+            "brand": "Booster Robotics",
+            "rated_torque_nm": null,
+            "peak_torque_nm": 68,
+            "rated_speed_rpm": null,
+            "gear_ratio": null,
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": null,
+            "actuator_id": null
+        },
+        "booster-t1-hip-pitch": {
+            "id": "booster-t1-hip-pitch",
+            "name": "T1 hip pitch joint motor",
+            "brand": "Booster Robotics",
+            "rated_torque_nm": null,
+            "peak_torque_nm": 98.8,
+            "rated_speed_rpm": null,
+            "gear_ratio": null,
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": null,
+            "actuator_id": null
+        },
+        "booster-t1-knee": {
+            "id": "booster-t1-knee",
+            "name": "T1 knee joint motor",
+            "brand": "Booster Robotics",
+            "rated_torque_nm": null,
+            "peak_torque_nm": 130.5,
+            "rated_speed_rpm": null,
+            "gear_ratio": null,
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": null,
+            "actuator_id": null
+        },
+        "booster-t1-ankle-pitch": {
+            "id": "booster-t1-ankle-pitch",
+            "name": "T1 ankle pitch joint motor",
+            "brand": "Booster Robotics",
+            "rated_torque_nm": null,
+            "peak_torque_nm": 73.1,
+            "rated_speed_rpm": null,
+            "gear_ratio": null,
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": null,
+            "actuator_id": null
+        },
+        "booster-t1-ankle-roll": {
+            "id": "booster-t1-ankle-roll",
+            "name": "T1 ankle roll joint motor",
+            "brand": "Booster Robotics",
+            "rated_torque_nm": null,
+            "peak_torque_nm": 17.2,
+            "rated_speed_rpm": null,
+            "gear_ratio": null,
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": null,
+            "actuator_id": null
+        },
+        "booster-k1-head": {
+            "id": "booster-k1-head",
+            "name": "K1 head joint motor",
+            "brand": "Booster Robotics",
+            "rated_torque_nm": null,
+            "peak_torque_nm": 6,
+            "rated_speed_rpm": null,
+            "gear_ratio": null,
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": null,
+            "actuator_id": null
+        },
+        "booster-k1-arm": {
+            "id": "booster-k1-arm",
+            "name": "K1 arm joint motor",
+            "brand": "Booster Robotics",
+            "rated_torque_nm": null,
+            "peak_torque_nm": 14,
+            "rated_speed_rpm": null,
+            "gear_ratio": null,
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": null,
+            "actuator_id": null
+        },
+        "booster-k1-hip-pitch": {
+            "id": "booster-k1-hip-pitch",
+            "name": "K1 hip pitch joint motor",
+            "brand": "Booster Robotics",
+            "rated_torque_nm": null,
+            "peak_torque_nm": 68,
+            "rated_speed_rpm": null,
+            "gear_ratio": null,
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": null,
+            "actuator_id": null
+        },
+        "booster-k1-hip-roll": {
+            "id": "booster-k1-hip-roll",
+            "name": "K1 hip roll joint motor",
+            "brand": "Booster Robotics",
+            "rated_torque_nm": null,
+            "peak_torque_nm": 43,
+            "rated_speed_rpm": null,
+            "gear_ratio": null,
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": null,
+            "actuator_id": null
+        },
+        "booster-k1-hip-yaw-ankle": {
+            "id": "booster-k1-hip-yaw-ankle",
+            "name": "K1 hip yaw and ankle joint motor",
+            "brand": "Booster Robotics",
+            "rated_torque_nm": null,
+            "peak_torque_nm": 38.3,
+            "rated_speed_rpm": null,
+            "gear_ratio": null,
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": null,
+            "actuator_id": null
+        },
+        "booster-k1-knee": {
+            "id": "booster-k1-knee",
+            "name": "K1 knee joint motor",
+            "brand": "Booster Robotics",
+            "rated_torque_nm": null,
+            "peak_torque_nm": 112,
+            "rated_speed_rpm": null,
+            "gear_ratio": null,
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": null,
+            "actuator_id": null
         }
     },
     "robots": [
@@ -185,10 +393,18 @@
             "product_url": "https://www.unitree.com/g1/",
             "image_url": "/robot-images/unitree-g1.webp",
             "summary": "Compact 1.32 m, 35 kg humanoid with 23 joints (23 to 43 on the EDU version) driven by low-inertia internal-rotor PMSM joint motors; the knees peak at 90 N·m. About 2 hours of battery life.",
-            "joints": [],
+            "joints": [
+                { "role": "Hip pitch + hip yaw + waist yaw", "motor": "unitree-n7520-14p3", "count": 5 },
+                { "role": "Hip roll + knee", "motor": "unitree-n7520-22p5", "count": 4 },
+                { "role": "Shoulder, elbow, wrist roll", "motor": "unitree-n5020-16", "count": 10 },
+                { "role": "Ankle pitch + roll (parallel linkage)", "motor": "unitree-n5020-16", "count": 4 }
+            ],
             "sources": [
                 "https://www.unitree.com/g1/",
-                "https://shop.unitree.com/products/unitree-g1"
+                "https://shop.unitree.com/products/unitree-g1",
+                "https://github.com/unitreerobotics/unitree_ros/blob/master/robots/g1_description/g1_23dof_rev_1_0.urdf",
+                "https://github.com/unitreerobotics/unitree_rl_lab/blob/main/source/unitree_rl_lab/unitree_rl_lab/assets/robots/unitree.py",
+                "https://github.com/unitreerobotics/unitree_rl_lab/blob/main/source/unitree_rl_lab/unitree_rl_lab/assets/robots/unitree_actuators.py"
             ]
         },
         {
@@ -258,10 +474,20 @@
             "price_max_usd": null,
             "product_url": "https://www.booster.tech/booster-t1/",
             "image_url": "/robot-images/booster-t1.webp",
-            "summary": "Developer humanoid, 1.18 m and about 30 kg, with 23 DOF (31 with grippers, 41 with dexterous hands) and up to 130 N·m peak joint torque. Won RoboCup 2025 AdultSize.",
-            "joints": [],
+            "summary": "Developer humanoid, 1.18 m and about 30 kg, with 23 DOF (31 with grippers, 41 with dexterous hands) and up to 130 N·m peak joint torque. Won RoboCup 2025 AdultSize. Joint-map torques are the effort limits in Booster's published URDF, which does not name the motor models.",
+            "joints": [
+                { "role": "Head (yaw, pitch)", "motor": "booster-t1-head", "count": 2 },
+                { "role": "Shoulder + elbow", "motor": "booster-t1-arm", "count": 8 },
+                { "role": "Waist yaw + hip roll + hip yaw", "motor": "booster-t1-hip-waist", "count": 5 },
+                { "role": "Hip pitch", "motor": "booster-t1-hip-pitch", "count": 2 },
+                { "role": "Knee", "motor": "booster-t1-knee", "count": 2 },
+                { "role": "Ankle pitch", "motor": "booster-t1-ankle-pitch", "count": 2 },
+                { "role": "Ankle roll", "motor": "booster-t1-ankle-roll", "count": 2 }
+            ],
             "sources": [
-                "https://www.booster.tech/booster-t1/"
+                "https://www.booster.tech/booster-t1/",
+                "https://github.com/BoosterRobotics/booster_assets/blob/main/robots/T1/T1_23dof.urdf",
+                "https://github.com/BoosterRobotics/booster_assets/blob/main/robots/T1/T1_23dof.xml"
             ]
         },
         {
@@ -280,10 +506,19 @@
             "price_max_usd": null,
             "product_url": "https://www.booster.tech/booster-k1/",
             "image_url": "/robot-images/booster-k1.webp",
-            "summary": "Entry-level 95 cm, 19.5 kg humanoid with 22 DOF and up to 60 N·m peak joint torque, sold in Geek, Education and Professional editions. Won RoboCup 2025 KidSize.",
-            "joints": [],
+            "summary": "Entry-level 95 cm, 19.5 kg humanoid with 22 DOF and up to 60 N·m peak joint torque, sold in Geek, Education and Professional editions. Won RoboCup 2025 KidSize. Joint-map torques are the effort limits in Booster's published URDF, which does not name the motor models.",
+            "joints": [
+                { "role": "Head (yaw, pitch)", "motor": "booster-k1-head", "count": 2 },
+                { "role": "Shoulder + elbow", "motor": "booster-k1-arm", "count": 8 },
+                { "role": "Hip pitch", "motor": "booster-k1-hip-pitch", "count": 2 },
+                { "role": "Hip roll", "motor": "booster-k1-hip-roll", "count": 2 },
+                { "role": "Hip yaw + ankle pitch + ankle roll", "motor": "booster-k1-hip-yaw-ankle", "count": 6 },
+                { "role": "Knee", "motor": "booster-k1-knee", "count": 2 }
+            ],
             "sources": [
-                "https://www.booster.tech/booster-k1/"
+                "https://www.booster.tech/booster-k1/",
+                "https://github.com/BoosterRobotics/booster_assets/blob/main/robots/K1/K1_22dof.urdf",
+                "https://github.com/BoosterRobotics/booster_assets/blob/main/robots/K1/K1_22dof.xml"
             ]
         },
         {
@@ -425,9 +660,17 @@
             "price_max_usd": null,
             "product_url": "https://i2rt.com/products/yam-leader",
             "image_url": "/robot-images/i2rt-yam-leader.webp",
-            "summary": "Teleoperation leader arm: the operator backdrives it to puppeteer a follower YAM (GELLO-style). Runs the same motor-chain SDK; its joint motor list is not published separately.",
-            "joints": [],
-            "sources": ["https://i2rt.com/products/yam-leader"]
+            "summary": "Teleoperation leader arm: the operator backdrives it to puppeteer a follower YAM (GELLO-style). The SDK's leader mode drives a standard YAM arm config by default (DM4340 at J1-J3, DM4310 at J4-J6) with a teaching handle in place of the gripper.",
+            "joints": [
+                { "role": "Shoulder (J1-J3)", "motor": "dm-j4340", "count": 3 },
+                { "role": "Elbow + wrist (J4-J6)", "motor": "dm-j4310", "count": 3 }
+            ],
+            "sources": [
+                "https://i2rt.com/products/yam-leader",
+                "https://github.com/i2rt-robotics/i2rt/blob/main/i2rt/robots/config/yam_v1.yml",
+                "https://github.com/i2rt-robotics/i2rt/blob/main/examples/minimum_gello/README.md",
+                "https://github.com/i2rt-robotics/i2rt/blob/main/examples/minimum_gello/minimum_gello.py"
+            ]
         }
     ]
 }
