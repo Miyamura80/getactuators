@@ -1,4 +1,4 @@
-import { gearboxOnlyIds } from "./evidence";
+import { hasMotorBoundary } from "./evidence";
 
 // Dependency-neutral: no catalog import, filesystem, server or React dependency.
 export interface ComparisonRecord {
@@ -9,6 +9,11 @@ export interface ComparisonRecord {
     rated_torque_nm: number | null;
     max_speed_rpm: number | null;
     weight_g: number | null;
+    voltage_v?: string | number | null;
+    peak_current_a?: number | null;
+    power_w?: number | null;
+    kt_nm_per_a?: number | null;
+    integrated_driver?: boolean | null;
 }
 export interface ComparisonPair {
     ids: [string, string];
@@ -27,9 +32,8 @@ const shared = (a: ComparisonRecord, b: ComparisonRecord) =>
     FIELDS.filter((field) => positive(a[field]) && positive(b[field]));
 const eligible = (a: ComparisonRecord) =>
     /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(a.id) &&
-    !a.id.includes("-vs-") &&
-    !gearboxOnlyIds.has(a.id) &&
-    !/\b(series|family|controller|driver)\b/i.test(a.name) &&
+    !/(?:^|-)vs(?:-|$)/.test(a.id) &&
+    hasMotorBoundary(a) &&
     FIELDS.filter((field) => positive(a[field])).length >= 3 &&
     (positive(a.peak_torque_nm) || positive(a.rated_torque_nm));
 const order = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
@@ -54,6 +58,8 @@ export function buildComparisonRegistry(
     records: readonly ComparisonRecord[],
     peers = 3,
 ): ComparisonPair[] {
+    // A whole `vs` slug token is reserved, including the ID boundaries.
+    // This makes both canonical and reverse paths unambiguous.
     const cap = Number.isFinite(peers)
         ? Math.max(0, Math.min(3, Math.floor(peers)))
         : 3;
@@ -77,6 +83,10 @@ export function buildComparisonRegistry(
         for (const b of candidates) {
             const ids = [a.id, b.id].sort(order) as [string, string];
             const path = `/comparisons/${ids.join("-vs-")}`;
+            const existing = pairs.get(path);
+            if (existing && existing.ids.join("\0") !== ids.join("\0")) {
+                throw new Error(`Conflicting comparison path identities: ${path}`);
+            }
             pairs.set(path, { ids, category: a.category, path });
         }
     }
@@ -94,26 +104,50 @@ export const AUTHORED_COMPARISONS = [
     },
 ];
 
+export function authoredComparisonDirectory(records: readonly ComparisonRecord[]) {
+    const paths = new Set<string>();
+    const authored = AUTHORED_COMPARISONS.filter((pair) => {
+        if (
+            pair.ids.length !== 2 ||
+            pair.ids[0] === pair.ids[1] ||
+            !pair.ids.every(
+                (id) =>
+                    /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id) &&
+                    !/(?:^|-)vs(?:-|$)/.test(id),
+            )
+        ) {
+            throw new Error(`Invalid authored comparison IDs: ${pair.path}`);
+        }
+        const ids = [...pair.ids].sort(order);
+        if (pair.path !== `/comparisons/${ids.join("-vs-")}`) {
+            throw new Error(`Invalid authored comparison path identity: ${pair.path}`);
+        }
+        if (paths.has(pair.path)) {
+            throw new Error(`Conflicting authored comparison identity: ${pair.path}`);
+        }
+        paths.add(pair.path);
+        return pair.ids.every(
+            (id) => records.filter((record) => record.id === id).length === 1,
+        );
+    });
+    return authored.map((pair) => ({
+        ...pair,
+        ids: [...pair.ids].sort(order) as [string, string],
+    }));
+}
+
 export function comparisonDirectory(
     records: readonly ComparisonRecord[],
 ): ComparisonPair[] {
-    const authored = AUTHORED_COMPARISONS.filter((pair) =>
-        pair.ids.every(
-            (id) => records.filter((record) => record.id === id).length === 1,
-        ),
-    );
-    const paths = new Set(authored.map((pair) => pair.path));
+    // Validate authored identities before they can suppress generated paths.
+    const authored = authoredComparisonDirectory(records);
+    const authoredPaths = new Set(authored.map((pair) => pair.path));
     return [
-        ...buildComparisonRegistry(records).filter((pair) => !paths.has(pair.path)),
+        ...buildComparisonRegistry(records).filter(
+            (pair) => !authoredPaths.has(pair.path),
+        ),
         ...authored,
     ].sort((a, b) => order(a.path, b.path));
-}
-
-export function authoredComparisonDirectory(records: readonly ComparisonRecord[]) {
-    const directory = comparisonDirectory(records);
-    return AUTHORED_COMPARISONS.filter((authored) =>
-        directory.some((pair) => pair.path === authored.path),
-    );
 }
 
 export function canonicalComparisonPath(
@@ -127,6 +161,15 @@ export function canonicalComparisonPath(
             base === pair.path ||
             base === `/comparisons/${[...pair.ids].reverse().join("-vs-")}`,
     );
+    if (
+        pair &&
+        pairs.some(
+            (candidate) =>
+                candidate.path === pair.path &&
+                candidate.ids.join("\0") !== pair.ids.join("\0"),
+        )
+    )
+        return null;
     return pair ? `${pair.path}${md}` : null;
 }
 
@@ -145,8 +188,34 @@ export function comparisonTitle(
     );
 }
 
+// Pure snapshot factory: callers cache only their immutable production catalog.
+// Synthetic or mutable record inputs always get a fresh snapshot.
+export function comparisonSnapshot(records: readonly ComparisonRecord[]) {
+    const directory = comparisonDirectory(records).map((pair) => {
+        const copy = { ...pair, ids: [...pair.ids] as [string, string] };
+        Object.freeze(copy.ids);
+        return Object.freeze(copy);
+    });
+    const authored = authoredComparisonDirectory(records).map((pair) => {
+        const copy = { ...pair, ids: [...pair.ids] as [string, string] };
+        Object.freeze(copy.ids);
+        return Object.freeze(copy);
+    });
+    const groups = groupsForPairs(directory).map((group) =>
+        Object.freeze({ ...group, pairs: Object.freeze(group.pairs) }),
+    );
+    return Object.freeze({
+        directory: Object.freeze(directory),
+        authored: Object.freeze(authored),
+        groups: Object.freeze(groups),
+    });
+}
+
 export function comparisonGroups(records: readonly ComparisonRecord[]) {
-    const pairs = comparisonDirectory(records);
+    return groupsForPairs(comparisonDirectory(records));
+}
+
+function groupsForPairs(pairs: readonly ComparisonPair[]) {
     return [...new Set(pairs.map((pair) => pair.category))].sort().map((category) => ({
         category,
         pairs: pairs.filter(

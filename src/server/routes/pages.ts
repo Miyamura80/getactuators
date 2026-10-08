@@ -31,6 +31,13 @@ function comparisonRedirect(url: URL): Response | null {
         : null;
 }
 
+function comparisonRobots(response: Response, path: string, url: URL): Response {
+    if (path === "/compare" && url.searchParams.has("compare")) {
+        response.headers.set("X-Robots-Tag", "noindex, follow");
+    }
+    return response;
+}
+
 const page: Handler = async (req) => {
     const url = new URL(req.url);
     const redirect = comparisonRedirect(url);
@@ -53,7 +60,12 @@ const page: Handler = async (req) => {
         found.path === "/compare"
             ? { ...found, body: () => compareBody(url.search) }
             : found;
-    if (wantsMarkdown(req)) return markdownResponse(pageMarkdown(selected));
+    if (wantsMarkdown(req))
+        return comparisonRobots(
+            markdownResponse(pageMarkdown(selected)),
+            found.path,
+            url,
+        );
     const html =
         found.kind === "spa"
             ? await renderSpaPage(
@@ -62,7 +74,11 @@ const page: Handler = async (req) => {
                   found.path === "/compare" && url.searchParams.has("compare"),
               )
             : renderStaticPage(found);
-    return htmlResponse(measurementHtml(html, found.path));
+    return comparisonRobots(
+        htmlResponse(measurementHtml(html, found.path)),
+        found.path,
+        url,
+    );
 };
 
 const twin: Handler = (req) => {
@@ -71,12 +87,16 @@ const twin: Handler = (req) => {
     if (redirect) return redirect;
     const found = findPageForMarkdown(url.pathname);
     return found
-        ? markdownResponse(
-              pageMarkdown(
-                  found.path === "/compare"
-                      ? { ...found, body: () => compareBody(url.search) }
-                      : found,
+        ? comparisonRobots(
+              markdownResponse(
+                  pageMarkdown(
+                      found.path === "/compare"
+                          ? { ...found, body: () => compareBody(url.search) }
+                          : found,
+                  ),
               ),
+              found.path,
+              url,
           )
         : null;
 };

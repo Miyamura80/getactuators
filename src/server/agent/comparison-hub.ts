@@ -6,17 +6,19 @@ import {
 } from "@/catalog/compare";
 import {
     COMPARISON_METHOD,
-    authoredComparisonDirectory,
-    comparisonGroups,
+    comparisonSnapshot,
     comparisonTitle,
 } from "@/catalog/comparison-registry";
 const categoryLabel = (slug: string) =>
     CATEGORIES.find((category) => category.slug === slug)?.label ?? slug;
 import { esc } from "./html/head";
 
+const production = comparisonSnapshot(ACTUATORS);
+
 export function comparisonHub(format: "html" | "md", records = ACTUATORS): string {
-    const groups = comparisonGroups(records);
-    const authored = authoredComparisonDirectory(records).map((pair) => ({
+    const snapshot = records === ACTUATORS ? production : comparisonSnapshot(records);
+    const groups = snapshot.groups;
+    const authored = snapshot.authored.map((pair) => ({
         pair,
         models: pair.ids.flatMap((id) => {
             const model = records.find((a) => a.id === id);

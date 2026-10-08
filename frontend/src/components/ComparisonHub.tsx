@@ -1,15 +1,17 @@
-import { authoredComparisonDirectory, COMPARISON_METHOD, comparisonGroups, comparisonTitle } from "../../../src/catalog/comparison-registry";
+import { COMPARISON_METHOD, comparisonSnapshot, comparisonTitle } from "../../../src/catalog/comparison-registry";
 import { ACTUATORS } from "../lib/data";
 import { COMPARISON_PHOTO_NOTE, comparisonPhotoAlt, comparisonHubNumbers } from "../../../src/catalog/compare";
 import { CATEGORIES } from "../types";
 
 const categoryLabel = (slug: string) => CATEGORIES.find(category => category.slug === slug)?.label ?? slug;
+const production = comparisonSnapshot(ACTUATORS);
 export function ComparisonHub({ records = ACTUATORS }: { records?: typeof ACTUATORS }) {
-    const groups = comparisonGroups(records);
+    const snapshot = records === ACTUATORS ? production : comparisonSnapshot(records);
+    const groups = snapshot.groups;
     return <section className="comparison-hub" aria-label="Actuator comparison directory">
         <p>Browse exact catalog models by drive type, or <a href="/actuators">pick 2–4 models in the gallery</a>. Match voltage, packaging and duty requirements before shortlisting.</p>
         <h2>Source-scoped engineering comparison</h2>
-        {authoredComparisonDirectory(records).map(pair => <article className="comparison-feature" key={pair.path}>
+        {snapshot.authored.map(pair => <article className="comparison-feature" key={pair.path}>
             <h3><a href={pair.path}>{pair.title}</a></h3>
             <div className="comparison-feature-photos">{pair.ids.map(id => {
                 const a = records.find(a => a.id === id);

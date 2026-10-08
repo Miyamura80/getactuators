@@ -1,3 +1,39 @@
+// Component policy is selection eligibility, not a new hardware specification.
+// Missing motor metadata fails closed when speed is also unknown; a standalone
+// frameless motor can qualify without an integrated drive. No ID allow/deny list.
+interface MotorBoundaryRecord {
+    name: string;
+    max_speed_rpm: number | null;
+    voltage_v?: string | number | null;
+    peak_current_a?: number | null;
+    power_w?: number | null;
+    kt_nm_per_a?: number | null;
+    integrated_driver?: boolean | null;
+}
+export function hasMotorBoundary(a: MotorBoundaryRecord): boolean {
+    if (/\b(series|family|controller|driver)\b/i.test(a.name)) return false;
+    const electrical =
+        [a.peak_current_a, a.power_w, a.kt_nm_per_a].some(
+            (value) => typeof value === "number" && Number.isFinite(value) && value > 0,
+        ) ||
+        (typeof a.voltage_v === "number"
+            ? Number.isFinite(a.voltage_v) && a.voltage_v > 0
+            : typeof a.voltage_v === "string" && /[1-9]/.test(a.voltage_v));
+    if (
+        /\b(reducer|gearbox|gearhead)\b/i.test(a.name) &&
+        a.integrated_driver !== true &&
+        (!electrical || !/\b(motor|actuator|joint)\b/i.test(a.name))
+    )
+        return false;
+    return (
+        electrical ||
+        a.integrated_driver === true ||
+        (a.max_speed_rpm !== null &&
+            Number.isFinite(a.max_speed_rpm) &&
+            a.max_speed_rpm > 0)
+    );
+}
+
 // Display-only evidence policy. Never mutate catalog values or the legacy flag.
 interface EvidenceRecord {
     id: string;

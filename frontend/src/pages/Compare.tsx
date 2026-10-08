@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef } from "react";
 import { PublicHeader } from "../components/PublicHeader";
 import { ComparisonHub } from "../components/ComparisonHub";
 import { PublicFooter } from "../components/PublicFooter";
@@ -8,8 +9,18 @@ import { COMPARE_SPECS, revisionNote } from "../../../src/catalog/compare";
 
 export function Compare({ menuOpen = false }: { menuOpen?: boolean }) {
     const selection = useCompareSelection();
+    const status = useRef<HTMLParagraphElement>(null);
+    const remainingRemove = useRef<HTMLButtonElement>(null);
+    const recoverAfterRemoval = useRef(false);
+    useLayoutEffect(() => {
+        if (!recoverAfterRemoval.current || selection.rows.length !== 1) return;
+        recoverAfterRemoval.current = false;
+        status.current?.scrollIntoView({ block: "start" });
+        remainingRemove.current?.focus({ preventScroll: true });
+    }, [selection.rows.length]);
     const remove = (id: string) => {
         const next = selection.ids.filter(value => value !== id);
+        recoverAfterRemoval.current = next.length === 1;
         selection.update(next);
         compareEvent("update", next);
     };
@@ -19,15 +30,15 @@ export function Compare({ menuOpen = false }: { menuOpen?: boolean }) {
             <h1>Compare actuators</h1>
             <p>Share this URL. Unknown means not documented, not zero. No winner is implied.</p>
             <a href={`/actuators${window.location.search}`}>Change picks in the gallery</a>
-            {selection.rows.length < 2 && <ComparisonHub />}
-            {selection.rows.length < 2 && <p role="status">Pick 2–4 actuators in the gallery. A missing or invalid selection is not compared.</p>}
+            {selection.rows.length === 0 && <ComparisonHub />}
+            {selection.rows.length < 2 && <p ref={status} role="status">Pick 2–4 actuators in the gallery. A missing or invalid selection is not compared.</p>}
             <div className="compare-products">
                 {selection.rows.map(a => <article key={a.id}>
                     <a href={`/actuators/${a.id}`}><div className="compare-photo"><ActuatorThumb actuator={a} /></div><h2>{a.name}</h2></a>
                     {!a.image_url && <p>Photo unavailable: schematic only</p>}
                     <p>{revisionNote(a)}</p>
                     <a href={`/actuators/${a.id}`}>Catalog and sources</a>
-                    <button type="button" aria-label={`Remove ${a.name}`} onClick={() => remove(a.id)}>Remove</button>
+                    <button ref={selection.rows.length === 1 ? remainingRemove : undefined} type="button" aria-label={`Remove ${a.name}`} onClick={() => remove(a.id)}>Remove</button>
                     <EngineeringEvidencePanel id={a.id} compact />
                 </article>)}
             </div>
