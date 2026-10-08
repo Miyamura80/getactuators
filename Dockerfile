@@ -7,10 +7,11 @@ RUN cd frontend && bun install --frozen-lockfile
 COPY frontend ./frontend
 # Catalog helpers shared by the browser and server (gallery order, evidence,
 # requirement shortlists, humanoid joint estimates, arm holding torque).
-COPY src/catalog/gallery.ts src/catalog/evidence.ts src/catalog/compare.ts src/catalog/engineering-evidence.ts src/catalog/shortlist.ts src/catalog/brands.ts src/catalog/index.ts src/catalog/types.ts ./src/catalog/
+COPY src/catalog/gallery.ts src/catalog/evidence.ts src/catalog/compare.ts src/catalog/comparison-registry.ts src/catalog/engineering-evidence.ts src/catalog/shortlist.ts src/catalog/brands.ts src/catalog/index.ts src/catalog/types.ts ./src/catalog/
 COPY src/server/agent/humanoid-joints.ts ./src/server/agent/
 COPY src/engineering/arm-torque.ts ./src/engineering/
 COPY src/public-navigation.ts src/public-navigation.css ./src/
+COPY src/comparisons.css ./src/
 RUN cd frontend && bun run build
 
 FROM oven/bun:1 AS runtime

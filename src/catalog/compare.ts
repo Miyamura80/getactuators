@@ -15,6 +15,11 @@ export interface CompareActuator {
     price_usd: number | null;
     encoder: string | null;
 }
+export const COMPARISON_PHOTO_NOTE =
+    "Catalog photo; illustrative. Confirm hardware revision/variant.";
+export function comparisonPhotoAlt(a: Pick<CompareActuator, "name">): string {
+    return `${a.name}: illustrative catalog photo; revision/variant unconfirmed`;
+}
 export const UNKNOWN = "Unknown: not documented";
 export function validatedCompareIds(
     search: string,
@@ -48,6 +53,9 @@ const value = (v: string | number | null, unit = "") =>
 function qualified(a: CompareActuator, field: string, displayed: string): string {
     const note = fieldCaveat({ id: a.id, verified: a.verified }, field);
     return note ? `${displayed}: ${note}` : displayed;
+}
+export function comparisonHubNumbers(a: CompareActuator): string {
+    return `${qualified(a, "peak_torque_nm", value(a.peak_torque_nm, " N·m"))} peak · ${qualified(a, "weight_g", value(a.weight_g, " g"))}`;
 }
 function engineeringDisplay(a: CompareActuator, topic: EngineeringTopic): string {
     const evidence = engineeringEvidenceFor(a.id);

@@ -51,7 +51,8 @@ export function headTags(m: HeadMeta): string {
         `<meta name="twitter:image" content="${esc(image)}">`,
     ];
     if (m.noindex) tags.push(`<meta name="robots" content="noindex, follow">`);
-    else tags.unshift(`<link rel="canonical" href="${esc(url)}">`);
+    if (!m.noindex || m.markdownPath)
+        tags.unshift(`<link rel="canonical" href="${esc(url)}">`);
     if (m.markdownPath) {
         tags.unshift(
             `<link rel="alternate" type="text/markdown" href="${esc(m.markdownPath)}" title="Markdown">`,

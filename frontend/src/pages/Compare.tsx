@@ -1,4 +1,5 @@
 import { PublicHeader } from "../components/PublicHeader";
+import { ComparisonHub } from "../components/ComparisonHub";
 import { PublicFooter } from "../components/PublicFooter";
 import { ActuatorThumb } from "../components/ActuatorThumb";
 import { EngineeringEvidencePanel } from "../components/EngineeringEvidencePanel";
@@ -18,6 +19,7 @@ export function Compare({ menuOpen = false }: { menuOpen?: boolean }) {
             <h1>Compare actuators</h1>
             <p>Share this URL. Unknown means not documented, not zero. No winner is implied.</p>
             <a href={`/actuators${window.location.search}`}>Change picks in the gallery</a>
+            {selection.rows.length < 2 && <ComparisonHub />}
             {selection.rows.length < 2 && <p role="status">Pick 2–4 actuators in the gallery. A missing or invalid selection is not compared.</p>}
             <div className="compare-products">
                 {selection.rows.map(a => <article key={a.id}>

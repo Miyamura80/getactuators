@@ -8,6 +8,7 @@ import {
     categoryLabel,
 } from "./catalog-md";
 import { EDITORIAL_PAGES } from "./editorial";
+import { GENERATED_COMPARISON_PAGES } from "./generated-comparisons";
 import { HUMANOID_GUIDE } from "./humanoid-guide";
 import * as ld from "./jsonld";
 import { PATHS } from "./links";
@@ -81,6 +82,7 @@ const STATIC_PAGES: Page[] = [
         ],
     },
     ...EDITORIAL_PAGES,
+    ...GENERATED_COMPARISON_PAGES,
     HUMANOID_GUIDE,
     ...TOOL_PAGES,
     {

@@ -142,7 +142,7 @@ export function pageBody(
     path = "",
     footer = true,
 ): string {
-    let content = markdownToHtml(md);
+    let content = visual && !editorial ? visual : markdownToHtml(md);
     if (md.startsWith("# Frequently asked questions\n")) {
         content = content.replace(
             /(<h3>[\s\S]*?<\/h3>)([\s\S]*?)(?=<h[23]>|$)/g,

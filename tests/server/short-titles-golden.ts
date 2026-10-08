@@ -1,9 +1,14 @@
 import { expect, test } from "bun:test";
 import { createHash } from "node:crypto";
 import { ACTUATORS, type Actuator } from "@/catalog";
+import {
+    AUTHORED_COMPARISONS,
+    comparisonDirectory,
+} from "@/catalog/comparison-registry";
 import { evidenceFor, fieldCaveat, gearboxOnlyIds } from "@/catalog/evidence";
 import { actuatorPath, categoryLabel } from "@/server/agent/catalog-md";
 import { CATALOG_UPDATED_DATE } from "@/server/agent/freshness";
+import { GENERATED_COMPARISON_PAGES } from "@/server/agent/generated-comparisons";
 import { markdownToHtml, pageBody } from "@/server/agent/html/body";
 import { documentTitle } from "@/server/agent/html/head";
 import { withToolCards } from "@/server/agent/html/tool-cards";
@@ -173,6 +178,34 @@ function snapshotProduct(body: string, a: Actuator): string {
         expect(normalized.split(`\n\n${sizing}`)).toHaveLength(2);
         normalized = normalized.replace(`\n\n${sizing}`, "");
     }
+    const related = comparisonDirectory(ACTUATORS).filter((pair) =>
+        pair.ids.includes(a.id),
+    );
+    if (related.length) {
+        // Freeze the new navigation wording independently; original product
+        // facts, metadata and content hashes remain unchanged.
+        const section = `\n\n## Catalog comparisons\n\nCatalog specifications and source caveats, not compatibility recommendations.\n\n${related
+            .map((pair) => {
+                const title =
+                    AUTHORED_COMPARISONS.find((authored) => authored.path === pair.path)
+                        ?.title ??
+                    pair.ids
+                        .map(
+                            (id) =>
+                                ACTUATORS.find((record) => record.id === id)?.name ??
+                                id,
+                        )
+                        .join(" vs ");
+                return `- [${title}](${pair.path})`;
+            })
+            .join("\n")}\n\n[Browse actuator comparisons](/compare).`;
+        expect(normalized.split(section)).toHaveLength(2);
+        const anchor = "\n\n## Machine-readable";
+        expect(normalized).toContain(`${section}${anchor}`);
+        const removed = normalized.replace(`${section}${anchor}`, anchor);
+        expect(removed.replace(anchor, `${section}${anchor}`)).toBe(normalized);
+        normalized = removed;
+    }
     return snapshotEngineering(normalized, a.id);
 }
 
@@ -309,11 +342,12 @@ async function expectCatalogPage(
 // metadata labels differ; hashes lock down original content, not head markup.
 test("the full catalog has distinct reviewed metadata without content changes", async () => {
     const registered = allPages();
-    expect(registered).toHaveLength(84);
+    expect(registered).toHaveLength(84 + GENERATED_COMPARISON_PAGES.length);
     // Pages added after the baseline capture have their own tests.
     const added = new Set([
         "/faq",
         "/compare",
+        ...GENERATED_COMPARISON_PAGES.map((page) => page.path),
         "/tools/motor-torque-calculator",
         "/guides/humanoid-robot-actuators",
         "/tools/robot-arm-torque-calculator",

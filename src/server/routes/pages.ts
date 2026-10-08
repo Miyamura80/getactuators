@@ -1,3 +1,8 @@
+import { ACTUATORS } from "@/catalog";
+import {
+    canonicalComparisonPath,
+    comparisonDirectory,
+} from "@/catalog/comparison-registry";
 import { compareBody, compareVisual } from "../agent/compare";
 import { renderSpaPage, renderStaticPage } from "../agent/html/render";
 import { PATHS } from "../agent/links";
@@ -15,8 +20,21 @@ import type { Handler, Route } from "../types";
 //   anything else                                         -> HTML
 // and every page also serves `<path>.md` directly.
 
+const comparisons = comparisonDirectory(ACTUATORS);
+function comparisonRedirect(url: URL): Response | null {
+    const canonical = canonicalComparisonPath(url.pathname, comparisons);
+    return canonical && canonical !== url.pathname
+        ? new Response(null, {
+              status: 301,
+              headers: { location: `${canonical}${url.search}` },
+          })
+        : null;
+}
+
 const page: Handler = async (req) => {
     const url = new URL(req.url);
+    const redirect = comparisonRedirect(url);
+    if (redirect) return redirect;
     const found = findPage(url.pathname);
     if (!found) return null;
     if (found.path === "/" && url.searchParams.get("mode") === "agent") {
@@ -41,6 +59,7 @@ const page: Handler = async (req) => {
             ? await renderSpaPage(
                   selected,
                   found.path === "/compare" ? compareVisual(url.search) : undefined,
+                  found.path === "/compare" && url.searchParams.has("compare"),
               )
             : renderStaticPage(found);
     return htmlResponse(measurementHtml(html, found.path));
@@ -48,6 +67,8 @@ const page: Handler = async (req) => {
 
 const twin: Handler = (req) => {
     const url = new URL(req.url);
+    const redirect = comparisonRedirect(url);
+    if (redirect) return redirect;
     const found = findPageForMarkdown(url.pathname);
     return found
         ? markdownResponse(

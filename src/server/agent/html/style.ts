@@ -1,3 +1,4 @@
+import COMPARISONS_CSS from "../../../comparisons.css" with { type: "text" };
 import NAVIGATION_CSS from "../../../public-navigation.css" with { type: "text" };
 // Minimal styling for server-rendered markup, following BRAND.md: black
 // background, Graphene Grey secondary text, Core Cyan links, Inter and
@@ -93,4 +94,5 @@ export const PAGE_CSS = `
 .ga-page h2#knee::before{content:"6"}
 .ga-page h2#ankle::before{content:"7"}
 ${NAVIGATION_CSS}
+${COMPARISONS_CSS}
 `.trim();

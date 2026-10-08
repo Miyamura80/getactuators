@@ -63,8 +63,12 @@ function headMeta(page: Page, noindex = false): HeadMeta {
 // Catalog facts and homepage FAQ live in visible siblings, rendered from the
 // same markdown as the agent twins (FAQ answers also supply JSON-LD). React's
 // visuals stay intact without discarding that substantive content.
-export async function renderSpaPage(page: Page, visual?: string): Promise<string> {
-    const meta = headMeta(page);
+export async function renderSpaPage(
+    page: Page,
+    visual?: string,
+    noindex = false,
+): Promise<string> {
+    const meta = headMeta(page, noindex);
     const body = page.body();
     const marker =
         page.persistentFrom ??
