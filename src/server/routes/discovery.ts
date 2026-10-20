@@ -16,7 +16,7 @@ import type { Route } from "../types";
 const TEXT = "text/plain; charset=utf-8";
 const XML = "application/xml; charset=utf-8";
 
-const OG_IMAGE = join(import.meta.dir, "..", "..", "..", "media", "banner.png");
+const OG_IMAGE = join(import.meta.dir, "..", "..", "..", "media", "og-image.png");
 
 function text(path: string, build: () => string, type = TEXT): Route {
     return { method: "GET", path, handler: () => textResponse(build(), type) };
