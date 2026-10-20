@@ -22,7 +22,7 @@ COPY frontend/src/data ./frontend/src/data
 COPY src ./src
 # Served as-is by src/server/routes: the agent skill and the og:image.
 COPY skills ./skills
-COPY media/banner.png ./media/banner.png
+COPY media/og-image.png ./media/og-image.png
 COPY scripts/serve_frontend.ts ./scripts/serve_frontend.ts
 EXPOSE 3000
 CMD ["bun", "run", "scripts/serve_frontend.ts"]
