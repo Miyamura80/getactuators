@@ -1,0 +1,50 @@
+/* /startups: treemaps of funding and reported output. Same drafting-sheet
+   rules as tools.css; tiles are flat fills, undisclosed ones hatched. */
+
+.su-toggle { margin: 20px 0 16px; max-width: 520px; }
+.su-maps { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; }
+.su-maps.both { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.su-map { margin: 0; border: 1px solid var(--line); padding: 12px; min-width: 0; }
+.su-map figcaption {
+    margin-bottom: 10px;
+    font: 600 11px/1 var(--mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+.su-map svg { display: block; width: 100%; height: auto; }
+.su-tile { cursor: default; outline: none; transition: opacity 0.15s; }
+.su-tile.dim { opacity: 0.35; }
+.su-tile:focus-visible rect { stroke: var(--text); stroke-width: 2; }
+/* Sizes are viewBox units, so they scale with the map. */
+.su-name { font: 700 24px var(--sans); fill: #000; }
+.su-value { font: 500 20px var(--mono); fill: #000; }
+.su-value.big { font-size: 38px; font-weight: 600; }
+.su-name.muted, .su-value.muted { fill: var(--muted); }
+
+.su-table { width: 100%; margin-top: 28px; border-collapse: collapse; font-size: 14px; }
+.su-table th {
+    text-align: left;
+    padding: 0 12px 8px 0;
+    font: 600 11px/1 var(--mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--line);
+}
+.su-table td { padding: 12px 12px 12px 0; vertical-align: top; border-bottom: 1px solid var(--line); }
+.su-table td:nth-child(2), .su-table td:nth-child(3) { font-family: var(--mono); }
+.su-table tr.on td { background: var(--panel); }
+.su-table a { color: var(--text); }
+.su-swatch { display: inline-block; width: 10px; height: 10px; margin-right: 8px; vertical-align: 1px; }
+.su-hq, .su-sub { display: block; margin-top: 4px; font: 400 12px/1.4 var(--sans); color: var(--muted); }
+.su-note { margin: 14px 0 0; font-size: 12px; color: var(--muted); }
+
+@media (max-width: 860px) {
+    .tool-main:has(.su-maps) { padding: 0 16px 24px; }
+    .su-maps.both { grid-template-columns: minmax(0, 1fr); }
+    .su-table thead { display: none; }
+    .su-table tr { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--line); padding: 10px 0; }
+    .su-table td { border: 0; padding: 4px 8px 4px 0; }
+    .su-table td:first-child, .su-table td:last-child { grid-column: 1 / -1; }
+}
