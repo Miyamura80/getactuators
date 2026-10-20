@@ -124,13 +124,16 @@ const STATIC_PAGES: Page[] = [
         "Which motor sits in each joint of real robot arms and legged robots, linked to actuator specs.",
         robotsBody,
     ),
-    sub(
-        STARTUPS_PATH,
-        "spa",
-        "Actuator startups",
-        "Venture-backed robot actuator and motor startups compared by money raised and reported production volume.",
-        startupsBody,
-    ),
+    {
+        ...sub(
+            STARTUPS_PATH,
+            "spa",
+            "Actuator startups",
+            "Venture-backed robot actuator and motor startups compared by money raised and reported production volume.",
+            startupsBody,
+        ),
+        image: PATHS.ogStartups,
+    },
     sub(
         PATHS.agentsPage,
         "spa",

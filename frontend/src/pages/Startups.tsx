@@ -223,47 +223,54 @@ export function Startups({ menuOpen = false }: { menuOpen?: boolean }) {
                     ))}
                 </div>
 
-                <table className="su-table">
-                    <thead>
-                        <tr>
-                            <th>Company</th>
-                            <th>Raised</th>
-                            <th>Reported output</th>
-                            <th>Source</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {STARTUPS.map((s) => (
-                            <tr
-                                key={s.id}
-                                className={focus === s.id ? "on" : ""}
-                                onMouseEnter={() => setFocus(s.id)}
-                                onMouseLeave={() => setFocus(null)}
-                            >
-                                <td>
+                <div className="su-list">
+                    <div className="su-head" aria-hidden="true">
+                        <span>Company</span>
+                        <span>Raised</span>
+                        <span>Output</span>
+                        <span />
+                    </div>
+                    {STARTUPS.map((s) => (
+                        <details
+                            key={s.id}
+                            className={`su-row${focus === s.id ? " on" : ""}`}
+                            onMouseEnter={() => setFocus(s.id)}
+                            onMouseLeave={() => setFocus(null)}
+                        >
+                            <summary>
+                                <span className="su-co">
                                     <i className="su-swatch" style={{ background: COLORS[s.id] }} />
+                                    {s.name}
+                                </span>
+                                <span className="su-fig">{formatMetric("raisedUsd", s.raisedUsd)}</span>
+                                <span className="su-fig">{formatMetric("unitsPerMonth", s.unitsPerMonth)}</span>
+                                <svg className="su-chev" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2" />
+                                </svg>
+                            </summary>
+                            <dl className="su-detail">
+                                <dt>HQ</dt>
+                                <dd>{s.hq}</dd>
+                                <dt>Round</dt>
+                                <dd>{s.round ?? "Undisclosed"}</dd>
+                                <dt>Lead</dt>
+                                <dd>{s.leadInvestor ?? "Undisclosed"}</dd>
+                                <dt>Output</dt>
+                                <dd>{s.volumeNote}</dd>
+                                <dt>Links</dt>
+                                <dd>
                                     <a href={s.url} rel="noopener" target="_blank">
-                                        {s.name}
+                                        Website
                                     </a>
-                                    <span className="su-hq">{s.hq}</span>
-                                </td>
-                                <td>
-                                    {formatMetric("raisedUsd", s.raisedUsd)}
-                                    {s.leadInvestor && <span className="su-sub">led by {s.leadInvestor}</span>}
-                                </td>
-                                <td>
-                                    {formatMetric("unitsPerMonth", s.unitsPerMonth)}
-                                    <span className="su-sub">{s.volumeNote}</span>
-                                </td>
-                                <td>
+                                    {" · "}
                                     <a href={s.source.url} rel="noopener" target="_blank">
                                         {s.source.label}
                                     </a>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                                </dd>
+                            </dl>
+                        </details>
+                    ))}
+                </div>
                 <p className="su-note">
                     Figures are company-reported or from press coverage and are not independently verified.
                 </p>
