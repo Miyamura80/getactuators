@@ -24,6 +24,7 @@ const PAGES = [
     "/robots",
     "/agents",
     "/startups",
+    "/investors",
     "/about",
     "/contact",
     "/privacy",
