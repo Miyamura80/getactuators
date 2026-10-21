@@ -17,6 +17,8 @@ import { HUMANOID_GUIDE_PATH } from "../../src/server/agent/humanoid-joints";
 import { MOTOR_TORQUE_PATH, MotorTorqueCalculator } from "./pages/MotorTorqueCalculator";
 import { Startups } from "./pages/Startups";
 import { STARTUPS_PATH } from "../../src/startups";
+import { Investors } from "./pages/Investors";
+import { INVESTORS_PATH } from "../../src/investors";
 
 function Page({ menuOpen }: { menuOpen: boolean }) {
     const path = usePath();
@@ -28,6 +30,7 @@ function Page({ menuOpen }: { menuOpen: boolean }) {
     if (path === ARM_TORQUE_PATH) return <ArmTorqueCalculator menuOpen={menuOpen} />;
     if (path === HUMANOID_GUIDE_PATH) return <HumanoidGuide menuOpen={menuOpen} />;
     if (path === STARTUPS_PATH) return <Startups menuOpen={menuOpen} />;
+    if (path === INVESTORS_PATH) return <Investors menuOpen={menuOpen} />;
     if (path === MOTOR_TORQUE_PATH) return <MotorTorqueCalculator menuOpen={menuOpen} />;
     if (path.startsWith("/actuators/")) {
         const raw = path.slice("/actuators/".length);

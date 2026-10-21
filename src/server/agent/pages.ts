@@ -1,6 +1,7 @@
 import { ACTUATORS, getActuator } from "@/catalog";
 import { compareBody } from "./compare";
 
+import { INVESTORS_PATH } from "@/investors";
 import { STARTUPS_PATH } from "@/startups";
 import {
     actuatorBody,
@@ -10,6 +11,7 @@ import {
 } from "./catalog-md";
 import { EDITORIAL_PAGES } from "./editorial";
 import { HUMANOID_GUIDE } from "./humanoid-guide";
+import { investorsBody } from "./investors";
 import * as ld from "./jsonld";
 import { PATHS } from "./links";
 import { agentsBody } from "./manifests";
@@ -134,6 +136,13 @@ const STATIC_PAGES: Page[] = [
         ),
         image: PATHS.ogStartups,
     },
+    sub(
+        INVESTORS_PATH,
+        "spa",
+        "Actuator investors",
+        "Which of 29 top venture funds have backed actuator makers or robot hardware, and which are still on the sidelines.",
+        investorsBody,
+    ),
     sub(
         PATHS.agentsPage,
         "spa",

@@ -82,6 +82,7 @@ const PAGE_PATHS = [
     "/robot",
     PATHS.agentsPage,
     "/startups",
+    "/investors",
     "/faq",
     "/about",
     "/contact",

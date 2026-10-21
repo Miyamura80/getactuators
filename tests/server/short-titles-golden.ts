@@ -309,7 +309,7 @@ async function expectCatalogPage(
 // metadata labels differ; hashes lock down original content, not head markup.
 test("the full catalog has distinct reviewed metadata without content changes", async () => {
     const registered = allPages();
-    expect(registered).toHaveLength(85);
+    expect(registered).toHaveLength(86);
     // Pages added after the baseline capture have their own tests.
     const added = new Set([
         "/faq",
@@ -318,6 +318,7 @@ test("the full catalog has distinct reviewed metadata without content changes", 
         "/guides/humanoid-robot-actuators",
         "/tools/robot-arm-torque-calculator",
         "/startups",
+        "/investors",
     ]);
     const pages = registered.filter((page) => !added.has(page.path));
     expect(ACTUATORS).toHaveLength(68);
