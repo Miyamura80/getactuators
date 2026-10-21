@@ -136,13 +136,16 @@ const STATIC_PAGES: Page[] = [
         ),
         image: PATHS.ogStartups,
     },
-    sub(
-        INVESTORS_PATH,
-        "spa",
-        "Actuator investors",
-        "Which of 29 top venture funds have backed actuator makers or robot hardware, and which are still on the sidelines.",
-        investorsBody,
-    ),
+    {
+        ...sub(
+            INVESTORS_PATH,
+            "spa",
+            "Actuator investors",
+            "Which of 29 top venture funds have backed actuator makers or robot hardware, and which are still on the sidelines.",
+            investorsBody,
+        ),
+        image: PATHS.ogInvestors,
+    },
     sub(
         PATHS.agentsPage,
         "spa",
