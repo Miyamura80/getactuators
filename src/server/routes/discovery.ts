@@ -16,7 +16,25 @@ import type { Route } from "../types";
 const TEXT = "text/plain; charset=utf-8";
 const XML = "application/xml; charset=utf-8";
 
-const OG_IMAGE = join(import.meta.dir, "..", "..", "..", "media", "og-image.png");
+const MEDIA = join(import.meta.dir, "..", "..", "..", "media");
+
+// Link-preview cards: the site-wide default plus page-specific ones.
+function ogImage(path: string, file: string): Route {
+    return {
+        method: "GET",
+        path,
+        handler: async () => {
+            const image = Bun.file(join(MEDIA, file));
+            if (!(await image.exists())) return null;
+            return new Response(image, {
+                headers: {
+                    "content-type": "image/png",
+                    "cache-control": "public, max-age=86400",
+                },
+            });
+        },
+    };
+}
 
 function text(path: string, build: () => string, type = TEXT): Route {
     return { method: "GET", path, handler: () => textResponse(build(), type) };
@@ -32,18 +50,6 @@ export const routes: Route[] = [
     text("/actuators/llms.txt", actuatorsLlmsTxt),
     text("/robots/llms.txt", robotsLlmsTxt),
     text("/docs/llms.txt", docsLlmsTxt),
-    {
-        method: "GET",
-        path: PATHS.ogImage,
-        handler: async () => {
-            const file = Bun.file(OG_IMAGE);
-            if (!(await file.exists())) return null;
-            return new Response(file, {
-                headers: {
-                    "content-type": "image/png",
-                    "cache-control": "public, max-age=86400",
-                },
-            });
-        },
-    },
+    ogImage(PATHS.ogImage, "og-image.png"),
+    ogImage(PATHS.ogStartups, "og-startups.png"),
 ];

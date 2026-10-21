@@ -11,6 +11,8 @@ COPY src/catalog/gallery.ts src/catalog/evidence.ts src/catalog/compare.ts src/c
 COPY src/server/agent/humanoid-joints.ts ./src/server/agent/
 COPY src/engineering/arm-torque.ts ./src/engineering/
 COPY src/public-navigation.ts src/public-navigation.css ./src/
+# Page data the browser imports directly.
+COPY src/startups.ts ./src/
 RUN cd frontend && bun run build
 
 FROM oven/bun:1 AS runtime
@@ -20,9 +22,9 @@ RUN bun install --frozen-lockfile --production --ignore-scripts
 COPY --from=build /app/frontend/dist ./frontend/dist
 COPY frontend/src/data ./frontend/src/data
 COPY src ./src
-# Served as-is by src/server/routes: the agent skill and the og:image.
+# Served as-is by src/server/routes: the agent skill and the og:images.
 COPY skills ./skills
-COPY media/og-image.png ./media/og-image.png
+COPY media/og-image.png media/og-startups.png ./media/
 COPY scripts/serve_frontend.ts ./scripts/serve_frontend.ts
 EXPOSE 3000
 CMD ["bun", "run", "scripts/serve_frontend.ts"]

@@ -20,6 +20,7 @@ export const FOOTER_GROUPS = [
             ["/guides/humanoid-robot-actuators", "Humanoid actuators"],
             ["/tools/motor-torque-calculator", "Motor torque calculator"],
             ["/tools/robot-arm-torque-calculator", "Arm torque calculator"],
+            ["/startups", "Actuator startups"],
             ["/comparisons/cubemars-ak80-9-vs-xiaomi-cybergear", "AK80-9 vs CyberGear"],
             ["/faq", "FAQ"],
             ["/agents", "For AI agents"],

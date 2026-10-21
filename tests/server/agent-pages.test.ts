@@ -23,6 +23,7 @@ const PAGES = [
     "/actuators",
     "/robots",
     "/agents",
+    "/startups",
     "/about",
     "/contact",
     "/privacy",
