@@ -52,4 +52,5 @@ export const routes: Route[] = [
     text("/docs/llms.txt", docsLlmsTxt),
     ogImage(PATHS.ogImage, "og-image.png"),
     ogImage(PATHS.ogStartups, "og-startups.png"),
+    ogImage(PATHS.ogInvestors, "og-investors.png"),
 ];

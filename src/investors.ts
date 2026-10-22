@@ -44,7 +44,7 @@ export const COMPANIES: Record<string, Company> = {
     mind: {
         name: "Mind Robotics",
         kind: "adj",
-        what: "Rivian-spinout industrial robots; hiring for in-house actuation",
+        what: "Rivian-spinout industrial robots; designs its own actuators",
     },
     robco: {
         name: "RobCo",
@@ -106,7 +106,7 @@ const SRC = {
         "https://techcrunch.com/2024/10/01/palmer-luckey-tried-to-crush-aeronautics-startup-salient-motion-but-anduril-backer-a16z-invested",
     clearmotion:
         "https://globalventuring.com/clearmotion-moves-into-the-light-with-100m",
-    mindA: "https://www.businesswire.com/news/home/20260311414783/en/",
+    mindA: "https://www.businesswire.com/news/home/20260311414783/en/Mind-Robotics-Announces-%24500M-Financing-to-Support-Deployment-of-AI-Powered-Robots-at-Industrial-Scale",
     mind400:
         "https://www.roboticstomorrow.com/news/2026/05/14/mind-robotics-announces-400m-in-new-funding-to-expand-industrial-robotics-deployment/26568/",
     robco: "https://www.therobotreport.com/robco-raises-100m-scale-industrial-automation/",
@@ -165,6 +165,7 @@ export const FUNDS: Fund[] = [
             d("westmag", true, "Seed $11M", 2025, SRC.westmag),
             d("salient", false, "Seed ~$4M", 2024, SRC.salient),
             d("mind", true, "Series A $500M (co-lead)", 2026, SRC.mindA),
+            d("mind", false, "$400M round (returning)", 2026, SRC.mind400),
         ],
     },
     {
@@ -215,7 +216,10 @@ export const FUNDS: Fund[] = [
     },
     {
         name: "Accel",
-        deals: [d("mind", true, "Series A $500M (co-lead)", 2026, SRC.mindA)],
+        deals: [
+            d("mind", true, "Series A $500M (co-lead)", 2026, SRC.mindA),
+            d("mind", false, "$400M round (returning)", 2026, SRC.mind400),
+        ],
     },
     { name: "Redpoint", deals: [d("mind", false, "$400M round", 2026, SRC.mind400)] },
     {
@@ -238,7 +242,13 @@ export const FUNDS: Fund[] = [
         deals: [d("sunday", false, "Series B $165M", 2026, SRC.sunday)],
     },
     { name: "Coatue", deals: [d("sunday", true, "Series B $165M", 2026, SRC.sunday)] },
-    { name: "Greenoaks", deals: [d("botco", true, "$150M round", 2025, SRC.botco)] },
+    {
+        name: "Greenoaks",
+        deals: [
+            d("botco", true, "$150M round", 2025, SRC.botco),
+            d("mind", false, "$400M round (returning)", 2026, SRC.mind400),
+        ],
+    },
     {
         name: "Spark",
         deals: [d("botco", false, "$150M first round", 2024, SRC.botcoSpark)],
