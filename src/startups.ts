@@ -8,6 +8,8 @@ export interface Startup {
     id: string;
     name: string;
     url: string;
+    // Served from frontend/public; a self-hosted copy, no third-party requests.
+    logo: string;
     hq: string;
     // Total disclosed funding in USD.
     raisedUsd: number | null;
@@ -25,6 +27,7 @@ export const STARTUPS: Startup[] = [
         id: "atlas-motion",
         name: "Atlas Motion",
         url: "https://atlasmotion.com/",
+        logo: "/logos/startups/atlas-motion.jpg",
         hq: "Long Beach, CA",
         raisedUsd: 11_500_000,
         round: "Seed / Series A (Aug 2026)",
@@ -40,6 +43,7 @@ export const STARTUPS: Startup[] = [
         id: "westmag",
         name: "Westmag",
         url: "https://www.westmag.com/",
+        logo: "/logos/startups/westmag.png",
         hq: "South San Francisco, CA",
         raisedUsd: 11_000_000,
         round: "Seed (closed 2025, announced Jun 2026)",
@@ -56,6 +60,7 @@ export const STARTUPS: Startup[] = [
         id: "caldera",
         name: "Caldera",
         url: "https://calderaindustries.ai/",
+        logo: "/logos/startups/caldera.svg",
         hq: "United States",
         raisedUsd: null,
         round: null,
