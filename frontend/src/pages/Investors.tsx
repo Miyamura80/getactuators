@@ -180,15 +180,18 @@ export function Investors({ menuOpen = false }: { menuOpen?: boolean }) {
                         </table>
                     </div>
                 </details>
-                <p className="inv-method">
-                    "No actuated bet" means public announcements and press did not name the fund in a round for an
-                    actuator maker or a robot hardware company. Paid databases (PitchBook, Crunchbase) were not checked,
-                    so small or undisclosed checks can be missing. "Robot hardware only" covers robot makers where nothing
-                    public says they build their own actuators. Mind Robotics counts as building its own actuators on the
-                    strength of job postings for engineers who design and productionize them. HongShan (formerly Sequoia China) led a round in
-                    joint-actuator maker RobStride but has been a separate firm from Sequoia since 2023, so it is not
-                    counted.
-                </p>
+                <details className="inv-sources inv-method-fold">
+                    <summary>Method and caveats</summary>
+                    <p className="inv-method">
+                        "No actuated bet" means public announcements and press did not name the fund in a round for an
+                        actuator maker or a robot hardware company. Paid databases (PitchBook, Crunchbase) were not checked,
+                        so small or undisclosed checks can be missing. "Robot hardware only" covers robot makers where nothing
+                        public says they build their own actuators. Mind Robotics counts as building its own actuators on the
+                        strength of job postings for engineers who design and productionize them. HongShan (formerly Sequoia China) led a round in
+                        joint-actuator maker RobStride but has been a separate firm from Sequoia since 2023, so it is not
+                        counted.
+                    </p>
+                </details>
             </main>
             <PublicFooter />
         </div>
