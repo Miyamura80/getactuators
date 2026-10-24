@@ -131,6 +131,8 @@ function Treemap({
                     const dim = focus !== null && focus !== t.s.id;
                     const roomy = known && t.w > 200 && t.h > 100;
                     const clip = `su-clip-${metric}-${t.s.id}`;
+                    const logo = t.w > 120 && t.h > 70;
+                    const textX = t.x + (logo ? 56 : 16);
                     return (
                         <g
                             key={t.s.id}
@@ -155,7 +157,23 @@ function Treemap({
                             <clipPath id={clip}>
                                 <rect x={t.x} y={t.y} width={t.w} height={t.h} />
                             </clipPath>
-                            <text clipPath={`url(#${clip})`} x={t.x + 16} y={t.y + 34} className={`su-name${known ? "" : " muted"}`}>
+                            {logo && (
+                                <>
+                                    <clipPath id={`${clip}-logo`}>
+                                        <rect x={t.x + 14} y={t.y + 12} width={30} height={30} rx={6} />
+                                    </clipPath>
+                                    <rect x={t.x + 14} y={t.y + 12} width={30} height={30} rx={6} fill="#fff" />
+                                    <image
+                                        href={t.s.logo}
+                                        x={t.x + 14}
+                                        y={t.y + 12}
+                                        width={30}
+                                        height={30}
+                                        clipPath={`url(#${clip}-logo)`}
+                                    />
+                                </>
+                            )}
+                            <text clipPath={`url(#${clip})`} x={textX} y={t.y + 36} className={`su-name${known ? "" : " muted"}`}>
                                 {t.s.name}
                             </text>
                             <text
@@ -240,6 +258,7 @@ export function Startups({ menuOpen = false }: { menuOpen?: boolean }) {
                             <summary>
                                 <span className="su-co">
                                     <i className="su-swatch" style={{ background: COLORS[s.id] }} />
+                                    <img className="su-logo" src={s.logo} alt="" width={22} height={22} />
                                     {s.name}
                                 </span>
                                 <span className="su-fig">{formatMetric("raisedUsd", s.raisedUsd)}</span>
