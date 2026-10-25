@@ -25,7 +25,8 @@ interface Props {
 export function CompanyLogo({ name, size = 16, theme = "dark", standalone = false, className }: Props) {
     const brand = resolveBrand(name);
     const label = brand?.name ?? name;
-    const src = brand?.logo ?? (brand?.domain ? logoUrl(brand.domain, size, LOGO_TOKEN, theme) : null);
+    const light = brand?.tile === "light";
+    const src = brand?.logo ?? (brand?.domain ? logoUrl(brand.domain, size, LOGO_TOKEN, light ? "light" : theme) : null);
     // Remember which URL failed so a new src gets a fresh attempt.
     const [failedSrc, setFailedSrc] = useState<string | null>(null);
     const failed = src !== null && failedSrc === src;
@@ -39,7 +40,7 @@ export function CompanyLogo({ name, size = 16, theme = "dark", standalone = fals
     );
 
     const box = { width: size, height: size };
-    const cls = `company-logo${className ? ` ${className}` : ""}`;
+    const cls = `company-logo${light ? " company-logo-light" : ""}${className ? ` ${className}` : ""}`;
     if (!src || failed) {
         return (
             <span

@@ -22,6 +22,9 @@ export interface BrandEntry {
     aliases?: string[];
     // Self-hosted logo under frontend/public; wins over the logo provider.
     logo?: string;
+    // "light" for a dark mark that disappears on the black HUD: drawn on a
+    // pale tile with the provider's light-theme variant.
+    tile?: "light";
 }
 
 type Row = [id: string, name: string, domain: string | null, aliases?: string[]];
@@ -139,11 +142,15 @@ const STARTUP_ENTRIES: BrandEntry[] = STARTUPS.map((s) => ({
     logo: s.logo,
 }));
 
+// Dark logos that need a pale tile to read on black (checked by eye).
+const LIGHT_TILE = new Set(["ivp", "benchmark"]);
+
 const fromRow = ([id, name, domain, aliases]: Row): BrandEntry => ({
     id,
     name,
     domain,
     ...(aliases ? { aliases } : {}),
+    ...(LIGHT_TILE.has(id) ? { tile: "light" as const } : {}),
 });
 
 export const BRANDS: BrandEntry[] = [

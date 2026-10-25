@@ -2481,6 +2481,15 @@ table.board {
     vertical-align: middle;
     overflow: hidden;
 }
+/* Per-brand override (registry `tile: "light"`) for dark marks. */
+.company-logo-light {
+    background: #e9eced;
+    /* These icons are opaque dark squares: a pale frame lets them read. */
+    padding: 2px;
+}
+.company-logo-light.company-logo-mono {
+    background: var(--panel-2);
+}
 .company-logo-mono {
     color: var(--muted);
     font-family: var(--mono);
