@@ -255,6 +255,9 @@ a:hover {
     font-size: 11.5px;
     color: var(--muted);
 }
+.robot-costs-note p {
+    margin: 0;
+}
 
 /* ---- Charts (shared SVG) ---------------------------------------------- */
 .chart-scroll {
