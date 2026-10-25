@@ -12,7 +12,7 @@ COPY src/server/agent/humanoid-joints.ts ./src/server/agent/
 COPY src/engineering/arm-torque.ts ./src/engineering/
 COPY src/public-navigation.ts src/public-navigation.css ./src/
 # Page data the browser imports directly.
-COPY src/startups.ts src/investors.ts ./src/
+COPY src/startups.ts src/investors.ts src/country-flag.ts ./src/
 COPY src/humanoids ./src/humanoids
 RUN cd frontend && bun run build
 
