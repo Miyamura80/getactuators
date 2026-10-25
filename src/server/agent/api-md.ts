@@ -113,7 +113,7 @@ function listRobots(ctx: ApiContext): string {
             absoluteUrl(apiMarkdownPath(`/api/v1/robots/${encodeURIComponent(r.id)}`)),
         ),
         mdText(r.brand),
-        String(r.dof),
+        num(r.dof),
         num(r.payload_kg, "kg"),
         num(r.weight_kg, "kg", 2),
         usd(r.price_usd),

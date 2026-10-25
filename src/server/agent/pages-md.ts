@@ -4,7 +4,7 @@ import { listBrands, queryActuators } from "@/catalog/query";
 import { REPO_URL, absoluteUrl } from "../site";
 import { actuatorLabel, actuatorPath, actuatorTable, robotSection } from "./catalog-md";
 import { PATHS } from "./links";
-import { bullets, mdLink, mdText, num, usd } from "./md";
+import { bullets, dofText, mdLink, mdText, num, usd } from "./md";
 
 // Markdown bodies for the SPA pages (/, /all, /actuators, /robots). The same
 // text is rendered into the HTML shell as prerendered content, so crawlers
@@ -108,7 +108,7 @@ export function homeBody(): string {
                     `${mdLink(actuatorLabel(a), absoluteUrl(actuatorPath(a.id)))}: $${num(a.price_per_nm, "", 2)} per Nm, ${usd(a.price_usd)}`,
             ),
         )}`,
-        `## Robots in the catalog\n\n${bullets(ROBOTS.map((r) => `${mdText(r.name)} by ${mdText(r.brand)}: ${r.dof} DOF, ${usd(r.price_usd)}`))}`,
+        `## Robots in the catalog\n\n${bullets(ROBOTS.map((r) => `${mdText(r.name)} by ${mdText(r.brand)}: ${dofText(r.dof)}, ${usd(r.price_usd)}`))}`,
         `## For AI agents\n\n${bullets([
             `Index for language models: ${absoluteUrl(PATHS.llms)}`,
             `REST API (JSON, no key): ${absoluteUrl(PATHS.apiIndex)}, spec at ${absoluteUrl(PATHS.openapi)}`,
