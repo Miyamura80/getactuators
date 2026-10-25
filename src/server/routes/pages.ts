@@ -91,6 +91,7 @@ const PAGE_PATHS = [
     "/guides/:slug",
     "/comparisons/:slug",
     "/tools/:slug",
+    "/humanoids",
 ];
 
 // Standalone agent documents open with their H1 (no frontmatter). /agents.md

@@ -11,6 +11,7 @@ import {
 } from "../schemas";
 import { defineTool } from "../tool";
 import { requireActuator, requireRobot, robotSummary } from "../views";
+import { getHumanoidJoints } from "./humanoids";
 
 const creditSchema = z
     .object({ name: z.string(), org: z.string(), org_url: z.string() })
@@ -116,4 +117,4 @@ const findRobots = defineTool({
     },
 });
 
-export const robotTools = [listRobots, getRobot, findRobots];
+export const robotTools = [listRobots, getRobot, findRobots, getHumanoidJoints];
