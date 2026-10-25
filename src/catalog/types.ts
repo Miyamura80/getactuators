@@ -91,6 +91,9 @@ export interface Robot {
     country_flag: string | null;
     dof: number;
     payload_kg: number | null;
+    // "whole_body" when the payload is a carry figure for the whole robot
+    // rather than per arm, so ratios against per-arm robots can say so.
+    payload_basis?: "per_arm" | "whole_body";
     reach_mm: number | null;
     // Standing height, for humanoids.
     height_m?: number | null;

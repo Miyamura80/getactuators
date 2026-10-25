@@ -18,7 +18,7 @@ const OPEN_PARTS: { key: keyof NonNullable<Robot["openness"]>; label: string; ti
 // whose actuators it runs on, and which build files the maker publishes.
 export function RobotFacts({ robot }: { robot: Robot }) {
     const { availability, actuator_sourcing, openness, lead_time } = robot;
-    if (!availability && !openness) return null;
+    if (!availability && !actuator_sourcing && !openness) return null;
     return (
         <div className="robot-facts">
             {availability && (

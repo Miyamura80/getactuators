@@ -222,7 +222,7 @@ export function robotSection(r: Robot, level = 2): string {
         `Brand: ${mdText(r.brand)}${r.country ? ` (${mdText(r.country)})` : ""}`,
         ...(r.kind === "humanoid" ? ["Type: Humanoid"] : []),
         `Degrees of freedom: ${r.dof}`,
-        `Payload: ${num(r.payload_kg, "kg")}`,
+        `Payload: ${num(r.payload_kg, "kg")}${r.payload_basis === "whole_body" ? " (whole body)" : ""}`,
         r.kind === "humanoid"
             ? `Height: ${num(r.height_m, "m", 2)}`
             : `Reach: ${num(r.reach_mm, "mm", 0)}`,

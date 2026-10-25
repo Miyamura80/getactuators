@@ -1749,6 +1749,24 @@ table.board {
     border-top: 1px solid var(--line);
     border-bottom: 1px solid var(--line);
 }
+.robot-stat-note {
+    display: block;
+    font-family: var(--sans, inherit);
+    font-size: 10.5px;
+    font-weight: 400;
+    color: var(--muted);
+}
+.robot-runtime-note {
+    margin: -4px 0 0;
+    font-size: 11.5px;
+    color: var(--muted);
+}
+.bar-g:focus-visible .bar,
+.robot-scatter g:focus-visible circle {
+    outline: none;
+    stroke: var(--cyan);
+    stroke-width: 2;
+}
 .robot-facts {
     display: flex;
     flex-wrap: wrap;

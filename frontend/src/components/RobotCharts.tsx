@@ -39,7 +39,7 @@ function bars(
         .sort((a, b) => (dir === "asc" ? a.v - b.v : b.v - a.v))
         .map(({ r, v }) => ({
             id: r.id,
-            name: r.name,
+            name: r.payload_basis === "whole_body" && metric === liftRatio ? `${r.name} (whole body)` : r.name,
             value: v,
             display: fmt(v),
             flag: r.country_flag,
@@ -55,7 +55,7 @@ const CARDS = [
         title: "Price",
         sub: "Entry USD · log scale · lower is cheaper",
         log: true,
-        skip: "Quote only",
+        skip: "Price not published",
         ...bars((r) => r.price_usd, usd, "asc"),
     },
     {
@@ -63,7 +63,7 @@ const CARDS = [
         title: "Price per DOF",
         sub: "Entry USD per degree of freedom · log scale",
         log: true,
-        skip: "Quote only",
+        skip: "Price not published",
         ...bars((r) => (r.price_usd == null ? null : r.price_usd / r.dof), usd, "asc"),
     },
     {

@@ -1,6 +1,7 @@
 import type { Robot } from "../types";
 import { ROBOTS, resolveJoints } from "../lib/robots";
 import { navigate } from "../lib/router";
+import { activation } from "./BarChart";
 import { BrandGlyph } from "./BrandGlyph";
 import { KIND_COLOR, hours } from "./RobotCharts";
 
@@ -127,7 +128,7 @@ function ParetoPlot({ pts, yLabel, yLog, fmtY }: Props) {
             ))}
             {path && <path d={path} className="pareto" />}
             {pts.map((p, i) => (
-                <g key={p.r.id} onClick={() => navigate(`/robots#${p.r.id}`)} style={{ cursor: "pointer" }}>
+                <g key={p.r.id} {...activation(p.r.name, () => navigate(`/robots#${p.r.id}`))}>
                     <title>{`${p.r.name}: ${usd(p.price)}, ${fmtY(p.y)}`}</title>
                     <circle
                         cx={sx(p.price)}

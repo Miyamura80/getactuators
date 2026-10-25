@@ -98,7 +98,10 @@ function RobotCard({ robot, active }: { robot: Robot; active: boolean }) {
                 <dl className="robot-stats">
                     <div>
                         <dt>Payload</dt>
-                        <dd>{robot.payload_kg == null ? "–" : `${num(robot.payload_kg, 1)} kg`}</dd>
+                        <dd>
+                            {robot.payload_kg == null ? "–" : `${num(robot.payload_kg, 1)} kg`}
+                            {robot.payload_basis === "whole_body" && <small className="robot-stat-note">whole body</small>}
+                        </dd>
                     </div>
                     {robot.kind === "humanoid" ? (
                         <div>
@@ -121,13 +124,15 @@ function RobotCard({ robot, active }: { robot: Robot; active: boolean }) {
                     </div>
                     <div>
                         <dt>Runtime</dt>
-                        <dd title={robot.runtime_note ?? undefined}>{runtimeLabel(robot)}</dd>
+                        <dd>{runtimeLabel(robot)}</dd>
                     </div>
                     <div>
                         <dt>Payload ÷ wt</dt>
                         <dd>{lift == null ? "–" : lift.toFixed(2)}</dd>
                     </div>
                 </dl>
+
+                {robot.runtime_note && <p className="robot-runtime-note">Runtime: {robot.runtime_note}</p>}
 
                 <RobotFacts robot={robot} />
 

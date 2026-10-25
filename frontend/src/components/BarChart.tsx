@@ -50,6 +50,23 @@ export function barLayout(names: string[]): { padL: number; labelH: number } {
     return { padL: Math.ceil(padL), labelH: Math.ceil(NAME_Y + drop + MIN_PAD * 2) };
 }
 
+// Click and keyboard props for an SVG group that acts as a link.
+export function activation(label: string, go: () => void) {
+    return {
+        role: "link",
+        tabIndex: 0,
+        "aria-label": label,
+        style: { cursor: "pointer" },
+        onClick: go,
+        onKeyDown: (e: { key: string; preventDefault: () => void }) => {
+            if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                go();
+            }
+        },
+    };
+}
+
 // Vertical bar chart: value above each bar, flag + rotated name below.
 // Sized by item count and scrolled horizontally by its container when wide.
 export function BarChart({ items, onSelect, log = false }: Props) {
@@ -91,8 +108,7 @@ export function BarChart({ items, onSelect, log = false }: Props) {
                     <g
                         key={it.id}
                         className="bar-g"
-                        onClick={onSelect ? () => onSelect(it.id) : undefined}
-                        style={onSelect ? { cursor: "pointer" } : undefined}
+                        {...(onSelect ? activation(it.name, () => onSelect(it.id)) : {})}
                     >
                         <rect
                             x={cx - barW / 2}
