@@ -1,0 +1,171 @@
+name: Temp Discover Actuator Images
+
+# Temporary: removed before the PR is ready.
+on:
+  push:
+    branches:
+      - claude/actuator-images-backfill
+    paths:
+      - ".github/workflows/tmp-discover-images.yaml"
+
+permissions:
+  contents: read
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+      - run: bun install
+      - name: Write inputs
+        run: |
+          cat > /tmp/cands.json <<'EOF_CANDS'
+          [
+           [
+            "wix-997992-jpg",
+            "https://static.wixstatic.com/media/cab28a_99799289dd554dec9598f6d239f493d8~mv2.jpg",
+            "https://www.myactuator.com/"
+           ],
+           [
+            "wix-997992-png",
+            "https://static.wixstatic.com/media/cab28a_99799289dd554dec9598f6d239f493d8~mv2.png",
+            "https://www.myactuator.com/"
+           ],
+           [
+            "wix-6582ec-jpg",
+            "https://static.wixstatic.com/media/cab28a_6582ec606b3d4f0ebcf34b06ae3e9fe2~mv2.jpg",
+            "https://www.myactuator.com/"
+           ],
+           [
+            "wix-6582ec-png",
+            "https://static.wixstatic.com/media/cab28a_6582ec606b3d4f0ebcf34b06ae3e9fe2~mv2.png",
+            "https://www.myactuator.com/"
+           ],
+           [
+            "wix-4429e4-jpg",
+            "https://static.wixstatic.com/media/cab28a_4429e4a1677e4d06895ba3503f1c0432~mv2.jpg",
+            "https://www.myactuator.com/"
+           ],
+           [
+            "wix-4429e4-png",
+            "https://static.wixstatic.com/media/cab28a_4429e4a1677e4d06895ba3503f1c0432~mv2.png",
+            "https://www.myactuator.com/"
+           ],
+           [
+            "wix-981921-jpg",
+            "https://static.wixstatic.com/media/cab28a_98192185e3c24514be563fd5d399ea56~mv2.jpg",
+            "https://www.myactuator.com/"
+           ],
+           [
+            "wix-981921-png",
+            "https://static.wixstatic.com/media/cab28a_98192185e3c24514be563fd5d399ea56~mv2.png",
+            "https://www.myactuator.com/"
+           ],
+           [
+            "wix-faf412-jpg",
+            "https://static.wixstatic.com/media/cab28a_faf412f7218a49c598a7540f634989a6~mv2.jpg",
+            "https://www.myactuator.com/"
+           ],
+           [
+            "wix-faf412-png",
+            "https://static.wixstatic.com/media/cab28a_faf412f7218a49c598a7540f634989a6~mv2.png",
+            "https://www.myactuator.com/"
+           ],
+           [
+            "x68-3",
+            "https://cdn.shopify.com/s/files/1/0673/6848/5000/files/RMDX6-8-main-3.jpg?v=1757060287",
+            "https://aifitlab.com/"
+           ],
+           [
+            "x68-4",
+            "https://cdn.shopify.com/s/files/1/0673/6848/5000/files/RMDX6-8-main-4.jpg?v=1757060286",
+            "https://aifitlab.com/"
+           ],
+           [
+            "x68-5",
+            "https://cdn.shopify.com/s/files/1/0673/6848/5000/files/RMDX6-8-main-5.jpg?v=1757060289",
+            "https://aifitlab.com/"
+           ],
+           [
+            "x68-rc1",
+            "https://cdn.shopify.com/s/files/1/0643/3210/3904/files/MyActuator-RMD-X6-8-Planetary-Servo-Actuator-1-8-Gear-Ratio-310RPM-4-5N-m-Torque-135W-Dual-Encoder-Robots-AGV-ldeWH.webp?v=1756034597",
+            "https://rcdrone.top/"
+           ],
+           [
+            "x10-rc2",
+            "https://cdn.shopify.com/s/files/1/0643/3210/3904/files/myactuator-rmd-x10-s2-v3-bldc-can-bus-135mc-x-500-o-brushless-servo-driver-2.webp?v=1756041846",
+            "https://rcdrone.top/"
+           ],
+           [
+            "x10-rc3",
+            "https://cdn.shopify.com/s/files/1/0643/3210/3904/files/myactuator-rmd-x10-s2-v3-bldc-can-bus-135mc-x-500-o-brushless-servo-driver-3.webp?v=1756041846",
+            "https://rcdrone.top/"
+           ],
+           [
+            "x10-rc4",
+            "https://cdn.shopify.com/s/files/1/0643/3210/3904/files/myactuator-rmd-x10-s2-v3-bldc-can-bus-135mc-x-500-o-brushless-servo-driver-4.webp?v=1756041846",
+            "https://rcdrone.top/"
+           ],
+           [
+            "x8120-rc3",
+            "https://cdn.shopify.com/s/files/1/0643/3210/3904/files/myactuator-rmd-x8-120-servo-motor-48v-574w-110nm-peak-torque-ethercat-canbus-robotic-arms-90p4S.webp?v=1756015301",
+            "https://rcdrone.top/"
+           ]
+          ]
+          EOF_CANDS
+          cat > ./tmp-pass3.ts <<'EOF_SCRIPT'
+          import { readFileSync } from "node:fs";
+          import sharp from "sharp";
+          const UA =
+              "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36";
+          const cands = JSON.parse(readFileSync("/tmp/cands.json", "utf8")) as [string, string, string][];
+          async function get(url: string, referer?: string) {
+              const headers: Record<string, string> = { "User-Agent": UA, Accept: "*/*" };
+              if (referer) headers.Referer = referer;
+              return fetch(url, { headers, redirect: "follow", signal: AbortSignal.timeout(45000) });
+          }
+          for (const l of ["https://trampa.co.uk/wp-json/wc/store/products?search=vesc", "https://trampa.co.uk/wp-json/wc/store/products?search=mk6"]) {
+              try {
+                  const r = await get(l);
+                  console.log(`### STORE ${r.status} ${l}`);
+                  const j = (await r.json()) as { name: string; permalink: string; images: { src: string }[] }[];
+                  for (const p of j) {
+                      console.log(`PRODUCT ${p.permalink} | ${p.name}`);
+                      for (const im of p.images.slice(0, 4)) console.log(`PIMG ${im.src}`);
+                  }
+              } catch (e) {
+                  console.log(`### STORE ERR ${l} ${(e as Error).message}`);
+              }
+          }
+          for (const p of ["https://www.analog.com/en/products/tmc4671.html", "https://www.analog.com/en/resources/evaluation-hardware-and-software/evaluation-boards-kits/tmc4671-eval.html"]) {
+              try {
+                  const r = await fetch(p, { headers: { "User-Agent": UA, Accept: "text/html", "Accept-Language": "en-US,en;q=0.9" }, signal: AbortSignal.timeout(120000) });
+                  const t = await r.text();
+                  console.log(`### PAGE ${r.status} ${p}`);
+                  for (const m of t.match(/<meta[^>]+image[^>]+>/gi) ?? []) console.log(`META ${m.slice(0, 300)}`);
+                  const urls = new Set(t.match(/(?:https?:\/\/[^"'()\s<>]+|\/-\/media\/[^"'()\s<>]+)\.(?:jpe?g|png|webp)(?:\?[^"'()\s<>]*)?/gi) ?? []);
+                  for (const u of [...urls].slice(0, 80)) console.log(`URL ${u}`);
+              } catch (e) {
+                  console.log(`### PAGE ERR ${p} ${(e as Error).message}`);
+              }
+          }
+          for (const [label, url, ref] of cands) {
+              try {
+                  const r = await get(url, ref);
+                  if (!r.ok) {
+                      console.log(`THUMBFAIL ${label} ${r.status}`);
+                      continue;
+                  }
+                  const buf = Buffer.from(await r.arrayBuffer());
+                  const meta = await sharp(buf).metadata();
+                  const out = await sharp(buf).resize(200, 200, { fit: "inside" }).flatten({ background: "#ffffff" }).jpeg({ quality: 70 }).toBuffer();
+                  console.log(`THUMB ${label} ${meta.width}x${meta.height} ${buf.length} ${out.toString("base64")}`);
+              } catch (e) {
+                  console.log(`THUMBFAIL ${label} ${(e as Error).message}`);
+              }
+          }
+          EOF_SCRIPT
+      - run: bun run ./tmp-pass3.ts
