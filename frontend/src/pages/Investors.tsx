@@ -28,11 +28,6 @@ const TOGGLE_LABEL: Record<Kind, string> = {
     adj: "Robot maker, own actuators",
     hw: "Robot hardware, actuators not confirmed",
 };
-const COUNT_LABEL: Record<Kind, string> = {
-    hw: "backed robot hardware, but nothing that makes its own actuators",
-    adj: "backed a robot maker that builds its own actuators",
-    direct: "backed an actuator maker outright",
-};
 // Text needs a lighter step than the dark robot-hardware fill.
 const COUNT_COLOR: Record<Kind, string> = { hw: "#6f9e9b", adj: "var(--inv-adj)", direct: "var(--inv-direct)" };
 const hostOf = (url: string) => new URL(url).hostname.replace(/^www\./, "");
@@ -63,17 +58,13 @@ export function Investors({ menuOpen = false }: { menuOpen?: boolean }) {
                     <h1>
                         Which top funds are <em>still on the sidelines</em> of actuation?
                     </h1>
-                    <p className="tool-lede">
-                        29 venture funds, checked for any round in hardware that moves: actuator makers, robots built on
-                        their own actuators, or robot hardware. Built from public funding announcements as of{" "}
-                        {INVESTORS_AS_OF}.
-                    </p>
+                    <p className="tool-lede">Public funding rounds in actuators and robot hardware, as of {INVESTORS_AS_OF}.</p>
                 </header>
 
                 <section className="inv-bench" aria-label="Summary">
                     <div className="inv-out">
                         <div className="inv-n">{out.length} of 29</div>
-                        <p>have no actuated bet on record: no actuator maker, no robot hardware.</p>
+                        <p>have no actuated bet on record.</p>
                         <div className="inv-names">
                             {out.map((f) => (
                                 <span key={f.name}>{f.name}</span>
@@ -84,17 +75,12 @@ export function Investors({ menuOpen = false }: { menuOpen?: boolean }) {
                         {(["hw", "adj", "direct"] as const).map((k) => (
                             <div key={k}>
                                 <b style={{ color: COUNT_COLOR[k] }}>{FUNDS.filter((f) => tierOf(f) === k).length}</b>
-                                <span>{COUNT_LABEL[k]}</span>
+                                <span>{KIND_LABEL[k]}</span>
                             </div>
                         ))}
                     </div>
                 </section>
 
-                <p className="inv-how">
-                    Every dot is a round in hardware that moves: hover or tab to one for the company and the round.
-                    Filled dots are rounds the fund led. Switch company types on and off to compare pure-play actuator
-                    makers with robot makers; funds with nothing left in view move to the top.
-                </p>
                 <div className="inv-presets" role="group" aria-label="Show">
                     {PRESETS.map((p) => (
                         <button key={p.label} type="button" aria-pressed={same(p.kinds)} onClick={() => setActive(p.kinds)}>
@@ -123,7 +109,9 @@ export function Investors({ menuOpen = false }: { menuOpen?: boolean }) {
                     </span>
                 </div>
                 <p className="inv-note-line">
-                    {inView} of 29 funds have no bet {active.length === KINDS.length ? "of any type" : "of the selected types"}.
+                    {active.length === KINDS.length
+                        ? "Hover a dot for the company and round."
+                        : `${inView} of 29 funds have no bet of the selected types.`}
                 </p>
 
                 <FundLedger active={active} folded={folded} onFold={() => setFolded((f) => !f)} />
@@ -180,15 +168,18 @@ export function Investors({ menuOpen = false }: { menuOpen?: boolean }) {
                         </table>
                     </div>
                 </details>
-                <p className="inv-method">
-                    "No actuated bet" means public announcements and press did not name the fund in a round for an
-                    actuator maker or a robot hardware company. Paid databases (PitchBook, Crunchbase) were not checked,
-                    so small or undisclosed checks can be missing. "Robot hardware only" covers robot makers where nothing
-                    public says they build their own actuators. Mind Robotics counts as building its own actuators on the
-                    strength of job postings for engineers who design and productionize them. HongShan (formerly Sequoia China) led a round in
-                    joint-actuator maker RobStride but has been a separate firm from Sequoia since 2023, so it is not
-                    counted.
-                </p>
+                <details className="inv-sources inv-method-fold">
+                    <summary>Method and caveats</summary>
+                    <p className="inv-method">
+                        "No actuated bet" means public announcements and press did not name the fund in a round for an
+                        actuator maker or a robot hardware company. Paid databases (PitchBook, Crunchbase) were not checked,
+                        so small or undisclosed checks can be missing. "Robot hardware only" covers robot makers where nothing
+                        public says they build their own actuators. Mind Robotics counts as building its own actuators on the
+                        strength of job postings for engineers who design and productionize them. HongShan (formerly Sequoia China) led a round in
+                        joint-actuator maker RobStride but has been a separate firm from Sequoia since 2023, so it is not
+                        counted.
+                    </p>
+                </details>
             </main>
             <PublicFooter />
         </div>
