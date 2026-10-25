@@ -240,6 +240,16 @@ a:hover {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     margin-bottom: 8px;
 }
+.robot-paretos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(460px, 100%), 1fr));
+    gap: 14px;
+    margin: 14px 0 24px;
+}
+.scatter.robot-scatter {
+    min-width: 0;
+    width: 100%;
+}
 .robot-costs-note {
     margin: 0 0 24px;
     font-size: 11.5px;
@@ -1732,12 +1742,77 @@ table.board {
 }
 .robot-stats {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 8px;
     margin: 2px 0;
     padding: 10px 0;
     border-top: 1px solid var(--line);
     border-bottom: 1px solid var(--line);
+}
+.robot-stat-note {
+    display: block;
+    font-family: var(--sans, inherit);
+    font-size: 10.5px;
+    font-weight: 400;
+    color: var(--muted);
+}
+.robot-runtime-note {
+    margin: -4px 0 0;
+    font-size: 11.5px;
+    color: var(--muted);
+}
+.bar-g:focus-visible .bar,
+.robot-scatter g:focus-visible circle {
+    outline: none;
+    stroke: var(--cyan);
+    stroke-width: 2;
+}
+.robot-facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+.robot-chip {
+    font-size: 11px;
+    padding: 3px 7px;
+    border: 1px solid var(--line);
+    color: var(--muted);
+}
+.robot-chip em {
+    font-style: normal;
+    opacity: 0.8;
+}
+.robot-chip[data-tone="shipping"] {
+    color: hsl(152 55% 62%);
+    border-color: hsl(152 40% 30%);
+}
+.robot-chip[data-tone="preorder"] {
+    color: hsl(40 80% 64%);
+    border-color: hsl(40 50% 32%);
+}
+.robot-chip[data-tone="discontinued"] {
+    color: hsl(0 60% 66%);
+    border-color: hsl(0 40% 32%);
+}
+.robot-open {
+    display: inline-flex;
+    gap: 3px;
+}
+.robot-open-part {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    padding: 3px 5px;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    opacity: 0.45;
+    text-decoration: line-through;
+}
+.robot-open-part[data-on="true"] {
+    color: var(--cyan);
+    border-color: var(--cyan-dim);
+    opacity: 1;
+    text-decoration: none;
 }
 .robot-stats > div {
     display: flex;

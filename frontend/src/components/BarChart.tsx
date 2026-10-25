@@ -1,3 +1,5 @@
+import { activation } from "../lib/svg-link";
+
 export interface BarItem {
     id: string;
     name: string;
@@ -91,8 +93,7 @@ export function BarChart({ items, onSelect, log = false }: Props) {
                     <g
                         key={it.id}
                         className="bar-g"
-                        onClick={onSelect ? () => onSelect(it.id) : undefined}
-                        style={onSelect ? { cursor: "pointer" } : undefined}
+                        {...(onSelect ? activation(it.name, () => onSelect(it.id)) : {})}
                     >
                         <rect
                             x={cx - barW / 2}
