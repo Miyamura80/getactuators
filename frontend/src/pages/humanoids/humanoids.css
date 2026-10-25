@@ -93,8 +93,36 @@
 .hm-sw.is-est { background: none; box-shadow: inset 0 0 0 1.5px var(--c); }
 .hm-list sup, .hm-hint sup { color: #e0a84e; font-size: 9px; margin-left: 2px; }
 
-.hm-fleet { margin-top: 36px; }
-.hm-fleet h2 { margin: 0 0 10px; font: 600 11px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.hm-fleet { margin-top: 32px; border-top: 1px solid var(--line); }
+.hm-fleet > summary { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; cursor: pointer; padding: 14px 0; list-style: none; }
+.hm-fleet > summary::-webkit-details-marker { display: none; }
+.hm-fleet > summary::before { content: "▸"; font: 600 14px/1 var(--mono); color: var(--muted); width: 12px; }
+.hm-fleet[open] > summary::before { content: "▾"; }
+.hm-fleet-t { font: 600 11px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); }
+.hm-fleet-hint { font-size: 12px; color: var(--muted); }
+.hm-fleet > summary:hover .hm-fleet-t { color: var(--cyan); }
+.hm-fleet > summary:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.hm-fleet-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.hm-search { flex: 0 1 380px; display: flex; align-items: center; gap: 8px; padding: 0 10px; border: 1px solid var(--line-strong); border-radius: 2px; background: var(--panel); color: var(--muted); min-width: 0; }
+.hm-search:focus-within { border-color: var(--cyan); }
+.hm-search input { flex: 1; min-width: 0; min-height: 38px; border: 0; background: transparent; color: var(--text); font: 500 14px var(--sans); outline: none; }
+.hm-search input::placeholder { color: var(--hm-faint); }
+.hm-fleet-n { font: 500 12px var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.hm-empty { padding: 18px 10px !important; color: var(--muted); }
+.hm-empty button { color: var(--cyan) !important; font-weight: 500 !important; }
+.hm-pager { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 4px; margin-top: 10px; }
+.hm-pager button { appearance: none; min-width: 34px; min-height: 34px; padding: 0 10px; background: var(--panel); border: 1px solid var(--line-strong); border-radius: 2px; color: var(--muted); font: 600 12px var(--mono); cursor: pointer; }
+.hm-pager button:hover:not(:disabled) { color: var(--text); border-color: var(--muted); }
+.hm-pager button[aria-current="page"] { color: var(--cyan); border-color: var(--cyan); }
+.hm-pager button:disabled { opacity: 0.35; cursor: default; }
+.hm-pager button:focus-visible, .hm-search:has(input:focus-visible) { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.hm-pager span { color: var(--hm-faint); padding: 0 4px; }
+.hm-meter { display: inline-flex; align-items: center; gap: 3px; cursor: help; }
+.hm-meter i { width: 6px; height: 6px; border-radius: 50%; box-shadow: inset 0 0 0 1px var(--line-strong); }
+.hm-meter span { margin-left: 5px; font: 500 10.5px var(--mono); letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); min-width: 64px; text-align: left; }
+.hm-meter.is-reported i.on { background: var(--green); box-shadow: none; }
+.hm-meter.is-mixed i.on { background: #8fbf9a; box-shadow: none; }
+.hm-meter.is-estimated i.on { background: #e0a84e; box-shadow: none; }
 .hm-table { overflow-x: auto; border: 1px solid var(--line); }
 .hm-table table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 760px; }
 .hm-table th { text-align: left; padding: 0; border-bottom: 1px solid var(--line-strong); font: 600 10.5px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
@@ -128,6 +156,10 @@
     .hm-stage.is-compare .hm-stats div:nth-child(-n + 2) { border-bottom: 1px solid var(--line); }
     .hm-stage.is-compare .hm-ree { display: none; }
     .hm-fleet .hm-mixcol { display: none; }
+    .hm-fleet-bar { flex-wrap: wrap; }
+    .hm-search { flex: 1 1 100%; }
+    .hm-pager { justify-content: center; }
+    .hm-meter span { display: none; }
     .hm-fleet .hm-table table { min-width: 600px; }
     .hm-pick { flex: 1 1 100%; }
     .hm-pick select { flex: 1; }

@@ -1,124 +1,180 @@
-import { useMemo, useState } from "react";
-import {
-    HUMANOIDS,
-    type Humanoid,
-    type HumanoidTotals,
-    humanoidTotals,
-    reeTotalKg,
-} from "../../../../src/humanoids";
+import { useReducer, useState } from "react";
+import type { DataGrade } from "../../../../src/humanoids";
+import { navigate, useLocationKey } from "../../lib/router";
+import { type FleetState, fleetSearch, parseFleet, queryFleet, ROWS, type SortKey } from "./fleet-query";
 import { MixBar } from "./Totals";
 
-interface Row {
-    h: Humanoid;
-    t: HumanoidTotals;
-    ree: number;
-}
-
-type Key = "name" | "dof" | "actuators" | "magnet" | "ree" | "price" | "reported";
-
-const COLS: { key: Key; label: string; num?: boolean }[] = [
+const COLS: { key: SortKey; label: string; num?: boolean }[] = [
     { key: "name", label: "Robot" },
     { key: "dof", label: "DOF", num: true },
     { key: "actuators", label: "Actuators", num: true },
     { key: "magnet", label: "Magnet kg", num: true },
     { key: "ree", label: "REE kg", num: true },
     { key: "price", label: "Price", num: true },
-    { key: "reported", label: "Types reported", num: true },
+    { key: "data", label: "Data", num: true },
 ];
 
-function value(r: Row, k: Key): number | string | null {
-    switch (k) {
-        case "name":
-            return r.h.name.toLowerCase();
-        case "dof":
-            return r.h.dof;
-        case "actuators":
-            return r.t.actuators;
-        case "magnet":
-            return r.t.magnetMassKg.value;
-        case "ree":
-            return r.ree;
-        case "price":
-            return r.h.price_usd;
-        case "reported":
-            return r.t.reportedShare;
-    }
-}
-
+const GRADE_DOTS: Record<DataGrade, number> = { reported: 3, mixed: 2, estimated: 1 };
 const usd = (n: number | null) => (n === null ? "n/a" : `$${(n / 1000).toFixed(n % 1000 ? 1 : 0)}k`);
+const TOP = [...ROWS].sort((a, b) => b.t.magnetMassKg.value - a.t.magnetMassKg.value)[0];
 
-export function FleetTable({ active, onPick }: { active: string; onPick: (id: string) => void }) {
-    const [sort, setSort] = useState<{ key: Key; dir: 1 | -1 }>({ key: "magnet", dir: -1 });
-    const rows = useMemo(() => {
-        const all: Row[] = HUMANOIDS.map((h) => {
-            const t = humanoidTotals(h);
-            return { h, t, ree: reeTotalKg(t).value };
-        });
-        return all.sort((a, b) => {
-            const x = value(a, sort.key);
-            const y = value(b, sort.key);
-            if (x === null) return y === null ? 0 : 1;
-            if (y === null) return -1;
-            return (x < y ? -1 : x > y ? 1 : 0) * sort.dir;
-        });
-    }, [sort]);
-    const click = (key: Key) =>
-        setSort((s) => (s.key === key ? { key, dir: s.dir === 1 ? -1 : 1 } : { key, dir: key === "name" ? 1 : -1 }));
+function Confidence({ share, grade }: { share: number; grade: DataGrade }) {
+    const pct = Math.round(share * 100);
+    const tip = `${pct}% of joint fields (actuator type, peak torque or force) come from maker data, URDFs or spec pages; the rest are estimated. Magnet mass is always estimated.`;
     return (
-        <div className="hm-table">
-            <table>
-                <thead>
-                    <tr>
-                        {COLS.slice(0, 1).map((c) => (
-                            <Th key={c.key} c={c} sort={sort} onClick={click} />
-                        ))}
-                        <th className="hm-mixcol">Mix</th>
-                        {COLS.slice(1).map((c) => (
-                            <Th key={c.key} c={c} sort={sort} onClick={click} />
-                        ))}
-                    </tr>
-                </thead>
-                <tbody>
-                    {rows.map(({ h, t, ree }) => (
-                        <tr key={h.id} className={h.id === active ? "is-active" : undefined}>
-                            <td>
-                                <button type="button" onClick={() => onPick(h.id)}>
-                                    {h.name}
-                                </button>
-                                <span className="hm-brand">{h.brand}</span>
-                            </td>
-                            <td className="hm-mixcol">
-                                <MixBar totals={t} compact />
-                            </td>
-                            <td className="num">{h.dof ?? "n/a"}</td>
-                            <td className="num">{t.actuators}</td>
-                            <td className="num">{t.magnetMassKg.value.toFixed(2)}</td>
-                            <td className="num">{ree.toFixed(2)}</td>
-                            <td className="num">{usd(h.price_usd)}</td>
-                            <td className="num">{Math.round(t.reportedShare * 100)}%</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
+        <span className={`hm-meter is-${grade}`} title={tip} role="img" aria-label={`${grade} data: ${tip}`}>
+            {[1, 2, 3].map((i) => (
+                <i key={i} className={i <= GRADE_DOTS[grade] ? "on" : undefined} />
+            ))}
+            <span>{grade}</span>
+        </span>
     );
 }
 
-function Th({
-    c,
-    sort,
-    onClick,
-}: {
-    c: (typeof COLS)[number];
-    sort: { key: Key; dir: 1 | -1 };
-    onClick: (k: Key) => void;
-}) {
-    const on = sort.key === c.key;
+function pageList(page: number, pages: number): (number | "gap")[] {
+    if (pages <= 7) return Array.from({ length: pages }, (_, i) => i + 1);
+    const out: (number | "gap")[] = [1];
+    for (let i = Math.max(2, page - 1); i <= Math.min(pages - 1, page + 1); i++) out.push(i);
+    if ((out[1] as number) > 2) out.splice(1, 0, "gap");
+    if (page + 1 < pages - 1) out.push("gap");
+    out.push(pages);
+    return out;
+}
+
+export function FleetTable({ active, onPick }: { active: string; onPick: (id: string) => void }) {
+    useLocationKey();
+    const [, bump] = useReducer((x: number) => x + 1, 0);
+    const state = parseFleet(window.location.search);
+    const [open, setOpen] = useState(() => Boolean(state.q || state.page > 1));
+    const result = queryFleet(state);
+    const isOpen = open || Boolean(state.q) || state.page > 1;
+
+    // Sort and page changes are history entries (back steps through them);
+    // typing replaces the entry so each keystroke is not one.
+    const go = (next: FleetState) => navigate(`${window.location.pathname}${fleetSearch(window.location.search, next)}#fleet`);
+    const search = (q: string) => {
+        const url = `${window.location.pathname}${fleetSearch(window.location.search, { ...state, q, page: 1 })}${window.location.hash}`;
+        window.history.replaceState(window.history.state, "", url);
+        bump();
+    };
+    const sortBy = (key: SortKey) => {
+        const dir = state.sort.key === key ? (state.sort.dir === 1 ? -1 : 1) : key === "name" ? 1 : -1;
+        go({ ...state, sort: { key, dir }, page: 1 });
+    };
+
     return (
-        <th className={c.num ? "num" : undefined} aria-sort={on ? (sort.dir === 1 ? "ascending" : "descending") : "none"}>
+        <details className="hm-fleet" id="fleet" open={isOpen} onToggle={(e) => setOpen(e.currentTarget.open)}>
+            <summary>
+                <span className="hm-fleet-t">Fleet ({ROWS.length})</span>
+                {TOP && (
+                    <span className="hm-fleet-hint">
+                        Most magnet: {TOP.h.name}, {TOP.t.magnetMassKg.value.toFixed(2)} kg
+                    </span>
+                )}
+            </summary>
+            <div className="hm-fleet-bar">
+                <label className="hm-search">
+                    <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+                        <circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                        <path d="M10.5 10.5 14 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                    </svg>
+                    <input
+                        type="search"
+                        value={state.q}
+                        placeholder="Robot, maker, country or actuator type"
+                        aria-label="Search the fleet"
+                        onChange={(e) => search(e.target.value)}
+                    />
+                </label>
+                <span className="hm-fleet-n" aria-live="polite">
+                    {result.total} of {ROWS.length}
+                </span>
+            </div>
+            <div className="hm-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <Th c={COLS[0]!} state={state} onClick={sortBy} />
+                            <th className="hm-mixcol">Mix</th>
+                            {COLS.slice(1).map((c) => (
+                                <Th key={c.key} c={c} state={state} onClick={sortBy} />
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {result.rows.map(({ h, t, ree, conf }) => (
+                            <tr key={h.id} className={h.id === active ? "is-active" : undefined}>
+                                <td>
+                                    <button type="button" onClick={() => onPick(h.id)}>
+                                        {h.name}
+                                    </button>
+                                    <span className="hm-brand">
+                                        {h.brand} · {h.country}
+                                    </span>
+                                </td>
+                                <td className="hm-mixcol">
+                                    <MixBar totals={t} compact />
+                                </td>
+                                <td className="num">{h.dof ?? "n/a"}</td>
+                                <td className="num">{t.actuators}</td>
+                                <td className="num">{t.magnetMassKg.value.toFixed(2)}</td>
+                                <td className="num">{ree.toFixed(2)}</td>
+                                <td className="num">{usd(h.price_usd)}</td>
+                                <td className="num">
+                                    <Confidence share={conf.share} grade={conf.grade} />
+                                </td>
+                            </tr>
+                        ))}
+                        {result.total === 0 && (
+                            <tr>
+                                <td colSpan={COLS.length + 1} className="hm-empty">
+                                    No robot matches "{state.q}".{" "}
+                                    <button type="button" onClick={() => search("")}>
+                                        Clear search
+                                    </button>
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
+            {result.pages > 1 && (
+                <nav className="hm-pager" aria-label="Fleet pages">
+                    <button type="button" disabled={result.page === 1} onClick={() => go({ ...state, page: result.page - 1 })}>
+                        Prev
+                    </button>
+                    {pageList(result.page, result.pages).map((p, i) =>
+                        p === "gap" ? (
+                            <span key={`gap-${i}`}>…</span>
+                        ) : (
+                            <button
+                                key={p}
+                                type="button"
+                                aria-current={p === result.page ? "page" : undefined}
+                                aria-label={`Page ${p}`}
+                                onClick={() => go({ ...state, page: p })}
+                            >
+                                {p}
+                            </button>
+                        ),
+                    )}
+                    <button type="button" disabled={result.page === result.pages} onClick={() => go({ ...state, page: result.page + 1 })}>
+                        Next
+                    </button>
+                </nav>
+            )}
+        </details>
+    );
+}
+
+function Th({ c, state, onClick }: { c: (typeof COLS)[number]; state: FleetState; onClick: (k: SortKey) => void }) {
+    const on = state.sort.key === c.key;
+    const dir = state.sort.dir;
+    return (
+        <th className={c.num ? "num" : undefined} aria-sort={on ? (dir === 1 ? "ascending" : "descending") : "none"}>
             <button type="button" onClick={() => onClick(c.key)}>
                 {c.label}
-                <span aria-hidden="true">{on ? (sort.dir === 1 ? " ▲" : " ▼") : ""}</span>
+                <span aria-hidden="true">{on ? (dir === 1 ? " ▲" : " ▼") : ""}</span>
             </button>
         </th>
     );

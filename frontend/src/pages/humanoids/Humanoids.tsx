@@ -160,10 +160,13 @@ export function Humanoids({ menuOpen = false }: { menuOpen?: boolean }) {
                     </div>
                 </section>
 
-                <section className="hm-fleet" aria-labelledby="hm-fleet-h">
-                    <h2 id="hm-fleet-h">Fleet</h2>
-                    <FleetTable active={a.id} onPick={(robot) => update({ robot })} />
-                </section>
+                <FleetTable
+                    active={a.id}
+                    onPick={(robot) => {
+                        update({ robot });
+                        document.querySelector(".hm-bar")?.scrollIntoView?.({ behavior: "smooth", block: "start" });
+                    }}
+                />
 
                 <Method />
             </main>

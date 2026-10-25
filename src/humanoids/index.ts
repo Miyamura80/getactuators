@@ -130,6 +130,21 @@ export function humanoidTotals(h: Humanoid): HumanoidTotals {
     };
 }
 
+export type DataGrade = "reported" | "mixed" | "estimated";
+
+// Share of joint fields (actuator type, and peak torque or force) taken from
+// maker data rather than estimated, 0 to 1, with a three-step grade.
+export function dataConfidence(h: Humanoid): { share: number; grade: DataGrade } {
+    let reported = 0;
+    for (const j of h.joints) {
+        if (j.typeConfidence === "reported") reported++;
+        if ((j.peakTorqueNm ?? j.peakForceN)?.confidence === "reported") reported++;
+    }
+    const share = h.joints.length ? reported / (2 * h.joints.length) : 0;
+    const grade = share >= 0.75 ? "reported" : share >= 0.25 ? "mixed" : "estimated";
+    return { share, grade };
+}
+
 // Total rare-earth (Nd + Pr + Dy + Tb) for a totals record, kg.
 export function reeTotalKg(t: HumanoidTotals): {
     value: number;
