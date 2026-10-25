@@ -27,6 +27,7 @@ const EXPECTED_TOOLS = [
     "list_robots",
     "get_robot",
     "find_robots_using_actuator",
+    "get_humanoid_joints",
     "humanoid_joint_requirements",
     "arm_holding_torque",
     "list_companies",

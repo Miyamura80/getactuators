@@ -11,6 +11,12 @@ import {
     listUseCasesHandler,
 } from "./handlers";
 import type { ApiHandler } from "./http";
+import {
+    HumanoidDetailSchema,
+    HumanoidListSchema,
+    getHumanoidById,
+    listHumanoids,
+} from "./humanoids";
 import { ActuatorListParams, CompareQueryParams, RobotListParams } from "./params";
 import {
     ActuatorDetailSchema,
@@ -215,5 +221,34 @@ export const OPERATIONS: Operation[] = [
         errors: [400],
         example: "/api/v1/sites?company=jl-mag",
         handler: listSitesHandler,
+    },
+    {
+        operationId: "list_humanoids",
+        method: "GET",
+        path: "/api/v1/humanoids",
+        summary: "List humanoids with actuator totals",
+        description:
+            "Every humanoid on /humanoids with its actuator count by type (QDD, planetary, harmonic, cycloidal, roller screw, ball screw, hydraulic, tendon, undisclosed) and estimated NdFeB magnet and rare-earth (Nd, Pr, Dy, Tb) mass, each with a range and confidence.",
+        response: HumanoidListSchema,
+        errors: [],
+        example: "/api/v1/humanoids",
+        handler: listHumanoids,
+    },
+    {
+        operationId: "get_humanoid",
+        method: "GET",
+        path: "/api/v1/humanoids/:id",
+        summary: "Get one humanoid joint by joint",
+        description:
+            "One humanoid mapped onto the canonical joint set: per joint the actuator type and whether it is reported or estimated (with what it was inferred from), motor, reducer, peak torque or force, estimated magnet mass and sources.",
+        pathParam: {
+            name: "id",
+            description: "Humanoid id (slug).",
+            example: "unitree-g1",
+        },
+        response: HumanoidDetailSchema,
+        errors: [404],
+        example: "/api/v1/humanoids/unitree-g1",
+        handler: getHumanoidById,
     },
 ];

@@ -124,7 +124,7 @@ function operationObject(op: Operation, tag: string): Json {
 }
 
 function tagFor(path: string): string {
-    if (path.includes("/robots")) return "robots";
+    if (path.includes("/robots") || path.includes("/humanoids")) return "robots";
     if (path.includes("/companies") || path.includes("/sites")) return "supply-chain";
     if (path.includes("/actuators")) return "actuators";
     if (path.startsWith("/api/v1/")) return "taxonomy";

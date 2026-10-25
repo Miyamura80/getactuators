@@ -13,6 +13,7 @@ COPY src/engineering/arm-torque.ts ./src/engineering/
 COPY src/public-navigation.ts src/public-navigation.css ./src/
 # Page data the browser imports directly.
 COPY src/startups.ts src/investors.ts src/country-flag.ts ./src/
+COPY src/humanoids ./src/humanoids
 # Company logo registry (domains for the logo provider, local overrides).
 COPY src/brands ./src/brands
 # The supply-chain registry and kit helpers (zod schemas stay server-side).
