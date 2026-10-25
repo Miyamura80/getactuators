@@ -1,6 +1,6 @@
+import { countryFlag } from "@/country-flag";
 import { COMPANIES, SEGMENTS, SEGMENT_LABEL } from "@/supply-chain/companies";
 import { concentration } from "@/supply-chain/concentration";
-import { countryFlag } from "@/supply-chain/countries";
 import { percent } from "@/supply-chain/format";
 import { LAB_MINING_HHI, LAB_STAGE_SHARES } from "@/supply-chain/lab-fixtures";
 import { marketOf } from "@/supply-chain/market-share";

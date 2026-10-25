@@ -52,8 +52,8 @@ Footnotes are numbered in first-cited order on both surfaces, and
 `<StageShareBar rows>` draws one stacked bar per stage, countries largest
 first and the unattributed rest as a grey "Other". The bar itself shows
 whether one country dominates; there is no separate badge. Segments carry
-flag emoji from `countryFlag(code)` in `countries.ts`, with the country name
-as the accessible label (use `<Flag code>` in React).
+flag emoji from `countryFlag(code)` in `src/country-flag.ts`, with the country name
+as the accessible label (use `<Flag code>` from `frontend/src/components/Flag.tsx`).
 
 `concentration(shares)` returns the top country and the HHI over named
 countries for markdown twins and modeled values (fractions or raw amounts;

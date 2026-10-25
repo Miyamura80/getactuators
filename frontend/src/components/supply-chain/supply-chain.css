@@ -60,7 +60,7 @@
 .sc-legend-label { font: 600 10px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 
 /* Flags */
-.sc-flag { display: inline-block; width: 1.4em; font-family: "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", var(--sans); line-height: 1; }
+.flag { display: inline-block; width: 1.4em; font-family: "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", var(--sans); line-height: 1; }
 
 /* Stage share bars */
 .sc-stages { display: grid; border: 1px solid var(--line); }
@@ -86,7 +86,7 @@
     white-space: nowrap;
 }
 .sc-seg-other { background: var(--line-strong); color: var(--muted); }
-.sc-seg .sc-flag { width: auto; margin-right: 4px; font-size: 14px; }
+.sc-seg .flag { width: auto; margin-right: 4px; font-size: 14px; }
 
 /* Market share list */
 .sc-share-cap { margin: -4px 0 12px; font: 11px/1.4 var(--mono); color: #6b7375; }

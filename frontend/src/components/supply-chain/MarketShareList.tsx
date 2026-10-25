@@ -1,7 +1,7 @@
 import type { Company } from "../../../../src/supply-chain/companies";
 import { percent } from "../../../../src/supply-chain/format";
 import type { SegmentMarket } from "../../../../src/supply-chain/market-share";
-import { Flag } from "./Flag";
+import { Flag } from "../Flag";
 import { SourcedValue } from "./SourcedValue";
 
 // Companies in one segment with their share of that segment's market: a thin
@@ -29,7 +29,7 @@ export function MarketShareList({ companies, market }: { companies: Company[]; m
         <ul>
             {rows}
             {market ? <li className="sc-share-other">
-                <span className="sc-flag" aria-hidden="true" />
+                <span className="flag" aria-hidden="true" />
                 <span className="sc-share-name">Other</span>
                 <span className="sc-share-track" aria-hidden="true">
                     <span className="sc-share-fill" style={{ width: `${Math.max(0, 1 - named) * 100}%` }} />

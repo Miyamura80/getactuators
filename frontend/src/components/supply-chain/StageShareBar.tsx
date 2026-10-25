@@ -1,8 +1,8 @@
 import { normalizeShares, type ShareKey, type Shares } from "../../../../src/supply-chain/concentration";
-import { countryName } from "../../../../src/supply-chain/countries";
+import { countryName } from "../../../../src/country-flag";
 import { percent } from "../../../../src/supply-chain/format";
 import type { Sourced } from "../../../../src/supply-chain/sourced";
-import { Flag } from "./Flag";
+import { Flag } from "../Flag";
 import { FootnoteRef } from "./SourcedValue";
 
 // Country colour for share segments. Bright on black, never the status red

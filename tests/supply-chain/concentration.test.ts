@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
+import { countryFlag } from "@/country-flag";
 import { concentration, normalizeShares } from "@/supply-chain/concentration";
-import { countryFlag } from "@/supply-chain/countries";
 import { formatValue, sourcedText } from "@/supply-chain/format";
 import { LAB_MINING_HHI, LAB_STAGE_SHARES } from "@/supply-chain/lab-fixtures";
 
