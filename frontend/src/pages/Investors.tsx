@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { PublicHeader } from "../components/PublicHeader";
 import { PublicFooter } from "../components/PublicFooter";
 import { FundLedger, TIER_COLOR } from "../components/FundLedger";
+import { CompanyLogo } from "../components/CompanyLogo";
 import {
     companyOf,
     FUNDS,
@@ -67,7 +68,10 @@ export function Investors({ menuOpen = false }: { menuOpen?: boolean }) {
                         <p>have no actuated bet on record.</p>
                         <div className="inv-names">
                             {out.map((f) => (
-                                <span key={f.name}>{f.name}</span>
+                                <span key={f.name} className="with-logo">
+                                    <CompanyLogo name={f.name} size={16} />
+                                    {f.name}
+                                </span>
                             ))}
                         </div>
                     </div>
@@ -134,9 +138,17 @@ export function Investors({ menuOpen = false }: { menuOpen?: boolean }) {
                                     f.deals.length
                                         ? f.deals.map((x) => (
                                               <tr key={`${f.name}${x.co}${x.round}`}>
-                                                  <td>{f.name}</td>
                                                   <td>
-                                                      {companyOf(x).name}
+                                                      <span className="with-logo">
+                                                          <CompanyLogo name={f.name} size={16} />
+                                                          {f.name}
+                                                      </span>
+                                                  </td>
+                                                  <td>
+                                                      <span className="with-logo">
+                                                          <CompanyLogo name={x.co} size={16} />
+                                                          {companyOf(x).name}
+                                                      </span>
                                                       {x.lead && <span className="inv-lead">LEAD</span>}
                                                   </td>
                                                   <td>{KIND_LABEL[companyOf(x).kind]}</td>
@@ -157,7 +169,12 @@ export function Investors({ menuOpen = false }: { menuOpen?: boolean }) {
                                           ))
                                         : [
                                               <tr key={f.name}>
-                                                  <td>{f.name}</td>
+                                                  <td>
+                                                      <span className="with-logo">
+                                                          <CompanyLogo name={f.name} size={16} />
+                                                          {f.name}
+                                                      </span>
+                                                  </td>
                                                   <td colSpan={4} className="inv-none">
                                                       No actuated round found
                                                   </td>

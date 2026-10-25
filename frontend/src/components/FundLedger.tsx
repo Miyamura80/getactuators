@@ -11,6 +11,7 @@ import {
     type Tier,
     tierOf,
 } from "../../../src/investors";
+import { CompanyLogo } from "./CompanyLogo";
 
 // One 2017-2026 track per fund, grouped by strongest bet in the active kinds.
 // Funds with nothing in view sit first, as hatched bars; that group folds.
@@ -56,6 +57,22 @@ function fitNames(names: string[], width: number): string {
     return out;
 }
 const hostOf = (url: string) => new URL(url).hostname.replace(/^www\./, "");
+// Logo slot left of a fund name in the ledger; the name moves right by LOGO_DX.
+const LOGO = 16;
+const LOGO_DX = 22;
+function LedgerLogo({ name, cy }: { name: string; cy: number }) {
+    return (
+        <foreignObject x={14} y={cy - LOGO / 2} width={LOGO} height={LOGO}>
+            <CompanyLogo name={name} size={LOGO} />
+        </foreignObject>
+    );
+}
+const TipHead = ({ name }: { name: string }) => (
+    <b className="with-logo">
+        <CompanyLogo name={name} size={16} />
+        {name}
+    </b>
+);
 
 interface Tip {
     body: ReactNode;
@@ -67,13 +84,13 @@ function FundTip({ fund }: { fund: Fund }) {
     if (!fund.deals.length)
         return (
             <>
-                <b>{fund.name}</b>
+                <TipHead name={fund.name} />
                 <span className="inv-tip-m">No actuated bet found, 2017 to Oct 2026</span>
             </>
         );
     return (
         <>
-            <b>{fund.name}</b>
+            <TipHead name={fund.name} />
             <span className="inv-tip-m">{KIND_LABEL[tierOf(fund)]}</span>
             {fund.deals.map((x) => (
                 <div className="inv-tip-row" key={`${x.co}${x.round}`}>
@@ -94,7 +111,7 @@ function DealTip({ fund, deal }: { fund: Fund; deal: Deal }) {
     const c = companyOf(deal);
     return (
         <>
-            <b>{c.name}</b>
+            <TipHead name={deal.co} />
             <span className="inv-tip-m">{c.what}</span>
             <div className="inv-tip-row">
                 <i className="inv-tip-kind" style={{ background: TIER_COLOR[c.kind] }} />
@@ -231,7 +248,8 @@ export function FundLedger({ active, folded, onFold }: { active: readonly Kind[]
                             return (
                                 <g key={f.name} className="inv-hit" tabIndex={0} {...hover(<FundTip fund={f} />)}>
                                     <rect x={0} y={top} width={W} height={RH} fill="transparent" />
-                                    <text x={14} y={cy + 5} fill="var(--inv-out)" fontSize={15} fontWeight={700}>
+                                    <LedgerLogo name={f.name} cy={cy} />
+                                    <text x={14 + LOGO_DX} y={cy + 5} fill="var(--inv-out)" fontSize={15} fontWeight={700}>
                                         {f.name}
                                     </text>
                                     <rect className="inv-mark" x={sx(Y0) + 2} y={top + 5} width={sx(NOW) - sx(Y0) - 4} height={RH - 10} fill="url(#inv-hatch)" stroke="var(--inv-out)" />
@@ -294,7 +312,8 @@ function FundRow({ fund, deals, top, hover }: { fund: Fund; deals: Deal[]; top: 
         <>
             <g className="inv-hit" tabIndex={0} {...hover(<FundTip fund={fund} />)}>
                 <rect x={0} y={top} width={sx(Y0) - 4} height={RH} fill="transparent" />
-                <text x={14} y={cy + 5} fill="var(--text)" fontSize={13}>
+                <LedgerLogo name={fund.name} cy={cy} />
+                <text x={14 + LOGO_DX} y={cy + 5} fill="var(--text)" fontSize={13}>
                     {fund.name}
                 </text>
             </g>

@@ -2,6 +2,7 @@ import { PublicHeader } from "../components/PublicHeader";
 import { PublicFooter } from "../components/PublicFooter";
 import { ActuatorThumb } from "../components/ActuatorThumb";
 import { EngineeringEvidencePanel } from "../components/EngineeringEvidencePanel";
+import { CompanyLogo } from "../components/CompanyLogo";
 import { compareEvent, useCompareSelection } from "../lib/compare-selection";
 import { COMPARE_SPECS, revisionNote } from "../../../src/catalog/compare";
 
@@ -22,6 +23,7 @@ export function Compare({ menuOpen = false }: { menuOpen?: boolean }) {
             <div className="compare-products">
                 {selection.rows.map(a => <article key={a.id}>
                     <a href={`/actuators/${a.id}`}><div className="compare-photo"><ActuatorThumb actuator={a} /></div><h2>{a.name}</h2></a>
+                    <p className="compare-brand with-logo"><CompanyLogo name={a.brand} size={20} />{a.brand}</p>
                     {!a.image_url && <p>Photo unavailable: schematic only</p>}
                     <p>{revisionNote(a)}</p>
                     <a href={`/actuators/${a.id}`}>Catalog and sources</a>
