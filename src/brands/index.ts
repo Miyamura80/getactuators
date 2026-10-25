@@ -7,7 +7,7 @@
 // confirmed as the company's own domain by Logo.dev brand search: robstride.com,
 // allient.com, iflight.com, nidec.com, hiwonder.com, menlo.ai, menlovc.com,
 // unitzero.ai, i2rt.com, mindrobotics.com, proception.ai, minervahumanoids.com,
-// theker.ai. Every domain returns a Logo.dev logo except lkmotor.cn (LKMTech),
+// theker.ai, pollen-robotics.com. Every domain returns a Logo.dev logo except lkmotor.cn (LKMTech),
 // which renders as a monogram.
 
 import { canonicalBrand } from "../catalog/brands";
@@ -72,6 +72,7 @@ const ROBOT_MAKERS: Row[] = [
     ["booster", "Booster Robotics", "booster.tech", ["Booster"]],
     ["i2rt", "i2RT Robotics", "i2rt.com", ["i2RT"]],
     ["unitzero", "UnitZero", "unitzero.ai"],
+    ["pollen", "Pollen Robotics", "pollen-robotics.com", ["Pollen"]],
     // The Asimov 1 bill of materials, not a company: always a monogram.
     ["asimov-bom", "Asimov BOM", null],
 ];
