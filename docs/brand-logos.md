@@ -23,6 +23,15 @@ name or id ──> src/brands (resolveBrand) ──> local logo?  ──yes─�
   `/startups` rows join automatically from `src/startups.ts` (their `url` gives
   the domain and their `logo` under `frontend/public/logos/startups/` wins over
   the provider).
+- **Self-hosted logos:** `src/brands/self-hosted.json` lists 81 official marks
+  under `frontend/public/logos/brands/`, each with the page it came from (the
+  company's own site, its GitHub org avatar, Wikimedia Commons or simple-icons;
+  never a logo API, whose terms forbid storing images). These win over the
+  provider, so the site shows real logos with no token. SVGs are sanitized (no
+  script, event handlers, foreignObject or external refs); PNGs are at most
+  96 px. `"tile": "light"` puts a dark mark on a pale tile. To add one: drop the
+  file in that folder and add a row with its `source`; the registry test checks
+  the file exists and the id is registered.
 - **Lookup:** `resolveBrand("CubeMars (T-Motor)")` matches an id, a name or an
   alias after normalising (case, punctuation, parentheticals), then falls back to
   the catalog's `canonicalBrand`.

@@ -1,7 +1,9 @@
 import { describe, expect, test } from "bun:test";
+import { existsSync } from "node:fs";
 import actuators from "../../frontend/src/data/actuators.json";
 import robots from "../../frontend/src/data/robots.json";
 import { BRANDS, brandInitials, logoUrl, resolveBrand } from "../../src/brands";
+import selfHosted from "../../src/brands/self-hosted.json";
 import { COMPANIES, FUNDS } from "../../src/investors";
 import { STARTUPS } from "../../src/startups";
 
@@ -40,6 +42,21 @@ describe("brand registry", () => {
         expect(resolveBrand("Menlo")?.id).toBe("menlo-ventures");
         expect(resolveBrand("Menlo Research")?.id).toBe("menlo-research");
         expect(resolveBrand("westmag")?.logo).toBe("/logos/startups/westmag.png");
+    });
+
+    test("every self-hosted logo is a registered company with a file and a source", () => {
+        for (const r of selfHosted) {
+            expect({ id: r.id, registered: Boolean(resolveBrand(r.id)) }).toEqual({
+                id: r.id,
+                registered: true,
+            });
+            expect({ id: r.id, file: existsSync(`frontend/public${r.logo}`) }).toEqual({
+                id: r.id,
+                file: true,
+            });
+            expect(r.source.length).toBeGreaterThan(0);
+            expect(resolveBrand(r.id)?.logo).toBe(r.logo);
+        }
     });
 
     test("monogram initials", () => {

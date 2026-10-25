@@ -12,6 +12,7 @@
 
 import { canonicalBrand } from "../catalog/brands";
 import { STARTUPS } from "../startups";
+import selfHosted from "./self-hosted.json";
 
 export interface BrandEntry {
     id: string;
@@ -147,16 +148,32 @@ const STARTUP_ENTRIES: BrandEntry[] = STARTUPS.map((s) => ({
     logo: s.logo,
 }));
 
+// Official marks served from frontend/public/logos/brands, each with the page
+// it came from (company site, its GitHub org, Wikimedia or simple-icons). They
+// win over the logo provider, so these render without a provider token.
+const SELF_HOSTED = new Map(
+    (selfHosted as { id: string; logo: string; tile?: "light" }[]).map((r) => [
+        r.id,
+        r,
+    ]),
+);
+
 // Dark logos that need a pale tile to read on black (checked by eye).
 const LIGHT_TILE = new Set(["ivp", "benchmark"]);
 
-const fromRow = ([id, name, domain, aliases]: Row): BrandEntry => ({
-    id,
-    name,
-    domain,
-    ...(aliases ? { aliases } : {}),
-    ...(LIGHT_TILE.has(id) ? { tile: "light" as const } : {}),
-});
+const fromRow = ([id, name, domain, aliases]: Row): BrandEntry => {
+    const own = SELF_HOSTED.get(id);
+    return {
+        id,
+        name,
+        domain,
+        ...(aliases ? { aliases } : {}),
+        ...(own ? { logo: own.logo } : {}),
+        ...(LIGHT_TILE.has(id) || own?.tile === "light"
+            ? { tile: "light" as const }
+            : {}),
+    };
+};
 
 export const BRANDS: BrandEntry[] = [
     ...STARTUP_ENTRIES,
