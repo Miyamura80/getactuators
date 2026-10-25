@@ -44,7 +44,7 @@ for asset in assets:
     assert "alpha-tag" in bundle, "Missing current sidebar UI"
     assert "hero-content" in get(re.search(r'href="(/assets/[^" ]+\.css)"', home).group(1))[0]
 gallery, _ = get("/actuators")
-assert 'rel="preload" as="image" href="/actuator-images/nabtesco-rv-42n.webp"' in gallery
+assert 'rel="preload" as="image" href="/actuator-images/steadywin-gim8108-8.webp"' in gallery
 # These are raw HTTP bytes, before the application bundle can run.
 assert 'data-gallery-prerender="true"' in gallery, "Missing gallery hydration marker"
 assert gallery.count('class="bento-card"') == len(rows), "Missing initial gallery cards"

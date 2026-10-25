@@ -13,7 +13,7 @@ afterEach(cleanup);
 test("leading gallery photo is eager and high priority, every other photo stays lazy", () => {
     const { container } = render(<ActuatorsGallery />);
     const first = container.querySelector('.bento-thumb img');
-    expect(first?.getAttribute("src")).toBe("/actuator-images/nabtesco-rv-42n.webp");
+    expect(first?.getAttribute("src")).toBe("/actuator-images/steadywin-gim8108-8.webp");
     expect(first?.getAttribute("loading")).toBe("eager");
     expect(first?.getAttribute("fetchpriority")).toBe("high");
     expect(first?.getAttribute("decoding")).toBe("auto");

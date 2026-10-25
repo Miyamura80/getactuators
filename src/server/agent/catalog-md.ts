@@ -120,7 +120,7 @@ export function actuatorBody(a: Actuator): string {
     if (sizing) sections.splice(3, 0, sizing);
     if (robots.length > 0) {
         sections.push(
-            `## Robots that use it\n\n${bullets(robots.map((r) => `${mdText(r.name)} by ${mdText(r.brand)}: ${mdText(r.summary)}`))}`,
+            `## Robots that use it\n\n${bullets(robots.map((r) => `${mdLink(r.name, absoluteUrl(`/robots#${encodeURIComponent(r.id)}`))} by ${mdText(r.brand)}: ${mdText(r.summary)}`))}`,
         );
     }
     if (a.notes && !productSummary(a.id))
@@ -221,7 +221,7 @@ export function robotSection(r: Robot, level = 2): string {
     const facts = [
         `Brand: ${mdText(r.brand)}${r.country ? ` (${mdText(r.country)})` : ""}`,
         ...(r.kind === "humanoid" ? ["Type: Humanoid"] : []),
-        `Degrees of freedom: ${r.dof}`,
+        `Degrees of freedom: ${num(r.dof)}`,
         `Payload: ${num(r.payload_kg, "kg")}${r.payload_basis === "whole_body" ? " (whole body)" : ""}`,
         r.kind === "humanoid"
             ? `Height: ${num(r.height_m, "m", 2)}`

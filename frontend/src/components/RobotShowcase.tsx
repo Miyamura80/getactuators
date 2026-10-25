@@ -69,7 +69,7 @@ function RobotThumb({ robot }: { robot: Robot }) {
             ) : (
                 <RobotArt kind={robot.kind} framing="plain" />
             )}
-            <span className="robot-dof">{robot.dof}-DOF</span>
+            {robot.dof != null && <span className="robot-dof">{robot.dof}-DOF</span>}
         </div>
     );
 }
@@ -147,14 +147,25 @@ function RobotCard({ robot, active }: { robot: Robot; active: boolean }) {
                         <ul className="motor-list">
                             {joints.map((j) => (
                                 <li key={j.role} className="motor-row">
-                                    <a
-                                        className="motor-name"
-                                        href={j.motor.product_url ?? "#"}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        {j.count}× {j.motor.name}
-                                    </a>
+                                    {j.motor.actuator_id ? (
+                                        <a
+                                            className="motor-name"
+                                            data-catalog="true"
+                                            href={`/actuators/${encodeURIComponent(j.motor.actuator_id)}`}
+                                            title="Open in the actuator catalog"
+                                        >
+                                            {j.count}× {j.motor.name}
+                                        </a>
+                                    ) : (
+                                        <a
+                                            className="motor-name"
+                                            href={j.motor.product_url ?? "#"}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            {j.count}× {j.motor.name}
+                                        </a>
+                                    )}
                                     <span className="motor-role">{j.role}</span>
                                     <span className="motor-torque">
                                         {torque(j.motor.rated_torque_nm)}/{torque(j.motor.peak_torque_nm)} N·m
