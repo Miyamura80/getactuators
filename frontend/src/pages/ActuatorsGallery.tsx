@@ -36,7 +36,13 @@ function readGrouping(): GalleryGrouping {
 
 export function ActuatorsGallery({ menuOpen = false }: { menuOpen?: boolean }) {
     const [by, setBy] = useState<GalleryGrouping>("type");
-    useEffect(() => setBy(readGrouping()), []);
+    useEffect(() => {
+        // Back/forward can land on an entry with a different ?by value.
+        const restore = () => setBy(readGrouping());
+        restore();
+        window.addEventListener("popstate", restore);
+        return () => window.removeEventListener("popstate", restore);
+    }, []);
     const sections = useMemo(() => galleryGroups(ACTUATORS, by), [by]);
     const selection = useCompareSelection();
     const choose = (next: GalleryGrouping) => {
@@ -65,14 +71,13 @@ export function ActuatorsGallery({ menuOpen = false }: { menuOpen?: boolean }) {
             </section>
 
             <div className="gallery-toolbar">
-                <div className="gallery-group-by" role="radiogroup" aria-label="Group actuators by">
+                <div className="gallery-group-by" role="group" aria-label="Group actuators by">
                     <span>Group by</span>
                     {GROUPINGS.map((g) => (
                         <button
                             key={g.key}
                             type="button"
-                            role="radio"
-                            aria-checked={by === g.key}
+                            aria-pressed={by === g.key}
                             onClick={() => choose(g.key)}
                         >
                             {g.label}

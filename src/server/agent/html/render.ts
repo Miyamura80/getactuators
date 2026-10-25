@@ -63,7 +63,11 @@ function headMeta(page: Page, noindex = false): HeadMeta {
 // Catalog facts and homepage FAQ live in visible siblings, rendered from the
 // same markdown as the agent twins (FAQ answers also supply JSON-LD). React's
 // visuals stay intact without discarding that substantive content.
-export async function renderSpaPage(page: Page, visual?: string): Promise<string> {
+export async function renderSpaPage(
+    page: Page,
+    visual?: string,
+    search = "",
+): Promise<string> {
     const meta = headMeta(page);
     const body = page.body();
     const marker =
@@ -121,8 +125,12 @@ export async function renderSpaPage(page: Page, visual?: string): Promise<string
                 // One tiny, already optimized photo: discover the leading gallery
                 // image while the application bundle is still downloading. Do not
                 // preload later cards (especially on a narrow mobile viewport).
+                // The application view reorders cards after hydration, so its
+                // first photo is not known here; skip the hint rather than
+                // fetch the wrong image early.
                 const firstPhoto =
-                    page.path === "/actuators"
+                    page.path === "/actuators" &&
+                    new URLSearchParams(search).get("by") !== "application"
                         ? galleryCards(ACTUATORS)[0]?.a.image_url
                         : null;
                 if (firstPhoto) {

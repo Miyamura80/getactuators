@@ -1075,7 +1075,7 @@ table.board {
 .gallery-group-by { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
 .gallery-group-by > span { margin-right: 4px; text-transform: uppercase; letter-spacing: 0.08em; font-size: 11px; }
 .gallery-group-by button { min-height: 36px; padding: 6px 14px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--text); font: 600 13px var(--sans); cursor: pointer; }
-.gallery-group-by button[aria-checked="true"] { border-color: var(--cyan); background: var(--cyan); color: var(--black); }
+.gallery-group-by button[aria-pressed="true"] { border-color: var(--cyan); background: var(--cyan); color: var(--black); }
 .gallery-jump { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
 .gallery-jump::-webkit-scrollbar { display: none; }
 .gallery-jump a { flex: none; padding: 5px 10px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: 12px; text-decoration: none; white-space: nowrap; }
