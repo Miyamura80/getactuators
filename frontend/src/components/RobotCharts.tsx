@@ -5,9 +5,10 @@ import { BarChart } from "./BarChart";
 import type { BarItem } from "./BarChart";
 import { BrandGlyph } from "./BrandGlyph";
 import { Legend } from "./Legend";
+import { RobotPareto } from "./RobotPareto";
 
 // Same hues as the robot-type cards on the home page.
-const KIND_COLOR: Record<RobotKind, string> = {
+export const KIND_COLOR: Record<RobotKind, string> = {
     humanoid: "hsl(262 60% 66%)",
     robot_arm: "hsl(210 70% 62%)",
 };
@@ -117,6 +118,7 @@ export function RobotCharts() {
                     </section>
                 ))}
             </div>
+            <RobotPareto />
         </>
     );
 }
