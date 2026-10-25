@@ -2,6 +2,7 @@ import { evidenceFor, fieldCaveat } from "../../../src/catalog/evidence";
 import type { Actuator } from "../types";
 import { CATEGORY_MAP } from "../types";
 import { bool, dash, list, num, price, voltage } from "../lib/format";
+import { robotsUsingActuator } from "../lib/robots";
 import { CopyLinkButton } from "./CopyLinkButton";
 
 interface Props {
@@ -51,6 +52,7 @@ export function DetailPanel({ actuator, onClose }: Props) {
     const a = actuator;
     const cat = CATEGORY_MAP[a.category];
     const evidence = evidenceFor(a);
+    const usedIn = robotsUsingActuator(a.id);
     const evidenceClass = evidence.label.startsWith("Catalog headline specs spot-checked:") ? "verified-note" : "evidence-note";
     return (
         <div className="drawer-scrim" onClick={onClose}>
@@ -93,6 +95,17 @@ export function DetailPanel({ actuator, onClose }: Props) {
                         </div>
                     ))}
                 </dl>
+
+                {usedIn.length > 0 && (
+                    <p className="drawer-used-in">
+                        <span>Used in</span>
+                        {usedIn.map((r) => (
+                            <a key={r.id} href={`/robots#${encodeURIComponent(r.id)}`}>
+                                {r.name}
+                            </a>
+                        ))}
+                    </p>
+                )}
 
                 {a.notes && <p className="drawer-notes">{a.notes}</p>}
 

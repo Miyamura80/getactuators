@@ -25,6 +25,12 @@ export function resolveJoints(robot: Robot): ResolvedJoint[] {
     return out;
 }
 
+// Robots whose loadout includes the catalog actuator with this id (via
+// RobotMotor.actuator_id), in robots.json order.
+export function robotsUsingActuator(actuatorId: string, robots: Robot[] = ROBOTS): Robot[] {
+    return robots.filter((r) => resolveJoints(r).some((j) => j.motor.actuator_id === actuatorId));
+}
+
 // Total actuator count across a robot's joints (0 when the loadout is unknown).
 export function motorCount(robot: Robot): number {
     return robot.joints.reduce((n, j) => n + j.count, 0);
