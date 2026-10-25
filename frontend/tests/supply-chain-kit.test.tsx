@@ -98,7 +98,11 @@ test("lab page renders every kit component", () => {
     expect(c.querySelectorAll(".sc-waffle")).toHaveLength(3);
     expect(c.querySelectorAll(".sc-hhi, .sc-stage")).toHaveLength(0);
     expect(c.querySelectorAll(".sc-eq-row")).toHaveLength(0);
-    for (const v of ["d1", "d2", "d3", "d4"]) expect(c.querySelector(`#perspective-${v} .sc-lab-headline`)).not.toBeNull();
+    const views = [...c.querySelectorAll(".sc-lab-variant")];
+    expect(views.map((v) => v.id)).toEqual(["perspective-without-leader", "perspective-leader-share", "perspective-units"]);
+    expect(views.map((v) => v.querySelector("h3")?.textContent)).toEqual(["If China stopped", "The leader's share", "What it buys · magnets"]);
+    expect(c.querySelectorAll(".sc-lab-variant h3 b")).toHaveLength(0);
+    expect(c.querySelectorAll(".sc-ladder, .sc-ten, .sc-ninety")).toHaveLength(0);
     expect(c.querySelectorAll(".sc-badge")).toHaveLength(0);
     expect(c.querySelectorAll(".sc-share")).toHaveLength(4);
     expect(c.querySelector(".sc-legend")).not.toBeNull();

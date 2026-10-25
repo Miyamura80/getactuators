@@ -10,7 +10,6 @@ import {
     HUMANOIDS_SHIPPED_2025,
     NDFEB_PER_EV,
     NDFEB_PER_HUMANOID,
-    REVENUE_LADDER,
 } from "./perspective";
 import {
     companySchema,
@@ -38,7 +37,6 @@ const DATASETS: Record<string, unknown> = {
     "lab-stage-shares": LAB_STAGE_SHARES,
     "lab-values": [LAB_MINING_HHI],
     "market-share": SEGMENT_MARKETS,
-    "perspective-ladder": REVENUE_LADDER,
     "perspective-units": [
         NDFEB_PER_HUMANOID,
         NDFEB_PER_EV,

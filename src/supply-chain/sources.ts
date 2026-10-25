@@ -277,13 +277,6 @@ export const SOURCES: SourceRef[] = [
     ),
     // Perspective references (src/supply-chain/perspective.ts)
     src(
-        "tesla-10k-2025",
-        "Tesla 10-K",
-        "Form 10-K for fiscal year 2025",
-        "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
-        "filing",
-    ),
-    src(
         "fai-robot-magnets",
         "Foundation for American Innovation",
         "The robot boom has a magnet problem",

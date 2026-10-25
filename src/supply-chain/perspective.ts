@@ -1,71 +1,12 @@
-import { COMPANIES } from "./companies";
 import { LAB_STAGE_SHARES } from "./lab-fixtures";
 import { SITES } from "./sites";
 import type { Sourced } from "./sourced";
 
-// Reference points that put the headline numbers in perspective: familiar
-// magnitudes of the same unit, unit translations and concentration yardsticks.
+// Reference points that put the headline numbers in perspective: unit
+// translations and concentration yardsticks.
 // Every reference is cited; derived figures are "modeled" with their method.
 
-export interface PerspectivePoint {
-    id: string;
-    label: string;
-    value: Sourced<number>;
-    // A headline number from the page, as opposed to a reference point.
-    headline?: boolean;
-}
-
-function companyRevenue(id: string): Sourced<number> {
-    const r = COMPANIES.find((c) => c.id === id)?.revenue;
-    if (!r) throw new Error(`no revenue for ${id}`);
-    return r;
-}
-
-// A. Revenue ladder, USD, on a log scale.
-export const REVENUE_LADDER: PerspectivePoint[] = [
-    {
-        id: "mp",
-        label: "MP Materials",
-        value: companyRevenue("mp-materials"),
-        headline: true,
-    },
-    {
-        id: "hds",
-        label: "Harmonic Drive Systems",
-        value: companyRevenue("harmonic-drive-systems"),
-    },
-    {
-        id: "northern",
-        label: "Northern Rare Earth",
-        value: companyRevenue("china-northern-rare-earth"),
-        headline: true,
-    },
-    {
-        id: "ndfeb-market",
-        label: "World NdFeB magnet sales",
-        value: {
-            value: 14.065e9,
-            unit: "USD",
-            sources: ["qyresearch-ndfeb-2025"],
-            asOf: "2024",
-            confidence: "estimated",
-            note: "Market research estimate of global NdFeB magnet sales.",
-        },
-    },
-    {
-        id: "tesla",
-        label: "Tesla",
-        value: {
-            value: 94.83e9,
-            unit: "USD",
-            sources: ["tesla-10k-2025"],
-            asOf: "2025",
-            confidence: "reported",
-        },
-    },
-];
-
-// B. What the magnet tonnage buys.
+// What the magnet tonnage buys.
 const BAOTOU = SITES.find((s) => s.id === "jlmag-baotou-expansion")?.capacity;
 if (!BAOTOU) throw new Error("jlmag-baotou-expansion capacity missing");
 export const MAGNET_CAPACITY: Sourced<number> = BAOTOU;
@@ -124,8 +65,8 @@ export const EVS_PER_YEAR: Sourced<number> = {
     note: "20,000 t a year divided by 1.5 kg of NdFeB per electric vehicle.",
 };
 
-// D. How dominant the leader is, next to markets people know. Each market
-// keeps its own share map (countries or companies) so the visuals count real
+// How dominant the leader is, next to markets people know. Each market
+// keeps its own share map (countries or companies) so the visuals name real
 // players; stage maps reuse the cited lab fixtures.
 
 export interface DominanceMarket {
