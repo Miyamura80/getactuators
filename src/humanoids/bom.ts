@@ -355,7 +355,8 @@ function restSlices(parts: RestPart[]): Omit<BomSlice, "share">[] {
     }));
 }
 
-export function humanoidBom(h: Humanoid, metric: BomMetric): Bom {
+// `maxSlices` caps the actuator slices before the rest fold into "Other".
+export function humanoidBom(h: Humanoid, metric: BomMetric, maxSlices = 6): Bom {
     const items = new Map<string, BomItem>();
     const excluded = new Map<
         string,
@@ -388,7 +389,7 @@ export function humanoidBom(h: Humanoid, metric: BomMetric): Bom {
         it.joints.push(j.canonical);
         items.set(key, it);
     }
-    const actuatorSlices = groupSlices([...items.values()]);
+    const actuatorSlices = groupSlices([...items.values()], maxSlices);
     const actuators = sumOf(actuatorSlices);
     const restParts =
         metric === "cost"

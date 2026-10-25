@@ -239,6 +239,25 @@ test("the cost view splits actuators from the rest of the robot where a full BOM
     expect(kbot.container.querySelector(".hm-donut-ring")).toBeNull();
 });
 
+test("rare earth is broken down by actuator design, matching the BOM grouping", () => {
+    setURL("/humanoids?robot=tesla-optimus");
+    const view = render(<Humanoids />);
+    const ree = view.container.querySelector(".hm-card .ree")!;
+    expect(ree.querySelector(".ree-title")?.textContent).toBe("Rare earth by actuator, estimated");
+    const names = [...ree.querySelectorAll(".ree-name")].map((n) => n.textContent);
+    expect(names[0]).toBe("Harmonic 180 N·m x6");
+    expect(names).toContain("Hand (tendon) x12");
+    expect(names).toContain("Undisclosed, XS class x2");
+    expect(names).toHaveLength(8);
+    // The legend carries the robot's per-element totals; the old text line is gone.
+    const key = [...ree.querySelectorAll(".ree-key span")].map((k) => k.textContent);
+    expect(key[0]).toBe("Nd neodymium337-700 g");
+    expect(view.container.querySelector(".hm-ree")).toBeNull();
+    // Values fall from largest to smallest.
+    const vals = [...ree.querySelectorAll(".ree-val")].map((v) => Number(v.textContent?.replace(/[^0-9]/g, "")));
+    expect([...vals].sort((a, b) => b - a)).toEqual(vals);
+});
+
 test("the BOM notes the price share and what it leaves out", () => {
     setURL("/humanoids?robot=unitree-g1");
     const g1 = render(<Humanoids />);

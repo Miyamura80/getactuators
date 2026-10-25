@@ -4,7 +4,6 @@ import {
     ACTUATOR_TYPES,
     type HumanoidTotals,
     reeTotalKg,
-    type Sourced,
 } from "../../../../src/humanoids";
 
 const kgText = (s: { value: number; range?: readonly [number, number] }) =>
@@ -33,17 +32,7 @@ export function MixBar({ totals, compact = false }: { totals: HumanoidTotals; co
     );
 }
 
-function Ree({ label, s }: { label: string; s: Sourced<number> }) {
-    const g = (x: number) => Math.round(x * 1000);
-    return (
-        <span>
-            <b>{label}</b>
-            {s.range ? `${g(s.range[0])}-${g(s.range[1])} g` : `${g(s.value)} g`}
-        </span>
-    );
-}
-
-export function Totals({ totals, dof, hideRee = false }: { totals: HumanoidTotals; dof: number | null; hideRee?: boolean }) {
+export function Totals({ totals, dof }: { totals: HumanoidTotals; dof: number | null }) {
     const ree = reeTotalKg(totals);
     return (
         <div className="hm-totals">
@@ -68,13 +57,6 @@ export function Totals({ totals, dof, hideRee = false }: { totals: HumanoidTotal
                 </div>
             </div>
             <MixBar totals={totals} />
-            {!hideRee && <div className="hm-ree" aria-label="Rare earths by element">
-                <Ree label="Nd" s={totals.reeKg.nd} />
-                <Ree label="Pr" s={totals.reeKg.pr} />
-                <Ree label="Dy" s={totals.reeKg.dy} />
-                <Ree label="Tb" s={totals.reeKg.tb} />
-                <em>estimated</em>
-            </div>}
         </div>
     );
 }
