@@ -80,6 +80,8 @@ export interface RobotJoint {
 // fallback art.
 export type RobotKind = "robot_arm" | "humanoid";
 
+export type RobotAvailability = "shipping" | "preorder" | "quote_only" | "discontinued";
+
 export interface Robot {
     id: string;
     name: string;
@@ -102,6 +104,19 @@ export interface Robot {
     image_fit?: "contain" | "cover";
     // Build-time crop for the photo script; not used at runtime.
     image_crop?: [number, number, number, number];
+    // Researched buying, power and openness facts. Optional so a robot can be
+    // listed before it has been researched.
+    power?: "battery" | "mains";
+    // Best quoted runtime per charge; runtime_note carries editions or caveats.
+    runtime_h?: number | null;
+    runtime_note?: string | null;
+    // What the maker publishes: mechanical CAD, a URDF/MJCF model, SDK source
+    // and a bill of materials.
+    openness?: { cad: boolean; urdf: boolean; sdk: boolean; bom: boolean };
+    // Whether the joint actuators are the maker's own design or bought in.
+    actuator_sourcing?: "in_house" | "off_the_shelf" | null;
+    availability?: RobotAvailability;
+    lead_time?: string | null;
     summary: string;
     joints: RobotJoint[];
     sources: string[];

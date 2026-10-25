@@ -177,6 +177,45 @@ export function actuatorTable(list: readonly Actuator[]): string {
     );
 }
 
+const AVAILABILITY: Record<NonNullable<Robot["availability"]>, string> = {
+    shipping: "shipping",
+    preorder: "pre-order",
+    quote_only: "quote only",
+    discontinued: "discontinued",
+};
+
+function runtimeFact(r: Robot): string | null {
+    if (r.power === "mains") return "Runtime: mains-powered";
+    if (r.power !== "battery") return null;
+    const value = r.runtime_h == null ? "not published" : `${r.runtime_h} h`;
+    return `Runtime: ${value}${r.runtime_note ? ` (${mdText(r.runtime_note)})` : ""}`;
+}
+
+function opennessFact(r: Robot): string | null {
+    const o = r.openness;
+    if (!o) return null;
+    const parts = [
+        o.cad && "CAD",
+        o.urdf && "URDF",
+        o.sdk && "SDK source",
+        o.bom && "BOM",
+    ].filter(Boolean);
+    return `Published: ${parts.length ? parts.join(", ") : "none"}`;
+}
+
+// Power, buying and openness facts, for robots that have been researched.
+function researchFacts(r: Robot): string[] {
+    const sourcing = r.actuator_sourcing
+        ? `Actuators: ${r.actuator_sourcing === "in_house" ? "designed in-house" : "bought off the shelf"}`
+        : null;
+    const availability = r.availability
+        ? `Availability: ${AVAILABILITY[r.availability]}${r.lead_time ? ` (${mdText(r.lead_time)})` : ""}`
+        : null;
+    return [runtimeFact(r), sourcing, opennessFact(r), availability].filter(
+        (x): x is string => x != null,
+    );
+}
+
 export function robotSection(r: Robot, level = 2): string {
     const h = "#".repeat(level);
     const facts = [
@@ -189,6 +228,7 @@ export function robotSection(r: Robot, level = 2): string {
             : `Reach: ${num(r.reach_mm, "mm", 0)}`,
         `Weight: ${num(r.weight_kg, "kg", 2)}`,
         `Price: ${usd(r.price_usd)}${r.price_max_usd ? ` to ${usd(r.price_max_usd)}` : ""}`,
+        ...researchFacts(r),
     ];
     const joints = resolveJoints(r).map((j) => [
         mdText(j.role),
