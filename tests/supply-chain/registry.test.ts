@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { auditRegistry, uncitedNumbers } from "@/supply-chain/audit";
 import { COMPANIES, SEGMENTS } from "@/supply-chain/companies";
 import { SUPPLY_LINKS } from "@/supply-chain/links";
+import { SEGMENT_MARKETS } from "@/supply-chain/market-share";
 import {
     companiesIn,
     findCompanies,
@@ -42,6 +43,22 @@ describe("supply-chain registry", () => {
             for (const v of [c.revenue, c.grossMargin])
                 if (v && v.confidence !== "reported")
                     expect(Boolean(v.note || v.range), c.id).toBe(true);
+    });
+});
+
+describe("market share", () => {
+    test("every segment has a cited market with at least one share", () => {
+        expect(SEGMENT_MARKETS.map((m) => m.segment).sort()).toEqual(
+            [...SEGMENTS].sort(),
+        );
+        for (const m of SEGMENT_MARKETS) {
+            expect(Object.keys(m.shares).length, m.segment).toBeGreaterThan(0);
+            for (const s of Object.values(m.shares)) {
+                expect(s.unit).toBe("fraction");
+                expect(s.value).toBeGreaterThan(0);
+                expect(s.value).toBeLessThan(1);
+            }
+        }
     });
 });
 

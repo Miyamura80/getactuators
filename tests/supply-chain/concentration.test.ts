@@ -1,26 +1,14 @@
 import { describe, expect, test } from "bun:test";
-import { concentration, levelFor, normalizeShares } from "@/supply-chain/concentration";
+import { concentration, normalizeShares } from "@/supply-chain/concentration";
+import { countryFlag } from "@/supply-chain/countries";
 import { formatValue, sourcedText } from "@/supply-chain/format";
-import { LAB_STAGE_SHARES, LAB_SYNTHETIC_SHARES } from "@/supply-chain/lab-fixtures";
+import { LAB_MINING_HHI, LAB_STAGE_SHARES } from "@/supply-chain/lab-fixtures";
 
-describe("concentration thresholds", () => {
-    test("top share at 70% is monopolized regardless of HHI", () => {
-        expect(levelFor(0.7, 4900)).toBe("monopolized");
-        expect(levelFor(0.6999, 4899)).toBe("concentrated");
-    });
-
-    test("HHI bands", () => {
-        expect(levelFor(0.4, 2500)).toBe("concentrated");
-        expect(levelFor(0.4, 2499)).toBe("moderate");
-        expect(levelFor(0.3, 1500)).toBe("moderate");
-        expect(levelFor(0.3, 1499)).toBe("distributed");
-    });
-
-    test("single country is a full monopoly", () => {
+describe("concentration", () => {
+    test("single country holds everything", () => {
         expect(concentration({ CN: 1 })).toEqual({
             top: { country: "CN", share: 1 },
             hhi: 10000,
-            level: "monopolized",
         });
     });
 
@@ -43,14 +31,20 @@ describe("concentration thresholds", () => {
         expect(concentration({ JP: 0.5, KR: 0.2 })?.hhi).toBe(2900);
     });
 
-    test("the cited lab stages read as the issue expects", () => {
-        const levels = LAB_STAGE_SHARES.map(
-            (r) => concentration(r.shares.value)?.level,
+    test("the cited lab stages and the modeled HHI agree", () => {
+        const tops = LAB_STAGE_SHARES.map(
+            (r) => concentration(r.shares.value)?.top.country,
         );
-        expect(levels).toEqual(["concentrated", "monopolized", "monopolized"]);
-        expect(LAB_SYNTHETIC_SHARES.map((r) => concentration(r.shares)?.level)).toEqual(
-            ["moderate", "distributed"],
+        expect(tops).toEqual(["CN", "CN", "CN"]);
+        expect(concentration(LAB_STAGE_SHARES[0]?.shares.value ?? {})?.hhi).toBe(
+            LAB_MINING_HHI.value,
         );
+    });
+
+    test("flags come from regional indicator symbols", () => {
+        expect(countryFlag("CN")).toBe("\u{1F1E8}\u{1F1F3}");
+        expect(countryFlag("jp")).toBe("\u{1F1EF}\u{1F1F5}");
+        expect(countryFlag("other")).toBe("other");
     });
 });
 

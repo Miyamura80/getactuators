@@ -19,7 +19,9 @@ test("the lab twin renders markdown footnotes and a Sources section", async () =
     ]) {
         expect(res.status).toBe(200);
         const md = await res.text();
-        expect(md).toContain("| Separation | CN 91%[^");
+        expect(md).toContain("| Separation | 🇨🇳 CN 91%[^");
+        expect(md).toContain("| AgiBot | 🇨🇳 CN | 39%[^");
+        expect(md).toContain("| Harmonic Drive Systems | 🇯🇵 JP | - |");
         expect(md).toContain("MP Materials revenue: $224.4M[^");
         expect(md).toContain("~$5.8-6B[^");
         expect(md).toContain("(model");

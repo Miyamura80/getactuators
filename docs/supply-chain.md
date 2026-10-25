@@ -15,7 +15,8 @@ Pages hold content; numbers live in the registry and are referenced by id.
  +-- sites/            HQs, plants, mines with lat/lon and pin precision
  +-- links.ts          SupplyLink: who sells what to whom
  +-- registry.ts       accessors: getCompany, companiesIn, sitesOf, linksOf, find*
- +-- concentration.ts  concentration(shares) -> top, HHI, level
+ +-- concentration.ts  normalizeShares, concentration(shares) -> top, HHI
+ +-- market-share.ts   cited company share of one market per segment
  +-- format.ts         value formatting shared by React and markdown
  +-- audit.ts          integrity checks behind tests and scripts/citation-audit.ts
  +-- views.ts          REST and MCP wire shapes
@@ -46,23 +47,33 @@ Pages hold content; numbers live in the registry and are referenced by id.
 Footnotes are numbered in first-cited order on both surfaces, and
 `<SourcesSection>` / `footnotes().section()` list them at the end.
 
-## Is a stage monopolized?
+## Country share by stage
 
-`concentration(shares)` takes country shares (fractions or raw amounts; the
-`other` key is unattributed volume) and returns the top country, the HHI over
-named countries and a level:
+`<StageShareBar rows>` draws one stacked bar per stage, countries largest
+first and the unattributed rest as a grey "Other". The bar itself shows
+whether one country dominates; there is no separate badge. Segments carry
+flag emoji from `countryFlag(code)` in `countries.ts`, with the country name
+as the accessible label (use `<Flag code>` in React).
 
-| Level | Rule | Badge |
-|-------|------|-------|
-| monopolized | top country 70% or more | Infra Red outline |
-| concentrated | HHI 2,500 or more | grey |
-| moderate | HHI 1,500 to 2,499 | grey |
-| distributed | HHI under 1,500 | Circuit Green outline |
+`concentration(shares)` returns the top country and the HHI over named
+countries for markdown twins and modeled values (fractions or raw amounts;
+the `other` key is unattributed volume).
 
-`<StageShareBar rows>` draws one stacked bar per stage with the badge at the
-end. Every kit component renders with fixtures on the hidden
-`/lab/supply-chain` page (noindex, not in the sitemap or llms.txt); check it
-after changing any of them.
+## Market share by segment
+
+`src/supply-chain/market-share.ts` holds one market per segment (for example
+rare earth mine production or humanoid robot shipments) with a cited share per
+company. `<MarketShareList>` renders a thin bar and the percentage per company,
+a dash where no public share exists, and "Other" for the rest. The audit checks
+each share belongs to a company in that segment and that shares add up to at
+most 100%. Never fill a gap with a guess: leave the company out of `shares`.
+
+## The kit page
+
+Every kit component renders with fixtures on the hidden `/lab/supply-chain`
+page (noindex, not in the sitemap or llms.txt); check it after changing any
+of them. `<SourcesSection>` is a `<details>` closed by default; footnote links
+open it before scrolling to the entry.
 
 ## Adding a page
 

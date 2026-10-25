@@ -26,6 +26,16 @@ export function countryName(code: string): string {
     return code in COUNTRIES ? COUNTRIES[code as CountryCode].name : code;
 }
 
+// Flag emoji from the two regional indicator symbols of an ISO alpha-2 code
+// ("CN" -> U+1F1E8 U+1F1F3). Pair it with countryName() as the accessible label.
+export function countryFlag(code: string): string {
+    const upper = code.toUpperCase();
+    if (!/^[A-Z]{2}$/.test(upper)) return code;
+    return String.fromCodePoint(
+        ...[...upper].map((c) => 0x1f1e6 + c.charCodeAt(0) - 65),
+    );
+}
+
 export function insideCountry(code: CountryCode, lat: number, lon: number): boolean {
     const [minLat, minLon, maxLat, maxLon] = COUNTRIES[code].bbox;
     return lat >= minLat && lat <= maxLat && lon >= minLon && lon <= maxLon;

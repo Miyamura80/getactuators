@@ -2,9 +2,8 @@ import { type Shares, concentration } from "./concentration";
 import type { Sourced } from "./sourced";
 
 // Fixtures for /lab/supply-chain, the hidden page that renders every shared
-// kit component. The stage shares are real and cited (the /metals dataset
-// will own the full series); the synthetic states exist only to show the two
-// badge levels no cited stage reaches yet, and are labelled as such.
+// kit component. The stage shares are real and cited; the /metals dataset
+// will own the full series.
 
 export const LAB_PATH = "/lab/supply-chain";
 
@@ -12,7 +11,6 @@ export interface StageShareRow {
     id: string;
     label: string;
     shares: Sourced<Shares>;
-    synthetic?: boolean;
 }
 
 // USGS 2025 figures are themselves estimates ("e" in the table), so the row
@@ -50,29 +48,6 @@ export const LAB_STAGE_SHARES: StageShareRow[] = [
             asOf: "2024",
             confidence: "estimated",
             note: "Share of sintered permanent magnet output.",
-        },
-    },
-];
-
-// Not data. Lab-only shapes for the moderate and distributed badge states.
-export const LAB_SYNTHETIC_SHARES: { id: string; label: string; shares: Shares }[] = [
-    {
-        id: "synthetic-moderate",
-        label: "Synthetic A",
-        shares: { JP: 0.38, CN: 0.22, KR: 0.15, US: 0.12, other: 0.13 },
-    },
-    {
-        id: "synthetic-distributed",
-        label: "Synthetic B",
-        shares: {
-            US: 0.2,
-            JP: 0.17,
-            CN: 0.16,
-            KR: 0.14,
-            AU: 0.1,
-            TH: 0.08,
-            MM: 0.05,
-            other: 0.1,
         },
     },
 ];

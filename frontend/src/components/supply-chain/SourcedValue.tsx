@@ -1,11 +1,12 @@
-import { useId, useState } from "react";
+import { useId } from "react";
 import { formatSourced } from "../../../../src/supply-chain/format";
 import { CONFIDENCE_LABEL, type Confidence, type Sourced, type SourceId } from "../../../../src/supply-chain/sourced";
 import { getSource } from "../../../../src/supply-chain/sources";
 import { footnoteAnchor, useFootnotes } from "./footnotes";
 
-// Superscript footnote numbers for a set of sources. Hover, focus or tap
-// opens a card with publisher, title, as-of date and confidence.
+// Superscript footnote links for a set of sources. Hover or focus shows a
+// card with publisher, title, as-of date and confidence; a click or tap
+// jumps to the entry in <SourcesSection>, opening it if collapsed.
 export function FootnoteRef({ sources, asOf, confidence, note }: {
     sources: readonly SourceId[];
     asOf: string;
@@ -13,16 +14,13 @@ export function FootnoteRef({ sources, asOf, confidence, note }: {
     note?: string;
 }) {
     const footnotes = useFootnotes();
-    const [open, setOpen] = useState(false);
     const tipId = useId();
     const numbers = sources.map((id) => footnotes.number(id));
-    return <span className={`sc-ref${open ? " is-open" : ""}`} onMouseLeave={() => setOpen(false)}>
-        <button type="button" aria-expanded={open} aria-describedby={tipId}
-            aria-label={`Source ${numbers.join(", ")}`}
-            onClick={() => setOpen((o) => !o)}
-            onKeyDown={(event) => { if (event.key === "Escape") setOpen(false); }}>
-            <sup>{numbers.join(",")}</sup>
-        </button>
+    return <span className="sc-ref">
+        <sup>
+            {numbers.map((n, i) => <span key={n}>{i > 0 ? "," : null}<a href={`#${footnoteAnchor(n)}`}
+                aria-describedby={tipId} aria-label={`Source ${n}`}>{n}</a></span>)}
+        </sup>
         <span role="tooltip" id={tipId} className="sc-tip">
             {sources.map((id, i) => {
                 const s = getSource(id);
@@ -36,7 +34,6 @@ export function FootnoteRef({ sources, asOf, confidence, note }: {
                 <span className={`sc-conf sc-conf-${confidence}`}>{CONFIDENCE_LABEL[confidence]}</span>
             </span>
             {note ? <span className="sc-tip-note">{note}</span> : null}
-            <a href={`#${footnoteAnchor(numbers[0] ?? 1)}`}>All sources</a>
         </span>
     </span>;
 }

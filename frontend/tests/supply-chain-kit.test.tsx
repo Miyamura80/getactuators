@@ -1,7 +1,7 @@
 import "./happydom";
 import { afterEach, expect, test } from "bun:test";
 import { cleanup, fireEvent, render } from "@testing-library/react";
-import { ConcentrationBadge } from "../src/components/supply-chain/ConcentrationBadge";
+import { MarketShareList } from "../src/components/supply-chain/MarketShareList";
 import { ConfidenceLegend } from "../src/components/supply-chain/ConfidenceLegend";
 import { FootnotesProvider } from "../src/components/supply-chain/footnotes";
 import { SourcedValue } from "../src/components/supply-chain/SourcedValue";
@@ -11,6 +11,8 @@ import { PublicHeader } from "../src/components/PublicHeader";
 import { SupplyChainLab } from "../src/pages/supply-chain/SupplyChainLab";
 import { supplyChainMenu, SUPPLY_CHAIN_PAGES_LIVE } from "../../src/public-navigation";
 import type { Sourced } from "../../src/supply-chain/sourced";
+import { COMPANIES } from "../../src/supply-chain/companies";
+import { marketOf } from "../../src/supply-chain/market-share";
 
 afterEach(cleanup);
 
@@ -36,35 +38,51 @@ test("SourcedValue styles each confidence and numbers sources in first-cited ord
     expect(sources[0]?.id).toBe("sc-source-1");
     expect(sources[0]?.textContent).toContain("USGS");
     expect(sources[1]?.textContent).toContain("IEA");
+    const details = view.container.querySelector("details.sc-sources") as HTMLDetailsElement;
+    expect(details.open).toBe(false);
+    expect(details.querySelector("summary")?.textContent).toBe("Sources (2)");
+    const link = values[1]?.querySelector('sup a[href="#sc-source-2"]') as HTMLAnchorElement;
+    fireEvent.click(link);
+    expect(details.open).toBe(true);
 });
 
-test("footnote card opens on tap and closes on Escape", () => {
+test("footnote card carries publisher, as-of, confidence and method", () => {
     const view = render(<FootnotesProvider><SourcedValue value={estimated} /></FootnotesProvider>);
-    const button = view.container.querySelector(".sc-ref button")!;
-    fireEvent.click(button);
-    expect(button.getAttribute("aria-expanded")).toBe("true");
+    const link = view.container.querySelector(".sc-ref sup a")!;
     const tip = view.container.querySelector('[role="tooltip"]')!;
+    expect(link.getAttribute("aria-describedby")).toBe(tip.id);
+    expect(tip.textContent).toContain("IEA");
     expect(tip.textContent).toContain("As of 2025");
     expect(tip.textContent).toContain("Estimate");
     expect(tip.textContent).toContain("Method.");
-    fireEvent.keyDown(button, { key: "Escape" });
-    expect(button.getAttribute("aria-expanded")).toBe("false");
 });
 
-test("ConcentrationBadge and StageShareBar read the level at a glance", () => {
-    const badge = render(<ConcentrationBadge level="monopolized" top={{ country: "CN", share: 0.94 }} />);
-    expect(badge.container.textContent).toBe("MonopolizedCN 94%");
-    expect(badge.container.querySelector(".sc-badge-monopolized")).not.toBeNull();
-    cleanup();
+test("StageShareBar orders countries with flags and keeps names accessible", () => {
     const bars = render(<FootnotesProvider><StageShareBar rows={[
         { id: "a", label: "Mining", shares: { CN: 270, US: 51, other: 69 } },
-        { id: "b", label: "Spread", shares: { US: 0.2, JP: 0.2, KR: 0.2, CN: 0.2, AU: 0.2 } },
     ]} /></FootnotesProvider>);
-    const rows = [...bars.container.querySelectorAll(".sc-stage")];
-    const segs = [...(rows[0]?.querySelectorAll(".sc-seg") ?? [])].map((s) => s.getAttribute("title"));
-    expect(segs).toEqual(["China 69%", "United States 13%", "Other 18%"]);
-    expect(rows[0]?.querySelector(".sc-badge-concentrated")).not.toBeNull();
-    expect(rows[1]?.querySelector(".sc-badge-moderate")).not.toBeNull();
+    const segs = [...bars.container.querySelectorAll(".sc-seg")];
+    expect(segs.map((s) => s.getAttribute("title"))).toEqual(["China 69%", "United States 13%", "Other 18%"]);
+    expect(segs[0]?.textContent).toBe("\u{1F1E8}\u{1F1F3} 69%");
+    expect(bars.container.querySelector(".sc-bar")?.getAttribute("aria-label")).toBe("Mining: China 69%, United States 13%, Other 18%");
+    expect(bars.container.querySelector(".sc-badge")).toBeNull();
+});
+
+test("MarketShareList shows cited shares, dashes and Other", () => {
+    const view = render(<FootnotesProvider><MarketShareList
+        companies={COMPANIES.filter((c) => c.segment === "robot-actuator-oem")}
+        market={marketOf("robot-actuator-oem")} /></FootnotesProvider>);
+    const rows = [...view.container.querySelectorAll(".sc-share li")];
+    expect(rows[0]?.querySelector(".sc-share-name")?.textContent).toBe("AgiBot");
+    expect(rows[0]?.querySelector(".sc-num")?.textContent).toBe("39%");
+    expect(rows[0]?.querySelector('[role="img"]')?.getAttribute("aria-label")).toBe("China");
+    const tesla = rows.find((r) => r.textContent?.includes("Tesla"));
+    expect(tesla?.querySelector(".sc-num")?.textContent).toBe("~1-4%");
+    const fanuc = rows.find((r) => r.textContent?.includes("FANUC"));
+    expect(fanuc?.classList.contains("sc-share-none")).toBe(true);
+    expect(fanuc?.querySelector(".sc-share-fill")).toBeNull();
+    expect(rows.at(-1)?.textContent).toContain("Other");
+    expect(view.container.querySelector(".sc-share-cap")?.textContent).toContain("Humanoid robot shipments");
 });
 
 test("legend shows all three confidence styles", () => {
@@ -89,8 +107,9 @@ test("supply-chain menu stays hidden until a page is live", () => {
 test("lab page renders every kit component", () => {
     const view = render(<SupplyChainLab />);
     const c = view.container;
-    expect(c.querySelectorAll(".sc-stage")).toHaveLength(5);
-    expect(c.querySelectorAll(".sc-lab-levels .sc-badge")).toHaveLength(4);
+    expect(c.querySelectorAll(".sc-stage")).toHaveLength(3);
+    expect(c.querySelectorAll(".sc-badge")).toHaveLength(0);
+    expect(c.querySelectorAll(".sc-share")).toHaveLength(4);
     expect(c.querySelector(".sc-legend")).not.toBeNull();
     expect(c.querySelectorAll(".sc-lab-readouts .sc-value")).toHaveLength(4);
     expect(c.querySelectorAll(".sc-sources li").length).toBeGreaterThanOrEqual(4);

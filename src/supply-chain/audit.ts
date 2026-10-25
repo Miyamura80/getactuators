@@ -2,6 +2,7 @@ import { COMPANIES } from "./companies";
 import { insideCountry } from "./countries";
 import { LAB_MINING_HHI, LAB_STAGE_SHARES } from "./lab-fixtures";
 import { SUPPLY_LINKS } from "./links";
+import { SEGMENT_MARKETS } from "./market-share";
 import {
     companySchema,
     siteSchema,
@@ -27,6 +28,7 @@ const DATASETS: Record<string, unknown> = {
     links: SUPPLY_LINKS,
     "lab-stage-shares": LAB_STAGE_SHARES,
     "lab-values": [LAB_MINING_HHI],
+    "market-share": SEGMENT_MARKETS,
 };
 
 // Numbers that need no citation of their own: coordinates (the site carries
@@ -114,6 +116,25 @@ function referenceErrors(): string[] {
         for (const end of [l.from, l.to])
             if (!companies.has(end))
                 errors.push(`link ${l.from} -> ${l.to}: unknown company "${end}"`);
+    return [...errors, ...marketErrors()];
+}
+
+// Shares belong to companies in that segment and add up to at most 100%.
+function marketErrors(): string[] {
+    const errors: string[] = [];
+    for (const m of SEGMENT_MARKETS) {
+        let total = 0;
+        for (const [id, s] of Object.entries(m.shares)) {
+            total += s.value;
+            const c = COMPANIES.find((x) => x.id === id);
+            if (c?.segment !== m.segment)
+                errors.push(
+                    `market ${m.segment}: "${id}" is not a company in this segment`,
+                );
+        }
+        if (total > 1 + 1e-9)
+            errors.push(`market ${m.segment}: shares add up to ${total}`);
+    }
     return errors;
 }
 

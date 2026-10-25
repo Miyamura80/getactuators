@@ -1,5 +1,5 @@
-/* Supply-chain kit: citations, confidence styles and the concentration
-   badge. Instrument HUD per BRAND.md: square, thin rules, numbers in mono. */
+/* Supply-chain kit: citations, confidence styles, share bars and market
+   share lists. Instrument HUD per BRAND.md: square, thin rules, numbers in mono. */
 
 /* Values by confidence */
 .sc-value { display: inline-flex; align-items: baseline; gap: 4px; font-family: var(--mono); font-variant-numeric: tabular-nums; }
@@ -17,18 +17,17 @@
 
 /* Footnote ref and its card */
 .sc-ref { position: relative; display: inline-flex; }
-.sc-ref > button {
-    min-width: 18px;
-    padding: 0 2px;
-    border: 0;
-    background: none;
+.sc-ref sup { line-height: 1; }
+.sc-ref sup { padding-left: 2px; }
+.sc-ref sup > span { color: var(--cyan); font: 600 11px var(--mono); }
+.sc-ref sup a {
+    padding: 0;
     color: var(--cyan);
     font: 600 11px var(--mono);
-    cursor: pointer;
-    line-height: 1;
+    text-decoration: none;
 }
-.sc-ref > button sup { vertical-align: super; font-size: 1em; }
-.sc-ref > button:focus-visible { outline: 1px solid var(--cyan); outline-offset: 1px; }
+.sc-ref sup a:hover { text-decoration: underline; }
+.sc-ref sup a:focus-visible { outline: 1px solid var(--cyan); outline-offset: 1px; }
 .sc-tip {
     position: absolute;
     top: calc(100% + 6px);
@@ -45,14 +44,12 @@
     white-space: normal;
 }
 .sc-ref:hover .sc-tip,
-.sc-ref:focus-within .sc-tip,
-.sc-ref.is-open .sc-tip { display: grid; gap: 8px; }
+.sc-ref:focus-within .sc-tip { display: grid; gap: 8px; }
 .sc-tip-src { display: grid; grid-template-columns: 16px 1fr; gap: 6px; }
 .sc-tip-src > b { font: 600 11px/1.5 var(--mono); color: var(--cyan); }
 .sc-tip-pub { display: block; font: 600 10px/1.4 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
 .sc-tip-meta { display: flex; justify-content: space-between; gap: 8px; padding-top: 8px; border-top: 1px solid var(--line); font: 11px var(--mono); color: var(--muted); }
 .sc-tip-note { font-size: 11px; color: var(--muted); }
-.sc-tip a { font: 11px var(--mono); color: var(--cyan); }
 .sc-conf { text-transform: uppercase; letter-spacing: 0.06em; }
 .sc-conf-reported { color: var(--text); }
 
@@ -62,53 +59,80 @@
 .sc-legend li + li { border-left: 1px solid var(--line); }
 .sc-legend-label { font: 600 10px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 
-/* Concentration badge */
-.sc-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 4px 8px;
-    border: 1px solid var(--line-strong);
-    font: 600 10px/1.2 var(--mono);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--muted);
-    white-space: nowrap;
-}
-.sc-badge > span { font-weight: 400; letter-spacing: 0.02em; color: var(--text); }
-.sc-badge-monopolized { border-color: var(--red); color: var(--red); }
-.sc-badge-distributed { border-color: var(--green); color: var(--green); }
+/* Flags */
+.sc-flag { display: inline-block; width: 1.4em; font-family: "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", var(--sans); line-height: 1; }
 
 /* Stage share bars */
 .sc-stages { display: grid; border: 1px solid var(--line); }
 .sc-stage {
     display: grid;
-    grid-template-columns: 210px minmax(0, 1fr) 190px;
+    grid-template-columns: 180px minmax(0, 1fr);
     align-items: center;
     gap: 16px;
     padding: 12px 16px;
 }
 .sc-stage + .sc-stage { border-top: 1px solid var(--line); }
 .sc-stage-label { display: flex; align-items: baseline; gap: 4px; font-size: 14px; min-width: 0; }
-.sc-stage-label .sc-tag { margin-left: 6px; }
-.sc-bar { display: flex; height: 26px; gap: 1px; background: var(--black); min-width: 0; }
+.sc-bar { display: flex; height: 28px; gap: 1px; background: var(--black); min-width: 0; }
 .sc-seg {
     display: flex;
     align-items: center;
     min-width: 2px;
     overflow: hidden;
-    padding: 0 6px;
-    font: 600 11px var(--mono);
+    padding: 0 8px;
+    font: 600 12px var(--mono);
     font-variant-numeric: tabular-nums;
     color: #000;
     white-space: nowrap;
 }
 .sc-seg-other { background: var(--line-strong); color: var(--muted); }
-.sc-stage-badge { display: flex; justify-content: flex-end; }
+.sc-seg .sc-flag { width: auto; margin-right: 4px; font-size: 14px; }
+
+/* Market share list */
+.sc-share-cap { margin: -4px 0 12px; font: 11px/1.4 var(--mono); color: #6b7375; }
+.sc-share ul { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.sc-share li {
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr) minmax(60px, 140px) 104px;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+}
+.sc-share-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sc-share-track { height: 6px; background: var(--panel-2); border: 1px solid var(--line); }
+.sc-share-fill { display: block; height: 100%; background: var(--cyan-dim); }
+.sc-share-fill.sc-share-estimated { background: repeating-linear-gradient(90deg, var(--cyan-dim) 0 3px, transparent 3px 5px); }
+.sc-share-fill.sc-share-modeled { background: var(--muted); }
+.sc-share .sc-tag { display: none; }
+.sc-share-pct { justify-self: end; font: 12px var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.sc-share-none .sc-share-name { color: var(--muted); }
+.sc-share-none .sc-share-track { border-color: transparent; background: none; }
+.sc-share-none .sc-share-pct { color: #5f6668; }
+.sc-share-other { padding-top: 8px; border-top: 1px dashed var(--line); color: var(--muted); }
+.sc-share-other .sc-share-fill { background: var(--line-strong); }
 
 /* Sources */
 .sc-sources { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line); }
-.sc-sources h2 { margin: 0 0 12px; font: 600 11px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.sc-sources > summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    margin-top: -12px;
+    font: 600 11px/1 var(--mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    cursor: pointer;
+    list-style: none;
+}
+.sc-sources > summary::-webkit-details-marker { display: none; }
+.sc-sources > summary::before { content: "+"; width: 12px; color: var(--cyan); }
+.sc-sources[open] > summary::before { content: "\2212"; }
+.sc-sources > summary span { color: var(--cyan); }
+.sc-sources > summary:hover { color: var(--text); }
+.sc-sources > summary:focus-visible { outline: 1px solid var(--cyan); outline-offset: 2px; }
+.sc-sources[open] > ol { margin-top: 8px; }
 .sc-sources ol { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
 .sc-sources li { display: grid; grid-template-columns: 28px 1fr; gap: 8px; font-size: 13px; line-height: 1.45; scroll-margin-top: 24px; }
 .sc-sources li:target { outline: 1px solid var(--cyan); outline-offset: 4px; }
@@ -119,9 +143,8 @@
 .sc-sources-meta { display: block; font: 11px var(--mono); color: #6b7375; }
 
 @media (max-width: 720px) {
-    .sc-stage { grid-template-columns: minmax(0, 1fr) auto; gap: 8px 12px; padding: 12px; }
-    .sc-bar { grid-column: 1 / -1; grid-row: 2; }
-    .sc-stage-badge { grid-row: 1; grid-column: 2; }
+    .sc-stage { grid-template-columns: 1fr; gap: 8px; padding: 12px; }
+    .sc-share li { grid-template-columns: 22px minmax(0, 1fr) 48px 96px; gap: 8px; }
     .sc-legend { width: 100%; }
     .sc-legend li { flex: 1 1 0; flex-direction: column; gap: 4px; padding: 8px 10px; }
 }

@@ -212,6 +212,69 @@ export const SOURCES: SourceRef[] = [
         "https://static.cninfo.com.cn/finalpage/2025-05-01/1223450927.PDF",
         "filing",
     ),
+    // Market shares (src/supply-chain/market-share.ts)
+    src(
+        "usgs-mcs-2025-ree",
+        "USGS",
+        "Mineral Commodity Summaries 2025: Rare Earths",
+        "https://pubs.usgs.gov/periodicals/mcs2025/mcs2025-rare-earths.pdf",
+        "government",
+    ),
+    {
+        ...src(
+            "fastmarkets-ree-quota-2024-1",
+            "Fastmarkets",
+            "China issues first batch of rare earths quotas for 2024",
+            "https://fastmarkets.com/insights/china-issues-first-batch-of-rare-earths-quotas-for-2024",
+            "press",
+        ),
+        paywalled: true,
+    },
+    src(
+        "asianmetal-ree-quota-2024-2",
+        "Asian Metal",
+        "China issues second batch of rare earth production quotas for 2024",
+        "https://www.asianmetal.com/news/2100201/China-issues-second-batch-of-rare-earth-production-quotas-for-2024",
+        "press",
+    ),
+    src(
+        "mp-results-fy2024",
+        "MP Materials",
+        "MP Materials Reports Fourth Quarter and Full Year 2024 Results",
+        "https://mpmaterials.com/news/mp-materials-reports-fourth-quarter-and-full-year-2024-results",
+        "filing",
+    ),
+    src(
+        "smm-jlmag-2024-briefing",
+        "SMM",
+        "JL MAG 2024 online performance briefing",
+        "https://www.metal.com/en/newscontent/103258211",
+        "press",
+    ),
+    {
+        ...src(
+            "qyresearch-ndfeb-2025",
+            "QYResearch via DRI",
+            "NdFeB Magnets: Global Market Share and Ranking",
+            "https://www.dri.co.jp/auto/report/qyr/251013-ndfeb-magnets-global-market-share-and.html",
+            "industry-report",
+        ),
+        paywalled: true,
+    },
+    src(
+        "technode-omdia-humanoid-2025",
+        "TechNode",
+        "China's AgiBot leads global humanoid robot shipments in 2025, Omdia says",
+        "https://technode.com/2026/01/09/chinas-agibot-leads-global-humanoid-robot-shipments-in-2025-omdia-says/",
+        "press",
+    ),
+    src(
+        "chinadaily-humanoid-2025",
+        "China Daily (Xinhua)",
+        "Chinese firms lead global humanoid robot production in 2025: report",
+        "https://investinchina.chinadaily.com.cn/s/202601/12/WS6964b698498e23165e06cba4/chinese-firms-lead-global-humanoid-robot-production-in-2025-report.html",
+        "press",
+    ),
     // Company sites, cited for headquarters and product lines
     src(
         "fanuc-site",
