@@ -61,7 +61,8 @@ test("MarketShareList shows cited shares, dashes and Other", () => {
         companies={COMPANIES.filter((c) => c.segment === "robot-actuator-oem")}
         market={marketOf("robot-actuator-oem")} /></FootnotesProvider>);
     const rows = [...view.container.querySelectorAll(".sc-share li")];
-    expect(rows[0]?.querySelector(".sc-share-name")?.textContent).toBe("AgiBot");
+    expect(rows[0]?.querySelector(".sc-share-name > span:last-child")?.textContent).toBe("AgiBot");
+    expect(rows[0]?.querySelector(".sc-share-name .company-logo")).not.toBeNull();
     expect(rows[0]?.querySelector(".sc-num")?.textContent).toBe("39%");
     expect(rows[0]?.querySelector('[role="img"]')?.getAttribute("aria-label")).toBe("China");
     const tesla = rows.find((r) => r.textContent?.includes("Tesla"));

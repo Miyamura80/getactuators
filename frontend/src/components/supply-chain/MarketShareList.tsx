@@ -1,6 +1,7 @@
 import type { Company } from "../../../../src/supply-chain/companies";
 import { percent } from "../../../../src/supply-chain/format";
 import type { SegmentMarket } from "../../../../src/supply-chain/market-share";
+import { CompanyLogo } from "../CompanyLogo";
 import { Flag } from "../Flag";
 import { SourcedValue } from "./SourcedValue";
 
@@ -15,7 +16,7 @@ export function MarketShareList({ companies, market }: { companies: Company[]; m
         const s = shareOf(c.id);
         return <li key={c.id} className={s ? undefined : "sc-share-none"}>
             <Flag code={c.hqCountry} />
-            <span className="sc-share-name">{c.name}</span>
+            <span className="sc-share-name"><CompanyLogo name={c.name} /><span>{c.name}</span></span>
             <span className="sc-share-track" aria-hidden="true">
                 {s ? <span className={`sc-share-fill sc-share-${s.confidence}`} style={{ width: `${s.value * 100}%` }} /> : null}
             </span>

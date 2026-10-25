@@ -41,6 +41,7 @@ const page: Handler = async (req) => {
             ? await renderSpaPage(
                   selected,
                   found.path === "/compare" ? compareVisual(url.search) : undefined,
+                  url.search,
               )
             : renderStaticPage(found);
     return htmlResponse(measurementHtml(html, found.path));

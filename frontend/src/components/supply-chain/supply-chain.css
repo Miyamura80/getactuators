@@ -92,7 +92,9 @@
     gap: 10px;
     font-size: 13px;
 }
-.sc-share-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sc-share-name { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.sc-share-name > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sc-share-name .company-logo { flex: none; }
 .sc-share-track { height: 6px; background: var(--panel-2); border: 1px solid var(--line); }
 .sc-share-fill { display: block; height: 100%; background: var(--cyan-dim); }
 .sc-share-fill.sc-share-estimated { background: repeating-linear-gradient(90deg, var(--cyan-dim) 0 3px, transparent 3px 5px); }

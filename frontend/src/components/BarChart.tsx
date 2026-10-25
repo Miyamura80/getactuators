@@ -1,3 +1,5 @@
+import { activation } from "../lib/svg-link";
+
 export interface BarItem {
     id: string;
     name: string;
@@ -10,6 +12,9 @@ export interface BarItem {
 interface Props {
     items: BarItem[];
     onSelect?: (id: string) => void;
+    // Log-scale bar heights, for values spanning orders of magnitude
+    // (robot prices run from hundreds to tens of thousands of dollars).
+    log?: boolean;
 }
 
 const SLOT = 46;
@@ -49,8 +54,12 @@ export function barLayout(names: string[]): { padL: number; labelH: number } {
 
 // Vertical bar chart: value above each bar, flag + rotated name below.
 // Sized by item count and scrolled horizontally by its container when wide.
-export function BarChart({ items, onSelect }: Props) {
+export function BarChart({ items, onSelect, log = false }: Props) {
     const max = Math.max(...items.map((i) => i.value), 1);
+    // On a log scale the smallest bar keeps a stub of a quarter decade.
+    const lo = Math.log10(Math.min(...items.map((i) => i.value), max)) - 0.25;
+    const frac = (v: number) =>
+        log ? (Math.log10(v) - lo) / (Math.log10(max) - lo) : v / max;
     const { padL: PAD_L, labelH } = barLayout(items.map((i) => i.name));
     const PAD_R = MIN_PAD;
     const width = PAD_L + PAD_R + items.length * SLOT;
@@ -76,7 +85,7 @@ export function BarChart({ items, onSelect }: Props) {
                 />
             ))}
             {items.map((it, i) => {
-                const h = Math.max(2, (it.value / max) * BAR_H);
+                const h = Math.max(2, frac(it.value) * BAR_H);
                 const x = PAD_L + i * SLOT;
                 const cx = x + SLOT / 2;
                 const barW = 30;
@@ -84,8 +93,7 @@ export function BarChart({ items, onSelect }: Props) {
                     <g
                         key={it.id}
                         className="bar-g"
-                        onClick={onSelect ? () => onSelect(it.id) : undefined}
-                        style={onSelect ? { cursor: "pointer" } : undefined}
+                        {...(onSelect ? activation(it.name, () => onSelect(it.id)) : {})}
                     >
                         <rect
                             x={cx - barW / 2}

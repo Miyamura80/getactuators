@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { PublicHeader } from "../components/PublicHeader";
 import { PublicFooter } from "../components/PublicFooter";
+import { CompanyLogo } from "../components/CompanyLogo";
 import {
     formatMetric,
     STARTUP_METRICS,
@@ -258,7 +259,7 @@ export function Startups({ menuOpen = false }: { menuOpen?: boolean }) {
                             <summary>
                                 <span className="su-co">
                                     <i className="su-swatch" style={{ background: COLORS[s.id] }} />
-                                    <img className="su-logo" src={s.logo} alt="" width={22} height={22} />
+                                    <CompanyLogo name={s.id} size={22} className="su-logo" />
                                     {s.name}
                                 </span>
                                 <span className="su-fig">{formatMetric("raisedUsd", s.raisedUsd)}</span>
@@ -273,7 +274,16 @@ export function Startups({ menuOpen = false }: { menuOpen?: boolean }) {
                                 <dt>Round</dt>
                                 <dd>{s.round ?? "Undisclosed"}</dd>
                                 <dt>Lead</dt>
-                                <dd>{s.leadInvestor ?? "Undisclosed"}</dd>
+                                <dd>
+                                    {s.leadInvestor ? (
+                                        <span className="with-logo">
+                                            <CompanyLogo name={s.leadInvestor} size={16} />
+                                            {s.leadInvestor}
+                                        </span>
+                                    ) : (
+                                        "Undisclosed"
+                                    )}
+                                </dd>
                                 <dt>Output</dt>
                                 <dd>{s.volumeNote}</dd>
                                 <dt>Links</dt>

@@ -149,7 +149,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://www.robotshop.com/products/myactuator-myactuator-brushless-dc-motor-rmd-x8-120-ethercat-large-torque-120nm-robot-joint-module-large-hollow-planetary-reduction-torque",
     "source_domain": "robotshop.com",
-    "image_url": null
+    "image_url": "/actuator-images/myactuator-rmd-x8-120.webp"
   },
   {
     "id": "robstride-04",
@@ -1281,7 +1281,7 @@
     "country_flag": "🇯🇵",
     "source_url": "https://www.harmonicdrive.net/products/integrated-actuators/integrated-actuators/lpa-integrated-servo-drive",
     "source_domain": "harmonicdrive.net",
-    "image_url": null
+    "image_url": "/actuator-images/harmonic-drive-lpa-20.webp"
   },
   {
     "id": "xiaomi-cybergear",
@@ -1544,7 +1544,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://www.feetechrc.com/en/scs_ttl_Servo.html",
     "source_domain": "feetechrc.com",
-    "image_url": null
+    "image_url": "/actuator-images/feetech-scs15.webp"
   },
   {
     "id": "dynamixel-xl330-m288-t",
@@ -1969,7 +1969,7 @@
     "country_flag": "🇯🇵",
     "source_url": "https://www.harmonicdrive.net/products/rotary-actuators/hollow-shaft-servo-actuators/fha-mini",
     "source_domain": "harmonicdrive.net",
-    "image_url": null
+    "image_url": "/actuator-images/harmonic-drive-fha-14c-100.webp"
   },
   {
     "id": "myactuator-rmd-x6-8",
@@ -2023,7 +2023,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://www.robotshop.com/products/myactuator-rmd-x6-v3-can-bus-18-mc-x-300-o-brushless-servo-driver",
     "source_domain": "robotshop.com",
-    "image_url": null
+    "image_url": "/actuator-images/myactuator-rmd-x6-8.webp"
   },
   {
     "id": "cubemars-ri60-kv120",
@@ -2421,7 +2421,7 @@
     "country_flag": "🇸🇰",
     "source_url": "https://www.spinea.com/en/products/drivespin/standard/ds110",
     "source_domain": "spinea.com",
-    "image_url": null
+    "image_url": "/actuator-images/spinea-drivespin-ds110.webp"
   },
   {
     "id": "atar-arc-cycloidal-joint",
@@ -2474,7 +2474,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://www.atarrobot.com/cycloidal-robot/arc-serie/Arc-cycloidal-joint-actuators.html",
     "source_domain": "atarrobot.com",
-    "image_url": null
+    "image_url": "/actuator-images/atar-arc-cycloidal-joint.webp"
   },
   {
     "id": "maxon-ec-frameless-90-flat-260w",
@@ -3058,7 +3058,7 @@
     "country_flag": "🇯🇵",
     "source_url": "https://www.harmonicdrive.net/products/rotary-actuators/hollow-shaft-servo-actuators/sha-cg",
     "source_domain": "harmonicdrive.net",
-    "image_url": null
+    "image_url": "/actuator-images/harmonic-drive-sha-cg.webp"
   },
   {
     "id": "harmonic-drive-cha-series",
@@ -3405,7 +3405,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://www.myactuator.com/x10-100-details",
     "source_domain": "myactuator.com",
-    "image_url": null
+    "image_url": "/actuator-images/myactuator-rmd-x10-s2-v3.webp"
   },
   {
     "id": "lkmtech-mg5010e-i36-v3",
