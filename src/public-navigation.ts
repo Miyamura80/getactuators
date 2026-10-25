@@ -33,6 +33,7 @@ export const FOOTER_GROUPS = [
         label: "Project",
         links: [
             ["/about", "About"],
+            ["/contributors", "Contributors"],
             ["/contact", "Contact"],
             ["/privacy", "Privacy"],
             ["https://github.com/Miyamura80/getactuators", "GitHub"],

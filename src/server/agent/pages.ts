@@ -2,6 +2,7 @@ import { ACTUATORS, getActuator } from "@/catalog";
 import { compareBody } from "./compare";
 
 import { INVESTORS_PATH } from "@/investors";
+import { CONTRIBUTORS_PATH } from "@/people";
 import { STARTUPS_PATH } from "@/startups";
 import {
     actuatorBody,
@@ -9,6 +10,7 @@ import {
     actuatorSummary,
     categoryLabel,
 } from "./catalog-md";
+import { contributorPeople, contributorsBody, personNode } from "./contributors";
 import { EDITORIAL_PAGES } from "./editorial";
 import { HUMANOID_GUIDE } from "./humanoid-guide";
 import { investorsBody } from "./investors";
@@ -162,6 +164,22 @@ const STATIC_PAGES: Page[] = [
         aboutBody,
         "AboutPage",
     ),
+    {
+        ...sub(
+            CONTRIBUTORS_PATH,
+            "spa",
+            "Contributors",
+            "The people who build actuatorlist, their affiliations and what they contributed, from the repository's git history.",
+            contributorsBody,
+            "AboutPage",
+        ),
+        jsonLd: () => [
+            ld.webPage("AboutPage", CONTRIBUTORS_PATH, "Contributors"),
+            ld.website(),
+            ...contributorPeople().map(personNode),
+            ld.breadcrumbs([HOME, { name: "Contributors", path: CONTRIBUTORS_PATH }]),
+        ],
+    },
     sub(
         "/contact",
         "static",

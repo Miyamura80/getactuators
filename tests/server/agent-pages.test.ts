@@ -26,6 +26,7 @@ const PAGES = [
     "/startups",
     "/investors",
     "/about",
+    "/contributors",
     "/contact",
     "/privacy",
 ];

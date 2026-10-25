@@ -1,6 +1,7 @@
 import { ACTUATORS, type Actuator } from "@/catalog";
 import { REPO_URL, SITE_DESCRIPTION, SITE_NAME, SITE_URL, absoluteUrl } from "../site";
 import { actuatorPath, actuatorSummary, categoryLabel } from "./catalog-md";
+import { contributorPeople, personId } from "./contributors";
 import { CATALOG_UPDATED_AT } from "./freshness";
 import { PATHS } from "./links";
 import type { FaqItem } from "./pages-md";
@@ -45,6 +46,7 @@ export function website(): Node {
         description: SITE_DESCRIPTION,
         inLanguage: "en",
         publisher: { "@id": ORG_ID },
+        contributor: contributorPeople().map((p) => ({ "@id": personId(p) })),
         potentialAction: {
             "@type": "SearchAction",
             target: {
