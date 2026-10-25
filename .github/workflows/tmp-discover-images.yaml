@@ -1,0 +1,22 @@
+name: Temp Discover Actuator Images
+
+# Temporary: removed before the PR is ready.
+on:
+  push:
+    branches:
+      - claude/actuator-images-backfill
+    paths:
+      - ".github/tmp-discover-images.ts"
+
+permissions:
+  contents: read
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+      - run: bun run .github/tmp-discover-images.ts
