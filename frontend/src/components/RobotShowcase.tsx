@@ -6,6 +6,7 @@ import { useLocationKey } from "../lib/router";
 import { BrandGlyph } from "./BrandGlyph";
 import { CopyLinkButton } from "./CopyLinkButton";
 import { RobotArt } from "./RobotArt";
+import { RobotCostCharts } from "./RobotCostCharts";
 
 // Price shown as a single value or a range when the product has variants.
 function priceLabel(r: Robot): string {
@@ -201,6 +202,8 @@ export function RobotShowcase() {
                 Real robots mapped to the parts that move them. Every joint links to
                 the actuator that drives it.
             </p>
+
+            <RobotCostCharts />
 
             {GROUPS.map((g) => {
                 const robots = ROBOTS.filter((r) => r.kind === g.kind);

@@ -31,6 +31,19 @@
             "product_url": "https://robotopian.com/products/damiao-dm-j4340-2ec-servo-motor",
             "actuator_id": null
         },
+        "dm-j4340p": {
+            "id": "dm-j4340p",
+            "name": "Damiao DM-J4340P-2EC",
+            "brand": "Damiao (DMBots)",
+            "rated_torque_nm": 9,
+            "peak_torque_nm": 27,
+            "rated_speed_rpm": 36,
+            "gear_ratio": "40:1",
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": null,
+            "actuator_id": null
+        },
         "dm-j6248": {
             "id": "dm-j6248",
             "name": "Damiao DM-J6248-2EC",
@@ -644,6 +657,35 @@
                 "https://pollen-robotics.com/reachy-mini/",
                 "https://huggingface.co/blog/reachy-mini",
                 "https://wiki.seeedstudio.com/reachymini_platforms_reachy_mini_hardware/"
+            ]
+        },
+        {
+            "id": "manmaru-yor",
+            "image_url": "/robot-images/manmaru-yor.webp",
+            "name": "Manmaru YOR",
+            "brand": "ManmaruAI",
+            "kind": "humanoid",
+            "country": "Japan",
+            "country_flag": "🇯🇵",
+            "dof": 14,
+            "payload_kg": 1.5,
+            "reach_mm": 767,
+            "height_m": 0.84,
+            "weight_kg": null,
+            "price_usd": 6300,
+            "price_max_usd": 12700,
+            "product_url": "https://yor.manmaruai.co.jp/en",
+            "summary": "Semi-humanoid for Physical AI research: two Seeed reBot Arm B601-DM arms (6 axes + gripper each, 767 mm reach, 1.5 kg payload) on the open-source YOR four-module swerve base. About $6,300 in parts to build from the published BOM and URDF, or about $12,700 assembled and tested. Seeed's BOM lists the Damiao motor mix per arm but not which joint gets which.",
+            "joints": [
+                { "role": "Arm joints, higher torque (3 per arm)", "motor": "dm-j4340p", "count": 6 },
+                { "role": "Arm joints + gripper (4 per arm)", "motor": "dm-j4310", "count": 8 }
+            ],
+            "sources": [
+                "https://yor.manmaruai.co.jp/en",
+                "https://github.com/manmaruai/manmaru-yor",
+                "https://github.com/Seeed-Projects/reBot-DevArm/blob/main/hardware/reBot_B601_DM/readme.md",
+                "https://openelab.io/blogs/learn/seeed-rebot-b601-dm-damiao-motors",
+                "https://yourownrobot.ai/"
             ]
         },
         {
