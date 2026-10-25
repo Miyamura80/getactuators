@@ -1,6 +1,7 @@
 import { evidenceFor, fieldCaveat } from "../../../src/catalog/evidence";
 import type { Actuator } from "../types";
 import { COLUMNS } from "../lib/columns";
+import { CompanyLogo } from "./CompanyLogo";
 
 interface Props {
     actuators: Actuator[];
@@ -40,7 +41,10 @@ export function ComparePanel({ actuators, onRemove, onClose }: Props) {
                             {actuators.map((a) => (
                                 <th key={a.id}>
                                     <span className="name">{a.name}</span>
-                                    <span className="brand">{a.brand}</span>
+                                    <span className="brand with-logo">
+                                        <CompanyLogo name={a.brand} size={16} />
+                                        {a.brand}
+                                    </span>
                                     <button
                                         type="button"
                                         className="remove"

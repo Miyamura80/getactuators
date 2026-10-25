@@ -11,6 +11,7 @@ import {
 } from "./catalog-md";
 import { EDITORIAL_PAGES } from "./editorial";
 import { HUMANOID_GUIDE } from "./humanoid-guide";
+import { HUMANOIDS_PAGE } from "./humanoids";
 import { investorsBody } from "./investors";
 import * as ld from "./jsonld";
 import { PATHS } from "./links";
@@ -146,6 +147,7 @@ const STATIC_PAGES: Page[] = [
         ),
         image: PATHS.ogInvestors,
     },
+    HUMANOIDS_PAGE,
     sub(
         PATHS.agentsPage,
         "spa",

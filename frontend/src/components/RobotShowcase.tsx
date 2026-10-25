@@ -6,6 +6,8 @@ import { useLocationKey } from "../lib/router";
 import { BrandGlyph } from "./BrandGlyph";
 import { CopyLinkButton } from "./CopyLinkButton";
 import { RobotArt } from "./RobotArt";
+import { CompanyLogo } from "./CompanyLogo";
+import { CountryFlag } from "./CountryFlag";
 import { RobotCharts } from "./robots/RobotCharts";
 import { RobotFacts } from "./robots/RobotFacts";
 
@@ -91,8 +93,10 @@ function RobotCard({ robot, active }: { robot: Robot; active: boolean }) {
                         />
                     </div>
                 </div>
-                <p className="robot-brand">
-                    {robot.country_flag} {robot.brand}
+                <p className="robot-brand with-logo">
+                    <CompanyLogo name={robot.brand} size={20} />
+                    <CountryFlag country={robot.country} />
+                    {robot.brand}
                 </p>
                 <p className="robot-summary">{robot.summary}</p>
 
@@ -260,7 +264,8 @@ export function RobotShowcase() {
 
             <p className="robot-credit">
                 YAM actuator loadout compiled with info from {ROBOT_CREDIT.name} (
-                <a href={ROBOT_CREDIT.org_url} target="_blank" rel="noopener noreferrer">
+                <a href={ROBOT_CREDIT.org_url} target="_blank" rel="noopener noreferrer" className="with-logo">
+                    <CompanyLogo name={ROBOT_CREDIT.org} size={14} />
                     {ROBOT_CREDIT.org}
                 </a>
                 ), which uses the YAM arms. Arm specs from i2rt.com, doc.i2rt.com and

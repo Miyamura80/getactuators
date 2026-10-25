@@ -1,9 +1,12 @@
+import type { ReactNode } from "react";
 import { evidenceFor, fieldCaveat } from "../../../src/catalog/evidence";
 import type { Actuator } from "../types";
 import { CATEGORY_MAP } from "../types";
 import { bool, dash, list, num, price, voltage } from "../lib/format";
 import { robotsUsingActuator } from "../lib/robots";
 import { CopyLinkButton } from "./CopyLinkButton";
+import { CompanyLogo } from "./CompanyLogo";
+import { CountryFlag } from "./CountryFlag";
 
 interface Props {
     actuator: Actuator | null;
@@ -12,7 +15,7 @@ interface Props {
 
 interface Spec {
     label: string;
-    value: string;
+    value: ReactNode;
 }
 
 const evidenceFields: Record<string, string> = {
@@ -43,7 +46,7 @@ function specs(a: Actuator): Spec[] {
         { label: "IP rating", value: a.ip_rating ?? dash() },
         { label: "Price", value: price(a.price_usd) },
         { label: "$ / peak N·m", value: a.price_per_nm == null ? dash() : `$${num(a.price_per_nm, 1)}` },
-        { label: "Origin", value: a.country ? `${a.country_flag ?? ""} ${a.country}` : dash() },
+        { label: "Origin", value: a.country ? <CountryFlag country={a.country} /> : dash() },
     ];
 }
 
@@ -71,7 +74,10 @@ export function DetailPanel({ actuator, onClose }: Props) {
                             {cat?.label ?? a.category}
                         </span>
                         <h2>{a.name}</h2>
-                        <p className="drawer-brand">{a.brand}</p>
+                        <p className="drawer-brand with-logo">
+                            <CompanyLogo name={a.brand} size={20} />
+                            {a.brand}
+                        </p>
                     </div>
                     <div className="drawer-head-actions">
                         <CopyLinkButton

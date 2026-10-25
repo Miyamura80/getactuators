@@ -17,6 +17,8 @@ import { num } from "../lib/format";
 import { Link } from "../lib/router";
 import { ActuatorThumb } from "../components/ActuatorThumb";
 import { BrandGlyph } from "../components/BrandGlyph";
+import { CompanyLogo } from "../components/CompanyLogo";
+import { CountryFlag } from "../components/CountryFlag";
 
 type Size = GallerySize;
 
@@ -156,10 +158,13 @@ function GalleryCard({ actuator, size, priority, by }: { actuator: Actuator; siz
                     </span>
                 )}
                 <h3 className="bento-name">
-                    <span className="flag">{actuator.country_flag ?? ""}</span>
+                    <CountryFlag country={actuator.country} />
                     {actuator.name}
                 </h3>
-                <p className="bento-brand">{actuator.brand}</p>
+                <p className="bento-brand with-logo">
+                    <CompanyLogo name={actuator.brand} size={20} />
+                    {actuator.brand}
+                </p>
                 <div className="bento-stats">
                     <span>
                         <b>{num(actuator.peak_torque_nm)}</b> N{"·"}m peak
