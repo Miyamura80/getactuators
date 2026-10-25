@@ -62,6 +62,8 @@ const MAKERS: Row[] = [
     ["vesc", "VESC / Trampa", "trampa.co.uk", ["Trampa / VESC Project", "Trampa"]],
     ["trinamic", "Trinamic", "analog.com", ["Analog Devices"]],
     ["lkmtech", "LKMTech", "lkmotor.cn", ["LK Motor"]],
+    // Asimov 1 joint motors (#100); no verified domain yet, so a monogram.
+    ["encos", "ENCOS", null],
     ["atar", "ATAR", "atarrobot.com", ["ATAR Robot"]],
 ];
 

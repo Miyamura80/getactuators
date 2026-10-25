@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import type { Robot, RobotKind } from "../types";
-import { ROBOTS, ROBOT_CREDIT, motorCount, resolveJoints } from "../lib/robots";
-import { num, price } from "../lib/format";
+import { ROBOTS, ROBOT_CREDIT, liftRatio, motorCount, resolveJoints, runtimeHours } from "../lib/robots";
+import { hours, num, price } from "../lib/format";
 import { useLocationKey } from "../lib/router";
 import { BrandGlyph } from "./BrandGlyph";
 import { CopyLinkButton } from "./CopyLinkButton";
 import { RobotArt } from "./RobotArt";
 import { CompanyLogo } from "./CompanyLogo";
 import { CountryFlag } from "./CountryFlag";
-import { RobotCostCharts } from "./RobotCostCharts";
+import { RobotCharts } from "./robots/RobotCharts";
+import { RobotFacts } from "./robots/RobotFacts";
 
 // Price shown as a single value or a range when the product has variants.
 function priceLabel(r: Robot): string {
@@ -23,6 +24,14 @@ function priceLabel(r: Robot): string {
 // which would otherwise round to 0 or 1.
 function torque(v: number | null): string {
     return num(v, v != null && v < 1 ? 2 : 0);
+}
+
+// Mains-powered machines read "Mains"; a battery robot with no published
+// figure reads as a dash, with any note shown under the stats.
+function runtimeLabel(r: Robot): string {
+    if (r.power === "mains") return "Mains";
+    const h = runtimeHours(r);
+    return h == null ? "–" : hours(h);
 }
 
 const KIND_LABEL: Record<RobotKind, string> = {
@@ -68,6 +77,7 @@ function RobotThumb({ robot }: { robot: Robot }) {
 function RobotCard({ robot, active }: { robot: Robot; active: boolean }) {
     const joints = resolveJoints(robot);
     const total = motorCount(robot);
+    const lift = liftRatio(robot);
     return (
         <article id={`robot-${robot.id}`} className="robot-card" data-active={active}>
             <RobotThumb robot={robot} />
@@ -93,7 +103,10 @@ function RobotCard({ robot, active }: { robot: Robot; active: boolean }) {
                 <dl className="robot-stats">
                     <div>
                         <dt>Payload</dt>
-                        <dd>{robot.payload_kg == null ? "–" : `${num(robot.payload_kg, 1)} kg`}</dd>
+                        <dd>
+                            {robot.payload_kg == null ? "–" : `${num(robot.payload_kg, 1)} kg`}
+                            {robot.payload_basis === "whole_body" && <small className="robot-stat-note">whole body</small>}
+                        </dd>
                     </div>
                     {robot.kind === "humanoid" ? (
                         <div>
@@ -114,7 +127,19 @@ function RobotCard({ robot, active }: { robot: Robot; active: boolean }) {
                         <dt>Actuators</dt>
                         <dd>{total > 0 ? total : "–"}</dd>
                     </div>
+                    <div>
+                        <dt>Runtime</dt>
+                        <dd>{runtimeLabel(robot)}</dd>
+                    </div>
+                    <div>
+                        <dt>Payload ÷ wt</dt>
+                        <dd>{lift == null ? "–" : lift.toFixed(2)}</dd>
+                    </div>
                 </dl>
+
+                {robot.runtime_note && <p className="robot-runtime-note">Runtime: {robot.runtime_note}</p>}
+
+                <RobotFacts robot={robot} />
 
                 <div className="robot-loadout">
                     <span className="robot-loadout-label">Actuator loadout</span>
@@ -207,7 +232,7 @@ export function RobotShowcase() {
                 the actuator that drives it.
             </p>
 
-            <RobotCostCharts />
+            <RobotCharts />
 
             {GROUPS.map((g) => {
                 const robots = ROBOTS.filter((r) => r.kind === g.kind);
