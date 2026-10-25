@@ -109,6 +109,71 @@
             "product_url": null,
             "actuator_id": null
         },
+        "pollen-orbita-2d": {
+            "id": "pollen-orbita-2d",
+            "name": "Orbita 2D",
+            "brand": "Pollen Robotics",
+            "rated_torque_nm": 12,
+            "peak_torque_nm": 16.5,
+            "rated_speed_rpm": 50,
+            "gear_ratio": "35:1 × 1.9",
+            "weight_g": 1900,
+            "torque_density_nm_per_kg": 8.7,
+            "product_url": "https://docs.pollen-robotics.com/hardware-guide/specifications/motors-actuators/#orbita-2d",
+            "actuator_id": null
+        },
+        "pollen-orbita-3d": {
+            "id": "pollen-orbita-3d",
+            "name": "Orbita 3D",
+            "brand": "Pollen Robotics",
+            "rated_torque_nm": 3,
+            "peak_torque_nm": 15,
+            "rated_speed_rpm": 50,
+            "gear_ratio": "28:1 × 5.33",
+            "weight_g": 950,
+            "torque_density_nm_per_kg": 15.8,
+            "product_url": "https://docs.pollen-robotics.com/hardware-guide/specifications/motors-actuators/#orbita-3d",
+            "actuator_id": null
+        },
+        "dynamixel-xl330-m288": {
+            "id": "dynamixel-xl330-m288",
+            "name": "XL330-M288-T",
+            "brand": "Robotis (Dynamixel)",
+            "rated_torque_nm": null,
+            "peak_torque_nm": 0.52,
+            "rated_speed_rpm": 103,
+            "gear_ratio": "288.4:1",
+            "weight_g": 18,
+            "torque_density_nm_per_kg": 28.9,
+            "product_url": "https://emanual.robotis.com/docs/en/dxl/x/xl330-m288/",
+            "actuator_id": null
+        },
+        "dynamixel-xl330-m077": {
+            "id": "dynamixel-xl330-m077",
+            "name": "XL330-M077-T",
+            "brand": "Robotis (Dynamixel)",
+            "rated_torque_nm": null,
+            "peak_torque_nm": 0.215,
+            "rated_speed_rpm": 383,
+            "gear_ratio": "77.5:1",
+            "weight_g": 18,
+            "torque_density_nm_per_kg": 11.9,
+            "product_url": "https://emanual.robotis.com/docs/en/dxl/x/xl330-m077/",
+            "actuator_id": null
+        },
+        "dynamixel-xc330-m288": {
+            "id": "dynamixel-xc330-m288",
+            "name": "XC330-M288 (custom)",
+            "brand": "Robotis (Dynamixel)",
+            "rated_torque_nm": null,
+            "peak_torque_nm": 0.93,
+            "rated_speed_rpm": 81,
+            "gear_ratio": "288.35:1",
+            "weight_g": 23,
+            "torque_density_nm_per_kg": 40.4,
+            "product_url": "https://emanual.robotis.com/docs/en/dxl/x/xc330-m288/",
+            "actuator_id": null
+        },
         "unitree-h2-leg": {
             "id": "unitree-h2-leg",
             "name": "H2 leg joint motor",
@@ -519,6 +584,66 @@
                 "https://www.booster.tech/booster-k1/",
                 "https://github.com/BoosterRobotics/booster_assets/blob/main/robots/K1/K1_22dof.urdf",
                 "https://github.com/BoosterRobotics/booster_assets/blob/main/robots/K1/K1_22dof.xml"
+            ]
+        },
+        {
+            "id": "pollen-reachy-2",
+            "image_url": "/robot-images/pollen-reachy-2.webp",
+            "image_crop": [0.15, 0, 0.7, 1],
+            "image_fit": "cover",
+            "name": "Reachy 2",
+            "brand": "Pollen Robotics",
+            "kind": "humanoid",
+            "country": "France",
+            "country_flag": "🇫🇷",
+            "dof": 17,
+            "payload_kg": 3,
+            "reach_mm": null,
+            "height_m": 1.66,
+            "weight_kg": 50,
+            "price_usd": 70000,
+            "price_max_usd": null,
+            "product_url": "https://pollen-robotics.com/reachy-2/",
+            "summary": "Open-source bimanual humanoid on an omnidirectional base, height adjustable from 1.36 to 1.66 m. Two 7-DOF arms carry about 3 kg each and a 3-DOF neck aims the head, all driven by Pollen's own Orbita parallel joints: 2-axis units at shoulder and elbow, 3-axis units at wrist and neck. Pollen publishes no list price; about $70k is the figure reported at launch.",
+            "joints": [
+                { "role": "Shoulder + elbow (2 axes each)", "motor": "pollen-orbita-2d", "count": 4 },
+                { "role": "Wrist + neck (3 axes each)", "motor": "pollen-orbita-3d", "count": 3 }
+            ],
+            "sources": [
+                "https://pollen-robotics.com/reachy-2/",
+                "https://docs.pollen-robotics.com/hardware-guide/specifications/general/",
+                "https://docs.pollen-robotics.com/hardware-guide/specifications/motors-actuators/",
+                "https://www.deeplearning.ai/the-batch/hugging-face-acquires-pollen-robotics-launches-reachy-2-robot-for-open-source-research"
+            ]
+        },
+        {
+            "id": "pollen-reachy-mini",
+            "image_url": "/robot-images/pollen-reachy-mini.webp",
+            "image_crop": [0.095, 0, 0.64, 1],
+            "image_fit": "cover",
+            "name": "Reachy Mini",
+            "brand": "Pollen Robotics",
+            "kind": "humanoid",
+            "country": "France",
+            "country_flag": "🇫🇷",
+            "dof": 9,
+            "payload_kg": null,
+            "reach_mm": null,
+            "height_m": 0.28,
+            "weight_kg": 1.5,
+            "price_usd": 399,
+            "price_max_usd": 499,
+            "product_url": "https://pollen-robotics.com/reachy-mini/",
+            "summary": "Open-source desktop companion robot from Pollen and Hugging Face, sold as a kit. A Stewart platform of six servos gives the head 6 DOF, with body rotation and two antennas on top. $399 Lite runs from a computer over USB; $499 Wireless adds a Raspberry Pi CM4 and battery.",
+            "joints": [
+                { "role": "Head (Stewart platform, 6 DOF)", "motor": "dynamixel-xl330-m288", "count": 6 },
+                { "role": "Body rotation", "motor": "dynamixel-xc330-m288", "count": 1 },
+                { "role": "Antennas", "motor": "dynamixel-xl330-m077", "count": 2 }
+            ],
+            "sources": [
+                "https://pollen-robotics.com/reachy-mini/",
+                "https://huggingface.co/blog/reachy-mini",
+                "https://wiki.seeedstudio.com/reachymini_platforms_reachy_mini_hardware/"
             ]
         },
         {
