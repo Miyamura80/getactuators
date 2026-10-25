@@ -8,6 +8,7 @@ import { CopyLinkButton } from "./CopyLinkButton";
 import { RobotArt } from "./RobotArt";
 import { CompanyLogo } from "./CompanyLogo";
 import { CountryFlag } from "./CountryFlag";
+import { RobotCostCharts } from "./RobotCostCharts";
 
 // Price shown as a single value or a range when the product has variants.
 function priceLabel(r: Robot): string {
@@ -16,6 +17,12 @@ function priceLabel(r: Robot): string {
         return `${price(r.price_usd)}–${price(r.price_max_usd)}`;
     }
     return price(r.price_usd);
+}
+
+// Whole N·m for joint motors, but keep two places for hobby servos under 1 N·m,
+// which would otherwise round to 0 or 1.
+function torque(v: number | null): string {
+    return num(v, v != null && v < 1 ? 2 : 0);
 }
 
 const KIND_LABEL: Record<RobotKind, string> = {
@@ -125,7 +132,7 @@ function RobotCard({ robot, active }: { robot: Robot; active: boolean }) {
                                     </a>
                                     <span className="motor-role">{j.role}</span>
                                     <span className="motor-torque">
-                                        {num(j.motor.rated_torque_nm)}/{num(j.motor.peak_torque_nm)} N·m
+                                        {torque(j.motor.rated_torque_nm)}/{torque(j.motor.peak_torque_nm)} N·m
                                         {j.motor.gear_ratio ? ` · ${j.motor.gear_ratio}` : ""}
                                     </span>
                                 </li>
@@ -199,6 +206,8 @@ export function RobotShowcase() {
                 Real robots mapped to the parts that move them. Every joint links to
                 the actuator that drives it.
             </p>
+
+            <RobotCostCharts />
 
             {GROUPS.map((g) => {
                 const robots = ROBOTS.filter((r) => r.kind === g.kind);
