@@ -1,7 +1,8 @@
 /* /humanoids: a joint map read like an instrument panel. Thin rules, square
    corners, mono numbers; color only on joint marks and the mix bars. */
 
-.hm-page { --hm-faint: #5b6466; --hm-other: #5b6466; }
+/* --hm-faint is text (4.9:1 on black); --hm-other stays a fill. */
+.hm-page { --hm-faint: #737c7e; --hm-other: #5b6466; }
 .hm-page .flag { font-size: 1.15em; line-height: 1; vertical-align: -0.08em; cursor: default; }
 
 .hm-bar { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }

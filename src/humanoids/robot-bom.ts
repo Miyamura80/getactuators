@@ -44,8 +44,10 @@ const BHL = ["bhl-irz", "bhl-rdworld"];
 const exact = (v: number) => [v, v] as const;
 
 // Berkeley Humanoid Lite: the paper's Table III, $4,312 in all, as itemized
-// by IRZ. "Other" is the remainder of the published total.
-const BHL_REST = [
+// by IRZ. "Other" is what remains of that total after the itemized parts and
+// the actuators as counted here, so the robot total matches the source.
+const BHL_TOTAL = 4312;
+const BHL_ITEMIZED = [
     part(
         "compute",
         "Compute & electronics",
@@ -74,16 +76,24 @@ const BHL_REST = [
         "Two grippers, outside the joint map.",
     ),
     part("battery", "Battery", 70, exact(70), "reported", BHL, "6S battery."),
-    part(
-        "other",
-        "Wiring, fasteners & other",
-        4312 - 3512 - 197 - 200.1 - 72 - 70,
-        exact(4312 - 3512 - 197 - 200.1 - 72 - 70),
-        "reported",
-        BHL,
-        "Remainder of the $4,312 total after the itemized parts and the paper's $3,512 of actuators.",
-    ),
 ];
+
+function bhlRest(actuatorsUsd: number): RestPart[] {
+    const itemized = BHL_ITEMIZED.reduce((n, p) => n + p.value.value, 0);
+    const other = Math.max(0, BHL_TOTAL - itemized - actuatorsUsd);
+    return [
+        ...BHL_ITEMIZED,
+        part(
+            "other",
+            "Wiring, fasteners & other",
+            other,
+            exact(other),
+            "estimated",
+            BHL,
+            `Remainder of the $4,312 total after the itemized parts and $${Math.round(actuatorsUsd).toLocaleString("en-US")} of actuators as counted here (the paper counts $3,512: 10 large and 12 small units, where the URDF has 12 leg and 10 arm joints).`,
+        ),
+    ];
+}
 
 // Optimus: Huibo's 135k CNY hardware BOM leaves 14k CNY after actuators and
 // hands; Morgan Stanley's ~$55k BOM puts actuators at 56%. Neither splits the
@@ -101,13 +111,10 @@ const OPTIMUS_REST = [
     ),
 ];
 
-const REST: Record<string, RestPart[]> = {
-    "berkeley-humanoid-lite": BHL_REST,
-    "tesla-optimus": OPTIMUS_REST,
-};
-
-export function restOfRobotCost(h: Humanoid): RestPart[] {
-    return REST[h.id] ?? [];
+export function restOfRobotCost(h: Humanoid, actuatorsUsd: number): RestPart[] {
+    if (h.id === "berkeley-humanoid-lite") return bhlRest(actuatorsUsd);
+    if (h.id === "tesla-optimus") return OPTIMUS_REST;
+    return [];
 }
 
 // Rest of the robot's mass: published weight minus the actuator mass, when

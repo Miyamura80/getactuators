@@ -286,6 +286,24 @@ function partLabel(j: HumanoidJoint): string {
     return `${type}, ${sizeSpec(j.sizeClass).label} class`;
 }
 
+function figureText(j: HumanoidJoint): string {
+    if (j.peakTorqueNm) return `${j.peakTorqueNm.value.toLocaleString("en-US")} N·m`;
+    if (j.peakForceN) return `${j.peakForceN.value.toLocaleString("en-US")} N`;
+    return `${sizeSpec(j.sizeClass).label} class`;
+}
+
+// Parts that share a label (one motor model at several figures) get the
+// figure appended so the legend rows stay distinct.
+function disambiguate(items: BomItem[]): BomItem[] {
+    const n = new Map<string, number>();
+    for (const it of items) n.set(it.label, (n.get(it.label) ?? 0) + 1);
+    return items.map((it) =>
+        (n.get(it.label) ?? 0) > 1
+            ? { ...it, label: `${it.label} · ${it.key.split("|")[2]}` }
+            : it,
+    );
+}
+
 const withShares = (slices: Omit<BomSlice, "share">[]): BomSlice[] => {
     const total = slices.reduce((n, s) => n + s.value, 0);
     return slices.map((s) => ({ ...s, share: total ? s.value / total : 0 }));
@@ -371,7 +389,9 @@ export function humanoidBom(h: Humanoid, metric: BomMetric, maxSlices = 6): Bom 
                   ? unitMass(j)
                   : unitMagnet(j);
         const label = partLabel(j);
-        const key = `${j.actuatorType}|${label}`;
+        // The figure is part of the key: one motor model can sit at joints
+        // with different torques, each with its own unit estimate.
+        const key = `${j.actuatorType}|${label}|${figureText(j)}`;
         if ("reason" in u) {
             const e = excluded.get(key) ?? { label, count: 0, reason: u.reason };
             e.count += j.count;
@@ -390,11 +410,11 @@ export function humanoidBom(h: Humanoid, metric: BomMetric, maxSlices = 6): Bom 
         it.joints.push(j.canonical);
         items.set(key, it);
     }
-    const actuatorSlices = groupSlices([...items.values()], maxSlices);
+    const actuatorSlices = groupSlices(disambiguate([...items.values()]), maxSlices);
     const actuators = sumOf(actuatorSlices);
     const restParts =
         metric === "cost"
-            ? restOfRobotCost(h)
+            ? restOfRobotCost(h, actuators.value)
             : metric === "mass"
               ? restOfRobotMass(h, actuators)
               : [];

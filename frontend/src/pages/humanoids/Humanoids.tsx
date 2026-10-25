@@ -130,6 +130,13 @@ function Legend() {
 
 export function Humanoids({ menuOpen = false }: { menuOpen?: boolean }) {
     const [state, setState] = useState<State>(readState);
+    // Back and Forward (fleet sort and page push history entries) restore
+    // the robot, compare and joint from the URL too.
+    useEffect(() => {
+        const sync = () => setState(readState());
+        window.addEventListener("popstate", sync);
+        return () => window.removeEventListener("popstate", sync);
+    }, []);
     useEffect(() => {
         const prev = document.title;
         document.title = TITLE;

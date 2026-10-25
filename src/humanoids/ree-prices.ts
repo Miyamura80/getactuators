@@ -39,7 +39,7 @@ export const REE_METAL_PRICE: Ree<Sourced<number>> = {
         unit: "USD/kg",
         sources: ["price-pr"],
         asOf: AS_OF,
-        confidence: "reported",
+        confidence: "estimated",
         range: [149.86, 150.27],
         note: "Praseodymium: Business Analytiq Northeast Asia index, $149.86/kg (July) and $150.27/kg (September 2026). The index does not say metal or oxide; read here as metal.",
     },

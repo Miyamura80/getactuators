@@ -21,7 +21,7 @@ export function MixBar({ totals, compact = false }: { totals: HumanoidTotals; co
                     <span
                         key={t}
                         className={t === "other" ? "is-other" : undefined}
-                        style={{ flexGrow: n, background: t === "other" ? undefined : ACTUATOR_TYPE_COLOR[t] }}
+                        style={{ flexGrow: n, flexBasis: 0, background: t === "other" ? undefined : ACTUATOR_TYPE_COLOR[t] }}
                         title={`${n} ${ACTUATOR_TYPE_LABEL[t]}`}
                     >
                         {!compact && n >= 3 ? n : ""}

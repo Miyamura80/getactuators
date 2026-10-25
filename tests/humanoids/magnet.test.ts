@@ -82,10 +82,10 @@ describe("magnet mass method", () => {
         expect(ree.range[1]).toBeGreaterThan(ree.value);
     });
 
-    test("every robot lands at or under the published 2 to 4.5 kg per-robot band", () => {
+    test("every robot's high magnet estimate stays within the published 4.5 kg per-robot ceiling", () => {
         for (const h of HUMANOIDS) {
             const t = humanoidTotals(h);
-            expect({ id: h.id, over: (t.magnetMassKg.range?.[0] ?? 0) > 4.5 }).toEqual({
+            expect({ id: h.id, over: (t.magnetMassKg.range?.[1] ?? 0) > 4.5 }).toEqual({
                 id: h.id,
                 over: false,
             });

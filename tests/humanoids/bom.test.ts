@@ -103,12 +103,18 @@ describe("rest of the robot", () => {
             "Battery",
             "Wiring, fasteners & other",
         ]);
-        expect(rest.every((s) => s.unit?.confidence === "reported" && !s.lumped)).toBe(
+        // Itemized parts are reported; the remainder is derived, so estimated.
+        expect(rest.slice(0, 4).every((s) => s.unit?.confidence === "reported")).toBe(
             true,
         );
-        // The paper's itemized parts plus its $3,512 of actuators make $4,312.
-        expect(b.rest?.value).toBeCloseTo(4312 - 3512, 1);
-        expect(b.total.value).toBeCloseTo(b.actuators.value + 800, 1);
+        expect(rest[4]?.unit?.confidence).toBe("estimated");
+        expect(rest.some((s) => s.lumped)).toBe(false);
+        // The robot total matches the published $4,312.
+        expect(b.total.value).toBeCloseTo(4312, 1);
+        expect(rest[4]?.value).toBeCloseTo(
+            4312 - b.actuators.value - 197 - 200.1 - 72 - 70,
+            1,
+        );
         const share = b.actuators.value / b.total.value;
         const actShares = b.slices
             .filter((s) => s.category === "actuator")
@@ -138,6 +144,25 @@ describe("rest of the robot", () => {
         expect(mass.total.value).toBeCloseTo(35, 1);
         expect(mass.slices.at(-1)?.unit?.confidence).toBe("modeled");
         expect(humanoidBom(g1, "magnet").rest).toBeNull();
+    });
+});
+
+describe("one motor model at several figures", () => {
+    test("AgiBot X1's R86-2 keeps a separate estimate per torque", () => {
+        const x1 = robot("agibot-x1");
+        const b = humanoidBom(x1, "cost", Number.POSITIVE_INFINITY);
+        const r86 = b.slices.filter((s) => s.label.startsWith("PowerFlow R86-2"));
+        expect(r86.map((s) => s.label).sort()).toEqual([
+            "PowerFlow R86-2 · 50 N·m",
+            "PowerFlow R86-2 · 80 N·m",
+        ]);
+        const [a, c] = r86;
+        expect(a?.unit?.value).not.toBe(c?.unit?.value);
+        // Every joint that has a unit estimate is counted once.
+        expect(
+            b.slices.reduce((n, s) => n + s.count, 0) +
+                b.excluded.reduce((n, e) => n + e.count, 0),
+        ).toBe(29);
     });
 });
 

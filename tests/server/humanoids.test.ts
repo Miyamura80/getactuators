@@ -42,6 +42,22 @@ describe("/humanoids", () => {
             );
             for (const h of HUMANOIDS)
                 expect(md).toContain(`## ${h.name} (${h.brand})`);
+            // Every robot section carries its joint table.
+            const sections = md.split(/\n## /).slice(1);
+            for (const h of HUMANOIDS) {
+                const sec = sections.find((s) =>
+                    s.startsWith(`${h.name} (${h.brand})`),
+                );
+                expect({
+                    id: h.id,
+                    table: sec?.includes(
+                        "| Joint | Count | Type | Motor | Peak | Magnet g | Sources |",
+                    ),
+                }).toEqual({
+                    id: h.id,
+                    table: true,
+                });
+            }
             expect(md).toContain(
                 "| Left knee | 1 | Rotary QDD | [RobStride 04](/actuators/robstride-04)",
             );

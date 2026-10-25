@@ -293,6 +293,27 @@ test("the fleet table sorts by actuator BOM", () => {
     expect([...view.container.querySelectorAll(".hm-fleet th")].some((th) => th.textContent?.startsWith("Actuator BOM $"))).toBe(true);
 });
 
+test("Back after a fleet sort restores the robot shown on the map", () => {
+    setURL("/humanoids?robot=unitree-g1&q=unitree&sort=name");
+    const view = render(<Humanoids />);
+    const caption = () => view.container.querySelector(".hm-card figcaption b")?.textContent;
+    expect(caption()).toBe("G1");
+    act(() => {
+        fireEvent.click(header(view.container, "DOF"));
+    });
+    act(() => {
+        fireEvent.click(view.getByRole("button", { name: "H1" }));
+    });
+    expect(caption()).toBe("H1");
+    // Going back lands on the entry from before the sort.
+    act(() => {
+        window.history.replaceState(null, "", "/humanoids?robot=unitree-g1&q=unitree&sort=name");
+        window.dispatchEvent(new PopStateEvent("popstate"));
+    });
+    expect(caption()).toBe("G1");
+    expect(view.container.querySelector(".hm-fleet tr.is-active")?.textContent).toContain("G1");
+});
+
 test("each row carries a data confidence meter with an explanation", () => {
     setURL("/humanoids?q=k-bot");
     const view = render(<Humanoids />);

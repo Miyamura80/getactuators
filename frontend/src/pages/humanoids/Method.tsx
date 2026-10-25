@@ -42,7 +42,9 @@ export function Method() {
                     Each actuator gets a motor size class from its peak torque (rotary) or force (linear), or from its
                     joint and the robot's mass when neither is published. Magnet mass = π × airgap diameter × active
                     length × magnet thickness × arc fill ({pct(ARC_FILL[0])} to {pct(ARC_FILL[1])}) × {NDFEB_DENSITY_G_CM3}{" "}
-                    g/cm³. Hydraulic joints carry no magnet at the joint. Every figure is an estimate with a range.
+                    g/cm³, with the table's millimetres divided by 10 to give cm. Hydraulic joints carry no magnet at the
+                    joint. Every figure is an estimate with a range. Sizing from output torque ignores the reducer, so
+                    high-ratio joints (harmonic, cycloidal, roller screw) read as an upper bound.
                 </p>
                 <div className="hm-table">
                     <table>
@@ -107,10 +109,11 @@ export function Method() {
                     the rest is the published weight minus the actuator mass counted here (modeled).
                 </p>
                 <p>
-                    Rare-earth cost: each element's grams times its metal price per kg (Nd ${REE_METAL_PRICE.nd.value}, Pr $
+                    Rare-earth cost: grams / 1,000 × the element's metal price per kg (Nd ${REE_METAL_PRICE.nd.value}, Pr $
                     {REE_METAL_PRICE.pr.value}, Dy ${REE_METAL_PRICE.dy.value}, Tb ${REE_METAL_PRICE.tb.value}, {REE_METAL_PRICE.nd.asOf},
-                    low grams at the low price and high grams at the high price). It is the raw value of the rare-earth
-                    content only, not the price of a magnet or an actuator.
+                    low grams at the low price and high grams at the high price). The Pr price is assumed to be a metal
+                    price: its index does not say metal or oxide. It is the raw value of the rare-earth content only, not
+                    the price of a magnet or an actuator.
                 </p>
                 <ol className="hm-src">
                     {METHOD_SOURCES.map((id) => {
