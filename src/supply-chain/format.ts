@@ -14,26 +14,52 @@ function trim(n: number): string {
     return Number(n.toFixed(digits)).toString();
 }
 
+// Steps from largest to smallest: [divisor, suffix].
+type Steps = [number, string][];
+const STEPS: Record<string, { prefix: string; steps: Steps }> = {
+    USD: {
+        prefix: "$",
+        steps: [
+            [1e9, "B"],
+            [1e6, "M"],
+            [1e3, "k"],
+            [1, ""],
+        ],
+    },
+    t: {
+        prefix: "",
+        steps: [
+            [1e6, " Mt"],
+            [1e3, " kt"],
+            [1, " t"],
+        ],
+    },
+    "t/yr": {
+        prefix: "",
+        steps: [
+            [1e6, " Mt/yr"],
+            [1e3, " kt/yr"],
+            [1, " t/yr"],
+        ],
+    },
+    units: {
+        prefix: "",
+        steps: [
+            [1e6, "M"],
+            [1e3, "k"],
+            [1, ""],
+        ],
+    },
+};
+
 function scaleFor(unit: string | undefined, max: number): Scale {
+    if (unit === "fraction") return { div: 0.01, prefix: "", suffix: "%" };
+    const table = unit ? STEPS[unit] : undefined;
+    if (!table) return { div: 1, prefix: "", suffix: unit ? ` ${unit}` : "" };
     const m = Math.abs(max);
-    switch (unit) {
-        case "USD":
-            if (m >= 1e9) return { div: 1e9, prefix: "$", suffix: "B" };
-            if (m >= 1e6) return { div: 1e6, prefix: "$", suffix: "M" };
-            if (m >= 1e3) return { div: 1e3, prefix: "$", suffix: "k" };
-            return { div: 1, prefix: "$", suffix: "" };
-        case "t":
-        case "t/yr": {
-            const per = unit === "t/yr" ? "/yr" : "";
-            if (m >= 1e6) return { div: 1e6, prefix: "", suffix: ` Mt${per}` };
-            if (m >= 1e3) return { div: 1e3, prefix: "", suffix: ` kt${per}` };
-            return { div: 1, prefix: "", suffix: ` t${per}` };
-        }
-        case "fraction":
-            return { div: 0.01, prefix: "", suffix: "%" };
-        default:
-            return { div: 1, prefix: "", suffix: unit ? ` ${unit}` : "" };
-    }
+    const [div, suffix] = table.steps.find(([d]) => m >= d) ??
+        table.steps.at(-1) ?? [1, ""];
+    return { div, prefix: table.prefix, suffix };
 }
 
 function plain(unit: string | undefined, n: number): string {
@@ -58,7 +84,11 @@ export function formatValue(
     }
     const max = range ? Math.max(Math.abs(range[0]), Math.abs(range[1])) : value;
     const s = scaleFor(unit, max);
-    const f = (n: number) => (unit === "fraction" ? plain(unit, n) : trim(n / s.div));
+    const f = (n: number) => {
+        if (unit === "fraction") return plain(unit, n);
+        if (unit === "units") return Number((n / s.div).toFixed(1)).toString();
+        return trim(n / s.div);
+    };
     const body = range ? `${f(range[0])}-${f(range[1])}` : f(value);
     return `${s.prefix}${body}${s.suffix}`;
 }

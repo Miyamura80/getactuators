@@ -4,6 +4,16 @@ import { LAB_MINING_HHI, LAB_STAGE_SHARES } from "./lab-fixtures";
 import { SUPPLY_LINKS } from "./links";
 import { SEGMENT_MARKETS } from "./market-share";
 import {
+    EVS_PER_YEAR,
+    HHI_COMPARISONS,
+    HIGHLY_CONCENTRATED_HHI,
+    HUMANOIDS_PER_YEAR,
+    HUMANOIDS_SHIPPED_2025,
+    NDFEB_PER_EV,
+    NDFEB_PER_HUMANOID,
+    REVENUE_LADDER,
+} from "./perspective";
+import {
     companySchema,
     siteSchema,
     sourceRefSchema,
@@ -29,6 +39,15 @@ const DATASETS: Record<string, unknown> = {
     "lab-stage-shares": LAB_STAGE_SHARES,
     "lab-values": [LAB_MINING_HHI],
     "market-share": SEGMENT_MARKETS,
+    "perspective-ladder": REVENUE_LADDER,
+    "perspective-units": [
+        NDFEB_PER_HUMANOID,
+        NDFEB_PER_EV,
+        HUMANOIDS_SHIPPED_2025,
+        HUMANOIDS_PER_YEAR,
+        EVS_PER_YEAR,
+    ],
+    "perspective-hhi": [HIGHLY_CONCENTRATED_HHI, ...HHI_COMPARISONS],
 };
 
 // Numbers that need no citation of their own: coordinates (the site carries

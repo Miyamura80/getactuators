@@ -39,11 +39,15 @@ export function normalizeShares(shares: Shares): {
     return { countries, other: Math.max(0, 1 - named) };
 }
 
+// Herfindahl-Hirschman index (0..10000) of shares given as fractions.
+export function hhi(fractions: readonly number[]): number {
+    return Math.round(fractions.reduce((s, f) => s + (clean(f) * 100) ** 2, 0));
+}
+
 // Null when no country holds a positive share.
 export function concentration(shares: Shares): Concentration | null {
     const { countries } = normalizeShares(shares);
     const top = countries[0];
     if (!top) return null;
-    const hhi = Math.round(countries.reduce((s, c) => s + (c.share * 100) ** 2, 0));
-    return { top, hhi };
+    return { top, hhi: hhi(countries.map((c) => c.share)) };
 }

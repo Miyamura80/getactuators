@@ -68,6 +68,19 @@ a dash where no public share exists, and "Other" for the rest. The audit checks
 each share belongs to a company in that segment and that shares add up to at
 most 100%. Never fill a gap with a guess: leave the company out of `shares`.
 
+## Perspective
+
+Four candidate visuals put headline numbers next to references people know.
+Their cited inputs live in `src/supply-chain/perspective.ts`; derived values
+(unit translations, HHIs) are `modeled` with their method in `note`.
+
+| Variant | Component | Shows |
+|---------|-----------|-------|
+| A | `<ScaleLadder>` | values on one log axis with multiples of the first headline |
+| B | `<UnitTranslation>` | a tonnage as humanoids or EVs, one icon per million, against a benchmark |
+| C | `<WaffleGrid>` | each stage as 100 cells coloured by country |
+| D | `<HhiRuler>` | HHI values against the US merger-guideline line and familiar markets |
+
 ## The kit page
 
 Every kit component renders with fixtures on the hidden `/lab/supply-chain`

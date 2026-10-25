@@ -3,20 +3,8 @@ import { countryName } from "../../../../src/country-flag";
 import { percent } from "../../../../src/supply-chain/format";
 import type { Sourced } from "../../../../src/supply-chain/sourced";
 import { Flag } from "../Flag";
+import { COUNTRY_FALLBACK, COUNTRY_COLOR } from "./country-colors";
 import { FootnoteRef } from "./SourcedValue";
-
-// Country colour for share segments. Bright on black, never the status red
-// or green; the unattributed rest is one grey "Other".
-const COUNTRY_COLOR: Partial<Record<ShareKey, string>> = {
-    CN: "#ff922b",
-    US: "#4dabf7",
-    JP: "#f783ac",
-    KR: "#9775fa",
-    AU: "#ffd43b",
-    MM: "#a9e34b",
-    TH: "#38d9a9",
-};
-const FALLBACK = "#8b95a1";
 
 export interface StageShareRowInput {
     id: string;
@@ -50,7 +38,7 @@ export function StageShareBar({ rows }: { rows: StageShareRowInput[] }) {
                     {segments.map((s) => <span key={s.key}
                         className={s.key === "other" ? "sc-seg sc-seg-other" : "sc-seg"}
                         title={`${nameOf(s.key)} ${percent(s.share)}`}
-                        style={{ flexGrow: s.share, background: s.key === "other" ? undefined : COUNTRY_COLOR[s.key] ?? FALLBACK }}>
+                        style={{ flexGrow: s.share, background: s.key === "other" ? undefined : COUNTRY_COLOR[s.key] ?? COUNTRY_FALLBACK }}>
                         {s.share >= LABEL_MIN ? <span aria-hidden="true">
                             {s.key === "other" ? "Other" : <Flag code={s.key} decorative />} {percent(s.share)}
                         </span> : null}

@@ -56,6 +56,8 @@ describe("value formatting", () => {
         expect(formatValue(20000, "t/yr")).toBe("20 kt/yr");
         expect(formatValue(0.94, "fraction")).toBe("94%");
         expect(formatValue(5050, "HHI")).toBe("5,050");
+        expect(formatValue(13000, "units")).toBe("13k");
+        expect(formatValue(7e6, "units", [4.44e6, 1e7])).toBe("4.4-10M");
     });
 
     test("confidence marks in plain text", () => {

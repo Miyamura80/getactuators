@@ -275,6 +275,45 @@ export const SOURCES: SourceRef[] = [
         "https://investinchina.chinadaily.com.cn/s/202601/12/WS6964b698498e23165e06cba4/chinese-firms-lead-global-humanoid-robot-production-in-2025-report.html",
         "press",
     ),
+    // Perspective references (src/supply-chain/perspective.ts)
+    src(
+        "tesla-10k-2025",
+        "Tesla 10-K",
+        "Form 10-K for fiscal year 2025",
+        "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+        "filing",
+    ),
+    src(
+        "fai-robot-magnets",
+        "Foundation for American Innovation",
+        "The robot boom has a magnet problem",
+        "https://policygradients.thefai.org/p/the-robot-boom-has-a-magnet-problem",
+        "industry-report",
+    ),
+    {
+        ...src(
+            "thundersaid-ev-magnets",
+            "Thunder Said Energy",
+            "Electric vehicles: motors and magnets",
+            "https://thundersaidenergy.com/downloads/electric-vehicles-motors-and-magnets/",
+            "industry-report",
+        ),
+        paywalled: true,
+    },
+    src(
+        "doj-ftc-merger-guidelines-2023",
+        "US DOJ and FTC",
+        "Merger Guidelines (2023)",
+        "https://www.justice.gov/atr/2023-merger-guidelines",
+        "government",
+    ),
+    src(
+        "statcounter-search-2025-12",
+        "StatCounter",
+        "Search engine market share worldwide, December 2025",
+        "https://gs.statcounter.com/search-engine-market-share/2025-12/worldwide",
+        "industry-report",
+    ),
     // Company sites, cited for headquarters and product lines
     src(
         "fanuc-site",
