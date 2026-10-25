@@ -120,7 +120,7 @@ export function actuatorBody(a: Actuator): string {
     if (sizing) sections.splice(3, 0, sizing);
     if (robots.length > 0) {
         sections.push(
-            `## Robots that use it\n\n${bullets(robots.map((r) => `${mdText(r.name)} by ${mdText(r.brand)}: ${mdText(r.summary)}`))}`,
+            `## Robots that use it\n\n${bullets(robots.map((r) => `${mdLink(r.name, absoluteUrl(`/robots#${encodeURIComponent(r.id)}`))} by ${mdText(r.brand)}: ${mdText(r.summary)}`))}`,
         );
     }
     if (a.notes && !productSummary(a.id))

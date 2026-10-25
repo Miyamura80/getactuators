@@ -159,7 +159,7 @@
             "weight_g": 18,
             "torque_density_nm_per_kg": 28.9,
             "product_url": "https://emanual.robotis.com/docs/en/dxl/x/xl330-m288/",
-            "actuator_id": null
+            "actuator_id": "dynamixel-xl330-m288-t"
         },
         "dynamixel-xl330-m077": {
             "id": "dynamixel-xl330-m077",

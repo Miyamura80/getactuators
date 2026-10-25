@@ -732,6 +732,20 @@ table.board {
     font-size: 13px;
     line-height: 1.55;
 }
+.drawer-used-in {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 10px;
+    margin: 14px 0 0;
+    font-size: 12.5px;
+}
+.drawer-used-in span {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+}
 .drawer-links {
     display: flex;
     gap: 10px;
@@ -1919,6 +1933,10 @@ table.board {
 }
 .motor-name:hover {
     text-decoration: underline;
+}
+.motor-name[data-catalog="true"]::after {
+    content: " →";
+    color: var(--muted);
 }
 .motor-role {
     grid-area: role;
