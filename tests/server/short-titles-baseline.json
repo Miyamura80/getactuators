@@ -55,8 +55,8 @@
             "path": "/agents",
             "title": "actuatorlist for AI agents",
             "description": "Connect an AI agent to actuatorlist: MCP server, REST API, markdown twins and llms.txt. No key needed.",
-            "bodySha256": "56ca4ebca291d5c5d74796e6f8b45fe0b3b248be88d0343d3610ac66aea11dcd",
-            "htmlContentSha256": "76bb8d094f57c672b937bbda715d09e0a23305a5b538a2b33af207c25a39b11d"
+            "bodySha256": "53af8137b58f62016d323f7d23ac851806c8ef3c5d186067842c6fa15a031059",
+            "htmlContentSha256": "326e5aa22e1f5a2abf81c88f07961064cb000dafe27ba40eb213cabe61cf9335"
         },
         {
             "path": "/about",
