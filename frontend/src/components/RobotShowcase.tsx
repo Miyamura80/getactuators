@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import type { Robot, RobotKind } from "../types";
-import { ROBOTS, ROBOT_CREDIT, motorCount, resolveJoints } from "../lib/robots";
-import { num, price } from "../lib/format";
+import { ROBOTS, ROBOT_CREDIT, liftRatio, motorCount, resolveJoints, runtimeHours } from "../lib/robots";
+import { hours, num, price } from "../lib/format";
 import { useLocationKey } from "../lib/router";
 import { BrandGlyph } from "./BrandGlyph";
 import { CopyLinkButton } from "./CopyLinkButton";
 import { RobotArt } from "./RobotArt";
-import { hours, liftRatio, RobotCharts } from "./RobotCharts";
-import { RobotFacts } from "./RobotFacts";
+import { RobotCharts } from "./robots/RobotCharts";
+import { RobotFacts } from "./robots/RobotFacts";
 
 // Price shown as a single value or a range when the product has variants.
 function priceLabel(r: Robot): string {
@@ -25,10 +25,11 @@ function torque(v: number | null): string {
 }
 
 // Mains-powered machines read "Mains"; a battery robot with no published
-// figure reads as a dash, with the reason in the tooltip.
+// figure reads as a dash, with any note shown under the stats.
 function runtimeLabel(r: Robot): string {
     if (r.power === "mains") return "Mains";
-    return r.runtime_h == null ? "–" : hours(r.runtime_h);
+    const h = runtimeHours(r);
+    return h == null ? "–" : hours(h);
 }
 
 const KIND_LABEL: Record<RobotKind, string> = {

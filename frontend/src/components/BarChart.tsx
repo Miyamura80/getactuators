@@ -1,3 +1,5 @@
+import { activation } from "../lib/svg-link";
+
 export interface BarItem {
     id: string;
     name: string;
@@ -48,23 +50,6 @@ export function barLayout(names: string[]): { padL: number; labelH: number } {
         drop = Math.max(drop, w * SIN);
     });
     return { padL: Math.ceil(padL), labelH: Math.ceil(NAME_Y + drop + MIN_PAD * 2) };
-}
-
-// Click and keyboard props for an SVG group that acts as a link.
-export function activation(label: string, go: () => void) {
-    return {
-        role: "link",
-        tabIndex: 0,
-        "aria-label": label,
-        style: { cursor: "pointer" },
-        onClick: go,
-        onKeyDown: (e: { key: string; preventDefault: () => void }) => {
-            if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                go();
-            }
-        },
-    };
 }
 
 // Vertical bar chart: value above each bar, flag + rotated name below.

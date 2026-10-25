@@ -1,9 +1,10 @@
-import type { Robot } from "../types";
-import { ROBOTS, resolveJoints } from "../lib/robots";
-import { navigate } from "../lib/router";
-import { activation } from "./BarChart";
-import { BrandGlyph } from "./BrandGlyph";
-import { KIND_COLOR, hours } from "./RobotCharts";
+import type { Robot } from "../../types";
+import { hours, usdShort } from "../../lib/format";
+import { frontierPath, paretoFront } from "../../lib/pareto";
+import { KIND_COLOR, ROBOTS, runtimeHours, totalPeakTorque } from "../../lib/robots";
+import { navigate } from "../../lib/router";
+import { activation } from "../../lib/svg-link";
+import { BrandGlyph } from "../BrandGlyph";
 
 const W = 620;
 const H = 360;
@@ -13,24 +14,6 @@ interface Pt {
     r: Robot;
     price: number;
     y: number;
-}
-
-// Sum of peak torque across every joint motor, or null when the loadout is
-// unknown or any motor's peak is unpublished.
-export function totalPeakTorque(r: Robot): number | null {
-    const joints = resolveJoints(r);
-    if (joints.length === 0 || joints.some((j) => j.motor.peak_torque_nm == null)) return null;
-    return joints.reduce((n, j) => n + j.count * (j.motor.peak_torque_nm as number), 0);
-}
-
-// Points on the upper-left frontier: nothing else is both no dearer and no
-// worse, and strictly better on one of the two.
-function frontier(pts: Pt[]): boolean[] {
-    return pts.map((p) =>
-        pts.every(
-            (q) => q === p || !(q.price <= p.price && q.y >= p.y && (q.price < p.price || q.y > p.y)),
-        ),
-    );
 }
 
 // Log-axis ticks at 1, 2 and 5 times each power of ten inside the range.
@@ -75,10 +58,6 @@ function frontLabels(pts: Pt[], front: boolean[], sx: (v: number) => number, sy:
     return placed;
 }
 
-function usd(v: number): string {
-    return v >= 1000 ? `$${v / 1000}k` : `$${v}`;
-}
-
 interface Props {
     pts: Pt[];
     yLabel: string;
@@ -99,12 +78,12 @@ function ParetoPlot({ pts, yLabel, yLog, fmtY }: Props) {
         yLog ? (Math.log10(v) - Math.log10(minY)) / (Math.log10(maxY) - Math.log10(minY)) : v / maxY;
     const sy = (v: number) => H - M.bottom - fy(v) * (H - M.top - M.bottom);
     const yTicks = yLog ? logTicks(minY, maxY) : linTicks(maxY);
-    const front = frontier(pts);
-    const path = pts
-        .filter((_, i) => front[i])
-        .sort((a, b) => a.price - b.price)
-        .map((p, i) => `${i === 0 ? "M" : "L"} ${sx(p.price).toFixed(1)} ${sy(p.y).toFixed(1)}`)
-        .join(" ");
+    const front = paretoFront(
+        pts,
+        (p) => p.price,
+        (p) => p.y,
+    );
+    const path = frontierPath(pts.filter((_, i) => front[i]).map((p) => ({ x: sx(p.price), y: sy(p.y) })));
 
     return (
         <svg className="scatter robot-scatter" viewBox={`0 0 ${W} ${H}`} role="img">
@@ -114,7 +93,7 @@ function ParetoPlot({ pts, yLabel, yLog, fmtY }: Props) {
                 <g key={t}>
                     <line x1={sx(t)} x2={sx(t)} y1={M.top} y2={H - M.bottom} className="grid" />
                     <text x={sx(t)} y={H - M.bottom + 16} className="axis-tick" textAnchor="middle">
-                        {usd(t)}
+                        {usdShort(t)}
                     </text>
                 </g>
             ))}
@@ -129,7 +108,7 @@ function ParetoPlot({ pts, yLabel, yLog, fmtY }: Props) {
             {path && <path d={path} className="pareto" />}
             {pts.map((p, i) => (
                 <g key={p.r.id} {...activation(p.r.name, () => navigate(`/robots#${p.r.id}`))}>
-                    <title>{`${p.r.name}: ${usd(p.price)}, ${fmtY(p.y)}`}</title>
+                    <title>{`${p.r.name}: ${usdShort(p.price)}, ${fmtY(p.y)}`}</title>
                     <circle
                         cx={sx(p.price)}
                         cy={sy(p.y)}
@@ -193,7 +172,7 @@ const PLOTS = [
         yLabel: "Runtime per charge (h)",
         yLog: false,
         fmtY: hours,
-        pts: points((r) => (r.power === "battery" ? (r.runtime_h ?? null) : null)),
+        pts: points(runtimeHours),
     },
 ];
 

@@ -1,45 +1,31 @@
-import type { Robot, RobotKind } from "../types";
-import { ROBOTS } from "../lib/robots";
-import { navigate } from "../lib/router";
-import { BarChart } from "./BarChart";
-import type { BarItem } from "./BarChart";
-import { BrandGlyph } from "./BrandGlyph";
-import { Legend } from "./Legend";
+import type { Robot } from "../../types";
+import { hours, usdShort } from "../../lib/format";
+import { KIND_COLOR, liftRatio, ROBOTS, runtimeHours } from "../../lib/robots";
+import { navigate } from "../../lib/router";
+import { BarChart } from "../BarChart";
+import type { BarItem } from "../BarChart";
+import { BrandGlyph } from "../BrandGlyph";
+import { Legend } from "../Legend";
 import { RobotPareto } from "./RobotPareto";
 
-// Same hues as the robot-type cards on the home page.
-export const KIND_COLOR: Record<RobotKind, string> = {
-    humanoid: "hsl(262 60% 66%)",
-    robot_arm: "hsl(210 70% 62%)",
-};
-
-function usd(v: number): string {
-    return v >= 10_000 ? `$${Math.round(v / 1000)}k` : v >= 1000 ? `$${(v / 1000).toFixed(1)}k` : `$${Math.round(v)}`;
-}
-
-export function hours(v: number): string {
-    return `${Number.isInteger(v) ? v : v.toFixed(1)} h`;
-}
-
-// Payload as a share of the robot's own mass, or null when either is missing.
-export function liftRatio(r: Robot): number | null {
-    return r.payload_kg != null && r.weight_kg ? r.payload_kg / r.weight_kg : null;
+interface BarSpec {
+    metric: (r: Robot) => number | null;
+    fmt: (v: number) => string;
+    dir: "asc" | "desc";
+    // Bar label, when it must say more than the robot's name.
+    label?: (r: Robot) => string;
 }
 
 // Bars for every robot the metric covers, sorted by value; the robots it
 // skips are named under the chart instead of silently dropped.
-function bars(
-    metric: (r: Robot) => number | null,
-    fmt: (v: number) => string,
-    dir: "asc" | "desc",
-): { items: BarItem[]; skipped: string[] } {
+function bars({ metric, fmt, dir, label = (r) => r.name }: BarSpec): { items: BarItem[]; skipped: string[] } {
     const rows = ROBOTS.map((r) => ({ r, v: metric(r) }));
     const items = rows
         .filter((x): x is { r: Robot; v: number } => x.v != null)
         .sort((a, b) => (dir === "asc" ? a.v - b.v : b.v - a.v))
         .map(({ r, v }) => ({
             id: r.id,
-            name: r.payload_basis === "whole_body" && metric === liftRatio ? `${r.name} (whole body)` : r.name,
+            name: label(r),
             value: v,
             display: fmt(v),
             flag: r.country_flag,
@@ -56,7 +42,7 @@ const CARDS = [
         sub: "Entry USD · log scale · lower is cheaper",
         log: true,
         skip: "Price not published",
-        ...bars((r) => r.price_usd, usd, "asc"),
+        ...bars({ metric: (r) => r.price_usd, fmt: usdShort, dir: "asc" }),
     },
     {
         key: "per-dof",
@@ -64,7 +50,7 @@ const CARDS = [
         sub: "Entry USD per degree of freedom · log scale",
         log: true,
         skip: "Price not published",
-        ...bars((r) => (r.price_usd == null ? null : r.price_usd / r.dof), usd, "asc"),
+        ...bars({ metric: (r) => (r.price_usd == null ? null : r.price_usd / r.dof), fmt: usdShort, dir: "asc" }),
     },
     {
         key: "runtime",
@@ -72,7 +58,7 @@ const CARDS = [
         sub: "Hours per charge, maker's best figure · higher is better",
         log: false,
         skip: "Mains-powered or not published",
-        ...bars((r) => (r.power === "battery" ? (r.runtime_h ?? null) : null), hours, "desc"),
+        ...bars({ metric: runtimeHours, fmt: hours, dir: "desc" }),
     },
     {
         key: "lift",
@@ -80,7 +66,12 @@ const CARDS = [
         sub: "How much it lifts per kg of robot · higher is better",
         log: false,
         skip: "Payload or weight not published",
-        ...bars(liftRatio, (v) => v.toFixed(2), "desc"),
+        ...bars({
+            metric: liftRatio,
+            fmt: (v) => v.toFixed(2),
+            dir: "desc",
+            label: (r) => (r.payload_basis === "whole_body" ? `${r.name} (whole body)` : r.name),
+        }),
     },
 ];
 

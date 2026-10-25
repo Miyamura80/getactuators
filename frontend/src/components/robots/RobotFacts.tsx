@@ -1,5 +1,7 @@
-import type { Robot, RobotAvailability } from "../types";
+import type { Robot, RobotAvailability } from "../../types";
 
+// Shipping, pre-order and discontinued get a colour in index.css; quote only
+// stays neutral, since it says nothing good or bad about getting one.
 const AVAILABILITY: Record<RobotAvailability, string> = {
     shipping: "Shipping",
     preorder: "Pre-order",

@@ -80,7 +80,20 @@ export interface RobotJoint {
 // fallback art.
 export type RobotKind = "robot_arm" | "humanoid";
 
+// Whether a robot can be bought today. Distinct from an actuator's
+// free-form `availability` string (e.g. "in_production").
 export type RobotAvailability = "shipping" | "preorder" | "quote_only" | "discontinued";
+export type RobotPower = "battery" | "mains";
+// Whether the joint actuators are the maker's own design or bought in.
+export type ActuatorSourcing = "in_house" | "off_the_shelf";
+// What the maker publishes: mechanical CAD, a URDF/MJCF model, SDK source
+// and a bill of materials.
+export interface RobotOpenness {
+    cad: boolean;
+    urdf: boolean;
+    sdk: boolean;
+    bom: boolean;
+}
 
 export interface Robot {
     id: string;
@@ -109,15 +122,13 @@ export interface Robot {
     image_crop?: [number, number, number, number];
     // Researched buying, power and openness facts. Optional so a robot can be
     // listed before it has been researched.
-    power?: "battery" | "mains";
+    power?: RobotPower;
     // Best quoted runtime per charge; runtime_note carries editions or caveats.
     runtime_h?: number | null;
     runtime_note?: string | null;
-    // What the maker publishes: mechanical CAD, a URDF/MJCF model, SDK source
-    // and a bill of materials.
-    openness?: { cad: boolean; urdf: boolean; sdk: boolean; bom: boolean };
-    // Whether the joint actuators are the maker's own design or bought in.
-    actuator_sourcing?: "in_house" | "off_the_shelf" | null;
+    openness?: RobotOpenness;
+    // Null when the maker does not say whose actuators it uses.
+    actuator_sourcing?: ActuatorSourcing | null;
     availability?: RobotAvailability;
     lead_time?: string | null;
     summary: string;
