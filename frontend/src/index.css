@@ -236,6 +236,15 @@ a:hover {
 .hi-chart {
     overflow-x: auto;
 }
+.robot-costs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-bottom: 8px;
+}
+.robot-costs-note {
+    margin: 0 0 24px;
+    font-size: 11.5px;
+    color: var(--muted);
+}
 
 /* ---- Charts (shared SVG) ---------------------------------------------- */
 .chart-scroll {
