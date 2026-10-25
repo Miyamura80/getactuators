@@ -2,6 +2,13 @@
 // keyed to its primary web domain (the logo provider's lookup key). A `null`
 // domain is deliberate: the company has no verified site, so the UI draws a
 // monogram instead of guessing. Shared by the browser (CompanyLogo) and tests.
+//
+// Verification (Oct 2026): domains were checked by web search; these were also
+// confirmed as the company's own domain by Logo.dev brand search: robstride.com,
+// allient.com, iflight.com, nidec.com, hiwonder.com, menlo.ai, menlovc.com,
+// unitzero.ai, i2rt.com, mindrobotics.com, proception.ai, minervahumanoids.com,
+// theker.ai. Every domain returns a Logo.dev logo except lkmotor.cn (LKMTech),
+// which renders as a monogram.
 
 import { canonicalBrand } from "../catalog/brands";
 import { STARTUPS } from "../startups";
