@@ -13,6 +13,7 @@ import {
     type Humanoid,
     humanoidTotals,
 } from "../../../../src/humanoids";
+import { Flag } from "../../components/Flag";
 import { FleetTable } from "./FleetTable";
 import { JointPanel } from "./JointPanel";
 import { Method } from "./Method";
@@ -82,7 +83,7 @@ function Card({ robot, joint, onJoint }: { robot: Humanoid; joint: CanonicalJoin
             <figcaption>
                 <b>{robot.name}</b>
                 <span>
-                    {robot.brand} · {robot.country}
+                    {robot.brand} · <Flag code={robot.country} />
                 </span>
             </figcaption>
             <Silhouette robot={robot} selected={joint} onSelect={onJoint} />

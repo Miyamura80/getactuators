@@ -8,6 +8,7 @@ import {
     humanoidTotals,
     reeTotalKg,
 } from "../../../../src/humanoids";
+import { countryName } from "../../../../src/country-flag";
 
 // Fleet table state lives in the URL: ?q= (search), ?sort= (column, "-" for
 // descending), ?page= (1-based). Defaults are left out of the URL.
@@ -32,7 +33,7 @@ export interface Row {
 export const ROWS: Row[] = HUMANOIDS.map((h) => {
     const t = humanoidTotals(h);
     const types = Object.keys(t.actuatorCountByType) as (keyof typeof ACTUATOR_TYPE_LABEL)[];
-    const hay = [h.name, h.brand, h.country, ...types, ...types.map((k) => ACTUATOR_TYPE_LABEL[k])]
+    const hay = [h.name, h.brand, h.country, countryName(h.country), ...types, ...types.map((k) => ACTUATOR_TYPE_LABEL[k])]
         .join(" ")
         .toLowerCase();
     return { h, t, ree: reeTotalKg(t).value, conf: dataConfidence(h), hay };

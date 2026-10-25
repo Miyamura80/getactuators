@@ -45,6 +45,7 @@ describe("/humanoids", () => {
             expect(md).toContain(
                 "| Left knee | 1 | Rotary QDD | [RobStride 04](/actuators/robstride-04)",
             );
+            expect(md).toContain("- **Country:** \u{1F1E8}\u{1F1F3} China");
             expect(md).toContain("## Magnet mass method");
             expect(md).not.toContain(EM_DASH);
         }

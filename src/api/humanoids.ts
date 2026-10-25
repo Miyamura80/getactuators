@@ -1,3 +1,4 @@
+import { countryFlag, countryName } from "@/country-flag";
 import {
     ACTUATOR_TYPES,
     HUMANOIDS,
@@ -90,7 +91,8 @@ const humanoidFields = {
     id: z.string(),
     name: z.string(),
     brand: z.string(),
-    country: z.string(),
+    country: z.string().describe("ISO 3166-1 alpha-2 code, e.g. `CN`."),
+    country_name: z.string().describe("Country name with its flag, e.g. `🇨🇳 China`."),
     robot_id: z
         .string()
         .nullable()
@@ -155,6 +157,7 @@ export function serializeHumanoid(h: Humanoid): z.infer<typeof HumanoidSchema> {
         name: h.name,
         brand: h.brand,
         country: h.country,
+        country_name: `${countryFlag(h.country)} ${countryName(h.country)}`,
         robot_id: h.robotId ?? null,
         dof: h.dof,
         height_m: h.height_m,

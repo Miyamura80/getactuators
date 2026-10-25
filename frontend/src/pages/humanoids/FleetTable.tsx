@@ -2,6 +2,7 @@ import { useReducer, useState } from "react";
 import type { DataGrade } from "../../../../src/humanoids";
 import { navigate, useLocationKey } from "../../lib/router";
 import { type FleetState, fleetSearch, parseFleet, queryFleet, ROWS, type SortKey } from "./fleet-query";
+import { Flag } from "../../components/Flag";
 import { MixBar } from "./Totals";
 
 const COLS: { key: SortKey; label: string; num?: boolean }[] = [
@@ -109,7 +110,7 @@ export function FleetTable({ active, onPick }: { active: string; onPick: (id: st
                                         {h.name}
                                     </button>
                                     <span className="hm-brand">
-                                        {h.brand} · {h.country}
+                                        {h.brand} · <Flag code={h.country} />
                                     </span>
                                 </td>
                                 <td className="hm-mixcol">

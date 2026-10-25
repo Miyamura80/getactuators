@@ -34,6 +34,7 @@ describe("humanoid joint dataset", () => {
         expect(HUMANOIDS.length).toBeGreaterThanOrEqual(15);
         expect(HUMANOIDS.length).toBeLessThanOrEqual(25);
         expect(new Set(HUMANOIDS.map((h) => h.id)).size).toBe(HUMANOIDS.length);
+        for (const h of HUMANOIDS) expect(h.country).toMatch(/^[A-Z]{2}$/);
     });
 
     test("every joint is canonical, sourced, and says what an estimate rests on", () => {

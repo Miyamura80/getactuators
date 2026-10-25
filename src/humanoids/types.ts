@@ -85,6 +85,7 @@ export interface Humanoid {
     id: string;
     name: string;
     brand: string;
+    // ISO 3166-1 alpha-2, e.g. "CN"; rendered as a flag (src/country-flag.ts).
     country: string;
     // Matching record in frontend/src/data/robots.json, when there is one.
     robotId?: string;

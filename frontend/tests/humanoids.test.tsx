@@ -163,6 +163,23 @@ test("fleet state restores from the URL and follows the back button", () => {
     expect(window.location.search).toContain("q=unitree");
 });
 
+test("countries render as flags named for assistive tech, and search by name or code", () => {
+    setURL("/humanoids?robot=unitree-g1");
+    const view = render(<Humanoids />);
+    const root = view.container;
+    const flag = root.querySelector(".hm-card figcaption .flag");
+    expect(flag?.textContent).toBe("\u{1F1E8}\u{1F1F3}");
+    expect(flag?.getAttribute("aria-label")).toBe("China");
+    expect(flag?.getAttribute("title")).toBe("China");
+    expect(root.querySelector(".hm-card figcaption")?.textContent).not.toContain("China");
+    search(root, "china");
+    expect(rowNames(root)).toContain("G1");
+    const chinaHits = rowNames(root).length;
+    search(root, "cn");
+    expect(rowNames(root)).toHaveLength(chinaHits);
+    expect(root.querySelector(".hm-fleet tbody .flag")?.getAttribute("aria-label")).toBe("China");
+});
+
 test("each row carries a data confidence meter with an explanation", () => {
     setURL("/humanoids?q=k-bot");
     const view = render(<Humanoids />);

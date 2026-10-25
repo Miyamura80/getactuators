@@ -1,3 +1,4 @@
+import { countryFlag, countryName } from "@/country-flag";
 import {
     ACTUATOR_TYPES,
     ACTUATOR_TYPE_LABEL,
@@ -33,6 +34,8 @@ const figure = (s?: Sourced<number>) =>
         ? `${s.value} ${s.unit ?? ""}${s.confidence === "reported" ? "" : ` (${s.confidence})`}`
         : "";
 
+const country = (code: string) => `${countryFlag(code)} ${countryName(code)}`;
+
 function mix(h: Humanoid): string {
     const t = humanoidTotals(h).actuatorCountByType;
     return ACTUATOR_TYPES.filter((k) => t[k])
@@ -60,7 +63,7 @@ function jointRow(j: HumanoidJoint): string[] {
 function robotSection(h: Humanoid): string {
     const t = humanoidTotals(h);
     const ree = reeTotalKg(t);
-    const head = `## ${h.name} (${h.brand})\n\n${h.summary}\n\n- **Actuators:** ${t.actuators} (${mix(h)})\n- **DOF:** ${h.dof ?? "not published"}\n- **Magnet:** ${range(t.magnetMassKg)} kg NdFeB (estimated)\n- **Rare earths:** ${range(ree)} kg (Nd ${range(t.reeKg.nd, 3)}, Pr ${range(t.reeKg.pr, 3)}, Dy ${range(t.reeKg.dy, 3)}, Tb ${range(t.reeKg.tb, 3)})`;
+    const head = `## ${h.name} (${h.brand})\n\n${h.summary}\n\n- **Country:** ${country(h.country)}\n- **Actuators:** ${t.actuators} (${mix(h)})\n- **DOF:** ${h.dof ?? "not published"}\n- **Magnet:** ${range(t.magnetMassKg)} kg NdFeB (estimated)\n- **Rare earths:** ${range(ree)} kg (Nd ${range(t.reeKg.nd, 3)}, Pr ${range(t.reeKg.pr, 3)}, Dy ${range(t.reeKg.dy, 3)}, Tb ${range(t.reeKg.tb, 3)})`;
     const notes = h.notCounted ? `\n- **Not counted:** ${h.notCounted}` : "";
     const inferred = [...new Set(h.joints.map((j) => j.inferredFrom).filter(Boolean))];
     const basis = inferred.length
@@ -79,7 +82,7 @@ export function humanoidsBody(): string {
         HUMANOIDS.map((h) => {
             const t = humanoidTotals(h);
             return [
-                `${h.name} (${h.brand})`,
+                `${h.name} (${h.brand}, ${country(h.country)})`,
                 h.dof === null ? "n/a" : String(h.dof),
                 String(t.actuators),
                 mix(h),
@@ -178,6 +181,10 @@ export function humanoidsItemList(): Record<string, unknown> {
                     "@type": "Product",
                     name: h.name,
                     brand: { "@type": "Brand", name: h.brand },
+                    countryOfOrigin: {
+                        "@type": "Country",
+                        name: countryName(h.country),
+                    },
                     category: "Humanoid robot",
                     description: h.summary,
                     url,
