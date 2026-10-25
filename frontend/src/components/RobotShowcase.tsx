@@ -67,7 +67,7 @@ function RobotThumb({ robot }: { robot: Robot }) {
             ) : (
                 <RobotArt kind={robot.kind} framing="plain" />
             )}
-            <span className="robot-dof">{robot.dof}-DOF</span>
+            {robot.dof != null && <span className="robot-dof">{robot.dof}-DOF</span>}
         </div>
     );
 }

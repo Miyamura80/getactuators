@@ -50,7 +50,7 @@ const CARDS = [
         sub: "Entry USD per degree of freedom · log scale",
         log: true,
         skip: "Price not published",
-        ...bars({ metric: (r) => (r.price_usd == null ? null : r.price_usd / r.dof), fmt: usdShort, dir: "asc" }),
+        ...bars({ metric: (r) => (r.price_usd == null || !r.dof ? null : r.price_usd / r.dof), fmt: usdShort, dir: "asc" }),
     },
     {
         key: "runtime",
