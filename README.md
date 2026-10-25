@@ -147,9 +147,9 @@ bun run scripts/serve_frontend.ts # serves frontend/dist and agent routes on :30
 cd frontend && bun run dev
 ```
 
-Company logos load from Logo.dev when `VITE_LOGO_DEV_TOKEN` is set in
-`frontend/.env` (or as a Railway variable); without it they render as
-monograms. See [docs/brand-logos.md](docs/brand-logos.md).
+Company logos use Logo.dev when `VITE_LOGO_DEV_TOKEN` is set in
+`frontend/.env` (or as a Railway variable); without a token, logos without a
+self-hosted image render as monograms. See [docs/brand-logos.md](docs/brand-logos.md).
 
 Main make targets:
 

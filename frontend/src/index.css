@@ -837,6 +837,9 @@ table.board {
     font-size: 11px;
     font-weight: 400;
 }
+.compare-table th .brand.with-logo {
+    display: flex;
+}
 .compare-table .remove {
     border: none;
     background: none;

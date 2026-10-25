@@ -20,6 +20,8 @@ describe("country flags", () => {
         expect(missing).toEqual([]);
         expect(countryCode("South Korea")).toBe("KR");
         expect(countryCode("United Kingdom")).toBe("GB");
+        expect(countryCode("jp")).toBe("JP");
+        expect(countryCode("ZZ")).toBeNull();
     });
 
     test("the flag keeps the country name as its label", () => {
@@ -31,10 +33,11 @@ describe("country flags", () => {
 });
 
 describe("CompanyLogo", () => {
-    test("without a client id it draws a decorative monogram", () => {
-        const { container } = render(<CompanyLogo name="Harmonic Drive LLC" size={16} />);
+    test("a company with no logo source draws a decorative monogram", () => {
+        // Not in the registry, so no domain: a monogram with or without a token.
+        const { container } = render(<CompanyLogo name="Zephyr Motion Works" size={16} />);
         const mono = container.querySelector(".company-logo-mono");
-        expect(mono?.textContent).toBe("HD");
+        expect(mono?.textContent).toBe("ZM");
         expect(mono?.getAttribute("aria-hidden")).toBe("true");
     });
 

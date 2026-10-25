@@ -19,15 +19,25 @@ function index(): Map<string, string> {
             } catch {
                 name = undefined;
             }
-            if (name && name !== code && !byName.has(name.toLowerCase())) byName.set(name.toLowerCase(), code);
+            // Unassigned codes come back as the code itself or as "Unknown Region".
+            if (!name || name === code || name === "Unknown Region") continue;
+            if (!byName.has(name.toLowerCase())) byName.set(name.toLowerCase(), code);
         }
     }
     return byName;
 }
 
+let known: Set<string> | null = null;
+
+function codes(): Set<string> {
+    known ??= new Set(index().values());
+    return known;
+}
+
 export function countryCode(nameOrCode: string | null | undefined): string | null {
     if (!nameOrCode) return null;
     const v = nameOrCode.trim();
-    if (/^[A-Za-z]{2}$/.test(v)) return v.toUpperCase();
+    // Only codes Intl names, so a stray "ZZ" renders nothing instead of a bogus flag.
+    if (/^[A-Za-z]{2}$/.test(v)) return codes().has(v.toUpperCase()) ? v.toUpperCase() : null;
     return index().get(v.toLowerCase()) ?? null;
 }

@@ -111,7 +111,7 @@ function DealTip({ fund, deal }: { fund: Fund; deal: Deal }) {
     const c = companyOf(deal);
     return (
         <>
-            <TipHead name={deal.co} />
+            <TipHead name={c.name} />
             <span className="inv-tip-m">{c.what}</span>
             <div className="inv-tip-row">
                 <i className="inv-tip-kind" style={{ background: TIER_COLOR[c.kind] }} />

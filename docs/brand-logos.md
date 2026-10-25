@@ -64,7 +64,8 @@ there without touching any page. The token is Logo.dev's publishable key
 (`pk_...`), which is safe to expose in the browser; anything else is ignored.
 
 - Local: put `VITE_LOGO_DEV_TOKEN=pk_...` in `frontend/.env` (Vite reads env
-  files from `frontend/`), then `bun run build` or `bun run dev`.
+  files from `frontend/`), then `cd frontend && bun run build` or
+  `cd frontend && bun run dev`.
 - Railway: add a `VITE_LOGO_DEV_TOKEN` service variable. The Dockerfile passes
   it into the frontend build as a build arg, so redeploy after setting it.
 - Unset: every logo is a monogram.
