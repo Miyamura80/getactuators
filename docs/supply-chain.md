@@ -49,9 +49,11 @@ Footnotes are numbered in first-cited order on both surfaces, and
 
 ## Country share by stage
 
-`<StageShareBar rows>` draws one stacked bar per stage, countries largest
-first and the unattributed rest as a grey "Other". The bar itself shows
-whether one country dominates; there is no separate badge. Segments carry
+`<WaffleGrid rows>` is the canonical "where is the chokepoint" visual: each
+stage as 100 cells (one per percent) coloured by country, with a legend of
+every country's flag and share under the grid, largest first and "Other"
+last. The area itself shows whether one country dominates; there is no
+separate badge. Segments carry
 flag emoji from `countryFlag(code)` in `src/country-flag.ts`, with the country name
 as the accessible label (use `<Flag code>` from `frontend/src/components/Flag.tsx`).
 
@@ -70,16 +72,16 @@ most 100%. Never fill a gap with a guess: leave the company out of `shares`.
 
 ## Perspective
 
-Four candidate visuals put headline numbers next to references people know.
+Candidate visuals that put headline numbers next to references people know.
 Their cited inputs live in `src/supply-chain/perspective.ts`; derived values
-(unit translations, HHIs) are `modeled` with their method in `note`.
+(unit translations, competitor equivalents) are `modeled` with their method
+in `note`.
 
 | Variant | Component | Shows |
 |---------|-----------|-------|
 | A | `<ScaleLadder>` | values on one log axis with multiples of the first headline |
 | B | `<UnitTranslation>` | a tonnage as humanoids or EVs, one icon per million, against a benchmark |
-| C | `<WaffleGrid>` | each stage as 100 cells coloured by country |
-| D | `<HhiRuler>` | HHI values against the US merger-guideline line and familiar markets |
+| D | `<CompetitorEquivalents>` | each market as the number of equal-sized competitors it acts like (10,000 / HHI), against the US "highly concentrated" line |
 
 ## The kit page
 

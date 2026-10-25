@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
 import {
+    EFFECTIVE_COMPETITORS,
     EVS_PER_YEAR,
-    HHI_COMPARISONS,
-    HIGHLY_CONCENTRATED_HHI,
+    HIGHLY_CONCENTRATED_EQUIVALENT,
     HUMANOIDS_PER_YEAR,
     REVENUE_LADDER,
 } from "@/supply-chain/perspective";
@@ -25,12 +25,17 @@ describe("perspective references", () => {
         expect(HUMANOIDS_PER_YEAR.confidence).toBe("modeled");
     });
 
-    test("HHI yardsticks sit on the 0 to 10,000 scale against the 1,800 line", () => {
-        expect(HIGHLY_CONCENTRATED_HHI.value).toBe(1800);
-        for (const p of HHI_COMPARISONS) {
-            expect(p.value.value).toBeGreaterThan(HIGHLY_CONCENTRATED_HHI.value);
-            expect(p.value.value).toBeLessThanOrEqual(10000);
+    test("markets read as equal-sized competitors, 10,000 / HHI", () => {
+        expect(HIGHLY_CONCENTRATED_EQUIVALENT.value).toBeCloseTo(5.56, 2);
+        const byId = Object.fromEntries(
+            EFFECTIVE_COMPETITORS.map((m) => [m.id, m.value.value]),
+        );
+        expect(byId.mining).toBeCloseTo(10000 / 5053, 6);
+        expect(byId.magnets).toBeLessThan(1.2);
+        expect(byId.smartphones).toBeGreaterThan(HIGHLY_CONCENTRATED_EQUIVALENT.value);
+        for (const m of EFFECTIVE_COMPETITORS) {
+            expect(m.value.confidence).toBe("modeled");
+            expect(m.value.note).toContain("10,000 / HHI");
         }
-        expect(HHI_COMPARISONS.find((p) => p.id === "mining")?.value.value).toBe(5053);
     });
 });

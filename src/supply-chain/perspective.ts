@@ -153,24 +153,31 @@ const humanoidShares = Object.values(
     SEGMENT_MARKETS.find((m) => m.segment === "robot-actuator-oem")?.shares ?? {},
 );
 
-export const HHI_COMPARISONS: PerspectivePoint[] = [
+interface HhiPoint {
+    id: string;
+    label: string;
+    // What the equal-sized players are.
+    of: "countries" | "companies";
+    hhi: Sourced<number>;
+    headline?: boolean;
+}
+
+const HHI_POINTS: HhiPoint[] = [
     {
-        id: "humanoids",
-        label: "Humanoid makers",
-        value: {
-            value: hhi(humanoidShares.map((s) => s.value)),
-            unit: "HHI",
-            sources: [...new Set(humanoidShares.flatMap((s) => s.sources))],
-            asOf: "2025",
-            confidence: "modeled",
-            note: "Company shares of 2025 humanoid shipments; unnamed makers excluded, so a lower bound.",
-        },
+        id: "magnets",
+        label: "NdFeB magnets",
+        of: "countries",
+        hhi: stageHhi(
+            "magnet",
+            "Country shares of sintered magnet output; named countries only.",
+        ),
+        headline: true,
     },
-    { id: "mining", label: "Rare earth mining", value: LAB_MINING_HHI, headline: true },
     {
         id: "separation",
         label: "Rare earth separation",
-        value: stageHhi(
+        of: "countries",
+        hhi: stageHhi(
             "separation",
             "Country shares of refined output; named countries only.",
         ),
@@ -179,7 +186,8 @@ export const HHI_COMPARISONS: PerspectivePoint[] = [
     {
         id: "search",
         label: "Web search",
-        value: {
+        of: "companies",
+        hhi: {
             value: hhi([0.91, 0.046]),
             unit: "HHI",
             sources: ["statcounter-search-2025-12"],
@@ -189,12 +197,77 @@ export const HHI_COMPARISONS: PerspectivePoint[] = [
         },
     },
     {
-        id: "magnets",
-        label: "NdFeB magnets",
-        value: stageHhi(
-            "magnet",
-            "Country shares of sintered magnet output; named countries only.",
-        ),
+        id: "mining",
+        label: "Rare earth mining",
+        of: "countries",
+        hhi: LAB_MINING_HHI,
         headline: true,
     },
+    {
+        id: "humanoids",
+        label: "Humanoid makers",
+        of: "companies",
+        hhi: {
+            value: hhi(humanoidShares.map((s) => s.value)),
+            unit: "HHI",
+            sources: [...new Set(humanoidShares.flatMap((s) => s.sources))],
+            asOf: "2025",
+            confidence: "modeled",
+            note: "Company shares of 2025 humanoid shipments; unnamed makers excluded.",
+        },
+    },
+    {
+        id: "smartphones",
+        label: "Smartphone makers",
+        of: "companies",
+        hhi: {
+            value: hhi([0.197, 0.191, 0.131, 0.082, 0.081]),
+            unit: "HHI",
+            sources: ["idc-smartphones-2025"],
+            asOf: "2025",
+            confidence: "modeled",
+            note: "Top five vendors by 2025 shipments (Apple 19.7%, Samsung 19.1%, Xiaomi 13.1%, vivo 8.2%, OPPO 8.1%); the rest excluded.",
+        },
+    },
 ];
+
+// 10,000 / HHI: how many equal-sized players would give the same HHI.
+const EQUIVALENT_SOURCES = ["foley-merger-guidelines-2023", "doj-hhi"];
+
+function equivalent(h: Sourced<number>): Sourced<number> {
+    return {
+        value: 10000 / h.value,
+        unit: "equal players",
+        sources: h.sources,
+        asOf: h.asOf,
+        confidence: "modeled",
+        note: `10,000 / HHI ${Math.round(h.value).toLocaleString("en-US")}. ${h.note ?? ""}`.trim(),
+    };
+}
+
+export interface CompetitorEquivalent {
+    id: string;
+    label: string;
+    of: "countries" | "companies";
+    value: Sourced<number>;
+    headline?: boolean;
+}
+
+// D. Markets as the number of equal-sized competitors they behave like.
+// Unnamed players are left out of each HHI, so every count is an upper bound.
+export const EFFECTIVE_COMPETITORS: CompetitorEquivalent[] = HHI_POINTS.map((p) => ({
+    id: p.id,
+    label: p.label,
+    of: p.of,
+    headline: p.headline,
+    value: equivalent(p.hhi),
+}));
+
+// The reading of 10,000 / HHI as equal-sized competitors, cited once.
+export const EQUIVALENT_METHOD_SOURCES = EQUIVALENT_SOURCES;
+
+export const HIGHLY_CONCENTRATED_EQUIVALENT: Sourced<number> = {
+    ...equivalent(HIGHLY_CONCENTRATED_HHI),
+    sources: [...HIGHLY_CONCENTRATED_HHI.sources, ...EQUIVALENT_SOURCES],
+    note: "10,000 / 1,800. Fewer equal-sized players than this and US merger guidelines call a market highly concentrated.",
+};

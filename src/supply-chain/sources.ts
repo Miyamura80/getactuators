@@ -314,6 +314,27 @@ export const SOURCES: SourceRef[] = [
         "https://gs.statcounter.com/search-engine-market-share/2025-12/worldwide",
         "industry-report",
     ),
+    src(
+        "foley-merger-guidelines-2023",
+        "Foley & Lardner",
+        "DOJ, FTC overhaul merger guidelines",
+        "https://www.foley.com/insights/publications/2023/07/doj-ftc-overhaul-merger-guidelines/",
+        "press",
+    ),
+    src(
+        "doj-hhi",
+        "US DOJ Antitrust Division",
+        "Herfindahl-Hirschman Index",
+        "https://www.justice.gov/atr/public/guidelines/hhi.html",
+        "government",
+    ),
+    src(
+        "idc-smartphones-2025",
+        "IDC",
+        "Smartphone market share: worldwide shipments by vendor, 2025",
+        "https://www.idc.com/promo/smartphone-market-share",
+        "industry-report",
+    ),
     // Company sites, cited for headquarters and product lines
     src(
         "fanuc-site",

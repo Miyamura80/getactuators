@@ -6,7 +6,6 @@ import { ConfidenceLegend } from "../src/components/supply-chain/ConfidenceLegen
 import { FootnotesProvider } from "../src/components/supply-chain/footnotes";
 import { SourcedValue } from "../src/components/supply-chain/SourcedValue";
 import { SourcesSection } from "../src/components/supply-chain/SourcesSection";
-import { StageShareBar } from "../src/components/supply-chain/StageShareBar";
 import { PublicHeader } from "../src/components/PublicHeader";
 import { SupplyChainLab } from "../src/pages/supply-chain/SupplyChainLab";
 import { supplyChainMenu, SUPPLY_CHAIN_PAGES_LIVE } from "../../src/public-navigation";
@@ -57,17 +56,6 @@ test("footnote card carries publisher, as-of, confidence and method", () => {
     expect(tip.textContent).toContain("Method.");
 });
 
-test("StageShareBar orders countries with flags and keeps names accessible", () => {
-    const bars = render(<FootnotesProvider><StageShareBar rows={[
-        { id: "a", label: "Mining", shares: { CN: 270, US: 51, other: 69 } },
-    ]} /></FootnotesProvider>);
-    const segs = [...bars.container.querySelectorAll(".sc-seg")];
-    expect(segs.map((s) => s.getAttribute("title"))).toEqual(["China 69%", "United States 13%", "Other 18%"]);
-    expect(segs[0]?.textContent).toBe("\u{1F1E8}\u{1F1F3} 69%");
-    expect(bars.container.querySelector(".sc-bar")?.getAttribute("aria-label")).toBe("Mining: China 69%, United States 13%, Other 18%");
-    expect(bars.container.querySelector(".sc-badge")).toBeNull();
-});
-
 test("MarketShareList shows cited shares, dashes and Other", () => {
     const view = render(<FootnotesProvider><MarketShareList
         companies={COMPANIES.filter((c) => c.segment === "robot-actuator-oem")}
@@ -107,7 +95,9 @@ test("supply-chain menu stays hidden until a page is live", () => {
 test("lab page renders every kit component", () => {
     const view = render(<SupplyChainLab />);
     const c = view.container;
-    expect(c.querySelectorAll(".sc-stage")).toHaveLength(3);
+    expect(c.querySelectorAll(".sc-waffle")).toHaveLength(3);
+    expect(c.querySelectorAll(".sc-hhi, .sc-stage")).toHaveLength(0);
+    expect(c.querySelectorAll(".sc-eq-row:not(.sc-eq-head)")).toHaveLength(6);
     expect(c.querySelectorAll(".sc-badge")).toHaveLength(0);
     expect(c.querySelectorAll(".sc-share")).toHaveLength(4);
     expect(c.querySelector(".sc-legend")).not.toBeNull();

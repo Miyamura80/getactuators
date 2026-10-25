@@ -6,8 +6,7 @@ import { FootnotesProvider } from "../../components/supply-chain/footnotes";
 import { MarketShareList } from "../../components/supply-chain/MarketShareList";
 import { SourcedValue } from "../../components/supply-chain/SourcedValue";
 import { SourcesSection } from "../../components/supply-chain/SourcesSection";
-import { StageShareBar } from "../../components/supply-chain/StageShareBar";
-import { HhiRuler } from "../../components/supply-chain/HhiRuler";
+import { CompetitorEquivalents } from "../../components/supply-chain/CompetitorEquivalents";
 import { ScaleLadder } from "../../components/supply-chain/ScaleLadder";
 import { UnitTranslation } from "../../components/supply-chain/UnitTranslation";
 import { WaffleGrid } from "../../components/supply-chain/WaffleGrid";
@@ -16,8 +15,9 @@ import { LAB_MINING_HHI, LAB_PATH, LAB_STAGE_SHARES } from "../../../../src/supp
 import { marketOf } from "../../../../src/supply-chain/market-share";
 import {
     EVS_PER_YEAR,
-    HHI_COMPARISONS,
-    HIGHLY_CONCENTRATED_HHI,
+    EFFECTIVE_COMPETITORS,
+    EQUIVALENT_METHOD_SOURCES,
+    HIGHLY_CONCENTRATED_EQUIVALENT,
     HUMANOIDS_PER_YEAR,
     HUMANOIDS_SHIPPED_2025,
     MAGNET_CAPACITY,
@@ -63,12 +63,7 @@ export function SupplyChainLab({ menuOpen = false }: { menuOpen?: boolean }) {
 
                 <section className="sc-lab-sec" aria-labelledby="sc-lab-conc">
                     <h2 id="sc-lab-conc"><span>01</span>Country share by stage</h2>
-                    <StageShareBar rows={LAB_STAGE_SHARES.map((r) => ({
-                        id: r.id,
-                        label: r.label,
-                        shares: r.shares.value,
-                        source: r.shares,
-                    }))} />
+                    <WaffleGrid rows={LAB_STAGE_SHARES.map((r) => ({ id: r.id, label: r.label, shares: r.shares.value, source: r.shares }))} />
                 </section>
 
                 <section className="sc-lab-sec" aria-labelledby="sc-lab-cite">
@@ -102,13 +97,9 @@ export function SupplyChainLab({ menuOpen = false }: { menuOpen?: boolean }) {
                                 benchmark={{ label: "Humanoids shipped, 2025", icon: "humanoid", value: HUMANOIDS_SHIPPED_2025 }}
                             />
                         </section>
-                        <section className="sc-lab-variant" id="perspective-c">
-                            <h3><b>C</b>Waffle · 1 cell = 1%</h3>
-                            <WaffleGrid rows={LAB_STAGE_SHARES.map((r) => ({ id: r.id, label: r.label, shares: r.shares.value, source: r.shares }))} />
-                        </section>
                         <section className="sc-lab-variant" id="perspective-d">
-                            <h3><b>D</b>Concentration ruler · HHI</h3>
-                            <HhiRuler threshold={HIGHLY_CONCENTRATED_HHI} points={HHI_COMPARISONS} />
+                            <h3><b>D</b>Effective competitors</h3>
+                            <CompetitorEquivalents markets={EFFECTIVE_COMPETITORS} threshold={HIGHLY_CONCENTRATED_EQUIVALENT} methodSources={EQUIVALENT_METHOD_SOURCES} />
                         </section>
                     </div>
                 </section>

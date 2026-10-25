@@ -4,8 +4,9 @@ import { LAB_MINING_HHI, LAB_STAGE_SHARES } from "./lab-fixtures";
 import { SUPPLY_LINKS } from "./links";
 import { SEGMENT_MARKETS } from "./market-share";
 import {
+    EFFECTIVE_COMPETITORS,
     EVS_PER_YEAR,
-    HHI_COMPARISONS,
+    HIGHLY_CONCENTRATED_EQUIVALENT,
     HIGHLY_CONCENTRATED_HHI,
     HUMANOIDS_PER_YEAR,
     HUMANOIDS_SHIPPED_2025,
@@ -47,7 +48,11 @@ const DATASETS: Record<string, unknown> = {
         HUMANOIDS_PER_YEAR,
         EVS_PER_YEAR,
     ],
-    "perspective-hhi": [HIGHLY_CONCENTRATED_HHI, ...HHI_COMPARISONS],
+    "perspective-hhi": [
+        HIGHLY_CONCENTRATED_HHI,
+        HIGHLY_CONCENTRATED_EQUIVALENT,
+        ...EFFECTIVE_COMPETITORS,
+    ],
 };
 
 // Numbers that need no citation of their own: coordinates (the site carries

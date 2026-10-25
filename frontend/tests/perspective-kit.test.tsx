@@ -2,14 +2,15 @@ import "./happydom";
 import { afterEach, expect, test } from "bun:test";
 import { cleanup, render } from "@testing-library/react";
 import { FootnotesProvider } from "../src/components/supply-chain/footnotes";
-import { HhiRuler } from "../src/components/supply-chain/HhiRuler";
+import { CompetitorEquivalents } from "../src/components/supply-chain/CompetitorEquivalents";
 import { ScaleLadder } from "../src/components/supply-chain/ScaleLadder";
 import { UnitTranslation } from "../src/components/supply-chain/UnitTranslation";
 import { WaffleGrid, waffleCells } from "../src/components/supply-chain/WaffleGrid";
 import {
     EVS_PER_YEAR,
-    HHI_COMPARISONS,
-    HIGHLY_CONCENTRATED_HHI,
+    EFFECTIVE_COMPETITORS,
+    EQUIVALENT_METHOD_SOURCES,
+    HIGHLY_CONCENTRATED_EQUIVALENT,
     HUMANOIDS_PER_YEAR,
     HUMANOIDS_SHIPPED_2025,
     MAGNET_CAPACITY,
@@ -45,19 +46,27 @@ test("UnitTranslation: one icon per million, range drawn outlined", () => {
     expect(c.querySelector(".sc-units-key")?.textContent).toBe("1 icon = 1M");
 });
 
-test("WaffleGrid: exactly 100 cells per stage, top country flagged", () => {
+test("WaffleGrid: 100 cells per stage, legend with every country largest first and Other last", () => {
     expect(waffleCells({ CN: 0.691, US: 0.131, other: 0.178 }).reduce((t, p) => t + p.cells, 0)).toBe(100);
-    const c = wrap(<WaffleGrid rows={[{ id: "m", label: "Magnets", shares: { CN: 0.94, other: 0.06 } }]} />).container;
+    const c = wrap(<WaffleGrid rows={[{ id: "m", label: "Mining", shares: { CN: 270, US: 51, AU: 29, other: 40 } }]} />).container;
     expect(c.querySelectorAll(".sc-waffle-grid span")).toHaveLength(100);
-    expect(c.querySelector(".sc-waffle-grid")?.getAttribute("aria-label")).toBe("Magnets: China 94%, Other 6%");
-    expect(c.querySelector(".sc-waffle-top .flag")?.getAttribute("aria-label")).toBe("China");
+    expect(c.querySelector(".sc-waffle-grid")?.getAttribute("aria-label")).toBe("Mining: China 69%, United States 13%, Australia 7%, Other 10%");
+    expect(c.querySelector(".sc-waffle-grid span")?.getAttribute("title")).toBe("China 69%");
+    const legend = [...c.querySelectorAll(".sc-waffle-legend li")];
+    expect(legend.map((l) => l.querySelector("b")?.textContent)).toEqual(["69%", "13%", "7%", "10%"]);
+    expect(legend[0]?.querySelector(".flag")?.getAttribute("aria-label")).toBe("China");
+    expect(legend.at(-1)?.textContent).toContain("Other");
 });
 
-test("HhiRuler: rows sorted, threshold line on every row", () => {
-    const c = wrap(<HhiRuler threshold={HIGHLY_CONCENTRATED_HHI} points={HHI_COMPARISONS} />).container;
-    const labels = [...c.querySelectorAll(".sc-hhi-row:not(.sc-hhi-axis):not(.sc-hhi-zone) .sc-hhi-label")].map((l) => l.textContent);
-    expect(labels[0]).toBe("Humanoid makers");
-    expect(labels.at(-1)).toBe("NdFeB magnets");
-    expect(c.querySelectorAll(".sc-hhi-line")).toHaveLength(HHI_COMPARISONS.length + 1);
-    expect(c.querySelector(".sc-hhi-zone")?.textContent).toContain("1,800+");
+test("CompetitorEquivalents: one square per equal competitor, most concentrated first", () => {
+    const c = wrap(<CompetitorEquivalents markets={EFFECTIVE_COMPETITORS} threshold={HIGHLY_CONCENTRATED_EQUIVALENT} methodSources={EQUIVALENT_METHOD_SOURCES} />).container;
+    const rows = [...c.querySelectorAll(".sc-eq-row:not(.sc-eq-head)")];
+    expect(rows[0]?.querySelector(".sc-eq-label")?.textContent).toBe("NdFeB magnets");
+    expect(rows[0]?.querySelector(".sc-num")?.textContent).toBe("1.1");
+    expect(rows[0]?.querySelector(".sc-eq-of")?.textContent).toBe("countries");
+    expect(rows.at(-1)?.querySelector(".sc-eq-label")?.textContent).toBe("Smartphone makers");
+    expect(rows.at(-1)?.querySelectorAll(".sc-eq-sq > span")).toHaveLength(10);
+    expect(rows[0]?.querySelectorAll(".sc-eq-sq > span")).toHaveLength(2);
+    expect(c.querySelector(".sc-eq-flag")?.textContent).toContain("below 5.6, regulators call it highly concentrated");
+    for (const el of c.querySelectorAll(".sc-eq-label, .sc-eq-of")) expect(el.textContent).not.toContain("HHI");
 });
