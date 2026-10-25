@@ -188,6 +188,8 @@
 .hm-method p { margin: 0 0 14px; font-size: 13px; line-height: 1.55; color: var(--muted); max-width: 88ch; }
 .hm-method .hm-table { margin-bottom: 14px; }
 .hm-method .hm-table table { min-width: 680px; font-size: 12.5px; }
+.hm-method .hm-table.is-narrow { max-width: 560px; }
+.hm-method .hm-table.is-narrow table { min-width: 0; }
 
 @media (max-width: 860px) {
     .hm-stage, .hm-stage.is-compare { grid-template-columns: minmax(0, 1fr); }

@@ -34,6 +34,55 @@ export const SOURCES = {
         title: "CubeMars RI80 frameless motor (catalog)",
         url: "/actuators/cubemars-ri80-v2-kv75",
     },
+    "frameless-maxon90": {
+        title: "maxon EC frameless 90 flat motor kit (catalog)",
+        url: "/actuators/maxon-ec-frameless-90-flat-260w",
+    },
+    // Method: gear ratio and reducer efficiency (motor-side sizing)
+    "catalog-ratios": {
+        title: "actuatorlist catalog: published gear ratios of QDD, integrated and planetary joints",
+        url: "/all",
+    },
+    "catalog-harmonic": {
+        title: "Harmonic Drive LPA-20 strain-wave gearhead, 51:1 to 101:1 (catalog)",
+        url: "/actuators/harmonic-drive-lpa-20",
+    },
+    "ratio-qdd-arxiv": {
+        title: "arXiv 2506.16356: single-stage planetary QDD actuators for legged robots, 5:1 to 15:1",
+        url: "https://arxiv.org/abs/2506.16356",
+    },
+    "ratio-qdd-guide": {
+        title: "Humanoid.guide: quasi-direct-drive actuators in humanoids, usually 5:1 to 20:1",
+        url: "https://humanoid.guide/?p=18213",
+    },
+    "eff-reducers-guide": {
+        title: "Humanoid.guide: harmonic vs planetary vs cycloidal reducers (efficiency 80 to 90, 90 to 97, 85 to 95%; cycloidal 30 to 100:1)",
+        url: "https://humanoid.guide/?p=16322",
+    },
+    "eff-planetary-pelonis": {
+        title: "Pelonis Servobox planetary gearhead datasheet: above 97% one stage, above 94% two stage",
+        url: "https://datasheets.globalspec.com/ds/pelonis-technologies/sel-a62a-90-p2/d212302c-a74d-4b78-a6bb-d5fa59818bfc",
+    },
+    "eff-harmonic-calc": {
+        title: "Firgelli: harmonic drive calculator, typical efficiency 0.75 to 0.90",
+        url: "https://www.firgelliauto.com/blogs/calculators/harmonic-drive-ratio-calculator",
+    },
+    "eff-harmonic-cone": {
+        title: "Cone Drive harmonic solutions: up to 90% efficiency, 50:1 to 160:1",
+        url: "https://www.automate.org/products/cone-drive/harmonic-solutions-for-precision-motion-control",
+    },
+    "lead-roller-guide": {
+        title: "Humanoid.guide: planetary roller screws in humanoids (lead sets force; 5 mm lead example)",
+        url: "https://humanoid.guide/?p=20588",
+    },
+    "screw-torque-formula": {
+        title: "Firgelli: lead screw torque calculator, T = F x lead / (2 pi x efficiency)",
+        url: "https://www.firgelliauto.com/blogs/engineering-calculators/lead-screw-torque-and-force-calculator",
+    },
+    "screw-ball-sizing": {
+        title: "Industrial Monitor Direct: sizing lead and ball screws (ball screws 90 to 95% efficient)",
+        url: "https://industrialmonitordirect.com/blogs/knowledgebase/sizing-lead-screws-and-ball-screws-for-linear-actuation",
+    },
     // Actuator cost
     "catalog-fit": {
         title: "actuatorlist catalog: price and mass against peak torque, QDD, integrated and cycloidal actuators",

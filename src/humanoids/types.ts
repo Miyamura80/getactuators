@@ -57,9 +57,23 @@ export const CENTRAL = ["neck", "waist"] as const;
 export type CentralJoint = (typeof CENTRAL)[number];
 export type CanonicalJoint = CentralJoint | `${"l" | "r"}-${SidedJoint}`;
 
-// Motor size class, picked from the joint's peak torque or force (see
-// ./magnet). Drives the magnet mass estimate.
+// Size class: of the motor (from its motor-side torque, see ./magnet), or of
+// the joint's load (from output torque or force).
 export type SizeClass = "xs" | "s" | "m" | "l" | "xl";
+
+// How the motor behind a joint was sized (see ./magnet and ./drive).
+export interface MotorSizing {
+    basis: "torque" | "force";
+    // Output torque (N·m) or force (N) the motor is sized from.
+    output: number;
+    // n:1 for rotary drives, screw lead in mm for screws.
+    gearRatio: Sourced<number>;
+    efficiency: Sourced<number>;
+    motorTorqueNm: Sourced<number>;
+    sizeClass: SizeClass;
+    // Classes at the low and high ends of the motor torque range.
+    classRange: readonly [SizeClass, SizeClass];
+}
 
 export interface HumanoidJoint {
     canonical: CanonicalJoint;
@@ -75,7 +89,13 @@ export interface HumanoidJoint {
     reducer?: string;
     peakTorqueNm?: Sourced<number>;
     peakForceN?: Sourced<number>;
+    // Motor size class, from motor-side torque; drives the magnet estimate.
     sizeClass: SizeClass;
+    // Joint load class, from output torque or force (or the authored class
+    // when neither is published).
+    loadClass: SizeClass;
+    // Absent for hydraulic joints (no motor at the joint).
+    motorSizing?: MotorSizing;
     // Published unit price of one actuator here, when the sources give one.
     unitCostUsd?: Sourced<number>;
     // Per node, i.e. already multiplied by count. Always estimated.

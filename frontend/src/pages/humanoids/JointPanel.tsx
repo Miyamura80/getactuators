@@ -44,6 +44,7 @@ function Sources({ ids }: { ids: string[] }) {
 
 function Entry({ j }: { j: HumanoidJoint }) {
     const m = j.magnetMassG;
+    const ms = j.motorSizing;
     return (
         <div className="hm-entry">
             <div className="hm-type">
@@ -83,6 +84,16 @@ function Entry({ j }: { j: HumanoidJoint }) {
                         <dt>Peak force</dt>
                         <dd>
                             <Figure s={j.peakForceN} />
+                        </dd>
+                    </>
+                )}
+                {ms && (
+                    <>
+                        <dt>At the motor</dt>
+                        <dd>
+                            {ms.motorTorqueNm.value} N·m via{" "}
+                            {ms.gearRatio.unit === "mm lead" ? `${ms.gearRatio.value} mm lead` : `${ms.gearRatio.value}:1`},{" "}
+                            {Math.round(ms.efficiency.value * 100)}% efficient <Conf c={ms.gearRatio.confidence} />
                         </dd>
                     </>
                 )}

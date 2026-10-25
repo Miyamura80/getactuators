@@ -13,6 +13,7 @@ import {
     REE_METAL_PRICE,
     SIZE_CLASSES,
     type Sourced,
+    TYPICAL_DRIVE,
     bomPriceShare,
     humanoidBom,
     humanoidTotals,
@@ -51,6 +52,15 @@ function mix(h: Humanoid): string {
         .join(", ");
 }
 
+// Motor-side torque and the ratio it came through, e.g. "2.81 N·m (80:1, modeled)".
+function atMotor(j: HumanoidJoint): string {
+    const ms = j.motorSizing;
+    if (!ms) return "";
+    const r = ms.gearRatio;
+    const via = r.unit === "mm lead" ? `${r.value} mm lead` : `${r.value}:1`;
+    return `${ms.motorTorqueNm.value} N·m (${via}${r.confidence === "reported" ? "" : `, ${r.confidence}`})`;
+}
+
 function jointRow(j: HumanoidJoint): string[] {
     const type = `${ACTUATOR_TYPE_LABEL[j.actuatorType]}${j.typeConfidence === "estimated" ? " (estimated)" : ""}`;
     const motor =
@@ -63,6 +73,7 @@ function jointRow(j: HumanoidJoint): string[] {
         type,
         motor,
         figure(j.peakTorqueNm) || figure(j.peakForceN),
+        atMotor(j),
         range(j.magnetMassG, 1),
         j.sources.map((id) => mdLink(sourceOf(id).title, sourceOf(id).url)).join("; "),
     ];
@@ -145,7 +156,7 @@ function robotSection(h: Humanoid): string {
         ? `\n\nEstimated types rest on: ${inferred.join(" / ")}.`
         : "";
     const table = mdTable(
-        ["Joint", "Count", "Type", "Motor", "Peak", "Magnet g", "Sources"],
+        ["Joint", "Count", "Type", "Motor", "Peak", "At motor", "Magnet g", "Sources"],
         h.joints.map(jointRow),
     );
     return `${head}${notes}${basis}\n\n${table}\n\n${reeSection(h)}\n\n${bomSection(h)}`;
@@ -170,23 +181,41 @@ export function humanoidsBody(): string {
     const classes = mdTable(
         [
             "Class",
-            "Peak torque up to",
-            "Peak force up to",
+            "Motor torque up to",
             "Airgap x length",
             "Magnet g per motor",
+            "Comparable",
         ],
         SIZE_CLASSES.map((c) => {
             const [lo, hi] = magnetRangeG(c.id);
-            const cap = (n: number, u: string) =>
-                Number.isFinite(n) ? `${n} ${u}` : "above";
             return [
                 c.label,
-                cap(c.maxTorqueNm, "N·m"),
-                cap(c.maxForceN, "N"),
+                Number.isFinite(c.maxMotorTorqueNm)
+                    ? `${c.maxMotorTorqueNm} N·m`
+                    : "above",
                 `${c.airgapDiameterMm} x ${c.activeLengthMm} mm`,
                 `${lo} to ${hi}`,
+                c.comparable,
             ];
         }),
+    );
+    const cite = (ids: string[]) =>
+        ids
+            .map((id) => mdLink(sourceOf(id).title, toAbsolute(sourceOf(id).url)))
+            .join("; ");
+    const drives = mdTable(
+        ["Design", "Typical ratio", "Efficiency", "Sources"],
+        (
+            Object.entries(TYPICAL_DRIVE) as [
+                keyof typeof TYPICAL_DRIVE,
+                (typeof TYPICAL_DRIVE)["qdd"],
+            ][]
+        ).map(([type, d]) => [
+            ACTUATOR_TYPE_LABEL[type],
+            `${d.ratioRange[0]} to ${d.ratioRange[1]}${d.kind === "screw" ? " mm lead" : ":1"}`,
+            `${Math.round(d.efficiencyRange[0] * 100)} to ${Math.round(d.efficiencyRange[1] * 100)}%`,
+            cite([...new Set([...d.ratioSources, ...d.efficiencySources])]),
+        ]),
     );
     const pct = (f: readonly [number, number]) =>
         `${Number((f[0] * 100).toFixed(2))} to ${Number((f[1] * 100).toFixed(2))}%`;
@@ -204,7 +233,9 @@ ${HUMANOIDS.map(robotSection).join("\n\n")}
 
 ## Magnet mass method
 
-Each actuator gets a motor size class from its peak torque (rotary) or force (linear), or from its joint and the robot's mass when neither is published. Magnet mass = pi x airgap diameter x active length x magnet thickness x arc fill (70 to 90%) x 7.5 g/cm³ (sintered NdFeB). Hydraulic joints carry no magnet at the joint.
+The magnet sits in the motor, before the reducer, so each motor is sized from motor-side torque: peak output torque / (gear ratio x efficiency), or for a screw force x lead / (2 pi x efficiency). A joint uses its published ratio (catalog record, reducer or part code), otherwise its design's typical band below (modeled). When neither torque nor force is published, the joint's load class (from its joint and the robot's mass) stands in for the output. The motor torque picks a size class. Magnet mass = pi x airgap diameter x active length x magnet thickness x arc fill (70 to 90%) x 7.5 g/cm³ (sintered NdFeB). The range spans the classes the ratio and efficiency bands reach. Hydraulic joints carry no magnet at the joint.
+
+${drives}
 
 ${classes}
 

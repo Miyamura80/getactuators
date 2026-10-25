@@ -54,7 +54,7 @@ export function Silhouette({ robot, selected, onSelect, highlight }: Props) {
                 const sel = selected === n.id;
                 const estimated = joints.every((j) => j.typeConfidence === "estimated");
                 const count = joints.reduce((s, j) => s + j.count, 0);
-                const big = joints.reduce((r, j) => Math.max(r, RADIUS[j.sizeClass]), 0);
+                const big = joints.reduce((r, j) => Math.max(r, RADIUS[j.loadClass]), 0);
                 const r = type ? big : 2.4;
                 const color = type ? ACTUATOR_TYPE_COLOR[type] : "var(--line-strong)";
                 const label = type

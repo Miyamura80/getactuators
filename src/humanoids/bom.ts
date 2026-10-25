@@ -35,7 +35,7 @@ const FIT_CATEGORIES = new Set([
     "integrated_joint",
     "cycloidal_premium",
 ]);
-// Peak torque a joint is assumed to have when only its size class is known.
+// Peak torque a joint is assumed to have when only its load class is known.
 const CLASS_TORQUE: Record<SizeClass, number | null> = {
     xs: null,
     s: 25,
@@ -135,7 +135,7 @@ function fromFit(
 }
 
 const jointTorque = (j: HumanoidJoint) =>
-    j.peakTorqueNm?.value ?? CLASS_TORQUE[j.sizeClass];
+    j.peakTorqueNm?.value ?? CLASS_TORQUE[j.loadClass];
 const isLinear = (t: ActuatorType) =>
     t === "linear-roller-screw" || t === "linear-ball-screw";
 
@@ -283,13 +283,13 @@ function partLabel(j: HumanoidJoint): string {
     if (j.peakTorqueNm)
         return `${type} ${j.peakTorqueNm.value.toLocaleString("en-US")} N·m`;
     if (j.peakForceN) return `${type} ${j.peakForceN.value.toLocaleString("en-US")} N`;
-    return `${type}, ${sizeSpec(j.sizeClass).label} class`;
+    return `${type}, ${sizeSpec(j.loadClass).label} class`;
 }
 
 function figureText(j: HumanoidJoint): string {
     if (j.peakTorqueNm) return `${j.peakTorqueNm.value.toLocaleString("en-US")} N·m`;
     if (j.peakForceN) return `${j.peakForceN.value.toLocaleString("en-US")} N`;
-    return `${sizeSpec(j.sizeClass).label} class`;
+    return `${sizeSpec(j.loadClass).label} class`;
 }
 
 // Parts that share a label (one motor model at several figures) get the

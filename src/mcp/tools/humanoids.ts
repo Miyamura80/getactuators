@@ -13,7 +13,7 @@ export const getHumanoidJoints = defineTool({
     name: "get_humanoid_joints",
     title: "Humanoid joint-by-joint actuators",
     description:
-        "What actuator moves each joint of a humanoid (Tesla Optimus, Figure 02, Atlas, Digit, Unitree G1/H1/H2, Fourier GR-1/GR-2 and more): per canonical joint (neck, waist, l-/r- shoulder pitch/roll/yaw, elbow, wrist, hand, hip yaw/roll/pitch, knee, ankle pitch/roll) the actuator type, whether it is reported or estimated and what it was inferred from, motor, reducer, peak torque or force, estimated NdFeB magnet mass and sources, plus robot totals (actuator mix, magnet and rare-earth kg with ranges). Omit robot_id to list every humanoid with its totals.",
+        "What actuator moves each joint of a humanoid (Tesla Optimus, Figure 02, Atlas, Digit, Unitree G1/H1/H2, Fourier GR-1/GR-2 and more): per canonical joint (neck, waist, l-/r- shoulder pitch/roll/yaw, elbow, wrist, hand, hip yaw/roll/pitch, knee, ankle pitch/roll) the actuator type, whether it is reported or estimated and what it was inferred from, motor, reducer, peak torque or force, gear ratio and motor sizing behind the estimated NdFeB magnet mass and sources, plus robot totals (actuator mix, magnet and rare-earth kg with ranges). Omit robot_id to list every humanoid with its totals.",
     input: z.object({
         robot_id: z
             .string()

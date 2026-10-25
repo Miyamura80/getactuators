@@ -1,5 +1,5 @@
 import { humanoidBom } from "./bom";
-import { reeSplit } from "./magnet";
+import { REE_FRACTION, reeSplit } from "./magnet";
 import { REE_METAL_PRICE } from "./ree-prices";
 import type { ActuatorType, Humanoid, Ree } from "./types";
 
@@ -24,12 +24,15 @@ export interface DesignRee {
     usd: Ree<Span>;
 }
 
-function gramsOf(rangeKg: readonly [number, number]): Ree<Span> {
+// Mid: the magnet estimate at the middle grade fraction (the magnet range is
+// not symmetric about its estimate when the motor class is uncertain).
+function gramsOf(valueKg: number, rangeKg: readonly [number, number]): Ree<Span> {
     const s = reeSplit([rangeKg[0] * 1000, rangeKg[1] * 1000]);
     const out = {} as Ree<Span>;
     for (const el of REE_ELEMENTS) {
         const [lo, hi] = s[el];
-        out[el] = { lo, hi, mid: (lo + hi) / 2 };
+        const f = REE_FRACTION[el];
+        out[el] = { lo, hi, mid: (valueKg * 1000 * (f[0] + f[1])) / 2 };
     }
     return out;
 }
@@ -58,7 +61,7 @@ export function reeByDesign(h: Humanoid): DesignRee[] {
     return humanoidBom(h, "magnet", Number.POSITIVE_INFINITY)
         .slices.filter((s) => s.category === "actuator")
         .map((s) => {
-            const grams = gramsOf(s.range);
+            const grams = gramsOf(s.value, s.range);
             return {
                 key: s.key,
                 label: s.label,

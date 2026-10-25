@@ -22,6 +22,7 @@ import {
 export { HUMANOIDS_AS_OF } from "./build";
 export * from "./types";
 export type { Confidence, Sourced } from "./sourced";
+export { TYPICAL_DRIVE, type DriveSpec } from "./drive";
 export {
     SIZE_CLASSES,
     magnetRangeG,
@@ -112,12 +113,14 @@ export function humanoidTotals(h: Humanoid): HumanoidTotals {
     let reported = 0;
     let lo = 0;
     let hi = 0;
+    let mid = 0;
     for (const j of h.joints) {
         byType[j.actuatorType] = (byType[j.actuatorType] ?? 0) + j.count;
         actuators += j.count;
         if (j.typeConfidence === "reported") reported += j.count;
         lo += j.magnetMassG.range?.[0] ?? j.magnetMassG.value;
         hi += j.magnetMassG.range?.[1] ?? j.magnetMassG.value;
+        mid += j.magnetMassG.value;
     }
     const magnetRange: [number, number] = [kg(lo), kg(hi)];
     const split = reeSplit(magnetRange);
@@ -128,7 +131,7 @@ export function humanoidTotals(h: Humanoid): HumanoidTotals {
             return [
                 el,
                 estimate(
-                    (a + b) / 2,
+                    (kg(mid) * (f[0] + f[1])) / 2,
                     [a, b],
                     `${pct(f[0])} to ${pct(f[1])}% of magnet mass`,
                 ),
@@ -141,7 +144,7 @@ export function humanoidTotals(h: Humanoid): HumanoidTotals {
             ACTUATOR_TYPES.filter((t) => byType[t]).map((t) => [t, byType[t]]),
         ),
         magnetMassKg: estimate(
-            (magnetRange[0] + magnetRange[1]) / 2,
+            kg(mid),
             magnetRange,
             "Sum of per-joint magnet estimates; see the method.",
         ),

@@ -51,7 +51,7 @@ describe("/humanoids", () => {
                 expect({
                     id: h.id,
                     table: sec?.includes(
-                        "| Joint | Count | Type | Motor | Peak | Magnet g | Sources |",
+                        "| Joint | Count | Type | Motor | Peak | At motor | Magnet g | Sources |",
                     ),
                 }).toEqual({
                     id: h.id,

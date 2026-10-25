@@ -1,7 +1,12 @@
+import { ACTUATORS } from "../catalog";
 import {
+    type KnownRatio,
+    LOAD_FORCE_N,
+    LOAD_TORQUE_NM,
     jointMagnetG,
-    sizeClassForForce,
-    sizeClassForTorque,
+    knownRatio,
+    loadClass,
+    sizeMotor,
     sizeSpec,
 } from "./magnet";
 import type { Confidence, Sourced } from "./sourced";
@@ -12,6 +17,7 @@ import {
     type CentralJoint,
     type Humanoid,
     type HumanoidJoint,
+    type MotorSizing,
     type SidedJoint,
     type SizeClass,
 } from "./types";
@@ -40,7 +46,13 @@ export interface JointSpec {
     cost?: number;
     costSrc?: string[];
     costNote?: string;
-    // Size class when neither torque nor force is published, and why.
+    // Gear ratio (n:1) or screw lead (mm) when the sources give one beyond
+    // the catalog record and reducer text, with its confidence and basis.
+    ratio?: number;
+    ratioFigure?: Confidence;
+    ratioNote?: string;
+    // Load class (from output torque or force) when neither is published,
+    // and why.
     size?: SizeClass;
     sizeFrom?: string;
     src: string[];
@@ -59,11 +71,35 @@ function sourced(value: number, unit: string, s: JointSpec): Sourced<number> {
     };
 }
 
-function classOf(s: JointSpec): SizeClass {
-    if (s.torque !== undefined) return sizeClassForTorque(s.torque);
-    if (s.force !== undefined) return sizeClassForForce(s.force);
+function loadOf(s: JointSpec): SizeClass {
+    if (s.torque !== undefined) return loadClass("torque", s.torque);
+    if (s.force !== undefined) return loadClass("force", s.force);
     if (s.size) return s.size;
     throw new Error(`joint ${s.at.join("+")} needs torque, force or size`);
+}
+
+const catalog = new Map(ACTUATORS.map((a) => [a.id, a]));
+const isScrew = (s: JointSpec) =>
+    s.type === "linear-roller-screw" || s.type === "linear-ball-screw";
+
+// Output the motor is sized from: the figure, or the load class's nominal
+// value. Screw types without a force figure size from force.
+function outputOf(s: JointSpec, load: SizeClass): ["torque" | "force", number] {
+    if (s.torque !== undefined) return ["torque", s.torque];
+    if (s.force !== undefined) return ["force", s.force];
+    return isScrew(s)
+        ? ["force", LOAD_FORCE_N[load]]
+        : ["torque", LOAD_TORQUE_NM[load]];
+}
+
+function explicitRatio(s: JointSpec): KnownRatio | undefined {
+    if (s.ratio === undefined) return undefined;
+    return {
+        value: s.ratio,
+        sources: s.src,
+        confidence: s.ratioFigure ?? "reported",
+        note: s.ratioNote ?? "Ratio from the joint's sources.",
+    };
 }
 
 function nodes(s: JointSpec): CanonicalJoint[] {
@@ -75,30 +111,65 @@ function nodes(s: JointSpec): CanonicalJoint[] {
     );
 }
 
-function expand(s: JointSpec): HumanoidJoint[] {
-    const sizeClass = classOf(s);
-    const count = s.count ?? 1;
-    const magnet = jointMagnetG(sizeClass, count, s.type);
-    const basis =
-        s.torque !== undefined
-            ? `peak torque ${s.torque} N·m`
-            : s.force !== undefined
-              ? `peak force ${s.force} N`
-              : (s.sizeFrom ?? "size class");
-    const magnetMassG: Sourced<number> = {
+const MAGNET_SOURCES = [
+    "fai-magnets",
+    "frameless-ri60",
+    "frameless-ri80",
+    "frameless-ilm85",
+];
+
+function magnetNote(s: JointSpec, load: SizeClass, sizing: MotorSizing): string {
+    const unitOf = sizing.basis === "torque" ? "N·m" : "N";
+    const out = `${sizing.output.toLocaleString("en-US")} ${unitOf}`;
+    const figure =
+        s.torque !== undefined || s.force !== undefined
+            ? out
+            : `${sizeSpec(load).label} load class taken as ${out} (${s.sizeFrom ?? "estimated"})`;
+    const r = sizing.gearRatio;
+    const via = r.unit === "mm lead" ? `${r.value} mm lead` : `${r.value}:1`;
+    const typical = r.confidence === "modeled" ? " (typical)" : "";
+    return `${sizeSpec(sizing.sizeClass).label} motor: ${figure} through ${via}${typical} is ${sizing.motorTorqueNm.value} N·m at the motor, x${s.count ?? 1}.`;
+}
+
+function magnetOf(
+    s: JointSpec,
+    load: SizeClass,
+    sizing: MotorSizing | null,
+): Sourced<number> {
+    const magnet = jointMagnetG(sizing, s.count ?? 1);
+    return {
         value: magnet.value,
         unit: "g",
-        sources: ["fai-magnets", "frameless-ilm85", "frameless-ri80"],
+        sources: [...MAGNET_SOURCES, ...(sizing?.motorTorqueNm.sources ?? [])].filter(
+            (id, i, all) => all.indexOf(id) === i,
+        ),
         asOf: HUMANOIDS_AS_OF,
         confidence: "estimated",
         range: magnet.range,
-        note:
-            s.type === "hydraulic"
-                ? "Hydraulic: no magnet at the joint; the pump motor is not counted."
-                : `${sizeSpec(sizeClass).label} motor class from ${basis}, x${count}.`,
+        note: sizing
+            ? magnetNote(s, load, sizing)
+            : "Hydraulic: no magnet at the joint; the pump motor is not counted.",
     };
-    return nodes(s).map((canonical) => ({
-        canonical,
+}
+
+function sizingOf(s: JointSpec, load: SizeClass): MotorSizing | null {
+    const [basis, output] = outputOf(s, load);
+    const ratio = knownRatio(
+        explicitRatio(s),
+        s.actuatorId ? catalog.get(s.actuatorId) : undefined,
+        s.reducer,
+        s.src,
+    );
+    return sizeMotor(s.type, basis, output, ratio);
+}
+
+function expand(s: JointSpec): HumanoidJoint[] {
+    const load = loadOf(s);
+    const count = s.count ?? 1;
+    const sizing = sizingOf(s, load);
+    const sizeClass = sizing?.sizeClass ?? load;
+    const magnetMassG = magnetOf(s, load, sizing);
+    const shared: Omit<HumanoidJoint, "canonical"> = {
         count,
         actuatorType: s.type,
         typeConfidence: s.inferredFrom ? "estimated" : "reported",
@@ -111,10 +182,13 @@ function expand(s: JointSpec): HumanoidJoint[] {
             : {}),
         ...(s.force !== undefined ? { peakForceN: sourced(s.force, "N", s) } : {}),
         sizeClass,
+        loadClass: load,
+        ...(sizing ? { motorSizing: sizing } : {}),
         ...unitCost(s),
         magnetMassG,
         sources: s.src,
-    }));
+    };
+    return nodes(s).map((canonical) => ({ canonical, ...shared }));
 }
 
 function unitCost(s: JointSpec): Pick<HumanoidJoint, "unitCostUsd"> {
