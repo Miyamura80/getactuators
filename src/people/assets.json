@@ -1,0 +1,19 @@
+{
+    "people": {
+        "eito-miyamura": {
+            "path": "/people/eito-miyamura.webp",
+            "sourceUrl": "https://github.com/Miyamura80.png",
+            "licence": "consent",
+            "credit": "GitHub avatar, used with consent",
+            "retrieved": "2026-10-25"
+        }
+    },
+    "orgs": {
+        "actuatorlist": {
+            "path": "/orgs/actuatorlist.svg",
+            "sourceUrl": "https://actuatorlist.com/favicon.svg",
+            "licence": "own",
+            "retrieved": "2026-10-25"
+        }
+    }
+}
