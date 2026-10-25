@@ -22,6 +22,7 @@ const METHOD_SOURCES = [
     "huibo-optimus-bom",
     "ms-optimus-bom",
     "bhl-rdworld",
+    "bhl-irz",
 ];
 const curve = (f: typeof COST_FIT, unit: string, scale = 1) =>
     `${(f.coef * scale).toFixed(scale === 1 ? 0 : 3)} ${unit} x torque^${f.exp.toFixed(2)}, range x or / ${Math.exp(f.sigma).toFixed(2)}, ${f.ids.length} actuators from ${f.minTorque} to ${f.maxTorque} N·m`;
@@ -94,6 +95,10 @@ export function Method() {
                     the Optimus linear-unit estimate for screw actuators. Retail prices of research actuators sit above a
                     volume maker's internal cost. Hydraulic and micro-motor joints have no defensible number and are left out.
                     Actuator mass uses the same approach with catalog masses ({curve(MASS_FIT, "kg", 1 / 1000)}).
+                    The rest of the robot (grey) appears only where a cited full-robot BOM exists: Berkeley Humanoid Lite's
+                    itemized parts list (reported) and the Optimus analyst remainder, which is not broken into categories
+                    (estimated, hatched). List prices are never used for it, since they include margin. In the mass view
+                    the rest is the published weight minus the actuator mass counted here (modeled).
                 </p>
                 <ol className="hm-src">
                     {METHOD_SOURCES.map((id) => {

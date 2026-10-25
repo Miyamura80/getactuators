@@ -76,6 +76,7 @@ function bomSection(h: Humanoid): string {
     const span = (lo: number, hi: number) =>
         lo === hi ? f(lo) : `${f(lo)} to ${f(hi)}`;
     const rows = cost.slices.map((s) => [
+        s.category === "actuator" ? "Actuator" : "Rest of robot",
         s.label,
         String(s.count),
         s.unit
@@ -92,11 +93,17 @@ function bomSection(h: Humanoid): string {
     const others = (["mass", "magnet"] as const).map((m) => {
         const b = humanoidBom(h, m);
         const top = b.slices[0];
-        return `${m === "mass" ? "Actuator mass" : "Magnet"}: ${BOM_FMT[m](b.total.range[0])} to ${BOM_FMT[m](b.total.range[1])}${top ? `, largest share ${top.label} (${Math.round(top.share * 100)}%)` : ""}.`;
+        const rest = b.rest
+            ? `, rest of robot ${BOM_FMT[m](b.rest.range[0])} to ${BOM_FMT[m](b.rest.range[1])} (published weight minus actuators)`
+            : "";
+        return `${m === "mass" ? "Actuator mass" : "Magnet"}: ${BOM_FMT[m](b.actuators.range[0])} to ${BOM_FMT[m](b.actuators.range[1])}${top ? `, largest share ${top.label} (${Math.round(top.share * 100)}%)` : ""}${rest}.`;
     });
     const share = bomPriceShare(h, cost);
     const lines = [
-        `Total: ${span(cost.total.range[0], cost.total.range[1])}.`,
+        `Actuators: ${span(cost.actuators.range[0], cost.actuators.range[1])}.`,
+        cost.rest
+            ? `Whole robot: ${span(cost.total.range[0], cost.total.range[1])}, actuators ${Math.round((cost.actuators.value / cost.total.value) * 100)}%.`
+            : "Non-actuator BOM not published.",
         ...(share
             ? [
                   `Actuators are about ${Math.round(share.value * 100)}% of the list price (${Math.round(share.range[0] * 100)} to ${Math.round(share.range[1] * 100)}%).`,
@@ -109,7 +116,7 @@ function bomSection(h: Humanoid): string {
               ]
             : []),
     ];
-    return `### Actuator BOM\n\n${mdTable(["Part", "Count", "Unit cost", "Subtotal", "Share", "Source"], rows)}\n\n${lines.join(" ")}`;
+    return `### Robot BOM\n\n${mdTable(["Group", "Part", "Count", "Unit cost", "Subtotal", "Share", "Source"], rows)}\n\n${lines.join(" ")}`;
 }
 
 function robotSection(h: Humanoid): string {

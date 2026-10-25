@@ -42,7 +42,7 @@ export const ROWS: Row[] = HUMANOIDS.map((h) => {
         .toLowerCase();
     const b = humanoidBom(h, "cost");
     const bomOut = b.excluded.reduce((n, e) => n + e.count, 0);
-    return { h, t, ree: reeTotalKg(t).value, bom: b.total.value, bomOut, conf: dataConfidence(h), hay };
+    return { h, t, ree: reeTotalKg(t).value, bom: b.actuators.value, bomOut, conf: dataConfidence(h), hay };
 });
 
 export interface FleetState {

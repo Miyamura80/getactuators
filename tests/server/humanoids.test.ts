@@ -46,9 +46,9 @@ describe("/humanoids", () => {
                 "| Left knee | 1 | Rotary QDD | [RobStride 04](/actuators/robstride-04)",
             );
             expect(md).toContain("- **Country:** \u{1F1E8}\u{1F1F3} China");
-            expect(md).toContain("### Actuator BOM");
+            expect(md).toContain("### Robot BOM");
             expect(md).toContain(
-                "| RobStride 03 | 8 | $250 (reported) | $2,000 | 47% |",
+                "| Actuator | RobStride 03 | 8 | $250 (reported) | $2,000 | 47% |",
             );
             expect(md).toContain("Not costed: Hand (hydraulic) x42");
             expect(md).toContain("## Magnet mass method");

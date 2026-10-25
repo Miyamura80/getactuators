@@ -282,6 +282,10 @@ export const SOURCES = {
         title: "R&D World: Berkeley Humanoid Lite parts ($188 6512, $136 5010 actuators; $4,312 total)",
         url: "https://www.rdworldonline.com/berkeley-debuts-5000-open-source-humanoid-built-with-desktop-3d-printers/",
     },
+    "bhl-irz": {
+        title: "IRZ: Berkeley Humanoid Lite's $4,312 BOM, actuators 81% (compute, battery, printed parts itemized)",
+        url: "https://irz.fr/en/articles/berkeley-humanoid-actuators-81-percent-en/",
+    },
     "bhl-orobot": {
         title: "Orobot: Berkeley Humanoid Lite BOM (6512 and 5010 actuators)",
         url: "https://orobot.io/o/program/BROKER-2/berkeley-humanoid-lite",

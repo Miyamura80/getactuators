@@ -1,6 +1,7 @@
 import { ACTUATORS } from "../catalog";
 import { HUMANOIDS_AS_OF } from "./build";
 import { sizeSpec } from "./magnet";
+import { type RestPart, restOfRobotCost, restOfRobotMass } from "./robot-bom";
 import type { Confidence, Sourced } from "./sourced";
 import {
     ACTUATOR_TYPE_LABEL,
@@ -248,18 +249,28 @@ export interface BomItem {
     joints: CanonicalJoint[];
 }
 
+export type BomCategory = "actuator" | "non-actuator";
+
 export interface BomSlice extends Omit<BomItem, "unit"> {
+    category: BomCategory;
     unit: Unit | null;
     value: number;
     range: [number, number];
     share: number;
+    // A non-actuator total the source does not break into categories.
+    lumped?: boolean;
 }
+
+type Total = { value: number; range: [number, number] };
 
 export interface Bom {
     metric: BomMetric;
     unit: string;
     slices: BomSlice[];
-    total: { value: number; range: [number, number] };
+    total: Total;
+    actuators: Total;
+    // Null when no source covers the rest of the robot.
+    rest: Total | null;
     excluded: { label: string; count: number; reason: string }[];
 }
 
@@ -274,15 +285,22 @@ function partLabel(j: HumanoidJoint): string {
     return `${type}, ${sizeSpec(j.sizeClass).label} class`;
 }
 
-// Group parts into at most `max` slices by value, the rest summed as "Other".
+const withShares = (slices: Omit<BomSlice, "share">[]): BomSlice[] => {
+    const total = slices.reduce((n, s) => n + s.value, 0);
+    return slices.map((s) => ({ ...s, share: total ? s.value / total : 0 }));
+};
+
+// Group actuator parts into at most `max` slices by value, the rest summed as
+// "Other". Shares are of the actuator total.
 export function groupSlices(items: BomItem[], max = 6): BomSlice[] {
     const sized = items
         .map((it) => ({
             ...it,
-            value: it.unit.value * it.count,
+            category: "actuator" as const,
+            value: r2(it.unit.value * it.count),
             range: [
-                (it.unit.range?.[0] ?? it.unit.value) * it.count,
-                (it.unit.range?.[1] ?? it.unit.value) * it.count,
+                r2((it.unit.range?.[0] ?? it.unit.value) * it.count),
+                r2((it.unit.range?.[1] ?? it.unit.value) * it.count),
             ] as [number, number],
         }))
         .filter((s) => s.value > 0)
@@ -295,22 +313,45 @@ export function groupSlices(items: BomItem[], max = 6): BomSlice[] {
             key: "other",
             label: "Other",
             type: "other",
+            category: "actuator",
             count: tail.reduce((n, s) => n + s.count, 0),
             unit: null,
             joints: tail.flatMap((s) => s.joints),
-            value: tail.reduce((n, s) => n + s.value, 0),
+            value: r2(tail.reduce((n, s) => n + s.value, 0)),
             range: [
-                tail.reduce((n, s) => n + s.range[0], 0),
-                tail.reduce((n, s) => n + s.range[1], 0),
+                r2(tail.reduce((n, s) => n + s.range[0], 0)),
+                r2(tail.reduce((n, s) => n + s.range[1], 0)),
             ],
         });
     }
-    const total = head.reduce((n, s) => n + s.value, 0);
-    return head.map((s) => ({
-        ...s,
-        value: r2(s.value),
-        range: [r2(s.range[0]), r2(s.range[1])],
-        share: total ? s.value / total : 0,
+    return withShares(head);
+}
+
+const sumOf = (
+    slices: readonly { value: number; range: [number, number] }[],
+): Total => ({
+    value: r2(slices.reduce((n, s) => n + s.value, 0)),
+    range: [
+        r2(slices.reduce((n, s) => n + s.range[0], 0)),
+        r2(slices.reduce((n, s) => n + s.range[1], 0)),
+    ],
+});
+
+function restSlices(parts: RestPart[]): Omit<BomSlice, "share">[] {
+    return parts.map((p) => ({
+        key: `rest:${p.key}`,
+        label: p.label,
+        type: "other",
+        category: "non-actuator",
+        count: 1,
+        unit: p.value,
+        joints: [],
+        value: r2(p.value.value),
+        range: [
+            r2(p.value.range?.[0] ?? p.value.value),
+            r2(p.value.range?.[1] ?? p.value.value),
+        ],
+        ...(p.lumped ? { lumped: true } : {}),
     }));
 }
 
@@ -347,17 +388,23 @@ export function humanoidBom(h: Humanoid, metric: BomMetric): Bom {
         it.joints.push(j.canonical);
         items.set(key, it);
     }
-    const slices = groupSlices([...items.values()]);
-    const sum = (f: (s: BomSlice) => number) =>
-        r2(slices.reduce((n, s) => n + f(s), 0));
+    const actuatorSlices = groupSlices([...items.values()]);
+    const actuators = sumOf(actuatorSlices);
+    const restParts =
+        metric === "cost"
+            ? restOfRobotCost(h)
+            : metric === "mass"
+              ? restOfRobotMass(h, actuators)
+              : [];
+    const rest = restSlices(restParts);
+    const slices = withShares([...actuatorSlices, ...rest]);
     return {
         metric,
         unit: BOM_UNIT[metric],
         slices,
-        total: {
-            value: sum((s) => s.value),
-            range: [sum((s) => s.range[0]), sum((s) => s.range[1])],
-        },
+        total: sumOf(slices),
+        actuators,
+        rest: rest.length ? sumOf(rest) : null,
         excluded: [...excluded.values()],
     };
 }
@@ -367,10 +414,10 @@ export function bomPriceShare(
     h: Humanoid,
     bom: Bom,
 ): { value: number; range: [number, number] } | null {
-    if (bom.metric !== "cost" || !h.price_usd || !bom.total.value) return null;
+    if (bom.metric !== "cost" || !h.price_usd || !bom.actuators.value) return null;
     const p = h.price_usd;
     return {
-        value: bom.total.value / p,
-        range: [bom.total.range[0] / p, bom.total.range[1] / p],
+        value: bom.actuators.value / p,
+        range: [bom.actuators.range[0] / p, bom.actuators.range[1] / p],
     };
 }

@@ -38,6 +38,7 @@ export {
     humanoidBom,
     type Bom,
     type BomMetric,
+    type BomCategory,
     type BomSlice,
 } from "./bom";
 

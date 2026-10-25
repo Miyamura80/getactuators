@@ -79,9 +79,65 @@ describe("actuator BOM aggregation", () => {
                 expect(b.total.value).toBeCloseTo(sum, 1);
                 expect(b.total.range[0]).toBeLessThanOrEqual(b.total.value + 0.01);
                 expect(b.total.range[1]).toBeGreaterThanOrEqual(b.total.value - 0.01);
-                expect(b.slices.length).toBeLessThanOrEqual(7);
+                const acts = b.slices.filter((s) => s.category === "actuator");
+                expect(acts.length).toBeLessThanOrEqual(7);
+                expect(b.slices.length - acts.length).toBeLessThanOrEqual(5);
+                expect(b.actuators.value).toBeCloseTo(
+                    acts.reduce((n, s) => n + s.value, 0),
+                    1,
+                );
+                expect(b.slices.reduce((n, s) => n + s.share, 0)).toBeCloseTo(1, 6);
             }
         }
+    });
+});
+
+describe("rest of the robot", () => {
+    test("Berkeley Humanoid Lite carries its itemized non-actuator BOM", () => {
+        const b = humanoidBom(robot("berkeley-humanoid-lite"), "cost");
+        const rest = b.slices.filter((s) => s.category === "non-actuator");
+        expect(rest.map((s) => s.label)).toEqual([
+            "Compute & electronics",
+            "Printed structure",
+            "Grippers",
+            "Battery",
+            "Wiring, fasteners & other",
+        ]);
+        expect(rest.every((s) => s.unit?.confidence === "reported" && !s.lumped)).toBe(
+            true,
+        );
+        // The paper's itemized parts plus its $3,512 of actuators make $4,312.
+        expect(b.rest?.value).toBeCloseTo(4312 - 3512, 1);
+        expect(b.total.value).toBeCloseTo(b.actuators.value + 800, 1);
+        const share = b.actuators.value / b.total.value;
+        const actShares = b.slices
+            .filter((s) => s.category === "actuator")
+            .reduce((n, s) => n + s.share, 0);
+        expect(actShares).toBeCloseTo(share, 6);
+    });
+
+    test("Optimus shows one lumped, estimated rest-of-robot slice", () => {
+        const b = humanoidBom(robot("tesla-optimus"), "cost");
+        const rest = b.slices.filter((s) => s.category === "non-actuator");
+        expect(rest).toHaveLength(1);
+        expect(rest[0]?.lumped).toBe(true);
+        expect(rest[0]?.unit?.confidence).toBe("estimated");
+        expect(rest[0]?.range[1]).toBeCloseTo(55000 * 0.44, 0);
+    });
+
+    test("robots without a full BOM show actuators only", () => {
+        const b = humanoidBom(robot("kscale-kbot"), "cost");
+        expect(b.rest).toBeNull();
+        expect(b.total).toEqual(b.actuators);
+    });
+
+    test("mass adds the published weight minus actuators, magnet never adds a rest", () => {
+        const g1 = robot("unitree-g1");
+        const mass = humanoidBom(g1, "mass");
+        expect(mass.rest?.value).toBeCloseTo(35 - mass.actuators.value, 1);
+        expect(mass.total.value).toBeCloseTo(35, 1);
+        expect(mass.slices.at(-1)?.unit?.confidence).toBe("modeled");
+        expect(humanoidBom(g1, "magnet").rest).toBeNull();
     });
 });
 
@@ -98,7 +154,7 @@ describe("actuator unit cost sources", () => {
 
     test("Berkeley Humanoid Lite uses the paper's actuator prices", () => {
         const b = humanoidBom(robot("berkeley-humanoid-lite"), "cost");
-        expect(b.total.value).toBe(12 * 188 + 10 * 136);
+        expect(b.actuators.value).toBe(12 * 188 + 10 * 136);
     });
 
     test("Optimus uses analyst estimates with ranges, the neck is left out", () => {

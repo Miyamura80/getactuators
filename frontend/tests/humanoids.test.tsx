@@ -206,8 +206,37 @@ test("the actuator BOM donut breaks cost down by part and highlights its joints"
     act(() => {
         fireEvent.click(view.getAllByRole("button", { name: "Mass kg" })[0]!);
     });
-    expect(bom.querySelector(".hm-donut-v")?.textContent).toBe("15.6 kg");
+    // Mass adds the rest of the robot: published weight (34 kg) minus actuators.
+    expect(bom.querySelector(".hm-donut-v")?.textContent).toBe("34.0 kg");
+    expect([...bom.querySelectorAll(".hm-bom-gh span")].map((s) => s.textContent)).toEqual([
+        "Actuators",
+        "Rest of robot",
+    ]);
     expect(node("l-elbow")?.classList.contains("is-dim")).toBe(false);
+});
+
+test("the cost view splits actuators from the rest of the robot where a full BOM exists", () => {
+    setURL("/humanoids?robot=berkeley-humanoid-lite");
+    const view = render(<Humanoids />);
+    const bom = view.container.querySelector(".hm-card .hm-bom")!;
+    const groups = [...bom.querySelectorAll(".hm-bom-group")];
+    expect(groups.map((g) => g.querySelector(".hm-bom-gh span")?.textContent)).toEqual(["Actuators", "Rest of robot"]);
+    const rest = [...groups[1]!.querySelectorAll(".hm-bom-l")].map((l) => l.textContent);
+    expect(rest).toEqual(["Compute & electronics", "Printed structure", "Grippers", "Battery", "Wiring, fasteners & other"]);
+    // Non-actuator slices are greys, distinct from each other.
+    const greys = [...groups[1]!.querySelectorAll("i")].map((i) => (i as HTMLElement).style.background);
+    expect(new Set(greys).size).toBe(5);
+    expect(bom.querySelector(".hm-donut-ring")).not.toBeNull();
+    expect(bom.querySelector(".hm-donut-r")?.textContent).toMatch(/^actuators \d+%$/);
+    cleanup();
+    setURL("/humanoids?robot=tesla-optimus");
+    const optimus = render(<Humanoids />);
+    expect(optimus.container.querySelector(".hm-card .hm-bom-legend i.is-hatch")).not.toBeNull();
+    cleanup();
+    setURL("/humanoids?robot=kscale-kbot");
+    const kbot = render(<Humanoids />);
+    expect(kbot.container.querySelector(".hm-bom-np")?.textContent).toContain("Non-actuator BOM not published");
+    expect(kbot.container.querySelector(".hm-donut-ring")).toBeNull();
 });
 
 test("the BOM notes the price share and what it leaves out", () => {

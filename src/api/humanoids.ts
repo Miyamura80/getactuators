@@ -136,10 +136,27 @@ export const ActuatorBomSchema = named(
         .object({
             metric: z.enum(["cost", "mass", "magnet"]),
             unit: z.string().describe("`USD` for cost, `kg` for mass and magnet."),
-            total: z.object(lowHigh),
+            total: z
+                .object(lowHigh)
+                .describe("Whole robot where the rest is sourced, else actuators."),
+            actuators: z.object(lowHigh),
+            rest: z
+                .object(lowHigh)
+                .nullable()
+                .describe("Non-actuator parts, null when no source covers them."),
             slices: z.array(
                 z.object({
-                    label: z.string().describe("Actuator model or design, or `Other`."),
+                    label: z
+                        .string()
+                        .describe(
+                            "Actuator model or design, `Other`, or a non-actuator category.",
+                        ),
+                    category: z.enum(["actuator", "non-actuator"]),
+                    lumped: z
+                        .boolean()
+                        .describe(
+                            "A non-actuator total the source does not break into categories.",
+                        ),
                     actuator_type: z.enum(ACTUATOR_TYPES),
                     count: z.number(),
                     unit_value: SourcedNumberSchema.nullable().describe(
@@ -234,7 +251,7 @@ export function serializeHumanoid(h: Humanoid): z.infer<typeof HumanoidSchema> {
             dy: sourced(t.reeKg.dy)!,
             tb: sourced(t.reeKg.tb)!,
         },
-        actuator_bom_usd: humanoidBom(h, "cost").total.value,
+        actuator_bom_usd: humanoidBom(h, "cost").actuators.value,
         page_url: absoluteUrl(`${HUMANOIDS_PATH}?robot=${h.id}`),
         api_url: absoluteUrl(`/api/v1/humanoids/${h.id}`),
     };
@@ -287,8 +304,12 @@ function serializeBom(h: Humanoid, b: Bom): z.infer<typeof ActuatorBomSchema> {
         metric: b.metric,
         unit: b.unit,
         total: lh(b.total),
+        actuators: lh(b.actuators),
+        rest: b.rest ? lh(b.rest) : null,
         slices: b.slices.map((s) => ({
             label: s.label,
+            category: s.category,
+            lumped: s.lumped ?? false,
             actuator_type: s.type,
             count: s.count,
             unit_value: sourced(s.unit ?? undefined),
