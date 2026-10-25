@@ -11,6 +11,7 @@ const COLS: { key: SortKey; label: string; num?: boolean }[] = [
     { key: "actuators", label: "Actuators", num: true },
     { key: "magnet", label: "Magnet kg", num: true },
     { key: "ree", label: "REE kg", num: true },
+    { key: "bom", label: "Actuator BOM $", num: true },
     { key: "price", label: "Price", num: true },
     { key: "data", label: "Data", num: true },
 ];
@@ -103,7 +104,7 @@ export function FleetTable({ active, onPick }: { active: string; onPick: (id: st
                         </tr>
                     </thead>
                     <tbody>
-                        {result.rows.map(({ h, t, ree, conf }) => (
+                        {result.rows.map(({ h, t, ree, bom, bomOut, conf }) => (
                             <tr key={h.id} className={h.id === active ? "is-active" : undefined}>
                                 <td>
                                     <button type="button" onClick={() => onPick(h.id)}>
@@ -120,6 +121,14 @@ export function FleetTable({ active, onPick }: { active: string; onPick: (id: st
                                 <td className="num">{t.actuators}</td>
                                 <td className="num">{t.magnetMassKg.value.toFixed(2)}</td>
                                 <td className="num">{ree.toFixed(2)}</td>
+                                <td className="num">
+                                    {usd(bom)}
+                                    {bomOut > 0 && (
+                                        <sup className="hm-out" title={`${bomOut} actuators have no defensible unit cost and are not counted`}>
+                                            +
+                                        </sup>
+                                    )}
+                                </td>
                                 <td className="num">{usd(h.price_usd)}</td>
                                 <td className="num">
                                     <Confidence share={conf.share} grade={conf.grade} />

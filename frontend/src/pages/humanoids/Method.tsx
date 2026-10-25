@@ -1,5 +1,7 @@
 import {
     ARC_FILL,
+    COST_FIT,
+    MASS_FIT,
     magnetRangeG,
     NDFEB_DENSITY_G_CM3,
     REE_FRACTION,
@@ -9,12 +11,25 @@ import {
 
 const pct = (x: number) => `${Number((x * 100).toFixed(2))}%`;
 const bound = (n: number, unit: string) => (Number.isFinite(n) ? `≤ ${n.toLocaleString("en-US")} ${unit}` : "above");
-const METHOD_SOURCES = ["fai-magnets", "jda-ndfeb", "crystals-gbd", "frameless-ilm85", "frameless-ri60", "frameless-ri80"];
+const METHOD_SOURCES = [
+    "fai-magnets",
+    "jda-ndfeb",
+    "crystals-gbd",
+    "frameless-ilm85",
+    "frameless-ri60",
+    "frameless-ri80",
+    "catalog-fit",
+    "huibo-optimus-bom",
+    "ms-optimus-bom",
+    "bhl-rdworld",
+];
+const curve = (f: typeof COST_FIT, unit: string, scale = 1) =>
+    `${(f.coef * scale).toFixed(scale === 1 ? 0 : 3)} ${unit} x torque^${f.exp.toFixed(2)}, range x or / ${Math.exp(f.sigma).toFixed(2)}, ${f.ids.length} actuators from ${f.minTorque} to ${f.maxTorque} N·m`;
 
 export function Method() {
     return (
         <details className="hm-fold">
-            <summary>Magnet mass method</summary>
+            <summary>Method: magnets, cost and mass</summary>
             <div className="hm-method">
                 <p>
                     Each actuator gets a motor size class from its peak torque (rotary) or force (linear), or from its
@@ -70,6 +85,15 @@ export function Method() {
                     25% of that), Dy {pct(REE_FRACTION.dy[0])} to {pct(REE_FRACTION.dy[1])} (grain-boundary diffused to
                     grade H), Tb {pct(REE_FRACTION.tb[0])} to {pct(REE_FRACTION.tb[1])}. Published per-robot estimates
                     run 2 to 4.5 kg of NdFeB; robots here land lower where hands and extra axes are not counted.
+                </p>
+                <p>
+                    Actuator cost, per unit: the catalog list price when a joint links to a catalog actuator, or a price
+                    published for that robot (reported). Optimus uses analyst BOM figures per actuator kind, from Huibo's
+                    CNY breakdown at 7.2 CNY/USD up to Morgan Stanley's share of a $55k BOM (estimated). Everything else is
+                    modeled from a curve fitted to catalog retail prices against peak torque ({curve(COST_FIT, "$")}), or
+                    the Optimus linear-unit estimate for screw actuators. Retail prices of research actuators sit above a
+                    volume maker's internal cost. Hydraulic and micro-motor joints have no defensible number and are left out.
+                    Actuator mass uses the same approach with catalog masses ({curve(MASS_FIT, "kg", 1 / 1000)}).
                 </p>
                 <ol className="hm-src">
                     {METHOD_SOURCES.map((id) => {

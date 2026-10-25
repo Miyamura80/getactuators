@@ -76,6 +76,8 @@ export interface HumanoidJoint {
     peakTorqueNm?: Sourced<number>;
     peakForceN?: Sourced<number>;
     sizeClass: SizeClass;
+    // Published unit price of one actuator here, when the sources give one.
+    unitCostUsd?: Sourced<number>;
     // Per node, i.e. already multiplied by count. Always estimated.
     magnetMassG: Sourced<number>;
     sources: string[];

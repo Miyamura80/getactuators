@@ -223,6 +223,9 @@ const bhl = robot({
             reducer: "3D-printed cycloidal",
             torque: 20,
             figureNote: "URDF effort limit",
+            cost: 188,
+            costSrc: ["bhl-rdworld", "bhl-paper"],
+            costNote: "US price of the 6512 actuator in the paper's BOM (Table III).",
             src: BHL_SRC,
         },
         {
@@ -233,6 +236,9 @@ const bhl = robot({
             torque: 20,
             figureNote:
                 "URDF effort limit; Humanoid.guide gives about 12 N·m for the 5010 unit",
+            cost: 136,
+            costSrc: ["bhl-rdworld", "bhl-paper"],
+            costNote: "US price of the 5010 actuator in the paper's BOM (Table III).",
             src: [...BHL_SRC, "bhl-commonality"],
         },
     ],

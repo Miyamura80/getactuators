@@ -13,6 +13,8 @@ interface Props {
     robot: Humanoid;
     selected: CanonicalJoint | null;
     onSelect: (j: CanonicalJoint | null) => void;
+    // Joints of the BOM slice picked below the figure; the rest dim.
+    highlight?: readonly CanonicalJoint[] | null;
 }
 
 const CX = VIEW.w / 2;
@@ -37,7 +39,7 @@ function Body() {
     );
 }
 
-export function Silhouette({ robot, selected, onSelect }: Props) {
+export function Silhouette({ robot, selected, onSelect, highlight }: Props) {
     return (
         <svg
             className="hm-fig"
@@ -61,7 +63,7 @@ export function Silhouette({ robot, selected, onSelect }: Props) {
                 return (
                     <g
                         key={n.id}
-                        className={`hm-node${sel ? " is-sel" : ""}${type ? "" : " is-empty"}`}
+                        className={`hm-node${sel ? " is-sel" : ""}${type ? "" : " is-empty"}${highlight && !highlight.includes(n.id) ? " is-dim" : ""}`}
                         role="button"
                         tabIndex={0}
                         aria-pressed={sel}

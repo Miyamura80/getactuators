@@ -19,6 +19,7 @@ import { JointPanel } from "./JointPanel";
 import { Method } from "./Method";
 import { Silhouette } from "./Silhouette";
 import { Totals } from "./Totals";
+import { BomDonut } from "./BomDonut";
 import "../tools.css";
 import "./humanoids.css";
 
@@ -78,6 +79,12 @@ function Picker({
 
 function Card({ robot, joint, onJoint }: { robot: Humanoid; joint: CanonicalJoint | null; onJoint: (j: CanonicalJoint | null) => void }) {
     const totals = useMemo(() => humanoidTotals(robot), [robot]);
+    const [slice, setSlice] = useState<{ key: string; joints: CanonicalJoint[] } | null>(null);
+    const [shown, setShown] = useState(robot.id);
+    if (shown !== robot.id) {
+        setShown(robot.id);
+        setSlice(null);
+    }
     return (
         <figure className="hm-card">
             <figcaption>
@@ -86,8 +93,14 @@ function Card({ robot, joint, onJoint }: { robot: Humanoid; joint: CanonicalJoin
                     {robot.brand} · <Flag code={robot.country} />
                 </span>
             </figcaption>
-            <Silhouette robot={robot} selected={joint} onSelect={onJoint} />
+            <Silhouette robot={robot} selected={joint} onSelect={onJoint} highlight={slice?.joints ?? null} />
             <Totals totals={totals} dof={robot.dof} />
+            <BomDonut
+                key={robot.id}
+                robot={robot}
+                highlight={slice?.key ?? null}
+                onHighlight={(key, joints) => setSlice(key && joints ? { key, joints } : null)}
+            />
         </figure>
     );
 }

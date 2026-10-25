@@ -2,6 +2,7 @@ import { countryFlag, countryName } from "@/country-flag";
 import {
     ACTUATOR_TYPES,
     ACTUATOR_TYPE_LABEL,
+    type BomMetric,
     HUMANOIDS,
     HUMANOIDS_AS_OF,
     HUMANOIDS_PATH,
@@ -10,6 +11,8 @@ import {
     REE_FRACTION,
     SIZE_CLASSES,
     type Sourced,
+    bomPriceShare,
+    humanoidBom,
     humanoidTotals,
     jointLabel,
     magnetRangeG,
@@ -18,6 +21,7 @@ import {
 } from "@/humanoids";
 import { absoluteUrl } from "../site";
 import * as ld from "./jsonld";
+import { toAbsolute } from "./jsonld";
 import { mdLink, mdTable, usd } from "./md";
 import type { Page } from "./page-types";
 
@@ -60,6 +64,54 @@ function jointRow(j: HumanoidJoint): string[] {
     ];
 }
 
+const BOM_FMT: Record<BomMetric, (v: number) => string> = {
+    cost: (v) => `$${Math.round(v).toLocaleString("en-US")}`,
+    mass: (v) => `${v.toFixed(1)} kg`,
+    magnet: (v) => `${v.toFixed(3)} kg`,
+};
+
+function bomSection(h: Humanoid): string {
+    const cost = humanoidBom(h, "cost");
+    const f = BOM_FMT.cost;
+    const span = (lo: number, hi: number) =>
+        lo === hi ? f(lo) : `${f(lo)} to ${f(hi)}`;
+    const rows = cost.slices.map((s) => [
+        s.label,
+        String(s.count),
+        s.unit
+            ? `${span(s.unit.range?.[0] ?? s.unit.value, s.unit.range?.[1] ?? s.unit.value)} (${s.unit.confidence})`
+            : "",
+        span(s.range[0], s.range[1]),
+        `${Math.round(s.share * 100)}%`,
+        s.unit
+            ? s.unit.sources
+                  .map((id) => mdLink(sourceOf(id).title, toAbsolute(sourceOf(id).url)))
+                  .join("; ")
+            : "",
+    ]);
+    const others = (["mass", "magnet"] as const).map((m) => {
+        const b = humanoidBom(h, m);
+        const top = b.slices[0];
+        return `${m === "mass" ? "Actuator mass" : "Magnet"}: ${BOM_FMT[m](b.total.range[0])} to ${BOM_FMT[m](b.total.range[1])}${top ? `, largest share ${top.label} (${Math.round(top.share * 100)}%)` : ""}.`;
+    });
+    const share = bomPriceShare(h, cost);
+    const lines = [
+        `Total: ${span(cost.total.range[0], cost.total.range[1])}.`,
+        ...(share
+            ? [
+                  `Actuators are about ${Math.round(share.value * 100)}% of the list price (${Math.round(share.range[0] * 100)} to ${Math.round(share.range[1] * 100)}%).`,
+              ]
+            : []),
+        ...others,
+        ...(cost.excluded.length
+            ? [
+                  `Not costed: ${cost.excluded.map((e) => `${e.label} x${e.count} (${e.reason})`).join("; ")}.`,
+              ]
+            : []),
+    ];
+    return `### Actuator BOM\n\n${mdTable(["Part", "Count", "Unit cost", "Subtotal", "Share", "Source"], rows)}\n\n${lines.join(" ")}`;
+}
+
 function robotSection(h: Humanoid): string {
     const t = humanoidTotals(h);
     const ree = reeTotalKg(t);
@@ -73,7 +125,7 @@ function robotSection(h: Humanoid): string {
         ["Joint", "Count", "Type", "Motor", "Peak", "Magnet g", "Sources"],
         h.joints.map(jointRow),
     );
-    return `${head}${notes}${basis}\n\n${table}`;
+    return `${head}${notes}${basis}\n\n${table}\n\n${bomSection(h)}`;
 }
 
 export function humanoidsBody(): string {

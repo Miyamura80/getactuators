@@ -1,17 +1,22 @@
 import { countryFlag, countryName } from "@/country-flag";
 import {
     ACTUATOR_TYPES,
+    type Bom,
     HUMANOIDS,
     HUMANOIDS_AS_OF,
     HUMANOIDS_PATH,
     type Humanoid,
     type HumanoidJoint,
     type Sourced,
+    bomPriceShare,
     getHumanoid,
+    humanoidBom,
     humanoidTotals,
     sourceOf,
 } from "@/humanoids";
 import { absoluteUrl } from "@/server/site";
+
+const toAbsolute = (url: string) => (/^https?:\/\//.test(url) ? url : absoluteUrl(url));
 import { z } from "zod";
 import { type ApiContext, json } from "./http";
 import { ApiError } from "./problem";
@@ -105,6 +110,11 @@ const humanoidFields = {
     actuator_count_by_type: z.record(z.string(), z.number()),
     magnet_mass_kg: SourcedNumberSchema,
     ree_kg: reeSchema,
+    actuator_bom_usd: z
+        .number()
+        .describe(
+            "Actuator cost total (USD), excluding actuators with no defensible price.",
+        ),
     page_url: z.string(),
     api_url: z.string(),
 };
@@ -114,6 +124,53 @@ export const HumanoidSchema = named(
     z.object(humanoidFields).describe("A humanoid with its actuator totals."),
 );
 
+const lowHigh = {
+    value: z.number(),
+    low: z.number(),
+    high: z.number(),
+};
+
+export const ActuatorBomSchema = named(
+    "ActuatorBom",
+    z
+        .object({
+            metric: z.enum(["cost", "mass", "magnet"]),
+            unit: z.string().describe("`USD` for cost, `kg` for mass and magnet."),
+            total: z.object(lowHigh),
+            slices: z.array(
+                z.object({
+                    label: z.string().describe("Actuator model or design, or `Other`."),
+                    actuator_type: z.enum(ACTUATOR_TYPES),
+                    count: z.number(),
+                    unit_value: SourcedNumberSchema.nullable().describe(
+                        "Per actuator, with confidence and sources; null for `Other`.",
+                    ),
+                    ...lowHigh,
+                    share: z.number().describe("Share of the total, 0 to 1."),
+                    joints: z.array(z.string()),
+                }),
+            ),
+            excluded: z
+                .array(
+                    z.object({
+                        label: z.string(),
+                        count: z.number(),
+                        reason: z.string(),
+                    }),
+                )
+                .describe(
+                    "Actuators with no defensible number, left out of the total.",
+                ),
+            price_share: z
+                .object(lowHigh)
+                .nullable()
+                .describe(
+                    "Actuator cost over the robot's list price, when both exist.",
+                ),
+        })
+        .describe("Actuator bill of materials, at most 6 slices plus Other."),
+);
+
 export const HumanoidDetailSchema = named(
     "HumanoidDetail",
     z.object({
@@ -121,6 +178,11 @@ export const HumanoidDetailSchema = named(
         summary: z.string(),
         not_counted: z.string().nullable(),
         joints: z.array(HumanoidJointSchema),
+        bom: z.object({
+            cost: ActuatorBomSchema,
+            mass: ActuatorBomSchema,
+            magnet: ActuatorBomSchema,
+        }),
         sources: z.array(sourceSchema),
     }),
 );
@@ -140,14 +202,14 @@ function sourced(s: Sourced<number> | undefined) {
         high: s.range?.[1] ?? null,
         note: s.note ?? null,
         as_of: s.asOf,
-        sources: s.sources.map((id) => absoluteUrl(sourceOf(id).url)),
+        sources: s.sources.map((id) => toAbsolute(sourceOf(id).url)),
     };
 }
 
 const sources = (ids: string[]) =>
     ids.map((id) => ({
         title: sourceOf(id).title,
-        url: absoluteUrl(sourceOf(id).url),
+        url: toAbsolute(sourceOf(id).url),
     }));
 
 export function serializeHumanoid(h: Humanoid): z.infer<typeof HumanoidSchema> {
@@ -172,6 +234,7 @@ export function serializeHumanoid(h: Humanoid): z.infer<typeof HumanoidSchema> {
             dy: sourced(t.reeKg.dy)!,
             tb: sourced(t.reeKg.tb)!,
         },
+        actuator_bom_usd: humanoidBom(h, "cost").total.value,
         page_url: absoluteUrl(`${HUMANOIDS_PATH}?robot=${h.id}`),
         api_url: absoluteUrl(`/api/v1/humanoids/${h.id}`),
     };
@@ -203,7 +266,38 @@ export function serializeHumanoidDetail(
         summary: h.summary,
         not_counted: h.notCounted ?? null,
         joints: h.joints.map(serializeJoint),
+        bom: {
+            cost: serializeBom(h, humanoidBom(h, "cost")),
+            mass: serializeBom(h, humanoidBom(h, "mass")),
+            magnet: serializeBom(h, humanoidBom(h, "magnet")),
+        },
         sources: sources(h.sources),
+    };
+}
+
+const lh = (x: { value: number; range: readonly [number, number] }) => ({
+    value: x.value,
+    low: x.range[0],
+    high: x.range[1],
+});
+
+function serializeBom(h: Humanoid, b: Bom): z.infer<typeof ActuatorBomSchema> {
+    const share = bomPriceShare(h, b);
+    return {
+        metric: b.metric,
+        unit: b.unit,
+        total: lh(b.total),
+        slices: b.slices.map((s) => ({
+            label: s.label,
+            actuator_type: s.type,
+            count: s.count,
+            unit_value: sourced(s.unit ?? undefined),
+            ...lh(s),
+            share: Math.round(s.share * 1000) / 1000,
+            joints: s.joints,
+        })),
+        excluded: b.excluded,
+        price_share: share ? lh(share) : null,
     };
 }
 

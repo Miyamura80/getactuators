@@ -34,6 +34,19 @@ export const SOURCES = {
         title: "CubeMars RI80 frameless motor (catalog)",
         url: "/actuators/cubemars-ri80-v2-kv75",
     },
+    // Actuator cost
+    "catalog-fit": {
+        title: "actuatorlist catalog: price and mass against peak torque, QDD, integrated and cycloidal actuators",
+        url: "/all",
+    },
+    "huibo-optimus-bom": {
+        title: "Huibo research via Zhihu: Optimus hardware BOM (rotary 57k, linear 44k, hands 20k CNY)",
+        url: "https://zhuanlan.zhihu.com/p/687045590",
+    },
+    "ms-optimus-bom": {
+        title: "XenoSpectrum on Morgan Stanley: Optimus Gen 2 BOM about $55k, actuators 56%, hands $9.5k",
+        url: "https://xenospectrum.com/en/humanoid-robot-bom-actuator-cost/",
+    },
     // Tesla Optimus
     "optimus-humanoid-guide": {
         title: "Humanoid.guide: linear vs rotary actuators, why Tesla bet on the roller screw",
@@ -265,6 +278,10 @@ export const SOURCES = {
         title: "Humanoid.guide: actuator commonality, Optimus to Berkeley Humanoid Lite",
         url: "https://humanoid.guide/humanoid-actuator-commonality/",
     },
+    "bhl-rdworld": {
+        title: "R&D World: Berkeley Humanoid Lite parts ($188 6512, $136 5010 actuators; $4,312 total)",
+        url: "https://www.rdworldonline.com/berkeley-debuts-5000-open-source-humanoid-built-with-desktop-3d-printers/",
+    },
     "bhl-orobot": {
         title: "Orobot: Berkeley Humanoid Lite BOM (6512 and 5010 actuators)",
         url: "https://orobot.io/o/program/BROKER-2/berkeley-humanoid-lite",
@@ -282,6 +299,11 @@ export const SOURCES = {
 
 export type SourceId = keyof typeof SOURCES;
 
+// "catalog:<id>" cites an actuatorlist catalog entry (its price or mass).
 export function sourceOf(id: string): Source {
+    if (id.startsWith("catalog:")) {
+        const slug = id.slice("catalog:".length);
+        return { title: `actuatorlist catalog: ${slug}`, url: `/actuators/${slug}` };
+    }
     return (SOURCES as Record<string, Source>)[id] ?? { title: id, url: id };
 }

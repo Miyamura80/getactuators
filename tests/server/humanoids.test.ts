@@ -46,6 +46,11 @@ describe("/humanoids", () => {
                 "| Left knee | 1 | Rotary QDD | [RobStride 04](/actuators/robstride-04)",
             );
             expect(md).toContain("- **Country:** \u{1F1E8}\u{1F1F3} China");
+            expect(md).toContain("### Actuator BOM");
+            expect(md).toContain(
+                "| RobStride 03 | 8 | $250 (reported) | $2,000 | 47% |",
+            );
+            expect(md).toContain("Not costed: Hand (hydraulic) x42");
             expect(md).toContain("## Magnet mass method");
             expect(md).not.toContain(EM_DASH);
         }
@@ -78,7 +83,24 @@ describe("REST /api/v1/humanoids", () => {
         expect(knee?.actuator_type).toBe("qdd");
         expect(knee?.actuator_id).toBe("robstride-04");
         expect(knee?.peak_torque_nm?.value).toBe(120);
-        expect(knee?.sources[0]?.url).toStartWith("https://");
+        expect(knee?.sources[0]?.url).toBe(
+            "https://docs.kscale.dev/robots/k-bot/mechanical/",
+        );
+        expect(body.bom.cost.total.value).toBeCloseTo(4235.86, 1);
+        expect(body.bom.cost.slices[0]?.unit_value?.sources[0]).toBe(
+            "https://actuatorlist.com/actuators/robstride-03",
+        );
+        expect(body.bom.mass.unit).toBe("kg");
+        expect(body.bom.magnet.slices.length).toBeGreaterThan(0);
+        expect(body.actuator_bom_usd).toBe(body.bom.cost.total.value);
+        const optimus = HumanoidDetailSchema.parse(
+            await (await get("/api/v1/humanoids/tesla-optimus")).json(),
+        );
+        expect(optimus.bom.cost.slices[0]?.unit_value?.sources).toEqual([
+            "https://zhuanlan.zhihu.com/p/687045590",
+            "https://xenospectrum.com/en/humanoid-robot-bom-actuator-cost/",
+        ]);
+        expect(optimus.bom.cost.excluded).toHaveLength(1);
         const missing = await get("/api/v1/humanoids/not-a-robot");
         expect(missing.status).toBe(404);
     });

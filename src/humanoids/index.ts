@@ -30,6 +30,16 @@ export {
     ARC_FILL,
 } from "./magnet";
 export { SOURCES, sourceOf, type Source } from "./sources";
+export {
+    BOM_UNIT,
+    COST_FIT,
+    MASS_FIT,
+    bomPriceShare,
+    humanoidBom,
+    type Bom,
+    type BomMetric,
+    type BomSlice,
+} from "./bom";
 
 export const HUMANOIDS_PATH = "/humanoids";
 

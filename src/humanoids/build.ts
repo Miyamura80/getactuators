@@ -36,6 +36,10 @@ export interface JointSpec {
     // Confidence and note for the torque or force figure.
     figure?: Confidence;
     figureNote?: string;
+    // Published unit price (USD) and where it comes from.
+    cost?: number;
+    costSrc?: string[];
+    costNote?: string;
     // Size class when neither torque nor force is published, and why.
     size?: SizeClass;
     sizeFrom?: string;
@@ -107,9 +111,24 @@ function expand(s: JointSpec): HumanoidJoint[] {
             : {}),
         ...(s.force !== undefined ? { peakForceN: sourced(s.force, "N", s) } : {}),
         sizeClass,
+        ...unitCost(s),
         magnetMassG,
         sources: s.src,
     }));
+}
+
+function unitCost(s: JointSpec): Pick<HumanoidJoint, "unitCostUsd"> {
+    if (s.cost === undefined) return {};
+    return {
+        unitCostUsd: {
+            value: s.cost,
+            unit: "USD",
+            sources: s.costSrc ?? s.src,
+            asOf: HUMANOIDS_AS_OF,
+            confidence: "reported",
+            ...(s.costNote ? { note: s.costNote } : {}),
+        },
+    };
 }
 
 export function robot(spec: RobotSpec): Humanoid {

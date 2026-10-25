@@ -180,6 +180,54 @@ test("countries render as flags named for assistive tech, and search by name or 
     expect(root.querySelector(".hm-fleet tbody .flag")?.getAttribute("aria-label")).toBe("China");
 });
 
+test("the actuator BOM donut breaks cost down by part and highlights its joints", () => {
+    setURL("/humanoids?robot=kscale-kbot");
+    const view = render(<Humanoids />);
+    const bom = view.container.querySelector(".hm-card .hm-bom")!;
+    const rows = [...bom.querySelectorAll(".hm-bom-legend button")];
+    expect(rows.map((r) => r.querySelector(".hm-bom-l")?.textContent)).toEqual([
+        "RobStride 03 x8",
+        "RobStride 04 x4",
+        "RobStride 02 x6",
+        "RobStride 00 x2",
+    ]);
+    expect(bom.querySelectorAll(".hm-donut path")).toHaveLength(4);
+    expect(bom.querySelector(".hm-donut-v")?.textContent).toBe("$4.2k");
+    // Picking a slice dims every joint that does not use that part.
+    act(() => {
+        fireEvent.click(rows[1]!);
+    });
+    const node = (j: string) => view.container.querySelector(`.hm-card .hm-node[data-joint="${j}"]`);
+    expect(node("l-knee")?.classList.contains("is-dim")).toBe(false);
+    expect(node("l-elbow")?.classList.contains("is-dim")).toBe(true);
+    expect(bom.querySelector(".hm-bom-detail")?.textContent).toContain("RobStride 04: 4 x $255");
+    expect(bom.querySelector(".hm-bom-detail .hm-conf.is-reported")).not.toBeNull();
+    // The toggle switches the same breakdown to mass, and clears the pick.
+    act(() => {
+        fireEvent.click(view.getAllByRole("button", { name: "Mass kg" })[0]!);
+    });
+    expect(bom.querySelector(".hm-donut-v")?.textContent).toBe("15.6 kg");
+    expect(node("l-elbow")?.classList.contains("is-dim")).toBe(false);
+});
+
+test("the BOM notes the price share and what it leaves out", () => {
+    setURL("/humanoids?robot=unitree-g1");
+    const g1 = render(<Humanoids />);
+    expect(g1.container.querySelector(".hm-bom-share")?.textContent).toMatch(/^Actuators ≈ \d+% of the robot's price/);
+    cleanup();
+    setURL("/humanoids?robot=sanctuary-phoenix");
+    const phoenix = render(<Humanoids />);
+    expect(phoenix.container.querySelector(".hm-bom-share")).toBeNull();
+    expect(phoenix.container.querySelector(".hm-bom-out summary")?.textContent).toBe("42 not counted");
+});
+
+test("the fleet table sorts by actuator BOM", () => {
+    setURL("/humanoids?sort=bom");
+    const view = render(<Humanoids />);
+    expect(rowNames(view.container)[0]).toBe("Berkeley Humanoid Lite");
+    expect([...view.container.querySelectorAll(".hm-fleet th")].some((th) => th.textContent?.startsWith("Actuator BOM $"))).toBe(true);
+});
+
 test("each row carries a data confidence meter with an explanation", () => {
     setURL("/humanoids?q=k-bot");
     const view = render(<Humanoids />);
@@ -193,6 +241,6 @@ test("the magnet method is folded in a details element with the size classes", (
     setURL("/humanoids");
     const view = render(<Humanoids />);
     const fold = view.container.querySelector("details.hm-fold");
-    expect(fold?.querySelector("summary")?.textContent).toBe("Magnet mass method");
+    expect(fold?.querySelector("summary")?.textContent).toBe("Method: magnets, cost and mass");
     expect(fold?.querySelectorAll("tbody tr")).toHaveLength(5);
 });

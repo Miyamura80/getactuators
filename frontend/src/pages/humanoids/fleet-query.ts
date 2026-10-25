@@ -3,6 +3,7 @@ import {
     dataConfidence,
     type DataGrade,
     HUMANOIDS,
+    humanoidBom,
     type Humanoid,
     type HumanoidTotals,
     humanoidTotals,
@@ -14,7 +15,7 @@ import { countryName } from "../../../../src/country-flag";
 // descending), ?page= (1-based). Defaults are left out of the URL.
 
 export const PAGE_SIZE = 10;
-export const SORT_KEYS = ["name", "dof", "actuators", "magnet", "ree", "price", "data"] as const;
+export const SORT_KEYS = ["name", "dof", "actuators", "magnet", "ree", "bom", "price", "data"] as const;
 export type SortKey = (typeof SORT_KEYS)[number];
 export interface Sort {
     key: SortKey;
@@ -26,6 +27,9 @@ export interface Row {
     h: Humanoid;
     t: HumanoidTotals;
     ree: number;
+    // Actuator cost total (USD) and how many actuators it leaves out.
+    bom: number;
+    bomOut: number;
     conf: { share: number; grade: DataGrade };
     hay: string;
 }
@@ -36,7 +40,9 @@ export const ROWS: Row[] = HUMANOIDS.map((h) => {
     const hay = [h.name, h.brand, h.country, countryName(h.country), ...types, ...types.map((k) => ACTUATOR_TYPE_LABEL[k])]
         .join(" ")
         .toLowerCase();
-    return { h, t, ree: reeTotalKg(t).value, conf: dataConfidence(h), hay };
+    const b = humanoidBom(h, "cost");
+    const bomOut = b.excluded.reduce((n, e) => n + e.count, 0);
+    return { h, t, ree: reeTotalKg(t).value, bom: b.total.value, bomOut, conf: dataConfidence(h), hay };
 });
 
 export interface FleetState {
@@ -78,6 +84,8 @@ function value(r: Row, k: SortKey): number | string | null {
             return r.t.magnetMassKg.value;
         case "ree":
             return r.ree;
+        case "bom":
+            return r.bom;
         case "price":
             return r.h.price_usd;
         case "data":
