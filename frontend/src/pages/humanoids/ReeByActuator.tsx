@@ -63,13 +63,15 @@ export function ReeByActuator({ robot }: { robot: Humanoid }) {
     const max = niceMax(Math.max(...rows.map((r) => sum(r.values, "hi")), unit === "grams" ? 1 : 0.01));
     return (
         <div className="ree">
-            <p className="ree-title">Rare earth by actuator, estimated</p>
-            <div className="hm-bom-tabs ree-tabs" role="group" aria-label="Rare earth shown as">
-                {UNITS.map((u) => (
-                    <button key={u.id} type="button" aria-pressed={unit === u.id} onClick={() => setUnit(u.id)}>
-                        {u.label}
-                    </button>
-                ))}
+            <div className="hm-sec-head">
+                <p className="ree-title">Rare earth by actuator, estimated</p>
+                <div className="hm-seg ree-tabs" role="group" aria-label="Rare earth shown as">
+                    {UNITS.map((u) => (
+                        <button key={u.id} type="button" aria-pressed={unit === u.id} onClick={() => setUnit(u.id)}>
+                            {u.label}
+                        </button>
+                    ))}
+                </div>
             </div>
             <div className="ree-key">
                 {ELEMENTS.map((el) => (

@@ -99,20 +99,23 @@ export function BomDonut({ robot, highlight, onHighlight }: Props) {
 
     return (
         <div className="hm-bom">
-            <div className="hm-bom-tabs" role="group" aria-label="Breakdown by">
-                {METRICS.map((m) => (
-                    <button
-                        key={m.id}
-                        type="button"
-                        aria-pressed={metric === m.id}
-                        onClick={() => {
-                            setMetric(m.id);
-                            onHighlight(null, null);
-                        }}
-                    >
-                        {m.label}
-                    </button>
-                ))}
+            <div className="hm-sec-head">
+                <p className="ree-title">Bill of materials</p>
+                <div className="hm-seg" role="group" aria-label="Breakdown by">
+                    {METRICS.map((m) => (
+                        <button
+                            key={m.id}
+                            type="button"
+                            aria-pressed={metric === m.id}
+                            onClick={() => {
+                                setMetric(m.id);
+                                onHighlight(null, null);
+                            }}
+                        >
+                            {m.label}
+                        </button>
+                    ))}
+                </div>
             </div>
             <div className="hm-bom-body">
                 <svg viewBox="0 0 120 120" className="hm-donut" role="img" aria-label={`${metric} breakdown, total ${fmt(metric, total.value)}`}>
