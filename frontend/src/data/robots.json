@@ -536,7 +536,7 @@
             "weight_g": null,
             "torque_density_nm_per_kg": null,
             "product_url": "https://www.seeedstudio.com/STS3215-19kg-cm-7-4V-Serial-Servo-p-6338.html",
-            "actuator_id": "feetech-sts3215"
+            "actuator_id": null
         }
     },
     "robots": [

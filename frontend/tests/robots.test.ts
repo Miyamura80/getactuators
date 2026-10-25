@@ -65,19 +65,18 @@ describe("resolveJoints", () => {
 describe("robotsUsingActuator", () => {
     test("returns each robot whose loadout links the actuator, once", () => {
         const linked = makeRobot([
-            { role: "arm", motor: "feetech-sts3215-c001", count: 5 },
-            { role: "gripper", motor: "feetech-sts3215-c001", count: 1 },
+            { role: "head", motor: "dynamixel-xl330-m288", count: 5 },
+            { role: "antenna", motor: "dynamixel-xl330-m288", count: 1 },
         ]);
-        const other = { ...makeRobot([{ role: "head", motor: "dynamixel-xl330-m288", count: 6 }]), id: "other" };
-        expect(robotsUsingActuator("feetech-sts3215", [linked, other]).map((r) => r.id)).toEqual(["r"]);
-        expect(robotsUsingActuator("dynamixel-xl330-m288-t", [linked, other]).map((r) => r.id)).toEqual(["other"]);
+        const other = { ...makeRobot([{ role: "arm", motor: "feetech-sts3215-c001", count: 6 }]), id: "other" };
+        expect(robotsUsingActuator("dynamixel-xl330-m288-t", [linked, other]).map((r) => r.id)).toEqual(["r"]);
     });
 
     test("is empty for an actuator no loadout links", () => {
         expect(robotsUsingActuator("definitely-not-an-actuator")).toEqual([]);
     });
 
-    test("finds the shipped SO-101 loadout for the STS3215", () => {
-        expect(robotsUsingActuator("feetech-sts3215").map((r) => r.id)).toContain("therobotstudio-so-101");
+    test("finds the shipped Reachy Mini loadout for the XL330-M288-T", () => {
+        expect(robotsUsingActuator("dynamixel-xl330-m288-t").map((r) => r.id)).toContain("pollen-reachy-mini");
     });
 });
