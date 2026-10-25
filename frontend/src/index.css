@@ -255,6 +255,9 @@ a:hover {
     font-size: 11.5px;
     color: var(--muted);
 }
+.robot-costs-note p {
+    margin: 0;
+}
 
 /* ---- Charts (shared SVG) ---------------------------------------------- */
 .chart-scroll {
@@ -602,10 +605,6 @@ table.board {
     font-size: 15px;
     margin-right: 6px;
 }
-.country-name {
-    color: var(--muted);
-    font-size: 11.5px;
-}
 .cat-chip {
     display: inline-block;
     padding: 3px 8px;
@@ -732,6 +731,20 @@ table.board {
     font-size: 13px;
     line-height: 1.55;
 }
+.drawer-used-in {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 10px;
+    margin: 14px 0 0;
+    font-size: 12.5px;
+}
+.drawer-used-in span {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+}
 .drawer-links {
     display: flex;
     gap: 10px;
@@ -850,6 +863,9 @@ table.board {
     color: var(--muted);
     font-size: 11px;
     font-weight: 400;
+}
+.compare-table th .brand.with-logo {
+    display: flex;
 }
 .compare-table .remove {
     border: none;
@@ -1060,6 +1076,34 @@ table.board {
     grid-auto-flow: dense;
     gap: 14px;
 }
+.gallery-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 0;
+    margin-bottom: 8px;
+    background: var(--black);
+    border-bottom: 1px solid var(--line);
+}
+.gallery-group-by { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+.gallery-group-by > span { margin-right: 4px; text-transform: uppercase; letter-spacing: 0.08em; font-size: 11px; }
+.gallery-group-by button { min-height: 36px; padding: 6px 14px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--text); font: 600 13px var(--sans); cursor: pointer; }
+.gallery-group-by button[aria-pressed="true"] { border-color: var(--cyan); background: var(--cyan); color: var(--black); }
+.gallery-jump { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+.gallery-jump::-webkit-scrollbar { display: none; }
+.gallery-jump a { flex: none; padding: 5px 10px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: 12px; text-decoration: none; white-space: nowrap; }
+.gallery-jump a:hover { border-color: var(--cyan); color: var(--text); }
+.gallery-jump b { margin-left: 4px; color: var(--cyan-dim); font-weight: 600; }
+.gallery-section { padding-top: 26px; scroll-margin-top: 110px; }
+.gallery-section-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; margin-bottom: 14px; }
+.gallery-section-head h2 { margin: 0; font-size: 20px; font-weight: 750; letter-spacing: -0.01em; }
+.gallery-section-head h2 span { margin-left: 6px; color: var(--muted); font: 500 13px var(--mono); }
+.gallery-section-head p { margin: 0; color: var(--muted); font-size: 13.5px; }
+.bento-uses { display: flex; flex-wrap: wrap; gap: 4px; }
+.use-chip { padding: 3px 8px; border: 1px solid var(--line-strong); border-radius: 2px; color: var(--muted); font-size: 10.5px; font-weight: 600; white-space: nowrap; }
 .bento-pick { position: relative; min-width: 0; display: flex; }
 .bento-pick[data-size="lg"] { grid-column: span 2; grid-row: span 2; }
 .bento-pick[data-size="wide"] { grid-column: span 2; }
@@ -1892,6 +1936,10 @@ table.board {
 .motor-name:hover {
     text-decoration: underline;
 }
+.motor-name[data-catalog="true"]::after {
+    content: " →";
+    color: var(--muted);
+}
 .motor-role {
     grid-area: role;
     font-size: 11.5px;
@@ -2575,4 +2623,59 @@ table.board {
     .page-nav {
         flex-wrap: wrap;
     }
+}
+
+/* ---- company logos (CompanyLogo) -------------------------------------- */
+/* A quiet square tile: the mark on panel black, a Graphene Grey hairline. */
+.company-logo {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    border: 1px solid color-mix(in srgb, var(--muted) 35%, transparent);
+    border-radius: 3px;
+    background: var(--panel-2);
+    object-fit: contain;
+    vertical-align: middle;
+    overflow: hidden;
+}
+/* Per-brand override (registry `tile: "light"`) for dark marks. */
+.company-logo-light {
+    background: #e9eced;
+    /* These icons are opaque dark squares: a pale frame lets them read. */
+    padding: 2px;
+}
+.company-logo-light.company-logo-mono {
+    background: var(--panel-2);
+}
+.company-logo-mono {
+    color: var(--muted);
+    font-family: var(--mono);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0;
+    user-select: none;
+}
+/* A name beside its logo, kept together as one inline unit. */
+.with-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
+p.with-logo {
+    display: flex;
+}
+.compare-brand {
+    margin: -8px 0 12px;
+    color: var(--muted);
+    font-size: 13px;
+}
+/* In an SVG <foreignObject>, sit flush in the slot (no line box offset). */
+foreignObject > .company-logo {
+    display: flex;
+}
+.cmdk-sub .company-logo {
+    margin-right: 6px;
 }

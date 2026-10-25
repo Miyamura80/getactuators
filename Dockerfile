@@ -14,6 +14,11 @@ COPY src/public-navigation.ts src/public-navigation.css ./src/
 # Page data the browser imports directly.
 COPY src/startups.ts src/investors.ts src/country-flag.ts ./src/
 COPY src/humanoids ./src/humanoids
+# Company logo registry (domains for the logo provider, local overrides).
+COPY src/brands ./src/brands
+# Logo.dev publishable key (public), baked into the bundle; unset draws monograms.
+ARG VITE_LOGO_DEV_TOKEN=""
+ENV VITE_LOGO_DEV_TOKEN=$VITE_LOGO_DEV_TOKEN
 RUN cd frontend && bun run build
 
 FROM oven/bun:1 AS runtime

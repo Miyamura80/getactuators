@@ -18,7 +18,7 @@ interface BarSpec {
 
 // Bars for every robot the metric covers, sorted by value; the robots it
 // skips are named under the chart instead of silently dropped.
-function bars({ metric, fmt, dir, label = (r) => r.name }: BarSpec): { items: BarItem[]; skipped: string[] } {
+function bars({ metric, fmt, dir, label = (r) => r.name }: BarSpec): { items: BarItem[]; skipped: Robot[] } {
     const rows = ROBOTS.map((r) => ({ r, v: metric(r) }));
     const items = rows
         .filter((x): x is { r: Robot; v: number } => x.v != null)
@@ -31,7 +31,23 @@ function bars({ metric, fmt, dir, label = (r) => r.name }: BarSpec): { items: Ba
             flag: r.country_flag,
             color: KIND_COLOR[r.kind],
         }));
-    return { items, skipped: rows.filter((x) => x.v == null).map((x) => x.r.name) };
+    return { items, skipped: rows.filter((x) => x.v == null).map((x) => x.r) };
+}
+
+interface SkipGroup {
+    label: string;
+    // Robots in this group; the last group takes whatever is left.
+    has?: (r: Robot) => boolean;
+}
+
+// One "label: names." line per non-empty group of skipped robots.
+function skipNotes(groups: SkipGroup[], skipped: Robot[]): string[] {
+    let rest = skipped;
+    return groups.flatMap(({ label, has }) => {
+        const mine = has ? rest.filter(has) : rest;
+        rest = has ? rest.filter((r) => !has(r)) : [];
+        return mine.length > 0 ? [`${label}: ${mine.map((r) => r.name).join(", ")}.`] : [];
+    });
 }
 
 // Ranged prices use the low end, the cheapest way into the robot.
@@ -41,7 +57,7 @@ const CARDS = [
         title: "Price",
         sub: "Entry USD · log scale · lower is cheaper",
         log: true,
-        skip: "Price not published",
+        skip: [{ label: "Price not published" }],
         ...bars({ metric: (r) => r.price_usd, fmt: usdShort, dir: "asc" }),
     },
     {
@@ -49,15 +65,18 @@ const CARDS = [
         title: "Price per DOF",
         sub: "Entry USD per degree of freedom · log scale",
         log: true,
-        skip: "Price not published",
-        ...bars({ metric: (r) => (r.price_usd == null ? null : r.price_usd / r.dof), fmt: usdShort, dir: "asc" }),
+        skip: [{ label: "Price not published" }],
+        ...bars({ metric: (r) => (r.price_usd == null || !r.dof ? null : r.price_usd / r.dof), fmt: usdShort, dir: "asc" }),
     },
     {
         key: "runtime",
         title: "Runtime",
         sub: "Hours per charge, maker's best figure · higher is better",
         log: false,
-        skip: "Mains-powered or not published",
+        skip: [
+            { label: "Mains-powered, no runtime", has: (r: Robot) => r.power === "mains" },
+            { label: "Runtime not published" },
+        ],
         ...bars({ metric: runtimeHours, fmt: hours, dir: "desc" }),
     },
     {
@@ -65,7 +84,7 @@ const CARDS = [
         title: "Payload ÷ own weight",
         sub: "How much it lifts per kg of robot · higher is better",
         log: false,
-        skip: "Payload or weight not published",
+        skip: [{ label: "Payload or weight not published" }],
         ...bars({
             metric: liftRatio,
             fmt: (v) => v.toFixed(2),
@@ -102,9 +121,11 @@ export function RobotCharts() {
                             />
                         </div>
                         {c.skipped.length > 0 && (
-                            <p className="robot-costs-note">
-                                {c.skip}: {c.skipped.join(", ")}.
-                            </p>
+                            <div className="robot-costs-note">
+                                {skipNotes(c.skip, c.skipped).map((note) => (
+                                    <p key={note}>{note}</p>
+                                ))}
+                            </div>
                         )}
                     </section>
                 ))}

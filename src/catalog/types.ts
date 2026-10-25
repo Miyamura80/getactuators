@@ -102,7 +102,7 @@ export interface Robot {
     kind: RobotKind;
     country: string | null;
     country_flag: string | null;
-    dof: number;
+    dof: number | null;
     payload_kg: number | null;
     // "whole_body" when the payload is a carry figure for the whole robot
     // rather than per arm, so ratios against per-arm robots can say so.

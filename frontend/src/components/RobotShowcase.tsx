@@ -6,6 +6,8 @@ import { useLocationKey } from "../lib/router";
 import { BrandGlyph } from "./BrandGlyph";
 import { CopyLinkButton } from "./CopyLinkButton";
 import { RobotArt } from "./RobotArt";
+import { CompanyLogo } from "./CompanyLogo";
+import { CountryFlag } from "./CountryFlag";
 import { RobotCharts } from "./robots/RobotCharts";
 import { RobotFacts } from "./robots/RobotFacts";
 
@@ -67,7 +69,7 @@ function RobotThumb({ robot }: { robot: Robot }) {
             ) : (
                 <RobotArt kind={robot.kind} framing="plain" />
             )}
-            <span className="robot-dof">{robot.dof}-DOF</span>
+            {robot.dof != null && <span className="robot-dof">{robot.dof}-DOF</span>}
         </div>
     );
 }
@@ -91,8 +93,10 @@ function RobotCard({ robot, active }: { robot: Robot; active: boolean }) {
                         />
                     </div>
                 </div>
-                <p className="robot-brand">
-                    {robot.country_flag} {robot.brand}
+                <p className="robot-brand with-logo">
+                    <CompanyLogo name={robot.brand} size={20} />
+                    <CountryFlag country={robot.country} />
+                    {robot.brand}
                 </p>
                 <p className="robot-summary">{robot.summary}</p>
 
@@ -143,14 +147,25 @@ function RobotCard({ robot, active }: { robot: Robot; active: boolean }) {
                         <ul className="motor-list">
                             {joints.map((j) => (
                                 <li key={j.role} className="motor-row">
-                                    <a
-                                        className="motor-name"
-                                        href={j.motor.product_url ?? "#"}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        {j.count}× {j.motor.name}
-                                    </a>
+                                    {j.motor.actuator_id ? (
+                                        <a
+                                            className="motor-name"
+                                            data-catalog="true"
+                                            href={`/actuators/${encodeURIComponent(j.motor.actuator_id)}`}
+                                            title="Open in the actuator catalog"
+                                        >
+                                            {j.count}× {j.motor.name}
+                                        </a>
+                                    ) : (
+                                        <a
+                                            className="motor-name"
+                                            href={j.motor.product_url ?? "#"}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            {j.count}× {j.motor.name}
+                                        </a>
+                                    )}
                                     <span className="motor-role">{j.role}</span>
                                     <span className="motor-torque">
                                         {torque(j.motor.rated_torque_nm)}/{torque(j.motor.peak_torque_nm)} N·m
@@ -249,7 +264,8 @@ export function RobotShowcase() {
 
             <p className="robot-credit">
                 YAM actuator loadout compiled with info from {ROBOT_CREDIT.name} (
-                <a href={ROBOT_CREDIT.org_url} target="_blank" rel="noopener noreferrer">
+                <a href={ROBOT_CREDIT.org_url} target="_blank" rel="noopener noreferrer" className="with-logo">
+                    <CompanyLogo name={ROBOT_CREDIT.org} size={14} />
                     {ROBOT_CREDIT.org}
                 </a>
                 ), which uses the YAM arms. Arm specs from i2rt.com, doc.i2rt.com and

@@ -4,7 +4,7 @@ import { actuatorPath, categoryLabel, robotSection } from "./catalog-md";
 import { CATALOG_UPDATED_DATE } from "./freshness";
 import { MCP_TOOLS, PATHS, RATE_LIMIT_PER_MINUTE, REST_ENDPOINTS } from "./links";
 import { whenToUse } from "./manifests";
-import { bullets, humanize, mdLink, mdText, num, usd } from "./md";
+import { bullets, dofText, humanize, mdLink, mdText, num, usd } from "./md";
 import { catalogStats } from "./pages-md";
 
 // llms.txt (https://llmstxt.org) and its long-form and per-section siblings.
@@ -160,7 +160,7 @@ export function robotsLlmsTxt(): string {
 
 ## Robots
 
-${ROBOTS.map((r) => `- ${mdText(r.name)} by ${mdText(r.brand)}: ${r.dof} DOF, ${usd(r.price_usd)}. ${mdText(r.summary)}`).join("\n")}
+${ROBOTS.map((r) => `- ${mdText(r.name)} by ${mdText(r.brand)}: ${dofText(r.dof)}, ${usd(r.price_usd)}. ${mdText(r.summary)}`).join("\n")}
 `;
 }
 

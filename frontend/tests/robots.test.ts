@@ -2,7 +2,7 @@
 // and resolveJoints drops joints whose motor key is not in the catalog so a
 // typo can never crash the render.
 import { describe, expect, test } from "bun:test";
-import { motorCount, resolveJoints, ROBOT_MOTORS } from "../src/lib/robots";
+import { motorCount, resolveJoints, ROBOT_MOTORS, robotsUsingActuator } from "../src/lib/robots";
 import type { Robot, RobotJoint } from "../src/types";
 
 function makeRobot(joints: RobotJoint[]): Robot {
@@ -59,5 +59,24 @@ describe("resolveJoints", () => {
         expect(resolved[0].role).toBe("hip");
         expect(resolved[0].count).toBe(3);
         expect(resolved[0].motor).toBe(ROBOT_MOTORS[key]);
+    });
+});
+
+describe("robotsUsingActuator", () => {
+    test("returns each robot whose loadout links the actuator, once", () => {
+        const linked = makeRobot([
+            { role: "head", motor: "dynamixel-xl330-m288", count: 5 },
+            { role: "antenna", motor: "dynamixel-xl330-m288", count: 1 },
+        ]);
+        const other = { ...makeRobot([{ role: "arm", motor: "feetech-sts3215-c001", count: 6 }]), id: "other" };
+        expect(robotsUsingActuator("dynamixel-xl330-m288-t", [linked, other]).map((r) => r.id)).toEqual(["r"]);
+    });
+
+    test("is empty for an actuator no loadout links", () => {
+        expect(robotsUsingActuator("definitely-not-an-actuator")).toEqual([]);
+    });
+
+    test("finds the shipped Reachy Mini loadout for the XL330-M288-T", () => {
+        expect(robotsUsingActuator("dynamixel-xl330-m288-t").map((r) => r.id)).toContain("pollen-reachy-mini");
     });
 });
