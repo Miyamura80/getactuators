@@ -30,6 +30,15 @@ export {
     ARC_FILL,
 } from "./magnet";
 export { SOURCES, sourceOf, type Source } from "./sources";
+export { REE_METAL_PRICE } from "./ree-prices";
+export {
+    REE_ELEMENTS,
+    metalValue,
+    reeByDesign,
+    spanTotal,
+    type DesignRee,
+    type Span,
+} from "./ree-design";
 export {
     BOM_UNIT,
     COST_FIT,

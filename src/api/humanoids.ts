@@ -7,12 +7,17 @@ import {
     HUMANOIDS_PATH,
     type Humanoid,
     type HumanoidJoint,
+    type REE_ELEMENTS,
+    REE_METAL_PRICE,
     type Sourced,
+    type Span,
     bomPriceShare,
     getHumanoid,
     humanoidBom,
     humanoidTotals,
+    reeByDesign,
     sourceOf,
+    spanTotal,
 } from "@/humanoids";
 import { absoluteUrl } from "@/server/site";
 
@@ -188,6 +193,33 @@ export const ActuatorBomSchema = named(
         .describe("Actuator bill of materials, at most 6 slices plus Other."),
 );
 
+const spanSchema = z.object({ value: z.number(), low: z.number(), high: z.number() });
+const perElement = z.object({
+    nd: spanSchema,
+    pr: spanSchema,
+    dy: spanSchema,
+    tb: spanSchema,
+});
+
+export const RareEarthByDesignSchema = named(
+    "RareEarthByDesign",
+    z
+        .object({
+            label: z.string().describe("Actuator design, as in the BOM."),
+            actuator_type: z.enum(ACTUATOR_TYPES),
+            count: z.number(),
+            grams: perElement.describe(
+                "Grams of each element across all units, estimated.",
+            ),
+            total_grams: spanSchema,
+            metal_usd: perElement.describe(
+                "Raw metal value (grams x US$/kg), not a magnet price.",
+            ),
+            total_metal_usd: spanSchema,
+        })
+        .describe("Rare earth in one actuator design, from its magnet mass estimate."),
+);
+
 export const HumanoidDetailSchema = named(
     "HumanoidDetail",
     z.object({
@@ -195,6 +227,15 @@ export const HumanoidDetailSchema = named(
         summary: z.string(),
         not_counted: z.string().nullable(),
         joints: z.array(HumanoidJointSchema),
+        rare_earth_by_design: z.array(RareEarthByDesignSchema),
+        rare_earth_metal_price_usd_per_kg: z
+            .object({
+                nd: SourcedNumberSchema,
+                pr: SourcedNumberSchema,
+                dy: SourcedNumberSchema,
+                tb: SourcedNumberSchema,
+            })
+            .describe("Metal prices behind metal_usd."),
         bom: z.object({
             cost: ActuatorBomSchema,
             mass: ActuatorBomSchema,
@@ -283,6 +324,29 @@ export function serializeHumanoidDetail(
         summary: h.summary,
         not_counted: h.notCounted ?? null,
         joints: h.joints.map(serializeJoint),
+        rare_earth_by_design: reeByDesign(h).map((d) => ({
+            label: d.label,
+            actuator_type: d.type,
+            count: d.count,
+            grams: perEl(d.grams),
+            total_grams: span(
+                spanTotal(d.grams, "mid"),
+                spanTotal(d.grams, "lo"),
+                spanTotal(d.grams, "hi"),
+            ),
+            metal_usd: perEl(d.usd),
+            total_metal_usd: span(
+                spanTotal(d.usd, "mid"),
+                spanTotal(d.usd, "lo"),
+                spanTotal(d.usd, "hi"),
+            ),
+        })),
+        rare_earth_metal_price_usd_per_kg: {
+            nd: req(REE_METAL_PRICE.nd),
+            pr: req(REE_METAL_PRICE.pr),
+            dy: req(REE_METAL_PRICE.dy),
+            tb: req(REE_METAL_PRICE.tb),
+        },
         bom: {
             cost: serializeBom(h, humanoidBom(h, "cost")),
             mass: serializeBom(h, humanoidBom(h, "mass")),
@@ -291,6 +355,21 @@ export function serializeHumanoidDetail(
         sources: sources(h.sources),
     };
 }
+
+const r2 = (x: number) => Math.round(x * 100) / 100;
+const span = (value: number, low: number, high: number) => ({
+    value: r2(value),
+    low: r2(low),
+    high: r2(high),
+});
+const perEl = (r: Record<(typeof REE_ELEMENTS)[number], Span>) => ({
+    nd: span(r.nd.mid, r.nd.lo, r.nd.hi),
+    pr: span(r.pr.mid, r.pr.lo, r.pr.hi),
+    dy: span(r.dy.mid, r.dy.lo, r.dy.hi),
+    tb: span(r.tb.mid, r.tb.lo, r.tb.hi),
+});
+const req = (s: Sourced<number>) =>
+    sourced(s) as NonNullable<ReturnType<typeof sourced>>;
 
 const lh = (x: { value: number; range: readonly [number, number] }) => ({
     value: x.value,

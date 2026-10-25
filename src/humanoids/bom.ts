@@ -88,7 +88,8 @@ export const MASS_FIT = fitPower("weight_g");
 type Unit = Sourced<number>;
 type Excluded = { reason: string };
 
-const r2 = (x: number) => Math.round(x * 100) / 100;
+// Keep four decimals: magnet and mass views are in kg, where 0.01 kg is coarse.
+const r2 = (x: number) => Math.round(x * 10000) / 10000;
 
 function unit(
     value: number,

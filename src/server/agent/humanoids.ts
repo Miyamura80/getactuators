@@ -8,7 +8,9 @@ import {
     HUMANOIDS_PATH,
     type Humanoid,
     type HumanoidJoint,
+    REE_ELEMENTS,
     REE_FRACTION,
+    REE_METAL_PRICE,
     SIZE_CLASSES,
     type Sourced,
     bomPriceShare,
@@ -16,8 +18,10 @@ import {
     humanoidTotals,
     jointLabel,
     magnetRangeG,
+    reeByDesign,
     reeTotalKg,
     sourceOf,
+    spanTotal,
 } from "@/humanoids";
 import { absoluteUrl } from "../site";
 import * as ld from "./jsonld";
@@ -69,6 +73,18 @@ const BOM_FMT: Record<BomMetric, (v: number) => string> = {
     mass: (v) => `${v.toFixed(1)} kg`,
     magnet: (v) => `${v.toFixed(3)} kg`,
 };
+
+function reeSection(h: Humanoid): string {
+    const g = (x: number) => String(Math.round(x));
+    const rows = reeByDesign(h).map((d) => [
+        d.label,
+        String(d.count),
+        ...REE_ELEMENTS.map((el) => g(d.grams[el].mid)),
+        `${g(spanTotal(d.grams, "mid"))} (${g(spanTotal(d.grams, "lo"))} to ${g(spanTotal(d.grams, "hi"))})`,
+        `$${spanTotal(d.usd, "mid").toFixed(2)} ($${spanTotal(d.usd, "lo").toFixed(2)} to $${spanTotal(d.usd, "hi").toFixed(2)})`,
+    ]);
+    return `### Rare earth by actuator (estimated)\n\n${mdTable(["Design", "Count", "Nd g", "Pr g", "Dy g", "Tb g", "Total g", "Metal value US$"], rows)}`;
+}
 
 function bomSection(h: Humanoid): string {
     const cost = humanoidBom(h, "cost");
@@ -132,7 +148,7 @@ function robotSection(h: Humanoid): string {
         ["Joint", "Count", "Type", "Motor", "Peak", "Magnet g", "Sources"],
         h.joints.map(jointRow),
     );
-    return `${head}${notes}${basis}\n\n${table}\n\n${bomSection(h)}`;
+    return `${head}${notes}${basis}\n\n${table}\n\n${reeSection(h)}\n\n${bomSection(h)}`;
 }
 
 export function humanoidsBody(): string {
@@ -191,6 +207,8 @@ ${HUMANOIDS.map(robotSection).join("\n\n")}
 Each actuator gets a motor size class from its peak torque (rotary) or force (linear), or from its joint and the robot's mass when neither is published. Magnet mass = pi x airgap diameter x active length x magnet thickness x arc fill (70 to 90%) x 7.5 g/cm³ (sintered NdFeB). Hydraulic joints carry no magnet at the joint.
 
 ${classes}
+
+Metal value is each element's grams times its metal price (US$/kg, ${REE_METAL_PRICE.nd.asOf}: Nd ${REE_METAL_PRICE.nd.value}, Pr ${REE_METAL_PRICE.pr.value}, Dy ${REE_METAL_PRICE.dy.value}, Tb ${REE_METAL_PRICE.tb.value}; ${REE_ELEMENTS.map((el) => REE_METAL_PRICE[el].sources.map((id) => mdLink(sourceOf(id).title, sourceOf(id).url)).join(", ")).join("; ")}). It is the raw rare-earth content only, not a magnet or actuator price.
 
 Rare earths by magnet mass: Nd ${pct(REE_FRACTION.nd)}, Pr ${pct(REE_FRACTION.pr)}, Dy ${pct(REE_FRACTION.dy)}, Tb ${pct(REE_FRACTION.tb)}. Sources: ${["fai-magnets", "jda-ndfeb", "crystals-gbd"].map((id) => mdLink(sourceOf(id).title, sourceOf(id).url)).join("; ")}.`;
 }

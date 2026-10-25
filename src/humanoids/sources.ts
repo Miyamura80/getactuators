@@ -47,6 +47,27 @@ export const SOURCES = {
         title: "XenoSpectrum on Morgan Stanley: Optimus Gen 2 BOM about $55k, actuators 56%, hands $9.5k",
         url: "https://xenospectrum.com/en/humanoid-robot-bom-actuator-cost/",
     },
+    // Rare-earth metal prices
+    "price-nd": {
+        title: "Rare Earth Mining: neodymium metal price (SMM, China domestic and FOB, Sep 2026)",
+        url: "https://rare-earth-mining.com/neodymium-price/",
+    },
+    "price-pr": {
+        title: "Business Analytiq: praseodymium price index, September 2026",
+        url: "https://businessanalytiq.com/procurementanalytics/index/praseodymium-price-index/",
+    },
+    "price-dy": {
+        title: "Rare Earth Mining: dysprosium metal price (SMM, 99% min, Sep 2026)",
+        url: "https://rare-earth-mining.com/dysprosium-price/",
+    },
+    "price-tb": {
+        title: "Rare Earth Mining: terbium metal price (SMM, China domestic and FOB, Sep 2026)",
+        url: "https://rare-earth-mining.com/terbium-price/",
+    },
+    "price-feb-2026": {
+        title: "Rare Earth Exchanges: China rare earth prices, February 2026 (Dy metal 1.45M CNY/t)",
+        url: "https://rareearthexchanges.com/news/china-rare-earth-prices-rose-in-february-2026-led-by-magnet-metals/",
+    },
     // Tesla Optimus
     "optimus-humanoid-guide": {
         title: "Humanoid.guide: linear vs rotary actuators, why Tesla bet on the roller screw",

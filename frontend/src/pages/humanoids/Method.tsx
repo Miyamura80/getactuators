@@ -2,6 +2,7 @@ import {
     ARC_FILL,
     COST_FIT,
     MASS_FIT,
+    REE_METAL_PRICE,
     magnetRangeG,
     NDFEB_DENSITY_G_CM3,
     REE_FRACTION,
@@ -23,6 +24,11 @@ const METHOD_SOURCES = [
     "ms-optimus-bom",
     "bhl-rdworld",
     "bhl-irz",
+    "price-nd",
+    "price-pr",
+    "price-dy",
+    "price-tb",
+    "price-feb-2026",
 ];
 const curve = (f: typeof COST_FIT, unit: string, scale = 1) =>
     `${(f.coef * scale).toFixed(scale === 1 ? 0 : 3)} ${unit} x torque^${f.exp.toFixed(2)}, range x or / ${Math.exp(f.sigma).toFixed(2)}, ${f.ids.length} actuators from ${f.minTorque} to ${f.maxTorque} N·m`;
@@ -99,6 +105,12 @@ export function Method() {
                     itemized parts list (reported) and the Optimus analyst remainder, which is not broken into categories
                     (estimated, hatched). List prices are never used for it, since they include margin. In the mass view
                     the rest is the published weight minus the actuator mass counted here (modeled).
+                </p>
+                <p>
+                    Rare-earth cost: each element's grams times its metal price per kg (Nd ${REE_METAL_PRICE.nd.value}, Pr $
+                    {REE_METAL_PRICE.pr.value}, Dy ${REE_METAL_PRICE.dy.value}, Tb ${REE_METAL_PRICE.tb.value}, {REE_METAL_PRICE.nd.asOf},
+                    low grams at the low price and high grams at the high price). It is the raw value of the rare-earth
+                    content only, not the price of a magnet or an actuator.
                 </p>
                 <ol className="hm-src">
                     {METHOD_SOURCES.map((id) => {

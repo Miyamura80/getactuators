@@ -258,6 +258,23 @@ test("rare earth is broken down by actuator design, matching the BOM grouping", 
     expect([...vals].sort((a, b) => b - a)).toEqual(vals);
 });
 
+test("the rare-earth chart switches between grams and metal cost", () => {
+    setURL("/humanoids?robot=tesla-optimus");
+    const view = render(<Humanoids />);
+    const ree = view.container.querySelector(".hm-card .ree")!;
+    const gramVals = [...ree.querySelectorAll(".ree-val")].map((v) => v.textContent);
+    expect(gramVals[0]).toMatch(/ g$/);
+    act(() => {
+        fireEvent.click([...ree.querySelectorAll<HTMLButtonElement>(".ree-tabs button")].find((b) => b.textContent === "Cost $")!);
+    });
+    const usd = [...ree.querySelectorAll(".ree-val")].map((v) => v.textContent);
+    expect(usd[0]).toMatch(/^\$/);
+    expect(usd).toHaveLength(gramVals.length);
+    expect(ree.querySelector(".ree-key em")?.textContent).toMatch(/^\$[\d.,]+-\$[\d.,]+$/);
+    expect(ree.querySelector(".ree-caption")?.textContent).toBe("US$ of rare-earth metal, all units per design");
+    expect(ree.querySelector(".ree-title")?.textContent).toBe("Rare earth by actuator, estimated");
+});
+
 test("the BOM notes the price share and what it leaves out", () => {
     setURL("/humanoids?robot=unitree-g1");
     const g1 = render(<Humanoids />);

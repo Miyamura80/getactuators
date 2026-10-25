@@ -47,6 +47,10 @@ describe("/humanoids", () => {
             );
             expect(md).toContain("- **Country:** \u{1F1E8}\u{1F1F3} China");
             expect(md).toContain("### Robot BOM");
+            expect(md).toContain("### Rare earth by actuator (estimated)");
+            expect(md).toContain(
+                "| Design | Count | Nd g | Pr g | Dy g | Tb g | Total g | Metal value US$ |",
+            );
             expect(md).toContain(
                 "| Actuator | RobStride 03 | 8 | $250 (reported) | $2,000 | 47% |",
             );
@@ -101,6 +105,12 @@ describe("REST /api/v1/humanoids", () => {
             "https://xenospectrum.com/en/humanoid-robot-bom-actuator-cost/",
         ]);
         expect(optimus.bom.cost.excluded).toHaveLength(1);
+        const ree = optimus.rare_earth_by_design[0];
+        expect(ree?.label).toBe("Harmonic 180 N·m");
+        expect(ree?.count).toBe(6);
+        expect(ree?.total_grams.low).toBeLessThan(ree?.total_grams.high ?? 0);
+        expect(ree?.total_metal_usd.value).toBeGreaterThan(0);
+        expect(optimus.rare_earth_metal_price_usd_per_kg.nd.unit).toBe("USD/kg");
         const missing = await get("/api/v1/humanoids/not-a-robot");
         expect(missing.status).toBe(404);
     });
