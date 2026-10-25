@@ -74,14 +74,21 @@ most 100%. Never fill a gap with a guess: leave the company out of `shares`.
 
 Candidate visuals that put headline numbers next to references people know.
 Their cited inputs live in `src/supply-chain/perspective.ts`; derived values
-(unit translations, competitor equivalents) are `modeled` with their method
+(unit translations) are `modeled` with their method
 in `note`.
 
 | Variant | Component | Shows |
 |---------|-----------|-------|
 | A | `<ScaleLadder>` | values on one log axis with multiples of the first headline |
 | B | `<UnitTranslation>` | a tonnage as humanoids or EVs, one icon per million, against a benchmark |
-| D | `<CompetitorEquivalents>` | each market as the number of equal-sized competitors it acts like (10,000 / HHI), against the US "highly concentrated" line |
+| D1 | `<OutOfTen>` | ten real items per stage coloured by the country that makes them ("9 of every 10 magnets") |
+| D2 | `<LeaderBars>` | the leader's share of each market, rare earths next to familiar markets |
+| D3 | `<PlayersToNinety>` | the actual countries or companies it takes to reach 90% of a market |
+| D4 | `<WithoutLeader>` | world supply with the leader's part drawn as gone |
+
+The D variants read share maps from `DOMINANCE_MARKETS` through the plain
+helpers in `src/supply-chain/dominance.ts` (leader, players to 90%, counts out
+of ten). They use no derived units.
 
 ## The kit page
 

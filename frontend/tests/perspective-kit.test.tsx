@@ -2,15 +2,16 @@ import "./happydom";
 import { afterEach, expect, test } from "bun:test";
 import { cleanup, render } from "@testing-library/react";
 import { FootnotesProvider } from "../src/components/supply-chain/footnotes";
-import { CompetitorEquivalents } from "../src/components/supply-chain/CompetitorEquivalents";
+import { LeaderBars } from "../src/components/supply-chain/LeaderBars";
+import { OutOfTen } from "../src/components/supply-chain/OutOfTen";
+import { PlayersToNinety } from "../src/components/supply-chain/PlayersToNinety";
+import { WithoutLeader } from "../src/components/supply-chain/WithoutLeader";
 import { ScaleLadder } from "../src/components/supply-chain/ScaleLadder";
 import { UnitTranslation } from "../src/components/supply-chain/UnitTranslation";
 import { WaffleGrid, waffleCells } from "../src/components/supply-chain/WaffleGrid";
 import {
     EVS_PER_YEAR,
-    EFFECTIVE_COMPETITORS,
-    EQUIVALENT_METHOD_SOURCES,
-    HIGHLY_CONCENTRATED_EQUIVALENT,
+    DOMINANCE_MARKETS,
     HUMANOIDS_PER_YEAR,
     HUMANOIDS_SHIPPED_2025,
     MAGNET_CAPACITY,
@@ -58,15 +59,46 @@ test("WaffleGrid: 100 cells per stage, legend with every country largest first a
     expect(legend.at(-1)?.textContent).toContain("Other");
 });
 
-test("CompetitorEquivalents: one square per equal competitor, most concentrated first", () => {
-    const c = wrap(<CompetitorEquivalents markets={EFFECTIVE_COMPETITORS} threshold={HIGHLY_CONCENTRATED_EQUIVALENT} methodSources={EQUIVALENT_METHOD_SOURCES} />).container;
-    const rows = [...c.querySelectorAll(".sc-eq-row:not(.sc-eq-head)")];
-    expect(rows[0]?.querySelector(".sc-eq-label")?.textContent).toBe("NdFeB magnets");
-    expect(rows[0]?.querySelector(".sc-num")?.textContent).toBe("1.1");
-    expect(rows[0]?.querySelector(".sc-eq-of")?.textContent).toBe("countries");
-    expect(rows.at(-1)?.querySelector(".sc-eq-label")?.textContent).toBe("Smartphone makers");
-    expect(rows.at(-1)?.querySelectorAll(".sc-eq-sq > span")).toHaveLength(10);
-    expect(rows[0]?.querySelectorAll(".sc-eq-sq > span")).toHaveLength(2);
-    expect(c.querySelector(".sc-eq-flag")?.textContent).toContain("below 5.6, regulators call it highly concentrated");
-    for (const el of c.querySelectorAll(".sc-eq-label, .sc-eq-of")) expect(el.textContent).not.toContain("HHI");
+const market = (id: string) => DOMINANCE_MARKETS.find((m) => m.id === id)!;
+
+test("OutOfTen: ten items per stage, coloured by maker, exact share on hover", () => {
+    const c = wrap(<OutOfTen rows={[
+        { market: market("mining"), icon: "ore", item: "tonnes of ore" },
+        { market: market("magnet"), icon: "magnet", item: "magnets" },
+    ]} />).container;
+    const rows = [...c.querySelectorAll(".sc-ten-row")];
+    expect(rows[0]?.querySelectorAll(".sc-ten-items svg")).toHaveLength(10);
+    expect(rows[1]?.querySelector(".sc-ten-lead")?.textContent).toContain("9 of 10");
+    expect(rows[0]?.querySelector(".sc-ten-lead")?.textContent).toContain("7 of 10");
+    expect(rows[1]?.querySelector(".sc-ten-items svg title")?.textContent).toBe("China 94%");
+    expect(rows[1]?.querySelector(".sc-ten-items")?.getAttribute("aria-label")).toBe("9 of 10 magnets from China, 1 of 10 magnets from others");
+});
+
+test("LeaderBars: sorted by the leader's share, rare earths marked, leader named", () => {
+    const c = wrap(<LeaderBars markets={DOMINANCE_MARKETS} />).container;
+    const rows = [...c.querySelectorAll(".sc-lead-row")];
+    expect(rows.map((r) => r.querySelector(".sc-lead-label")?.textContent)).toEqual([
+        "NdFeB magnets", "Rare earth separation", "Web search", "Rare earth mining", "Humanoid robots", "Smartphones",
+    ]);
+    expect(rows[0]?.classList.contains("is-ree")).toBe(true);
+    expect(rows[2]?.classList.contains("is-ree")).toBe(false);
+    expect(rows[2]?.querySelector(".sc-lead-who")?.textContent).toContain("Google");
+    expect(rows.at(-1)?.querySelector(".sc-lead-who b")?.textContent).toBe("20%");
+});
+
+test("PlayersToNinety: the real players that reach 90%, fewest first", () => {
+    const c = wrap(<PlayersToNinety markets={DOMINANCE_MARKETS.filter((m) => m.id !== "humanoids")} />).container;
+    const rows = [...c.querySelectorAll(".sc-ninety-row")];
+    const counts = rows.map((r) => r.querySelector(".sc-ninety-count")?.textContent);
+    expect(counts).toEqual(["1", "1", "1", "4", "8+"]);
+    const phones = rows.at(-1)!;
+    expect(phones.querySelectorAll(".sc-chip:not(.is-more)")).toHaveLength(5);
+    expect(phones.querySelector(".sc-chip.is-more")?.textContent).toBe("+3 more");
+});
+
+test("WithoutLeader: the leader's part shown as gone, the rest as left", () => {
+    const c = wrap(<WithoutLeader markets={["mining", "separation", "magnet"].map(market)} />).container;
+    const left = [...c.querySelectorAll(".sc-gone-value b")].map((b) => b.textContent);
+    expect(left).toEqual(["31%", "9%", "6%"]);
+    expect(c.querySelector(".sc-gone-lost")?.textContent).toContain("69% gone");
 });

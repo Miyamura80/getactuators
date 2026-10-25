@@ -1,7 +1,5 @@
 import { COMPANIES } from "./companies";
-import { concentration, hhi } from "./concentration";
-import { LAB_MINING_HHI, LAB_STAGE_SHARES } from "./lab-fixtures";
-import { SEGMENT_MARKETS } from "./market-share";
+import { LAB_STAGE_SHARES } from "./lab-fixtures";
 import { SITES } from "./sites";
 import type { Sourced } from "./sourced";
 
@@ -126,148 +124,80 @@ export const EVS_PER_YEAR: Sourced<number> = {
     note: "20,000 t a year divided by 1.5 kg of NdFeB per electric vehicle.",
 };
 
-// D. Concentration yardsticks on the 0 to 10,000 HHI scale.
-export const HIGHLY_CONCENTRATED_HHI: Sourced<number> = {
-    value: 1800,
-    unit: "HHI",
-    sources: ["doj-ftc-merger-guidelines-2023"],
-    asOf: "2023-12",
-    confidence: "reported",
-    note: "Above 1,800 the 2023 US Merger Guidelines call a market highly concentrated.",
-};
+// D. How dominant the leader is, next to markets people know. Each market
+// keeps its own share map (countries or companies) so the visuals count real
+// players; stage maps reuse the cited lab fixtures.
 
-function stageHhi(id: string, note: string): Sourced<number> {
+export interface DominanceMarket {
+    id: string;
+    label: string;
+    // What the share keys are: ISO country codes or company names.
+    kind: "country" | "company";
+    // A rare-earth stage (as opposed to a familiar reference market).
+    rareEarth?: boolean;
+    // Raw amounts or fractions; "other" is unattributed volume.
+    shares: Sourced<Record<string, number>>;
+}
+
+function stage(id: string, label: string): DominanceMarket {
     const row = LAB_STAGE_SHARES.find((r) => r.id === id);
     if (!row) throw new Error(`no stage ${id}`);
     return {
-        value: concentration(row.shares.value)?.hhi ?? 0,
-        unit: "HHI",
-        sources: row.shares.sources,
-        asOf: row.shares.asOf,
-        confidence: "modeled",
-        note,
+        id,
+        label,
+        kind: "country",
+        rareEarth: true,
+        shares: row.shares as Sourced<Record<string, number>>,
     };
 }
 
-const humanoidShares = Object.values(
-    SEGMENT_MARKETS.find((m) => m.segment === "robot-actuator-oem")?.shares ?? {},
-);
-
-interface HhiPoint {
-    id: string;
-    label: string;
-    // What the equal-sized players are.
-    of: "countries" | "companies";
-    hhi: Sourced<number>;
-    headline?: boolean;
-}
-
-const HHI_POINTS: HhiPoint[] = [
-    {
-        id: "magnets",
-        label: "NdFeB magnets",
-        of: "countries",
-        hhi: stageHhi(
-            "magnet",
-            "Country shares of sintered magnet output; named countries only.",
-        ),
-        headline: true,
-    },
-    {
-        id: "separation",
-        label: "Rare earth separation",
-        of: "countries",
-        hhi: stageHhi(
-            "separation",
-            "Country shares of refined output; named countries only.",
-        ),
-        headline: true,
-    },
+export const DOMINANCE_MARKETS: DominanceMarket[] = [
+    stage("magnet", "NdFeB magnets"),
+    stage("separation", "Rare earth separation"),
+    stage("mining", "Rare earth mining"),
     {
         id: "search",
         label: "Web search",
-        of: "companies",
-        hhi: {
-            value: hhi([0.91, 0.046]),
-            unit: "HHI",
+        kind: "company",
+        shares: {
+            value: { Google: 0.91, Bing: 0.046 },
+            unit: "fraction",
             sources: ["statcounter-search-2025-12"],
             asOf: "2025-12",
-            confidence: "modeled",
-            note: "Google about 91% and Bing about 4.6% of worldwide search; other engines excluded.",
+            confidence: "reported",
+            note: "Worldwide share of search referrals; smaller engines not listed.",
         },
     },
     {
-        id: "mining",
-        label: "Rare earth mining",
-        of: "countries",
-        hhi: LAB_MINING_HHI,
-        headline: true,
-    },
-    {
         id: "humanoids",
-        label: "Humanoid makers",
-        of: "companies",
-        hhi: {
-            value: hhi(humanoidShares.map((s) => s.value)),
-            unit: "HHI",
-            sources: [...new Set(humanoidShares.flatMap((s) => s.sources))],
+        label: "Humanoid robots",
+        kind: "company",
+        shares: {
+            value: { AgiBot: 0.39, Unitree: 0.32 },
+            unit: "fraction",
+            sources: ["technode-omdia-humanoid-2025"],
             asOf: "2025",
-            confidence: "modeled",
-            note: "Company shares of 2025 humanoid shipments; unnamed makers excluded.",
+            confidence: "reported",
+            note: "Share of about 13,000 humanoids shipped worldwide; smaller makers not listed.",
         },
     },
     {
         id: "smartphones",
-        label: "Smartphone makers",
-        of: "companies",
-        hhi: {
-            value: hhi([0.197, 0.191, 0.131, 0.082, 0.081]),
-            unit: "HHI",
+        label: "Smartphones",
+        kind: "company",
+        shares: {
+            value: {
+                Apple: 0.197,
+                Samsung: 0.191,
+                Xiaomi: 0.131,
+                vivo: 0.082,
+                OPPO: 0.081,
+            },
+            unit: "fraction",
             sources: ["idc-smartphones-2025"],
             asOf: "2025",
-            confidence: "modeled",
-            note: "Top five vendors by 2025 shipments (Apple 19.7%, Samsung 19.1%, Xiaomi 13.1%, vivo 8.2%, OPPO 8.1%); the rest excluded.",
+            confidence: "reported",
+            note: "Share of 1.26 billion smartphones shipped worldwide; vendors below fifth not listed.",
         },
     },
 ];
-
-// 10,000 / HHI: how many equal-sized players would give the same HHI.
-const EQUIVALENT_SOURCES = ["foley-merger-guidelines-2023", "doj-hhi"];
-
-function equivalent(h: Sourced<number>): Sourced<number> {
-    return {
-        value: 10000 / h.value,
-        unit: "equal players",
-        sources: h.sources,
-        asOf: h.asOf,
-        confidence: "modeled",
-        note: `10,000 / HHI ${Math.round(h.value).toLocaleString("en-US")}. ${h.note ?? ""}`.trim(),
-    };
-}
-
-export interface CompetitorEquivalent {
-    id: string;
-    label: string;
-    of: "countries" | "companies";
-    value: Sourced<number>;
-    headline?: boolean;
-}
-
-// D. Markets as the number of equal-sized competitors they behave like.
-// Unnamed players are left out of each HHI, so every count is an upper bound.
-export const EFFECTIVE_COMPETITORS: CompetitorEquivalent[] = HHI_POINTS.map((p) => ({
-    id: p.id,
-    label: p.label,
-    of: p.of,
-    headline: p.headline,
-    value: equivalent(p.hhi),
-}));
-
-// The reading of 10,000 / HHI as equal-sized competitors, cited once.
-export const EQUIVALENT_METHOD_SOURCES = EQUIVALENT_SOURCES;
-
-export const HIGHLY_CONCENTRATED_EQUIVALENT: Sourced<number> = {
-    ...equivalent(HIGHLY_CONCENTRATED_HHI),
-    sources: [...HIGHLY_CONCENTRATED_HHI.sources, ...EQUIVALENT_SOURCES],
-    note: "10,000 / 1,800. Fewer equal-sized players than this and US merger guidelines call a market highly concentrated.",
-};

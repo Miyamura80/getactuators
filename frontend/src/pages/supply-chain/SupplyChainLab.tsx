@@ -6,7 +6,10 @@ import { FootnotesProvider } from "../../components/supply-chain/footnotes";
 import { MarketShareList } from "../../components/supply-chain/MarketShareList";
 import { SourcedValue } from "../../components/supply-chain/SourcedValue";
 import { SourcesSection } from "../../components/supply-chain/SourcesSection";
-import { CompetitorEquivalents } from "../../components/supply-chain/CompetitorEquivalents";
+import { LeaderBars } from "../../components/supply-chain/LeaderBars";
+import { OutOfTen } from "../../components/supply-chain/OutOfTen";
+import { PlayersToNinety } from "../../components/supply-chain/PlayersToNinety";
+import { WithoutLeader } from "../../components/supply-chain/WithoutLeader";
 import { ScaleLadder } from "../../components/supply-chain/ScaleLadder";
 import { UnitTranslation } from "../../components/supply-chain/UnitTranslation";
 import { WaffleGrid } from "../../components/supply-chain/WaffleGrid";
@@ -15,9 +18,7 @@ import { LAB_MINING_HHI, LAB_PATH, LAB_STAGE_SHARES } from "../../../../src/supp
 import { marketOf } from "../../../../src/supply-chain/market-share";
 import {
     EVS_PER_YEAR,
-    EFFECTIVE_COMPETITORS,
-    EQUIVALENT_METHOD_SOURCES,
-    HIGHLY_CONCENTRATED_EQUIVALENT,
+    DOMINANCE_MARKETS,
     HUMANOIDS_PER_YEAR,
     HUMANOIDS_SHIPPED_2025,
     MAGNET_CAPACITY,
@@ -42,6 +43,12 @@ function readouts(): { label: string; value: Sourced<number> }[] {
         ...pick("JL MAG Baotou project", sitesOf("jl-mag").find((s) => s.capacity)?.capacity),
         ...pick("Rare earth mining HHI", LAB_MINING_HHI),
     ];
+}
+
+function market(id: string) {
+    const m = DOMINANCE_MARKETS.find((x) => x.id === id);
+    if (!m) throw new Error(`no market ${id}`);
+    return m;
 }
 
 // Hidden QA page: every shared supply-chain component, rendered with cited
@@ -97,9 +104,29 @@ export function SupplyChainLab({ menuOpen = false }: { menuOpen?: boolean }) {
                                 benchmark={{ label: "Humanoids shipped, 2025", icon: "humanoid", value: HUMANOIDS_SHIPPED_2025 }}
                             />
                         </section>
-                        <section className="sc-lab-variant" id="perspective-d">
-                            <h3><b>D</b>Effective competitors</h3>
-                            <CompetitorEquivalents markets={EFFECTIVE_COMPETITORS} threshold={HIGHLY_CONCENTRATED_EQUIVALENT} methodSources={EQUIVALENT_METHOD_SOURCES} />
+                        <section className="sc-lab-variant" id="perspective-d1">
+                            <h3><b>D1</b>Out of ten</h3>
+                            <p className="sc-lab-headline">9 of every 10 magnets are made in China.</p>
+                            <OutOfTen rows={[
+                                { market: market("mining"), icon: "ore", item: "tonnes of ore" },
+                                { market: market("separation"), icon: "flask", item: "tonnes of refined oxide" },
+                                { market: market("magnet"), icon: "magnet", item: "magnets" },
+                            ]} />
+                        </section>
+                        <section className="sc-lab-variant" id="perspective-d2">
+                            <h3><b>D2</b>The leader's share</h3>
+                            <p className="sc-lab-headline">China controls magnets more tightly than Google controls search.</p>
+                            <LeaderBars markets={DOMINANCE_MARKETS} />
+                        </section>
+                        <section className="sc-lab-variant" id="perspective-d3">
+                            <h3><b>D3</b>Who makes 90%</h3>
+                            <p className="sc-lab-headline">One country makes 9 in 10 magnets; smartphones need 8 or more companies.</p>
+                            <PlayersToNinety markets={DOMINANCE_MARKETS.filter((m) => m.id !== "humanoids")} />
+                        </section>
+                        <section className="sc-lab-variant" id="perspective-d4">
+                            <h3><b>D4</b>If China stopped</h3>
+                            <p className="sc-lab-headline">Without China, 94% of magnet supply disappears.</p>
+                            <WithoutLeader markets={["mining", "separation", "magnet"].map(market)} />
                         </section>
                     </div>
                 </section>

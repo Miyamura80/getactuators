@@ -97,7 +97,8 @@ test("lab page renders every kit component", () => {
     const c = view.container;
     expect(c.querySelectorAll(".sc-waffle")).toHaveLength(3);
     expect(c.querySelectorAll(".sc-hhi, .sc-stage")).toHaveLength(0);
-    expect(c.querySelectorAll(".sc-eq-row:not(.sc-eq-head)")).toHaveLength(6);
+    expect(c.querySelectorAll(".sc-eq-row")).toHaveLength(0);
+    for (const v of ["d1", "d2", "d3", "d4"]) expect(c.querySelector(`#perspective-${v} .sc-lab-headline`)).not.toBeNull();
     expect(c.querySelectorAll(".sc-badge")).toHaveLength(0);
     expect(c.querySelectorAll(".sc-share")).toHaveLength(4);
     expect(c.querySelector(".sc-legend")).not.toBeNull();
