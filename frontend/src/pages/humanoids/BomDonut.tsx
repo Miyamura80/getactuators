@@ -84,12 +84,11 @@ export function BomDonut({ robot, highlight, onHighlight }: Props) {
     const total = bom.total;
     const actShare = bom.rest && total.value ? bom.actuators.value / total.value : null;
 
-    let a = 0;
-    const paths = bom.slices.map((s) => {
-        const a0 = a;
-        a += s.share * 2 * Math.PI;
-        return { s, d: arc(60, 60, 34, 53, a0, a) };
-    });
+    const starts = bom.slices.map((_, i) => bom.slices.slice(0, i).reduce((n, s) => n + s.share, 0) * 2 * Math.PI);
+    const paths = bom.slices.map((s, i) => ({
+        s,
+        d: arc(60, 60, 34, 53, starts[i] ?? 0, (starts[i] ?? 0) + s.share * 2 * Math.PI),
+    }));
     const split = actShare === null ? null : actShare * 2 * Math.PI;
     const groups: { title: string; value: { value: number; range: [number, number] } | null; rows: BomSlice[] }[] = [
         { title: "Actuators", value: bom.rest ? bom.actuators : null, rows: bom.slices.filter((s) => s.category === "actuator") },

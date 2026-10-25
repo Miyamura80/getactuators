@@ -43,7 +43,7 @@ function Ree({ label, s }: { label: string; s: Sourced<number> }) {
     );
 }
 
-export function Totals({ totals, dof }: { totals: HumanoidTotals; dof: number | null }) {
+export function Totals({ totals, dof, hideRee = false }: { totals: HumanoidTotals; dof: number | null; hideRee?: boolean }) {
     const ree = reeTotalKg(totals);
     return (
         <div className="hm-totals">
@@ -68,13 +68,13 @@ export function Totals({ totals, dof }: { totals: HumanoidTotals; dof: number | 
                 </div>
             </div>
             <MixBar totals={totals} />
-            <div className="hm-ree" aria-label="Rare earths by element">
+            {!hideRee && <div className="hm-ree" aria-label="Rare earths by element">
                 <Ree label="Nd" s={totals.reeKg.nd} />
                 <Ree label="Pr" s={totals.reeKg.pr} />
                 <Ree label="Dy" s={totals.reeKg.dy} />
                 <Ree label="Tb" s={totals.reeKg.tb} />
                 <em>estimated</em>
-            </div>
+            </div>}
         </div>
     );
 }

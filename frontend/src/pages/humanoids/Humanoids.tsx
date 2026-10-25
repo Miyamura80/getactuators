@@ -20,6 +20,9 @@ import { Method } from "./Method";
 import { Silhouette } from "./Silhouette";
 import { Totals } from "./Totals";
 import { BomDonut } from "./BomDonut";
+import { gramsByNode, type Element } from "./ree";
+import { readReeViz, ReeBodyPicker, ReeFleet, ReeJoints, ReeRobotBar, ReeScale, type ReeViz } from "./ReeViz";
+import { reeOf } from "./Silhouette";
 import "../tools.css";
 import "./humanoids.css";
 
@@ -77,7 +80,20 @@ function Picker({
     );
 }
 
-function Card({ robot, joint, onJoint }: { robot: Humanoid; joint: CanonicalJoint | null; onJoint: (j: CanonicalJoint | null) => void }) {
+function Card({
+    robot,
+    joint,
+    onJoint,
+    reeviz,
+}: {
+    robot: Humanoid;
+    joint: CanonicalJoint | null;
+    onJoint: (j: CanonicalJoint | null) => void;
+    reeviz: ReeViz | null;
+}) {
+    const [reeEl, setReeEl] = useState<Element | "all">("all");
+    const reeGrams = useMemo(() => gramsByNode(robot), [robot]);
+    const reeMax = Math.max(...[...reeGrams.values()].map((g) => reeOf(g, reeEl)), 1);
     const totals = useMemo(() => humanoidTotals(robot), [robot]);
     const [slice, setSlice] = useState<{ key: string; joints: CanonicalJoint[] } | null>(null);
     const [shown, setShown] = useState(robot.id);
@@ -93,8 +109,18 @@ function Card({ robot, joint, onJoint }: { robot: Humanoid; joint: CanonicalJoin
                     {robot.brand} · <Flag code={robot.country} />
                 </span>
             </figcaption>
-            <Silhouette robot={robot} selected={joint} onSelect={onJoint} highlight={slice?.joints ?? null} />
-            <Totals totals={totals} dof={robot.dof} />
+            {reeviz === "B" && <ReeBodyPicker value={reeEl} onChange={setReeEl} />}
+            <Silhouette
+                robot={robot}
+                selected={joint}
+                onSelect={onJoint}
+                highlight={slice?.joints ?? null}
+                ree={reeviz === "B" ? { el: reeEl, grams: reeGrams, max: reeMax } : null}
+            />
+            {reeviz === "B" && <ReeScale max={reeMax} el={reeEl} />}
+            <Totals totals={totals} dof={robot.dof} hideRee={reeviz === "A" || reeviz === "D"} />
+            {reeviz === "A" && <ReeRobotBar robot={robot} />}
+            {reeviz === "D" && <ReeJoints robot={robot} />}
             <BomDonut
                 key={robot.id}
                 robot={robot}
@@ -128,6 +154,7 @@ function Legend() {
 
 export function Humanoids({ menuOpen = false }: { menuOpen?: boolean }) {
     const [state, setState] = useState<State>(readState);
+    const [reeviz] = useState(readReeViz);
     useEffect(() => {
         const prev = document.title;
         document.title = TITLE;
@@ -166,13 +193,15 @@ export function Humanoids({ menuOpen = false }: { menuOpen?: boolean }) {
                 <Legend />
 
                 <section className={`hm-stage${b ? " is-compare" : ""}`} aria-label="Joint map">
-                    <Card robot={a} joint={state.joint} onJoint={onJoint} />
-                    {b && <Card robot={b} joint={state.joint} onJoint={onJoint} />}
+                    <Card robot={a} joint={state.joint} onJoint={onJoint} reeviz={reeviz} />
+                    {b && <Card robot={b} joint={state.joint} onJoint={onJoint} reeviz={reeviz} />}
                     <div className="hm-panels">
                         <JointPanel robot={a} joint={state.joint} onSelect={onJoint} />
                         {b && <JointPanel robot={b} joint={state.joint} onSelect={onJoint} />}
                     </div>
                 </section>
+
+                {reeviz === "C" && <ReeFleet active={a.id} onPick={(robot) => update({ robot })} />}
 
                 <FleetTable
                     active={a.id}
