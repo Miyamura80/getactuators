@@ -27,6 +27,7 @@ import {
 } from "./pages-md";
 import { actuatorSeoTitle } from "./seo-titles";
 import { startupsBody } from "./startups";
+import { HIDDEN_PAGES } from "./supply-chain/pages";
 import { TOOL_PAGES } from "./tools";
 import { aboutBody, contactBody, privacyBody } from "./trust";
 
@@ -182,7 +183,7 @@ const STATIC_PAGES: Page[] = [
 
 const ALIASES: Record<string, string> = { "/robot": "/robots", "/index.html": "/" };
 
-const byPath = new Map(STATIC_PAGES.map((p) => [p.path, p]));
+const byPath = new Map([...STATIC_PAGES, ...HIDDEN_PAGES].map((p) => [p.path, p]));
 
 function actuatorPage(id: string): Page | null {
     const a = getActuator(id);

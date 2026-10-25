@@ -13,6 +13,8 @@ COPY src/engineering/arm-torque.ts ./src/engineering/
 COPY src/public-navigation.ts src/public-navigation.css ./src/
 # Page data the browser imports directly.
 COPY src/startups.ts src/investors.ts ./src/
+# The supply-chain registry and kit helpers (zod schemas stay server-side).
+COPY src/supply-chain ./src/supply-chain
 RUN cd frontend && bun run build
 
 FROM oven/bun:1 AS runtime

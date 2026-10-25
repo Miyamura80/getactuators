@@ -1,0 +1,96 @@
+import { describe, expect, test } from "bun:test";
+import { auditRegistry, uncitedNumbers } from "@/supply-chain/audit";
+import { COMPANIES, SEGMENTS } from "@/supply-chain/companies";
+import { SUPPLY_LINKS } from "@/supply-chain/links";
+import {
+    companiesIn,
+    findCompanies,
+    findSites,
+    getCompany,
+    linksOf,
+    sitesOf,
+} from "@/supply-chain/registry";
+import { SITES } from "@/supply-chain/sites";
+import { SOURCES } from "@/supply-chain/sources";
+
+describe("supply-chain registry", () => {
+    const report = auditRegistry();
+
+    test("passes the audit with no errors or warnings", () => {
+        expect(report.errors).toEqual([]);
+        expect(report.warnings).toEqual([]);
+    });
+
+    test("seed covers four segments and the four atlas countries", () => {
+        expect(new Set(COMPANIES.map((c) => c.segment))).toEqual(new Set(SEGMENTS));
+        const countries = new Set(COMPANIES.map((c) => c.hqCountry));
+        for (const c of ["JP", "CN", "KR", "US"])
+            expect(countries.has(c as never)).toBe(true);
+        expect(COMPANIES.length).toBeGreaterThanOrEqual(15);
+        expect(SITES.length).toBeGreaterThanOrEqual(25);
+        expect(SUPPLY_LINKS.length).toBeGreaterThanOrEqual(9);
+        expect(SOURCES.length).toBeGreaterThanOrEqual(20);
+    });
+
+    test("every company has at least one site", () => {
+        for (const c of COMPANIES)
+            expect(sitesOf(c.id).length, c.id).toBeGreaterThan(0);
+    });
+
+    test("estimates carry a method note or a range", () => {
+        for (const c of COMPANIES)
+            for (const v of [c.revenue, c.grossMargin])
+                if (v && v.confidence !== "reported")
+                    expect(Boolean(v.note || v.range), c.id).toBe(true);
+    });
+});
+
+describe("audit catches bad data", () => {
+    test("bare numbers outside a Sourced value are uncited", () => {
+        const misses = uncitedNumbers("x", [
+            { id: "a", revenue: 12, lat: 1, lon: 2 },
+            {
+                id: "b",
+                revenue: {
+                    value: 3,
+                    sources: ["s"],
+                    asOf: "2025",
+                    confidence: "reported",
+                },
+            },
+        ]);
+        expect(misses).toEqual(["x[0].revenue: 12"]);
+    });
+});
+
+describe("accessors", () => {
+    test("companiesIn filters by headquarters country", () => {
+        const kr = companiesIn("KR").map((c) => c.id);
+        expect(kr).toContain("hyundai-mobis");
+        expect(kr.every((id) => getCompany(id)?.hqCountry === "KR")).toBe(true);
+    });
+
+    test("sitesOf and linksOf resolve both directions", () => {
+        expect(sitesOf("jl-mag").map((s) => s.id)).toContain("jlmag-baotou");
+        const jl = linksOf("jl-mag");
+        expect(jl.buys.map((l) => l.from).sort()).toEqual([
+            "china-northern-rare-earth",
+            "china-rare-earth-group",
+        ]);
+        expect(linksOf("nabtesco").supplies.map((l) => l.to)).toContain("fanuc");
+    });
+
+    test("findCompanies and findSites combine filters", () => {
+        expect(
+            findCompanies({ country: "jp", stage: "gearing" }).map((c) => c.id),
+        ).toEqual(["harmonic-drive-systems", "nabtesco", "nidec"]);
+        expect(
+            findSites({ company: "nabtesco" })
+                .map((s) => s.country)
+                .sort(),
+        ).toEqual(["CN", "JP"]);
+        expect(findSites({ kind: "mine" }).map((s) => s.id)).toEqual([
+            "mp-mountain-pass",
+        ]);
+    });
+});

@@ -29,6 +29,9 @@ const EXPECTED_TOOLS = [
     "find_robots_using_actuator",
     "humanoid_joint_requirements",
     "arm_holding_torque",
+    "list_companies",
+    "get_company",
+    "list_sites",
 ];
 
 const usedActuator = ACTUATORS.find((a) => robotsUsingActuator(a.id).length > 0);

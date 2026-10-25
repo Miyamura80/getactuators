@@ -32,6 +32,9 @@ function sha256(value: string) {
 const TOOLS_ADDED_AFTER_BASELINE = [
     "humanoid_joint_requirements",
     "arm_holding_torque",
+    "list_companies",
+    "get_company",
+    "list_sites",
 ];
 function snapshotContent(value: string) {
     let out = value.replace(
