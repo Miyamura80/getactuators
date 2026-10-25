@@ -36,9 +36,9 @@ describe("concentration", () => {
             (r) => concentration(r.shares.value)?.top.country,
         );
         expect(tops).toEqual(["CN", "CN", "CN"]);
-        expect(concentration(LAB_STAGE_SHARES[0]?.shares.value ?? {})?.hhi).toBe(
-            LAB_MINING_HHI.value,
-        );
+        // CN 69.2%, US 13.1%, AU 7.4%, MM 5.6%, TH 1.2% of 390,000 t.
+        expect(concentration(LAB_STAGE_SHARES[0]?.shares.value ?? {})?.hhi).toBe(5053);
+        expect(LAB_MINING_HHI.value).toBe(5053);
     });
 
     test("flags come from regional indicator symbols", () => {

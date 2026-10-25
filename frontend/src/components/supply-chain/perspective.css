@@ -24,7 +24,7 @@
 .sc-iso-fill { position: absolute; inset: 0 auto 0 0; overflow: hidden; }
 .sc-iso-fill svg { fill: var(--cyan); }
 .is-benchmark .sc-iso-fill svg { fill: var(--muted); }
-.sc-units-key { margin: 12px 0 0; font: 10px var(--mono); color: #6b7375; text-align: right; }
+.sc-units-key { margin: 12px 0 0; font: 10px var(--mono); color: var(--muted); text-align: right; }
 
 /* Leader dominance */
 .sc-player { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
@@ -50,6 +50,7 @@
 .sc-gone-bar { display: flex; height: 30px; gap: 2px; }
 .sc-gone-lost {
     display: flex;
+    flex-basis: 0;
     align-items: center;
     gap: 6px;
     min-width: 0;
@@ -61,7 +62,7 @@
     overflow: hidden;
     background: repeating-linear-gradient(135deg, transparent 0 6px, rgba(255, 146, 43, 0.12) 6px 8px);
 }
-.sc-gone-left { background: var(--text); min-width: 4px; }
+.sc-gone-left { flex-basis: 0; background: var(--text); min-width: 4px; }
 .sc-gone-value { justify-self: end; font: 13px var(--mono); color: var(--muted); }
 .sc-gone-value b { font-size: 22px; color: var(--text); }
 

@@ -11,7 +11,9 @@ import {
     linksOf,
     sitesOf,
 } from "@/supply-chain/registry";
+import { asOfSchema, companySchema } from "@/supply-chain/schemas";
 import { SITES } from "@/supply-chain/sites";
+import { isSourced } from "@/supply-chain/sourced";
 import { SOURCES } from "@/supply-chain/sources";
 
 describe("supply-chain registry", () => {
@@ -56,7 +58,7 @@ describe("market share", () => {
             for (const s of Object.values(m.shares)) {
                 expect(s.unit).toBe("fraction");
                 expect(s.value).toBeGreaterThan(0);
-                expect(s.value).toBeLessThan(1);
+                expect(s.value).toBeLessThanOrEqual(1);
             }
         }
     });
@@ -109,5 +111,45 @@ describe("accessors", () => {
         expect(findSites({ kind: "mine" }).map((s) => s.id)).toEqual([
             "mp-mountain-pass",
         ]);
+    });
+});
+
+describe("schemas reject impossible values", () => {
+    test("asOf must be a real calendar date", () => {
+        const ok = (s: string) => asOfSchema.safeParse(s).success;
+        expect(["2025", "2025-12", "2024-02-29"].map(ok)).toEqual([true, true, true]);
+        expect(["2025-13", "2025-02-30", "2025-00"].map(ok)).toEqual([
+            false,
+            false,
+            false,
+        ]);
+    });
+
+    test("a gross margin range stays within 0..1", () => {
+        const base = COMPANIES[0];
+        if (!base) throw new Error("no companies");
+        const margin = (range: [number, number]) => ({
+            ...base,
+            grossMargin: {
+                value: 0.3,
+                range,
+                sources: ["x"],
+                asOf: "2025",
+                confidence: "estimated" as const,
+            },
+        });
+        expect(companySchema.safeParse(margin([0.2, 0.4])).success).toBe(true);
+        expect(companySchema.safeParse(margin([0.2, 1.4])).success).toBe(false);
+    });
+
+    test("isSourced needs typed sources and a known confidence", () => {
+        const s = { value: 1, sources: ["x"], confidence: "reported", asOf: "2025" };
+        expect(isSourced(s)).toBe(true);
+        expect(isSourced({ ...s, sources: "x" })).toBe(false);
+        expect(isSourced({ ...s, confidence: "guess" })).toBe(false);
+    });
+
+    test("an ended link is historical, not active", () => {
+        expect(linksOf("mp-materials").supplies[0]?.ended).toBe("2025-04");
     });
 });

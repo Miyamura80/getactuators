@@ -13,7 +13,7 @@ export function Player({ id, kind, withName = false }: {
     if (id === "other") return <span className="sc-player is-other">Others</span>;
     if (kind === "company") return <span className="sc-player"><CompanyLogo name={id} /><span>{id}</span></span>;
     return <span className="sc-player">
-        <Flag code={id} />
+        <Flag code={id} decorative={withName} />
         {withName ? <span>{shortName(id)}</span> : null}
     </span>;
 }

@@ -1,7 +1,8 @@
 import type { Confidence, SourceId } from "./sourced";
 
 // Who sells what to whom. Used by country arcs and BOM graphs. A link marked
-// "estimated" rests on press reports the buyer has not confirmed.
+// "estimated" rests on press reports the buyer has not confirmed. A link with
+// `ended` is historical: kept for the record, never drawn as a current flow.
 
 export interface SupplyLink {
     from: string;
@@ -10,6 +11,8 @@ export interface SupplyLink {
     sources: SourceId[];
     confidence: Confidence;
     note?: string;
+    // YYYY-MM the relationship stopped; absent while it is active.
+    ended?: string;
 }
 
 export const SUPPLY_LINKS: SupplyLink[] = [
@@ -20,6 +23,7 @@ export const SUPPLY_LINKS: SupplyLink[] = [
         sources: ["mp-10q-q1-2025", "alcircle-crg-shenghe-2026"],
         confidence: "reported",
         note: "MP halted shipments to China in April 2025.",
+        ended: "2025-04",
     },
     {
         from: "china-northern-rare-earth",

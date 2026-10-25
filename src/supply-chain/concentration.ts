@@ -1,4 +1,5 @@
 import type { CountryCode } from "./countries";
+import { rankShares } from "./dominance";
 
 // Country shares of one supply-chain stage (production, capacity or sales):
 // normalised shares for the stacked bars, and the top country plus the
@@ -28,15 +29,14 @@ export function normalizeShares(shares: Shares): {
     countries: { country: CountryCode; share: number }[];
     other: number;
 } {
-    const entries = Object.entries(shares) as [ShareKey, number][];
-    const total = entries.reduce((s, [, v]) => s + clean(v), 0);
-    const denom = total > 1 + 1e-9 ? total : 1;
-    const countries = entries
-        .filter(([k, v]) => k !== "other" && clean(v) > 0)
-        .map(([k, v]) => ({ country: k as CountryCode, share: clean(v) / denom }))
-        .sort((a, b) => b.share - a.share || a.country.localeCompare(b.country));
-    const named = countries.reduce((s, c) => s + c.share, 0);
-    return { countries, other: Math.max(0, 1 - named) };
+    const { named, other } = rankShares(shares as Record<string, number>);
+    return {
+        countries: named.map((n) => ({
+            country: n.key as CountryCode,
+            share: n.share,
+        })),
+        other,
+    };
 }
 
 // Herfindahl-Hirschman index (0..10000) of shares given as fractions.

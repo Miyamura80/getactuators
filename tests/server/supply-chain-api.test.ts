@@ -98,6 +98,8 @@ describe("MCP supply-chain tools", () => {
         expect(out.company.revenue_usd?.sources[0]?.publisher).toBe("MP Materials");
         expect(out.sites.map((s) => s.id)).toContain("mp-mountain-pass");
         expect(out.supplies.map((l) => l.to)).toEqual(["shenghe-resources"]);
+        // The Shenghe offtake stopped in April 2025: kept, but marked historical.
+        expect(out.supplies[0]?.ended).toBe("2025-04");
         expect((await callTool("get_company", { id: "no-such-co" })).isError).toBe(
             true,
         );

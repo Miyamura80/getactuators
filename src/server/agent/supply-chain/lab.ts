@@ -36,7 +36,7 @@ export function supplyChainLabBody(): string {
         return [
             r.label,
             c
-                ? `${flagged(c.top.country)} ${percent(c.top.share)}${fn.ref(r.shares.sources)}`
+                ? `${flagged(c.top.country)} ${r.shares.confidence === "estimated" ? "~" : ""}${percent(c.top.share)}${fn.ref(r.shares.sources)}`
                 : "n/a",
             c ? c.hhi.toLocaleString("en-US") : "n/a",
             r.shares.asOf,

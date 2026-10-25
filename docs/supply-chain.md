@@ -1,7 +1,8 @@
 # Supply-chain atlas: data and page recipe
 
-The supply-chain pages (`/metals`, `/bom`, `/manufacturing`, `/alts`, `/japan`,
-`/china`, `/korea`, `/us`) share one cited registry and one set of components.
+The planned supply-chain pages (`/metals`, `/bom`, `/manufacturing`, `/alts`,
+`/japan`, `/china`, `/korea`, `/us`; none is live yet, only the hidden
+`/lab/supply-chain`) will share one cited registry and one set of components.
 Pages hold content; numbers live in the registry and are referenced by id.
 
 ```
@@ -13,7 +14,7 @@ Pages hold content; numbers live in the registry and are referenced by id.
  +-- countries.ts      ISO codes with bounding boxes (site pins are checked)
  +-- companies/        Company records (segment, stages, ownership, revenue)
  +-- sites/            HQs, plants, mines with lat/lon and pin precision
- +-- links.ts          SupplyLink: who sells what to whom
+ +-- links.ts          SupplyLink: who sells what to whom (`ended` = historical)
  +-- registry.ts       accessors: getCompany, companiesIn, sitesOf, linksOf, find*
  +-- concentration.ts  normalizeShares, concentration(shares) -> top, HHI
  +-- market-share.ts   cited company share of one market per segment

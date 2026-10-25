@@ -18,8 +18,9 @@ test("the lab twin renders markdown footnotes and a Sources section", async () =
         await getMarkdown("/lab/supply-chain"),
     ]) {
         expect(res.status).toBe(200);
+        expect(res.headers.get("x-robots-tag")).toBe("noindex");
         const md = await res.text();
-        expect(md).toContain("| Separation | 🇨🇳 CN 91%[^");
+        expect(md).toContain("| Separation | 🇨🇳 CN ~91%[^");
         expect(md).toContain("| AgiBot | 🇨🇳 CN | 39%[^");
         expect(md).toContain("| Harmonic Drive Systems | 🇯🇵 JP | - |");
         expect(md).toContain("MP Materials revenue: $224.4M[^");
@@ -30,4 +31,8 @@ test("the lab twin renders markdown footnotes and a Sources section", async () =
             /\[\^1\]: USGS, "Mineral Commodity Summaries 2026: Rare Earths"\. https:\/\/pubs\.usgs\.gov/,
         );
     }
+});
+
+test("indexed pages keep their markdown twin indexable", async () => {
+    expect((await get("/robots.md")).headers.get("x-robots-tag")).toBeNull();
 });

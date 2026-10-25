@@ -10,9 +10,21 @@ import { STAGES } from "./stages";
 // browser bundle imports the data without zod. The registry tests and
 // scripts/citation-audit.ts parse each dataset with these.
 
+// A real calendar month and day, not just the right shape ("2025-02-30" fails).
+function isCalendarDate(s: string): boolean {
+    const [y, m = 1, d = 1] = s.split("-").map(Number);
+    const date = new Date(Date.UTC(y ?? 0, m - 1, d));
+    return (
+        date.getUTCFullYear() === y &&
+        date.getUTCMonth() === m - 1 &&
+        date.getUTCDate() === d
+    );
+}
+
 export const asOfSchema = z
     .string()
-    .regex(/^\d{4}(-\d{2}(-\d{2})?)?$/, "asOf must be YYYY, YYYY-MM or YYYY-MM-DD");
+    .regex(/^\d{4}(-\d{2}(-\d{2})?)?$/, "asOf must be YYYY, YYYY-MM or YYYY-MM-DD")
+    .refine(isCalendarDate, "asOf must be a real calendar date");
 
 export function sourcedSchema<T extends z.ZodType>(value: T) {
     return z.object({
@@ -54,7 +66,10 @@ export const companySchema = z.object({
         .optional(),
     revenue: sourcedNumberSchema.optional(),
     grossMargin: sourcedNumberSchema
-        .refine((s) => s.value >= 0 && s.value <= 1, "gross margin is a fraction")
+        .refine(
+            (s) => [s.value, ...(s.range ?? [])].every((n) => n >= 0 && n <= 1),
+            "gross margin is a fraction",
+        )
         .optional(),
     products: z.array(z.string().min(1)).optional(),
     url: z.url(),
@@ -86,4 +101,5 @@ export const supplyLinkSchema = z.object({
     sources: z.array(z.string().min(1)).min(1),
     confidence: z.enum(CONFIDENCES),
     note: z.string().min(1).optional(),
+    ended: asOfSchema.optional(),
 });

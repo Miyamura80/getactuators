@@ -76,6 +76,10 @@ const linkOut = z.object({
     what: z.string(),
     confidence: z.enum(CONFIDENCES),
     note: z.string().nullable(),
+    ended: z
+        .string()
+        .nullable()
+        .describe("When the link stopped (YYYY-MM); null while it is active."),
     sources: z.array(sourceRefOut),
 });
 
@@ -168,6 +172,7 @@ function linkView(l: SupplyLink): z.input<typeof linkOut> {
         what: l.what,
         confidence: l.confidence,
         note: l.note ?? null,
+        ended: l.ended ?? null,
         sources: refs(l.sources),
     };
 }

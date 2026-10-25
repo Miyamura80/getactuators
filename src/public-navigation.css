@@ -287,6 +287,7 @@
         margin-top: 4px;
         border: 0;
         border-top: 1px solid #242424;
+        grid-template-columns: minmax(0, 1fr);
     }
     .site-sub-panel section {
         padding: 8px 0;

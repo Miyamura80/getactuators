@@ -36,7 +36,11 @@ export function isSourced(x: unknown): x is Sourced<unknown> {
         x !== null &&
         "value" in x &&
         "sources" in x &&
+        Array.isArray(x.sources) &&
+        x.sources.every((s) => typeof s === "string") &&
         "confidence" in x &&
-        "asOf" in x
+        (CONFIDENCES as readonly unknown[]).includes(x.confidence) &&
+        "asOf" in x &&
+        typeof x.asOf === "string"
     );
 }
