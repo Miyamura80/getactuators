@@ -2,7 +2,7 @@ import { PublicHeader } from "../components/PublicHeader";
 import { PublicFooter } from "../components/PublicFooter";
 import { useEffect, useMemo, useState } from "react";
 import type { Actuator } from "../types";
-import { ACTUATORS, allUseCases, categoryCounts, maxValue } from "../lib/data";
+import { ACTUATORS, allUseCases, categoryCounts, countryCounts, maxValue } from "../lib/data";
 import { COLUMNS } from "../lib/columns";
 import {
     applyFilters,
@@ -41,7 +41,7 @@ function actuatorFromQuery(search: string): Actuator | null {
 // merged on top and the hash is preserved (filtering must not scroll-reset).
 function buildUrl(filters: FilterState, selId: string | null, compare: Set<string>): string {
     const params = new URLSearchParams(window.location.search);
-    for (const key of ["q", "cat", "use", "sort", "dir", "sel", "compare"]) params.delete(key);
+    for (const key of ["q", "cat", "use", "country", "sort", "dir", "sel", "compare"]) params.delete(key);
     new URLSearchParams(filtersToQuery(filters)).forEach((value, key) => params.set(key, value));
     if (selId) params.set("sel", selId);
     const ids = selectedIds(`?compare=${encodeURIComponent([...compare].join(","))}`);
@@ -65,6 +65,7 @@ export function AllActuators({ menuOpen = false }: { menuOpen?: boolean }) {
 
     const counts = useMemo(() => categoryCounts(), []);
     const useCases = useMemo(() => allUseCases(), []);
+    const countries = useMemo(() => countryCounts(), []);
     const maxes = useMemo(() => {
         const m: Record<string, number> = {};
         for (const c of COLUMNS) if (c.bar) m[c.key] = maxValue(ACTUATORS, c.value);
@@ -133,8 +134,8 @@ export function AllActuators({ menuOpen = false }: { menuOpen?: boolean }) {
                     All actuators
                 </h1>
                 <p>
-                    Every rotary actuator in the dataset. Filter and sort by torque,
-                    density, price, speed and more. Every row links back to its source.
+                    Every rotary actuator in the dataset. Filter by type, country and use,
+                    sort by torque, density, price, speed and more. Every row links back to its source.
                 </p>
             </section>
 
@@ -142,11 +143,11 @@ export function AllActuators({ menuOpen = false }: { menuOpen?: boolean }) {
                 <FilterBar
                     filters={filters}
                     counts={counts}
+                    countries={countries}
                     useCases={useCases}
                     total={ACTUATORS.length}
                     shown={rows.length}
                     onChange={onFiltersChange}
-                    onReset={() => onFiltersChange(DEFAULT_FILTERS)}
                 />
                 <Leaderboard
                     rows={rows}

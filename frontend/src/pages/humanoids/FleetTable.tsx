@@ -2,6 +2,7 @@ import { useReducer, useState } from "react";
 import type { DataGrade } from "../../../../src/humanoids";
 import { navigate, useLocationKey } from "../../lib/router";
 import { type FleetState, fleetSearch, parseFleet, queryFleet, ROWS, type SortKey } from "./fleet-query";
+import { CompanyLogo } from "../../components/CompanyLogo";
 import { Flag } from "../../components/Flag";
 import { MetricBar } from "../../components/MetricBar";
 import { MixBar } from "./Totals";
@@ -122,6 +123,7 @@ export function FleetTable({ active, onPick }: { active: string; onPick: (id: st
                                         {h.name}
                                     </button>
                                     <span className="hm-brand">
+                                        <CompanyLogo name={h.brand} size={14} />
                                         {h.brand} · <Flag code={h.country} />
                                     </span>
                                 </td>

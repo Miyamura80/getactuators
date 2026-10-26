@@ -57,6 +57,7 @@ test("picks and unpicks write comparison URLs preserving filters, detail selecti
 test("filter and drawer actions retain comparison state in their URL writes", () => {
     setURL(`/all?compare=${ids.slice(0, 2).join(",")}#table`);
     const view = render(<AllActuators />);
+    fireEvent.click(view.getByRole("button", { name: "Filters" }));
     fireEvent.click(view.container.querySelector('[aria-label="Category filter"] button')!);
     expect(params().get("cat")).toBeTruthy();
     expect(params().get("compare")).toBe(ids.slice(0, 2).sort().join(","));
@@ -136,4 +137,19 @@ test("four-selection limit and panel removals keep the same URL-backed selection
     }
     expect(params().has("compare")).toBe(false);
     expect(view.container.querySelector(".compare-dock")).toBeNull();
+});
+
+test("the filters popover writes country choices to the URL and shows them as removable pills", () => {
+    setURL("/all");
+    const view = render(<AllActuators />);
+    expect(view.container.querySelector('[aria-label="Country filter"]')).toBeNull();
+    fireEvent.click(view.getByRole("button", { name: "Filters" }));
+    const country = ACTUATORS.find(a => a.country)!.country!;
+    fireEvent.click(view.container.querySelector(`[aria-label="Country filter"] button[title="${country}"]`)!);
+    expect(params().get("country")).toBe(country);
+    expect(view.getByRole("button", { name: "Filters, 1 active" })).toBeTruthy();
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(view.container.querySelector('[aria-label="Country filter"]')).toBeNull();
+    fireEvent.click(view.getByRole("button", { name: `Clear filter: ${country}` }));
+    expect(params().has("country")).toBe(false);
 });
