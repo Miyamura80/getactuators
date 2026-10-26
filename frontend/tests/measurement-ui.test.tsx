@@ -3,7 +3,7 @@ import { afterEach, expect, test } from "bun:test";
 import { cleanup, fireEvent, render } from "@testing-library/react";
 import { StrictMode } from "react";
 import { DetailPanel } from "../src/components/DetailPanel";
-import { AllActuators } from "../src/pages/AllActuators";
+import { ActuatorsPage } from "../src/pages/actuators/ActuatorsPage";
 import { ACTUATORS } from "../src/lib/data";
 
 afterEach(cleanup);
@@ -16,22 +16,22 @@ test("drawer primary links are instrumented but citations are not", () => {
     expect(document.querySelector(".drawer-sources [data-measure-event]")).toBeNull();
 });
 test("comparison opens and removals dispatch only user actions, not StrictMode renders or selection toggles", () => {
-    window.history.replaceState(null, "", "/all");
+    window.history.replaceState(null, "", "/actuators?view=list");
     const events: unknown[] = [];
     const listener = (e: Event) => events.push((e as CustomEvent).detail);
     window.addEventListener("actuatorlist:compare", listener);
     try {
-        const view = render(<StrictMode><AllActuators /></StrictMode>);
-        const boxes = view.getAllByRole("checkbox");
-        // Compare selection controls are labelled per product, not category filters.
-        const compareBoxes = boxes.filter((box) => box.getAttribute("aria-label")?.startsWith("Compare "));
+        const view = render(<StrictMode><ActuatorsPage /></StrictMode>);
+        const compareBoxes = view.getAllByRole("checkbox", { name: /^Compare / });
         expect(compareBoxes.length).toBeGreaterThan(1);
         fireEvent.click(compareBoxes[0]); fireEvent.click(compareBoxes[1]);
         expect(events).toEqual([]);
-        fireEvent.click(view.getByRole("button", { name: /^Compare$/ }));
+        const open = view.getByRole("link", { name: "Compare selected actuators" });
+        open.addEventListener("click", (e) => e.preventDefault());
+        fireEvent.click(open);
         expect(events).toHaveLength(1);
         expect(events[0]).toEqual({ action: "open", productIds: expect.arrayContaining([expect.any(String), expect.any(String)]) });
-        view.rerender(<StrictMode><AllActuators /></StrictMode>);
+        view.rerender(<StrictMode><ActuatorsPage /></StrictMode>);
         expect(events).toHaveLength(1);
         fireEvent.click(view.getAllByRole("button", { name: /^Remove / })[0]);
         expect(events).toHaveLength(2);

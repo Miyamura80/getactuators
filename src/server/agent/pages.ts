@@ -18,10 +18,9 @@ import { PATHS } from "./links";
 import { agentsBody } from "./manifests";
 import { mdDocument } from "./md";
 import {
-    allBody,
+    actuatorsBody,
     faqItems,
     faqSection,
-    galleryBody,
     homeBody,
     robotsBody,
     topBy,
@@ -108,18 +107,11 @@ const STATIC_PAGES: Page[] = [
         ],
     },
     sub(
-        "/all",
-        "spa",
-        "All robot actuators",
-        `Every actuator in the catalog (${ACTUATORS.length}) in one table: peak torque, weight, torque density and price.`,
-        allBody,
-    ),
-    sub(
         "/actuators",
         "spa",
-        "Actuator gallery by category",
-        "Robot actuators grouped by drive type: QDD, integrated joints, smart servos, harmonic, cycloidal and frameless kits.",
-        galleryBody,
+        "All robot actuators",
+        `Every actuator in the catalog (${ACTUATORS.length}) as a photo gallery or one sortable table: peak torque, weight, torque density and price.`,
+        actuatorsBody,
     ),
     sub(
         "/robots",

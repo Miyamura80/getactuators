@@ -1,7 +1,7 @@
 import "./happydom";
 import { afterEach, beforeEach, expect, test } from "bun:test";
 import { cleanup, fireEvent, render } from "@testing-library/react";
-import { ActuatorsGallery } from "../src/pages/ActuatorsGallery";
+import { ActuatorsPage } from "../src/pages/actuators/ActuatorsPage";
 import { ActuatorThumb } from "../src/components/ActuatorThumb";
 import { ACTUATORS } from "../src/lib/data";
 
@@ -11,7 +11,7 @@ beforeEach(() => {
 afterEach(cleanup);
 
 test("leading gallery photo is eager and high priority, every other photo stays lazy", () => {
-    const { container } = render(<ActuatorsGallery />);
+    const { container } = render(<ActuatorsPage />);
     const first = container.querySelector('.bento-thumb img');
     expect(first?.getAttribute("src")).toBe("/actuator-images/steadywin-gim8108-8.webp");
     expect(first?.getAttribute("loading")).toBe("eager");

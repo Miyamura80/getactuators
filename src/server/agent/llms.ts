@@ -63,8 +63,7 @@ ${link("Agent skill", PATHS.skill, "SKILL.md teaching an agent to use the API an
 ## Catalog pages (markdown)
 
 ${link("Home", "/index.md", "overview, top actuators by torque density, FAQ")}
-${link("All actuators", "/all.md", "every actuator in one table")}
-${link("Gallery", "/actuators.md", "actuators grouped by category")}
+${link("Actuators", "/actuators.md", "every actuator in one table, plus categories")}
 ${link("Robots", "/robots.md", "robots with per-joint motors")}
 
 ## Engineering guides and tools (markdown)
@@ -141,8 +140,7 @@ export function actuatorsLlmsTxt(): string {
 
 > ${ACTUATORS.length} robot actuators, each with a markdown spec sheet. Filter them with the REST API (${u("/api/v1/actuators")}) instead of reading every sheet.
 
-- ${mdLink("All actuators table", u("/all.md"))}: every actuator in one markdown table
-- ${mdLink("Gallery by category", u("/actuators.md"))}: grouped by drive type
+- ${mdLink("All actuators table", u("/actuators.md"))}: every actuator in one markdown table
 
 ## Actuators
 

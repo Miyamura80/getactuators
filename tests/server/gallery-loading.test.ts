@@ -31,7 +31,7 @@ test("gallery discovers only its first actual photo in the server head before Ja
 test("other pages and gallery markdown do not preload gallery photos", async () => {
     for (const path of [
         "/",
-        "/all",
+        "/actuators?view=list",
         "/robots",
         "/guides",
         "/actuators/cubemars-ak80-9",

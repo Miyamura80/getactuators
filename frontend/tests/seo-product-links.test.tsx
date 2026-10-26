@@ -4,12 +4,12 @@ import { cleanup, fireEvent, render, waitFor } from "@testing-library/react";
 import { DetailPanel } from "../src/components/DetailPanel";
 import { Leaderboard } from "../src/components/Leaderboard";
 import { ACTUATORS } from "../src/lib/data";
-import { ActuatorsGallery } from "../src/pages/ActuatorsGallery";
+import { ActuatorsPage } from "../src/pages/actuators/ActuatorsPage";
 
 afterEach(cleanup);
 
 test("every gallery card is an anchor to its encoded product path", () => {
-    const { container } = render(<ActuatorsGallery />);
+    const { container } = render(<ActuatorsPage />);
     const cards = Array.from(container.querySelectorAll("a.bento-card"));
     expect(cards).toHaveLength(ACTUATORS.length);
     for (const a of ACTUATORS) {

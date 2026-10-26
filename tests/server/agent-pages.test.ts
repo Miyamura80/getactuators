@@ -19,7 +19,6 @@ import {
 
 const PAGES = [
     "/",
-    "/all",
     "/actuators",
     "/robots",
     "/agents",
@@ -79,7 +78,6 @@ describe("markdown twins", () => {
     test("every page has a .md URL with frontmatter", async () => {
         const twins = [
             "/index.md",
-            "/all.md",
             "/actuators.md",
             "/robots.md",
             "/about.md",

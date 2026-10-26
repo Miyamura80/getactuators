@@ -2,7 +2,7 @@ import "./happydom";
 import { expect, spyOn, test } from "bun:test";
 import { act } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
-import { ActuatorsGallery } from "../src/pages/ActuatorsGallery";
+import { ActuatorsPage } from "../src/pages/actuators/ActuatorsPage";
 import { CommandPalette } from "../src/components/CommandPalette";
 import { GalleryRoot } from "../src/GalleryRoot";
 import { mountApp } from "../src/startup";
@@ -14,7 +14,7 @@ test("gallery startup reuses every initial card and photo instead of replacing t
     ).happyDOM.setURL("http://localhost:1/actuators");
     const html = renderToString(
         <>
-            <ActuatorsGallery />
+            <ActuatorsPage />
             <CommandPalette />
         </>,
     );

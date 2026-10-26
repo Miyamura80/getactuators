@@ -2,8 +2,7 @@
 export const PUBLIC_LINKS = [
     ["/", "Leaderboard"],
     ["/robots", "Robot types"],
-    ["/all", "All actuators"],
-    ["/actuators", "Gallery"],
+    ["/actuators", "Actuators"],
     ["/compare", "Compare"],
     ["/guides", "Guides"],
     ["/agents", "Agents"],
@@ -61,7 +60,7 @@ const liveSupplyChain = supplyChainMenu().flatMap((g) =>
 );
 
 export const FOOTER_GROUPS = [
-    { label: "Catalog", links: PUBLIC_LINKS.slice(0, 5) },
+    { label: "Catalog", links: PUBLIC_LINKS.slice(0, 4) },
     {
         label: "Resources",
         links: [
