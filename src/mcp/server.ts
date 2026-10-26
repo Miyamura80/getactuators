@@ -7,6 +7,7 @@ import { actuatorTools } from "./tools/actuators";
 import { compareTools } from "./tools/compare";
 import { engineeringTools } from "./tools/engineering";
 import { robotTools } from "./tools/robots";
+import { supplyChainTools } from "./tools/supply-chain";
 
 // The public catalog MCP server: anonymous, read-only, stateless. A fresh
 // instance is built per HTTP request (see ./http.ts), which is cheap because
@@ -26,6 +27,7 @@ export const CATALOG_TOOLS: readonly ToolDef[] = [
     ...compareTools,
     ...robotTools,
     ...engineeringTools,
+    ...supplyChainTools,
 ];
 
 export const INSTRUCTIONS = `actuatorlist is an open, read-only catalog of robot actuators and the robots that use them. No account or key is needed and no tool changes anything.
@@ -39,7 +41,9 @@ Which tool to use:
 - Filtering or sorting the catalog: search_actuators. Discover valid filter values with list_actuator_categories (category slugs, use-case tags) and list_brands.
 - One actuator in full: get_actuator. Two to ten side by side, with the winner per metric: compare_actuators.
 - Robots: list_robots, get_robot (joints resolved to motors and catalog actuator ids), find_robots_using_actuator.
+- Humanoids joint by joint (actuator type per joint, reported vs estimated, magnet and rare-earth kg): get_humanoid_joints.
 - Sizing a humanoid: humanoid_joint_requirements gives a static torque estimate per joint (stated pose and arithmetic) and the catalog actuators that reach it. Treat estimates as a floor, not a dynamic requirement.
+- Supply chain (who makes magnets, gears and actuators, and where): list_companies, get_company and list_sites. Sourced values carry sources and a confidence (reported, estimated or modeled); quote estimates as estimates.
 - Sizing a robot arm: arm_holding_torque takes link lengths, masses, actuator masses and payload and returns static holding torque per joint, catalog actuators per joint and a calculator_url the user can open.
 Bulk snapshots are also exposed as resources (catalog://actuators, catalog://robots, catalog://categories, actuator://{id}, robot://{id}). Website: ${SITE_URL}.`;
 

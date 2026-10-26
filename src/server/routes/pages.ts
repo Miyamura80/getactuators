@@ -15,6 +15,14 @@ import type { Handler, Route } from "../types";
 //   anything else                                         -> HTML
 // and every page also serves `<path>.md` directly.
 
+// Markdown twin of a page; a noindex page keeps noindex on its twin too,
+// since the HTML robots meta tag does not reach markdown readers.
+function twinResponse(p: Parameters<typeof pageMarkdown>[0]): Response {
+    const res = markdownResponse(pageMarkdown(p));
+    if (p.noindex) res.headers.set("x-robots-tag", "noindex");
+    return res;
+}
+
 const page: Handler = async (req) => {
     const url = new URL(req.url);
     const found = findPage(url.pathname);
@@ -35,12 +43,13 @@ const page: Handler = async (req) => {
         found.path === "/compare"
             ? { ...found, body: () => compareBody(url.search) }
             : found;
-    if (wantsMarkdown(req)) return markdownResponse(pageMarkdown(selected));
+    if (wantsMarkdown(req)) return twinResponse(selected);
     const html =
         found.kind === "spa"
             ? await renderSpaPage(
                   selected,
                   found.path === "/compare" ? compareVisual(url.search) : undefined,
+                  url.search,
               )
             : renderStaticPage(found);
     return htmlResponse(measurementHtml(html, found.path));
@@ -50,12 +59,10 @@ const twin: Handler = (req) => {
     const url = new URL(req.url);
     const found = findPageForMarkdown(url.pathname);
     return found
-        ? markdownResponse(
-              pageMarkdown(
-                  found.path === "/compare"
-                      ? { ...found, body: () => compareBody(url.search) }
-                      : found,
-              ),
+        ? twinResponse(
+              found.path === "/compare"
+                  ? { ...found, body: () => compareBody(url.search) }
+                  : found,
           )
         : null;
 };
@@ -92,6 +99,8 @@ const PAGE_PATHS = [
     "/guides/:slug",
     "/comparisons/:slug",
     "/tools/:slug",
+    "/lab/supply-chain",
+    "/humanoids",
 ];
 
 // Standalone agent documents open with their H1 (no frontmatter). /agents.md
@@ -121,4 +130,5 @@ export const routes: Route[] = [
     { method: "GET", path: "/guides/:file", handler: twin },
     { method: "GET", path: "/comparisons/:file", handler: twin },
     { method: "GET", path: "/tools/:file", handler: twin },
+    { method: "GET", path: "/lab/:file", handler: twin },
 ];

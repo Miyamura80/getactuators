@@ -13,6 +13,7 @@ import {
 import { contributorPeople, contributorsBody, personNode } from "./contributors";
 import { EDITORIAL_PAGES } from "./editorial";
 import { HUMANOID_GUIDE } from "./humanoid-guide";
+import { HUMANOIDS_PAGE } from "./humanoids";
 import { investorsBody } from "./investors";
 import * as ld from "./jsonld";
 import { PATHS } from "./links";
@@ -29,6 +30,7 @@ import {
 } from "./pages-md";
 import { actuatorSeoTitle } from "./seo-titles";
 import { startupsBody } from "./startups";
+import { HIDDEN_PAGES } from "./supply-chain/pages";
 import { TOOL_PAGES } from "./tools";
 import { aboutBody, contactBody, privacyBody } from "./trust";
 
@@ -148,6 +150,7 @@ const STATIC_PAGES: Page[] = [
         ),
         image: PATHS.ogInvestors,
     },
+    HUMANOIDS_PAGE,
     sub(
         PATHS.agentsPage,
         "spa",
@@ -200,7 +203,7 @@ const STATIC_PAGES: Page[] = [
 
 const ALIASES: Record<string, string> = { "/robot": "/robots", "/index.html": "/" };
 
-const byPath = new Map(STATIC_PAGES.map((p) => [p.path, p]));
+const byPath = new Map([...STATIC_PAGES, ...HIDDEN_PAGES].map((p) => [p.path, p]));
 
 function actuatorPage(id: string): Page | null {
     const a = getActuator(id);

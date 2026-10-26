@@ -5,6 +5,8 @@ import { useEffect, useRef } from "react";
 import { ACTUATORS } from "../lib/data";
 import { num, price } from "../lib/format";
 import { Link } from "../lib/router";
+import { CompanyLogo } from "../components/CompanyLogo";
+import { CountryFlag } from "../components/CountryFlag";
 
 interface Props {
     id: string;
@@ -91,8 +93,10 @@ export function ExplodedView({ id, menuOpen = false }: Props) {
             <div className="xp-scroll" ref={scrollRef}>
                 <div className="xp-stage" ref={stageRef}>
                     <div className="xp-heading">
-                        <p className="xp-eyebrow">
-                            {actuator.country_flag} {actuator.brand}
+                        <p className="xp-eyebrow with-logo">
+                            <CompanyLogo name={actuator.brand} size={20} />
+                            <CountryFlag country={actuator.country} />
+                            {actuator.brand}
                         </p>
                         <h1>{actuator.name}</h1>
                         <p className="xp-evidence">{evidenceFor(actuator).label}</p>

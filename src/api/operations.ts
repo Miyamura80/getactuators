@@ -11,6 +11,12 @@ import {
     listUseCasesHandler,
 } from "./handlers";
 import type { ApiHandler } from "./http";
+import {
+    HumanoidDetailSchema,
+    HumanoidListSchema,
+    getHumanoidById,
+    listHumanoids,
+} from "./humanoids";
 import { ActuatorListParams, CompareQueryParams, RobotListParams } from "./params";
 import {
     ActuatorDetailSchema,
@@ -22,6 +28,16 @@ import {
     RobotDetailSchema,
     RobotListSchema,
 } from "./schemas";
+import {
+    CompanyDetailSchema,
+    CompanyListParams,
+    CompanyListSchema,
+    SiteListParams,
+    SiteListSchema,
+    getCompanyHandler,
+    listCompaniesHandler,
+    listSitesHandler,
+} from "./supply-chain";
 
 // The API surface as data. Routes, the /api index, the OpenAPI document and the
 // developer docs are all generated from this list, so they cannot disagree.
@@ -166,5 +182,73 @@ export const OPERATIONS: Operation[] = [
         errors: [],
         example: "/api/v1/use-cases",
         handler: listUseCasesHandler,
+    },
+    {
+        operationId: "list_companies",
+        method: "GET",
+        path: "/api/v1/companies",
+        summary: "List supply-chain companies",
+        description:
+            "Companies along the actuator supply chain (rare earths, magnets and motors, gears and bearings, robot and actuator makers). Filter by country, stage or segment. Every number carries sources, as-of date and confidence. Cursor-paginated.",
+        query: CompanyListParams,
+        response: CompanyListSchema,
+        errors: [400],
+        example: "/api/v1/companies?country=JP&stage=gearing",
+        handler: listCompaniesHandler,
+    },
+    {
+        operationId: "get_company",
+        method: "GET",
+        path: "/api/v1/companies/:id",
+        summary: "Get one supply-chain company",
+        description:
+            "One company with its sites, the companies it supplies and the companies that supply it, each with citations.",
+        pathParam: { name: "id", description: "Company id (slug).", example: "jl-mag" },
+        response: CompanyDetailSchema,
+        errors: [404],
+        example: "/api/v1/companies/jl-mag",
+        handler: getCompanyHandler,
+    },
+    {
+        operationId: "list_sites",
+        method: "GET",
+        path: "/api/v1/sites",
+        summary: "List supply-chain sites",
+        description:
+            "Headquarters, plants, mines and refineries with coordinates and their precision. Filter by country, stage, company or kind. Cursor-paginated.",
+        query: SiteListParams,
+        response: SiteListSchema,
+        errors: [400],
+        example: "/api/v1/sites?company=jl-mag",
+        handler: listSitesHandler,
+    },
+    {
+        operationId: "list_humanoids",
+        method: "GET",
+        path: "/api/v1/humanoids",
+        summary: "List humanoids with actuator totals",
+        description:
+            "Every humanoid on /humanoids with its actuator count by type (QDD, planetary, harmonic, cycloidal, roller screw, ball screw, hydraulic, tendon, undisclosed) and estimated NdFeB magnet and rare-earth (Nd, Pr, Dy, Tb) mass, each with a range and confidence.",
+        response: HumanoidListSchema,
+        errors: [],
+        example: "/api/v1/humanoids",
+        handler: listHumanoids,
+    },
+    {
+        operationId: "get_humanoid",
+        method: "GET",
+        path: "/api/v1/humanoids/:id",
+        summary: "Get one humanoid joint by joint",
+        description:
+            "One humanoid mapped onto the canonical joint set: per joint the actuator type and whether it is reported or estimated (with what it was inferred from), motor, reducer, peak torque or force, gear ratio and motor-side torque, estimated magnet mass and sources.",
+        pathParam: {
+            name: "id",
+            description: "Humanoid id (slug).",
+            example: "unitree-g1",
+        },
+        response: HumanoidDetailSchema,
+        errors: [404],
+        example: "/api/v1/humanoids/unitree-g1",
+        handler: getHumanoidById,
     },
 ];
