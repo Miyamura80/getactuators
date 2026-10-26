@@ -94,15 +94,19 @@ function Card({ robot, joint, onJoint }: { robot: Humanoid; joint: CanonicalJoin
                     {robot.brand} · <Flag code={robot.country} />
                 </span>
             </figcaption>
-            <Silhouette robot={robot} selected={joint} onSelect={onJoint} highlight={slice?.joints ?? null} />
-            <Totals totals={totals} dof={robot.dof} />
-            <ReeByActuator robot={robot} />
-            <BomDonut
-                key={robot.id}
-                robot={robot}
-                highlight={slice?.key ?? null}
-                onHighlight={(key, joints) => setSlice(key && joints ? { key, joints } : null)}
-            />
+            <div className="hm-card-body">
+                <Silhouette robot={robot} selected={joint} onSelect={onJoint} highlight={slice?.joints ?? null} />
+                <Totals totals={totals} dof={robot.dof} />
+            </div>
+            <div className="hm-card-charts">
+                <ReeByActuator robot={robot} />
+                <BomDonut
+                    key={robot.id}
+                    robot={robot}
+                    highlight={slice?.key ?? null}
+                    onHighlight={(key, joints) => setSlice(key && joints ? { key, joints } : null)}
+                />
+            </div>
         </figure>
     );
 }
