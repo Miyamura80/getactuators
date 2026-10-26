@@ -86,13 +86,6 @@
 .pc-name { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.01em; color: var(--text); }
 .pc-core .pc-name { font-size: 26px; }
 .pc-role { margin: -4px 0 0; font-size: 13px; color: var(--muted); }
-.pc-what { margin: 4px 0 0; font-size: 14px; line-height: 1.5; color: var(--muted); }
-.pc-stats {
-    margin: 0;
-    font: 500 12px/1.4 var(--mono);
-    font-variant-numeric: tabular-nums;
-    color: var(--cyan);
-}
 .pc-links { display: flex; gap: 4px; margin-top: 4px; margin-left: -8px; }
 .pc-links a {
     display: grid;
@@ -104,40 +97,6 @@
 }
 .pc-links a:hover { color: var(--cyan); text-decoration: none; }
 .pc-links a:focus-visible { outline: 1px solid var(--cyan); outline-offset: 0; }
-
-/* Affiliation: a mask-drawn mark plus the name, or a mono wordmark. */
-.org-logo {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    max-width: 100%;
-    color: var(--muted);
-    font-size: 13px;
-    transition: color 0.15s;
-}
-.org-mark {
-    flex: none;
-    width: 18px;
-    height: 18px;
-    background: currentColor;
-    mask: no-repeat center / contain;
-    -webkit-mask: no-repeat center / contain;
-}
-.org-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.org-wordmark {
-    padding: 3px 6px;
-    border: 1px solid var(--line-strong);
-    font: 600 10px/1.2 var(--mono);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-.pc:hover .org-logo,
-.pc:focus-within .org-logo { color: var(--text); }
-.pc:hover .org-wordmark,
-.pc:focus-within .org-wordmark { border-color: var(--muted); }
 
 /* /contributors footer row: the one CTA, then provenance in small print. */
 .ctb-foot {

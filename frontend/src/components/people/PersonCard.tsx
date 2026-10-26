@@ -1,11 +1,4 @@
-import {
-    contributionStats,
-    initials,
-    orgOf,
-    type LinkKind,
-    type Person,
-} from "../../../../src/people";
-import { OrgLogo } from "./OrgLogo";
+import { initials, type LinkKind, type Person } from "../../../../src/people";
 
 const LINK_LABEL: Record<LinkKind, string> = {
     github: "GitHub",
@@ -53,7 +46,7 @@ export function Headshot({ person }: { person: Person }) {
     );
 }
 
-// One person: headshot, name, affiliation, one line on what they did, links.
+// One person: headshot, name and links.
 // `core` draws the larger card; `showRole` adds the role under the name.
 export function PersonCard({
     person,
@@ -64,16 +57,12 @@ export function PersonCard({
     core?: boolean;
     showRole?: boolean;
 }) {
-    const stats = contributionStats(person);
     return (
         <article className={`pc${core ? " pc-core" : ""}`} aria-label={person.name}>
             <Headshot person={person} />
             <div className="pc-body">
                 <h3 className="pc-name">{person.name}</h3>
                 {showRole && <p className="pc-role">{person.role}</p>}
-                <OrgLogo org={orgOf(person)} />
-                {person.contribution && <p className="pc-what">{person.contribution}</p>}
-                {stats && <p className="pc-stats">{stats}</p>}
                 {person.links.length > 0 && (
                     <div className="pc-links">
                         {person.links.map((l) => (

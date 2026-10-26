@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { PublicHeader } from "../components/PublicHeader";
 import { PublicFooter } from "../components/PublicFooter";
 import { PeopleGrid } from "../components/people/PeopleGrid";
-import { CONTRIBUTIONS_AS_OF, CONTRIBUTORS_PATH, peopleIn } from "../../../src/people";
+import { CONTRIBUTORS_PATH, peopleIn } from "../../../src/people";
 import "./tools.css";
 
 const TITLE = "Contributors";
@@ -34,7 +34,7 @@ export function Contributors({ menuOpen = false }: { menuOpen?: boolean }) {
                         Contribute on GitHub
                     </a>
                     <p>
-                        Commits from git history, as of {CONTRIBUTIONS_AS_OF}. Listed and want a change?{" "}
+                        Listed and want a change?{" "}
                         <a href="/contact">Contact</a>
                     </p>
                 </div>

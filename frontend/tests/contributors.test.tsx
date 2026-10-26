@@ -4,8 +4,7 @@ import { act, cleanup, render } from "@testing-library/react";
 import { mountApp } from "../src/startup";
 import { Contributors } from "../src/pages/Contributors";
 import { PersonCard } from "../src/components/people/PersonCard";
-import { OrgLogo } from "../src/components/people/OrgLogo";
-import { ORGS, PEOPLE, peopleIn } from "../../src/people";
+import { PEOPLE, peopleIn } from "../../src/people";
 import { FOOTER_GROUPS } from "../../src/public-navigation";
 
 afterEach(cleanup);
@@ -59,21 +58,10 @@ test("a person without a headshot gets a monogram, never a borrowed photo", () =
     }
 });
 
-test("org logos: a mask silhouette, the shared CompanyLogo for a registry brand, else a wordmark", () => {
-    for (const org of ORGS) {
-        const view = render(<OrgLogo org={org} />);
-        if (org.logo) {
-            const mark = view.container.querySelector<HTMLElement>(".org-mark");
-            expect(mark?.getAttribute("aria-label")).toBe(`${org.name} logo`);
-            expect(mark?.getAttribute("style")).toContain(org.logo.path);
-        } else if (org.brandId) {
-            expect(view.container.querySelector(".company-logo")).not.toBeNull();
-            expect(view.container.querySelector(".org-name")?.textContent).toBe(org.name);
-        } else {
-            expect(view.container.querySelector(".org-wordmark")?.textContent).toBe(org.name);
-        }
-        cleanup();
-    }
+test("cards show only face, name and links: no affiliation or commit counts", () => {
+    const view = render(<Contributors />);
+    expect(view.container.querySelector(".org-logo, .org-wordmark, .pc-stats, .pc-what")).toBeNull();
+    expect(view.container.textContent).not.toContain("commit");
 });
 
 test("profile links are labelled icon links that open safely", () => {
