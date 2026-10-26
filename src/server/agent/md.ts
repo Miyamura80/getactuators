@@ -82,6 +82,11 @@ export function num(value: number | null | undefined, unit = "", digits = 1): st
     return unit ? `${rounded} ${unit}` : rounded;
 }
 
+// "26 DOF", or a note when the maker has not published a joint count.
+export function dofText(value: number | null): string {
+    return value === null ? "DOF not published" : `${value} DOF`;
+}
+
 export function usd(value: number | null | undefined): string {
     if (value === null || value === undefined) return "quote only";
     return `$${value.toLocaleString("en-US")}`;

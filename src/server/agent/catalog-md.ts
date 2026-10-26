@@ -120,7 +120,7 @@ export function actuatorBody(a: Actuator): string {
     if (sizing) sections.splice(3, 0, sizing);
     if (robots.length > 0) {
         sections.push(
-            `## Robots that use it\n\n${bullets(robots.map((r) => `${mdText(r.name)} by ${mdText(r.brand)}: ${mdText(r.summary)}`))}`,
+            `## Robots that use it\n\n${bullets(robots.map((r) => `${mdLink(r.name, absoluteUrl(`/robots#${encodeURIComponent(r.id)}`))} by ${mdText(r.brand)}: ${mdText(r.summary)}`))}`,
         );
     }
     if (a.notes && !productSummary(a.id))
@@ -177,18 +177,58 @@ export function actuatorTable(list: readonly Actuator[]): string {
     );
 }
 
+const AVAILABILITY: Record<NonNullable<Robot["availability"]>, string> = {
+    shipping: "shipping",
+    preorder: "pre-order",
+    quote_only: "quote only",
+    discontinued: "discontinued",
+};
+
+function runtimeFact(r: Robot): string | null {
+    if (r.power === "mains") return "Runtime: mains-powered";
+    if (r.power !== "battery") return null;
+    const value = r.runtime_h == null ? "not published" : `${r.runtime_h} h`;
+    return `Runtime: ${value}${r.runtime_note ? ` (${mdText(r.runtime_note)})` : ""}`;
+}
+
+function opennessFact(r: Robot): string | null {
+    const o = r.openness;
+    if (!o) return null;
+    const parts = [
+        o.cad && "CAD",
+        o.urdf && "URDF",
+        o.sdk && "SDK source",
+        o.bom && "BOM",
+    ].filter(Boolean);
+    return `Published: ${parts.length ? parts.join(", ") : "none"}`;
+}
+
+// Power, buying and openness facts, for robots that have been researched.
+function researchFacts(r: Robot): string[] {
+    const sourcing = r.actuator_sourcing
+        ? `Actuators: ${r.actuator_sourcing === "in_house" ? "designed in-house" : "bought off the shelf"}`
+        : null;
+    const availability = r.availability
+        ? `Availability: ${AVAILABILITY[r.availability]}${r.lead_time ? ` (${mdText(r.lead_time)})` : ""}`
+        : null;
+    return [runtimeFact(r), sourcing, opennessFact(r), availability].filter(
+        (x): x is string => x != null,
+    );
+}
+
 export function robotSection(r: Robot, level = 2): string {
     const h = "#".repeat(level);
     const facts = [
         `Brand: ${mdText(r.brand)}${r.country ? ` (${mdText(r.country)})` : ""}`,
         ...(r.kind === "humanoid" ? ["Type: Humanoid"] : []),
-        `Degrees of freedom: ${r.dof}`,
-        `Payload: ${num(r.payload_kg, "kg")}`,
+        `Degrees of freedom: ${num(r.dof)}`,
+        `Payload: ${num(r.payload_kg, "kg")}${r.payload_basis === "whole_body" ? " (whole body)" : ""}`,
         r.kind === "humanoid"
             ? `Height: ${num(r.height_m, "m", 2)}`
             : `Reach: ${num(r.reach_mm, "mm", 0)}`,
         `Weight: ${num(r.weight_kg, "kg", 2)}`,
         `Price: ${usd(r.price_usd)}${r.price_max_usd ? ` to ${usd(r.price_max_usd)}` : ""}`,
+        ...researchFacts(r),
     ];
     const joints = resolveJoints(r).map((j) => [
         mdText(j.role),

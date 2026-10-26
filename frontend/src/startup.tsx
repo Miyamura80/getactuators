@@ -19,6 +19,10 @@ import { Startups } from "./pages/Startups";
 import { STARTUPS_PATH } from "../../src/startups";
 import { Investors } from "./pages/Investors";
 import { INVESTORS_PATH } from "../../src/investors";
+import { SupplyChainLab } from "./pages/supply-chain/SupplyChainLab";
+import { LAB_PATH } from "../../src/supply-chain/lab-fixtures";
+import { Humanoids } from "./pages/humanoids/Humanoids";
+import { HUMANOIDS_PATH } from "../../src/humanoids";
 
 function Page({ menuOpen }: { menuOpen: boolean }) {
     const path = usePath();
@@ -32,6 +36,8 @@ function Page({ menuOpen }: { menuOpen: boolean }) {
     if (path === STARTUPS_PATH) return <Startups menuOpen={menuOpen} />;
     if (path === INVESTORS_PATH) return <Investors menuOpen={menuOpen} />;
     if (path === MOTOR_TORQUE_PATH) return <MotorTorqueCalculator menuOpen={menuOpen} />;
+    if (path === LAB_PATH) return <SupplyChainLab menuOpen={menuOpen} />;
+    if (path === HUMANOIDS_PATH) return <Humanoids menuOpen={menuOpen} />;
     if (path.startsWith("/actuators/")) {
         const raw = path.slice("/actuators/".length);
         let id = raw;

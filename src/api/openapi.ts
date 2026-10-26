@@ -124,7 +124,8 @@ function operationObject(op: Operation, tag: string): Json {
 }
 
 function tagFor(path: string): string {
-    if (path.includes("/robots")) return "robots";
+    if (path.includes("/robots") || path.includes("/humanoids")) return "robots";
+    if (path.includes("/companies") || path.includes("/sites")) return "supply-chain";
     if (path.includes("/actuators")) return "actuators";
     if (path.startsWith("/api/v1/")) return "taxonomy";
     return "meta";
@@ -212,6 +213,11 @@ export function buildOpenApi(operations: readonly Operation[]): Json {
                 description: "Categories, brands and use cases for filters.",
             },
             { name: "meta", description: "Discovery: index and this document." },
+            {
+                name: "supply-chain",
+                description:
+                    "Companies and sites along the actuator supply chain, with citations.",
+            },
         ],
         externalDocs: { description: "Developer guide", url: absoluteUrl("/docs/api") },
         paths,

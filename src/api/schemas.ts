@@ -122,7 +122,12 @@ const robotFields = {
     kind: z.enum(["robot_arm", "humanoid"]).describe("Robot type."),
     country: str("Manufacturer country."),
     country_flag: str("Flag emoji."),
-    dof: z.number().describe("Degrees of freedom."),
+    dof: z
+        .number()
+        .nullable()
+        .describe(
+            "Degrees of freedom; null when the maker has not published a joint count.",
+        ),
     payload_kg: num("Payload in kg."),
     reach_mm: num("Reach in mm."),
     height_m: num("Standing height in m (humanoids)."),

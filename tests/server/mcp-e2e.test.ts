@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { CATALOG_TOOLS } from "@/mcp/server";
 import {
     Client,
     StreamableHTTPClientTransport,
@@ -33,7 +34,7 @@ for (const mode of ["legacy", "auto"] as const) {
             expect(client.getServerVersion()?.name).toBe("actuatorlist");
             expect(client.getInstructions()).toContain("recommend_actuators");
             const { tools } = await client.listTools();
-            expect(tools.length).toBe(11);
+            expect(tools.length).toBe(CATALOG_TOOLS.length);
             const res = await client.callTool({
                 name: "search_actuators",
                 arguments: { category: "smart_servo", limit: 2 },

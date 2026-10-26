@@ -60,7 +60,7 @@
         "asimov-ec-a6416": {
             "id": "asimov-ec-a6416",
             "name": "EC-A6416-P2-25",
-            "brand": "Asimov BOM",
+            "brand": "ENCOS",
             "rated_torque_nm": 40,
             "peak_torque_nm": 120,
             "rated_speed_rpm": null,
@@ -73,7 +73,7 @@
         "asimov-ec-a5013": {
             "id": "asimov-ec-a5013",
             "name": "EC-A5013-H17-100",
-            "brand": "Asimov BOM",
+            "brand": "ENCOS",
             "rated_torque_nm": 30,
             "peak_torque_nm": 90,
             "rated_speed_rpm": null,
@@ -86,7 +86,7 @@
         "asimov-ec-a3814": {
             "id": "asimov-ec-a3814",
             "name": "EC-A3814-H14-107",
-            "brand": "Asimov BOM",
+            "brand": "ENCOS",
             "rated_torque_nm": 20,
             "peak_torque_nm": 60,
             "rated_speed_rpm": null,
@@ -99,7 +99,7 @@
         "asimov-ec-a4315": {
             "id": "asimov-ec-a4315",
             "name": "EC-A4315-P2-36",
-            "brand": "Asimov BOM",
+            "brand": "ENCOS",
             "rated_torque_nm": 25,
             "peak_torque_nm": 75,
             "rated_speed_rpm": null,
@@ -112,7 +112,7 @@
         "asimov-ec-a4310": {
             "id": "asimov-ec-a4310",
             "name": "EC-A4310-P2-36",
-            "brand": "Asimov BOM",
+            "brand": "ENCOS",
             "rated_torque_nm": 12,
             "peak_torque_nm": 36,
             "rated_speed_rpm": null,
@@ -159,7 +159,7 @@
             "weight_g": 18,
             "torque_density_nm_per_kg": 28.9,
             "product_url": "https://emanual.robotis.com/docs/en/dxl/x/xl330-m288/",
-            "actuator_id": null
+            "actuator_id": "dynamixel-xl330-m288-t"
         },
         "dynamixel-xl330-m077": {
             "id": "dynamixel-xl330-m077",
@@ -420,6 +420,123 @@
             "torque_density_nm_per_kg": null,
             "product_url": null,
             "actuator_id": null
+        },
+        "unitree-r1-60nm": {
+            "id": "unitree-r1-60nm",
+            "name": "R1 60 N·m joint",
+            "brand": "Unitree",
+            "rated_torque_nm": null,
+            "peak_torque_nm": 60,
+            "rated_speed_rpm": null,
+            "gear_ratio": null,
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": "https://www.unitree.com/R1",
+            "actuator_id": null
+        },
+        "unitree-r1-ankle": {
+            "id": "unitree-r1-ankle",
+            "name": "R1 ankle joint",
+            "brand": "Unitree",
+            "rated_torque_nm": null,
+            "peak_torque_nm": 50,
+            "rated_speed_rpm": null,
+            "gear_ratio": null,
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": "https://www.unitree.com/R1",
+            "actuator_id": null
+        },
+        "unitree-r1-33nm": {
+            "id": "unitree-r1-33nm",
+            "name": "R1 33 N·m joint",
+            "brand": "Unitree",
+            "rated_torque_nm": null,
+            "peak_torque_nm": 33,
+            "rated_speed_rpm": null,
+            "gear_ratio": null,
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": "https://www.unitree.com/R1",
+            "actuator_id": null
+        },
+        "unitree-r1-head-yaw": {
+            "id": "unitree-r1-head-yaw",
+            "name": "R1 head yaw servo",
+            "brand": "Unitree",
+            "rated_torque_nm": null,
+            "peak_torque_nm": 0.86,
+            "rated_speed_rpm": null,
+            "gear_ratio": null,
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": "https://www.unitree.com/R1",
+            "actuator_id": null
+        },
+        "fourier-gr3-leg": {
+            "id": "fourier-gr3-leg",
+            "name": "GR-3 leg actuator",
+            "brand": "Fourier",
+            "rated_torque_nm": null,
+            "peak_torque_nm": null,
+            "rated_speed_rpm": null,
+            "gear_ratio": null,
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": "https://www.fftai.com/grx/gr3",
+            "actuator_id": null
+        },
+        "fourier-gr3-upper": {
+            "id": "fourier-gr3-upper",
+            "name": "GR-3 upper-body actuator",
+            "brand": "Fourier",
+            "rated_torque_nm": null,
+            "peak_torque_nm": null,
+            "rated_speed_rpm": null,
+            "gear_ratio": null,
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": "https://www.fftai.com/grx/gr3",
+            "actuator_id": null
+        },
+        "fourier-gr3-hand": {
+            "id": "fourier-gr3-hand",
+            "name": "GR-3 hand joint",
+            "brand": "Fourier",
+            "rated_torque_nm": null,
+            "peak_torque_nm": null,
+            "rated_speed_rpm": null,
+            "gear_ratio": null,
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": "https://www.fftai.com/grx/gr3",
+            "actuator_id": null
+        },
+        "agilex-piper-joint": {
+            "id": "agilex-piper-joint",
+            "name": "PiPER joint module",
+            "brand": "AgileX Robotics",
+            "rated_torque_nm": null,
+            "peak_torque_nm": null,
+            "rated_speed_rpm": null,
+            "gear_ratio": null,
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": "https://global.agilex.ai/products/piper",
+            "actuator_id": null
+        },
+        "feetech-sts3215-c001": {
+            "id": "feetech-sts3215-c001",
+            "name": "STS3215 C001 (7.4V, 1:345)",
+            "brand": "Feetech",
+            "rated_torque_nm": 0.49,
+            "peak_torque_nm": 1.91,
+            "rated_speed_rpm": null,
+            "gear_ratio": "1:345",
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": "https://www.seeedstudio.com/STS3215-19kg-cm-7-4V-Serial-Servo-p-6338.html",
+            "actuator_id": null
         }
     },
     "robots": [
@@ -440,6 +557,13 @@
             "price_max_usd": 20000,
             "product_url": "https://menlo.ai/asimov-1",
             "image_url": "/robot-images/menlo-asimov-1.webp",
+            "power": "battery",
+            "runtime_h": null,
+            "runtime_note": "Hot-swap 13S4P Li-ion pack",
+            "openness": { "cad": true, "urdf": true, "sdk": true, "bom": true },
+            "actuator_sourcing": "off_the_shelf",
+            "availability": "preorder",
+            "lead_time": "Batch 4 forming, $499 deposit",
             "summary": "Open-source 1.2 m, 35 kg biped humanoid for whole-body control and locomotion research, sold as a DIY kit with full BOM, CAD and a MuJoCo sim on GitHub. Rated for 5 kg per arm.",
             "joints": [
                 { "role": "Hip pitch + waist yaw", "motor": "asimov-ec-a6416", "count": 3 },
@@ -451,7 +575,9 @@
             "sources": [
                 "https://menlo.ai/asimov-1",
                 "https://docs.menlo.ai/asimov/1/overview/system-tour/mechanical",
-                "https://github.com/menloresearch/asimov-1"
+                "https://github.com/menloresearch/asimov-1",
+                "https://menlo.ai/order",
+                "https://docs.menlo.ai/asimov/1/build/assembly-preparations"
             ]
         },
         {
@@ -470,6 +596,13 @@
             "price_max_usd": 21500,
             "product_url": "https://www.unitree.com/g1/",
             "image_url": "/robot-images/unitree-g1.webp",
+            "power": "battery",
+            "runtime_h": 2,
+            "runtime_note": null,
+            "openness": { "cad": true, "urdf": true, "sdk": true, "bom": false },
+            "actuator_sourcing": "in_house",
+            "availability": "shipping",
+            "lead_time": null,
             "summary": "Compact 1.32 m, 35 kg humanoid with 23 joints (23 to 43 on the EDU version) driven by low-inertia internal-rotor PMSM joint motors. Unitree's spec sheet quotes a 90 N·m knee peak; its published URDF sets the knee and hip-roll limit at 139 N·m, which the joint map uses. About 2 hours of battery life.",
             "joints": [
                 { "role": "Hip pitch + hip yaw + waist yaw", "motor": "unitree-n7520-14p3", "count": 5 },
@@ -482,7 +615,8 @@
                 "https://shop.unitree.com/products/unitree-g1",
                 "https://github.com/unitreerobotics/unitree_ros/blob/master/robots/g1_description/g1_23dof_rev_1_0.urdf",
                 "https://github.com/unitreerobotics/unitree_rl_lab/blob/main/source/unitree_rl_lab/unitree_rl_lab/assets/robots/unitree.py",
-                "https://github.com/unitreerobotics/unitree_rl_lab/blob/main/source/unitree_rl_lab/unitree_rl_lab/assets/robots/unitree_actuators.py"
+                "https://github.com/unitreerobotics/unitree_rl_lab/blob/main/source/unitree_rl_lab/unitree_rl_lab/assets/robots/unitree_actuators.py",
+                "https://support.unitree.com/home/en/G1_developer/get_sdk"
             ]
         },
         {
@@ -501,6 +635,13 @@
             "price_max_usd": null,
             "product_url": "https://www.unitree.com/H2/",
             "image_url": "/robot-images/unitree-h2.webp",
+            "power": "battery",
+            "runtime_h": 3,
+            "runtime_note": null,
+            "openness": { "cad": false, "urdf": true, "sdk": true, "bom": false },
+            "actuator_sourcing": "in_house",
+            "availability": "preorder",
+            "lead_time": "Retailers quote phased 2026 deliveries",
             "summary": "Full-size 1.82 m, 70 kg humanoid with 31 DOF, up to 360 N·m at the leg joints and a bionic head. Arms carry about 7 kg rated, 15 kg peak.",
             "joints": [
                 { "role": "Legs", "motor": "unitree-h2-leg", "count": 12 },
@@ -508,7 +649,9 @@
             ],
             "sources": [
                 "https://www.unitree.com/H2/",
-                "https://shop.unitree.com/products/unitree-h2"
+                "https://shop.unitree.com/products/unitree-h2",
+                "https://github.com/unitreerobotics/unitree_ros",
+                "https://www.robotshop.com/products/unitree-h2-humanoid-robot"
             ]
         },
         {
@@ -523,17 +666,26 @@
             "country_flag": "🇺🇸",
             "dof": 75,
             "payload_kg": 25,
+            "payload_basis": "whole_body",
             "reach_mm": null,
             "height_m": 1.68,
             "weight_kg": 30,
             "price_usd": 20000,
             "price_max_usd": null,
             "product_url": "https://www.1x.tech/neo",
+            "power": "battery",
+            "runtime_h": 4,
+            "runtime_note": null,
+            "openness": { "cad": false, "urdf": false, "sdk": false, "bom": false },
+            "actuator_sourcing": "in_house",
+            "availability": "preorder",
+            "lead_time": "$200 deposit, US deliveries 2026",
             "summary": "Home humanoid with tendon-driven actuation, a soft lattice-polymer body and 22-DOF hands. Weighs 30 kg and carries 25 kg.",
             "joints": [],
             "sources": [
                 "https://www.1x.tech/neo",
-                "https://github.com/kingjulio8238/humanoid-atlas"
+                "https://github.com/kingjulio8238/humanoid-atlas",
+                "https://www.1x.tech/order"
             ]
         },
         {
@@ -548,10 +700,17 @@
             "reach_mm": null,
             "height_m": 1.18,
             "weight_kg": 30,
-            "price_usd": null,
-            "price_max_usd": null,
+            "price_usd": 29800,
+            "price_max_usd": 49000,
             "product_url": "https://www.booster.tech/booster-t1/",
             "image_url": "/robot-images/booster-t1.webp",
+            "power": "battery",
+            "runtime_h": 2,
+            "runtime_note": "About 2 h walking, 4 h standing; retailer figure",
+            "openness": { "cad": false, "urdf": true, "sdk": false, "bom": false },
+            "actuator_sourcing": null,
+            "availability": "discontinued",
+            "lead_time": "Replaced by the T2",
             "summary": "Developer humanoid, 1.18 m and about 30 kg, with 23 DOF (31 with grippers, 41 with dexterous hands) and up to 130 N·m peak joint torque. Won RoboCup 2025 AdultSize. Joint-map torques are the effort limits in Booster's published URDF, which does not name the motor models.",
             "joints": [
                 { "role": "Head (yaw, pitch)", "motor": "booster-t1-head", "count": 2 },
@@ -565,7 +724,11 @@
             "sources": [
                 "https://www.booster.tech/booster-t1/",
                 "https://github.com/BoosterRobotics/booster_assets/blob/main/robots/T1/T1_23dof.urdf",
-                "https://github.com/BoosterRobotics/booster_assets/blob/main/robots/T1/T1_23dof.xml"
+                "https://github.com/BoosterRobotics/booster_assets/blob/main/robots/T1/T1_23dof.xml",
+                "https://github.com/BoosterRobotics/booster_gym",
+                "https://www.robotshop.com/products/booster-t1-humanoid-robot-standard",
+                "https://www.generationrobots.com/en/404278-booster-t1-humanoid-robot.html",
+                "https://www.robotsinternational.com/Booster-T1-Basic-Humanoid-Robot.htm"
             ]
         },
         {
@@ -580,10 +743,17 @@
             "reach_mm": null,
             "height_m": 0.95,
             "weight_kg": 19.5,
-            "price_usd": null,
+            "price_usd": 4999,
             "price_max_usd": null,
             "product_url": "https://www.booster.tech/booster-k1/",
             "image_url": "/robot-images/booster-k1.webp",
+            "power": "battery",
+            "runtime_h": 1.17,
+            "runtime_note": "1 h 10 min on Edu and Pro; 20 min on the Geek edition",
+            "openness": { "cad": false, "urdf": true, "sdk": true, "bom": false },
+            "actuator_sourcing": "in_house",
+            "availability": "shipping",
+            "lead_time": "Through distributors; direct by inquiry",
             "summary": "Entry-level 95 cm, 19.5 kg humanoid with 22 DOF, sold in Geek, Education and Professional editions. Won RoboCup 2025 KidSize. Booster's product page quotes up to 60 N·m peak joint torque, but its published URDF sets higher effort limits (knee 112 N·m, hip pitch 68 N·m); the joint map uses the URDF limits, which do not name the motor models.",
             "joints": [
                 { "role": "Head (yaw, pitch)", "motor": "booster-k1-head", "count": 2 },
@@ -596,7 +766,10 @@
             "sources": [
                 "https://www.booster.tech/booster-k1/",
                 "https://github.com/BoosterRobotics/booster_assets/blob/main/robots/K1/K1_22dof.urdf",
-                "https://github.com/BoosterRobotics/booster_assets/blob/main/robots/K1/K1_22dof.xml"
+                "https://github.com/BoosterRobotics/booster_assets/blob/main/robots/K1/K1_22dof.xml",
+                "https://github.com/BoosterRobotics/booster_assets",
+                "https://github.com/BoosterRobotics/booster_robotics_sdk",
+                "https://www.humanoidsdaily.com/news/booster-robotics-launches-k1-robocup-champion-platform"
             ]
         },
         {
@@ -617,6 +790,13 @@
             "price_usd": 70000,
             "price_max_usd": null,
             "product_url": "https://pollen-robotics.com/reachy-2/",
+            "power": "battery",
+            "runtime_h": 8,
+            "runtime_note": null,
+            "openness": { "cad": false, "urdf": true, "sdk": true, "bom": false },
+            "actuator_sourcing": "in_house",
+            "availability": "quote_only",
+            "lead_time": null,
             "summary": "Open-source bimanual humanoid on an omnidirectional base, height adjustable from 1.36 to 1.66 m. Two 7-DOF arms carry about 3 kg each and a 3-DOF neck aims the head, all driven by Pollen's own Orbita parallel joints: 2-axis units at shoulder and elbow, 3-axis units at wrist and neck. Pollen publishes no list price; about $70k is the figure reported at launch.",
             "joints": [
                 { "role": "Shoulder + elbow (2 axes each)", "motor": "pollen-orbita-2d", "count": 4 },
@@ -626,7 +806,9 @@
                 "https://pollen-robotics.com/reachy-2/",
                 "https://docs.pollen-robotics.com/hardware-guide/specifications/general/",
                 "https://docs.pollen-robotics.com/hardware-guide/specifications/motors-actuators/",
-                "https://www.deeplearning.ai/the-batch/hugging-face-acquires-pollen-robotics-launches-reachy-2-robot-for-open-source-research"
+                "https://www.deeplearning.ai/the-batch/hugging-face-acquires-pollen-robotics-launches-reachy-2-robot-for-open-source-research",
+                "https://docs.pollen-robotics.com/hardware-guide/specifications/mobile-base/",
+                "https://github.com/pollen-robotics/reachy2-sdk"
             ]
         },
         {
@@ -647,6 +829,13 @@
             "price_usd": 399,
             "price_max_usd": 499,
             "product_url": "https://pollen-robotics.com/reachy-mini/",
+            "power": "battery",
+            "runtime_h": 4,
+            "runtime_note": "Wireless has a 12.8 Wh pack rated 2 to 4 h depending on use; Lite runs on USB power",
+            "openness": { "cad": false, "urdf": true, "sdk": true, "bom": false },
+            "actuator_sourcing": "off_the_shelf",
+            "availability": "shipping",
+            "lead_time": "Up to 90 days",
             "summary": "Open-source desktop companion robot from Pollen and Hugging Face, sold as a kit. A Stewart platform of six servos gives the head 6 DOF, with body rotation and two antennas on top. $399 Lite runs from a computer over USB; $499 Wireless adds a Raspberry Pi CM4 and battery.",
             "joints": [
                 { "role": "Head (Stewart platform, 6 DOF)", "motor": "dynamixel-xl330-m288", "count": 6 },
@@ -656,7 +845,10 @@
             "sources": [
                 "https://pollen-robotics.com/reachy-mini/",
                 "https://huggingface.co/blog/reachy-mini",
-                "https://wiki.seeedstudio.com/reachymini_platforms_reachy_mini_hardware/"
+                "https://wiki.seeedstudio.com/reachymini_platforms_reachy_mini_hardware/",
+                "https://github.com/pollen-robotics/reachy_mini",
+                "https://huggingface.co/docs/reachy_mini/troubleshooting",
+                "https://wiki.seeedstudio.com/reachymini_getting_started/"
             ]
         },
         {
@@ -675,6 +867,13 @@
             "price_usd": 6300,
             "price_max_usd": 12700,
             "product_url": "https://yor.manmaruai.co.jp/en",
+            "power": "battery",
+            "runtime_h": null,
+            "runtime_note": null,
+            "openness": { "cad": false, "urdf": true, "sdk": false, "bom": true },
+            "actuator_sourcing": "off_the_shelf",
+            "availability": "quote_only",
+            "lead_time": "Assembled by quote; DIY from the public BOM",
             "summary": "Semi-humanoid for Physical AI research: two Seeed reBot Arm B601-DM arms (6 axes + gripper each, 767 mm reach, 1.5 kg payload) on the open-source YOR four-module swerve base. About $6,300 in parts to build from the published BOM and URDF, or about $12,700 assembled and tested. Seeed's BOM lists the Damiao motor mix per arm but not which joint gets which.",
             "joints": [
                 { "role": "Arm joints, higher torque (3 per arm)", "motor": "dm-j4340p", "count": 6 },
@@ -686,6 +885,123 @@
                 "https://github.com/Seeed-Projects/reBot-DevArm/blob/main/hardware/reBot_B601_DM/readme.md",
                 "https://openelab.io/blogs/learn/seeed-rebot-b601-dm-damiao-motors",
                 "https://yourownrobot.ai/"
+            ]
+        },
+        {
+            "id": "unitree-r1",
+            "image_url": "/robot-images/unitree-r1.webp",
+            "name": "R1",
+            "brand": "Unitree Robotics",
+            "kind": "humanoid",
+            "country": "China",
+            "country_flag": "🇨🇳",
+            "dof": 26,
+            "payload_kg": 2,
+            "reach_mm": null,
+            "height_m": 1.23,
+            "weight_kg": 29,
+            "price_usd": 5900,
+            "price_max_usd": null,
+            "product_url": "https://www.unitree.com/R1",
+            "power": "battery",
+            "runtime_h": 1,
+            "runtime_note": "About 1 h per charge on all editions (R1 AIR, R1, R1 EDU); quick-release smart battery.",
+            "openness": { "cad": false, "urdf": true, "sdk": true, "bom": false },
+            "actuator_sourcing": "in_house",
+            "availability": "shipping",
+            "lead_time": null,
+            "summary": "Unitree R1 is a 1.23 m, roughly 29 kg entry-level humanoid sold from $4,900 (R1 AIR, 20 DOF) and $5,900 (R1, 26 DOF), with an R1 EDU edition of 26 to 40 DOF sold through sales. Joints use Unitree's own low-inertia internal-rotor PMSM actuators with crossed roller bearings and dual encoders. Unitree publishes R1 URDF models in unitree_ros and R1 examples in the open unitree_sdk2.",
+            "joints": [
+                { "role": "Hip pitch + roll + yaw", "motor": "unitree-r1-60nm", "count": 6 },
+                { "role": "Knee", "motor": "unitree-r1-60nm", "count": 2 },
+                { "role": "Ankle pitch + roll (linkage)", "motor": "unitree-r1-ankle", "count": 4 },
+                { "role": "Waist roll + yaw", "motor": "unitree-r1-60nm", "count": 2 },
+                { "role": "Shoulder pitch + roll", "motor": "unitree-r1-60nm", "count": 4 },
+                { "role": "Shoulder yaw + elbow + wrist roll", "motor": "unitree-r1-33nm", "count": 6 },
+                { "role": "Head pitch", "motor": "unitree-r1-33nm", "count": 1 },
+                { "role": "Head yaw", "motor": "unitree-r1-head-yaw", "count": 1 }
+            ],
+            "sources": [
+                "https://www.unitree.com/R1/",
+                "https://www.unitree.com/mobile/R1/",
+                "https://github.com/unitreerobotics/unitree_ros/tree/master/robots/r1_description",
+                "https://github.com/unitreerobotics/unitree_sdk2/tree/main/example/r1",
+                "https://toborlife.ai/r1-edu-pro-a/"
+            ]
+        },
+        {
+            "id": "fourier-gr-3",
+            "image_url": "/robot-images/fourier-gr-3.webp",
+            "name": "GR-3",
+            "brand": "Fourier",
+            "kind": "humanoid",
+            "country": "China",
+            "country_flag": "🇨🇳",
+            "dof": 55,
+            "payload_kg": 3,
+            "reach_mm": null,
+            "height_m": 1.65,
+            "weight_kg": 71,
+            "price_usd": null,
+            "price_max_usd": null,
+            "product_url": "https://www.fftai.com/grx/gr3",
+            "power": "battery",
+            "runtime_h": 3,
+            "runtime_note": "Hot-swappable packs (702 Wh + 234 Wh); 55 DOF counts the optional 12-DoF hands, 43 with the basic hands",
+            "openness": { "cad": false, "urdf": false, "sdk": false, "bom": false },
+            "actuator_sourcing": "in_house",
+            "availability": "quote_only",
+            "lead_time": null,
+            "summary": "Fourier GR-3 is a 165 cm, 71 kg care and companionship humanoid unveiled in August 2025, with a soft upholstered shell, 31 touch sensors, a four-microphone array and an LLM-driven interaction stack. It offers up to 55 DOF with optional 12-DoF dexterous hands, a 3 kg single-arm load, a 440 Nm maximum joint peak torque and about 3 hours of runtime. It is built on Fourier's own actuators and sold in GR-3, GR-3C and GR-3C Ultra configurations on quote.",
+            "joints": [
+                { "role": "Legs", "motor": "fourier-gr3-leg", "count": 12 },
+                { "role": "Waist", "motor": "fourier-gr3-upper", "count": 3 },
+                { "role": "Arms", "motor": "fourier-gr3-upper", "count": 14 },
+                { "role": "Neck", "motor": "fourier-gr3-upper", "count": 2 },
+                { "role": "Dexterous hands (optional)", "motor": "fourier-gr3-hand", "count": 24 }
+            ],
+            "sources": [
+                "https://www.prnewswire.com/news-releases/meet-gr-3-beyond-function-designed-to-care-fourier-to-unveil-its-first-care-centric-humanoid-302523202.html",
+                "https://www.robotlar.org/en/humanoid-robots/fourier-gr3",
+                "https://robozaps.com/products/fourier-gr-3"
+            ]
+        },
+        {
+            "id": "agility-digit-5",
+            "image_url": "/robot-images/agility-digit-5.webp",
+            "name": "Digit 5",
+            "brand": "Agility Robotics",
+            "kind": "humanoid",
+            "country": "United States",
+            "country_flag": "🇺🇸",
+            "dof": null,
+            "payload_kg": 22.7,
+            "payload_basis": "whole_body",
+            "reach_mm": null,
+            "height_m": 1.81,
+            "weight_kg": 129,
+            "price_usd": null,
+            "price_max_usd": null,
+            "product_url": "https://www.agilityrobotics.com/solutions/digit-5",
+            "power": "battery",
+            "runtime_h": 1.5,
+            "runtime_note": "10:1 run-to-charge with a 9 min autonomous charge; no list price, reported S-4 terms are about $200k outright or $8,500/month RaaS",
+            "openness": { "cad": false, "urdf": false, "sdk": false, "bom": false },
+            "actuator_sourcing": "in_house",
+            "availability": "quote_only",
+            "lead_time": "Early access expected H1 2027; general availability expected by end of 2027 (US, Canada, then EU and UK)",
+            "summary": "Digit 5 is Agility Robotics' fifth generation bipedal humanoid, unveiled September 15, 2026, for warehouse and manufacturing work alongside people without safety fencing. It stands 1.81 m, weighs 129 kg, lifts up to 22.7 kg (50 lb) repeatedly and reaches up to 2.2 m, with forward-facing legs driven by proprietary cycloidal actuators. A 90 minute battery recharges in 9 minutes, and the robot is sold by quote or as Robots-as-a-Service, with early access in H1 2027.",
+            "joints": [],
+            "sources": [
+                "https://www.agilityrobotics.com/solutions/digit-5",
+                "https://www.agilityrobotics.com/solution",
+                "https://www.agilityrobotics.com/content/agility-unveils-digit-5-humanoid-robot-built-for-cooperatively-safe-work-at-scale",
+                "https://www.agilityrobotics.com/content/jonathan-hurst-answers-your-questions-about-building-digit-5",
+                "https://www.techrepublic.com/article/news-agility-digit-5-humanoid-robot-factory-workers/",
+                "https://www.linkedin.com/posts/davidepearce_agility-robotics-unveiled-digit-5-yesterday-activity-7505865416586604544-S4Sp",
+                "https://robozaps.com/products/digit",
+                "https://humanoid.guide/product/digit/",
+                "https://www.humanoid-robots.io/robot/digit-by-agility-robotics"
             ]
         },
         {
@@ -703,6 +1019,13 @@
             "price_max_usd": null,
             "product_url": "https://i2rt.com/products/yam-6-dof-arm",
             "image_url": "/robot-images/i2rt-yam.webp",
+            "power": "mains",
+            "runtime_h": null,
+            "runtime_note": "Tethered, mains powered",
+            "openness": { "cad": false, "urdf": true, "sdk": true, "bom": false },
+            "actuator_sourcing": "off_the_shelf",
+            "availability": "shipping",
+            "lead_time": "20 business days",
             "summary": "Low-cost 6-DOF manipulator built for imitation learning and teleoperation data collection. CNC 6061 billet frame, integrated cross-roller bearings, 95 mm patent-pending gripper.",
             "joints": [
                 { "role": "Shoulder (J1-J3)", "motor": "dm-j4340", "count": 3 },
@@ -711,7 +1034,8 @@
             "sources": [
                 "https://i2rt.com/products/yam-6-dof-arm",
                 "https://doc.i2rt.com/products/yam-standard.html",
-                "https://github.com/uynitsuj/robots_realtime"
+                "https://github.com/uynitsuj/robots_realtime",
+                "https://github.com/i2rt-robotics/i2rt"
             ]
         },
         {
@@ -722,13 +1046,20 @@
             "country": "China",
             "country_flag": "🇨🇳",
             "dof": 6,
-            "payload_kg": 2,
+            "payload_kg": 3,
             "reach_mm": 750,
-            "weight_kg": null,
+            "weight_kg": 5.06,
             "price_usd": 3499,
             "price_max_usd": null,
             "product_url": "https://i2rt.com/products/yam-pro-6-dof-arm-copy",
             "image_url": "/robot-images/i2rt-yam-pro.webp",
+            "power": "mains",
+            "runtime_h": null,
+            "runtime_note": "Tethered, mains powered",
+            "openness": { "cad": false, "urdf": true, "sdk": true, "bom": false },
+            "actuator_sourcing": "off_the_shelf",
+            "availability": "shipping",
+            "lead_time": "20 business days",
             "summary": "Same motor set and SDK as the base YAM; the control-law difference is a stiffer J4 position gain plus build refinements. Interchangeable with Standard and Ultra in the SDK.",
             "joints": [
                 { "role": "Shoulder (J1-J3)", "motor": "dm-j4340", "count": 3 },
@@ -737,7 +1068,8 @@
             "sources": [
                 "https://i2rt.com/products/yam-pro-6-dof-arm-copy",
                 "https://doc.i2rt.com/products/yam-pro.html",
-                "https://github.com/uynitsuj/robots_realtime"
+                "https://github.com/uynitsuj/robots_realtime",
+                "https://github.com/i2rt-robotics/i2rt"
             ]
         },
         {
@@ -748,13 +1080,20 @@
             "country": "China",
             "country_flag": "🇨🇳",
             "dof": 6,
-            "payload_kg": 2,
+            "payload_kg": 4,
             "reach_mm": 750,
-            "weight_kg": null,
+            "weight_kg": 5.3,
             "price_usd": 4299,
             "price_max_usd": 4399,
             "product_url": "https://i2rt.com/products/yam-ultra-6-dof-arm",
             "image_url": "/robot-images/i2rt-yam-ultra-2.webp",
+            "power": "mains",
+            "runtime_h": null,
+            "runtime_note": "Tethered, mains powered",
+            "openness": { "cad": false, "urdf": true, "sdk": true, "bom": false },
+            "actuator_sourcing": "off_the_shelf",
+            "availability": "shipping",
+            "lead_time": "20 business days",
             "summary": "Enhanced build of the 6-DOF YAM with the same Damiao motor chain and SDK as Standard and Pro, tuned for higher-duty data collection.",
             "joints": [
                 { "role": "Shoulder (J1-J3)", "motor": "dm-j4340", "count": 3 },
@@ -763,7 +1102,8 @@
             "sources": [
                 "https://i2rt.com/products/yam-ultra-6-dof-arm",
                 "https://doc.i2rt.com/products/yam-ultra.html",
-                "https://github.com/uynitsuj/robots_realtime"
+                "https://github.com/uynitsuj/robots_realtime",
+                "https://github.com/i2rt-robotics/i2rt"
             ]
         },
         {
@@ -776,11 +1116,18 @@
             "dof": 6,
             "payload_kg": 4,
             "reach_mm": 1100,
-            "weight_kg": null,
+            "weight_kg": 6.4,
             "price_usd": 4999,
             "price_max_usd": null,
             "product_url": "https://i2rt.com/products/big-yam-6-dof-arm",
             "image_url": "/robot-images/i2rt-big-yam.webp",
+            "power": "mains",
+            "runtime_h": null,
+            "runtime_note": "Tethered, mains powered",
+            "openness": { "cad": true, "urdf": true, "sdk": true, "bom": false },
+            "actuator_sourcing": "off_the_shelf",
+            "availability": "shipping",
+            "lead_time": "About 3 weeks",
             "summary": "Heavier-payload 6-DOF variant. Uses DM6248 motors at the shoulders with substantially different control gains and a reversed joint 2; the only YAM whose SDK gains differ meaningfully from Standard.",
             "joints": [
                 { "role": "Shoulder (J1-J2)", "motor": "dm-j6248", "count": 2 },
@@ -790,7 +1137,8 @@
             "sources": [
                 "https://i2rt.com/products/big-yam-6-dof-arm",
                 "https://doc.i2rt.com/products/yam-big.html",
-                "https://github.com/uynitsuj/robots_realtime"
+                "https://github.com/uynitsuj/robots_realtime",
+                "https://github.com/i2rt-robotics/i2rt"
             ]
         },
         {
@@ -808,9 +1156,19 @@
             "price_max_usd": 9999,
             "product_url": "https://i2rt.com/products/yam-7dof",
             "image_url": "/robot-images/i2rt-yam-7.webp",
-            "summary": "7-DOF member of the YAM family with an added redundant joint for richer wrist orientation. Per-joint motor list not published in the SDK docs yet.",
+            "power": "mains",
+            "runtime_h": null,
+            "runtime_note": "Tethered, mains powered",
+            "openness": { "cad": false, "urdf": false, "sdk": false, "bom": false },
+            "actuator_sourcing": "in_house",
+            "availability": "shipping",
+            "lead_time": "About 30 days",
+            "summary": "7-DOF member of the YAM family with an added redundant joint for richer wrist orientation. Unlike the rest of the family it runs on i2RT's own GF-series actuators (GF62X48 at the shoulder) rather than Damiao motors; i2RT has not published a joint-by-joint map.",
             "joints": [],
-            "sources": ["https://i2rt.com/products/yam-7dof"]
+            "sources": [
+                "https://i2rt.com/products/yam-7dof",
+                "https://i2rt.com/products/gf62x48-10"
+            ]
         },
         {
             "id": "i2rt-yam-leader",
@@ -822,11 +1180,18 @@
             "dof": 6,
             "payload_kg": null,
             "reach_mm": null,
-            "weight_kg": null,
+            "weight_kg": 4.6,
             "price_usd": 2999,
             "price_max_usd": null,
             "product_url": "https://i2rt.com/products/yam-leader",
             "image_url": "/robot-images/i2rt-yam-leader.webp",
+            "power": "mains",
+            "runtime_h": null,
+            "runtime_note": "Tethered, mains powered",
+            "openness": { "cad": false, "urdf": true, "sdk": true, "bom": false },
+            "actuator_sourcing": "off_the_shelf",
+            "availability": "shipping",
+            "lead_time": "20 business days",
             "summary": "Teleoperation leader arm: the operator backdrives it to puppeteer a follower YAM (GELLO-style). The SDK's leader mode drives a standard YAM arm config by default (DM4340 at J1-J3, DM4310 at J4-J6) with a teaching handle in place of the gripper.",
             "joints": [
                 { "role": "Shoulder (J1-J3)", "motor": "dm-j4340", "count": 3 },
@@ -836,7 +1201,80 @@
                 "https://i2rt.com/products/yam-leader",
                 "https://github.com/i2rt-robotics/i2rt/blob/main/i2rt/robots/config/yam_v1.yml",
                 "https://github.com/i2rt-robotics/i2rt/blob/main/examples/minimum_gello/README.md",
-                "https://github.com/i2rt-robotics/i2rt/blob/main/examples/minimum_gello/minimum_gello.py"
+                "https://github.com/i2rt-robotics/i2rt/blob/main/examples/minimum_gello/minimum_gello.py",
+                "https://github.com/i2rt-robotics/i2rt"
+            ]
+        },
+        {
+            "id": "agilex-piper",
+            "image_url": "/robot-images/agilex-piper.webp",
+            "name": "PiPER",
+            "brand": "AgileX Robotics",
+            "kind": "robot_arm",
+            "country": "China",
+            "country_flag": "🇨🇳",
+            "dof": 6,
+            "payload_kg": 1.5,
+            "reach_mm": 626,
+            "height_m": null,
+            "weight_kg": 4.2,
+            "price_usd": 3500,
+            "price_max_usd": null,
+            "product_url": "https://global.agilex.ai/products/piper",
+            "power": "mains",
+            "runtime_h": null,
+            "runtime_note": "Tethered, mains powered",
+            "openness": { "cad": false, "urdf": true, "sdk": true, "bom": false },
+            "actuator_sourcing": null,
+            "availability": "shipping",
+            "lead_time": null,
+            "summary": "PiPER is a 4.2 kg desktop 6-DOF arm from AgileX Robotics with a 1.5 kg payload, 626 mm reach and ±0.1 mm repeatability, built on an aluminum alloy frame with an integrated controller. It runs on DC 24V and is controlled over CAN, with drag teaching, trajectory replay, an open-source Python SDK, ROS 1/ROS 2 drivers and URDF models for Gazebo and Isaac Sim. A two-finger gripper (0 to 70 mm stroke, 40 N rated clamping force) and a teach pendant are optional end effectors.",
+            "joints": [
+                { "role": "Arm joints J1-J6", "motor": "agilex-piper-joint", "count": 6 }
+            ],
+            "sources": [
+                "https://global.agilex.ai/products/piper",
+                "https://static.generation-robots.com/media/agilex-piper-user-manual.pdf",
+                "https://www.usrobotstore.com/products/piper",
+                "https://www.roboticscenter.ai/hardware/agilex-piper"
+            ]
+        },
+        {
+            "id": "therobotstudio-so-101",
+            "image_url": "/robot-images/therobotstudio-so-101.webp",
+            "image_fit": "cover",
+            "name": "SO-101",
+            "brand": "TheRobotStudio",
+            "kind": "robot_arm",
+            "country": null,
+            "country_flag": null,
+            "dof": 6,
+            "payload_kg": null,
+            "reach_mm": null,
+            "height_m": null,
+            "weight_kg": null,
+            "price_usd": 121.94,
+            "price_max_usd": 315.99,
+            "product_url": "https://github.com/TheRobotStudio/SO-ARM100",
+            "power": "mains",
+            "runtime_h": null,
+            "runtime_note": "Tethered, mains powered",
+            "openness": { "cad": true, "urdf": true, "sdk": true, "bom": true },
+            "actuator_sourcing": "off_the_shelf",
+            "availability": "shipping",
+            "lead_time": null,
+            "summary": "SO-101 is an open-source, 3D-printable arm designed by TheRobotStudio with Hugging Face as the successor to SO-100, with improved wiring and easier assembly. The follower arm uses six Feetech STS3215 serial bus servos (5 arm joints plus a gripper) at a 1:345 gear ratio and is usually paired with a leader arm for teleoperation and imitation learning in the LeRobot library. STEP and STL files, simulation models and a full bill of materials are published under Apache-2.0, and kits are sold by Seeed Studio, WowRobo, PartaBot and others.",
+            "joints": [
+                { "role": "Arm joints", "motor": "feetech-sts3215-c001", "count": 5 },
+                { "role": "Gripper", "motor": "feetech-sts3215-c001", "count": 1 }
+            ],
+            "sources": [
+                "https://github.com/TheRobotStudio/SO-ARM100",
+                "https://wiki.seeedstudio.com/lerobot_so100m_new/",
+                "https://www.seeedstudio.com/SO-101-Low-Cost-AI-Arm-Kit-Pro-p-6427.html",
+                "https://www.seeedstudio.com/SO-101-Assembled-Kit-Pro-p-6691.html",
+                "https://www.seeedstudio.com/STS3215-19kg-cm-7-4V-Serial-Servo-p-6338.html",
+                "https://www.seeedstudio.com/Feetech-ST-3215-C044-Heavy-Duty-Servo-7-4V-1-191-Gear-Reduction-p-6460.html"
             ]
         }
     ]
