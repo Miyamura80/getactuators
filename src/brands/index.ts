@@ -87,6 +87,24 @@ const ROBOT_MAKERS: Row[] = [
     ["asimov-bom", "Asimov BOM", null],
 ];
 
+// Humanoid makers on /humanoids (src/humanoids) not listed elsewhere. Domains
+// are each robot's product_url or the maker's own page in its sources. Kepler's
+// sources are press coverage only, so it stays a monogram.
+const HUMANOID_MAKERS: Row[] = [
+    ["figure", "Figure AI", "figure.ai", ["Figure"]],
+    ["apptronik", "Apptronik", "apptronik.com"],
+    ["sanctuary", "Sanctuary AI", "sanctuary.ai", ["Sanctuary"]],
+    ["kscale", "K-Scale Labs", "kscale.dev", ["K-Scale"]],
+    ["xpeng", "XPeng", "xpeng.com", ["XPENG Robotics"]],
+    [
+        "berkeley-hybrid-robotics",
+        "UC Berkeley Hybrid Robotics",
+        "berkeley-humanoid.org",
+        ["Berkeley Humanoid"],
+    ],
+    ["kepler", "Kepler", null, ["Kepler Robotics"]],
+];
+
 // Supply-chain registry companies (src/supply-chain/companies) and the
 // familiar-market leaders on /lab/supply-chain (DOMINANCE_MARKETS). Domains are
 // each company's own site from the registry `url`; the two the registry only
@@ -213,9 +231,14 @@ const fromRow = ([id, name, domain, aliases]: Row): BrandEntry => {
 
 export const BRANDS: BrandEntry[] = [
     ...STARTUP_ENTRIES,
-    ...[...MAKERS, ...ROBOT_MAKERS, ...SUPPLY_CHAIN, ...PORTFOLIO, ...INVESTORS].map(
-        fromRow,
-    ),
+    ...[
+        ...MAKERS,
+        ...ROBOT_MAKERS,
+        ...HUMANOID_MAKERS,
+        ...SUPPLY_CHAIN,
+        ...PORTFOLIO,
+        ...INVESTORS,
+    ].map(fromRow),
 ];
 
 // Lowercase, drop a parenthetical ("Robotis (Dynamixel)"), collapse punctuation.

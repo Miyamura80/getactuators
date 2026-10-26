@@ -4,6 +4,7 @@ import actuators from "../../frontend/src/data/actuators.json";
 import robots from "../../frontend/src/data/robots.json";
 import { BRANDS, brandInitials, logoUrl, resolveBrand } from "../../src/brands";
 import selfHosted from "../../src/brands/self-hosted.json";
+import { HUMANOIDS } from "../../src/humanoids";
 import { COMPANIES, FUNDS } from "../../src/investors";
 import { STARTUPS } from "../../src/startups";
 import { COMPANIES as SUPPLY_COMPANIES } from "../../src/supply-chain/companies";
@@ -15,6 +16,7 @@ const referenced: string[] = [
     ...Object.values(robots.robots).map((r) => r.brand),
     ...Object.values(robots.motors).map((m) => m.brand),
     robots.credit.org,
+    ...HUMANOIDS.map((h) => h.brand),
     ...STARTUPS.map((s) => s.name),
     ...STARTUPS.flatMap((s) => (s.leadInvestor ? [s.leadInvestor] : [])),
     ...Object.keys(COMPANIES),
@@ -51,6 +53,9 @@ describe("brand registry", () => {
         expect(resolveBrand("Harmonic Drive Systems")?.id).toBe(
             "harmonic-drive-systems",
         );
+        expect(resolveBrand("UBTECH Robotics")?.id).toBe("ubtech");
+        expect(resolveBrand("Figure AI")?.id).toBe("figure");
+        expect(resolveBrand("1X Technologies")?.id).toBe("1x");
         expect(resolveBrand("westmag")?.logo).toBe("/logos/startups/westmag.png");
     });
 
