@@ -82,7 +82,26 @@ export const HumanoidJointSchema = named(
         reducer: z.string().nullable(),
         peak_torque_nm: SourcedNumberSchema.nullable(),
         peak_force_n: SourcedNumberSchema.nullable(),
-        size_class: z.enum(["xs", "s", "m", "l", "xl"]),
+        size_class: z
+            .enum(["xs", "s", "m", "l", "xl"])
+            .describe("Motor size class, from motor-side torque."),
+        load_class: z
+            .enum(["xs", "s", "m", "l", "xl"])
+            .describe("Joint load class, from output torque or force."),
+        motor_sizing: z
+            .object({
+                gear_ratio: SourcedNumberSchema.describe(
+                    "Reduction n:1, or screw lead in mm for screw actuators. Modeled when the design's typical band stands in.",
+                ),
+                efficiency: SourcedNumberSchema.describe(
+                    "Reducer or screw efficiency, 0 to 1.",
+                ),
+                motor_torque_nm: SourcedNumberSchema.describe(
+                    "Peak torque the motor must make: output / (ratio x efficiency), or force x lead / (2 pi x efficiency).",
+                ),
+            })
+            .nullable()
+            .describe("How the motor behind the joint was sized; null for hydraulics."),
         magnet_mass_g: SourcedNumberSchema.describe(
             "Estimated NdFeB at this node, all actuators.",
         ),
@@ -311,6 +330,14 @@ function serializeJoint(j: HumanoidJoint): z.infer<typeof HumanoidJointSchema> {
         peak_torque_nm: sourced(j.peakTorqueNm),
         peak_force_n: sourced(j.peakForceN),
         size_class: j.sizeClass,
+        load_class: j.loadClass,
+        motor_sizing: j.motorSizing
+            ? {
+                  gear_ratio: sourced(j.motorSizing.gearRatio)!,
+                  efficiency: sourced(j.motorSizing.efficiency)!,
+                  motor_torque_nm: sourced(j.motorSizing.motorTorqueNm)!,
+              }
+            : null,
         magnet_mass_g: sourced(j.magnetMassG)!,
         sources: sources(j.sources),
     };

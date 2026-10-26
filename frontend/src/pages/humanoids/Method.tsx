@@ -1,4 +1,5 @@
 import {
+    ACTUATOR_TYPE_LABEL,
     ARC_FILL,
     COST_FIT,
     MASS_FIT,
@@ -8,10 +9,13 @@ import {
     REE_FRACTION,
     SIZE_CLASSES,
     sourceOf,
+    TYPICAL_DRIVE,
 } from "../../../../src/humanoids";
 
 const pct = (x: number) => `${Number((x * 100).toFixed(2))}%`;
 const bound = (n: number, unit: string) => (Number.isFinite(n) ? `≤ ${n.toLocaleString("en-US")} ${unit}` : "above");
+const DRIVES = Object.entries(TYPICAL_DRIVE) as [keyof typeof TYPICAL_DRIVE, (typeof TYPICAL_DRIVE)[keyof typeof TYPICAL_DRIVE]][];
+const band = (r: readonly [number, number], scale = 1) => `${Math.round(r[0] * scale)} to ${Math.round(r[1] * scale)}`;
 const METHOD_SOURCES = [
     "fai-magnets",
     "jda-ndfeb",
@@ -19,6 +23,18 @@ const METHOD_SOURCES = [
     "frameless-ilm85",
     "frameless-ri60",
     "frameless-ri80",
+    "frameless-maxon90",
+    "catalog-ratios",
+    "catalog-harmonic",
+    "ratio-qdd-arxiv",
+    "ratio-qdd-guide",
+    "eff-reducers-guide",
+    "eff-planetary-pelonis",
+    "eff-harmonic-calc",
+    "eff-harmonic-cone",
+    "lead-roller-guide",
+    "screw-torque-formula",
+    "screw-ball-sizing",
     "catalog-fit",
     "huibo-optimus-bom",
     "ms-optimus-bom",
@@ -39,20 +55,43 @@ export function Method() {
             <summary>Method: magnets, cost and mass</summary>
             <div className="hm-method">
                 <p>
-                    Each actuator gets a motor size class from its peak torque (rotary) or force (linear), or from its
-                    joint and the robot's mass when neither is published. Magnet mass = π × airgap diameter × active
-                    length × magnet thickness × arc fill ({pct(ARC_FILL[0])} to {pct(ARC_FILL[1])}) × {NDFEB_DENSITY_G_CM3}{" "}
-                    g/cm³, with the table's millimetres divided by 10 to give cm. Hydraulic joints carry no magnet at the
-                    joint. Every figure is an estimate with a range. Sizing from output torque ignores the reducer, so
-                    high-ratio joints (harmonic, cycloidal, roller screw) read as an upper bound.
+                    The magnet sits in the motor, before the reducer, so each motor is sized from the torque it makes:
+                    peak output torque / (gear ratio × efficiency), or for a screw force × lead / (2π × efficiency).
+                    Joints use their published ratio (catalog, reducer or part code) and otherwise their design's typical
+                    band below; with neither torque nor force published, the joint's load class stands in. The motor
+                    torque picks a size class. Magnet mass = π × airgap diameter × active length × magnet thickness ×
+                    arc fill ({pct(ARC_FILL[0])} to {pct(ARC_FILL[1])}) × {NDFEB_DENSITY_G_CM3} g/cm³, with the table's
+                    millimetres divided by 10 to give cm. Hydraulic joints carry no magnet at the joint. Every figure is
+                    an estimate; the range spans the classes the ratio and efficiency bands reach.
                 </p>
+                <div className="hm-table is-narrow">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Design</th>
+                                <th className="num">Typical ratio</th>
+                                <th className="num">Efficiency</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {DRIVES.map(([type, d]) => (
+                                <tr key={type}>
+                                    <td>{ACTUATOR_TYPE_LABEL[type]}</td>
+                                    <td className="num">
+                                        {d.kind === "screw" ? `${band(d.ratioRange)} mm lead` : `${band(d.ratioRange)}:1`}
+                                    </td>
+                                    <td className="num">{band(d.efficiencyRange, 100)}%</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
                 <div className="hm-table">
                     <table>
                         <thead>
                             <tr>
                                 <th>Class</th>
-                                <th className="num">Torque</th>
-                                <th className="num">Force</th>
+                                <th className="num">Motor torque</th>
                                 <th className="num">Airgap x length</th>
                                 <th className="num">Magnet</th>
                                 <th className="num">g per motor</th>
@@ -67,10 +106,9 @@ export function Method() {
                                     <tr key={c.id}>
                                         <td>{c.label}</td>
                                         <td className="num">
-                                            {Number.isFinite(c.maxTorqueNm) ? bound(c.maxTorqueNm, "N·m") : `> ${prev?.maxTorqueNm} N·m`}
-                                        </td>
-                                        <td className="num">
-                                            {Number.isFinite(c.maxForceN) ? bound(c.maxForceN, "N") : `> ${prev?.maxForceN.toLocaleString("en-US")} N`}
+                                            {Number.isFinite(c.maxMotorTorqueNm)
+                                                ? bound(c.maxMotorTorqueNm, "N·m")
+                                                : `> ${prev?.maxMotorTorqueNm} N·m`}
                                         </td>
                                         <td className="num">
                                             {c.airgapDiameterMm} x {c.activeLengthMm} mm
@@ -93,7 +131,8 @@ export function Method() {
                     {pct(REE_FRACTION.pr[0])} to {pct(REE_FRACTION.pr[1])} (PrNd 29 to 32% of a sintered magnet, Pr 20 to
                     25% of that), Dy {pct(REE_FRACTION.dy[0])} to {pct(REE_FRACTION.dy[1])} (grain-boundary diffused to
                     grade H), Tb {pct(REE_FRACTION.tb[0])} to {pct(REE_FRACTION.tb[1])}. Published per-robot estimates
-                    run 2 to 4.5 kg of NdFeB; robots here land lower where hands and extra axes are not counted.
+                    run 2 to 4.5 kg of NdFeB; robots here land lower where hands and extra axes are not counted, and
+                    high-ratio robots land lower still once the reducer is taken out.
                 </p>
                 <p>
                     Actuator cost, per unit: the catalog list price when a joint links to a catalog actuator, or a price

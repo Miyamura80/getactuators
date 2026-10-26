@@ -76,7 +76,7 @@ test("the fleet folds by default with a count and a one-line hint", () => {
     const view = render(<Humanoids />);
     const fleet = view.container.querySelector<HTMLDetailsElement>("details.hm-fleet")!;
     expect(fleet.open).toBe(false);
-    expect(fleet.querySelector("summary")?.textContent).toBe("Fleet (21)Most magnet: H2, 2.76 kg");
+    expect(fleet.querySelector("summary")?.textContent).toBe("Fleet (21)Most magnet: X1, 2.60 kg");
     cleanup();
     setURL("/humanoids?page=2");
     const deep = render(<Humanoids />);
@@ -251,7 +251,7 @@ test("rare earth is broken down by actuator design, matching the BOM grouping", 
     expect(names).toHaveLength(8);
     // The legend carries the robot's per-element totals; the old text line is gone.
     const key = [...ree.querySelectorAll(".ree-key span")].map((k) => k.textContent);
-    expect(key[0]).toBe("Nd neodymium337-700 g");
+    expect(key[0]).toBe("Nd neodymium115-450 g");
     expect(view.container.querySelector(".hm-ree")).toBeNull();
     // Values fall from largest to smallest.
     const vals = [...ree.querySelectorAll(".ree-val")].map((v) => Number(v.textContent?.replace(/[^0-9]/g, "")));
@@ -323,10 +323,22 @@ test("each row carries a data confidence meter with an explanation", () => {
     expect(meter?.querySelectorAll("i.on")).toHaveLength(3);
 });
 
-test("the magnet method is folded in a details element with the size classes", () => {
+test("the magnet method is folded in a details element with the drive bands and size classes", () => {
     setURL("/humanoids");
     const view = render(<Humanoids />);
     const fold = view.container.querySelector("details.hm-fold");
     expect(fold?.querySelector("summary")?.textContent).toBe("Method: magnets, cost and mass");
-    expect(fold?.querySelectorAll("tbody tr")).toHaveLength(5);
+    const [drives, classes] = [...(fold?.querySelectorAll("table") ?? [])];
+    expect(drives?.querySelectorAll("tbody tr")).toHaveLength(8);
+    expect(classes?.querySelectorAll("tbody tr")).toHaveLength(5);
+    expect(drives?.textContent).toContain("Harmonic50 to 100:170 to 90%");
+    expect(fold?.textContent).not.toContain("upper bound");
+});
+
+test("a joint shows the motor-side torque its magnet is sized from", () => {
+    setURL("/humanoids?robot=tesla-optimus&joint=l-hip-yaw");
+    const view = render(<Humanoids />);
+    const panel = view.container.textContent ?? "";
+    expect(panel).toContain("At the motor");
+    expect(panel).toContain("2.81 N·m via 80:1, 80% efficient");
 });

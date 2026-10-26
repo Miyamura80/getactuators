@@ -11,6 +11,7 @@ import {
     type Sourced,
     sourceOf,
 } from "../../../../src/humanoids";
+import { MetricBar } from "../../components/MetricBar";
 
 function Conf({ c }: { c: Confidence | "reported" | "estimated" }) {
     return <span className={`hm-conf is-${c}`}>{c}</span>;
@@ -44,6 +45,7 @@ function Sources({ ids }: { ids: string[] }) {
 
 function Entry({ j }: { j: HumanoidJoint }) {
     const m = j.magnetMassG;
+    const ms = j.motorSizing;
     return (
         <div className="hm-entry">
             <div className="hm-type">
@@ -86,6 +88,16 @@ function Entry({ j }: { j: HumanoidJoint }) {
                         </dd>
                     </>
                 )}
+                {ms && (
+                    <>
+                        <dt>At the motor</dt>
+                        <dd>
+                            {ms.motorTorqueNm.value} N·m via{" "}
+                            {ms.gearRatio.unit === "mm lead" ? `${ms.gearRatio.value} mm lead` : `${ms.gearRatio.value}:1`},{" "}
+                            {Math.round(ms.efficiency.value * 100)}% efficient <Conf c={ms.gearRatio.confidence} />
+                        </dd>
+                    </>
+                )}
                 <dt>Magnet</dt>
                 <dd>
                     {m.range && m.range[1] > 0 ? `${m.range[0]} to ${m.range[1]} g NdFeB` : "0 g"} <Conf c="estimated" />
@@ -100,6 +112,16 @@ function Entry({ j }: { j: HumanoidJoint }) {
 // One row per actuator design and joint, left side standing for both sides.
 function JointList({ robot, onSelect }: { robot: Humanoid; onSelect: (j: CanonicalJoint) => void }) {
     const rows = robot.joints.filter((j) => !j.canonical.startsWith("r-"));
+    // Torque (N·m) and force (N) bars scale separately; magnet bars share one scale.
+    const peakMax = (unit: string) =>
+        Math.max(
+            1e-9,
+            ...rows.flatMap((j) => {
+                const f = j.peakTorqueNm ?? j.peakForceN;
+                return f && (f.unit ?? "") === unit ? [f.value] : [];
+            }),
+        );
+    const magnetMax = Math.max(1e-9, ...rows.map((j) => j.magnetMassG.value / j.count));
     return (
         <table className="hm-list">
             <thead>
@@ -134,10 +156,21 @@ function JointList({ robot, onSelect }: { robot: Humanoid; onSelect: (j: Canonic
                                 {ACTUATOR_TYPE_LABEL[j.actuatorType]}
                             </td>
                             <td className="num">
-                                {fig ? `${fig.value.toLocaleString("en-US")} ${fig.unit}` : "n/a"}
-                                {fig && fig.confidence !== "reported" && <sup>e</sup>}
+                                <MetricBar
+                                    value={fig?.value ?? null}
+                                    max={fig ? peakMax(fig.unit ?? "") : 1}
+                                    text={fig ? `${fig.value.toLocaleString("en-US")} ${fig.unit}${fig.confidence !== "reported" ? "ᵉ" : ""}` : ""}
+                                    higherIsBetter
+                                />
                             </td>
-                            <td className="num">{Math.round(j.magnetMassG.value / j.count)}</td>
+                            <td className="num">
+                                <MetricBar
+                                    value={j.magnetMassG.value / j.count}
+                                    max={magnetMax}
+                                    text={String(Math.round(j.magnetMassG.value / j.count))}
+                                    higherIsBetter
+                                />
+                            </td>
                         </tr>
                     );
                 })}

@@ -240,7 +240,7 @@ export const OPERATIONS: Operation[] = [
         path: "/api/v1/humanoids/:id",
         summary: "Get one humanoid joint by joint",
         description:
-            "One humanoid mapped onto the canonical joint set: per joint the actuator type and whether it is reported or estimated (with what it was inferred from), motor, reducer, peak torque or force, estimated magnet mass and sources.",
+            "One humanoid mapped onto the canonical joint set: per joint the actuator type and whether it is reported or estimated (with what it was inferred from), motor, reducer, peak torque or force, gear ratio and motor-side torque, estimated magnet mass and sources.",
         pathParam: {
             name: "id",
             description: "Humanoid id (slug).",
