@@ -34,7 +34,7 @@ const DEFAULT_GROUPS: Group[] = ["nd", "dy", "tb"];
 
 const W = 720;
 const H = 300;
-const M = { l: 46, r: 14, t: 12, b: 34 };
+const M = { l: 46, r: 14, t: 12, b: 50 };
 const X0 = Date.UTC(2011, 0, 1);
 const X1 = Date.UTC(2027, 0, 1);
 const LOG = [1, 5000] as const;
@@ -99,7 +99,7 @@ export function PriceChart() {
                 <line x1={M.l} x2={W - M.r} y1={y(v)} y2={y(v)} />
                 <text x={M.l - 6} y={y(v) + 4} textAnchor="end">${v.toLocaleString("en-US")}</text>
             </g>)}
-            {years.map((yr) => <text key={yr} className="mt-axis" x={x(Date.UTC(yr, 0, 1))} y={H - M.b + 16} textAnchor="middle">{yr}</text>)}
+            {years.map((yr) => <text key={yr} className="mt-axis" x={x(Date.UTC(yr, 0, 1))} y={H - M.b + 14} textAnchor="middle">{yr}</text>)}
             {groups.includes("nd") || groups.includes("ndpr") || groups.includes("pr")
                 ? <g className="mt-floor">
                     <line x1={floorX} x2={W - M.r} y1={y(NDPR_PRICE_FLOOR.value)} y2={y(NDPR_PRICE_FLOOR.value)} />
@@ -116,9 +116,9 @@ export function PriceChart() {
                     </circle>)}
                 </g>;
             })}
-            {METAL_EVENTS.map((e, i) => <g key={e.id} className="mt-pin" transform={`translate(${x(eventTime(e.date))},${H - M.b})`}>
-                <line y1={0} y2={-6} />
-                <text y={-9} textAnchor="middle">{i + 1}</text>
+            {METAL_EVENTS.map((e, i) => <g key={e.id} className="mt-pin" transform={`translate(${Math.max(M.l + 4, x(eventTime(e.date)))},${H - M.b})`}>
+                <line y1={18} y2={24} />
+                <text y={35} textAnchor="middle">{i + 1}</text>
                 <title>{`${e.date}: ${e.title}`}</title>
             </g>)}
         </svg>

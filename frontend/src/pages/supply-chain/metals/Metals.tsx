@@ -1,7 +1,6 @@
 import { type ReactNode, useEffect, useState } from "react";
 import { PublicFooter } from "../../../components/PublicFooter";
 import { PublicHeader } from "../../../components/PublicHeader";
-import { ConfidenceLegend } from "../../../components/supply-chain/ConfidenceLegend";
 import { FootnotesProvider } from "../../../components/supply-chain/footnotes";
 import { SourcesSection } from "../../../components/supply-chain/SourcesSection";
 import { METALS_AS_OF, METALS_PATH } from "../../../../../src/supply-chain/metals";
@@ -69,7 +68,6 @@ export function Metals({ menuOpen = false }: { menuOpen?: boolean }) {
                     <p className="tool-lede">Six metals make an actuator's magnet. Control tightens from mine to magnet.</p>
                     <a className="mt-cta" href="/api/v1/metals">Get the data</a>
                 </header>
-                <ConfidenceLegend />
 
                 <Section n="01" id="what-goes-in" title="What goes in">
                     <WhatGoesIn element={state.element} grade={state.grade}

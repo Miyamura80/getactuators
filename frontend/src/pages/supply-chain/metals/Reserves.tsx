@@ -15,7 +15,7 @@ import { SourcedValue } from "../../../components/supply-chain/SourcedValue";
 // biggest producers show first; the rest fold away.
 
 const SHOWN = 6;
-const years = (s: Sourced<number>) => `${Math.round(s.value).toLocaleString("en-US")} yr`;
+const years = (s: Sourced<number>) => `${Math.round(s.value).toLocaleString("en-US")}\u00a0yr`;
 const tons = (s: Sourced<number>) => formatValue(s.value, "t");
 
 // Width on a log axis from 100 t to the largest value, as a percentage.
