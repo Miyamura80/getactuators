@@ -6,6 +6,7 @@ import { ActuatorThumb } from "../src/components/ActuatorThumb";
 import { ACTUATORS } from "../src/lib/data";
 
 beforeEach(() => {
+    window.localStorage.clear();
     (window as unknown as { happyDOM: { setURL: (url: string) => void } }).happyDOM.setURL("http://localhost:1/actuators");
 });
 afterEach(cleanup);

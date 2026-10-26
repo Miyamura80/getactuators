@@ -53,6 +53,7 @@ test("production frontend build emits the exact initial gallery tree without dup
     (
         window as unknown as { happyDOM: { setURL: (url: string) => void } }
     ).happyDOM.setURL("http://localhost:1/actuators");
+    window.localStorage.clear();
     root.dataset.galleryPrerender = "true";
     document.body.append(root);
     const photos = [...root.querySelectorAll(".bento-thumb img")];

@@ -8,6 +8,7 @@ import { readFileSync } from "node:fs";
 afterEach(cleanup);
 test("gallery picks are separate accessible controls with a compact shareable tray", async () => {
     (window as unknown as { happyDOM: { setURL: (url: string) => void } }).happyDOM.setURL("http://localhost/actuators");
+    window.localStorage.clear();
     const view = render(<ActuatorsPage />);
     expect(view.container.querySelectorAll("input[type=checkbox]")).toHaveLength(ACTUATORS.length);
     const boxes = view.getAllByRole("checkbox", { name: /^Compare / });
@@ -33,6 +34,7 @@ test("validated selection rejects duplicates, unknowns, repeated keys and oversi
 });
 test("gallery restores silently, caps at four, preserves other query state and follows popstate", async () => {
     const ids = ACTUATORS.slice(0, 4).map(a => a.id);
+    window.localStorage.clear();
     window.history.replaceState(null, "", `/actuators?sel=${ids[0]}&extra=robot&compare=${ids.join(",")}#keep`);
     const events: unknown[] = [];
     const listener = (e: Event) => events.push((e as CustomEvent).detail);

@@ -12,6 +12,7 @@ test("gallery startup reuses every initial card and photo instead of replacing t
     (
         window as unknown as { happyDOM: { setURL: (url: string) => void } }
     ).happyDOM.setURL("http://localhost:1/actuators");
+    window.localStorage.clear();
     const html = renderToString(
         <>
             <ActuatorsPage />
@@ -83,6 +84,7 @@ test("a photo that failed before hydration falls back to its schematic", async (
     (
         window as unknown as { happyDOM: { setURL: (url: string) => void } }
     ).happyDOM.setURL("http://localhost:1/actuators");
+    window.localStorage.clear();
     document.body.innerHTML = `<div id="root" data-gallery-prerender="true">${renderToString(<GalleryRoot />)}</div>`;
     const container = document.getElementById("root")!;
     const card = container.querySelector(".bento-card")!;
