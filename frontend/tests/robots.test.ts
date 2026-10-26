@@ -2,7 +2,14 @@
 // and resolveJoints drops joints whose motor key is not in the catalog so a
 // typo can never crash the render.
 import { describe, expect, test } from "bun:test";
-import { motorCount, resolveJoints, ROBOT_MOTORS, robotsUsingActuator } from "../src/lib/robots";
+import {
+    motorCount,
+    ROBOT_MOTORS,
+    ROBOTS,
+    resolveJoints,
+    robotsUsingActuator,
+    totalPeakTorque,
+} from "../src/lib/robots";
 import type { Robot, RobotJoint } from "../src/types";
 
 function makeRobot(joints: RobotJoint[]): Robot {
@@ -91,5 +98,48 @@ describe("robotsUsingActuator", () => {
 
     test("keeps the 12V STS3215 apart from the 7.4V C001 the SO-101 uses", () => {
         expect(robotsUsingActuator("feetech-sts3215").map((r) => r.id)).not.toContain("therobotstudio-so-101");
+    });
+});
+
+describe("published joint tables", () => {
+    const robot = (id: string) => {
+        const r = ROBOTS.find((x) => x.id === id);
+        if (!r) throw new Error(`missing robot ${id}`);
+        return r;
+    };
+
+    test("NEO, Digit 5 and YAM 7 have joint tables that all resolve", () => {
+        for (const id of ["1x-neo", "agility-digit-5", "i2rt-yam-7"]) {
+            const r = robot(id);
+            expect(r.joints.length).toBeGreaterThan(0);
+            expect(resolveJoints(r)).toHaveLength(r.joints.length);
+            expect(new Set(r.joints.map((j) => j.role)).size).toBe(r.joints.length);
+        }
+    });
+
+    test("complete loadouts sum to the published DOF", () => {
+        for (const id of ["1x-neo", "i2rt-yam-7"]) {
+            const r = robot(id);
+            expect({ id, n: motorCount(r) }).toEqual({ id, n: r.dof as number });
+        }
+    });
+
+    test("YAM 7 runs i2RT GF actuators and gets a full peak-torque total", () => {
+        const r = robot("i2rt-yam-7");
+        expect(resolveJoints(r).map((j) => j.motor.name)).toEqual([
+            "GF62X48-10",
+            "GF43X40-16",
+            "GF43X40-10",
+            "GF43X10-10",
+        ]);
+        // 2 x 95 + 2 x 28 + 23.5 + 2 x 7 N·m from i2RT's spec tables.
+        expect(totalPeakTorque(r)).toBe(283.5);
+    });
+
+    test("Digit 5 stays partial: DOF unpublished, knees only", () => {
+        const r = robot("agility-digit-5");
+        expect(r.dof).toBeNull();
+        expect(motorCount(r)).toBe(2);
+        expect(totalPeakTorque(r)).toBeNull();
     });
 });
