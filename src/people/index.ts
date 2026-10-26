@@ -28,7 +28,12 @@ const ORG_RECORDS: Org[] = [
     { id: "actuatorlist", name: "actuatorlist", url: "https://actuatorlist.com/" },
     { id: "ducky-drones", name: "Ducky Drones", url: "https://www.duckydrones.com/" },
     { id: "tau-robotics", name: "Tau Robotics", url: "https://www.tau-robotics.com/" },
-    { id: "manmaru-ai", name: "Manmaru AI", url: "https://manmaruai.co.jp/" },
+    {
+        id: "manmaru-ai",
+        name: "Manmaru AI",
+        url: "https://manmaruai.co.jp/",
+        brandId: "manmaru",
+    },
 ];
 
 const PEOPLE_RECORDS: Person[] = [
@@ -50,27 +55,40 @@ const PEOPLE_RECORDS: Person[] = [
         name: "Soumil Sahjpall",
         role: "Contributor",
         affiliation: { orgId: "ducky-drones" },
+        // OPEN QUESTION (#85): GitHub handle unknown, so no link and no
+        // commit count yet. Add { kind: "github", url } once confirmed.
         links: [],
         lists: ["contributor"],
         contribution: "Early contributor.",
+        unconfirmed: [{ field: "github", question: "Soumil's GitHub handle" }],
     },
     {
         id: "cornelia-weinzel",
+        // OPEN QUESTION (#85): spelling unconfirmed ("Weinzel" or
+        // "Weinzierl"); the id follows the name.
         name: "Cornelia Weinzel",
         role: "Contributor",
         affiliation: { orgId: "tau-robotics" },
         links: [],
         lists: ["contributor"],
         contribution: "Early contributor.",
+        unconfirmed: [
+            { field: "name", question: "Cornelia Weinzel or Cornelia Weinzierl?" },
+        ],
     },
     {
         id: "shouta-yoshikai",
+        // OPEN QUESTION (#85): spelling unconfirmed ("Shouta" or "Shota");
+        // the id follows the name.
         name: "Shouta Yoshikai",
         role: "Contributor",
         affiliation: { orgId: "manmaru-ai" },
         links: [],
         lists: ["contributor"],
         contribution: "Early contributor.",
+        unconfirmed: [
+            { field: "name", question: "Shouta Yoshikai or Shota Yoshikai?" },
+        ],
     },
 ];
 

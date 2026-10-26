@@ -45,6 +45,9 @@ export interface Person {
     // github link, used to count their commits in git history.
     gitEmails?: string[];
     sources?: SourceId[];
+    // Facts the owner still has to confirm before merge (#85). Rendered as
+    // written meanwhile; drop an entry once it is confirmed.
+    unconfirmed?: { field: "name" | "github"; question: string }[];
 }
 
 export interface Org {
@@ -54,6 +57,9 @@ export interface Org {
     logo?: ImageAsset;
     // Supply-chain Company registry id (#71), when the org has a record there.
     companyId?: string;
+    // src/brands registry id: without a self-hosted logo, the org is drawn
+    // with that brand's CompanyLogo tile.
+    brandId?: string;
 }
 
 // Commit counts per person, snapshotted from git history by
