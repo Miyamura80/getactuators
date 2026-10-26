@@ -373,3 +373,14 @@ describe("real 404s", () => {
         expect(res.headers.get("content-type")).toStartWith("application/problem+json");
     });
 });
+
+test("robots markdown gives humanoid arm reach only where published", async () => {
+    const md = await (await get("/robots.md")).text();
+    const section = (name: string) =>
+        md.slice(
+            md.indexOf(`## ${name} by`),
+            md.indexOf("\n## ", md.indexOf(`## ${name} by`) + 1),
+        );
+    expect(section("H2")).toContain("Arm reach: 690 mm");
+    expect(section("NEO")).not.toContain("Arm reach");
+});
