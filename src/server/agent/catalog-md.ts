@@ -226,6 +226,9 @@ export function robotSection(r: Robot, level = 2): string {
         r.kind === "humanoid"
             ? `Height: ${num(r.height_m, "m", 2)}`
             : `Reach: ${num(r.reach_mm, "mm", 0)}`,
+        ...(r.kind === "humanoid" && r.reach_mm != null
+            ? [`Arm reach: ${num(r.reach_mm, "mm", 0)}`]
+            : []),
         `Weight: ${num(r.weight_kg, "kg", 2)}`,
         `Price: ${usd(r.price_usd)}${r.price_max_usd ? ` to ${usd(r.price_max_usd)}` : ""}`,
         ...researchFacts(r),

@@ -16,7 +16,7 @@
             "weight_g": 300,
             "torque_density_nm_per_kg": 23.3,
             "product_url": "https://damiao.enactic.ai/en/products/hardware/dm-j4310-2ec-v1.1/",
-            "actuator_id": null
+            "actuator_id": "damiao-dm-j4310-2ec"
         },
         "dm-j4340": {
             "id": "dm-j4340",
@@ -29,7 +29,7 @@
             "weight_g": 362,
             "torque_density_nm_per_kg": 74.6,
             "product_url": "https://robotopian.com/products/damiao-dm-j4340-2ec-servo-motor",
-            "actuator_id": null
+            "actuator_id": "damiao-dm-j4340-2ec"
         },
         "dm-j4340p": {
             "id": "dm-j4340p",
@@ -55,7 +55,7 @@
             "weight_g": 628,
             "torque_density_nm_per_kg": 154.5,
             "product_url": "https://aifitlab.com/products/damiao-dm-j6248p-2ec-motor",
-            "actuator_id": null
+            "actuator_id": "damiao-dm-j6248p-2ec"
         },
         "asimov-ec-a6416": {
             "id": "asimov-ec-a6416",
@@ -68,7 +68,7 @@
             "weight_g": null,
             "torque_density_nm_per_kg": null,
             "product_url": null,
-            "actuator_id": null
+            "actuator_id": "encos-ec-a6416-p2-25"
         },
         "asimov-ec-a5013": {
             "id": "asimov-ec-a5013",
@@ -81,7 +81,7 @@
             "weight_g": null,
             "torque_density_nm_per_kg": null,
             "product_url": null,
-            "actuator_id": null
+            "actuator_id": "encos-ec-a5013-h17-100"
         },
         "asimov-ec-a3814": {
             "id": "asimov-ec-a3814",
@@ -94,7 +94,7 @@
             "weight_g": null,
             "torque_density_nm_per_kg": null,
             "product_url": null,
-            "actuator_id": null
+            "actuator_id": "encos-ec-a3814-h14-107"
         },
         "asimov-ec-a4315": {
             "id": "asimov-ec-a4315",
@@ -107,7 +107,7 @@
             "weight_g": null,
             "torque_density_nm_per_kg": null,
             "product_url": null,
-            "actuator_id": null
+            "actuator_id": "encos-ec-a4315-p2-36"
         },
         "asimov-ec-a4310": {
             "id": "asimov-ec-a4310",
@@ -120,7 +120,7 @@
             "weight_g": null,
             "torque_density_nm_per_kg": null,
             "product_url": null,
-            "actuator_id": null
+            "actuator_id": "encos-ec-a4310-p2-36"
         },
         "pollen-orbita-2d": {
             "id": "pollen-orbita-2d",
@@ -172,7 +172,7 @@
             "weight_g": 18,
             "torque_density_nm_per_kg": 11.9,
             "product_url": "https://emanual.robotis.com/docs/en/dxl/x/xl330-m077/",
-            "actuator_id": null
+            "actuator_id": "dynamixel-xl330-m077-t"
         },
         "dynamixel-xc330-m288": {
             "id": "dynamixel-xc330-m288",
@@ -536,7 +536,7 @@
             "weight_g": null,
             "torque_density_nm_per_kg": null,
             "product_url": "https://www.seeedstudio.com/STS3215-19kg-cm-7-4V-Serial-Servo-p-6338.html",
-            "actuator_id": null
+            "actuator_id": "feetech-sts3215-c001"
         },
         "hello-stretch-stepper": {
             "id": "hello-stretch-stepper",
@@ -575,7 +575,7 @@
             "weight_g": 65,
             "torque_density_nm_per_kg": 29.2,
             "product_url": "https://emanual.robotis.com/docs/en/dxl/x/xc430-w240/",
-            "actuator_id": null
+            "actuator_id": "dynamixel-xc430-w240-t"
         },
         "dynamixel-xm540-w270": {
             "id": "dynamixel-xm540-w270",
@@ -682,7 +682,7 @@
             "dof": 23,
             "payload_kg": 2,
             "payload_basis": "per_arm",
-            "reach_mm": null,
+            "reach_mm": 450,
             "height_m": 1.32,
             "weight_kg": 35,
             "price_usd": 13500,
@@ -722,7 +722,7 @@
             "dof": 31,
             "payload_kg": 7,
             "payload_basis": "per_arm",
-            "reach_mm": null,
+            "reach_mm": 690,
             "height_m": 1.82,
             "weight_kg": 70,
             "price_usd": 29900,
@@ -791,7 +791,7 @@
             "country_flag": "🇨🇳",
             "dof": 23,
             "payload_kg": null,
-            "reach_mm": null,
+            "reach_mm": 450,
             "height_m": 1.18,
             "weight_kg": 30,
             "price_usd": 29800,
@@ -994,7 +994,7 @@
             "dof": 26,
             "payload_kg": 2,
             "payload_basis": "per_arm",
-            "reach_mm": null,
+            "reach_mm": 420,
             "height_m": 1.23,
             "weight_kg": 29,
             "price_usd": 5900,
