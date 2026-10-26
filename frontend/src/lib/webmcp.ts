@@ -101,6 +101,7 @@ export function searchActuators(args: SearchArgs) {
         search: str(args.query),
         categories: new Set(category ? [category] : []),
         useCases: new Set(),
+        countries: new Set(),
         sortKey,
         sortDir: args.sort_dir === "asc" ? "asc" : "desc",
     }).filter((a) => {
