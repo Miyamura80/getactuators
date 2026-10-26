@@ -11,6 +11,7 @@ import {
     type Sourced,
     sourceOf,
 } from "../../../../src/humanoids";
+import { CompanyLogo } from "../../components/CompanyLogo";
 import { MetricBar } from "../../components/MetricBar";
 
 function Conf({ c }: { c: Confidence | "reported" | "estimated" }) {
@@ -191,7 +192,10 @@ export function JointPanel({
     if (!joint) {
         return (
             <div className="hm-panel">
-                <p className="hm-panel-k">{robot.brand}</p>
+                <p className="hm-panel-k with-logo">
+                    <CompanyLogo name={robot.brand} size={14} />
+                    {robot.brand}
+                </p>
                 <h3>{robot.name}</h3>
                 <p className="hm-summary">{robot.summary}</p>
                 {robot.notCounted && <p className="hm-inferred">Not counted: {robot.notCounted}</p>}

@@ -13,6 +13,7 @@ import {
     type Humanoid,
     humanoidTotals,
 } from "../../../../src/humanoids";
+import { CompanyLogo } from "../../components/CompanyLogo";
 import { Flag } from "../../components/Flag";
 import { FleetTable } from "./FleetTable";
 import { JointPanel } from "./JointPanel";
@@ -63,9 +64,15 @@ function Picker({
     none?: string;
     exclude?: string;
 }) {
+    const picked = value ? getHumanoid(value) : undefined;
     return (
         <label className="hm-pick">
             <span>{label}</span>
+            {picked && (
+                <span className="hm-pick-logo">
+                    <CompanyLogo name={picked.brand} size={18} />
+                </span>
+            )}
             <select value={value ?? ""} onChange={(e) => onChange(e.target.value || null)}>
                 {none && <option value="">{none}</option>}
                 {HUMANOIDS.filter((h) => h.id !== exclude).map((h) => (
@@ -90,7 +97,8 @@ function Card({ robot, joint, onJoint }: { robot: Humanoid; joint: CanonicalJoin
         <figure className="hm-card">
             <figcaption>
                 <b>{robot.name}</b>
-                <span>
+                <span className="with-logo">
+                    <CompanyLogo name={robot.brand} size={16} />
                     {robot.brand} · <Flag code={robot.country} />
                 </span>
             </figcaption>
