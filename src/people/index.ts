@@ -55,9 +55,11 @@ const PEOPLE_RECORDS: Person[] = [
         name: "Soumil Sahjpall",
         role: "Contributor",
         affiliation: { orgId: "ducky-drones" },
-        // OPEN QUESTION (#85): GitHub handle unknown, so no link and no
-        // commit count yet. Add { kind: "github", url } once confirmed.
-        links: [],
+        // OPEN QUESTION (#85): GitHub handle unknown, so no commit count yet.
+        // Add { kind: "github", url } once confirmed.
+        links: [
+            { kind: "linkedin", url: "https://www.linkedin.com/in/soumil-sahjpall/" },
+        ],
         lists: ["contributor"],
         contribution: "Early contributor.",
         unconfirmed: [{ field: "github", question: "Soumil's GitHub handle" }],
@@ -67,23 +69,24 @@ const PEOPLE_RECORDS: Person[] = [
         name: "Cornelia Weinzierl",
         role: "Contributor",
         affiliation: { orgId: "tau-robotics" },
-        links: [],
+        links: [
+            { kind: "github", url: "https://github.com/CorneliaMelon" },
+            {
+                kind: "linkedin",
+                url: "https://www.linkedin.com/in/cornelia-weinzierl/",
+            },
+        ],
         lists: ["contributor"],
         contribution: "Early contributor.",
     },
     {
-        id: "shouta-yoshikai",
-        // OPEN QUESTION (#85): spelling unconfirmed ("Shouta" or "Shota");
-        // the id follows the name.
-        name: "Shouta Yoshikai",
+        id: "shota-yoshikai",
+        name: "Shota Yoshikai",
         role: "Contributor",
         affiliation: { orgId: "manmaru-ai" },
-        links: [],
+        links: [{ kind: "linkedin", url: "https://jp.linkedin.com/in/shota-yoshikai" }],
         lists: ["contributor"],
         contribution: "Early contributor.",
-        unconfirmed: [
-            { field: "name", question: "Shouta Yoshikai or Shota Yoshikai?" },
-        ],
     },
 ];
 

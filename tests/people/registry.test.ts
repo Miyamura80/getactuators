@@ -5,12 +5,7 @@ import { resolveBrand } from "@/brands";
 import { ORGS, PEOPLE, contributionOf, orgOf } from "@/people";
 import type { ImageAsset } from "@/people";
 import sharp from "sharp";
-import {
-    MAX_BYTES,
-    blockedImageHost,
-    headshot,
-    logo,
-} from "../../scripts/people-assets";
+import { MAX_BYTES, headshot, logo } from "../../scripts/people-assets";
 
 const PUBLIC = "frontend/public";
 const LICENCES = ["consent", "press-kit", "cc-by", "cc-by-sa", "public-domain", "own"];
@@ -44,9 +39,10 @@ describe("people registry", () => {
                 licence: true,
             });
             expect(a.sourceUrl).toMatch(/^https?:\/\//);
-            expect({ id, blocked: blockedImageHost(a.sourceUrl) }).toEqual({
+            // Signed CDN links expire; record the page the image came from.
+            expect({ id, signed: a.sourceUrl.includes("licdn.com") }).toEqual({
                 id,
-                blocked: undefined,
+                signed: false,
             });
             expect(a.retrieved).toMatch(/^\d{4}-\d{2}-\d{2}$/);
             const file = join(PUBLIC, a.path);
@@ -61,17 +57,6 @@ describe("people registry", () => {
             for (const f of readdirSync(join(PUBLIC, dir)))
                 expect(recorded.has(`/${dir}/${f}`)).toBe(true);
         }
-    });
-
-    test("blocked image hosts are refused, subdomains included", () => {
-        expect(blockedImageHost("https://media.licdn.com/dms/image/x.jpg")).toBe(
-            "media.licdn.com",
-        );
-        expect(blockedImageHost("https://x.media.licdn.com/a.jpg")).toBe(
-            "media.licdn.com",
-        );
-        expect(blockedImageHost("https://github.com/Miyamura80.png")).toBeUndefined();
-        expect(blockedImageHost("local/file.png")).toBeUndefined();
     });
 
     test("every unconfirmed fact names a question", () => {

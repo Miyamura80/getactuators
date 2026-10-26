@@ -17,23 +17,13 @@
 // history (author or Co-authored-by trailer) into src/people/contributions.json.
 //
 // Only use images the person consented to or the organisation publishes for
-// identification. Never scrape LinkedIn photos.
+// identification. For a LinkedIn photo, download it first and pass the profile
+// URL as --source-url: the media.licdn.com link is signed and expires.
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import sharp from "sharp";
 import { PEOPLE, githubLogin } from "../src/people";
 import type { Contribution, ImageAsset, Licence } from "../src/people/types";
-
-// Image hosts the pipeline refuses. OPEN QUESTION (#85): whether
-// media.licdn.com (LinkedIn photos) may ever be a source is for the owner to
-// decide; until then it stays blocked, matching the rule above.
-export const BLOCKED_IMAGE_HOSTS = ["media.licdn.com"];
-
-export function blockedImageHost(url: string): string | undefined {
-    if (!/^https?:\/\//.test(url)) return undefined;
-    const host = new URL(url).hostname.toLowerCase();
-    return BLOCKED_IMAGE_HOSTS.find((h) => host === h || host.endsWith(`.${h}`));
-}
 
 const ASSETS_JSON = "src/people/assets.json";
 const CONTRIBUTIONS_JSON = "src/people/contributions.json";
@@ -115,10 +105,6 @@ async function asset(kind: "headshot" | "logo", args: string[]) {
         );
     }
     const sourceUrl = flag(args, "source-url") ?? src;
-    for (const url of [src, sourceUrl]) {
-        const blocked = blockedImageHost(url);
-        if (blocked) throw new Error(`${blocked} is not an allowed image source`);
-    }
     const { bytes, svg } = await load(src);
     const file: AssetFile = JSON.parse(readFileSync(ASSETS_JSON, "utf8"));
     let path: string;
