@@ -46,7 +46,7 @@ async function loadShell(): Promise<string> {
     return shellCache;
 }
 
-function headMeta(page: Page, noindex = false): HeadMeta {
+function headMeta(page: Page, noindex = page.noindex ?? false): HeadMeta {
     return {
         path: page.path,
         title: page.title,

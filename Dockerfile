@@ -16,6 +16,8 @@ COPY src/startups.ts src/investors.ts src/country-flag.ts ./src/
 COPY src/humanoids ./src/humanoids
 # Company logo registry (domains for the logo provider, local overrides).
 COPY src/brands ./src/brands
+# The supply-chain registry and kit helpers (zod schemas stay server-side).
+COPY src/supply-chain ./src/supply-chain
 # Logo.dev publishable key (public), baked into the bundle; unset draws monograms.
 ARG VITE_LOGO_DEV_TOKEN=""
 ENV VITE_LOGO_DEV_TOKEN=$VITE_LOGO_DEV_TOKEN

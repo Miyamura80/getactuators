@@ -87,6 +87,37 @@ const ROBOT_MAKERS: Row[] = [
     ["asimov-bom", "Asimov BOM", null],
 ];
 
+// Supply-chain registry companies (src/supply-chain/companies) and the
+// familiar-market leaders on /lab/supply-chain (DOMINANCE_MARKETS). Domains are
+// each company's own site from the registry `url`; the two the registry only
+// cites through Wikipedia stay null (monogram). Nidec, Nabtesco, Leaderdrive,
+// Unitree and Xiaomi are already listed above.
+const SUPPLY_CHAIN: Row[] = [
+    ["mp-materials", "MP Materials", "mpmaterials.com"],
+    ["china-northern-rare-earth", "China Northern Rare Earth", "reht.com"],
+    ["china-rare-earth-group", "China Rare Earth Group", null],
+    ["shenghe-resources", "Shenghe Resources", null],
+    ["shin-etsu-chemical", "Shin-Etsu Chemical", "shinetsu.co.jp"],
+    ["jl-mag", "JL MAG Rare-Earth", "jlmag.com.cn", ["JL MAG"]],
+    ["harmonic-drive-systems", "Harmonic Drive Systems", "hds.co.jp"],
+    ["timken", "Timken", "timken.com"],
+    ["tesla", "Tesla", "tesla.com"],
+    ["boston-dynamics", "Boston Dynamics", "bostondynamics.com"],
+    ["hyundai-mobis", "Hyundai Mobis", "mobis.com"],
+    ["rainbow-robotics", "Rainbow Robotics", "rainbow-robotics.com"],
+    ["fanuc", "FANUC", "fanuc.co.jp"],
+    ["yaskawa", "Yaskawa Electric", "yaskawa-global.com", ["Yaskawa"]],
+    ["ubtech", "UBTech Robotics", "ubtrobot.com", ["UBTech"]],
+    ["agibot", "AgiBot", "agibot.com"],
+    ["tuopu-group", "Ningbo Tuopu Group", "tuopu.com", ["Tuopu"]],
+    ["google", "Google", "google.com"],
+    ["bing", "Bing", "bing.com"],
+    ["apple", "Apple", "apple.com"],
+    ["samsung", "Samsung", "samsung.com"],
+    ["vivo", "vivo", "vivo.com"],
+    ["oppo", "OPPO", "oppo.com"],
+];
+
 // Companies behind the /investors deals (src/investors.ts COMPANIES).
 const PORTFOLIO: Row[] = [
     ["salient", "Salient Motion", "salientmotion.com"],
@@ -182,7 +213,9 @@ const fromRow = ([id, name, domain, aliases]: Row): BrandEntry => {
 
 export const BRANDS: BrandEntry[] = [
     ...STARTUP_ENTRIES,
-    ...[...MAKERS, ...ROBOT_MAKERS, ...PORTFOLIO, ...INVESTORS].map(fromRow),
+    ...[...MAKERS, ...ROBOT_MAKERS, ...SUPPLY_CHAIN, ...PORTFOLIO, ...INVESTORS].map(
+        fromRow,
+    ),
 ];
 
 // Lowercase, drop a parenthetical ("Robotis (Dynamixel)"), collapse punctuation.

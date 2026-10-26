@@ -185,3 +185,114 @@
         flex-wrap: wrap;
     }
 }
+
+/* Supply chain dropdown: a ruled panel of two groups, square and flat. */
+.site-sub {
+    position: relative;
+}
+.site-sub > summary {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 11px;
+    border-radius: 6px;
+    color: #aaa;
+    font-size: 13px;
+    cursor: pointer;
+    list-style: none;
+}
+.site-sub > summary::-webkit-details-marker {
+    display: none;
+}
+.site-sub > summary::after {
+    content: "";
+    width: 5px;
+    height: 5px;
+    margin-top: -3px;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    transform: rotate(45deg);
+}
+.site-sub[open] > summary::after {
+    margin-top: 3px;
+    transform: rotate(225deg);
+}
+.site-sub > summary:hover,
+.site-sub[open] > summary,
+.site-sub > summary.is-current {
+    background: #242424;
+    color: #fff;
+}
+.site-sub > summary:focus-visible {
+    outline: 2px solid #91b9ff;
+    outline-offset: 3px;
+}
+.site-sub-panel {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    z-index: 30;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(210px, 1fr));
+    background: #0a0a0a;
+    border: 1px solid #383838;
+}
+.site-sub-panel section {
+    padding: 12px;
+    min-width: 0;
+}
+.site-sub-panel section + section {
+    border-left: 1px solid #242424;
+}
+.site-sub-panel h3 {
+    margin: 0 0 6px;
+    padding: 0 11px;
+    font: 600 10px / 1.6 "JetBrains Mono", ui-monospace, monospace;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #9ba4a6;
+}
+.site-menu .site-sub-panel a,
+.site-sub-soon {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 11px;
+    font-size: 13px;
+    white-space: nowrap;
+}
+.site-menu .site-sub-panel a {
+    border-radius: 2px;
+}
+.site-sub-soon {
+    color: #5f6668;
+    cursor: default;
+}
+.site-sub-soon small {
+    font: 10px "JetBrains Mono", ui-monospace, monospace;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #5f6668;
+}
+@media (max-width: 860px) {
+    .site-sub {
+        grid-column: 1 / -1;
+    }
+    .site-sub > summary {
+        padding: 12px;
+    }
+    .site-sub-panel {
+        position: static;
+        margin-top: 4px;
+        border: 0;
+        border-top: 1px solid #242424;
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .site-sub-panel section {
+        padding: 8px 0;
+    }
+    .site-sub-panel section + section {
+        border-left: 0;
+    }
+}

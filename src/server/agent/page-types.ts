@@ -19,4 +19,6 @@ export interface Page {
     // Markdown list as visual rows.
     persistentHtml?: (html: string) => string;
     jsonLd: () => Record<string, unknown>[];
+    // Served but kept out of search: robots noindex, no sitemap or llms.txt.
+    noindex?: boolean;
 }

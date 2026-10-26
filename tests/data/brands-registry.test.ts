@@ -6,6 +6,8 @@ import { BRANDS, brandInitials, logoUrl, resolveBrand } from "../../src/brands";
 import selfHosted from "../../src/brands/self-hosted.json";
 import { COMPANIES, FUNDS } from "../../src/investors";
 import { STARTUPS } from "../../src/startups";
+import { COMPANIES as SUPPLY_COMPANIES } from "../../src/supply-chain/companies";
+import { DOMINANCE_MARKETS } from "../../src/supply-chain/perspective";
 
 // Every company name a page shows, from every dataset on the site.
 const referenced: string[] = [
@@ -18,6 +20,10 @@ const referenced: string[] = [
     ...Object.keys(COMPANIES),
     ...Object.values(COMPANIES).map((c) => c.name),
     ...FUNDS.map((f) => f.name),
+    ...SUPPLY_COMPANIES.map((c) => c.name),
+    ...DOMINANCE_MARKETS.filter((m) => m.kind === "company").flatMap((m) =>
+        Object.keys(m.shares.value).filter((k) => k !== "other"),
+    ),
 ];
 
 describe("brand registry", () => {
@@ -41,6 +47,10 @@ describe("brand registry", () => {
         expect(resolveBrand("Waveshare (Feetech OEM)")?.id).toBe("waveshare");
         expect(resolveBrand("Menlo")?.id).toBe("menlo-ventures");
         expect(resolveBrand("Menlo Research")?.id).toBe("menlo-research");
+        expect(resolveBrand("Unitree Robotics")?.id).toBe("unitree");
+        expect(resolveBrand("Harmonic Drive Systems")?.id).toBe(
+            "harmonic-drive-systems",
+        );
         expect(resolveBrand("westmag")?.logo).toBe("/logos/startups/westmag.png");
     });
 
