@@ -29,7 +29,7 @@ test("gallery startup reuses every initial card and photo instead of replacing t
     photos.forEach((image) =>
         Object.defineProperty(image, "complete", { value: false }),
     );
-    expect(cards).toHaveLength(68);
+    expect(cards).toHaveLength(79);
     const errors = spyOn(console, "error");
     let mounted: Root | undefined;
     try {

@@ -209,9 +209,9 @@ describe("actuator unit cost sources", () => {
         if ("reason" in u) throw new Error(u.reason);
         expect(u.confidence).toBe("modeled");
         expect(u.value).toBeCloseTo(COST_FIT.coef * 139 ** COST_FIT.exp, 0);
-        const neck = robot("booster-t1").joints.find((j) => j.canonical === "neck");
+        const neck = robot("booster-k1").joints.find((j) => j.canonical === "neck");
         if (!neck) throw new Error("no neck");
-        expect(unitCost(robot("booster-t1"), neck)).toEqual({
+        expect(unitCost(robot("booster-k1"), neck)).toEqual({
             reason: `below the catalog price fit range (${COST_FIT.minTorque} N·m)`,
         });
     });
