@@ -63,18 +63,13 @@ const PEOPLE_RECORDS: Person[] = [
         unconfirmed: [{ field: "github", question: "Soumil's GitHub handle" }],
     },
     {
-        id: "cornelia-weinzel",
-        // OPEN QUESTION (#85): spelling unconfirmed ("Weinzel" or
-        // "Weinzierl"); the id follows the name.
-        name: "Cornelia Weinzel",
+        id: "cornelia-weinzierl",
+        name: "Cornelia Weinzierl",
         role: "Contributor",
         affiliation: { orgId: "tau-robotics" },
         links: [],
         lists: ["contributor"],
         contribution: "Early contributor.",
-        unconfirmed: [
-            { field: "name", question: "Cornelia Weinzel or Cornelia Weinzierl?" },
-        ],
     },
     {
         id: "shouta-yoshikai",
