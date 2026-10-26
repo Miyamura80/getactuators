@@ -1443,7 +1443,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://www.robotshop.com/products/my-actuator-rmd-x8-pro-v2-can-bus-bldc-actuator-w-19-reduction-mc-x-300-o-driver",
     "source_domain": "robotshop.com",
-    "image_url": null
+    "image_url": "/actuator-images/myactuator-rmd-x8-pro-v2.webp"
   },
   {
     "id": "mjbots-qdd100",
@@ -2953,7 +2953,7 @@
     "country_flag": "🇬🇧",
     "source_url": "https://trampa.co.uk/product/vesc6-mk6/",
     "source_domain": "trampa.co.uk",
-    "image_url": null
+    "image_url": "/actuator-images/trampa-vesc-6-mkvi.webp"
   },
   {
     "id": "trinamic-tmc4671",
@@ -3008,7 +3008,7 @@
     "country_flag": "🇩🇪",
     "source_url": "https://www.analog.com/en/products/tmc4671.html",
     "source_domain": "analog.com",
-    "image_url": null
+    "image_url": "/actuator-images/trinamic-tmc4671.webp"
   },
   {
     "id": "harmonic-drive-sha-cg",
@@ -3896,7 +3896,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://www.seeedstudio.com/STS3215-19kg-cm-7-4V-Serial-Servo-p-6338.html",
     "source_domain": "seeedstudio.com",
-    "image_url": null
+    "image_url": "/actuator-images/feetech-sts3215-c001.webp"
   },
   {
     "id": "encos-ec-a6416-p2-25",
