@@ -3,6 +3,7 @@ import type { DataGrade } from "../../../../src/humanoids";
 import { navigate, useLocationKey } from "../../lib/router";
 import { type FleetState, fleetSearch, parseFleet, queryFleet, ROWS, type SortKey } from "./fleet-query";
 import { Flag } from "../../components/Flag";
+import { MetricBar } from "../../components/MetricBar";
 import { MixBar } from "./Totals";
 
 const COLS: { key: SortKey; label: string; num?: boolean }[] = [
@@ -19,6 +20,16 @@ const COLS: { key: SortKey; label: string; num?: boolean }[] = [
 const GRADE_DOTS: Record<DataGrade, number> = { reported: 3, mixed: 2, estimated: 1 };
 const usd = (n: number | null) => (n === null ? "n/a" : `$${(n / 1000).toFixed(n % 1000 ? 1 : 0)}k`);
 const TOP = [...ROWS].sort((a, b) => b.t.magnetMassKg.value - a.t.magnetMassKg.value)[0];
+// Bar scales come from the whole fleet, so a bar keeps its length across search and pages.
+const maxOf = (f: (r: (typeof ROWS)[number]) => number | null) => Math.max(1e-9, ...ROWS.map((r) => f(r) ?? 0));
+const MAX = {
+    dof: maxOf((r) => r.h.dof),
+    actuators: maxOf((r) => r.t.actuators),
+    magnet: maxOf((r) => r.t.magnetMassKg.value),
+    ree: maxOf((r) => r.ree),
+    bom: maxOf((r) => r.bom),
+    price: maxOf((r) => r.h.price_usd),
+};
 
 function Confidence({ share, grade }: { share: number; grade: DataGrade }) {
     const pct = Math.round(share * 100);
@@ -117,19 +128,37 @@ export function FleetTable({ active, onPick }: { active: string; onPick: (id: st
                                 <td className="hm-mixcol">
                                     <MixBar totals={t} compact />
                                 </td>
-                                <td className="num">{h.dof ?? "n/a"}</td>
-                                <td className="num">{t.actuators}</td>
-                                <td className="num">{t.magnetMassKg.value.toFixed(2)}</td>
-                                <td className="num">{ree.toFixed(2)}</td>
                                 <td className="num">
-                                    {usd(bom)}
-                                    {bomOut > 0 && (
-                                        <sup className="hm-out" title={`${bomOut} actuators have no defensible unit cost and are not counted`}>
-                                            +
-                                        </sup>
-                                    )}
+                                    <MetricBar value={h.dof} max={MAX.dof} text={String(h.dof)} higherIsBetter />
                                 </td>
-                                <td className="num">{usd(h.price_usd)}</td>
+                                <td className="num">
+                                    <MetricBar value={t.actuators} max={MAX.actuators} text={String(t.actuators)} higherIsBetter />
+                                </td>
+                                <td className="num">
+                                    <MetricBar
+                                        value={t.magnetMassKg.value}
+                                        max={MAX.magnet}
+                                        text={t.magnetMassKg.value.toFixed(2)}
+                                        higherIsBetter
+                                    />
+                                </td>
+                                <td className="num">
+                                    <MetricBar value={ree} max={MAX.ree} text={ree.toFixed(2)} higherIsBetter />
+                                </td>
+                                <td
+                                    className="num"
+                                    title={bomOut > 0 ? `${bomOut} actuators have no defensible unit cost and are not counted` : undefined}
+                                >
+                                    <MetricBar
+                                        value={bom || null}
+                                        max={MAX.bom}
+                                        text={`${usd(bom)}${bomOut > 0 ? "+" : ""}`}
+                                        higherIsBetter
+                                    />
+                                </td>
+                                <td className="num">
+                                    <MetricBar value={h.price_usd} max={MAX.price} text={usd(h.price_usd)} higherIsBetter />
+                                </td>
                                 <td className="num">
                                     <Confidence share={conf.share} grade={conf.grade} />
                                 </td>
