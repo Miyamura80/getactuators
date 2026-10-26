@@ -2442,12 +2442,30 @@ table.board {
     color: var(--text);
 }
 @media (max-width: 560px) {
-    .cmdk-trigger-text {
+    /* Touch screens have no Cmd+K, so the trigger shrinks to a round icon
+       button that clears the iOS home indicator. */
+    .cmdk-trigger-text,
+    .cmdk-trigger-kbd {
         display: none;
     }
     .cmdk-trigger {
-        right: 14px;
-        bottom: 14px;
+        right: calc(12px + env(safe-area-inset-right, 0px));
+        bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        justify-content: center;
+    }
+    .cmdk-trigger-icon {
+        font-size: 20px;
+        line-height: 1;
+    }
+    /* Reserve room after the last content (footer links, table rows) so
+       scrolling to the end always leaves it clear of the floating trigger. */
+    body:has(.cmdk-trigger)::after {
+        content: "";
+        display: block;
+        height: calc(64px + env(safe-area-inset-bottom, 0px));
     }
 }
 
