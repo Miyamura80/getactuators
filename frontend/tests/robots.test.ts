@@ -94,6 +94,11 @@ describe("robotsUsingActuator", () => {
         expect(ids("encos-ec-a6416-p2-25")).toEqual(["menlo-asimov-1"]);
         expect(ids("feetech-sts3215-c001")).toEqual(["therobotstudio-so-101"]);
         expect(ids("dynamixel-xc430-w240-t")).toEqual(["hello-robot-stretch-3"]);
+        expect(ids("damiao-dm-j4340p-2ec")).toEqual(["manmaru-yor"]);
+    });
+
+    test("keeps Reachy Mini's plastic-gear XC330-M288-PG off the metal-gear XC330-M288-T", () => {
+        expect(ROBOT_MOTORS["dynamixel-xc330-m288"]?.actuator_id ?? null).toBeNull();
     });
 
     test("keeps the 12V STS3215 apart from the 7.4V C001 the SO-101 uses", () => {
