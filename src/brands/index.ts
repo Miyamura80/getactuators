@@ -81,6 +81,8 @@ const ROBOT_MAKERS: Row[] = [
     ["agility", "Agility Robotics", "agilityrobotics.com", ["Agility"]],
     ["agilex", "AgileX Robotics", "agilex.ai", ["AgileX"]],
     ["therobotstudio", "TheRobotStudio", "therobotstudio.com"],
+    ["hello-robot", "Hello Robot", "hello-robot.com"],
+    ["franka", "Franka Robotics", "franka.de", ["Franka"]],
     // Domain from its own product page (yor.manmaruai.co.jp) in robots.json.
     ["manmaru", "ManmaruAI", "manmaruai.co.jp", ["Manmaru"]],
     // The Asimov 1 bill of materials, not a company: always a monogram.
