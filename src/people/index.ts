@@ -47,8 +47,6 @@ const PEOPLE_RECORDS: Person[] = [
             { kind: "web", url: "https://eito.me/" },
         ],
         lists: ["contributor-core"],
-        contribution:
-            "Started the catalog and built the site, REST API and MCP server.",
     },
     {
         id: "soumil-sahjpall",
@@ -61,7 +59,6 @@ const PEOPLE_RECORDS: Person[] = [
             { kind: "linkedin", url: "https://www.linkedin.com/in/soumil-sahjpall/" },
         ],
         lists: ["contributor"],
-        contribution: "Early contributor.",
         unconfirmed: [{ field: "github", question: "Soumil's GitHub handle" }],
     },
     {
@@ -77,7 +74,6 @@ const PEOPLE_RECORDS: Person[] = [
             },
         ],
         lists: ["contributor"],
-        contribution: "Early contributor.",
     },
     {
         id: "shota-yoshikai",
@@ -86,7 +82,6 @@ const PEOPLE_RECORDS: Person[] = [
         affiliation: { orgId: "manmaru-ai" },
         links: [{ kind: "linkedin", url: "https://jp.linkedin.com/in/shota-yoshikai" }],
         lists: ["contributor"],
-        contribution: "Early contributor.",
     },
 ];
 
