@@ -39,10 +39,10 @@
             "peak_torque_nm": 27,
             "rated_speed_rpm": 36,
             "gear_ratio": "40:1",
-            "weight_g": null,
-            "torque_density_nm_per_kg": null,
-            "product_url": null,
-            "actuator_id": null
+            "weight_g": 381,
+            "torque_density_nm_per_kg": 70.9,
+            "product_url": "https://www.seeedstudio.com/DM4340P-Actuator-p-6663.html",
+            "actuator_id": "damiao-dm-j4340p-2ec"
         },
         "dm-j6248": {
             "id": "dm-j6248",

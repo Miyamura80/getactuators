@@ -4137,5 +4137,59 @@
     "source_url": "https://aifitlab.com/products/encos-ec-a3814-h14-107-motor",
     "source_domain": "aifitlab.com",
     "image_url": null
+  },
+  {
+    "id": "damiao-dm-j4340p-2ec",
+    "name": "DM-J4340P-2EC",
+    "brand": "DAMIAO (DMBots)",
+    "category": "integrated_joint",
+    "use_cases": [
+      "robot_arm",
+      "humanoid_joint",
+      "exoskeleton"
+    ],
+    "product_url": "https://www.seeedstudio.com/DM4340P-Actuator-p-6663.html",
+    "datasheet_url": "https://github.com/dmBots/DM-J4340P-2EC",
+    "price_usd": 175,
+    "availability": "in_production",
+    "peak_torque_nm": 27,
+    "rated_torque_nm": 9,
+    "max_speed_rpm": 52.5,
+    "gear_ratio": "40:1",
+    "weight_g": 381,
+    "torque_density_nm_per_kg": 70.9,
+    "backdrivable": null,
+    "backlash_arcmin": null,
+    "repeatability_arcmin": null,
+    "voltage_v": "24",
+    "peak_current_a": 8,
+    "power_w": null,
+    "kt_nm_per_a": null,
+    "comm": [
+      "CAN"
+    ],
+    "control_modes": [
+      "position",
+      "velocity",
+      "torque"
+    ],
+    "encoder": "dual 14-bit magnetic single-turn encoders (motor and output)",
+    "integrated_driver": true,
+    "ip_rating": null,
+    "notes": "57mm OD x 56.5mm planetary joint motor with integrated driver, a taller sibling of the DM-J4340-2EC with the same 40:1 ratio and torque ratings. Used for the three higher-torque joints of each Seeed reBot Arm B601-DM (the Manmaru YOR arms). Specs are for the original DM-J4340P-2EC in the DAMIAO manual: 9 N.m rated, 27 N.m peak, 36 rpm rated and 52.5 rpm no-load at 24V (100 rpm on the 48V build), 3A rated and 8A peak phase current, ~381g. CAN at 1 Mbps with MIT, position-velocity, velocity and force-position modes. DAMIAO's DM-J4340P-2EC V1.1 lifts this to 12 N.m rated / 40 N.m peak with 16-bit encoders in the same housing, and resellers may ship either. $175 is the Seeed Studio price for one motor ($166 at 10+).",
+    "sources": [
+      "https://github.com/dmBots/DM-J4340P-2EC",
+      "https://github.com/dmBots/DM-J4340P-2EC/blob/master/manual/DM-J4340P-2EC%20Geared%20Motor%20User%20Manual%20V1.2%202026-09-14.pdf",
+      "https://github.com/dmBots/DM-J4340P-2EC/blob/master/manual/DM-J4340P-2EC%20V1.1%20Geared%20Motor%20User%20Manual%20V1.4%202026-09-14.pdf",
+      "https://www.seeedstudio.com/DM4340P-Actuator-p-6663.html"
+    ],
+    "verified": true,
+    "price_per_nm": 6.48,
+    "data_source": "spot_checked",
+    "country": "China",
+    "country_flag": "🇨🇳",
+    "source_url": "https://www.seeedstudio.com/DM4340P-Actuator-p-6663.html",
+    "source_domain": "seeedstudio.com",
+    "image_url": null
   }
 ]
