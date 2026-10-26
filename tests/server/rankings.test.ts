@@ -26,7 +26,7 @@ test("home rankings list verified actuators only", () => {
     for (const a of excluded)
         expect(urls).not.toContain(absoluteUrl(actuatorPath(a.id)));
     // The full tables still list unverified entries and gearboxes.
-    const all = findPage("/all")?.body();
+    const all = findPage("/actuators")?.body();
     expect(all).toContain(absoluteUrl(actuatorPath(unverified[0]?.id ?? "")));
     expect(all).toContain(absoluteUrl(actuatorPath("nabtesco-rv-42n")));
 });

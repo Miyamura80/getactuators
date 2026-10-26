@@ -3,8 +3,7 @@ import { createRoot, hydrateRoot, type Root as ReactRoot } from "react-dom/clien
 import App from "./App.tsx";
 import { usePath } from "./lib/router";
 import { Home } from "./pages/Home";
-import { AllActuators } from "./pages/AllActuators";
-import { ActuatorsGallery } from "./pages/ActuatorsGallery";
+import { ActuatorsPage } from "./pages/actuators/ActuatorsPage";
 import { ExplodedView } from "./pages/ExplodedView";
 import { CommandPalette } from "./components/CommandPalette";
 import { Agents } from "./pages/Agents";
@@ -26,10 +25,9 @@ import { HUMANOIDS_PATH } from "../../src/humanoids";
 
 function Page({ menuOpen }: { menuOpen: boolean }) {
     const path = usePath();
-    if (path === "/all") return <AllActuators menuOpen={menuOpen} />;
     if (path === "/compare") return <Compare menuOpen={menuOpen} />;
     if (path === "/robots" || path === "/robot") return <Home menuOpen={menuOpen} />;
-    if (path === "/actuators") return <ActuatorsGallery menuOpen={menuOpen} />;
+    if (path === "/actuators") return <ActuatorsPage menuOpen={menuOpen} />;
     if (path === "/agents") return <Agents menuOpen={menuOpen} />;
     if (path === ARM_TORQUE_PATH) return <ArmTorqueCalculator menuOpen={menuOpen} />;
     if (path === HUMANOID_GUIDE_PATH) return <HumanoidGuide menuOpen={menuOpen} />;

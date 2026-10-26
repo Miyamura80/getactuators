@@ -42,7 +42,7 @@ function buildIndex(): Item[] {
         name: a.name,
         sub: `${a.brand} · ${CATEGORY_MAP[a.category]?.label ?? a.category}`,
         brand: a.brand,
-        to: `/all?sel=${encodeURIComponent(a.id)}`,
+        to: `/actuators?view=list&sel=${encodeURIComponent(a.id)}`,
         hay: `${a.name} ${a.brand} ${a.category} ${CATEGORY_MAP[a.category]?.label ?? ""} ${a.notes ?? ""}`.toLowerCase(),
     }));
     // Robots first (small, curated set), then the actuator catalog.

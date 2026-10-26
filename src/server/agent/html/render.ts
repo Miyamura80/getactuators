@@ -125,12 +125,14 @@ export async function renderSpaPage(
                 // One tiny, already optimized photo: discover the leading gallery
                 // image while the application bundle is still downloading. Do not
                 // preload later cards (especially on a narrow mobile viewport).
-                // The application view reorders cards after hydration, so its
-                // first photo is not known here; skip the hint rather than
-                // fetch the wrong image early.
+                // The application grouping reorders cards after hydration and
+                // the list view shows no photos, so skip the hint there rather
+                // than fetch the wrong image early.
+                const params = new URLSearchParams(search);
                 const firstPhoto =
                     page.path === "/actuators" &&
-                    new URLSearchParams(search).get("by") !== "application"
+                    params.get("by") !== "application" &&
+                    params.get("view") !== "list"
                         ? galleryCards(ACTUATORS)[0]?.a.image_url
                         : null;
                 if (firstPhoto) {

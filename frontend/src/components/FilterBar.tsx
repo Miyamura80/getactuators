@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { type ReactNode, useEffect, useId, useRef, useState } from "react";
 import type { CategorySlug } from "../types";
 import { CATEGORIES, CATEGORY_MAP, USE_CASE_LABELS } from "../types";
 import { activeFilterCount, type FilterState } from "../lib/filter";
@@ -17,6 +17,8 @@ interface Props {
     total: number;
     shown: number;
     onChange: (next: FilterState) => void;
+    // Extra controls at the end of the search row (e.g. a view switch).
+    children?: ReactNode;
 }
 
 function toggle<T>(set: Set<T>, v: T): Set<T> {
@@ -53,6 +55,7 @@ export function FilterBar({
     total,
     shown,
     onChange,
+    children,
 }: Props) {
     const [open, setOpen] = useState(false);
     const wrapRef = useRef<HTMLDivElement>(null);
@@ -130,6 +133,7 @@ export function FilterBar({
                 <span className="count" title={`${shown} of ${total} shown`}>
                     {shown} / {total}
                 </span>
+                {children}
             </div>
 
             {pills.length > 0 && (
