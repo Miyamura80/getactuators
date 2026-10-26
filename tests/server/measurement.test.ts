@@ -34,7 +34,7 @@ test("configured HTML pages alone receive bootstrap and asset works without dist
     try {
         for (const path of [
             "/",
-            "/all",
+            "/actuators",
             "/privacy",
             "/guides/robot-actuator-selection",
             "/comparisons/cubemars-ak80-9-vs-xiaomi-cybergear",

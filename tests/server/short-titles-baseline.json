@@ -27,22 +27,15 @@
             "path": "/",
             "title": "actuatorlist: robot actuator leaderboard and spec database",
             "description": "Compare robot actuators by torque, weight, torque density and price. Browse QDD motors, integrated joints, smart servos and reducers.",
-            "bodySha256": "232688801ad73f144d20071c2636b286642fccd3991185b652f9ec50c00e2cdd",
-            "htmlContentSha256": "14648cd18b65109df7030208b82dddd538af804fde856a4d94bebb2021e414c5"
-        },
-        {
-            "path": "/all",
-            "title": "All robot actuators",
-            "description": "Every actuator in the catalog (68) in one table: peak torque, weight, torque density and price.",
-            "bodySha256": "bf50f642392ea9211d2a811b2e6ccd51001f1b448cd86a9e99f12b8ee7d9c7ec",
-            "htmlContentSha256": "44ca5847a50d6db09afd0a7f94cdc197bab3b64a0bb1ea7232eb127b0ef88f1a"
+            "bodySha256": "479a418ea589cb27071757a631e19f23304a1e1f331e69ed5f465ec86bca473e",
+            "htmlContentSha256": "7aea873a8f8af14f67006bf7b2bbfdee07bfee0ee28dc0c37616e476af0ff1d6"
         },
         {
             "path": "/actuators",
-            "title": "Actuator gallery by category",
-            "description": "Robot actuators grouped by drive type: QDD, integrated joints, smart servos, harmonic, cycloidal and frameless kits.",
-            "bodySha256": "0dea912bf8873f38f038991f135ac4e453df71a2ed9cbfe8edf1c8e0c4a8912c",
-            "htmlContentSha256": "78611ef3efcd03b7ba24f48276c28583353b5b45958f4e6d1d15e9cb72693d7a"
+            "title": "All robot actuators",
+            "description": "Every actuator in the catalog (68) as a photo gallery or one sortable table: peak torque, weight, torque density and price.",
+            "bodySha256": "d6691810987cb6aa1a5856f5b255ca01d53187373f2f4dbb16ee921e6ebdcca5",
+            "htmlContentSha256": "e64789eaf6c8504d95a8328d5edb1b05ee6d73685c2e72a16000ebe80e8c4e7b"
         },
         {
             "path": "/robots",

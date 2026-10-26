@@ -81,7 +81,6 @@ function doc(path: string, title: string, description: string, body: () => strin
 const PAGE_PATHS = [
     "/",
     "/index.html",
-    "/all",
     "/compare",
     "/actuators",
     "/actuators/:id",
