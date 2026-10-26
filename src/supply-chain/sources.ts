@@ -38,6 +38,17 @@ function src(
     return { id, publisher, title, url, kind, accessed: ACCESSED };
 }
 
+// Sources added for /metals were read on the day the dataset was built.
+function metals(
+    id: string,
+    publisher: string,
+    title: string,
+    url: string,
+    kind: SourceRef["kind"],
+): SourceRef {
+    return { ...src(id, publisher, title, url, kind), accessed: "2026-10-26" };
+}
+
 export const SOURCES: SourceRef[] = [
     // Statistics and intergovernmental reports
     src(
@@ -393,6 +404,114 @@ export const SOURCES: SourceRef[] = [
         "Rainbow Robotics",
         "https://www.rainbow-robotics.com/",
         "company-site",
+    ),
+    // Magnet metals (src/supply-chain/metals): USGS chapters by edition
+    metals(
+        "usgs-mcs-2026-ree-heavy",
+        "USGS",
+        "Mineral Commodity Summaries 2026: Rare Earths (Heavy)",
+        "https://pubs.usgs.gov/periodicals/mcs2026/mcs2026-rare-earths-heavy.pdf",
+        "government",
+    ),
+    metals(
+        "usgs-mcs-2026-cobalt",
+        "USGS",
+        "Mineral Commodity Summaries 2026: Cobalt",
+        "https://pubs.usgs.gov/periodicals/mcs2026/mcs2026-cobalt.pdf",
+        "government",
+    ),
+    metals(
+        "usgs-mcs-2021-ree",
+        "USGS",
+        "Mineral Commodity Summaries 2021: Rare Earths",
+        "https://pubs.usgs.gov/periodicals/mcs2021/mcs2021-rare-earths.pdf",
+        "government",
+    ),
+    metals(
+        "usgs-mcs-2021-cobalt",
+        "USGS",
+        "Mineral Commodity Summaries 2021: Cobalt",
+        "https://pubs.usgs.gov/periodicals/mcs2021/mcs2021-cobalt.pdf",
+        "government",
+    ),
+    metals(
+        "usgs-mcs-2016-ree",
+        "USGS",
+        "Mineral Commodity Summaries 2016: Rare Earths",
+        "https://d9-wret.s3.us-west-2.amazonaws.com/assets/palladium/production/mineral-pubs/rare-earth/mcs-2016-raree.pdf",
+        "government",
+    ),
+    metals(
+        "usgs-mcs-2013-ree",
+        "USGS",
+        "Mineral Commodity Summaries 2013: Rare Earths",
+        "https://d9-wret.s3.us-west-2.amazonaws.com/assets/palladium/production/mineral-pubs/rare-earth/mcs-2013-raree.pdf",
+        "government",
+    ),
+    // Magnet composition and market structure
+    metals(
+        "arnold-dysprosium-2015",
+        "Arnold Magnetic Technologies",
+        "The important role of dysprosium in modern permanent magnets",
+        "https://www.arnoldmagnetics.com/wp-content/uploads/2017/10/Important-Role-of-Dysprosium-in-Modern-Permanent-Magnets-150906.pdf",
+        "industry-report",
+    ),
+    metals(
+        "jda-ndfeb-composition",
+        "JDA Magnet",
+        "How are sintered neodymium magnets made? (raw material composition)",
+        "https://jdamagnet.com/how-sintered-neodymium-magnets-made/",
+        "company-site",
+    ),
+    metals(
+        "nus-eai-rare-earths-2025",
+        "NUS East Asian Institute",
+        "Rare earths and industry: why dependence on China endures (Background Brief 1843)",
+        "https://research.nus.edu.sg/eai/wp-content/uploads/2025/11/EAIBB-No.-1843-Rare-earths_China-2.pdf",
+        "academic",
+    ),
+    metals(
+        "reuters-goldman-ndpr-2023",
+        "Reuters via Investing.com",
+        "Goldman says West needs over $25 billion investments in rare earths to match China",
+        "https://investing.com/news/commodities-news/goldman-says-west-needs-over-25-billion-investments-in-rare-earths-to-match-china-3120910",
+        "press",
+    ),
+    metals(
+        "af-china-tech-ban-2023",
+        "Asia Financial (Reuters)",
+        "China curbs the export of rare earths processing technology",
+        "https://www.asiafinancial.com/china-curbs-the-export-of-rare-earths-processing-technology",
+        "press",
+    ),
+    metals(
+        "mp-dod-partnership-2025",
+        "MP Materials",
+        "MP Materials announces transformational public-private partnership with the Department of Defense",
+        "https://mpmaterials.com/news/mp-materials-announces-transformational-public-private-partnership-with-the-department-of-defense-to-accelerate-u-s-rare-earth-magnet-independence/",
+        "filing",
+    ),
+    // Monthly 2026 prices: Shanghai Metals Market benchmarks as republished
+    metals(
+        "rem-nd-price-2026",
+        "Rare Earth Mining (SMM data)",
+        "Neodymium price today: NdPr spot and industrial benchmark",
+        "https://rare-earth-mining.com/neodymium-price/",
+        "press",
+    ),
+    metals(
+        "rem-dy-price-2026",
+        "Rare Earth Mining (SMM data)",
+        "Dysprosium price today: spot rate and market outlook",
+        "https://rare-earth-mining.com/dysprosium-price/",
+        "press",
+    ),
+    metals(
+        "rem-tb-price-2026",
+        "Rare Earth Mining (SMM data)",
+        "Terbium price today: spot rate, FOB and market outlook",
+        "https://rare-earth-mining.com/terbium-price/",
+        "press",
     ),
 ];
 

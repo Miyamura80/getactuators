@@ -1,8 +1,8 @@
 # Supply-chain atlas: data and page recipe
 
-The planned supply-chain pages (`/metals`, `/bom`, `/manufacturing`, `/alts`,
-`/japan`, `/china`, `/korea`, `/us`; none is live yet, only the hidden
-`/lab/supply-chain`) will share one cited registry and one set of components.
+The supply-chain pages (`/metals` is live; `/bom`, `/manufacturing`, `/alts`,
+`/japan`, `/china`, `/korea`, `/us` are planned; `/lab/supply-chain` is the
+hidden kit page) share one cited registry and one set of components.
 Pages hold content; numbers live in the registry and are referenced by id.
 
 ```
@@ -125,6 +125,12 @@ open it before scrolling to the entry.
 |---------|------|
 | MCP | `list_companies(country?, stage?, segment?)`, `get_company(id)`, `list_sites(country?, stage?, company?, kind?)` |
 | REST | `GET /api/v1/companies`, `GET /api/v1/companies/{id}`, `GET /api/v1/sites` |
+| MCP (metals) | `get_metal_supply(element, stage?)`, `get_metal_prices(series, from?, to?)` |
+| REST (metals) | `GET /api/v1/metals`, `GET /api/v1/metals/{element}`, `GET /api/v1/metal-prices/{series}` |
+
+Commodity prices for any page come from `priceAt(seriesId, "YYYY-MM")` in
+`src/supply-chain/metals/prices.ts`: the last reading in that month, else the
+year's annual average, else the last earlier point with `carried: true`.
 
 Every number in a response carries `as_of`, `confidence`, `note` and the full
 source references.

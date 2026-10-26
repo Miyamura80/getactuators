@@ -4,6 +4,22 @@ import { LAB_MINING_HHI, LAB_STAGE_SHARES } from "./lab-fixtures";
 import { SUPPLY_LINKS } from "./links";
 import { SEGMENT_MARKETS } from "./market-share";
 import {
+    BORON_FRACTION,
+    GBD_DY,
+    MAGNET_GRADES,
+    METALS,
+    METAL_EVENTS,
+    NDPR_PRICE_FLOOR,
+    ND_IN_NDPR,
+    PRICE_CHAIN,
+    PRICE_DRIVERS,
+    PRICE_SERIES,
+    RESERVES,
+    STAGE_SHARES,
+    TB_FRACTION,
+    TOTAL_RE_FRACTION,
+} from "./metals";
+import {
     DOMINANCE_MARKETS,
     EVS_PER_YEAR,
     HUMANOIDS_PER_YEAR,
@@ -45,6 +61,25 @@ const DATASETS: Record<string, unknown> = {
         EVS_PER_YEAR,
     ],
     "perspective-dominance": DOMINANCE_MARKETS,
+    "metals-grades": [
+        MAGNET_GRADES,
+        GBD_DY,
+        TOTAL_RE_FRACTION,
+        BORON_FRACTION,
+        TB_FRACTION,
+        ND_IN_NDPR,
+    ],
+    "metals-stage-shares": STAGE_SHARES,
+    "metals-reserves": RESERVES,
+    "metals-prices": [PRICE_SERIES, NDPR_PRICE_FLOOR],
+};
+
+// Records that cite sources without a number of their own.
+const CITING_RECORDS: Record<string, readonly { sources: readonly string[] }[]> = {
+    "metals-elements": METALS,
+    "metals-events": METAL_EVENTS,
+    "metals-drivers": PRICE_DRIVERS,
+    "metals-price-chain": PRICE_CHAIN,
 };
 
 // Numbers that need no citation of their own: coordinates (the site carries
@@ -168,6 +203,11 @@ function citations(): [string, readonly string[]][] {
     for (const [name, data] of Object.entries(DATASETS))
         for (const { path, s } of sourcedValues(data))
             out.push([`${name}${path}`, s.sources]);
+    for (const [name, records] of Object.entries(CITING_RECORDS))
+        records.forEach((r, i) => out.push([`${name}[${i}]`, r.sources]));
+    for (const [metal, stages] of Object.entries(STAGE_SHARES))
+        for (const [stage, e] of Object.entries(stages))
+            if (e.kind === "gap") out.push([`stage gap ${metal}/${stage}`, e.sources]);
     return out;
 }
 

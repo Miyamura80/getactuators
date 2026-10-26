@@ -156,7 +156,9 @@ describe("HTML pages", () => {
             expect(item[2]).toBe(markdownToHtml(`### ${faq.q}`).trim());
             expect(item[3]?.trim()).toBe(markdownToHtml(mdText(faq.a)).trim());
         }
-        expect(content.match(/<h3>/g)).toHaveLength(canonical.length);
+        // The site header may hold its own h3s (the supply-chain menu).
+        const main = content.slice(content.indexOf("</header>"));
+        expect(main.match(/<h3>/g)).toHaveLength(canonical.length);
         const graph = JSON.parse(
             /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(
                 content,
