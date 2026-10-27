@@ -88,6 +88,47 @@ them in this order:
 through `leaderOf` in `src/supply-chain/dominance.ts`. They use no derived
 units.
 
+## Map kit
+
+`frontend/src/components/maps/`, d3-geo + d3-zoom over the TopoJSON in
+`frontend/public/geo/` (Natural Earth; see its README). Map data comes from
+`src/supply-chain/map.ts`: `sitePins()`, `supplyArcs()` (current links only,
+anchored by `companyAnchor`), `arcsTouching(arcs, code)`, `NamedCluster`.
+
+```
+ <WorldMap values max toggle>          <CountryMap code="JP">
+   <Arcs arcs />                          <Arcs arcs={arcsTouching(arcs, "JP")} />
+   <ClusterZoom pins clusters ... />      <Pins pins selectedId onSelect />
+ </WorldMap>                            </CountryMap>
+ <MapDrawer open title onClose>  useMapSelection() -> ?company= ?site= ?cluster=
+```
+
+| Component | Shows |
+|-----------|-------|
+| `<WorldMap>` | Pacific-centred choropleth (one cyan ramp), graticule, readout, slot for a stage toggle |
+| `<CountryMap code>` | admin-1 outlines for JP, CN, KR or US, fitted to bounds |
+| `<Pins>` | buttons whose shape is the segment (circle REE, diamond magnets/motors, square gears/screws/bearings, triangle OEM); hollow when `precision !== "site"` |
+| `<Arcs>` | great-circle arcs; an arc leaving the map ends at the edge with a country chip (a link once that page is live) |
+| `<ClusterZoom>` | groups pins closer than 28 px, zooms to a group or a named cluster; lists named clusters under the map |
+| `<MapDrawer>` | the selection panel (bottom sheet on phones) |
+
+Wheel zoom needs Ctrl/Cmd (the page keeps scrolling); pinch, drag, double
+click and the +/-/fit buttons work as usual. Every layer adds a visually
+hidden table. Pages pass `prerender` on their `Page` entry to put a static SVG
+map (`worldMapSvg` in `src/server/agent/supply-chain/map-svg.ts`) in the HTML
+before hydration, and list the same data as tables in the markdown twin.
+
+## Flow kit
+
+`frontend/src/components/flows/`, shared by `/bom` and `/manufacturing`.
+
+| Component | Shows |
+|-----------|-------|
+| `<ValueSankey nodes links unit>` | band width = value; hover or focus lights a node's upstream and downstream paths; `onSelectNode`; `valueMax` fixes the scale across charts; top to bottom under 600 px |
+| `<SupplyGraph nodes edges>` | layered company cards (monogram, name, flag, stage, badges); hover a card to read what flows on its edges |
+| `<NodeBadge kind>` | `idiot-index` (`9.1x`), `margin` (`38%`), `concentration` (flag, meter, top share); a `Sourced` value keeps its confidence style and footnote |
+| `<ProcessStepChip stepId>` | link to `/manufacturing#step=<id>` |
+
 ## The kit page
 
 Every kit component renders with fixtures on the hidden `/lab/supply-chain`

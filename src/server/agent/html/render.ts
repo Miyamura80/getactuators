@@ -59,6 +59,12 @@ function headMeta(page: Page, noindex = page.noindex ?? false): HeadMeta {
     };
 }
 
+// A page's server-rendered picture (e.g. a map), placed after its H1.
+function withPicture(page: Page, html: string): string {
+    const picture = page.prerender?.() ?? "";
+    return picture ? html.replace("</h1>", `</h1>${picture}`) : html;
+}
+
 // React owns #root: only the built gallery is hydrated; other fallbacks mount.
 // Catalog facts and homepage FAQ live in visible siblings, rendered from the
 // same markdown as the agent twins (FAQ answers also supply JSON-LD). React's
@@ -76,7 +82,8 @@ export async function renderSpaPage(
     const split = marker === null ? -1 : body.indexOf(marker);
     const fallback = split < 0 ? body : body.slice(0, split);
     const content = split < 0 ? "" : body.slice(split);
-    const fallbackHtml = `<div class="ga-page">${pageBody(fallback, false, undefined, page.path, !content)}</div>`;
+    const fallbackBody = pageBody(fallback, false, undefined, page.path, !content);
+    const fallbackHtml = `<div class="ga-page">${withPicture(page, fallbackBody)}</div>`;
     // Built with the frontend's own React tree; no React dependency at runtime.
     // Bare/backend-only checkouts keep the existing catalog fallback.
     const galleryFile = Bun.file(`${DIST_DIR}/actuators.html`);

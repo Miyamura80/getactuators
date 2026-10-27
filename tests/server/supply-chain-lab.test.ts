@@ -33,6 +33,35 @@ test("the lab twin renders markdown footnotes and a Sources section", async () =
     }
 });
 
+test("the lab HTML carries a server-rendered world map before hydration", async () => {
+    const html = await (await get("/lab/supply-chain")).text();
+    const svg = html.match(
+        /<figure class="ga-map"[^>]*><svg viewBox="0 0 960 500" role="img"[\s\S]*?<\/svg>/,
+    )?.[0];
+    expect(svg).toBeDefined();
+    // China shaded on the magnet-share ramp, pins drawn with titles.
+    expect(svg).toContain("<title>China</title>");
+    expect(svg).toContain(
+        "<title>JL MAG Rare-Earth · Ganzhou headquarters and magnet plant</title>",
+    );
+    expect((svg?.match(/<g fill=/g) ?? []).length).toBeGreaterThan(20);
+});
+
+test("the lab twin has the map and flow kits as tables", async () => {
+    const md = await (await get("/lab/supply-chain.md")).text();
+    expect(md).toContain("## Map kit");
+    expect(md).toContain("| China (CN) | 94% |");
+    expect(md).toMatch(
+        /\| JL MAG Rare-Earth · Ganzhou [^|]*\| Magnets & motors \| 🇨🇳 CN \| city \|/,
+    );
+    expect(md).toContain(
+        "| Ningbo Tuopu Group (CN) | Tesla (US) | Optimus actuator assemblies | estimated |",
+    );
+    expect(md).not.toContain("Shenghe Resources (CN) |");
+    expect(md).toContain("## Flow kit");
+    expect(md).toContain("| Actuators | Berkeley Humanoid Lite | $3,616 |");
+});
+
 test("indexed pages keep their markdown twin indexable", async () => {
     expect((await get("/robots.md")).headers.get("x-robots-tag")).toBeNull();
 });
