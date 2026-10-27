@@ -8,11 +8,15 @@
     "build": "tsc -b && vite build && bun scripts/prerender-gallery.tsx",
     "lint": "eslint .",
     "preview": "vite preview",
+    "posters": "bun scripts/capture-posters.ts",
     "test": "bun test"
   },
   "dependencies": {
+    "@react-three/drei": "^10.7.9",
+    "@react-three/fiber": "^9.8.2",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "three": "^0.186.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
@@ -23,6 +27,7 @@
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
+    "@types/three": "^0.186.0",
     "@vitejs/plugin-react": "^5.1.1",
     "autoprefixer": "^10.4.24",
     "eslint": "^9.39.1",
@@ -30,6 +35,7 @@
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
     "happy-dom": "^20.7.0",
+    "playwright-core": "1.63.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.2.1",
     "typescript": "~5.9.3",

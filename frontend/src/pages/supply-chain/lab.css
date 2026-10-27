@@ -36,6 +36,31 @@
 .sc-lab-segments > section:nth-child(n + 3) { border-top: 1px solid var(--line); }
 .sc-lab-segments h3 { margin: 0 0 8px; font: 600 10px/1.3 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); }
 
+.sc-lab-3d-wait { aspect-ratio: 16 / 9; border: 1px solid var(--line); }
+.sc-lab-tabs { display: flex; overflow-x: auto; border: 1px solid var(--line); border-bottom: 0; scrollbar-width: none; }
+.sc-lab-tabs button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 0 auto;
+    min-height: 44px;
+    padding: 0 16px;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    font: 600 11px/1 var(--mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    cursor: pointer;
+}
+.sc-lab-tabs button + button { border-left: 1px solid var(--line); }
+.sc-lab-tabs button b { color: var(--line-strong); }
+.sc-lab-tabs button:hover { color: var(--text); }
+.sc-lab-tabs button:focus-visible { outline: 1px solid var(--cyan); outline-offset: -1px; }
+.sc-lab-tabs button[aria-selected="true"] { color: var(--text); border-bottom-color: var(--cyan); }
+.sc-lab-tabs button[aria-selected="true"] b { color: var(--cyan); }
+
 @media (max-width: 960px) {
     .sc-lab-readouts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .sc-lab-readouts > div:nth-child(odd) { border-left: 0; }

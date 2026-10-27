@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { Suspense, lazy, useEffect } from "react";
 import { PublicHeader } from "../../components/PublicHeader";
 import { PublicFooter } from "../../components/PublicFooter";
 import { ConfidenceLegend } from "../../components/supply-chain/ConfidenceLegend";
@@ -30,6 +30,9 @@ import "../../components/supply-chain/perspective.css";
 import "./lab.css";
 
 const TITLE = "Supply-chain kit";
+
+// The 3D bench is its own chunk, so the shared page bundle stays as it was.
+const ExplodeKitDemo = lazy(() => import("./ExplodeKitDemo"));
 
 function readouts(): { label: string; value: Sourced<number> }[] {
     const pick = (label: string, v: Sourced<number> | undefined) => (v ? [{ label, value: v }] : []);
@@ -117,6 +120,13 @@ export function SupplyChainLab({ menuOpen = false }: { menuOpen?: boolean }) {
                             <MarketShareList companies={COMPANIES.filter((c) => c.segment === seg)} market={marketOf(seg)} />
                         </section>)}
                     </div>
+                </section>
+
+                <section className="sc-lab-sec" aria-labelledby="sc-lab-3d">
+                    <h2 id="sc-lab-3d"><span>05</span>3D explode kit</h2>
+                    <Suspense fallback={<div className="sc-lab-3d-wait" />}>
+                        <ExplodeKitDemo />
+                    </Suspense>
                 </section>
 
                 <SourcesSection />

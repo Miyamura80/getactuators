@@ -5,6 +5,7 @@ import { percent } from "@/supply-chain/format";
 import { LAB_MINING_HHI, LAB_STAGE_SHARES } from "@/supply-chain/lab-fixtures";
 import { marketOf } from "@/supply-chain/market-share";
 import { getCompany } from "@/supply-chain/registry";
+import { DEMO_SCENES, MAGNET_PRESS_LOOP } from "@/supply-chain/scenes/demos";
 import { mdTable, mdText } from "../md";
 import { type Footnotes, footnotes } from "./footnotes";
 
@@ -25,6 +26,21 @@ function segmentSection(fn: Footnotes, seg: (typeof SEGMENTS)[number]): string {
         ? `Share of ${market.market.toLowerCase()}, ${market.asOf}.`
         : "";
     return `### ${SEGMENT_LABEL[seg]}\n\n${caption}\n\n${mdTable(["Company", "Country", "Share"], rows)}`;
+}
+
+// The 3D kit demos as text: each assembly's parts in explode order.
+function explodeKitSection(): string {
+    const scenes = DEMO_SCENES.map(
+        (s) => `- **${s.title}**: ${s.parts.map((p) => mdText(p.label)).join(", ")}`,
+    );
+    const steps = (MAGNET_PRESS_LOOP.steps ?? []).map((s) => s.label).join(" > ");
+    return `## 3D explode kit
+
+Generic demo assemblies, not teardowns. Parts in explode order:
+
+${scenes.join("\n")}
+
+Process loop, ${MAGNET_PRESS_LOOP.title.toLowerCase()}: ${steps}.`;
 }
 
 // Markdown twin of /lab/supply-chain: the cited kit fixtures as text, with
@@ -69,6 +85,8 @@ Reported figures are plain; estimates carry "~" and models say so.
 A dash means no public share was found.
 
 ${SEGMENTS.map((seg) => segmentSection(fn, seg)).join("\n\n")}
+
+${explodeKitSection()}
 
 ${fn.section()}`;
 }
