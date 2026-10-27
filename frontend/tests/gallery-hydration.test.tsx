@@ -2,7 +2,7 @@ import "./happydom";
 import { expect, spyOn, test } from "bun:test";
 import { act } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
-import { ActuatorsGallery } from "../src/pages/ActuatorsGallery";
+import { ActuatorsPage } from "../src/pages/actuators/ActuatorsPage";
 import { CommandPalette } from "../src/components/CommandPalette";
 import { GalleryRoot } from "../src/GalleryRoot";
 import { mountApp } from "../src/startup";
@@ -12,9 +12,10 @@ test("gallery startup reuses every initial card and photo instead of replacing t
     (
         window as unknown as { happyDOM: { setURL: (url: string) => void } }
     ).happyDOM.setURL("http://localhost:1/actuators");
+    window.localStorage.clear();
     const html = renderToString(
         <>
-            <ActuatorsGallery />
+            <ActuatorsPage />
             <CommandPalette />
         </>,
     );
@@ -29,7 +30,7 @@ test("gallery startup reuses every initial card and photo instead of replacing t
     photos.forEach((image) =>
         Object.defineProperty(image, "complete", { value: false }),
     );
-    expect(cards).toHaveLength(68);
+    expect(cards).toHaveLength(80);
     const errors = spyOn(console, "error");
     let mounted: Root | undefined;
     try {
@@ -83,6 +84,7 @@ test("a photo that failed before hydration falls back to its schematic", async (
     (
         window as unknown as { happyDOM: { setURL: (url: string) => void } }
     ).happyDOM.setURL("http://localhost:1/actuators");
+    window.localStorage.clear();
     document.body.innerHTML = `<div id="root" data-gallery-prerender="true">${renderToString(<GalleryRoot />)}</div>`;
     const container = document.getElementById("root")!;
     const card = container.querySelector(".bento-card")!;

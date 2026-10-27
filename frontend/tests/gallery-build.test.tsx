@@ -32,7 +32,7 @@ test("production frontend build emits the exact initial gallery tree without dup
     root.innerHTML = html;
     const cards = [...root.querySelectorAll<HTMLAnchorElement>(".bento-card")];
     const expected = galleryCards(ACTUATORS);
-    expect(cards).toHaveLength(68);
+    expect(cards).toHaveLength(80);
     expect(cards.map((card) => card.getAttribute("href"))).toEqual(
         expected.map(({ a }) => `/actuators/${encodeURIComponent(a.id)}`),
     );
@@ -53,6 +53,7 @@ test("production frontend build emits the exact initial gallery tree without dup
     (
         window as unknown as { happyDOM: { setURL: (url: string) => void } }
     ).happyDOM.setURL("http://localhost:1/actuators");
+    window.localStorage.clear();
     root.dataset.galleryPrerender = "true";
     document.body.append(root);
     const photos = [...root.querySelectorAll(".bento-thumb img")];

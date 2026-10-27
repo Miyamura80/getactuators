@@ -89,7 +89,8 @@ export function dofText(value: number | null): string {
 
 export function usd(value: number | null | undefined): string {
     if (value === null || value === undefined) return "quote only";
-    return `$${value.toLocaleString("en-US")}`;
+    const cents = Number.isInteger(value) ? 0 : 2;
+    return `$${value.toLocaleString("en-US", { minimumFractionDigits: cents, maximumFractionDigits: cents })}`;
 }
 
 export function humanize(slug: string): string {

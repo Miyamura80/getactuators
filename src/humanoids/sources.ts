@@ -41,7 +41,7 @@ export const SOURCES = {
     // Method: gear ratio and reducer efficiency (motor-side sizing)
     "catalog-ratios": {
         title: "actuatorlist catalog: published gear ratios of QDD, integrated and planetary joints",
-        url: "/all",
+        url: "/actuators?view=list",
     },
     "catalog-harmonic": {
         title: "Harmonic Drive LPA-20 strain-wave gearhead, 51:1 to 101:1 (catalog)",
@@ -86,7 +86,7 @@ export const SOURCES = {
     // Actuator cost
     "catalog-fit": {
         title: "actuatorlist catalog: price and mass against peak torque, QDD, integrated and cycloidal actuators",
-        url: "/all",
+        url: "/actuators?view=list",
     },
     "huibo-optimus-bom": {
         title: "Huibo research via Zhihu: Optimus hardware BOM (rotary 57k, linear 44k, hands 20k CNY)",

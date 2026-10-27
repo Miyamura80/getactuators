@@ -50,7 +50,7 @@ describe("sitemap.xml", () => {
         }
         for (const p of [
             "/",
-            "/all",
+            "/actuators",
             "/robots",
             "/about",
             "/contact",

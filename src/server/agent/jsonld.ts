@@ -51,7 +51,7 @@ export function website(): Node {
             "@type": "SearchAction",
             target: {
                 "@type": "EntryPoint",
-                urlTemplate: `${SITE_URL}/all?q={search_term_string}`,
+                urlTemplate: `${SITE_URL}/actuators?view=list&q={search_term_string}`,
             },
             "query-input": "required name=search_term_string",
         },
@@ -64,7 +64,7 @@ export function dataset(): Node {
         "@id": DATASET_ID,
         name: "actuatorlist robot actuator catalog",
         description: `Specifications of ${ACTUATORS.length} robot actuators (QDD motors, integrated joints, smart servos, harmonic and cycloidal reducers) and the robots that use them: torque, speed, weight, torque density, backlash, price and sources.`,
-        url: `${SITE_URL}/all`,
+        url: `${SITE_URL}/actuators`,
         license: MIT,
         isAccessibleForFree: true,
         creator: { "@id": ORG_ID },

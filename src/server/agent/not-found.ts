@@ -22,7 +22,7 @@ function body(pathname: string): string {
         `Nothing lives at \`${pathname.replace(/`/g, "")}\` on actuatorlist. The catalog pages, API and agent documents are listed below.`,
         bullets([
             mdLink("Leaderboard (home)", absoluteUrl("/")),
-            mdLink("All actuators", absoluteUrl("/all")),
+            mdLink("All actuators", absoluteUrl("/actuators")),
             mdLink("Robots", absoluteUrl("/robots")),
             mdLink("llms.txt index for agents", absoluteUrl(PATHS.llms)),
             mdLink("Sitemap", absoluteUrl(PATHS.sitemap)),

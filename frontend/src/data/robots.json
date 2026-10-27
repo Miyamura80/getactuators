@@ -16,7 +16,7 @@
             "weight_g": 300,
             "torque_density_nm_per_kg": 23.3,
             "product_url": "https://damiao.enactic.ai/en/products/hardware/dm-j4310-2ec-v1.1/",
-            "actuator_id": null
+            "actuator_id": "damiao-dm-j4310-2ec"
         },
         "dm-j4340": {
             "id": "dm-j4340",
@@ -29,7 +29,7 @@
             "weight_g": 362,
             "torque_density_nm_per_kg": 74.6,
             "product_url": "https://robotopian.com/products/damiao-dm-j4340-2ec-servo-motor",
-            "actuator_id": null
+            "actuator_id": "damiao-dm-j4340-2ec"
         },
         "dm-j4340p": {
             "id": "dm-j4340p",
@@ -39,10 +39,10 @@
             "peak_torque_nm": 27,
             "rated_speed_rpm": 36,
             "gear_ratio": "40:1",
-            "weight_g": null,
-            "torque_density_nm_per_kg": null,
-            "product_url": null,
-            "actuator_id": null
+            "weight_g": 381,
+            "torque_density_nm_per_kg": 70.9,
+            "product_url": "https://www.seeedstudio.com/DM4340P-Actuator-p-6663.html",
+            "actuator_id": "damiao-dm-j4340p-2ec"
         },
         "dm-j6248": {
             "id": "dm-j6248",
@@ -55,6 +55,58 @@
             "weight_g": 628,
             "torque_density_nm_per_kg": 154.5,
             "product_url": "https://aifitlab.com/products/damiao-dm-j6248p-2ec-motor",
+            "actuator_id": "damiao-dm-j6248p-2ec"
+        },
+        "i2rt-gf62x48-10": {
+            "id": "i2rt-gf62x48-10",
+            "name": "GF62X48-10",
+            "brand": "i2RT Robotics",
+            "rated_torque_nm": 30,
+            "peak_torque_nm": 95,
+            "rated_speed_rpm": 38,
+            "gear_ratio": "48:1",
+            "weight_g": 767,
+            "torque_density_nm_per_kg": 123.9,
+            "product_url": "https://i2rt.com/products/gf62x48-10",
+            "actuator_id": null
+        },
+        "i2rt-gf43x40-16": {
+            "id": "i2rt-gf43x40-16",
+            "name": "GF43X40-16",
+            "brand": "i2RT Robotics",
+            "rated_torque_nm": 14,
+            "peak_torque_nm": 28,
+            "rated_speed_rpm": 44,
+            "gear_ratio": "40:1",
+            "weight_g": 464.5,
+            "torque_density_nm_per_kg": 60.3,
+            "product_url": "https://i2rt.com/products/gf43x40-16",
+            "actuator_id": null
+        },
+        "i2rt-gf43x40-10": {
+            "id": "i2rt-gf43x40-10",
+            "name": "GF43X40-10",
+            "brand": "i2RT Robotics",
+            "rated_torque_nm": 8.9,
+            "peak_torque_nm": 23.5,
+            "rated_speed_rpm": 43,
+            "gear_ratio": "40:1",
+            "weight_g": 409,
+            "torque_density_nm_per_kg": 57.5,
+            "product_url": "https://i2rt.com/products/gf43x10-10-copy",
+            "actuator_id": null
+        },
+        "i2rt-gf43x10-10": {
+            "id": "i2rt-gf43x10-10",
+            "name": "GF43X10-10",
+            "brand": "i2RT Robotics",
+            "rated_torque_nm": 2.2,
+            "peak_torque_nm": 7,
+            "rated_speed_rpm": 172,
+            "gear_ratio": "10:1",
+            "weight_g": 300,
+            "torque_density_nm_per_kg": 23.3,
+            "product_url": "https://i2rt.com/products/gf43x10-10",
             "actuator_id": null
         },
         "asimov-ec-a6416": {
@@ -68,7 +120,7 @@
             "weight_g": null,
             "torque_density_nm_per_kg": null,
             "product_url": null,
-            "actuator_id": null
+            "actuator_id": "encos-ec-a6416-p2-25"
         },
         "asimov-ec-a5013": {
             "id": "asimov-ec-a5013",
@@ -81,7 +133,7 @@
             "weight_g": null,
             "torque_density_nm_per_kg": null,
             "product_url": null,
-            "actuator_id": null
+            "actuator_id": "encos-ec-a5013-h17-100"
         },
         "asimov-ec-a3814": {
             "id": "asimov-ec-a3814",
@@ -94,7 +146,7 @@
             "weight_g": null,
             "torque_density_nm_per_kg": null,
             "product_url": null,
-            "actuator_id": null
+            "actuator_id": "encos-ec-a3814-h14-107"
         },
         "asimov-ec-a4315": {
             "id": "asimov-ec-a4315",
@@ -107,7 +159,7 @@
             "weight_g": null,
             "torque_density_nm_per_kg": null,
             "product_url": null,
-            "actuator_id": null
+            "actuator_id": "encos-ec-a4315-p2-36"
         },
         "asimov-ec-a4310": {
             "id": "asimov-ec-a4310",
@@ -120,7 +172,7 @@
             "weight_g": null,
             "torque_density_nm_per_kg": null,
             "product_url": null,
-            "actuator_id": null
+            "actuator_id": "encos-ec-a4310-p2-36"
         },
         "pollen-orbita-2d": {
             "id": "pollen-orbita-2d",
@@ -172,7 +224,7 @@
             "weight_g": 18,
             "torque_density_nm_per_kg": 11.9,
             "product_url": "https://emanual.robotis.com/docs/en/dxl/x/xl330-m077/",
-            "actuator_id": null
+            "actuator_id": "dynamixel-xl330-m077-t"
         },
         "dynamixel-xc330-m288": {
             "id": "dynamixel-xc330-m288",
@@ -512,6 +564,58 @@
             "product_url": "https://www.fftai.com/grx/gr3",
             "actuator_id": null
         },
+        "1x-neo-body": {
+            "id": "1x-neo-body",
+            "name": "NEO body tendon drive",
+            "brand": "1X Technologies",
+            "rated_torque_nm": null,
+            "peak_torque_nm": null,
+            "rated_speed_rpm": null,
+            "gear_ratio": null,
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": "https://www.1x.tech/neo",
+            "actuator_id": null
+        },
+        "1x-neo-wrist": {
+            "id": "1x-neo-wrist",
+            "name": "NEO wrist tendon drive",
+            "brand": "1X Technologies",
+            "rated_torque_nm": null,
+            "peak_torque_nm": 17.75,
+            "rated_speed_rpm": null,
+            "gear_ratio": "5:1 to 15:1",
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": "https://www.1x.tech/discover/neos-hands",
+            "actuator_id": null
+        },
+        "1x-neo-hand": {
+            "id": "1x-neo-hand",
+            "name": "NEO hand tendon drive",
+            "brand": "1X Technologies",
+            "rated_torque_nm": null,
+            "peak_torque_nm": null,
+            "rated_speed_rpm": null,
+            "gear_ratio": "5:1 to 15:1",
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": "https://www.1x.tech/discover/neos-hands",
+            "actuator_id": null
+        },
+        "agility-digit-5-knee": {
+            "id": "agility-digit-5-knee",
+            "name": "Digit 5 knee cycloidal actuator",
+            "brand": "Agility Robotics",
+            "rated_torque_nm": null,
+            "peak_torque_nm": null,
+            "rated_speed_rpm": null,
+            "gear_ratio": null,
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": "https://www.agilityrobotics.com/solutions/digit-5",
+            "actuator_id": null
+        },
         "agilex-piper-joint": {
             "id": "agilex-piper-joint",
             "name": "PiPER joint module",
@@ -536,7 +640,7 @@
             "weight_g": null,
             "torque_density_nm_per_kg": null,
             "product_url": "https://www.seeedstudio.com/STS3215-19kg-cm-7-4V-Serial-Servo-p-6338.html",
-            "actuator_id": null
+            "actuator_id": "feetech-sts3215-c001"
         },
         "hello-stretch-stepper": {
             "id": "hello-stretch-stepper",
@@ -575,7 +679,7 @@
             "weight_g": 65,
             "torque_density_nm_per_kg": 29.2,
             "product_url": "https://emanual.robotis.com/docs/en/dxl/x/xc430-w240/",
-            "actuator_id": null
+            "actuator_id": "dynamixel-xc430-w240-t"
         },
         "dynamixel-xm540-w270": {
             "id": "dynamixel-xm540-w270",
@@ -682,7 +786,7 @@
             "dof": 23,
             "payload_kg": 2,
             "payload_basis": "per_arm",
-            "reach_mm": null,
+            "reach_mm": 450,
             "height_m": 1.32,
             "weight_kg": 35,
             "price_usd": 13500,
@@ -722,7 +826,7 @@
             "dof": 31,
             "payload_kg": 7,
             "payload_basis": "per_arm",
-            "reach_mm": null,
+            "reach_mm": 690,
             "height_m": 1.82,
             "weight_kg": 70,
             "price_usd": 29900,
@@ -775,11 +879,43 @@
             "availability": "preorder",
             "lead_time": "$200 deposit, US deliveries 2026",
             "summary": "Home humanoid with tendon-driven actuation, a soft lattice-polymer body and 22-DOF hands. Weighs 30 kg and carries 25 kg.",
-            "joints": [],
+            "joints": [
+                {
+                    "role": "Legs",
+                    "motor": "1x-neo-body",
+                    "count": 12
+                },
+                {
+                    "role": "Spine",
+                    "motor": "1x-neo-body",
+                    "count": 2
+                },
+                {
+                    "role": "Neck",
+                    "motor": "1x-neo-body",
+                    "count": 3
+                },
+                {
+                    "role": "Shoulder + elbow",
+                    "motor": "1x-neo-body",
+                    "count": 8
+                },
+                {
+                    "role": "Wrist",
+                    "motor": "1x-neo-wrist",
+                    "count": 6
+                },
+                {
+                    "role": "Hands (fingers + palm)",
+                    "motor": "1x-neo-hand",
+                    "count": 44
+                }
+            ],
             "sources": [
                 "https://www.1x.tech/neo",
                 "https://github.com/kingjulio8238/humanoid-atlas",
-                "https://www.1x.tech/order"
+                "https://www.1x.tech/order",
+                "https://www.1x.tech/discover/neos-hands"
             ]
         },
         {
@@ -791,7 +927,7 @@
             "country_flag": "🇨🇳",
             "dof": 23,
             "payload_kg": null,
-            "reach_mm": null,
+            "reach_mm": 450,
             "height_m": 1.18,
             "weight_kg": 30,
             "price_usd": 29800,
@@ -994,7 +1130,7 @@
             "dof": 26,
             "payload_kg": 2,
             "payload_basis": "per_arm",
-            "reach_mm": null,
+            "reach_mm": 420,
             "height_m": 1.23,
             "weight_kg": 29,
             "price_usd": 5900,
@@ -1089,7 +1225,13 @@
             "availability": "quote_only",
             "lead_time": "Early access expected H1 2027; general availability expected by end of 2027 (US, Canada, then EU and UK)",
             "summary": "Digit 5 is Agility Robotics' fifth generation bipedal humanoid, unveiled September 15, 2026, for warehouse and manufacturing work alongside people without safety fencing. It stands 1.81 m, weighs 129 kg, lifts up to 22.7 kg (50 lb) repeatedly and reaches up to 2.2 m, with forward-facing legs driven by proprietary cycloidal actuators. A 90 minute battery recharges in 9 minutes, and the robot is sold by quote or as Robots-as-a-Service, with early access in H1 2027.",
-            "joints": [],
+            "joints": [
+                {
+                    "role": "Knee (rest of joint map unpublished)",
+                    "motor": "agility-digit-5-knee",
+                    "count": 2
+                }
+            ],
             "sources": [
                 "https://www.agilityrobotics.com/solutions/digit-5",
                 "https://www.agilityrobotics.com/solution",
@@ -1099,7 +1241,8 @@
                 "https://www.linkedin.com/posts/davidepearce_agility-robotics-unveiled-digit-5-yesterday-activity-7505865416586604544-S4Sp",
                 "https://robozaps.com/products/digit",
                 "https://humanoid.guide/product/digit/",
-                "https://www.humanoid-robots.io/robot/digit-by-agility-robotics"
+                "https://www.humanoid-robots.io/robot/digit-by-agility-robotics",
+                "https://spectrum.ieee.org/agility-robotics-digit-5-redesign"
             ]
         },
         {
@@ -1266,11 +1409,35 @@
             "actuator_sourcing": "in_house",
             "availability": "shipping",
             "lead_time": "About 30 days",
-            "summary": "7-DOF member of the YAM family with an added redundant joint for richer wrist orientation. Unlike the rest of the family it runs on i2RT's own GF-series actuators (GF62X48 at the shoulder) rather than Damiao motors; i2RT has not published a joint-by-joint map.",
-            "joints": [],
+            "summary": "7-DOF member of the YAM family with an added redundant joint for richer wrist orientation. Unlike the rest of the family it runs on i2RT's own GF-series actuators rather than Damiao motors: GF62X48-10 at J1-J2, GF43X40-16 at J3-J4, GF43X40-10 at J5 and GF43X10-10 at J6-J7 and the gripper.",
+            "joints": [
+                {
+                    "role": "Shoulder (J1-J2)",
+                    "motor": "i2rt-gf62x48-10",
+                    "count": 2
+                },
+                {
+                    "role": "Upper arm (J3-J4)",
+                    "motor": "i2rt-gf43x40-16",
+                    "count": 2
+                },
+                {
+                    "role": "Forearm (J5)",
+                    "motor": "i2rt-gf43x40-10",
+                    "count": 1
+                },
+                {
+                    "role": "Wrist (J6-J7)",
+                    "motor": "i2rt-gf43x10-10",
+                    "count": 2
+                }
+            ],
             "sources": [
                 "https://i2rt.com/products/yam-7dof",
-                "https://i2rt.com/products/gf62x48-10"
+                "https://i2rt.com/products/gf62x48-10",
+                "https://i2rt.com/products/gf43x40-16",
+                "https://i2rt.com/products/gf43x10-10-copy",
+                "https://i2rt.com/products/gf43x10-10"
             ]
         },
         {
