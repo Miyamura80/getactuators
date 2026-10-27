@@ -1,6 +1,7 @@
 {
     "name": "actuatorlist",
     "version": "0.1.0",
+    "license": "MIT",
     "description": "A community directory of actuators for robotics and motion systems",
     "type": "module",
     "scripts": {
