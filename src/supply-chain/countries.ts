@@ -10,7 +10,9 @@ export interface CountryInfo {
 
 export const COUNTRIES = {
     AU: { bbox: [-44, 112, -10, 154] },
+    CD: { bbox: [-14, 11, 6, 32] },
     CN: { bbox: [18, 73, 54, 135] },
+    ID: { bbox: [-12, 94, 7, 142] },
     JP: { bbox: [24, 122, 46, 146] },
     KR: { bbox: [33, 124, 39, 131] },
     MM: { bbox: [9, 92, 29, 102] },

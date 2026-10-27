@@ -108,3 +108,8 @@ export function sourcedText(s: Sourced<number>): string {
 export function percent(share: number): string {
     return `${Math.round(share * 100)}%`;
 }
+
+// "4.2%": a share with a fixed number of decimals, trailing zeros dropped.
+export function percentDigits(share: number, digits = 1): string {
+    return `${Number((share * 100).toFixed(digits))}%`;
+}
