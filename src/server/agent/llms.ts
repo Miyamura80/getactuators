@@ -73,6 +73,10 @@ ${link("Robot actuator selection guide", "/guides/robot-actuator-selection.md", 
 ${link("Motor torque calculator", "/tools/motor-torque-calculator.md", "torque, power and speed relation, units and worked examples")}
 ${link("Robot arm torque calculator", "/tools/robot-arm-torque-calculator.md", "static holding torque per joint; same model from the MCP tool arm_holding_torque and, on the page, WebMCP tools calculate_arm_holding_torque, set_arm_model and select_arm_joint")}
 
+## Supply chain (markdown)
+
+${link("Magnet metals", "/metals.md", "Nd, Pr, Dy, Tb, Sm and Co: country share at each stage from mine to magnet, USGS reserves and years of supply, cited price history and the events behind it; same data from the MCP tools get_metal_supply and get_metal_prices")}
+
 ## About
 
 ${link("About", "/about.md", "who runs the catalog and how data is verified")}
