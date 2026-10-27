@@ -202,4 +202,8 @@ steps.
   [Zod](https://zod.dev), [prek](https://github.com/j178/prek) and
   [Vite](https://vitejs.dev).
 
-Released under the [MIT License](LICENSE).
+- **Code**: [MIT License](LICENSE).
+- **Data** (the actuator, robot, humanoid and supply-chain catalog): [CC BY 4.0](LICENSE-DATA).
+  Credit "actuatorlist.com (Eito Miyamura)". Product photos, logos and
+  headshots are not covered; they belong to their owners and are shown for
+  identification only. Third-party figures keep their source citations.

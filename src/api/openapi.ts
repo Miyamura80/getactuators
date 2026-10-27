@@ -195,7 +195,7 @@ export function buildOpenApi(operations: readonly Operation[]): Json {
             version: `${API_VERSION}.0.0`,
             summary:
                 "Read-only REST API over the actuatorlist robot actuator and robot catalog.",
-            description: `Free, anonymous, read-only access to every actuator and robot on ${SITE_URL}. No API key, no account, no writes: production is safe to call, so there is no separate sandbox.\n\n**Rate limits:** ${RATE_LIMIT} requests per ${RATE_WINDOW_S}s per client IP, reported in \`RateLimit\`/\`RateLimit-Policy\` and \`X-RateLimit-*\` headers; a 429 carries \`Retry-After\`.\n\n**Errors:** RFC 9457 \`application/problem+json\` with a stable \`code\`.\n\n**Versioning and deprecation:** ${DEPRECATION_POLICY}`,
+            description: `Free, anonymous, read-only access to every actuator and robot on ${SITE_URL}. No API key, no account, no writes: production is safe to call, so there is no separate sandbox.\n\n**Rate limits:** ${RATE_LIMIT} requests per ${RATE_WINDOW_S}s per client IP, reported in \`RateLimit\`/\`RateLimit-Policy\` and \`X-RateLimit-*\` headers; a 429 carries \`Retry-After\`.\n\n**Errors:** RFC 9457 \`application/problem+json\` with a stable \`code\`.\n\n**License:** the API description and code are MIT licensed; the data it returns is CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/), credit \"actuatorlist.com (Eito Miyamura)\". Product photos and logos are not covered.\n\n**Versioning and deprecation:** ${DEPRECATION_POLICY}`,
             contact: { name: "actuatorlist on GitHub", url: `${REPO_URL}/issues` },
             license: { name: "MIT", identifier: "MIT" },
             "x-deprecation-policy": DEPRECATION_POLICY,

@@ -38,8 +38,26 @@ const TOOLS_ADDED_AFTER_BASELINE = [
     "get_metal_supply",
     "get_metal_prices",
 ];
+// The licence wording changed when the data moved to CC BY 4.0 after the
+// capture. Map back only these exact sentences; the rest stays locked.
+const LICENSE_CHANGES: [now: string, baseline: string][] = [
+    [
+        "The dataset lives in the repository and is published under CC BY 4.0; the code is MIT licensed.",
+        "The dataset lives in the repository and is published under the MIT License.",
+    ],
+    [
+        "are all public in the [GitHub repository](https://github.com/Miyamura80/getactuators): the code under the MIT License and the dataset under CC BY 4.0.",
+        "are all public in the [GitHub repository](https://github.com/Miyamura80/getactuators) under the MIT License.",
+    ],
+];
 function snapshotContent(value: string) {
-    let out = value.replace(
+    let out = LICENSE_CHANGES.reduce(
+        (acc, [now, before]) =>
+            acc
+                .replaceAll(now, before)
+                .replaceAll(renderedAddition(now), renderedAddition(before)),
+        value,
+    ).replace(
         `The catalog was last updated on ${CATALOG_UPDATED_DATE}.`,
         `The catalog was last updated on ${baseline.catalogUpdatedDate}.`,
     );

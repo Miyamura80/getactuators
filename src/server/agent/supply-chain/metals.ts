@@ -254,7 +254,7 @@ function dataset(
         description,
         url: absoluteUrl(METALS_PATH),
         isAccessibleForFree: true,
-        license: "https://opensource.org/licenses/MIT",
+        license: "https://creativecommons.org/licenses/by/4.0/",
         temporalCoverage,
         distribution: [
             {

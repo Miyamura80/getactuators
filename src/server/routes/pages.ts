@@ -120,7 +120,7 @@ export const routes: Route[] = [
     doc(
         PATHS.pricingMd,
         "actuatorlist pricing",
-        "actuatorlist is free: one plan, no keys, 120 requests per minute per IP, MIT License.",
+        "actuatorlist is free: one plan, no keys, 120 requests per minute per IP, MIT code and CC BY 4.0 data.",
         pricingBody,
     ),
     ...PAGE_PATHS.map((path): Route => ({ method: "GET", path, handler: page })),

@@ -87,7 +87,7 @@ ${link("Privacy", "/privacy.md", "no accounts, cookies or analytics")}
 
 ${link("Sitemap", PATHS.sitemap, "every indexable URL")}
 ${link("JSON Lines feed", PATHS.feed, "one actuator object per line")}
-- [Source repository](${REPO_URL}): dataset, site code and AGENTS.md, MIT License
+- [Source repository](${REPO_URL}): dataset (CC BY 4.0), site code (MIT License) and AGENTS.md
 `;
 }
 

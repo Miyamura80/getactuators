@@ -67,7 +67,7 @@ export function faqItems(): FaqItem[] {
         },
         {
             q: "How do I add or correct an actuator?",
-            a: `Open an issue or a pull request on GitHub at ${REPO_URL}. The dataset lives in the repository and is published under the MIT License.`,
+            a: `Open an issue or a pull request on GitHub at ${REPO_URL}. The dataset lives in the repository and is published under CC BY 4.0; the code is MIT licensed.`,
         },
     ];
 }

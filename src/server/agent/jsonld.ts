@@ -13,7 +13,7 @@ type Node = Record<string, unknown>;
 const ORG_ID = `${SITE_URL}/#organization`;
 const SITE_ID = `${SITE_URL}/#website`;
 const DATASET_ID = `${SITE_URL}/#dataset`;
-const MIT = "https://opensource.org/licenses/MIT";
+const DATA_LICENSE = "https://creativecommons.org/licenses/by/4.0/";
 const FREE_OFFER = { "@type": "Offer", price: "0", priceCurrency: "USD" };
 
 export function organization(): Node {
@@ -63,7 +63,7 @@ export function dataset(): Node {
         name: "actuatorlist robot actuator catalog",
         description: `Specifications of ${ACTUATORS.length} robot actuators (QDD motors, integrated joints, smart servos, harmonic and cycloidal reducers) and the robots that use them: torque, speed, weight, torque density, backlash, price and sources.`,
         url: `${SITE_URL}/actuators`,
-        license: MIT,
+        license: DATA_LICENSE,
         isAccessibleForFree: true,
         creator: { "@id": ORG_ID },
         dateModified: CATALOG_UPDATED_AT,
