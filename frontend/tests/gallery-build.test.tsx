@@ -32,7 +32,7 @@ test("production frontend build emits the exact initial gallery tree without dup
     root.innerHTML = html;
     const cards = [...root.querySelectorAll<HTMLAnchorElement>(".bento-card")];
     const expected = galleryCards(ACTUATORS);
-    expect(cards).toHaveLength(79);
+    expect(cards).toHaveLength(80);
     expect(cards.map((card) => card.getAttribute("href"))).toEqual(
         expected.map(({ a }) => `/actuators/${encodeURIComponent(a.id)}`),
     );
