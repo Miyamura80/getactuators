@@ -1,4 +1,5 @@
-import { initials, type LinkKind, type Person } from "../../../../src/people";
+import { initials, orgOf, type LinkKind, type Person } from "../../../../src/people";
+import { OrgLogo } from "./OrgLogo";
 
 const LINK_LABEL: Record<LinkKind, string> = {
     github: "GitHub",
@@ -46,7 +47,7 @@ export function Headshot({ person }: { person: Person }) {
     );
 }
 
-// One person: headshot, name and links.
+// One person: headshot, name, affiliation (contributors only) and links.
 // `core` draws the larger card; `showRole` adds the role under the name.
 export function PersonCard({
     person,
@@ -63,6 +64,7 @@ export function PersonCard({
             <div className="pc-body">
                 <h3 className="pc-name">{person.name}</h3>
                 {showRole && <p className="pc-role">{person.role}</p>}
+                {!core && <OrgLogo org={orgOf(person)} />}
                 {person.links.length > 0 && (
                     <div className="pc-links">
                         {person.links.map((l) => (
