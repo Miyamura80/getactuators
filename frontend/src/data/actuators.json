@@ -95,7 +95,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://www.unitree.com/h1/",
     "source_domain": "unitree.com",
-    "image_url": null
+    "image_url": "/actuator-images/unitree-m107.webp"
   },
   {
     "id": "myactuator-rmd-x8-120",
@@ -1443,7 +1443,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://www.robotshop.com/products/my-actuator-rmd-x8-pro-v2-can-bus-bldc-actuator-w-19-reduction-mc-x-300-o-driver",
     "source_domain": "robotshop.com",
-    "image_url": null
+    "image_url": "/actuator-images/myactuator-rmd-x8-pro-v2.webp"
   },
   {
     "id": "mjbots-qdd100",
@@ -3008,7 +3008,7 @@
     "country_flag": "🇩🇪",
     "source_url": "https://www.analog.com/en/products/tmc4671.html",
     "source_domain": "analog.com",
-    "image_url": null
+    "image_url": "/actuator-images/trinamic-tmc4671.webp"
   },
   {
     "id": "harmonic-drive-sha-cg",
@@ -3630,7 +3630,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://aifitlab.com/products/damiao-dm-j4310-2ec-v1-1-servo-motor",
     "source_domain": "aifitlab.com",
-    "image_url": null
+    "image_url": "/actuator-images/damiao-dm-j4310-2ec.webp"
   },
   {
     "id": "damiao-dm-j4340-2ec",
@@ -3684,7 +3684,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://aifitlab.com/products/damiao-dm-j4340-2ec-servo-motor",
     "source_domain": "aifitlab.com",
-    "image_url": null
+    "image_url": "/actuator-images/damiao-dm-j4340-2ec.webp"
   },
   {
     "id": "damiao-dm-j6248p-2ec",
@@ -3706,7 +3706,7 @@
     "max_speed_rpm": 60,
     "gear_ratio": "48:1",
     "weight_g": 660,
-    "torque_density_nm_per_kg": 147.0,
+    "torque_density_nm_per_kg": 147,
     "backdrivable": null,
     "backlash_arcmin": null,
     "repeatability_arcmin": null,
@@ -3739,7 +3739,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://aifitlab.com/products/damiao-dm-j6248p-2ec-motor",
     "source_domain": "aifitlab.com",
-    "image_url": null
+    "image_url": "/actuator-images/damiao-dm-j6248p-2ec.webp"
   },
   {
     "id": "dynamixel-xl330-m077-t",
@@ -3793,7 +3793,7 @@
     "country_flag": "🇰🇷",
     "source_url": "https://robotis.us/products/dynamixel-xl330-m077-t",
     "source_domain": "robotis.us",
-    "image_url": null
+    "image_url": "/actuator-images/dynamixel-xl330-m077-t.webp"
   },
   {
     "id": "dynamixel-xc430-w240-t",
@@ -3845,7 +3845,7 @@
     "country_flag": "🇰🇷",
     "source_url": "https://robotis.us/products/dynamixel-xc430-w240-t",
     "source_domain": "robotis.us",
-    "image_url": null
+    "image_url": "/actuator-images/dynamixel-xc430-w240-t.webp"
   },
   {
     "id": "feetech-sts3215-c001",
@@ -3896,7 +3896,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://www.seeedstudio.com/STS3215-19kg-cm-7-4V-Serial-Servo-p-6338.html",
     "source_domain": "seeedstudio.com",
-    "image_url": null
+    "image_url": "/actuator-images/feetech-sts3215-c001.webp"
   },
   {
     "id": "encos-ec-a6416-p2-25",
@@ -3944,7 +3944,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://aifitlab.com/products/encos-ec-a6416-p2-25-motor",
     "source_domain": "aifitlab.com",
-    "image_url": null
+    "image_url": "/actuator-images/encos-ec-a6416-p2-25.webp"
   },
   {
     "id": "encos-ec-a4315-p2-36",
@@ -3986,13 +3986,13 @@
       "https://autonews.gasgoo.com/articles/news/ces-2026-encos-showcases-three-core-products-enabling-mass-production-of-humanoid-robots-2008894532819447809"
     ],
     "verified": false,
-    "price_per_nm": 10.0,
+    "price_per_nm": 10,
     "data_source": "web_search",
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://aifitlab.com/products/encos-ec-a4315-p2-36-motor",
     "source_domain": "aifitlab.com",
-    "image_url": null
+    "image_url": "/actuator-images/encos-ec-a4315-p2-36.webp"
   },
   {
     "id": "encos-ec-a4310-p2-36",
@@ -4040,7 +4040,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://aifitlab.com/products/encos-ec-a4310-p2-36-motor",
     "source_domain": "aifitlab.com",
-    "image_url": null
+    "image_url": "/actuator-images/encos-ec-a4310-p2-36.webp"
   },
   {
     "id": "encos-ec-a5013-h17-100",
@@ -4088,7 +4088,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://aifitlab.com/products/encos-ec-a5013-h17-100-motor",
     "source_domain": "aifitlab.com",
-    "image_url": null
+    "image_url": "/actuator-images/encos-ec-a5013-h17-100.webp"
   },
   {
     "id": "encos-ec-a3814-h14-107",
@@ -4136,7 +4136,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://aifitlab.com/products/encos-ec-a3814-h14-107-motor",
     "source_domain": "aifitlab.com",
-    "image_url": null
+    "image_url": "/actuator-images/encos-ec-a3814-h14-107.webp"
   },
   {
     "id": "damiao-dm-j4340p-2ec",
