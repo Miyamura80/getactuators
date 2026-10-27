@@ -9,6 +9,8 @@ import {
     metalSupplyOut,
     metalSupplyView,
 } from "@/supply-chain/metals/views";
+import { MEASURE_STATUSES, MEASURE_TYPES, findMeasures } from "@/supply-chain/policy";
+import { measureListOut, measureListView } from "@/supply-chain/policy/views";
 import { findCompanies, findSites, getCompany } from "@/supply-chain/registry";
 import { SITE_KINDS } from "@/supply-chain/sites";
 import { STAGES } from "@/supply-chain/stages";
@@ -155,10 +157,37 @@ const getMetalPrices = defineTool({
     },
 });
 
+const listPolicyMeasures = defineTool({
+    name: "list_policy_measures",
+    title: "List policy measures",
+    description:
+        "Government and standards-body measures that touch the actuator chain: export controls (China's rare earth and magnet controls), tariffs (US Section 301 and 232, China's retaliation), subsidies and programmes (DoD awards, JOGMEC, CRMA, robot plans) and standards (ISO 10218, ISO 13482, IEC). Each has a status history with a primary source per change. Filter by jurisdiction (CN, US, EU, JP, KR, AU, INTL), type, stage or status.",
+    input: z.object({
+        jurisdiction: z
+            .string()
+            .min(2)
+            .max(5)
+            .optional()
+            .describe("ISO 3166 alpha-2 code, EU, INTL or OTHER."),
+        type: z
+            .enum(MEASURE_TYPES)
+            .optional()
+            .describe("export-control, tariff, subsidy or standard."),
+        stage,
+        status: z
+            .enum(MEASURE_STATUSES)
+            .optional()
+            .describe("draft, announced, in-force, suspended or expired."),
+    }),
+    output: measureListOut,
+    run: (filter) => measureListView(findMeasures(filter)),
+});
+
 export const supplyChainTools = [
     listCompanies,
     getCompanyTool,
     listSites,
     getMetalSupply,
     getMetalPrices,
+    listPolicyMeasures,
 ];

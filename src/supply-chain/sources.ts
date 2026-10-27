@@ -1,3 +1,4 @@
+import { POLICY_SOURCES } from "./policy/sources";
 import type { SourceId } from "./sourced";
 
 // Every document the supply-chain registry cites. Ids are kebab-case
@@ -6,6 +7,7 @@ import type { SourceId } from "./sourced";
 
 export const SOURCE_KINDS = [
     "government",
+    "standards-body",
     "filing",
     "industry-report",
     "teardown",
@@ -520,6 +522,7 @@ export const SOURCES: SourceRef[] = [
         "https://rare-earth-mining.com/terbium-price/",
         "press",
     ),
+    ...POLICY_SOURCES,
 ];
 
 const byId = new Map(SOURCES.map((s) => [s.id, s]));

@@ -29,6 +29,13 @@ import {
 } from "./metals";
 import { ActuatorListParams, CompareQueryParams, RobotListParams } from "./params";
 import {
+    PolicyListParams,
+    PolicyListSchema,
+    PolicyMeasureSchema,
+    getPolicyHandler,
+    listPolicyHandler,
+} from "./policy";
+import {
     ActuatorDetailSchema,
     ActuatorListSchema,
     CategoryListSchema,
@@ -280,6 +287,36 @@ export const OPERATIONS: Operation[] = [
         errors: [400, 404],
         example: "/api/v1/metal-prices/dy-oxide?from=2020-01",
         handler: getMetalPricesHandler,
+    },
+    {
+        operationId: "list_policy_measures",
+        method: "GET",
+        path: "/api/v1/policy",
+        summary: "List policy measures on the actuator chain",
+        description:
+            "Export controls, tariffs, subsidies and standards that touch the actuator supply chain (mining to robot) in China, the US, the EU, Japan, Korea, Australia and international standards bodies, oldest first. Each measure has its status history with a primary source per change. Filter by jurisdiction, type, stage or status.",
+        query: PolicyListParams,
+        response: PolicyListSchema,
+        errors: [400],
+        example: "/api/v1/policy?jurisdiction=CN&type=export-control",
+        handler: listPolicyHandler,
+    },
+    {
+        operationId: "get_policy_measure",
+        method: "GET",
+        path: "/api/v1/policy/:id",
+        summary: "Get one policy measure",
+        description:
+            "One measure with its issuer, dates, status history, affected stages, HS codes, companies, award size and sources.",
+        pathParam: {
+            name: "id",
+            description: "Measure id, e.g. cn-mofcom-2025-18.",
+            example: "cn-mofcom-2025-18",
+        },
+        response: PolicyMeasureSchema,
+        errors: [404],
+        example: "/api/v1/policy/cn-mofcom-2025-18",
+        handler: getPolicyHandler,
     },
     {
         operationId: "list_humanoids",

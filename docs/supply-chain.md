@@ -168,10 +168,18 @@ open it before scrolling to the entry.
 | REST | `GET /api/v1/companies`, `GET /api/v1/companies/{id}`, `GET /api/v1/sites` |
 | MCP (metals) | `get_metal_supply(element, stage?)`, `get_metal_prices(series, from?, to?)` |
 | REST (metals) | `GET /api/v1/metals`, `GET /api/v1/metals/{element}`, `GET /api/v1/metal-prices/{series}` |
+| MCP (policy) | `list_policy_measures(jurisdiction?, type?, stage?, status?)` |
+| REST (policy) | `GET /api/v1/policy`, `GET /api/v1/policy/{id}`, Atom feed `/policy/feed.xml` |
 
 Commodity prices for any page come from `priceAt(seriesId, "YYYY-MM")` in
 `src/supply-chain/metals/prices.ts`: the last reading in that month, else the
 year's annual average, else the last earlier point with `carried: true`.
+
+Government measures (export controls, tariffs, subsidies, standards) live once
+in `src/supply-chain/policy/`: `/policy` draws them, `/metals` pins the ones
+with a `metals` link on its price chart, and country pages read their strip
+from `measuresForCountry(code)`. Each measure needs a government or
+standards-body source and a dated, sourced `statusHistory`, oldest first.
 
 Every number in a response carries `as_of`, `confidence`, `note` and the full
 source references.
