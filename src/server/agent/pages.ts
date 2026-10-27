@@ -29,6 +29,7 @@ import { actuatorSeoTitle } from "./seo-titles";
 import { startupsBody } from "./startups";
 import { METALS_PAGE } from "./supply-chain/metals";
 import { HIDDEN_PAGES } from "./supply-chain/pages";
+import { POLICY_PAGE } from "./supply-chain/policy";
 import { TOOL_PAGES } from "./tools";
 import { aboutBody, contactBody, privacyBody } from "./trust";
 
@@ -143,6 +144,7 @@ const STATIC_PAGES: Page[] = [
     },
     HUMANOIDS_PAGE,
     METALS_PAGE,
+    POLICY_PAGE,
     sub(
         PATHS.agentsPage,
         "spa",

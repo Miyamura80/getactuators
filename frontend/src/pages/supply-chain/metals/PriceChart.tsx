@@ -59,7 +59,16 @@ function describe(s: PriceSeries, p: PricePoint): string {
     return `${s.label}, ${MARKET_LABEL[s.market]}, ${p.date}: ${usd(p.value)}/kg (${BASIS_LABEL[p.basis]}). ${src}`;
 }
 
+// /policy links here at a date: ?event=<id> lights that pin and opens the
+// event list, ?at=YYYY-MM draws a cursor at that month.
+function readLink(search: string): { event: string | null; at: number | null } {
+    const q = new URLSearchParams(search);
+    const at = /^\d{4}-(0[1-9]|1[0-2])$/.test(q.get("at") ?? "") ? eventTime(q.get("at") ?? "") : null;
+    return { event: q.get("event"), at };
+}
+
 export function PriceChart() {
+    const [link] = useState(() => readLink(typeof window === "undefined" ? "" : window.location.search));
     const [groups, setGroups] = useState<Group[]>(DEFAULT_GROUPS);
     const [log, setLog] = useState(true);
     const shown = PRICE_SERIES.filter((s) => groups.includes(s.element));
@@ -116,19 +125,22 @@ export function PriceChart() {
                     </circle>)}
                 </g>;
             })}
-            {METAL_EVENTS.map((e, i) => <g key={e.id} className="mt-pin" transform={`translate(${Math.max(M.l + 4, x(eventTime(e.date)))},${H - M.b})`}>
+            {link.at !== null
+                ? <g className="mt-cursor"><line x1={x(link.at)} x2={x(link.at)} y1={M.t} y2={H - M.b} /></g>
+                : null}
+            {METAL_EVENTS.map((e, i) => <g key={e.id} className={`mt-pin${link.event === e.id ? " is-hit" : ""}`} transform={`translate(${Math.max(M.l + 4, x(eventTime(e.date)))},${H - M.b})`}>
                 <line y1={18} y2={24} />
                 <text y={35} textAnchor="middle">{i + 1}</text>
                 <title>{`${e.date}: ${e.title}`}</title>
             </g>)}
         </svg>
         <p className="mt-note">Solid: export (FOB China) or LME. Dashed: China domestic. Points: USGS annual averages and year-end ranges, 2026 monthly SMM readings.</p>
-        <details className="mt-events">
+        <details className="mt-events" open={link.event !== null && METAL_EVENTS.some((e) => e.id === link.event)}>
             <summary>Events ({METAL_EVENTS.length})</summary>
             <ol>
-                {METAL_EVENTS.map((e) => <li key={e.id}>
+                {METAL_EVENTS.map((e) => <li key={e.id} className={link.event === e.id ? "is-hit" : undefined}>
                     <span className="mt-ev-date">{e.date}</span>
-                    <b>{e.title}</b>
+                    <b>{e.measureId ? <a href={`/policy#measure=${e.measureId}`}>{e.title}</a> : e.title}</b>
                     <span>{e.detail}<FootnoteRef sources={e.sources} asOf={e.date} confidence="reported" /></span>
                 </li>)}
             </ol>

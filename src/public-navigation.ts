@@ -17,6 +17,7 @@ export const SUPPLY_CHAIN_GROUPS = [
         label: "Chain",
         links: [
             ["/metals", "Metals"],
+            ["/policy", "Policy"],
             ["/bom", "Bill of materials"],
             ["/manufacturing", "Manufacturing"],
             ["/alts", "Alternatives"],
@@ -35,6 +36,7 @@ export const SUPPLY_CHAIN_GROUPS = [
 
 export const SUPPLY_CHAIN_PAGES_LIVE: ReadonlySet<string> = new Set<string>([
     "/metals",
+    "/policy",
 ]);
 
 export interface SupplyChainMenuLink {

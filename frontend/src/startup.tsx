@@ -24,6 +24,8 @@ import { Humanoids } from "./pages/humanoids/Humanoids";
 import { HUMANOIDS_PATH } from "../../src/humanoids";
 import { Metals } from "./pages/supply-chain/metals/Metals";
 import { METALS_PATH } from "../../src/supply-chain/metals";
+import { Policy } from "./pages/supply-chain/policy/Policy";
+import { POLICY_PATH } from "../../src/supply-chain/policy";
 
 function Page({ menuOpen }: { menuOpen: boolean }) {
     const path = usePath();
@@ -39,6 +41,7 @@ function Page({ menuOpen }: { menuOpen: boolean }) {
     if (path === LAB_PATH) return <SupplyChainLab menuOpen={menuOpen} />;
     if (path === HUMANOIDS_PATH) return <Humanoids menuOpen={menuOpen} />;
     if (path === METALS_PATH) return <Metals menuOpen={menuOpen} />;
+    if (path === POLICY_PATH) return <Policy menuOpen={menuOpen} />;
     if (path.startsWith("/actuators/")) {
         const raw = path.slice("/actuators/".length);
         let id = raw;
