@@ -118,14 +118,16 @@ export function SupplyGraph({ nodes, edges, label, selectedId, onSelectNode }: S
             {wires.filter((w) => near?.edges.has(w.key) && w.edge.label).map((w) => <span key={w.key} className="fk-wire-label"
                 style={{ left: w.mid[0], top: w.mid[1] }} aria-hidden="true">{w.edge.label}</span>)}
         </div>
-        <table className="fk-sr">
-            <caption>{label}</caption>
-            <thead><tr><th scope="col">Supplier</th><th scope="col">Buyer</th><th scope="col">What flows</th></tr></thead>
-            <tbody>{edges.map((e) => <tr key={edgeKey(e)}>
-                <th scope="row">{byId.get(e.from)?.name ?? e.from}</th>
-                <td>{byId.get(e.to)?.name ?? e.to}</td>
-                <td>{e.label ?? ""}{e.confidence === "estimated" ? " (estimated)" : ""}</td>
-            </tr>)}</tbody>
-        </table>
+        <div className="fk-sr">
+            <table>
+                <caption>{label}</caption>
+                <thead><tr><th scope="col">Supplier</th><th scope="col">Buyer</th><th scope="col">What flows</th></tr></thead>
+                <tbody>{edges.map((e) => <tr key={edgeKey(e)}>
+                    <th scope="row">{byId.get(e.from)?.name ?? e.from}</th>
+                    <td>{byId.get(e.to)?.name ?? e.to}</td>
+                    <td>{e.label ?? ""}{e.confidence === "estimated" ? " (estimated)" : ""}</td>
+                </tr>)}</tbody>
+            </table>
+        </div>
     </figure>;
 }
