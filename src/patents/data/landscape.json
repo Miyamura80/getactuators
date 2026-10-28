@@ -1,0 +1,8 @@
+{
+    "version": 1,
+    "collectedAt": null,
+    "dataset": "patents-public-data.patents.publications",
+    "sinceYear": 2010,
+    "technologies": [],
+    "crossChecks": []
+}

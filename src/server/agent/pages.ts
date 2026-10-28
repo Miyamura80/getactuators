@@ -16,6 +16,7 @@ import { investorsBody } from "./investors";
 import * as ld from "./jsonld";
 import { PATHS } from "./links";
 import { agentsBody } from "./manifests";
+import { PATENTS_PAGE } from "./market/patents";
 import { mdDocument } from "./md";
 import {
     actuatorsBody,
@@ -143,6 +144,8 @@ const STATIC_PAGES: Page[] = [
     },
     HUMANOIDS_PAGE,
     METALS_PAGE,
+    // Indexed once the first patent snapshot is committed; served either way.
+    ...(PATENTS_PAGE.noindex ? [] : [PATENTS_PAGE]),
     sub(
         PATHS.agentsPage,
         "spa",
@@ -179,7 +182,9 @@ const STATIC_PAGES: Page[] = [
 
 const ALIASES: Record<string, string> = { "/robot": "/robots", "/index.html": "/" };
 
-const byPath = new Map([...STATIC_PAGES, ...HIDDEN_PAGES].map((p) => [p.path, p]));
+const byPath = new Map(
+    [...STATIC_PAGES, ...HIDDEN_PAGES, PATENTS_PAGE].map((p) => [p.path, p]),
+);
 
 function actuatorPage(id: string): Page | null {
     const a = getActuator(id);
