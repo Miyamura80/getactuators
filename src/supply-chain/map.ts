@@ -58,8 +58,9 @@ export const SEGMENT_COLOR: Record<Segment, string> = {
 // (TILE_MARK): `line` is stroked, `solid` is stroked and filled, `cut` is
 // filled in the tile colour to punch holes back through a solid. Chosen by
 // rendering candidates at 14 to 18 px: a pickaxe (mining), a tilted
-// horseshoe magnet with solid poles (outline after Lucide's magnet, ISC), a
-// six-tooth gear, a solid robot face with its eyes and mouth cut out.
+// horseshoe magnet with solid poles (after Lucide's magnet, ISC, with its
+// arms thinned to open the gap between the poles), a six-tooth gear, a solid
+// robot face with its eyes and mouth cut out.
 export interface Pictogram {
     line: string;
     solid?: string;
@@ -71,8 +72,8 @@ export const SEGMENT_PICTO: Record<Segment, Pictogram> = {
         solid: "M7 4.5C13 2 20.5 6 20.5 17 17.5 10.5 13.5 7.5 7 4.5z",
     },
     "magnets-motors": {
-        line: "m6 15-4-4 6.75-6.77a7.79 7.79 0 0 1 11 11L13 22l-4-4 6.39-6.36a2.14 2.14 0 0 0-3-3L6 15",
-        solid: "M2 11 6 15 9 12 5 8zM13 22 9 18 12 15 16 19z",
+        line: "M5.11 14.11 2 11l6.75-6.77a7.79 7.79 0 0 1 11 11L13 22l-3.11-3.11 6.75-6.77a3.38 3.38 0 0 0-4.78-4.78L5.11 14.11",
+        solid: "M2 11 5.11 14.11 8.11 11.11 5 8zM13 22 9.89 18.89 12.89 15.89 16 19z",
     },
     "gears-screws-bearings": {
         line: "M9.07 4.77 9.53 1.49 14.47 1.49 14.93 4.77 16.79 5.85 19.87 4.61 22.34 8.88 19.73 10.93 19.73 13.07 22.34 15.12 19.87 19.39 16.79 18.15 14.93 19.23 14.47 22.51 9.53 22.51 9.07 19.23 7.21 18.15 4.13 19.39 1.66 15.12 4.27 13.07 4.27 10.93 1.66 8.88 4.13 4.61 7.21 5.85zM14.6 12a2.6 2.6 0 1 1-5.2 0 2.6 2.6 0 1 1 5.2 0",
