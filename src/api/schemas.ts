@@ -69,6 +69,9 @@ export const ActuatorSchema = named(
             source_domain: str("Domain of source_url."),
             url: z.string().describe("Human-readable page on actuatorlist.com."),
             api_url: z.string().describe("Canonical API URL of this resource."),
+            price_history_url: z
+                .string()
+                .describe("API URL of this actuator's recorded price history."),
         })
         .describe("A robot actuator with its published specifications."),
 );

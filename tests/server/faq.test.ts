@@ -31,7 +31,7 @@ test("FAQ has a real canonical route, Markdown twin, sitemap entry and seven com
     expect(html).toContain('"url":"https://actuatorlist.com/faq"');
     const markdown = await (await get("/faq.md")).text();
     expect(await (await getMarkdown("/faq")).text()).toBe(markdown);
-    expect(allPages()).toHaveLength(99);
+    expect(allPages()).toHaveLength(100);
     expect(await (await get("/sitemap.xml")).text()).toContain(
         "https://actuatorlist.com/faq",
     );

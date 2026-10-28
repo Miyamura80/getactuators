@@ -75,3 +75,30 @@ bun run scripts/generate-logo.ts "My-Project" "modern geometric style"
 
 - **check_ai_writing.ts** - Checks for em dashes in the codebase (AI writing detector)
 - **validate-agents-md.ts** - Validates CLAUDE.md/AGENTS.md has required sections
+
+## Price snapshots (`price-snapshot/`)
+
+Records each catalog actuator's listed price into `data/prices/history.json`,
+which `/prices`, its `.md` twin, `GET /api/v1/prices/{actuatorId}` and the MCP
+tool `get_price_history` read. Each point keeps its method, source URL, listed
+currency and the day's ECB rate to USD. Out-of-stock is a flag, not a price.
+
+Extractors, most reliable first: Shopify product JSON, WooCommerce Store API,
+schema.org `Product`/`Offer` JSON-LD, then CSS selectors. The bot sends a
+User-Agent pointing at this repo, honours robots.txt and waits 3 s between
+requests to one host.
+
+```bash
+# This week's prices (the weekly workflow runs this and opens a PR)
+bun run scripts/price-snapshot/snapshot.ts --report /tmp/price-report.md
+
+# One-off Internet Archive back-fill, at most one snapshot per month
+bun run scripts/price-snapshot/wayback.ts --since 2022 --report /tmp/wayback.md
+
+# Seed from the catalog's own git history (needs a full clone)
+bun run scripts/price-snapshot/seed-catalog.ts
+```
+
+All three take `--dry-run`; snapshot and wayback also take `--only id1,id2`. The workflow is
+`.github/workflows/price-snapshot.yaml` (weekly, or by hand with mode
+`wayback`); it never pushes to `main`.

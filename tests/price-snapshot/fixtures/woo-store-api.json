@@ -1,0 +1,14 @@
+[
+    {
+        "id": 42,
+        "name": "Example Motor Controller",
+        "slug": "example-motor-controller",
+        "is_in_stock": true,
+        "prices": {
+            "price": "24900",
+            "regular_price": "24900",
+            "currency_code": "GBP",
+            "currency_minor_unit": 2
+        }
+    }
+]

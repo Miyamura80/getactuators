@@ -7,6 +7,7 @@ import { num, price } from "../lib/format";
 import { Link } from "../lib/router";
 import { CompanyLogo } from "../components/CompanyLogo";
 import { CountryFlag } from "../components/CountryFlag";
+import { PriceSparkline } from "./prices/Sparkline";
 
 interface Props {
     id: string;
@@ -150,6 +151,7 @@ export function ExplodedView({ id, menuOpen = false }: Props) {
                         <Spec label="Weight" value={`${num(actuator.weight_g)} g`} caveat={fieldCaveat(actuator, "weight_g")} />
                         <Spec label="Price" value={price(actuator.price_usd)} caveat={fieldCaveat(actuator, "price_usd")} />
                     </div>
+                    <PriceSparkline id={actuator.id} />
                 </div>
             </div>
             <EngineeringEvidencePanel id={id} />

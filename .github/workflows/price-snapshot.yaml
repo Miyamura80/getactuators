@@ -1,0 +1,84 @@
+name: Price Snapshot
+
+# Weekly. Runs where egress is open (GitHub-hosted runner), reads each catalog
+# actuator's listed price from its product_url (scripts/price-snapshot/) and
+# opens a bot PR that appends to data/prices/history.json. Never pushes to
+# main. The PR body lists price changes, failures (page removed, layout
+# changed, robots.txt), out-of-stock flags and points that need a person.
+# Run by hand from the Actions tab with mode "wayback" for the one-off
+# Internet Archive back-fill. Opening PRs needs "Allow GitHub Actions to
+# create and approve pull requests" in the repository's Actions settings.
+on:
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "snapshot (this week's prices) or wayback (back-fill from the Internet Archive)"
+        type: choice
+        options: [snapshot, wayback]
+        default: snapshot
+      since:
+        description: "wayback only: first year to back-fill"
+        default: "2022"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: price-snapshot
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout code
+        # actions/checkout v6.0.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          # Full history: the wayback mode also looks up the URLs the catalog used before.
+          fetch-depth: 0
+
+      # oven-sh/setup-bun v2.1.3
+      - uses: oven-sh/setup-bun@ecf28ddc73e819eb6fa29df6b34ef8921c743461
+        with:
+          bun-version: 1.4.2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Read prices
+        env:
+          MODE: ${{ inputs.mode || 'snapshot' }}
+          SINCE: ${{ inputs.since || '2022' }}
+        run: |
+          if [ "$MODE" = "wayback" ]; then
+            bun run scripts/price-snapshot/wayback.ts --since "$SINCE" --report "$RUNNER_TEMP/price-report.md"
+          else
+            bun run scripts/price-snapshot/snapshot.ts --report "$RUNNER_TEMP/price-report.md"
+          fi
+
+      - name: Open bot PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MODE: ${{ inputs.mode || 'snapshot' }}
+        run: |
+          if git diff --quiet -- data/prices/history.json; then
+            echo "No price changes to commit."
+            cat "$RUNNER_TEMP/price-report.md" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          day=$(date -u +%F)
+          branch="bot/price-$MODE-$day"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git add data/prices/history.json
+          git commit -m "💽 Prices: $MODE $day"
+          git push origin "$branch"
+          gh pr create --base main --head "$branch" \
+            --title "💽 Prices: $MODE $day" \
+            --body-file "$RUNNER_TEMP/price-report.md"

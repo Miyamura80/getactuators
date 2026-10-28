@@ -16,6 +16,7 @@ import { investorsBody } from "./investors";
 import * as ld from "./jsonld";
 import { PATHS } from "./links";
 import { agentsBody } from "./manifests";
+import { PRICES_PAGE } from "./market/prices";
 import { mdDocument } from "./md";
 import {
     actuatorsBody,
@@ -143,6 +144,7 @@ const STATIC_PAGES: Page[] = [
     },
     HUMANOIDS_PAGE,
     METALS_PAGE,
+    PRICES_PAGE,
     sub(
         PATHS.agentsPage,
         "spa",
