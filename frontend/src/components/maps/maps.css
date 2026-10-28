@@ -85,10 +85,73 @@
 .mk-pin:hover .mk-tip, .mk-pin:focus-visible .mk-tip { opacity: 1; }
 .mk-arc-tip { bottom: auto; transform: translate(-50%, -130%); opacity: 1; display: grid; gap: 2px; }
 .mk-arc-tip i { font: 400 10px/1.3 var(--mono); font-style: normal; color: var(--muted); }
+.mk-pin .mk-tip { display: flex; align-items: center; gap: 8px; text-align: left; }
+.mk-tip > span { display: grid; gap: 1px; }
+.mk-tip i { font: 400 10px/1.3 var(--mono); font-style: normal; color: var(--muted); }
+.mk-mono {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border: 1.5px solid;
+    background: #000;
+    font: 600 10px/1 var(--mono);
+    letter-spacing: 0.02em;
+}
+.mk-pin:hover, .mk-pin:focus-visible { z-index: 4; }
+
+/* Always-on labels: company names, group callouts, orientation cities.
+   Decorative (aria-hidden); placed by labels.ts so none overlap. */
+.mk-labels { position: absolute; inset: 0; pointer-events: none; transition: opacity 150ms; }
+.mk-label {
+    position: absolute;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    padding: 0 4px;
+    white-space: nowrap;
+    background: rgb(0 0 0 / 0.72);
+    font: 500 11px var(--sans);
+    color: #d4d9da;
+}
+.mk-label.is-cluster { font: 600 10.5px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); background: #000; }
+.mk-label.is-city { padding: 0 3px; background: none; font: 500 9.5px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: #737c7e; }
+/* The box is the estimate the placer used; text hugs the marker side. */
+.mk-label.is-left { justify-content: flex-end; }
+.mk-label.is-top, .mk-label.is-bottom { justify-content: center; }
+.mk-city-dot { position: absolute; width: 4px; height: 4px; background: #737c7e; transform: translate(-50%, -50%); }
+.mk-city-dot.is-capital { width: 8px; height: 8px; border-radius: 50%; border: 1px solid #9ba4a6; background: #9ba4a6; box-shadow: inset 0 0 0 1.5px #000; }
+/* Hovering or focusing a marker hands it the stage: the labels recede. */
+.mk-html:has(.mk-pin:hover, .mk-pin:focus-visible, .mk-cluster:hover, .mk-cluster:focus-visible) .mk-labels { opacity: 0.2; }
+
+/* Segment mix of a group, as a strip along its marker's foot. */
+.mk-mix { position: absolute; left: 0; right: 0; bottom: 0; display: flex; gap: 1px; height: 3px; background: #000; }
+.mk-mix i { display: block; min-width: 3px; }
+
+/* Country maps: lighter land, faint internal borders, a bright coastline.
+   The site-density ramp stays dim so coloured pins keep the contrast and a
+   large region does not shout by area alone. */
+.mk-country .mk-land { stroke: #262626; }
+.mk-country .mk-land:not([data-step]) { fill: #161616; }
+.mk-country .mk-land[data-step="1"], .mk-country .mk-ramp i[data-step="1"] { fill: color-mix(in srgb, var(--cyan-dim) 9%, #111); background: color-mix(in srgb, var(--cyan-dim) 9%, #111); }
+.mk-country .mk-land[data-step="2"], .mk-country .mk-ramp i[data-step="2"] { fill: color-mix(in srgb, var(--cyan-dim) 15%, #111); background: color-mix(in srgb, var(--cyan-dim) 15%, #111); }
+.mk-country .mk-land[data-step="3"], .mk-country .mk-ramp i[data-step="3"] { fill: color-mix(in srgb, var(--cyan-dim) 22%, #111); background: color-mix(in srgb, var(--cyan-dim) 22%, #111); }
+.mk-country .mk-land[data-step="4"], .mk-country .mk-ramp i[data-step="4"] { fill: color-mix(in srgb, var(--cyan-dim) 30%, #111); background: color-mix(in srgb, var(--cyan-dim) 30%, #111); }
+.mk-country .mk-land[data-step="5"], .mk-country .mk-ramp i[data-step="5"] { fill: color-mix(in srgb, var(--cyan-dim) 38%, #111); background: color-mix(in srgb, var(--cyan-dim) 38%, #111); }
+.mk-coast { fill: none; stroke: #6f787a; stroke-width: 1; stroke-linejoin: round; vector-effect: non-scaling-stroke; pointer-events: none; }
+.mk-scale { position: absolute; left: 8px; bottom: 8px; display: grid; gap: 3px; padding: 4px 6px; background: rgb(0 0 0 / 0.72); pointer-events: none; z-index: 5; }
+.mk-scale i { display: block; height: 4px; border: 1px solid var(--muted); border-top: 0; }
+.mk-scale span { font: 500 10px/1 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.mk-keyrow { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 20px; margin-top: 8px; }
+.mk-keyrow .mk-key, .mk-keyrow .mk-legend { margin: 0; }
+.mk-key b { font: 600 10px/1 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.mk-key li { color: #c4cacb; }
+.mk-key li.is-approx { color: var(--muted); }
 
 /* Clusters */
 .mk-group { position: absolute; transform: translate(-50%, -50%); z-index: 1; }
 .mk-cluster {
+    position: relative;
     display: grid;
     place-items: center;
     min-width: 26px;
@@ -129,7 +192,7 @@
     text-align: left;
     cursor: pointer;
 }
-.mk-group-list button { color: var(--cyan); }
+.mk-group-list button { color: var(--text); }
 .mk-group-list button:hover, .mk-group-list button:focus-visible { background: var(--panel); outline: none; }
 .mk-group-list button > span, .mk-group-list button { white-space: nowrap; }
 
@@ -268,7 +331,7 @@ span.mk-chip { border-style: dashed; color: var(--muted); }
 .mk-ramp i[data-step="5"] { background: color-mix(in srgb, var(--cyan-dim) 88%, #000); }
 .mk-key { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 8px 0 0; padding: 0; list-style: none; font: 500 11px/1.2 var(--sans); color: var(--muted); }
 .mk-key li { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
-.mk-key .mk-glyph { color: var(--cyan); }
+.mk-key .mk-glyph { color: var(--muted); }
 
 /* Hidden table equivalents */
 .mk-sr, .mk-table {
@@ -332,5 +395,5 @@ span.mk-chip { border-style: dashed; color: var(--muted); }
 @keyframes mk-up { from { opacity: 0; transform: translateY(16px); } }
 @media (prefers-reduced-motion: reduce) {
     .mk-drawer { animation: none; }
-    .mk-land, .mk-arc-line, .mk-tip { transition: none; }
+    .mk-land, .mk-arc-line, .mk-tip, .mk-labels { transition: none; }
 }

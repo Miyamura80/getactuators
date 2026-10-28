@@ -2,8 +2,11 @@ import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } fro
 import { select } from "d3-selection";
 import "d3-transition";
 import { type ZoomBehavior, zoom, zoomIdentity, zoomTransform } from "d3-zoom";
+import type { LabelItem, Rect } from "./labels";
 import { type Box, MapContext, type MapContextValue, type ZoomState, reducedMotion, zoomForBox } from "./map-context";
+import { LabelLayer } from "./MapLabels";
 import type { MapView } from "./projection";
+import { ScaleBar } from "./ScaleBar";
 import "./maps.css";
 
 const IDENTITY: ZoomState = { k: 1, x: 0, y: 0 };
@@ -84,11 +87,39 @@ export interface MapFrameProps {
     // Visually hidden table equivalent of the base layer.
     table?: ReactNode;
     className?: string;
+    // A bottom-left scale bar (country maps; the world map's scale varies
+    // too much across the frame to state one).
+    scaleBar?: boolean;
+}
+
+type LabelSets = Record<string, LabelItem[]>;
+
+// One source's labels in, the rest kept; same array out when nothing changed.
+function useLabelSets() {
+    const [sets, setSets] = useState<LabelSets>({});
+    const setLabels = useCallback((source: string, items: LabelItem[]) => {
+        setSets((prev) => {
+            if (!items.length && !prev[source]) return prev;
+            const next = { ...prev };
+            if (items.length) next[source] = items;
+            else delete next[source];
+            return next;
+        });
+    }, []);
+    return { sets, setLabels };
+}
+
+// HUD corners labels must keep clear of, in CSS pixels: the zoom controls
+// (bottom right) and the scale bar (bottom left).
+function hudRects(w: number, h: number, scaleBar: boolean): Rect[] {
+    const rects: Rect[] = [[w - 46, h - 116, w, h]];
+    if (scaleBar) rects.push([0, h - 30, 128, h]);
+    return rects;
 }
 
 // The frame every map shares: SVG stage, d3-zoom (wheel, pinch, drag, double
 // click, +/- and fit buttons), overlay layers and the hidden tables.
-export function MapFrame({ view, label, base, children, toggle, readout, legend, table, className }: MapFrameProps) {
+export function MapFrame({ view, label, base, children, toggle, readout, legend, table, className, scaleBar = false }: MapFrameProps) {
     const { width, height, projection } = view;
     const { svgRef, state, apply, scaleBy, hint } = useZoom(width, height);
     const [svgLayer, setSvgLayer] = useState<SVGGElement | null>(null);
@@ -96,6 +127,7 @@ export function MapFrame({ view, label, base, children, toggle, readout, legend,
     const [belowLayer, setBelowLayer] = useState<HTMLDivElement | null>(null);
     const [stageWidth, setStageWidth] = useState(width);
     const stageRef = useRef<HTMLDivElement>(null);
+    const { sets, setLabels } = useLabelSets();
     useEffect(() => {
         const el = stageRef.current;
         if (!el || typeof ResizeObserver === "undefined") return;
@@ -114,8 +146,11 @@ export function MapFrame({ view, label, base, children, toggle, readout, legend,
         svgLayer,
         tableLayer,
         belowLayer,
-    }), [width, height, projection, state, apply, stageWidth, svgLayer, tableLayer, belowLayer]);
+        setLabels,
+    }), [width, height, projection, state, apply, stageWidth, svgLayer, tableLayer, belowLayer, setLabels]);
     const zoomed = state.k > 1.01;
+    const scale = stageWidth / width;
+    const reserved = useMemo(() => hudRects(stageWidth, stageWidth * (height / width), scaleBar), [stageWidth, width, height, scaleBar]);
     return <figure className={`mk-map${className ? ` ${className}` : ""}`}>
         <MapContext.Provider value={ctx}>
             {toggle ? <div className="mk-slot">{toggle}</div> : null}
@@ -124,7 +159,11 @@ export function MapFrame({ view, label, base, children, toggle, readout, legend,
                     <g className="mk-base" transform={`translate(${state.x},${state.y}) scale(${state.k})`}>{base}</g>
                     <g className="mk-overlay" ref={setSvgLayer} />
                 </svg>
-                <div className="mk-html">{children}</div>
+                <div className="mk-html">
+                    <LabelLayer sets={sets} width={width} height={height} scale={scale} reserved={reserved} />
+                    {children}
+                </div>
+                {scaleBar ? <ScaleBar projection={projection} width={width} height={height} zoom={state} scale={scale} /> : null}
                 {readout ? <div className="mk-readout" aria-live="polite">{readout}</div> : null}
                 <div className="mk-controls">
                     <button type="button" aria-label="Zoom in" title="Zoom in" onClick={() => scaleBy(1.6)}>

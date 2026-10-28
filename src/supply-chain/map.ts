@@ -42,11 +42,70 @@ export interface LonLat {
     lat: number;
 }
 
-// One marker. Shape encodes the segment; `precision` other than "site" draws
-// the marker hollow because the pin is a city centre, not the gate.
+// Segment identity on every map: a colour paired with a marker shape (see
+// SEGMENT_SHAPE in Pins.tsx), so colour is never the only channel. Validated
+// as a categorical set on the dark surface (OKLCH L 0.665; CVD-separable
+// with the shapes as secondary encoding).
+export const SEGMENT_COLOR: Record<Segment, string> = {
+    "ree-mining-refining": "#e36e13",
+    "magnets-motors": "#a577eb",
+    "gears-screws-bearings": "#af9100",
+    "robot-actuator-oem": "#e06099",
+};
+
+// Short names for the in-map key, where the full SEGMENT_LABEL wraps.
+export const SEGMENT_SHORT: Record<Segment, string> = {
+    "ree-mining-refining": "Rare earths",
+    "magnets-motors": "Magnets & motors",
+    "gears-screws-bearings": "Gears & bearings",
+    "robot-actuator-oem": "Robots & actuators",
+};
+
+// A few cities per country map for orientation: the capital plus the
+// largest metros. Plain geography, drawn faint under the site labels.
+export interface RefCity extends LonLat {
+    name: string;
+    capital?: boolean;
+}
+
+export const REFERENCE_CITIES: Record<Admin1Country, readonly RefCity[]> = {
+    JP: [
+        { name: "Tokyo", lat: 35.6812, lon: 139.7671, capital: true },
+        { name: "Osaka", lat: 34.6937, lon: 135.5023 },
+        { name: "Nagoya", lat: 35.1815, lon: 136.9066 },
+        { name: "Sapporo", lat: 43.0618, lon: 141.3545 },
+        { name: "Fukuoka", lat: 33.5904, lon: 130.4017 },
+    ],
+    CN: [
+        { name: "Beijing", lat: 39.9042, lon: 116.4074, capital: true },
+        { name: "Shanghai", lat: 31.2304, lon: 121.4737 },
+        { name: "Guangzhou", lat: 23.1291, lon: 113.2644 },
+        { name: "Chengdu", lat: 30.5728, lon: 104.0668 },
+        { name: "Wuhan", lat: 30.5928, lon: 114.3055 },
+    ],
+    KR: [
+        { name: "Seoul", lat: 37.5665, lon: 126.978, capital: true },
+        { name: "Busan", lat: 35.1796, lon: 129.0756 },
+        { name: "Daegu", lat: 35.8714, lon: 128.6014 },
+    ],
+    US: [
+        { name: "Washington", lat: 38.9072, lon: -77.0369, capital: true },
+        { name: "New York", lat: 40.7128, lon: -74.006 },
+        { name: "Los Angeles", lat: 34.0522, lon: -118.2437 },
+        { name: "Chicago", lat: 41.8781, lon: -87.6298 },
+        { name: "Houston", lat: 29.7604, lon: -95.3698 },
+    ],
+};
+
+// One marker. Shape and colour encode the segment; `precision` other than
+// "site" draws the marker hollow because the pin is a city centre, not the
+// gate. `company` is the short on-map label, `admin1` names a group of pins
+// that share a region.
 export interface MapPin extends LonLat {
     id: string;
     label: string;
+    company?: string;
+    admin1?: string;
     segment: Segment;
     precision: Site["precision"];
     country: CountryCode;
@@ -83,6 +142,8 @@ export function sitePin(site: Site): MapPin | null {
     return {
         id: site.id,
         label: `${company.name} · ${site.name}`,
+        company: company.name,
+        admin1: site.admin1,
         segment: company.segment,
         precision: site.precision,
         country: site.country,

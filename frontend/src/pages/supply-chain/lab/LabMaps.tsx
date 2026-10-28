@@ -90,18 +90,19 @@ export function LabMaps({ topologies }: { topologies?: Partial<Record<string, Ma
                     onCluster={(id) => { setOrigin("world"); sel.select({ cluster: id }); }}
                     selectedId={selectedPin}
                     onSelect={pick("world")}
+                    labels="groups"
                 />
             </WorldMap>
             {drawer("world")}
         </div>
         <PinLegend />
         <div className="sc-lab-countries">
-            {ADMIN1_COUNTRIES.map((code) => <section key={code} className="sc-lab-mapwrap" aria-label={countryName(code)}>
+            {ADMIN1_COUNTRIES.map((code) => [code, pins.filter((p) => p.country === code)] as const).map(([code, here]) => <section key={code} className="sc-lab-mapwrap" aria-label={countryName(code)}>
                 <h3><Flag code={code} decorative /> {countryName(code)}</h3>
-                <CountryMap code={code} topology={topologies?.[code]}>
+                <CountryMap code={code} sites={here} topology={topologies?.[code]}>
                     <Arcs arcs={arcsTouching(arcs, code)} />
                     <ClusterZoom
-                        pins={pins.filter((p) => p.country === code)}
+                        pins={here}
                         clusters={LAB_CLUSTERS}
                         activeCluster={origin === code ? sel.cluster : null}
                         onCluster={(id) => { setOrigin(code); sel.select({ cluster: id }); }}
