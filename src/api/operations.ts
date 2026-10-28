@@ -39,6 +39,13 @@ import {
     RobotListSchema,
 } from "./schemas";
 import {
+    SdkBrandSchema,
+    SdkListParams,
+    SdkListSchema,
+    getSdkBrandHandler,
+    listSdkHandler,
+} from "./sdk";
+import {
     CompanyDetailSchema,
     CompanyListParams,
     CompanyListSchema,
@@ -280,6 +287,36 @@ export const OPERATIONS: Operation[] = [
         errors: [400, 404],
         example: "/api/v1/metal-prices/dy-oxide?from=2020-01",
         handler: getMetalPricesHandler,
+    },
+    {
+        operationId: "list_sdk_scores",
+        method: "GET",
+        path: "/api/v1/sdk",
+        summary: "Actuator SDK leaderboard",
+        description:
+            "Brands ranked by SDK quality: overall score for a weighting preset, seven dimension scores 0-10, a capability matrix (Python, C++, Rust, ROS 2, ros2_control, URDF, MJCF, open firmware, documented protocol), evidence counts and the collectors behind the snapshot.",
+        query: SdkListParams,
+        response: SdkListSchema,
+        errors: [400],
+        example: "/api/v1/sdk?preset=ros2",
+        handler: listSdkHandler,
+    },
+    {
+        operationId: "get_sdk_score",
+        method: "GET",
+        path: "/api/v1/sdk/:brand",
+        summary: "One brand's SDK scorecard",
+        description:
+            "Every check behind a brand's SDK score, with the GitHub files, maker docs and forum posts it rests on. Takes a brand id or a catalog actuator id.",
+        pathParam: {
+            name: "brand",
+            description: "Brand id (e.g. robotis, mjbots, odrive) or an actuator id.",
+            example: "mjbots",
+        },
+        response: SdkBrandSchema,
+        errors: [404],
+        example: "/api/v1/sdk/mjbots",
+        handler: getSdkBrandHandler,
     },
     {
         operationId: "list_humanoids",

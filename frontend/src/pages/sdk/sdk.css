@@ -1,0 +1,159 @@
+/* /sdk: seven numbered views, instrument HUD per BRAND.md: square, thin
+   rules, numbers in mono, cyan for magnitude. */
+
+.sdk-head { position: relative; }
+.sdk-cta {
+    position: absolute;
+    right: 0;
+    bottom: 20px;
+    padding: 8px 14px;
+    background: var(--cyan);
+    color: var(--black);
+    font: 600 12px/1 var(--mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+.sdk-cta:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.sdk-presets { display: flex; flex-wrap: wrap; margin-top: 20px; border: 1px solid var(--line-strong); width: fit-content; max-width: 100%; }
+.sdk-presets button, .sdk-tray button, .sdk-cell-head button {
+    min-height: 36px;
+    padding: 0 14px;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    font: 600 12px var(--mono);
+    cursor: pointer;
+}
+.sdk-presets button + button { border-left: 1px solid var(--line-strong); }
+.sdk-presets button.is-on { box-shadow: inset 0 0 0 1px var(--cyan); color: var(--cyan); }
+.sdk-page button:focus-visible, .sdk-page select:focus-visible { outline: 2px solid var(--cyan); outline-offset: 1px; }
+
+.sdk-sec { padding-top: 32px; }
+.sdk-sec > h2 {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin: 0 0 10px;
+    font: 600 11px/1 var(--mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+.sdk-sec > h2 span { color: var(--cyan); }
+.sdk-note { margin: 6px 0 10px; font: 11px/1.5 var(--mono); color: var(--muted); }
+
+/* 01 Leaderboard */
+.sdk-board { list-style: none; margin: 0; padding: 0; border: 1px solid var(--line); }
+.sdk-board li + li { border-top: 1px solid var(--line); }
+.sdk-board button {
+    display: grid;
+    grid-template-columns: 28px minmax(110px, 180px) minmax(0, 1fr) 44px 120px;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 40px;
+    padding: 0 12px;
+    border: 0;
+    background: transparent;
+    color: var(--text);
+    text-align: left;
+    cursor: pointer;
+}
+.sdk-board li.is-on button { background: var(--panel-2); box-shadow: inset 2px 0 0 var(--cyan); }
+.sdk-rank, .sdk-score, .sdk-conf { font: 600 13px var(--mono); font-variant-numeric: tabular-nums; }
+.sdk-rank, .sdk-conf { color: var(--muted); }
+.sdk-conf { font-size: 11px; text-align: right; }
+.sdk-score { text-align: right; }
+.sdk-bar { height: 8px; background: var(--panel-2); }
+.sdk-bar i { display: block; height: 100%; background: var(--cyan); border-radius: 0 4px 4px 0; }
+
+/* 02 Heatmap */
+.sdk-scroll { overflow-x: auto; max-width: 100%; }
+.sdk-heat, .sdk-caps, .sdk-rubric { border-collapse: collapse; width: 100%; font: 12px var(--mono); }
+.sdk-heat th, .sdk-caps th { padding: 6px 8px; color: var(--muted); font-weight: 600; text-align: left; white-space: nowrap; }
+.sdk-heat thead th, .sdk-caps thead th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+.sdk-heat tbody th, .sdk-caps tbody th { color: var(--text); }
+.sdk-heat td { padding: 1px; }
+.sdk-heat td button {
+    width: 100%;
+    min-width: 56px;
+    min-height: 32px;
+    border: 0;
+    font: 600 12px var(--mono);
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+}
+.sdk-heat td button.is-on { outline: 2px solid var(--text); outline-offset: -2px; }
+.sdk-cell { margin-top: 12px; padding: 14px 16px; border: 1px solid var(--line-strong); background: var(--panel); }
+.sdk-cell-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.sdk-cell-head h3 { margin: 0; font-size: 15px; }
+.sdk-cell-head h3 b { font-family: var(--mono); color: var(--cyan); margin-left: 6px; }
+.sdk-checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.sdk-check-head { display: grid; grid-template-columns: 16px 1fr auto; gap: 8px; font-size: 14px; }
+.sdk-check-pts { font: 11px var(--mono); color: var(--muted); }
+.sdk-check.is-pass .sdk-check-head > span:first-child { color: var(--cyan); }
+.sdk-check.is-fail .sdk-check-head, .sdk-check.is-unknown .sdk-check-head { color: var(--muted); }
+.sdk-check ul { list-style: none; margin: 6px 0 0 24px; padding: 0; display: grid; gap: 6px; }
+.sdk-ev a { color: var(--text); font-size: 13px; overflow-wrap: anywhere; }
+.sdk-ev-meta { display: block; font: 11px var(--mono); color: var(--muted); overflow-wrap: anywhere; }
+
+/* 03 Radar */
+.sdk-radar { display: grid; grid-template-columns: minmax(0, 240px) minmax(0, 420px); gap: 24px; align-items: start; }
+.sdk-radar svg { width: 100%; height: auto; overflow: visible; }
+.sdk-radar .sdk-note { grid-column: 1 / -1; }
+.sdk-tray { display: grid; gap: 8px; font: 12px var(--mono); color: var(--muted); }
+.sdk-tray ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.sdk-tray li { display: grid; grid-template-columns: 10px 1fr auto; align-items: center; gap: 8px; color: var(--text); }
+.sdk-tray li i { width: 10px; height: 10px; }
+.sdk-tray button { min-height: 28px; padding: 0 8px; }
+.sdk-add select { width: 100%; min-height: 36px; background: var(--panel); color: var(--text); border: 1px solid var(--line-strong); font: 12px var(--mono); }
+.sdk-grid { fill: none; stroke: var(--line-strong); stroke-width: 1; }
+.sdk-axis { fill: var(--muted); font: 10px var(--mono); }
+.sdk-label { fill: var(--text); font: 11px var(--mono); }
+
+/* 04 Scatter */
+.sdk-scatter svg { width: 100%; height: auto; max-width: 760px; }
+.sdk-dot { fill: var(--panel); stroke: var(--muted); stroke-width: 2; }
+.sdk-dot.is-front { fill: var(--cyan); stroke: var(--black); }
+.sdk-frontier { fill: none; stroke: var(--cyan); stroke-width: 1; stroke-dasharray: 4 4; opacity: 0.6; }
+
+/* 05 Timeline */
+.sdk-timeline ol { list-style: none; margin: 0; padding: 0; display: flex; align-items: flex-end; gap: 2px; height: 140px; border-bottom: 1px solid var(--line-strong); overflow-x: auto; }
+.sdk-timeline li { flex: 1 0 28px; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; }
+.sdk-tl-bar { width: 100%; background: var(--cyan); border-radius: 4px 4px 0 0; min-height: 2px; }
+.sdk-tl-n { font: 10px var(--mono); color: var(--text); order: -1; }
+.sdk-tl-y { position: absolute; bottom: -16px; font: 10px var(--mono); color: var(--muted); }
+.sdk-timeline .sdk-note { margin-top: 22px; }
+
+/* 06 Themes */
+.sdk-themes { display: grid; gap: 1px; border: 1px solid var(--line); }
+.sdk-theme summary { display: flex; justify-content: space-between; padding: 10px 12px; cursor: pointer; font-size: 14px; }
+.sdk-theme summary b { font-family: var(--mono); color: var(--cyan); }
+.sdk-theme ul { list-style: none; margin: 0; padding: 0 12px 12px; display: grid; gap: 8px; }
+
+/* 07 Capabilities */
+.sdk-caps td { padding: 6px 8px; text-align: center; color: var(--muted); border-top: 1px solid var(--line); }
+.sdk-caps tbody th { border-top: 1px solid var(--line); }
+.sdk-caps td.is-official { color: var(--cyan); }
+.sdk-caps td.is-community { color: var(--text); }
+
+/* Method */
+.sdk-method { margin-top: 32px; border: 1px solid var(--line); padding: 0 16px; }
+.sdk-method summary { padding: 12px 0; cursor: pointer; font: 600 12px var(--mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.sdk-method p, .sdk-method li { font-size: 14px; line-height: 1.5; color: var(--text); }
+.sdk-method h3 { font-size: 14px; margin: 18px 0 6px; }
+.sdk-rubric th, .sdk-rubric td { padding: 6px 8px; text-align: left; vertical-align: top; border-top: 1px solid var(--line); }
+.sdk-runs { padding-left: 18px; }
+.sdk-runs span { font: 11px var(--mono); text-transform: uppercase; color: var(--muted); }
+.sdk-runs li.is-ok span { color: var(--cyan); }
+
+@media (max-width: 720px) {
+    .sdk-cta { position: static; display: inline-block; margin-top: 14px; }
+    .sdk-board button { grid-template-columns: 22px minmax(0, 1fr) 40px; gap: 8px; }
+    .sdk-board .sdk-bar { grid-column: 2 / 4; grid-row: 2; margin-bottom: 8px; }
+    .sdk-board .sdk-conf { display: none; }
+    .sdk-radar { grid-template-columns: minmax(0, 1fr); }
+}

@@ -7,6 +7,7 @@ import { num, price } from "../lib/format";
 import { Link } from "../lib/router";
 import { CompanyLogo } from "../components/CompanyLogo";
 import { CountryFlag } from "../components/CountryFlag";
+import { SdkBadge } from "./sdk/SdkBadge";
 
 interface Props {
     id: string;
@@ -100,6 +101,7 @@ export function ExplodedView({ id, menuOpen = false }: Props) {
                         </p>
                         <h1>{actuator.name}</h1>
                         <p className="xp-evidence">{evidenceFor(actuator).label}</p>
+                        <SdkBadge id={actuator.id} comm={actuator.comm} />
                         <p className="xp-hint">{"Conceptual silhouette: not CAD or model-specific internals."} {reducerFamily ? "Generic reducer illustration. No motor included." : "Scroll to separate the illustrative panels."}</p>
                         <a className="xp-specs-jump" href="#catalog-content">
                             Jump to specifications
