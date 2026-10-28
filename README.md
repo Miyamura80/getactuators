@@ -204,6 +204,4 @@ steps.
 
 - **Code**: [MIT License](LICENSE).
 - **Data** (the actuator, robot, humanoid and supply-chain catalog): [CC BY 4.0](LICENSE-DATA).
-  Credit "actuatorlist.com (Eito Miyamura)". Product photos, logos and
-  headshots are not covered; they belong to their owners and are shown for
-  identification only. Third-party figures keep their source citations.
+  Credit "actuatorlist.com (Eito Miyamura)"; see LICENSE-DATA for scope.

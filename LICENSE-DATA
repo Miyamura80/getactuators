@@ -1,6 +1,6 @@
 Data License
 
-Copyright (c) 2026 Eito Miyamura
+Copyright (c) 2025-2026 Eito Miyamura
 
 The actuatorlist catalog and dataset are licensed under the Creative Commons
 Attribution 4.0 International License (CC BY 4.0). To view a copy of this
@@ -42,11 +42,10 @@ repository is MIT licensed.
 What this does not cover
 ------------------------
 
-- Third-party images are NOT licensed under CC BY 4.0 or MIT. This includes
-  product photos (frontend/public/actuator-images/, frontend/public/robot-images/),
-  company and brand logos (frontend/public/logos/, including brands/ and
-  startups/), and any people headshots (such as frontend/public/people/). They
-  remain the property of their respective owners and are used only to
+- Third-party images are NOT licensed under CC BY 4.0 or MIT. This covers
+  every product photo, company or brand logo and headshot of a person,
+  wherever it is stored in this repository or served by actuatorlist.com.
+  They remain the property of their respective owners and are used only to
   identify the products, companies and people they depict.
 - Product names, company names and trademarks belong to their owners.
 - Figures sourced from third parties (manufacturer datasheets, retailer

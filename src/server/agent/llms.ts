@@ -1,5 +1,11 @@
 import { ACTUATORS, type Actuator, CATEGORIES, ROBOTS } from "@/catalog";
-import { REPO_URL, SITE_DESCRIPTION, absoluteUrl } from "../site";
+import {
+    CODE_LICENSE,
+    DATA_LICENSE,
+    REPO_URL,
+    SITE_DESCRIPTION,
+    absoluteUrl,
+} from "../site";
 import { actuatorPath, categoryLabel, robotSection } from "./catalog-md";
 import { CATALOG_UPDATED_DATE } from "./freshness";
 import { MCP_TOOLS, PATHS, RATE_LIMIT_PER_MINUTE, REST_ENDPOINTS } from "./links";
@@ -87,7 +93,7 @@ ${link("Privacy", "/privacy.md", "no accounts, cookies or analytics")}
 
 ${link("Sitemap", PATHS.sitemap, "every indexable URL")}
 ${link("JSON Lines feed", PATHS.feed, "one actuator object per line")}
-- [Source repository](${REPO_URL}): dataset (CC BY 4.0), site code (MIT License) and AGENTS.md
+- [Source repository](${REPO_URL}): dataset (${DATA_LICENSE.name}), site code (${CODE_LICENSE.name}) and AGENTS.md
 `;
 }
 

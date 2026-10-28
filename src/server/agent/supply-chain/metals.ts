@@ -27,7 +27,7 @@ import {
 } from "@/supply-chain/metals";
 import type { Sourced } from "@/supply-chain/sourced";
 import { STAGE_LABEL } from "@/supply-chain/stages";
-import { SITE_URL, absoluteUrl } from "../../site";
+import { DATA_LICENSE, SITE_URL, absoluteUrl } from "../../site";
 import * as ld from "../jsonld";
 import { mdTable, mdText } from "../md";
 import type { Page } from "../page-types";
@@ -254,7 +254,8 @@ function dataset(
         description,
         url: absoluteUrl(METALS_PATH),
         isAccessibleForFree: true,
-        license: "https://creativecommons.org/licenses/by/4.0/",
+        license: DATA_LICENSE.url,
+        creditText: DATA_LICENSE.credit,
         temporalCoverage,
         distribution: [
             {

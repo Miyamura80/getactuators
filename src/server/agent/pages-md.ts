@@ -1,7 +1,7 @@
 import { ACTUATORS, type Actuator, CATEGORIES, ROBOTS } from "@/catalog";
 import { isRankable } from "@/catalog/evidence";
 import { listBrands, queryActuators } from "@/catalog/query";
-import { REPO_URL, absoluteUrl } from "../site";
+import { LICENSE_SPLIT, REPO_URL, absoluteUrl } from "../site";
 import { actuatorLabel, actuatorPath, actuatorTable, robotSection } from "./catalog-md";
 import { PATHS } from "./links";
 import { bullets, dofText, mdLink, mdText, num, usd } from "./md";
@@ -67,7 +67,7 @@ export function faqItems(): FaqItem[] {
         },
         {
             q: "How do I add or correct an actuator?",
-            a: `Open an issue or a pull request on GitHub at ${REPO_URL}. The dataset lives in the repository and is published under CC BY 4.0; the code is MIT licensed.`,
+            a: `Open an issue or a pull request on GitHub at ${REPO_URL}. The dataset lives in the repository. ${LICENSE_SPLIT}`,
         },
     ];
 }

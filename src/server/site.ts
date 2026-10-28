@@ -12,6 +12,21 @@ export const SITE_DESCRIPTION =
 
 export const REPO_URL = "https://github.com/Miyamura80/getactuators";
 
+// License facts, stated once for every surface (pages, markdown twins,
+// OpenAPI, JSON-LD). LICENSE and LICENSE-DATA hold the full terms.
+export const CODE_LICENSE = { name: "MIT License", spdx: "MIT" } as const;
+
+export const DATA_LICENSE = {
+    name: "CC BY 4.0",
+    url: "https://creativecommons.org/licenses/by/4.0/",
+    credit: "actuatorlist.com (Eito Miyamura)",
+} as const;
+
+export const LICENSE_SPLIT = `The code is published under the ${CODE_LICENSE.name} and the dataset under ${DATA_LICENSE.name}.`;
+
+export const LICENSE_EXCLUDES =
+    "Product photos, logos and headshots are not covered: they belong to their owners and are shown only for identification.";
+
 export function absoluteUrl(path: string): string {
     return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
 }
