@@ -5,14 +5,7 @@ describe("Config Loading", () => {
     test("loads config from YAML successfully", () => {
         const config = createConfig();
         expect(config.exampleParent.exampleChild).toBe("example_value");
-        expect(config.modelName).toBe("gemini/gemini-3-flash-preview");
-    });
-
-    test("has correct default LLM settings", () => {
-        const config = createConfig();
-        expect(config.defaultLlm.defaultModel).toBe("gemini/gemini-3-flash-preview");
-        expect(config.defaultLlm.defaultTemperature).toBe(0.5);
-        expect(config.defaultLlm.defaultMaxTokens).toBe(100000);
+        expect(typeof config.devEnv).toBe("string");
     });
 
     test("has logging config", () => {
@@ -31,7 +24,7 @@ describe("Config Loading", () => {
     test("has feature flags", () => {
         const config = createConfig();
         expect(config.features.newUi).toBe(false);
-        expect(config.features.enableLlmFallback).toBe(true);
+        expect(config.features.betaFeatures).toBe(false);
     });
 
     test("sets runtime fields", () => {
@@ -45,8 +38,8 @@ describe("Config Env Var Override", () => {
     const savedEnv: Record<string, string | undefined> = {};
 
     beforeEach(() => {
-        savedEnv.DEFAULT_LLM__DEFAULT_MAX_TOKENS =
-            process.env.DEFAULT_LLM__DEFAULT_MAX_TOKENS;
+        savedEnv.EXAMPLE_PARENT__EXAMPLE_CHILD =
+            process.env.EXAMPLE_PARENT__EXAMPLE_CHILD;
         savedEnv.FEATURES__NEW_UI = process.env.FEATURES__NEW_UI;
     });
 
@@ -61,9 +54,9 @@ describe("Config Env Var Override", () => {
     });
 
     test("env vars override nested YAML values", () => {
-        process.env.DEFAULT_LLM__DEFAULT_MAX_TOKENS = "99999";
+        process.env.EXAMPLE_PARENT__EXAMPLE_CHILD = "overridden";
         const config = createConfig();
-        expect(config.defaultLlm.defaultMaxTokens).toBe(99999);
+        expect(config.exampleParent.exampleChild).toBe("overridden");
     });
 
     test("env vars override feature flags", () => {

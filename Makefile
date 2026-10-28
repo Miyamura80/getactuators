@@ -35,24 +35,8 @@ help: ## Show this help message
 
 ### Onboarding & Setup
 .PHONY: onboard
-onboard: check_bun ## Interactive onboarding CLI (rename, deps, env, hooks, media)
+onboard: check_bun ## Interactive onboarding CLI (rename, deps, env, hooks)
 	@bun run onboard.ts
-
-########################################################
-# Asset Generation
-########################################################
-
-### Asset Generation
-.PHONY: banner logo
-banner: check_bun ## Generate project banner image
-	@echo "$(YELLOW)🎨 Generating banner...$(RESET)"
-	@bun run scripts/generate-banner.ts
-	@echo "$(GREEN)✅ Banner generated at media/banner.png$(RESET)"
-
-logo: check_bun ## Generate logo, icons, and favicon
-	@echo "$(YELLOW)🎨 Generating logo suite...$(RESET)"
-	@bun run scripts/generate-logo.ts
-	@echo "$(GREEN)✅ Logo suite generated in frontend/public/$(RESET)"
 
 ########################################################
 # Check dependencies

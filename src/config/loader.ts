@@ -107,11 +107,6 @@ export function createConfig(): Config {
     if (process.env.DEV_ENV) {
         camelCased.devEnv = process.env.DEV_ENV;
     }
-    camelCased.openaiApiKey = process.env.OPENAI_API_KEY;
-    camelCased.anthropicApiKey = process.env.ANTHROPIC_API_KEY;
-    camelCased.groqApiKey = process.env.GROQ_API_KEY;
-    camelCased.perplexityApiKey = process.env.PERPLEXITY_API_KEY;
-    camelCased.geminiApiKey = process.env.GEMINI_API_KEY;
 
     // Runtime computed
     camelCased.isLocal = process.env.GITHUB_ACTIONS !== "true";

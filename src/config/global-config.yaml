@@ -1,25 +1,8 @@
-model_name: gemini/gemini-3-flash-preview
 dot_global_config_health_check: true
 dev_env: dev
 
 example_parent:
   example_child: "example_value"
-
-########################################################
-# LLMs
-########################################################
-default_llm:
-  default_model: gemini/gemini-3-flash-preview
-  fallback_model: gemini/gemini-2.5-flash-preview
-  default_temperature: 0.5
-  default_max_tokens: 100000
-
-llm_config:
-  cache_enabled: false
-  retry:
-    max_attempts: 3
-    min_wait_seconds: 1
-    max_wait_seconds: 5
 
 ########################################################
 # Debugging
@@ -28,7 +11,6 @@ features:
   # Add feature flags here. Can be overridden by env vars: FEATURES__NEW_UI=true
   new_ui: false
   beta_features: false
-  enable_llm_fallback: true
 
 logging:
   verbose: true

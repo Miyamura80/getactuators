@@ -23,7 +23,7 @@ describe("coerceValue", () => {
 
     test("leaves non-numeric strings as strings", () => {
         expect(coerceValue("hello")).toBe("hello");
-        expect(coerceValue("gemini/gemini-3-flash")).toBe("gemini/gemini-3-flash");
+        expect(coerceValue("example/value-1")).toBe("example/value-1");
     });
 });
 

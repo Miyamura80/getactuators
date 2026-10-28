@@ -11,7 +11,7 @@ Super-opinionated Bun/TypeScript stack for fast development. Uses `bun` as runti
 
 ```bash
 # Onboarding & Setup
-make onboard        # Interactive onboarding CLI (rename, deps, env, hooks, media)
+make onboard        # Interactive onboarding CLI (rename, deps, env, hooks)
 make setup          # Install dependencies (bun install)
 make all            # Install deps and run main application
 make dev            # Run in watch mode

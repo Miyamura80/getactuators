@@ -86,22 +86,8 @@ function loadExistingEnv(): Record<string, string> {
     return result;
 }
 
-const PLACEHOLDER_VALUES = new Set([
-    "sk-...",
-    "sk-ant-...",
-    "xai-...",
-    "gsk_...",
-    "pplx-...",
-    "AIza...",
-    "csk-...",
-    "sk-lf-...",
-    "pk-lf-...",
-    "sk_test_...",
-    "ghp_...",
-    "postgresql://user:pass@host:port/db",
-    "https://your-project.supabase.co",
-    "https://cloud.langfuse.com",
-]);
+// Example values in .env.example that are not real settings.
+const PLACEHOLDER_VALUES = new Set(["pk_..."]);
 
 function hasRealValue(value: string): boolean {
     return !!value && !PLACEHOLDER_VALUES.has(value);
@@ -175,10 +161,6 @@ function writeEnvFile(existing: Record<string, string>): void {
         outputLines.push(`${key}=${value}`);
     }
     writeFileSync(join(REPO_ROOT, ".env"), outputLines.join("\n"));
-}
-
-function generateAsset(script: string, args: string[]): boolean {
-    return runCommand(["bun", "run", script, ...args]);
 }
 
 function runCommand(cmd: string[]): boolean {
@@ -368,78 +350,6 @@ async function cmdHooks(): Promise<boolean> {
     return prekOk;
 }
 
-function hasGeminiKey(): boolean {
-    const existing = loadExistingEnv();
-    const geminiKey = process.env.GEMINI_API_KEY || existing.GEMINI_API_KEY;
-    return !!geminiKey && hasRealValue(geminiKey);
-}
-
-function runMediaGenerators(choice: string, args: string[]): boolean {
-    if (choice === "banner" || choice === "both") {
-        p.log.info("Generating banner...");
-        const ok = generateAsset("scripts/generate-banner.ts", args);
-        if (ok) {
-            p.log.success("Banner generated at media/banner.png");
-        } else {
-            p.log.error("Banner generation failed.");
-            if (choice === "banner") return false;
-        }
-    }
-    if (choice === "logo" || choice === "both") {
-        p.log.info("Generating logo suite...");
-        const ok = generateAsset("scripts/generate-logo.ts", args);
-        if (ok) {
-            p.log.success("Logo suite generated in docs/public/");
-        } else {
-            p.log.error("Logo generation failed.");
-            return false;
-        }
-    }
-    return true;
-}
-
-async function cmdMedia(): Promise<boolean> {
-    p.log.step("Generate media assets");
-
-    if (!hasGeminiKey()) {
-        p.log.warn(
-            "GEMINI_API_KEY not set -media generation requires a Gemini API key.",
-        );
-        p.log.info("Set it in .env or as an environment variable, then re-run.");
-        return false;
-    }
-
-    const pkg = readPackageJson();
-    const title =
-        pkg.name !== DEFAULT_NAME ? toDisplayName(pkg.name) : DEFAULT_DISPLAY_NAME;
-
-    const theme = exitIfCancelled(
-        await p.text({
-            message: "Visual theme / style hint (optional):",
-            placeholder: "e.g. cyberpunk, nature, minimalist",
-        }),
-    );
-
-    const choice = exitIfCancelled(
-        await p.select({
-            message: "What to generate?",
-            options: [
-                { value: "both", label: "Banner + Logo" },
-                { value: "banner", label: "Banner only" },
-                { value: "logo", label: "Logo only" },
-                { value: "skip", label: "Skip" },
-            ],
-        }),
-    );
-
-    if (choice === "skip") {
-        p.log.info("Skipped media generation.");
-        return true;
-    }
-
-    return runMediaGenerators(choice, [title, theme || ""]);
-}
-
 // ──────────────────────────────────────────────
 // Orchestrator
 // ──────────────────────────────────────────────
@@ -458,7 +368,6 @@ async function orchestrator(): Promise<void> {
         { name: "Install dependencies", fn: cmdDeps },
         { name: "Configure environment", fn: cmdEnv },
         { name: "Set up git hooks", fn: cmdHooks },
-        { name: "Generate media assets", fn: cmdMedia },
     ];
 
     const results: { name: string; ok: boolean; skipped: boolean }[] = [];
@@ -542,11 +451,6 @@ switch (subcommand) {
         await cmdHooks();
         p.outro("Done!");
         break;
-    case "media":
-        p.intro("Generate media assets");
-        await cmdMedia();
-        p.outro("Done!");
-        break;
     case "--help":
     case "-h":
         console.log(`Usage: bun run onboard.ts [subcommand]
@@ -556,7 +460,6 @@ Subcommands:
   deps     Install dependencies (bun install)
   env      Configure environment variables from .env.example
   hooks    Install git hooks via prek
-  media    Generate banner and/or logo assets
 
 Run without a subcommand for the full interactive onboarding flow.`);
         break;

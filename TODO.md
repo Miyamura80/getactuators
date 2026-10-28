@@ -8,8 +8,7 @@
 
 ### Medium Priority
 
-- [ ] Limited test coverage for `src/config/flags.ts` and `src/config/llm-api-key.ts`
-- [ ] Feature flag not checked in all fallback paths
+- [ ] Limited test coverage for `src/config/flags.ts`
 
 ### `saas` branch only
 

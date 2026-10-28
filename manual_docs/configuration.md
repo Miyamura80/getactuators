@@ -22,10 +22,9 @@ from common import global_config
 
 # Access nested YAML config values
 global_config.example_parent.example_child
-global_config.llm_config.retry.max_attempts
+global_config.logging.verbose
 
 # Access environment variables from .env
-global_config.OPENAI_API_KEY
 global_config.DEV_ENV
 ```
 
@@ -107,9 +106,6 @@ To override config values locally without modifying tracked files, create `.glob
 
 ```yaml
 # .global_config.yaml (git-ignored)
-llm_config:
-  cache_enabled: true
-
 logging:
   verbose: false
 ```
@@ -126,6 +122,6 @@ Pydantic automatically validates all config values at startup. If a required fie
 
 ```
 pydantic_core._pydantic_core.ValidationError: 1 validation error for Config
-OPENAI_API_KEY
+DEV_ENV
   Field required [type=missing, input_value={...}, input_type=dict]
 ```

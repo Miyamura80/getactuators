@@ -11,8 +11,8 @@ rename the project and remove unused template scaffolding.
 
 `onboard.ts` at the repo root is the source of truth for every onboarding
 step. Read it before changing anything. Its `orchestrator()` defines the step
-order, and each `cmd*` function (`cmdRename`, `cmdDeps`, `cmdEnv`, `cmdHooks`,
-`cmdMedia`) defines exactly what that step does. The CLI dispatch at the bottom
+order, and each `cmd*` function (`cmdRename`, `cmdDeps`, `cmdEnv`, `cmdHooks`)
+defines exactly what that step does. The CLI dispatch at the bottom
 of the file maps subcommands to those functions.
 
 ## Workflow
@@ -21,8 +21,8 @@ of the file maps subcommands to those functions.
    - `CLAUDE.md` / `AGENTS.md` (AGENTS.md is a symlink to CLAUDE.md), `README.md`,
      `package.json`, `Makefile`, `.env.example`
    - `onboard.ts` - the orchestrator step list and each `cmd*` function, so you
-     know precisely what renaming, dependency install, env config, hook setup,
-     and media generation will touch
+     know precisely what renaming, dependency install, env config, and hook
+     setup will touch
    - `src/` (entrypoint `src/index.ts`), `tests/`, and the two independent
      dependency trees under `docs/` (Next.js/Fumadocs) and `frontend/`
      (Vite/React) - each has its own `package.json`
@@ -34,7 +34,7 @@ of the file maps subcommands to those functions.
    - New project name (kebab-case - `onboard.ts` validates this and derives a
      display name from it)
    - Which onboarding steps to run: rename, dependency install, environment
-     configuration, git-hook setup, media (banner/logo) generation
+     configuration, git-hook setup
    - Whether the optional `docs/` site and `frontend/` app are kept or removed
    - Which `.env.example` keys they actually need (secrets vs. optional)
 
@@ -43,7 +43,7 @@ of the file maps subcommands to those functions.
    - Full interactive run: `make onboard` (or `bun run onboard.ts`). It walks
      every step, asking to run or skip each, and prints a summary.
    - Single step headless: `bun run onboard.ts <subcommand>` where subcommand is
-     one of `rename`, `deps`, `env`, `hooks`, `media`. Use these to re-run or
+     one of `rename`, `deps`, `env`, `hooks`. Use these to re-run or
      target one concern without the full wizard.
    - `bun run onboard.ts --help` lists the subcommands.
 
@@ -55,8 +55,6 @@ of the file maps subcommands to those functions.
      `.env` (git-ignored). Keys matching secret patterns (`SECRET`, `_KEY`,
      `TOKEN`, `PASSWORD`, `CREDENTIAL`) are treated as secrets.
    - **hooks** - installs git hooks via `prek` (`prek install`).
-   - **media** - generates banner and/or logo assets via the Gemini scripts
-     (`make banner` / `make logo`); requires `GEMINI_API_KEY`. Safe to skip.
 
 5. Verify the result after onboarding:
    - `bun install` succeeded and `bun run start` (or `make all`) runs the
@@ -84,5 +82,3 @@ of the file maps subcommands to those functions.
   which is git-ignored - keep it that way.
 - Do not push to `main`, force-push, or run destructive git commands as part of
   onboarding.
-- The media step needs network access and `GEMINI_API_KEY`; if either is
-  missing, skip it rather than failing the whole run.
