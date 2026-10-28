@@ -56,23 +56,24 @@ export const SEGMENT_COLOR: Record<Segment, string> = {
 
 // One pictogram per segment on a 24-unit grid, drawn into the tile's middle
 // (TILE_MARK): `line` is stroked, `solid` is stroked and filled. Chosen by
-// rendering candidates at 14 to 18 px: a pickaxe (mining), a horseshoe
-// magnet with solid poles, a six-tooth gear, an industrial robot arm.
+// rendering candidates at 14 to 18 px: a pickaxe (mining), a tilted
+// horseshoe magnet with solid poles (outline after Lucide's magnet, ISC), a
+// six-tooth gear, a humanoid robot.
 export const SEGMENT_PICTO: Record<Segment, { line: string; solid?: string }> = {
     "ree-mining-refining": {
         line: "M3.5 21 14 10.5",
         solid: "M7 4.5C13 2 20.5 6 20.5 17 17.5 10.5 13.5 7.5 7 4.5z",
     },
     "magnets-motors": {
-        line: "M6.5 4v8a5.5 5.5 0 0 0 11 0V4",
-        solid: "M4 3.5h5v4H4zM15 3.5h5v4h-5z",
+        line: "m6 15-4-4 6.75-6.77a7.79 7.79 0 0 1 11 11L13 22l-4-4 6.39-6.36a2.14 2.14 0 0 0-3-3L6 15",
+        solid: "M2 11 6 15 9 12 5 8zM13 22 9 18 12 15 16 19z",
     },
     "gears-screws-bearings": {
         line: "M9.07 4.77 9.53 1.49 14.47 1.49 14.93 4.77 16.79 5.85 19.87 4.61 22.34 8.88 19.73 10.93 19.73 13.07 22.34 15.12 19.87 19.39 16.79 18.15 14.93 19.23 14.47 22.51 9.53 22.51 9.07 19.23 7.21 18.15 4.13 19.39 1.66 15.12 4.27 13.07 4.27 10.93 1.66 8.88 4.13 4.61 7.21 5.85zM14.6 12a2.6 2.6 0 1 1-5.2 0 2.6 2.6 0 1 1 5.2 0",
     },
     "robot-actuator-oem": {
-        line: "M3 21.5h12M9 17 6 9.5l9.5-4M15.5 5.5 20 3.5M15.5 5.5l3 4",
-        solid: "M6 21.5V18h6v3.5zM8.2 9.5a2.2 2.2 0 1 1-4.4 0 2.2 2.2 0 1 1 4.4 0",
+        line: "M8.6 10.5H4.5v6M15.4 10.5h4.1v6M10.3 17.5v4.8M13.7 17.5v4.8",
+        solid: "M9.3 2h5.4a1.3 1.3 0 0 1 1.3 1.3v3.4A1.3 1.3 0 0 1 14.7 8H9.3A1.3 1.3 0 0 1 8 6.7V3.3A1.3 1.3 0 0 1 9.3 2zM8.6 10h6.8v7.5H8.6z",
     },
 };
 
