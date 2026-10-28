@@ -18,6 +18,30 @@ request steps.
 A digitised curve is never raw data. Say how it was digitised in `notes` and
 give its uncertainty.
 
+## Independence
+
+Every run states who stands behind the numbers, with the evidence in
+`independenceNote` (author, employer, funding, declared competing interests).
+
+| `independence` | Meaning | Datasheet-vs-measured |
+|----------------|---------|-----------------------|
+| `vendor` | The maker's own test: product page, manual, vendor test report | No verdict; shown as "Maker-reported" |
+| `vendor-affiliated` | Run by a company or person with a commercial tie to the actuator, such as a reseller or a company selling a kit built on it | No verdict; shown as "Affiliated test" |
+| `independent` | No known tie to the maker or a seller | Verdict against the datasheet |
+
+When in doubt, pick the less independent label and say why in the note.
+
+## Verdicts
+
+Only `independent` runs get a verdict. How it is set depends on the claim:
+
+- Typical value (the default, `bound` omitted or `"typical"`): within 10% of
+  the claim is "matches"; worse than that is "below datasheet"; better is
+  "beats". For backlash and repeatability, lower is better.
+- Maximum (`bound: "max"`, for any "or less" or "<=" figure): a measurement at
+  or under the limit is "within spec", above it "over limit". A maximum is
+  never "beaten".
+
 ## Rig requirements (lab and community)
 
 | Item | Minimum |
@@ -122,6 +146,8 @@ interface BenchmarkRun {
     date: string;                  // YYYY, YYYY-MM or YYYY-MM-DD
     origin: "published" | "lab" | "community";
     method: "reported" | "digitised" | "raw";
+    independence: "vendor" | "vendor-affiliated" | "independent";
+    independenceNote: string;      // evidence: who ran it, any tie to the maker
     source?: { url: string; title: string; locator?: string }; // required for published
     submitter?: string;            // GitHub handle, community only
     unit: string;                  // hardware revision and setup tested
@@ -136,7 +162,10 @@ interface BenchmarkRun {
     ripplePct?: number; bandwidthHz?: number; latencyMs?: number;
     repeatabilityArcmin?: number;
     uncertainty: Record<string, number>;  // per reported channel
-    claims?: { metric: string; value: number; source: string }[]; // datasheet values not in the catalog
+    claims?: {                     // datasheet values not in the catalog
+        metric: string; value: number; source: string;
+        bound?: "typical" | "max"; // "max" for an "or less" limit
+    }[];
     plausibilityNote?: string;
     notes?: string;
 }

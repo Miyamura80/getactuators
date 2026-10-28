@@ -6,19 +6,21 @@
             "date": "2024-04",
             "origin": "published",
             "method": "reported",
+            "independence": "independent",
+            "independenceNote": "Academic paper by UMass Amherst, University of Maryland and KOREATECH authors, funded by NSF grant 2220924; no tie to CubeMars.",
             "source": {
                 "url": "https://arxiv.org/abs/2404.05039",
                 "title": "Perera et al., StaccaToe: A Single-Leg Robot that Mimics the Human Leg and Toe (arXiv 2404.05039)",
                 "locator": "Knee actuator backlash measurement"
             },
-            "unit": "AK80-9 KV100 V3.0 (StaccaToe knee)",
+            "unit": "AK80-9 KV100 (StaccaToe knee); hardware version not stated, likely before V3.0",
             "rig": {
                 "torqueSensor": null,
                 "accuracyPct": null,
                 "encoder": "Actuator motor encoder",
                 "ambientC": null,
                 "busV": null,
-                "controller": "CubeMars stock driver"
+                "controller": "MAB Robotics MD80 V2.1 (replaced stock driver)"
             },
             "backlashArcmin": 9,
             "uncertainty": {},
@@ -26,10 +28,10 @@
                 {
                     "metric": "backlashArcmin",
                     "value": 11.4,
-                    "source": "Manufacturer specification of 0.19 deg, as quoted by Perera et al."
+                    "source": "Manufacturer specification of 0.19 deg (11.4 arcmin) as quoted by Perera et al.; this is the AK80-9 V2.0 figure. Resellers (RobotShop) list the V3.0 KV100 at 15 arcmin (0.25 deg), not confirmed on cubemars.com."
                 }
             ],
-            "notes": "Output shaft rigidly fixed while torques were commanded; backlash read from the motor encoder as 0.15 deg at the output."
+            "notes": "Output shaft rigidly fixed while torques were commanded; backlash read from the motor encoder as 0.15 deg at the output. The paper does not name the hardware version, and the 0.19 deg claim it compares against is the V2.0 specification, so the claim and the tested unit may be different variants."
         },
         {
             "actuatorId": "feetech-sts3215",
@@ -37,16 +39,18 @@
             "date": "2026",
             "origin": "published",
             "method": "reported",
+            "independence": "vendor-affiliated",
+            "independenceNote": "Sole author Boris Kotov is a Robonine employee and declares a competing interest; Robonine sells the SO-ARM102 kit ($389) built on STS3215 and STS3250 servos.",
             "source": {
                 "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13087586/",
-                "title": "Kotov, An open-source test stand for backlash measurement in low-cost UART servo motors (HardwareX, 2026)",
+                "title": "Kotov, An open-source test stand for backlash measurement in low-cost UART servo motors (HardwareX, 2026, doi 10.1016/j.ohx.2026.e00767)",
                 "locator": "Results, single STS3215 with default settings"
             },
             "unit": "STS3215 (single servo, default settings)",
             "rig": {
                 "torqueSensor": "Two STS3215 puller servos loading through elastic bands",
                 "accuracyPct": null,
-                "encoder": "Servo output encoder, 12-bit",
+                "encoder": "The tested servo's own 12-bit encoder, read while it actively holds position",
                 "ambientC": null,
                 "busV": null,
                 "controller": "Node.js controller over UART"
@@ -57,10 +61,11 @@
                 {
                     "metric": "backlashArcmin",
                     "value": 30,
-                    "source": "Feetech datasheet limit of 0.5 deg or less"
+                    "source": "Feetech datasheet <= 0.5 deg as quoted by Robonine; Feetech primary not verified",
+                    "bound": "max"
                 }
             ],
-            "notes": "Unloaded backlash about 0.62 deg (1.08 mm at 100 mm radius); loaded backlash about 1.30 deg (2.27 mm at 100 mm). The stored value is the unloaded figure. The stand's hardware, code and logs are open (roboninecom/Measuring-Backlash-in-Popular-UART-Servos)."
+            "notes": "Unloaded backlash about 0.62 deg (1.08 mm at 100 mm radius); loaded backlash about 1.30 deg (2.27 mm at 100 mm). The stored value is the unloaded figure. Play is read from the servo's own encoder while its position loop is active, so it includes the position-loop dead band and is not passive gear backlash. The stand's hardware, code and logs are open (roboninecom/Measuring-Backlash-in-Popular-UART-Servos)."
         },
         {
             "actuatorId": "feetech-sts3215",
@@ -68,6 +73,8 @@
             "date": "2026-10",
             "origin": "published",
             "method": "reported",
+            "independence": "vendor-affiliated",
+            "independenceNote": "Robonine sells the SO-ARM102 kit ($389) built on STS3215 and STS3250 servos.",
             "source": {
                 "url": "https://robonine.com/testing-of-feetech-sts3215-servomotor-backlash-repeatability-and-torque/",
                 "title": "Robonine: Testing of Feetech STS3215 Servomotor: Backlash, Repeatability, and Torque",
@@ -77,7 +84,7 @@
             "rig": {
                 "torqueSensor": null,
                 "accuracyPct": null,
-                "encoder": "Dial indicator on the output",
+                "encoder": "Dial indicator on an 86 mm lever, about 30 g rubber-band preload",
                 "ambientC": null,
                 "busV": 12,
                 "controller": null
@@ -88,39 +95,11 @@
                 {
                     "metric": "backlashArcmin",
                     "value": 30,
-                    "source": "Feetech datasheet limit of 0.5 deg or less, as quoted by Robonine"
+                    "source": "Feetech datasheet <= 0.5 deg as quoted by Robonine; Feetech primary not verified",
+                    "bound": "max"
                 }
             ],
-            "notes": "Angular backlash of 0.0151 rad (about 0.87 deg). The servo also has a 10-count firmware dead zone, so part of the play may be control rather than gears."
-        },
-        {
-            "actuatorId": "feetech-sts3250",
-            "runId": "branikita-stall-test",
-            "date": "2026-10",
-            "origin": "published",
-            "method": "reported",
-            "source": {
-                "url": "https://huggingface.co/posts/branikita/935466322450846",
-                "title": "branikita: FEETECH STS3250 Stall Torque and Repeatability Tests (Hugging Face post)",
-                "locator": "Stall torque result"
-            },
-            "unit": "STS3250",
-            "rig": {
-                "torqueSensor": null,
-                "accuracyPct": null,
-                "encoder": null,
-                "ambientC": null,
-                "busV": null,
-                "controller": null
-            },
-            "torqueSpeed": [
-                {
-                    "rpm": 0,
-                    "torqueNm": 4.71
-                }
-            ],
-            "uncertainty": {},
-            "notes": "Up to 48 kg.cm (4.71 Nm) for a brief moment, then about 25 kg.cm (2.45 Nm) sustained after the overload protection activated. Supply voltage and lever method are not stated."
+            "notes": "Angular backlash of 0.0151 rad (about 0.87 deg). The servo's firmware has a 10-count dead zone (about 0.88 deg), nearly equal to the measured play, so much of it may be control dead band rather than gears."
         },
         {
             "actuatorId": "feetech-sts3250",
@@ -128,16 +107,18 @@
             "date": "2026",
             "origin": "published",
             "method": "reported",
+            "independence": "vendor-affiliated",
+            "independenceNote": "Sole author Boris Kotov is a Robonine employee and declares a competing interest; Robonine sells the SO-ARM102 kit ($389) built on STS3215 and STS3250 servos.",
             "source": {
                 "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13087586/",
-                "title": "Kotov, An open-source test stand for backlash measurement in low-cost UART servo motors (HardwareX, 2026)",
+                "title": "Kotov, An open-source test stand for backlash measurement in low-cost UART servo motors (HardwareX, 2026, doi 10.1016/j.ohx.2026.e00767)",
                 "locator": "Results, single STS3250"
             },
             "unit": "STS3250 (single servo)",
             "rig": {
                 "torqueSensor": "Two STS3215 puller servos loading through elastic bands",
                 "accuracyPct": null,
-                "encoder": "Servo output encoder, 12-bit",
+                "encoder": "The tested servo's own 12-bit encoder, read while it actively holds position",
                 "ambientC": null,
                 "busV": null,
                 "controller": "Node.js controller over UART"
@@ -148,10 +129,11 @@
                 {
                     "metric": "backlashArcmin",
                     "value": 30,
-                    "source": "Feetech datasheet limit of 0.5 deg or less"
+                    "source": "Feetech datasheet <= 0.5 deg as quoted by Robonine; Feetech primary not verified",
+                    "bound": "max"
                 }
             ],
-            "notes": "Unloaded backlash 1.48 counts, about 0.13 deg; loaded backlash 3.78 counts, about 0.33 deg, at a 100 mm radius. The stored value is the unloaded figure."
+            "notes": "Unloaded backlash 1.48 counts, about 0.13 deg; loaded backlash 3.78 counts, about 0.33 deg, at a 100 mm radius. The stored value is the unloaded figure. 1.48 counts is at the encoder's resolution (one count is about 0.088 deg). Play is read from the servo's own encoder while its position loop is active, so it includes the position-loop dead band and is not passive gear backlash."
         },
         {
             "actuatorId": "feetech-sts3250",
@@ -159,30 +141,39 @@
             "date": "2026-10",
             "origin": "published",
             "method": "reported",
+            "independence": "vendor-affiliated",
+            "independenceNote": "Robonine sells the SO-ARM102 kit ($389) built on STS3215 and STS3250 servos. Its founder, Nikita Bragin (branikita), reposted the same stall test on Hugging Face.",
             "source": {
                 "url": "https://robonine.com/feetech-sts3250-smart-actuator-evaluation-of-accuracy-torque-and-backlash/",
                 "title": "Robonine: Feetech STS3250 Smart Actuator: Evaluation of Accuracy, Torque and Backlash",
-                "locator": "Backlash result"
+                "locator": "Backlash and stall torque results"
             },
             "unit": "STS3250 (12 V, 50 kg.cm)",
             "rig": {
                 "torqueSensor": null,
                 "accuracyPct": null,
-                "encoder": null,
-                "ambientC": null,
+                "encoder": "Digital dial indicator, 0.01 mm resolution, on an 86 mm lever",
+                "ambientC": 25,
                 "busV": 12,
                 "controller": null
             },
-            "backlashArcmin": 25.8,
+            "torqueSpeed": [
+                {
+                    "rpm": 0,
+                    "torqueNm": 4.71
+                }
+            ],
+            "backlashArcmin": 25.6,
             "uncertainty": {},
             "claims": [
                 {
                     "metric": "backlashArcmin",
                     "value": 30,
-                    "source": "Feetech datasheet limit of 0.5 deg or less, as quoted by Robonine"
+                    "source": "Feetech datasheet <= 0.5 deg as quoted by Robonine; Feetech primary not verified (Robonine cites a Feetech document dated 2024-01-16, Edition A/0)",
+                    "bound": "max"
                 }
             ],
-            "notes": "Mechanical backlash of 0.43 deg, within the 0.5 deg specification. A different method from the HardwareX test stand, so the two are not directly comparable."
+            "notes": "Backlash 0.64 mm at 86 mm, atan(0.64/86) = 0.43 deg, at 12 V and 25 +/- 2 C. Stall: up to 48 kg.cm (4.71 Nm) for a split second, then about 25 kg.cm (2.45 Nm) sustained after the overload protection activated. The stall instrument is not stated, and the weights the article lists cannot reach 48 kg.cm."
         },
         {
             "actuatorId": "mjbots-qdd100",
@@ -190,6 +181,8 @@
             "date": "2026-10",
             "origin": "published",
             "method": "reported",
+            "independence": "vendor",
+            "independenceNote": "mjbots' own product page. The catalog peak (16 Nm) and rated (3.3 Nm) torque come from the same page, so agreement with the datasheet is guaranteed and proves nothing.",
             "source": {
                 "url": "https://mjbots.com/products/qdd100-beta-3-developer-kit",
                 "title": "mjbots: qdd100 beta 3 developer kit (product page)",
@@ -228,9 +221,11 @@
         {
             "actuatorId": "steadywin-gim6010-8",
             "runId": "hackaday-spider-bot-stall",
-            "date": "2026-10",
+            "date": "2025-04",
             "origin": "published",
             "method": "reported",
+            "independence": "independent",
+            "independenceNote": "Hobbyist build log on Hackaday.io (log dated 04/12/2025); no tie to Steadywin found.",
             "source": {
                 "url": "https://hackaday.io/project/202366-the-unnamed-spider-bot/log/239789-steadywin-gim6010-8-stock-controller-vs-odrive-vs-tinymovr",
                 "title": "The Unnamed Spider Bot: Steadywin GIM6010-8, stock controller vs ODrive vs Tinymovr (Hackaday.io log)",
@@ -238,7 +233,7 @@
             },
             "unit": "GIM6010-8 with the stock driver (ODrive clone, customised 0.5.x firmware)",
             "rig": {
-                "torqueSensor": "Force reading at the end of a 200 mm arm",
+                "torqueSensor": "Digital load cell on 200 mm arm",
                 "accuracyPct": null,
                 "encoder": null,
                 "ambientC": null,
@@ -253,7 +248,7 @@
                 }
             ],
             "uncertainty": {},
-            "notes": "Stall force fluctuated around 55 N at the end of a 200 mm arm at 24 A, about 11 Nm. The same log found that an ODrive Micro (7 A rated) limited stall torque to about 4.8 Nm, which explains a lower 3 Nm figure reported elsewhere."
+            "notes": "A single rough reading: the stall force fluctuated around 55 N at the end of a 200 mm arm at 24 A, about 11 Nm. The same log found that an ODrive Micro (7 A rated) limited stall torque to about 4.8 Nm, which explains a lower 3 Nm figure reported elsewhere."
         },
         {
             "actuatorId": "xiaomi-cybergear",
@@ -261,21 +256,27 @@
             "date": "2026-10",
             "origin": "published",
             "method": "reported",
+            "independence": "vendor",
+            "independenceNote": "Xiaomi's own CyberGear instruction manual.",
             "source": {
-                "url": "https://roboticscv.com/wp-content/uploads/pdf/CyberGear%E5%BE%AE%E7%94%B5%E6%9C%BA%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E%E4%B9%A6.pdf",
-                "title": "Xiaomi CyberGear micromotor manual (Chinese, third-party mirror)",
-                "locator": "PDF pp4-5, section 1.3.15 overload table"
+                "url": "https://github.com/belovictor/cybergear-docs/blob/main/instructionmanual/instructionmanual.md",
+                "title": "Xiaomi CyberGear micromotor instruction manual (English translation, belovictor/cybergear-docs)",
+                "locator": "Section 1.3.15, maximum overload time vs torque"
             },
-            "unit": "Original CyberGear, 24 V, 7.75:1 (not CyberGear 2.0)",
+            "unit": "Original CyberGear, 7.75:1 (not CyberGear 2.0)",
             "rig": {
                 "torqueSensor": null,
                 "accuracyPct": null,
                 "encoder": null,
                 "ambientC": 25,
-                "busV": 24,
+                "busV": null,
                 "controller": "CyberGear integrated driver"
             },
             "thermal": [
+                {
+                    "torqueNm": 12,
+                    "tToLimitS": 28
+                },
                 {
                     "torqueNm": 11,
                     "tToLimitS": 45
@@ -289,12 +290,28 @@
                     "tToLimitS": 90
                 },
                 {
+                    "torqueNm": 8,
+                    "tToLimitS": 160
+                },
+                {
                     "torqueNm": 7,
                     "tToLimitS": 320
+                },
+                {
+                    "torqueNm": 6,
+                    "tToLimitS": 700
+                },
+                {
+                    "torqueNm": 5,
+                    "tToLimitS": 1800
+                },
+                {
+                    "torqueNm": 4.5,
+                    "tToLimitS": 2500
                 }
             ],
             "uncertainty": {},
-            "notes": "Vendor overload table at 24 rpm and 25 C ambient; each row ends when the winding reaches 120 C. The starting winding temperature is not stated, so the rise is not recorded. The same manual sets the board limit at 80 C and the default CAN motor warning and fault at 75 and 80 C, below the 120 C endpoint."
+            "notes": "Vendor overload table at 24 rpm and 25 C ambient; each row ends when the winding reaches 120 C. The table marks 4 Nm as rated, with no time. The test voltage is not stated for this table (24 V is the rated voltage). The starting winding temperature is not stated, so the rise is not recorded. The same manual sets the board limit at 80 C and the default CAN motor warning and fault at 75 and 80 C, below the 120 C endpoint. The Chinese original is mirrored at roboticscv.com, whose TLS certificate does not validate."
         }
     ]
 }

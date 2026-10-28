@@ -11,6 +11,21 @@ export type BenchmarkOrigin = (typeof BENCHMARK_ORIGINS)[number];
 export const BENCHMARK_METHODS = ["reported", "digitised", "raw"] as const;
 export type BenchmarkMethod = (typeof BENCHMARK_METHODS)[number];
 
+// Who stands behind the numbers. Only independent runs get a verdict against
+// the datasheet: a maker's own test (vendor) or a test by a company that sells
+// the actuator inside its own products (vendor-affiliated) is shown without one.
+export const BENCHMARK_INDEPENDENCE = [
+    "vendor",
+    "vendor-affiliated",
+    "independent",
+] as const;
+export type BenchmarkIndependence = (typeof BENCHMARK_INDEPENDENCE)[number];
+
+// How a datasheet value is meant: a typical figure, or an upper limit
+// ("0.5 deg or less") that a measurement can only stay within or exceed.
+export const CLAIM_BOUNDS = ["typical", "max"] as const;
+export type ClaimBound = (typeof CLAIM_BOUNDS)[number];
+
 export interface TorqueSpeedPoint {
     rpm: number;
     torqueNm: number;
@@ -64,6 +79,8 @@ export interface DatasheetClaim {
     metric: ScalarMetric;
     value: number;
     source: string;
+    // Omitted means "typical".
+    bound?: ClaimBound;
 }
 
 export interface BenchmarkRun {
@@ -74,6 +91,9 @@ export interface BenchmarkRun {
     date: string;
     origin: BenchmarkOrigin;
     method: BenchmarkMethod;
+    independence: BenchmarkIndependence;
+    // The evidence for `independence`: who ran the test and any tie to the maker.
+    independenceNote: string;
     source?: { url: string; title: string; locator?: string };
     submitter?: string;
     // Hardware revision and setup the source names.

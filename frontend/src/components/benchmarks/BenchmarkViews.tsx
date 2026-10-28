@@ -3,8 +3,10 @@ import {
     type BenchmarkOrigin,
     type BenchmarkRun,
     type DeltaRow,
+    INDEPENDENCE_LABEL,
     ORIGIN_LABEL,
     datasheetDeltas,
+    deltaStatusLabel,
     describeRig,
     holdLabel,
     measuredSummary,
@@ -19,6 +21,12 @@ export function OriginBadge({ origin }: { origin: BenchmarkOrigin }) {
     return <span className="bm-origin" data-origin={origin}>{ORIGIN_LABEL[origin]}</span>;
 }
 
+export function IndependenceBadge({ run }: { run: BenchmarkRun }) {
+    return <span className="bm-indep" data-independence={run.independence} title={run.independenceNote}>
+        {INDEPENDENCE_LABEL[run.independence]}
+    </span>;
+}
+
 export function SourceLink({ run }: { run: BenchmarkRun }) {
     if (run.source) return <a href={run.source.url} rel="noopener">{run.source.title}</a>;
     return <span>{run.submitter ? `@${run.submitter}` : run.runId}</span>;
@@ -27,20 +35,18 @@ export function SourceLink({ run }: { run: BenchmarkRun }) {
 const pct = (r: number) => `${r >= 1 ? "+" : ""}${Math.round((r - 1) * 100)}%`;
 const num = (n: number) => n.toLocaleString("en-US", { maximumFractionDigits: 2 });
 
-const VERDICT = { "over-promised": "Over-promised", matches: "Matches", beats: "Beats" } as const;
-
 export function DeltaBar({ row }: { row: DeltaRow }) {
     // Both values on one scale: the claim as a tick, the measurement as a bar.
     const max = Math.max(row.claimed, row.measured) * 1.15 || 1;
-    return <div className="bm-delta" data-verdict={row.verdict}>
+    return <div className="bm-delta" data-verdict={row.verdict ?? "none"}>
         <span className="bm-delta-label">{row.label}</span>
-        <span className="bm-verdict">{VERDICT[row.verdict]}</span>
+        <span className="bm-verdict">{deltaStatusLabel(row)}</span>
         <span className="bm-delta-track" aria-hidden="true">
             <span className="bm-delta-bar" style={{ width: `${(row.measured / max) * 100}%` }} />
             <span className="bm-delta-claim" style={{ left: `${(row.claimed / max) * 100}%` }} />
         </span>
         <span className="bm-delta-values">
-            {num(row.measured)} measured vs {num(row.claimed)} {row.unit} claimed <b>{pct(row.ratio)}</b>
+            {num(row.measured)} measured vs {row.claimBound === "max" ? "max " : ""}{num(row.claimed)} {row.unit} claimed <b>{pct(row.ratio)}</b>
         </span>
     </div>;
 }
@@ -96,10 +102,12 @@ export function ThermalChart() {
 export function RunItem({ run }: { run: BenchmarkRun }) {
     return <li className="bm-run">
         <OriginBadge origin={run.origin} />
+        <IndependenceBadge run={run} />
         <span className="bm-run-what">{measuredSummary(run)}</span>
         <details>
             <summary>Source & rig</summary>
             <p><SourceLink run={run} />{run.source?.locator && <small> ({run.source.locator})</small>}</p>
+            <p>{INDEPENDENCE_LABEL[run.independence]}: {run.independenceNote}</p>
             <p>{run.unit}. {describeRig(run)}. {run.date}.</p>
             {run.notes && <p>{run.notes}</p>}
         </details>

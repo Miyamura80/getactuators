@@ -13,7 +13,7 @@ const getBenchmarks = defineTool({
     name: "get_benchmarks",
     title: "Measured actuator benchmarks",
     description:
-        "Measured performance of a catalog actuator next to its datasheet: dyno speed curves, thermal holds (time to the thermal limit, or continuous), backlash, stiffness, friction, ripple, bandwidth, latency and repeatability, from published tests (papers, vendor test reports, reviewer tests) and community dyno runs. Each run has an origin badge (published, lab, community), rig, uncertainty and source URL; the datasheet_vs_measured rows say whether the datasheet over-promised. Omit actuator_id to list every run.",
+        "Measured performance of a catalog actuator next to its datasheet: dyno speed curves, thermal holds (time to the thermal limit, or continuous), backlash, stiffness, friction, ripple, bandwidth, latency and repeatability, from published tests (papers, vendor test reports, reviewer tests) and community dyno runs. Each run has an origin badge (published, lab, community), an independence label (vendor, vendor-affiliated, independent) with its evidence, rig, uncertainty and source URL. The datasheet_vs_measured rows give a verdict (below-datasheet, matches, beats; within-spec or over-limit for upper-limit claims) only for independent runs; vendor and vendor-affiliated rows have verdict null. Omit actuator_id to list every run.",
     input: z.object({
         actuator_id: z
             .string()

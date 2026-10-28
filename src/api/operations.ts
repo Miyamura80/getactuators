@@ -433,7 +433,7 @@ export const OPERATIONS: Operation[] = [
         path: "/api/v1/benchmarks",
         summary: "List measured benchmark runs",
         description:
-            "Measured actuator runs from published tests (papers, vendor test reports, reviewer tests) and community dyno submissions: torque-speed points, thermal holds (time to thermal limit), backlash, stiffness, friction, ripple, bandwidth, latency and repeatability, each with origin, rig, uncertainty and source.",
+            "Measured actuator runs from published tests (papers, vendor test reports, reviewer tests) and community dyno submissions: torque-speed points, thermal holds (time to thermal limit), backlash, stiffness, friction, ripple, bandwidth, latency and repeatability, each with origin, independence (vendor, vendor-affiliated or independent), rig, uncertainty and source.",
         query: BenchmarkListParams,
         response: BenchmarkListSchema,
         errors: [400],
@@ -446,7 +446,7 @@ export const OPERATIONS: Operation[] = [
         path: "/api/v1/benchmarks/:id",
         summary: "Get one actuator's measured runs vs its datasheet",
         description:
-            "Every measured run of one catalog actuator plus a datasheet-vs-measured comparison (ratio and verdict per metric) and its measured continuous torque density when a continuous hold was measured. Empty runs mean nothing has been measured yet.",
+            "Every measured run of one catalog actuator plus a datasheet-vs-measured comparison (ratio, independence and verdict per metric; only independent runs get a verdict) and its measured continuous torque density when a continuous hold was measured. Empty runs mean nothing has been measured yet.",
         pathParam: {
             name: "id",
             description: "Actuator id (slug).",

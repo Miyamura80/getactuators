@@ -4,19 +4,21 @@
     "date": "2024-04",
     "origin": "published",
     "method": "reported",
+    "independence": "independent",
+    "independenceNote": "Academic paper by UMass Amherst, University of Maryland and KOREATECH authors, funded by NSF grant 2220924; no tie to CubeMars.",
     "source": {
         "url": "https://arxiv.org/abs/2404.05039",
         "title": "Perera et al., StaccaToe: A Single-Leg Robot that Mimics the Human Leg and Toe (arXiv 2404.05039)",
         "locator": "Knee actuator backlash measurement"
     },
-    "unit": "AK80-9 KV100 V3.0 (StaccaToe knee)",
+    "unit": "AK80-9 KV100 (StaccaToe knee); hardware version not stated, likely before V3.0",
     "rig": {
         "torqueSensor": null,
         "accuracyPct": null,
         "encoder": "Actuator motor encoder",
         "ambientC": null,
         "busV": null,
-        "controller": "CubeMars stock driver"
+        "controller": "MAB Robotics MD80 V2.1 (replaced stock driver)"
     },
     "backlashArcmin": 9,
     "uncertainty": {},
@@ -24,8 +26,8 @@
         {
             "metric": "backlashArcmin",
             "value": 11.4,
-            "source": "Manufacturer specification of 0.19 deg, as quoted by Perera et al."
+            "source": "Manufacturer specification of 0.19 deg (11.4 arcmin) as quoted by Perera et al.; this is the AK80-9 V2.0 figure. Resellers (RobotShop) list the V3.0 KV100 at 15 arcmin (0.25 deg), not confirmed on cubemars.com."
         }
     ],
-    "notes": "Output shaft rigidly fixed while torques were commanded; backlash read from the motor encoder as 0.15 deg at the output."
+    "notes": "Output shaft rigidly fixed while torques were commanded; backlash read from the motor encoder as 0.15 deg at the output. The paper does not name the hardware version, and the 0.19 deg claim it compares against is the V2.0 specification, so the claim and the tested unit may be different variants."
 }

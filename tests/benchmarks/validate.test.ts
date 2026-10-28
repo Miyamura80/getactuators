@@ -3,8 +3,10 @@ import { join } from "node:path";
 import {
     BENCHMARK_RUNS,
     datasheetDeltas,
+    deltaStatusLabel,
     measuredLeaderboard,
     thermalSeries,
+    verdictFor,
 } from "@/benchmarks";
 import {
     type RunContext,
@@ -30,6 +32,8 @@ const community = () => ({
     date: "2026-10-01",
     origin: "community",
     method: "raw",
+    independence: "independent",
+    independenceNote: "Hobbyist bench, no tie to mjbots.",
     submitter: "octocat",
     unit: "qdd100 beta 3",
     rig: {
@@ -135,6 +139,25 @@ describe("validateRun", () => {
         expect(validateRun(hot, ctx()).join()).toContain("cannot be held longer");
     });
 
+    test("independence and its evidence are required", () => {
+        const run = community() as Record<string, unknown>;
+        run.independence = undefined;
+        expect(validateRun(run, ctx()).join()).toContain("independence");
+        const noNote = community() as Record<string, unknown>;
+        noNote.independenceNote = undefined;
+        expect(validateRun(noNote, ctx()).join()).toContain("independenceNote");
+        const bad = { ...community(), independence: "neutral" };
+        expect(validateRun(bad, ctx()).join()).toContain("independence");
+    });
+
+    test("claims accept a max bound and nothing else", () => {
+        const claim = { metric: "backlashArcmin", value: 30, source: "Datasheet" };
+        const ok = { ...community(), claims: [{ ...claim, bound: "max" }] };
+        expect(validateRun(ok, ctx())).toEqual([]);
+        const bad = { ...community(), claims: [{ ...claim, bound: "min" }] };
+        expect(validateRun(bad, ctx()).join()).toContain("bound");
+    });
+
     test("rejects future dates", () => {
         const run = { ...community(), date: "2027-01" };
         expect(validateRun(run, ctx()).join()).toContain("in the future");
@@ -162,13 +185,44 @@ describe("data/benchmarks", () => {
 });
 
 describe("views", () => {
-    test("datasheet vs measured flags over-promised backlash", () => {
+    test("only independent runs get a verdict", () => {
+        const rows = datasheetDeltas();
+        for (const d of rows) {
+            if (d.run.independence === "independent") expect(d.verdict).not.toBeNull();
+            else expect(d.verdict).toBeNull();
+        }
         const sts = datasheetDeltas("feetech-sts3215");
         expect(sts.every((d) => d.metric === "backlashArcmin")).toBe(true);
-        expect(sts.map((d) => d.verdict)).toEqual(["over-promised", "over-promised"]);
+        expect(sts.map((d) => [d.verdict, deltaStatusLabel(d)])).toEqual([
+            [null, "Affiliated test"],
+            [null, "Affiliated test"],
+        ]);
+        const qdd = datasheetDeltas("mjbots-qdd100");
+        expect(qdd.map((d) => [d.verdict, deltaStatusLabel(d)])).toEqual([
+            [null, "Maker-reported"],
+            [null, "Maker-reported"],
+        ]);
         const ak = datasheetDeltas("cubemars-ak80-9")[0];
         expect(ak?.verdict).toBe("beats");
         expect(ak?.claimed).toBe(11.4);
+    });
+
+    test("a max claim is within spec or over limit, never beats", () => {
+        expect(verdictFor(0.2, "lower", "max")).toBe("within-spec");
+        expect(verdictFor(1, "lower", "max")).toBe("within-spec");
+        expect(verdictFor(1.05, "lower", "max")).toBe("over-limit");
+        expect(verdictFor(2, "higher", "max")).toBe("over-limit");
+        expect(verdictFor(0.2, "lower")).toBe("beats");
+        expect(verdictFor(1.5, "lower")).toBe("below-datasheet");
+        expect(verdictFor(0.5, "higher")).toBe("below-datasheet");
+        expect(verdictFor(1.05, "higher")).toBe("matches");
+        const feetechClaims = BENCHMARK_RUNS.flatMap((r) =>
+            r.actuatorId.startsWith("feetech-") ? (r.claims ?? []) : [],
+        );
+        expect(feetechClaims.length).toBeGreaterThan(0);
+        for (const c of feetechClaims) expect(c.bound).toBe("max");
+        for (const d of datasheetDeltas())
+            if (d.claimBound === "max") expect(d.verdict).not.toBe("beats");
     });
 
     test("leaderboard ranks continuous holds only", () => {
@@ -179,6 +233,8 @@ describe("views", () => {
 
     test("thermal series are sorted by torque", () => {
         const cg = thermalSeries().find((s) => s.actuatorId === "xiaomi-cybergear");
-        expect(cg?.points.map((p) => p.torqueNm)).toEqual([11, 10, 9, 7]);
+        expect(cg?.points.map((p) => p.torqueNm)).toEqual([
+            12, 11, 10, 9, 8, 7, 6, 5, 4.5,
+        ]);
     });
 });

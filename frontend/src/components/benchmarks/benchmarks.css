@@ -60,10 +60,16 @@
 .bm-delta-bar { position: absolute; inset: 0 auto 0 0; background: var(--line-strong); }
 .bm-delta-claim { position: absolute; top: -3px; bottom: -3px; width: 2px; margin-left: -1px; background: var(--text); }
 .bm-delta-values { grid-column: 1 / -1; font-variant-numeric: tabular-nums; }
-.bm-delta[data-verdict="over-promised"] .bm-delta-bar { background: var(--red); }
-.bm-delta[data-verdict="over-promised"] .bm-verdict { color: var(--red); }
-.bm-delta[data-verdict="beats"] .bm-delta-bar { background: var(--green); }
-.bm-delta[data-verdict="beats"] .bm-verdict { color: var(--green); }
+.bm-delta[data-verdict="below-datasheet"] .bm-delta-bar,
+.bm-delta[data-verdict="over-limit"] .bm-delta-bar { background: var(--red); }
+.bm-delta[data-verdict="below-datasheet"] .bm-verdict,
+.bm-delta[data-verdict="over-limit"] .bm-verdict { color: var(--red); }
+.bm-delta[data-verdict="beats"] .bm-delta-bar,
+.bm-delta[data-verdict="within-spec"] .bm-delta-bar { background: var(--green); }
+.bm-delta[data-verdict="beats"] .bm-verdict,
+.bm-delta[data-verdict="within-spec"] .bm-verdict { color: var(--green); }
+/* No verdict (vendor or vendor-affiliated run): neutral, not judged. */
+.bm-delta[data-verdict="none"] .bm-verdict { color: var(--muted); font-weight: 400; }
 
 .bm-origin {
     display: inline-block;
@@ -77,6 +83,18 @@
 }
 .bm-origin[data-origin="lab"] { color: var(--cyan-dim); border-color: var(--cyan-dim); }
 .bm-origin[data-origin="community"] { color: #ffb547; border-color: #ffb547; }
+.bm-indep {
+    display: inline-block;
+    padding: 2px 6px;
+    border: 1px dashed var(--line-strong);
+    font: 600 10px/1.2 var(--mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    vertical-align: middle;
+}
+.bm-indep[data-independence="vendor-affiliated"] { color: #ffb547; border-color: #ffb547; }
+.bm-indep[data-independence="independent"] { color: var(--green); border-color: var(--green); border-style: solid; }
 
 .bm-picks { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
 .bm-picks button {

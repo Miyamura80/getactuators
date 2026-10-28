@@ -4,9 +4,11 @@ import { z } from "zod";
 import { ACTUATORS } from "../catalog";
 import type { Actuator } from "../catalog/types";
 import {
+    BENCHMARK_INDEPENDENCE,
     BENCHMARK_METHODS,
     BENCHMARK_ORIGINS,
     type BenchmarkRun,
+    CLAIM_BOUNDS,
     SCALAR_METRICS,
     UNCERTAINTY_KEYS,
 } from "./types";
@@ -48,6 +50,8 @@ export const benchmarkRunSchema = z
         date: z.string().regex(DATE, "use YYYY, YYYY-MM or YYYY-MM-DD"),
         origin: z.enum(BENCHMARK_ORIGINS),
         method: z.enum(BENCHMARK_METHODS),
+        independence: z.enum(BENCHMARK_INDEPENDENCE),
+        independenceNote: text,
         source: z
             .object({
                 url: z.string().url().startsWith("https://"),
@@ -86,6 +90,7 @@ export const benchmarkRunSchema = z
                         metric: z.enum(SCALAR_METRICS),
                         value: nonNegative,
                         source: text,
+                        bound: z.enum(CLAIM_BOUNDS).optional(),
                     })
                     .strict(),
             )

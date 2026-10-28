@@ -34,8 +34,16 @@ describe("/benchmarks page and twin", () => {
             ])
                 expect(md).toContain(h);
             expect(md).toMatch(
-                /\| Backlash \| 30 arcmin \| 51\.9 arcmin \| \+73% \| Over-promised \|/,
+                /\| Backlash \| max 30 arcmin \| 51\.9 arcmin \| \+73% \| Vendor-affiliated \| Affiliated test \|/,
             );
+            expect(md).toMatch(
+                /\| Peak torque \| 16 Nm \| 16 Nm \| \+0% \| Vendor \| Maker-reported \|/,
+            );
+            expect(md).toMatch(
+                /\| Backlash \| 11\.4 arcmin \| 9 arcmin \| -21% \| Independent \| Beats \|/,
+            );
+            for (const run of BENCHMARK_RUNS)
+                expect(md).toContain(run.independenceNote.slice(0, 30));
             expect(md).toContain("| 1 | [qdd100 beta 3 (mjbots)]");
             expect(md).toContain("| continuous |");
             for (const run of BENCHMARK_RUNS)
@@ -63,10 +71,17 @@ describe("REST /api/v1/benchmarks", () => {
             await (await get("/api/v1/benchmarks?actuator=feetech-sts3250")).json(),
         );
         expect(sts.runs.map((r) => r.runId).sort()).toEqual([
-            "branikita-stall-test",
             "hardwarex-2026-test-stand",
             "robonine-evaluation",
         ]);
+        const independent = BenchmarkListSchema.parse(
+            await (await get("/api/v1/benchmarks?independence=independent")).json(),
+        );
+        expect(independent.runs.map((r) => r.runId).sort()).toEqual([
+            "hackaday-spider-bot-stall",
+            "staccatoe-2024-backlash",
+        ]);
+        expect((await get("/api/v1/benchmarks?independence=maybe")).status).toBe(400);
         const community = BenchmarkListSchema.parse(
             await (await get("/api/v1/benchmarks?origin=community")).json(),
         );
@@ -82,10 +97,30 @@ describe("REST /api/v1/benchmarks", () => {
         );
         expect(qdd.runs).toHaveLength(1);
         expect(qdd.measured_continuous_torque_density_nm_per_kg).toBeCloseTo(6.51, 2);
-        expect(qdd.datasheet_vs_measured.map((d) => [d.metric, d.verdict])).toEqual([
-            ["peakTorqueNm", "matches"],
-            ["continuousTorqueNm", "matches"],
+        // A vendor run is maker-reported: no verdict.
+        expect(
+            qdd.datasheet_vs_measured.map((d) => [
+                d.metric,
+                d.independence,
+                d.verdict,
+                d.status,
+            ]),
+        ).toEqual([
+            ["peakTorqueNm", "vendor", null, "Maker-reported"],
+            ["continuousTorqueNm", "vendor", null, "Maker-reported"],
         ]);
+        const ak = ActuatorBenchmarksSchema.parse(
+            await (await get("/api/v1/benchmarks/cubemars-ak80-9")).json(),
+        );
+        expect(ak.datasheet_vs_measured[0]?.verdict).toBe("beats");
+        const sts = ActuatorBenchmarksSchema.parse(
+            await (await get("/api/v1/benchmarks/feetech-sts3215")).json(),
+        );
+        for (const d of sts.datasheet_vs_measured) {
+            expect(d.claim_bound).toBe("max");
+            expect(d.verdict).toBeNull();
+            expect(d.status).toBe("Affiliated test");
+        }
         const empty = ActuatorBenchmarksSchema.parse(
             await (await get("/api/v1/benchmarks/robstride-02")).json(),
         );
@@ -109,7 +144,27 @@ describe("MCP get_benchmarks", () => {
         ).structuredContent as {
             actuator: { runs: { thermal?: unknown[] }[] } | null;
         };
-        expect(one.actuator?.runs[0]?.thermal).toHaveLength(4);
+        expect(one.actuator?.runs[0]?.thermal).toHaveLength(9);
+        const sts = (
+            await callTool("get_benchmarks", { actuator_id: "feetech-sts3250" })
+        ).structuredContent as {
+            actuator: {
+                runs: { independence: string }[];
+                datasheet_vs_measured: {
+                    verdict: string | null;
+                    independence: string;
+                }[];
+            } | null;
+        };
+        expect(
+            sts.actuator?.runs.every((r) => r.independence === "vendor-affiliated"),
+        ).toBe(true);
+        // Backlash from both runs plus the Robonine stall peak, none judged.
+        expect(sts.actuator?.datasheet_vs_measured.map((d) => d.verdict)).toEqual([
+            null,
+            null,
+            null,
+        ]);
         const all = (await callTool("get_benchmarks", {})).structuredContent as {
             all: { total: number } | null;
         };

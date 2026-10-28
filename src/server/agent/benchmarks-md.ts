@@ -2,11 +2,13 @@ import {
     BENCHMARKS_PATH,
     BENCHMARK_RUNS,
     type BenchmarkRun,
+    INDEPENDENCE_LABEL,
     ORIGIN_LABEL,
     PROTOCOL_URL,
     SUBMIT_URL,
     benchmarkActuator,
     datasheetDeltas,
+    deltaStatusLabel,
     describeRig,
     holdLabel,
     measuredActuators,
@@ -41,25 +43,29 @@ function sourceLink(run: BenchmarkRun): string {
     return run.submitter ? `@${run.submitter}` : run.runId;
 }
 
-const VERDICT_TEXT = {
-    "over-promised": "Over-promised",
-    matches: "Matches",
-    beats: "Beats",
-} as const;
-
 function deltaTable(actuatorId?: string): string {
     const rows = datasheetDeltas(actuatorId);
     if (rows.length === 0)
         return "No metric with both a datasheet value and a measurement yet.";
     return mdTable(
-        ["Actuator", "Metric", "Datasheet", "Measured", "Delta", "Verdict", "Run"],
+        [
+            "Actuator",
+            "Metric",
+            "Datasheet",
+            "Measured",
+            "Delta",
+            "Independence",
+            "Verdict",
+            "Run",
+        ],
         rows.map((d) => [
             actuatorLink(d.actuatorId),
             d.label,
-            `${fmt(d.claimed)} ${d.unit}`,
+            `${d.claimBound === "max" ? "max " : ""}${fmt(d.claimed)} ${d.unit}`,
             `${fmt(d.measured)} ${d.unit}`,
             `${d.ratio >= 1 ? "+" : ""}${Math.round((d.ratio - 1) * 100)}%`,
-            VERDICT_TEXT[d.verdict],
+            INDEPENDENCE_LABEL[d.run.independence],
+            deltaStatusLabel(d),
             sourceLink(d.run),
         ]),
     );
@@ -133,6 +139,7 @@ function runRow(run: BenchmarkRun): string[] {
     return [
         actuatorLink(run.actuatorId),
         ORIGIN_LABEL[run.origin],
+        INDEPENDENCE_LABEL[run.independence],
         run.date,
         mdText(measuredSummary(run)),
         mdText(describeRig(run)),
@@ -140,23 +147,38 @@ function runRow(run: BenchmarkRun): string[] {
     ];
 }
 
+const RUN_HEADERS = [
+    "Actuator",
+    "Origin",
+    "Independence",
+    "Date",
+    "Measured",
+    "Rig",
+    "Source",
+];
+
+function runNote(r: BenchmarkRun): string {
+    const notes = r.notes ? ` ${mdText(r.notes)}` : "";
+    return `${actuatorLink(r.actuatorId)}, ${sourceLink(r)}: ${INDEPENDENCE_LABEL[r.independence]} (${mdText(r.independenceNote)}).${notes}`;
+}
+
 function runsSection(): string {
     return `## All runs
 
-${mdTable(["Actuator", "Origin", "Date", "Measured", "Rig", "Source"], BENCHMARK_RUNS.map(runRow))}
+${mdTable(RUN_HEADERS, BENCHMARK_RUNS.map(runRow))}
 
-${bullets(BENCHMARK_RUNS.filter((r) => r.notes).map((r) => `${actuatorLink(r.actuatorId)}, ${sourceLink(r)}: ${mdText(r.notes ?? "")}`))}`;
+${bullets(BENCHMARK_RUNS.map(runNote))}`;
 }
 
 export function benchmarksBody(): string {
     const n = measuredActuators().length;
     return `# ${TITLE}
 
-Datasheets are claims. This page lists ${BENCHMARK_RUNS.length} measured runs on ${n} catalog actuators and sets each against the datasheet. Badges: **Published** (a paper, vendor test report or reviewer test, linked), **Lab** (run by the maintainers) and **Community** (submitted by pull request under the test protocol and reviewed).
+This page lists ${BENCHMARK_RUNS.length} measured runs on ${n} catalog actuators and sets each against the datasheet. Origin: **Published** (a paper, vendor test report or reviewer test, linked), **Lab** (run by the maintainers) and **Community** (submitted by pull request under the test protocol and reviewed). Independence: **Vendor** (the maker's own test), **Vendor-affiliated** (run by a company that sells products built on the actuator) and **Independent**.
 
 ## Datasheet vs measured
 
-Within 10% of the claim is a match. For backlash and repeatability, lower is better.
+Only independent runs get a verdict. Vendor rows read "Maker-reported" and vendor-affiliated rows "Affiliated test", with no verdict. For a typical datasheet value, within 10% is a match; for a maximum ("or less") the result is within spec or over limit. For backlash and repeatability, lower is better.
 
 ${deltaTable()}
 
@@ -185,7 +207,7 @@ export function measuredSection(actuatorId: string): string | undefined {
     return `## Measured
 
 ${mdTable(
-    ["Origin", "Date", "Measured", "Rig", "Source"],
+    RUN_HEADERS.slice(1),
     runs.map((r) => runRow(r).slice(1)),
 )}
 ${deltas.length > 0 ? `\n${deltaTable(actuatorId)}\n` : ""}

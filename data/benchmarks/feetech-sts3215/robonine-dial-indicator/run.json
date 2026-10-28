@@ -4,6 +4,8 @@
     "date": "2026-10",
     "origin": "published",
     "method": "reported",
+    "independence": "vendor-affiliated",
+    "independenceNote": "Robonine sells the SO-ARM102 kit ($389) built on STS3215 and STS3250 servos.",
     "source": {
         "url": "https://robonine.com/testing-of-feetech-sts3215-servomotor-backlash-repeatability-and-torque/",
         "title": "Robonine: Testing of Feetech STS3215 Servomotor: Backlash, Repeatability, and Torque",
@@ -13,7 +15,7 @@
     "rig": {
         "torqueSensor": null,
         "accuracyPct": null,
-        "encoder": "Dial indicator on the output",
+        "encoder": "Dial indicator on an 86 mm lever, about 30 g rubber-band preload",
         "ambientC": null,
         "busV": 12,
         "controller": null
@@ -24,8 +26,9 @@
         {
             "metric": "backlashArcmin",
             "value": 30,
-            "source": "Feetech datasheet limit of 0.5 deg or less, as quoted by Robonine"
+            "source": "Feetech datasheet <= 0.5 deg as quoted by Robonine; Feetech primary not verified",
+            "bound": "max"
         }
     ],
-    "notes": "Angular backlash of 0.0151 rad (about 0.87 deg). The servo also has a 10-count firmware dead zone, so part of the play may be control rather than gears."
+    "notes": "Angular backlash of 0.0151 rad (about 0.87 deg). The servo's firmware has a 10-count dead zone (about 0.88 deg), nearly equal to the measured play, so much of it may be control dead band rather than gears."
 }

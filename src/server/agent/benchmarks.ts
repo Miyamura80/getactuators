@@ -23,7 +23,7 @@ export const BENCHMARKS_PAGE: Page = {
             "@id": `${SITE_URL}${BENCHMARKS_PATH}#runs`,
             name: "Measured robot actuator benchmarks",
             description:
-                "Measured torque, thermal holds, backlash and other test results for catalog actuators, from published tests and community dyno runs, each with its source and rig.",
+                "Measured torque, thermal holds, backlash and other test results for catalog actuators, from published tests and community dyno runs, each with its source, rig and independence (vendor, vendor-affiliated or independent).",
             url: absoluteUrl(BENCHMARKS_PATH),
             isAccessibleForFree: true,
             license: "https://opensource.org/licenses/MIT",
