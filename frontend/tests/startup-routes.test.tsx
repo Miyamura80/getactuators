@@ -11,6 +11,7 @@ for (const [path, selector] of [
     ["/actuators/cubemars-ak80-9", ".xp-stage"],
     ["/actuators", ".gallery-page"],
     ["/humanoids", ".hm-page .hm-fig"],
+    ["/open-source", ".os-page .os-gallery"],
 ]) {
     test(`unprerendered ${path} keeps the existing client mount and persistent sibling`, async () => {
         (

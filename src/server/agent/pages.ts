@@ -18,6 +18,7 @@ import { PATHS } from "./links";
 import { agentsBody } from "./manifests";
 import { PATENTS_PAGE } from "./market/patents";
 import { mdDocument } from "./md";
+import { OPEN_SOURCE_PAGE } from "./open-source";
 import {
     actuatorsBody,
     faqItems,
@@ -146,6 +147,7 @@ const STATIC_PAGES: Page[] = [
     METALS_PAGE,
     // Indexed once the first patent snapshot is committed; served either way.
     ...(PATENTS_PAGE.noindex ? [] : [PATENTS_PAGE]),
+    OPEN_SOURCE_PAGE,
     sub(
         PATHS.agentsPage,
         "spa",

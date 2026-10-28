@@ -26,6 +26,8 @@ import { Metals } from "./pages/supply-chain/metals/Metals";
 import { METALS_PATH } from "../../src/supply-chain/metals";
 import { Patents } from "./pages/market/patents/Patents";
 import { PATENTS_PATH } from "../../src/patents/landscape";
+import { OpenSource } from "./pages/open-source/OpenSource";
+import { OPEN_SOURCE_PATH } from "../../src/open-source";
 
 function Page({ menuOpen }: { menuOpen: boolean }) {
     const path = usePath();
@@ -42,6 +44,7 @@ function Page({ menuOpen }: { menuOpen: boolean }) {
     if (path === HUMANOIDS_PATH) return <Humanoids menuOpen={menuOpen} />;
     if (path === METALS_PATH) return <Metals menuOpen={menuOpen} />;
     if (path === PATENTS_PATH) return <Patents menuOpen={menuOpen} />;
+    if (path === OPEN_SOURCE_PATH) return <OpenSource menuOpen={menuOpen} />;
     if (path.startsWith("/actuators/")) {
         const raw = path.slice("/actuators/".length);
         let id = raw;

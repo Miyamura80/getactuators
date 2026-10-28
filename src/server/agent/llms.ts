@@ -73,6 +73,7 @@ ${link("Agent skill", PATHS.skill, "SKILL.md teaching an agent to use the API an
 ${link("Home", "/index.md", "overview, top actuators by torque density, FAQ")}
 ${link("Actuators", "/actuators.md", "every actuator in one table, plus categories")}
 ${link("Robots", "/robots.md", "robots with per-joint motors")}
+${link("Open-source robots", "/open-source.md", "robots you can build from public files: actuator per joint, cost to build, licences, an openness score per dimension (CAD, electronics, firmware, software, BOM, assembly, sim, licence) and the family tree; same data from GET /api/v1/open-robots and the MCP tool list_open_robots")}
 
 ## Engineering guides and tools (markdown)
 

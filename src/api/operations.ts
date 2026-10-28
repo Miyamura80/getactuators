@@ -27,6 +27,11 @@ import {
     getMetalPricesHandler,
     listMetalsHandler,
 } from "./metals";
+import {
+    OpenRobotListParams,
+    OpenRobotListSchema,
+    listOpenRobotsHandler,
+} from "./open-robots";
 import { ActuatorListParams, CompareQueryParams, RobotListParams } from "./params";
 import {
     PatentLandscapeParams,
@@ -346,5 +351,18 @@ export const OPERATIONS: Operation[] = [
         errors: [400, 404],
         example: "/api/v1/patents/strain-wave?families=10",
         handler: getPatentLandscapeHandler,
+    },
+    {
+        operationId: "list_open_robots",
+        method: "GET",
+        path: "/api/v1/open-robots",
+        summary: "List open-source robots and the actuators they use",
+        description:
+            "Every robot on /open-source: type, DOF, cost to build, licences, an openness score over eight dimensions (CAD, electronics, firmware, software, BOM, assembly guide, sim model, licence) with a link per dimension, GitHub stars, what it derives from, and its joints mapped to catalog actuator ids. Also returns joint counts per actuator model.",
+        query: OpenRobotListParams,
+        response: OpenRobotListSchema,
+        errors: [400],
+        example: "/api/v1/open-robots?type=arm",
+        handler: listOpenRobotsHandler,
     },
 ];

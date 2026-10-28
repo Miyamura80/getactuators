@@ -38,6 +38,7 @@ const TOOLS_ADDED_AFTER_BASELINE = [
     "get_metal_supply",
     "get_metal_prices",
     "get_patent_landscape",
+    "list_open_robots",
 ];
 function snapshotContent(value: string) {
     let out = value.replace(
@@ -315,7 +316,7 @@ async function expectCatalogPage(
 // metadata labels differ; hashes lock down original content, not head markup.
 test("the full catalog has distinct reviewed metadata without content changes", async () => {
     const registered = allPages();
-    expect(registered).toHaveLength(87);
+    expect(registered).toHaveLength(88);
     // Pages added after the baseline capture have their own tests.
     const added = new Set([
         "/faq",
@@ -327,6 +328,7 @@ test("the full catalog has distinct reviewed metadata without content changes", 
         "/investors",
         "/humanoids",
         "/metals",
+        "/open-source",
     ]);
     const pages = registered.filter((page) => !added.has(page.path));
     expect(ACTUATORS).toHaveLength(68);
