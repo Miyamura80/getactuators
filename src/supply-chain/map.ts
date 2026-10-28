@@ -55,11 +55,17 @@ export const SEGMENT_COLOR: Record<Segment, string> = {
 };
 
 // One pictogram per segment on a 24-unit grid, drawn into the tile's middle
-// (TILE_MARK): `line` is stroked, `solid` is stroked and filled. Chosen by
+// (TILE_MARK): `line` is stroked, `solid` is stroked and filled, `cut` is
+// filled in the tile colour to punch holes back through a solid. Chosen by
 // rendering candidates at 14 to 18 px: a pickaxe (mining), a tilted
 // horseshoe magnet with solid poles (outline after Lucide's magnet, ISC), a
-// six-tooth gear, a robot head.
-export const SEGMENT_PICTO: Record<Segment, { line: string; solid?: string }> = {
+// six-tooth gear, a solid robot face with its eyes and mouth cut out.
+export interface Pictogram {
+    line: string;
+    solid?: string;
+    cut?: string;
+}
+export const SEGMENT_PICTO: Record<Segment, Pictogram> = {
     "ree-mining-refining": {
         line: "M3.5 21 14 10.5",
         solid: "M7 4.5C13 2 20.5 6 20.5 17 17.5 10.5 13.5 7.5 7 4.5z",
@@ -72,8 +78,9 @@ export const SEGMENT_PICTO: Record<Segment, { line: string; solid?: string }> = 
         line: "M9.07 4.77 9.53 1.49 14.47 1.49 14.93 4.77 16.79 5.85 19.87 4.61 22.34 8.88 19.73 10.93 19.73 13.07 22.34 15.12 19.87 19.39 16.79 18.15 14.93 19.23 14.47 22.51 9.53 22.51 9.07 19.23 7.21 18.15 4.13 19.39 1.66 15.12 4.27 13.07 4.27 10.93 1.66 8.88 4.13 4.61 7.21 5.85zM14.6 12a2.6 2.6 0 1 1-5.2 0 2.6 2.6 0 1 1 5.2 0",
     },
     "robot-actuator-oem": {
-        line: "M12 2v3M5 7.5h14a1.5 1.5 0 0 1 1.5 1.5v9a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 18V9A1.5 1.5 0 0 1 5 7.5zM9 16h6M1.5 11.5v4M22.5 11.5v4",
-        solid: "M10.2 12a1.6 1.6 0 1 1-3.2 0 1.6 1.6 0 0 1 3.2 0zM17 12a1.6 1.6 0 1 1-3.2 0 1.6 1.6 0 0 1 3.2 0z",
+        line: "M12 2.5v3",
+        solid: "M5 6.5h14a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8.5a2 2 0 0 1 2-2z",
+        cut: "M10.4 12.5a1.9 1.9 0 1 1-3.8 0 1.9 1.9 0 0 1 3.8 0zM17.4 12.5a1.9 1.9 0 1 1-3.8 0 1.9 1.9 0 0 1 3.8 0zM9 16.4h6v1.3H9z",
     },
 };
 
