@@ -4,7 +4,11 @@ import { afterEach, beforeEach, expect, test } from "bun:test";
 import { act, cleanup, fireEvent, render } from "@testing-library/react";
 import { clipArc, edgePoint } from "../src/components/maps/arc-geometry";
 import { choroplethScale } from "../src/components/maps/choropleth";
-import { groupPoints } from "../src/components/maps/cluster";
+import { groupName, groupPoints } from "../src/components/maps/cluster";
+import { ClusterZoom } from "../src/components/maps/ClusterZoom";
+import { labelSize, placeLabels } from "../src/components/maps/labels";
+import { niceScale } from "../src/components/maps/ScaleBar";
+import { LAB_CLUSTERS } from "../../src/supply-chain/lab-kit";
 import type { MapTopology } from "../src/components/maps/geo";
 import { Pins } from "../src/components/maps/Pins";
 import { readSelection, useMapSelection, withSelection } from "../src/components/maps/use-map-selection";
@@ -19,8 +23,7 @@ import { SupplyGraph } from "../src/components/flows/SupplyGraph";
 import { ValueSankey } from "../src/components/flows/ValueSankey";
 import { FootnotesProvider } from "../src/components/supply-chain/footnotes";
 import { LabMaps } from "../src/pages/supply-chain/lab/LabMaps";
-import { arcsTouching, sitePins, supplyArcs } from "../../src/supply-chain/map";
-
+import { SEGMENT_COLOR, arcsTouching, sitePins, supplyArcs } from "../../src/supply-chain/map";
 const geo = (f: string) => JSON.parse(readFileSync(new URL(`../public/geo/${f}`, import.meta.url), "utf8")) as MapTopology;
 const WORLD = geo("world-110m.json");
 const JP = geo("jp-admin1.json");
@@ -103,6 +106,62 @@ test("arc geometry: clip at the frame and drop floating runs", () => {
     const mid = clipArc([[-50, 5], [20, 5], [30, 5], null, [400, 5]], 300, 100);
     expect(mid.runs).toEqual([]);
     expect(edgePoint([50, 50], [50, 150], 100, 100)).toEqual([50, 100]);
+});
+
+test("pins pair segment colour with shape; hover card carries the monogram and site", () => {
+    const c = render(<WorldMap label="Sites" topology={WORLD}><Pins pins={PINS} /></WorldMap>).container;
+    const pin = c.querySelector('[data-pin="mp-mountain-pass"]') as HTMLElement;
+    const glyph = pin.querySelector(".mk-glyph") as SVGElement;
+    expect(glyph.getAttribute("style")).toContain(SEGMENT_COLOR["ree-mining-refining"]);
+    expect(glyph.querySelector("circle")).not.toBeNull();
+    expect(pin.querySelector(".mk-mono")?.textContent).toBe("MM");
+    expect(pin.querySelector(".mk-tip i")?.textContent).toBe("Mountain Pass mine and separation plant");
+});
+
+test("country map: site density shading, coastline, scale bar, cities and placed labels", () => {
+    const here = PINS.filter((p) => p.country === "JP");
+    const c = render(<CountryMap code="JP" sites={here} topology={JP}>
+        <ClusterZoom pins={here} clusters={LAB_CLUSTERS} />
+    </CountryMap>).container;
+    // Nagano holds a site: shaded, and listed in the hidden table.
+    expect(c.querySelector('path[data-id="JP-20"]')?.getAttribute("data-step")).not.toBeNull();
+    expect(c.querySelector('path[data-id="JP-01"]')?.getAttribute("data-step")).toBeNull();
+    const table = [...c.querySelectorAll(".mk-sr table")].find((t) => t.querySelector("caption")?.textContent?.includes("sites per region"));
+    expect(table?.textContent).toContain("Nagano");
+    expect(c.querySelector(".mk-coast")?.getAttribute("d")?.length).toBeGreaterThan(100);
+    expect(c.querySelector(".mk-scale")?.getAttribute("aria-label")).toMatch(/^Scale: bar is [\d,]+ km$/);
+    // The key lists only the segments on this map, with counts.
+    const key = [...c.querySelectorAll(".mk-keyrow .mk-key li")].map((li) => li.textContent);
+    expect(key.some((t) => t?.startsWith("Rare earths"))).toBe(false);
+    expect(key).toContain(`Gears & bearings${here.filter((p) => p.segment === "gears-screws-bearings").length}`);
+    // Labels are decorative and never overlap.
+    const layer = c.querySelector(".mk-labels");
+    expect(layer?.getAttribute("aria-hidden")).toBe("true");
+    expect(layer?.querySelector(".is-city")).not.toBeNull();
+    expect(c.querySelectorAll(".mk-city-dot.is-capital")).toHaveLength(1);
+});
+
+test("label placement: priority first, no overlaps, markers and HUD kept clear", () => {
+    const item = (id: string, x: number, priority: number, text = "Label text") => ({ id, at: [x, 50] as [number, number], text, priority, tone: "site" as const, r: 6 });
+    const placed = placeLabels([item("low", 100, 0), item("high", 104, 2), item("far", 300, 1), item("bare", 200, 1, "")], 400, 100, 1, [[280, 0, 400, 100]]);
+    const ids = placed.map((p) => p.item.id);
+    // The two near markers both fit (one each side); the HUD box hides "far";
+    // a bare marker never gets a label.
+    expect(ids).toEqual(["high", "low"]);
+    expect(placed[0]?.side).toBe("right");
+    expect(placed[1]?.side).toBe("left");
+    expect(labelSize(item("x", 0, 0)).every((n) => n > 0)).toBe(true);
+});
+
+test("groups take the name their members share: cluster, company, then region", () => {
+    const at = (id: string) => PINS.find((p) => p.id === id) as (typeof PINS)[number];
+    const jl = PINS.filter((p) => p.companyId === "jl-mag");
+    expect(groupName(jl.filter((p) => p.country === "CN" && p.lat > 40), LAB_CLUSTERS)).toBe("Baotou");
+    expect(groupName([at("mp-mountain-pass"), at("mp-las-vegas")], [])).toBe("MP Materials");
+    expect(groupName([at("mp-mountain-pass"), at("tesla-austin")], [])).toBeNull();
+    const { km, px } = niceScale(3.3);
+    expect([1, 2, 5].some((s) => Number(String(km).replace(/0+$/, "")) === s)).toBe(true);
+    expect(px).toBeGreaterThan(40);
 });
 
 test("clusters group nearby points, choropleth buckets five steps", () => {

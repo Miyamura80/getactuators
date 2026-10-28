@@ -1,4 +1,5 @@
 import { createContext, useContext } from "react";
+import type { LabelItem } from "./labels";
 
 // What a map frame hands its overlays (Pins, Arcs, ClusterZoom). Base
 // coordinates are projected viewBox units at zoom 1; screen coordinates are
@@ -28,6 +29,10 @@ export interface MapContextValue {
     svgLayer: SVGGElement | null;
     tableLayer: HTMLElement | null;
     belowLayer: HTMLElement | null;
+    // Overlays hand their label candidates to the frame, which places every
+    // source's labels together so they avoid each other. One call per source
+    // replaces that source's set; [] clears it.
+    setLabels: (source: string, items: LabelItem[]) => void;
 }
 
 export const MapContext = createContext<MapContextValue | null>(null);
