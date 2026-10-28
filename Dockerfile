@@ -24,6 +24,8 @@ COPY src/benchmarks ./src/benchmarks
 # Actuator price history and its analysis (/prices, catalog sparklines).
 COPY src/prices ./src/prices
 COPY data/prices ./data/prices
+# Patent landscape scopes and snapshot (/patents).
+COPY src/patents ./src/patents
 # Logo.dev publishable key (public), baked into the bundle; unset draws monograms.
 ARG VITE_LOGO_DEV_TOKEN=""
 ENV VITE_LOGO_DEV_TOKEN=$VITE_LOGO_DEV_TOKEN

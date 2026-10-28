@@ -40,7 +40,6 @@ import {
     listOpenRobotsHandler,
 } from "./open-robots";
 import { ActuatorListParams, CompareQueryParams, RobotListParams } from "./params";
-import { PriceHistorySchema, getPriceHistoryHandler } from "./prices";
 import {
     PatentLandscapeParams,
     PatentLandscapeSchema,
@@ -48,6 +47,7 @@ import {
     getPatentLandscapeHandler,
     listPatentTechnologiesHandler,
 } from "./patents";
+import { PriceHistorySchema, getPriceHistoryHandler } from "./prices";
 import {
     ActuatorDetailSchema,
     ActuatorListSchema,
