@@ -29,6 +29,13 @@ import {
 } from "./metals";
 import { ActuatorListParams, CompareQueryParams, RobotListParams } from "./params";
 import {
+    PatentLandscapeParams,
+    PatentLandscapeSchema,
+    PatentTechnologyListSchema,
+    getPatentLandscapeHandler,
+    listPatentTechnologiesHandler,
+} from "./patents";
+import {
     ActuatorDetailSchema,
     ActuatorListSchema,
     CategoryListSchema,
@@ -309,5 +316,35 @@ export const OPERATIONS: Operation[] = [
         errors: [404],
         example: "/api/v1/humanoids/unitree-g1",
         handler: getHumanoidById,
+    },
+    {
+        operationId: "list_patent_technologies",
+        method: "GET",
+        path: "/api/v1/patents",
+        summary: "List patent landscape technologies",
+        description:
+            "The actuator and magnet technologies /patents tracks, each with its CPC code set, keyword filters and rationale, and the number of patent families since 2010 once a snapshot is collected (`status`).",
+        response: PatentTechnologyListSchema,
+        errors: [],
+        example: "/api/v1/patents",
+        handler: listPatentTechnologiesHandler,
+    },
+    {
+        operationId: "get_patent_landscape",
+        method: "GET",
+        path: "/api/v1/patents/:technology",
+        summary: "Patent landscape of one technology",
+        description:
+            "Patent families since 2010 for one technology, deduplicated by family: counts per priority year and applicant country, the top 15 assignees with share and 3-year CAGR (linked to the company registry where possible), top-5 share and the most recent families with Google Patents links. Priority years from `first_incomplete_year` on are still filling in. Empty with `status: not_collected` until the first snapshot.",
+        pathParam: {
+            name: "technology",
+            description: "Technology id, e.g. strain-wave, ndfeb, robot-joints.",
+            example: "strain-wave",
+        },
+        query: PatentLandscapeParams,
+        response: PatentLandscapeSchema,
+        errors: [400, 404],
+        example: "/api/v1/patents/strain-wave?families=10",
+        handler: getPatentLandscapeHandler,
     },
 ];

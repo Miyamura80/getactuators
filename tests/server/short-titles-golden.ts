@@ -37,6 +37,7 @@ const TOOLS_ADDED_AFTER_BASELINE = [
     "list_sites",
     "get_metal_supply",
     "get_metal_prices",
+    "get_patent_landscape",
 ];
 function snapshotContent(value: string) {
     let out = value.replace(

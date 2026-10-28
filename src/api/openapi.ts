@@ -131,6 +131,7 @@ function tagFor(path: string): string {
         path.includes("/metal")
     )
         return "supply-chain";
+    if (path.includes("/patents")) return "supply-chain";
     if (path.includes("/actuators")) return "actuators";
     if (path.startsWith("/api/v1/")) return "taxonomy";
     return "meta";

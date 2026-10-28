@@ -4,6 +4,7 @@ import { actuatorPath, categoryLabel, robotSection } from "./catalog-md";
 import { CATALOG_UPDATED_DATE } from "./freshness";
 import { MCP_TOOLS, PATHS, RATE_LIMIT_PER_MINUTE, REST_ENDPOINTS } from "./links";
 import { whenToUse } from "./manifests";
+import { PATENTS_PAGE } from "./market/patents";
 import { bullets, dofText, humanize, mdLink, mdText, num, usd } from "./md";
 import { catalogStats } from "./pages-md";
 
@@ -13,6 +14,13 @@ const u = absoluteUrl;
 
 function link(label: string, path: string, note: string): string {
     return `- ${mdLink(label, u(path))}: ${note}`;
+}
+
+// Listed once the first patent snapshot is committed (the page is noindex
+// until then).
+function patentsLink(): string {
+    if (PATENTS_PAGE.noindex) return "";
+    return `\n${link("Patent landscape", "/patents.md", "patent families since 2010 per actuator and magnet technology (CPC-scoped, deduplicated by family): filings by priority year and applicant country, top assignees with growth; same data from the MCP tool get_patent_landscape")}`;
 }
 
 function howToCall(): string {
@@ -75,7 +83,7 @@ ${link("Robot arm torque calculator", "/tools/robot-arm-torque-calculator.md", "
 
 ## Supply chain (markdown)
 
-${link("Magnet metals", "/metals.md", "Nd, Pr, Dy, Tb, Sm and Co: country share at each stage from mine to magnet, USGS reserves and years of supply, cited price history and the events behind it; same data from the MCP tools get_metal_supply and get_metal_prices")}
+${link("Magnet metals", "/metals.md", "Nd, Pr, Dy, Tb, Sm and Co: country share at each stage from mine to magnet, USGS reserves and years of supply, cited price history and the events behind it; same data from the MCP tools get_metal_supply and get_metal_prices")}${patentsLink()}
 
 ## About
 
