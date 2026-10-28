@@ -47,8 +47,11 @@ Measured an actuator on a dynamometer? Add the run to
     procedures, sample counts and how to state uncertainty.
 2.  Add one folder per run: `data/benchmarks/<actuator-id>/<run-id>/` with
     `run.json`, `rig.md` and your raw CSV logs. Use `"origin": "community"`,
-    `"method": "raw"` and your GitHub handle as `submitter`. The actuator must
-    already be in the catalog.
+    `"method": "raw"` and your GitHub handle as `submitter`. Set
+    `independence` (`vendor`, `vendor-affiliated` or `independent`) and say
+    in `independenceNote` whether you have any tie to the maker or a seller;
+    only independent runs get a verdict. The actuator must already be in the
+    catalog.
 3.  Check and bundle it:
     ```bash
     bun run scripts/validate-benchmarks.ts --write

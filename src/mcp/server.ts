@@ -54,7 +54,7 @@ Which tool to use:
 - Sizing a humanoid: humanoid_joint_requirements gives a static torque estimate per joint (stated pose and arithmetic) and the catalog actuators that reach it. Treat estimates as a floor, not a dynamic requirement.
 - Supply chain (who makes magnets, gears and actuators, and where): list_companies, get_company and list_sites. Magnet metals (Nd, Pr, Dy, Tb, Sm, Co): get_metal_supply for country shares by stage, reserves and latest prices; get_metal_prices for a cited price history. Sourced values carry sources and a confidence (reported, estimated or modeled); quote estimates as estimates.
 - Patents (who files actuator and magnet inventions, and where): get_patent_landscape for one technology. If status is not_collected, say no counts exist yet.
-- Measured performance vs the datasheet (dyno runs, thermal holds, backlash; published, lab or community origin): get_benchmarks. Quote the run's source and origin with the number.
+- Measured performance vs the datasheet (dyno runs, thermal holds, backlash; published, lab or community origin): get_benchmarks. Quote the run's source, origin and independence with the number; only independent runs carry a verdict.
 - Price history of one actuator (listed price over time with method, source URL and FX rate per point, latest $/Nm, one-year change): get_price_history.
 - Which brand has the best SDK (ROS 2 drivers, Python/C++ bindings, open protocol and firmware, docs): get_sdk_score by brand or actuator id; get_actuator also carries the brand's sdk score.
 - Sizing a robot arm: arm_holding_torque takes link lengths, masses, actuator masses and payload and returns static holding torque per joint, catalog actuators per joint and a calculator_url the user can open.

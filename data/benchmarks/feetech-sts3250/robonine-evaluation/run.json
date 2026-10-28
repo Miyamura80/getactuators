@@ -4,28 +4,37 @@
     "date": "2026-10",
     "origin": "published",
     "method": "reported",
+    "independence": "vendor-affiliated",
+    "independenceNote": "Robonine sells the SO-ARM102 kit ($389) built on STS3215 and STS3250 servos. Its founder, Nikita Bragin (branikita), reposted the same stall test on Hugging Face.",
     "source": {
         "url": "https://robonine.com/feetech-sts3250-smart-actuator-evaluation-of-accuracy-torque-and-backlash/",
         "title": "Robonine: Feetech STS3250 Smart Actuator: Evaluation of Accuracy, Torque and Backlash",
-        "locator": "Backlash result"
+        "locator": "Backlash and stall torque results"
     },
     "unit": "STS3250 (12 V, 50 kg.cm)",
     "rig": {
         "torqueSensor": null,
         "accuracyPct": null,
-        "encoder": null,
-        "ambientC": null,
+        "encoder": "Digital dial indicator, 0.01 mm resolution, on an 86 mm lever",
+        "ambientC": 25,
         "busV": 12,
         "controller": null
     },
-    "backlashArcmin": 25.8,
+    "torqueSpeed": [
+        {
+            "rpm": 0,
+            "torqueNm": 4.71
+        }
+    ],
+    "backlashArcmin": 25.6,
     "uncertainty": {},
     "claims": [
         {
             "metric": "backlashArcmin",
             "value": 30,
-            "source": "Feetech datasheet limit of 0.5 deg or less, as quoted by Robonine"
+            "source": "Feetech datasheet <= 0.5 deg as quoted by Robonine; Feetech primary not verified (Robonine cites a Feetech document dated 2024-01-16, Edition A/0)",
+            "bound": "max"
         }
     ],
-    "notes": "Mechanical backlash of 0.43 deg, within the 0.5 deg specification. A different method from the HardwareX test stand, so the two are not directly comparable."
+    "notes": "Backlash 0.64 mm at 86 mm, atan(0.64/86) = 0.43 deg, at 12 V and 25 +/- 2 C. Stall: up to 48 kg.cm (4.71 Nm) for a split second, then about 25 kg.cm (2.45 Nm) sustained after the overload protection activated. The stall instrument is not stated, and the weights the article lists cannot reach 48 kg.cm."
 }

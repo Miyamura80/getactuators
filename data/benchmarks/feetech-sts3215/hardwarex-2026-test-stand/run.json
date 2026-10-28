@@ -4,16 +4,18 @@
     "date": "2026",
     "origin": "published",
     "method": "reported",
+    "independence": "vendor-affiliated",
+    "independenceNote": "Sole author Boris Kotov is a Robonine employee and declares a competing interest; Robonine sells the SO-ARM102 kit ($389) built on STS3215 and STS3250 servos.",
     "source": {
         "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13087586/",
-        "title": "Kotov, An open-source test stand for backlash measurement in low-cost UART servo motors (HardwareX, 2026)",
+        "title": "Kotov, An open-source test stand for backlash measurement in low-cost UART servo motors (HardwareX, 2026, doi 10.1016/j.ohx.2026.e00767)",
         "locator": "Results, single STS3215 with default settings"
     },
     "unit": "STS3215 (single servo, default settings)",
     "rig": {
         "torqueSensor": "Two STS3215 puller servos loading through elastic bands",
         "accuracyPct": null,
-        "encoder": "Servo output encoder, 12-bit",
+        "encoder": "The tested servo's own 12-bit encoder, read while it actively holds position",
         "ambientC": null,
         "busV": null,
         "controller": "Node.js controller over UART"
@@ -24,8 +26,9 @@
         {
             "metric": "backlashArcmin",
             "value": 30,
-            "source": "Feetech datasheet limit of 0.5 deg or less"
+            "source": "Feetech datasheet <= 0.5 deg as quoted by Robonine; Feetech primary not verified",
+            "bound": "max"
         }
     ],
-    "notes": "Unloaded backlash about 0.62 deg (1.08 mm at 100 mm radius); loaded backlash about 1.30 deg (2.27 mm at 100 mm). The stored value is the unloaded figure. The stand's hardware, code and logs are open (roboninecom/Measuring-Backlash-in-Popular-UART-Servos)."
+    "notes": "Unloaded backlash about 0.62 deg (1.08 mm at 100 mm radius); loaded backlash about 1.30 deg (2.27 mm at 100 mm). The stored value is the unloaded figure. Play is read from the servo's own encoder while its position loop is active, so it includes the position-loop dead band and is not passive gear backlash. The stand's hardware, code and logs are open (roboninecom/Measuring-Backlash-in-Popular-UART-Servos)."
 }

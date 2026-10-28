@@ -3,6 +3,7 @@ import { PublicFooter } from "../../components/PublicFooter";
 import { PublicHeader } from "../../components/PublicHeader";
 import {
     DeltaBar,
+    IndependenceBadge,
     OriginBadge,
     RunItem,
     SourceLink,
@@ -36,15 +37,17 @@ function Section({ n, id, title, children }: { n: string; id: string; title: str
 function DatasheetVsMeasured() {
     const rows = datasheetDeltas();
     const ids = [...new Set(rows.map((r) => r.actuatorId))];
-    return <div className="bm-dvm">
+    return <><div className="bm-dvm">
         {ids.map((id) => <article key={id} className="bm-card">
             <h3><a href={`/actuators/${id}`}>{benchmarkActuator(id)?.name ?? id}</a></h3>
             {rows.filter((r) => r.actuatorId === id).map((r) => <div key={`${r.run.runId}-${r.metric}`} className="bm-dvm-row">
                 <DeltaBar row={r} />
-                <small><OriginBadge origin={r.run.origin} /> <SourceLink run={r.run} /></small>
+                <small><OriginBadge origin={r.run.origin} /> <IndependenceBadge run={r.run} /> <SourceLink run={r.run} /></small>
             </div>)}
         </article>)}
-    </div>;
+    </div>
+    <p className="bm-note">Verdicts come from independent runs only. Maker and affiliated tests are shown without one; a datasheet maximum is either met or exceeded.</p>
+    </>;
 }
 
 function Overlay() {
@@ -72,7 +75,7 @@ function Leaderboard() {
             {board.map((r) => <li key={r.actuator.id}>
                 <a href={`/actuators/${r.actuator.id}`}>{r.actuator.name}</a>
                 <b>{r.densityNmPerKg.toFixed(2)} Nm/kg</b>
-                <small>{r.continuousTorqueNm} Nm continuous, {r.massKg} kg <OriginBadge origin={r.run.origin} /></small>
+                <small>{r.continuousTorqueNm} Nm continuous, {r.massKg} kg <OriginBadge origin={r.run.origin} /> <IndependenceBadge run={r.run} /></small>
             </li>)}
         </ol>
         {waiting.length > 0 && <p className="bm-note">Not ranked until a continuous hold is measured: {waiting.map((a) => a.name).join(", ")}.</p>}

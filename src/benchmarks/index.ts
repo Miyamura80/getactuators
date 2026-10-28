@@ -2,8 +2,10 @@ import { ACTUATORS } from "../catalog";
 import type { Actuator } from "../catalog/types";
 import bundle from "./runs.generated.json";
 import type {
+    BenchmarkIndependence,
     BenchmarkOrigin,
     BenchmarkRun,
+    ClaimBound,
     ScalarMetric,
     ThermalPoint,
 } from "./types";
@@ -28,6 +30,12 @@ export const ORIGIN_LABEL: Record<BenchmarkOrigin, string> = {
     published: "Published",
     lab: "Lab",
     community: "Community",
+};
+
+export const INDEPENDENCE_LABEL: Record<BenchmarkIndependence, string> = {
+    vendor: "Vendor",
+    "vendor-affiliated": "Vendor-affiliated",
+    independent: "Independent",
 };
 
 export function runsFor(actuatorId: string): BenchmarkRun[] {
@@ -104,7 +112,30 @@ function measured(run: BenchmarkRun, metric: DeltaMetric): number | undefined {
     }
 }
 
-export type Verdict = "over-promised" | "matches" | "beats";
+// Typical-value claims: below datasheet, matches or beats. Upper-bound ("max")
+// claims: within spec or over limit, never "beats".
+export const VERDICTS = [
+    "below-datasheet",
+    "matches",
+    "beats",
+    "within-spec",
+    "over-limit",
+] as const;
+export type Verdict = (typeof VERDICTS)[number];
+
+export const VERDICT_LABEL: Record<Verdict, string> = {
+    "below-datasheet": "Below datasheet",
+    matches: "Matches",
+    beats: "Beats",
+    "within-spec": "Within spec",
+    "over-limit": "Over limit",
+};
+
+// What a row shows instead of a verdict when the run is not independent.
+const UNRATED_LABEL: Record<Exclude<BenchmarkIndependence, "independent">, string> = {
+    vendor: "Maker-reported",
+    "vendor-affiliated": "Affiliated test",
+};
 
 export interface DeltaRow {
     actuatorId: string;
@@ -113,20 +144,33 @@ export interface DeltaRow {
     unit: string;
     claimed: number;
     claimSource: string;
+    claimBound: ClaimBound;
     measured: number;
     run: BenchmarkRun;
     // measured / claimed.
     ratio: number;
-    verdict: Verdict;
+    // null unless the run is independent.
+    verdict: Verdict | null;
 }
 
-// Within 10% of the claim counts as a match.
+export function deltaStatusLabel(row: DeltaRow): string {
+    if (row.verdict) return VERDICT_LABEL[row.verdict];
+    const ind = row.run.independence;
+    return ind === "independent" ? "No verdict" : UNRATED_LABEL[ind];
+}
+
+// Within 10% of a typical claim counts as a match.
 const TOLERANCE = 0.1;
 
-function verdictFor(ratio: number, better: "higher" | "lower"): Verdict {
+export function verdictFor(
+    ratio: number,
+    better: "higher" | "lower",
+    bound: ClaimBound = "typical",
+): Verdict {
+    if (bound === "max") return ratio <= 1 ? "within-spec" : "over-limit";
     const worse = better === "higher" ? ratio < 1 - TOLERANCE : ratio > 1 + TOLERANCE;
     const nicer = better === "higher" ? ratio > 1 + TOLERANCE : ratio < 1 - TOLERANCE;
-    if (worse) return "over-promised";
+    if (worse) return "below-datasheet";
     return nicer ? "beats" : "matches";
 }
 
@@ -134,12 +178,14 @@ function claimFor(
     a: Actuator,
     run: BenchmarkRun,
     metric: DeltaMetric,
-): { value: number; source: string } | undefined {
+): { value: number; source: string; bound: ClaimBound } | undefined {
     const value = a[CATALOG_FIELD[metric]];
     if (typeof value === "number" && value > 0)
-        return { value, source: "Catalog datasheet value" };
+        return { value, source: "Catalog datasheet value", bound: "typical" };
     const claim = run.claims?.find((c) => c.metric === (metric as ScalarMetric));
-    return claim ? { value: claim.value, source: claim.source } : undefined;
+    return claim
+        ? { value: claim.value, source: claim.source, bound: claim.bound ?? "typical" }
+        : undefined;
 }
 
 // Datasheet vs measured, one row per run and metric where both exist.
@@ -161,10 +207,14 @@ export function datasheetDeltas(actuatorId?: string): DeltaRow[] {
                 unit: m.unit,
                 claimed: claim.value,
                 claimSource: claim.source,
+                claimBound: claim.bound,
                 measured: value,
                 run,
                 ratio,
-                verdict: verdictFor(ratio, m.better),
+                verdict:
+                    run.independence === "independent"
+                        ? verdictFor(ratio, m.better, claim.bound)
+                        : null,
             });
         }
     }

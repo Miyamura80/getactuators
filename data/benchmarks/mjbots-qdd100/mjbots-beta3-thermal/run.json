@@ -4,6 +4,8 @@
     "date": "2026-10",
     "origin": "published",
     "method": "reported",
+    "independence": "vendor",
+    "independenceNote": "mjbots' own product page. The catalog peak (16 Nm) and rated (3.3 Nm) torque come from the same page, so agreement with the datasheet is guaranteed and proves nothing.",
     "source": {
         "url": "https://mjbots.com/products/qdd100-beta-3-developer-kit",
         "title": "mjbots: qdd100 beta 3 developer kit (product page)",

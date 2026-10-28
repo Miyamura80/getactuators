@@ -25,8 +25,24 @@ test("renders the five sections, one CTA and an origin badge per run", () => {
     ]);
     expect(c.querySelectorAll(".bm-cta")).toHaveLength(1);
     expect(c.querySelectorAll(".bm-runs .bm-origin")).toHaveLength(BENCHMARK_RUNS.length);
-    // Over-promised backlash is flagged.
-    expect(c.querySelector('.bm-delta[data-verdict="over-promised"]')?.textContent).toContain("Backlash");
+    // Every run carries an independence badge with its evidence.
+    const badges = [...c.querySelectorAll<HTMLElement>(".bm-runs .bm-indep")];
+    expect(badges).toHaveLength(BENCHMARK_RUNS.length);
+    expect(badges.every((b) => (b.getAttribute("title") ?? "").length > 0)).toBe(true);
+    // Datasheet vs measured: a badge per row; only independent runs get a verdict.
+    const rows = [...c.querySelectorAll("#datasheet-vs-measured .bm-dvm-row")];
+    expect(rows.length).toBeGreaterThan(0);
+    for (const row of rows) {
+        const ind = row.querySelector(".bm-indep")?.getAttribute("data-independence");
+        const verdict = row.querySelector(".bm-delta")?.getAttribute("data-verdict");
+        if (ind === "independent") expect(verdict).not.toBe("none");
+        else expect(verdict).toBe("none");
+    }
+    const sts = c.querySelector('.bm-dvm-row:has(.bm-indep[data-independence="vendor-affiliated"]) .bm-verdict');
+    expect(sts?.textContent).toBe("Affiliated test");
+    expect(c.querySelector('.bm-dvm-row:has(.bm-indep[data-independence="vendor"]) .bm-verdict')?.textContent).toBe("Maker-reported");
+    expect(c.querySelector('.bm-delta[data-verdict="beats"]')?.textContent).toContain("Backlash");
+    expect(c.textContent).not.toMatch(/over-promis/i);
     // Leaderboard: qdd100 is the only continuous hold.
     expect([...c.querySelectorAll(".bm-board li a")].map((a) => a.textContent)).toEqual(["qdd100 beta 3"]);
     // Thermal chart: one series per thermal run.

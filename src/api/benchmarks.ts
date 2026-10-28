@@ -1,4 +1,5 @@
 import {
+    INDEPENDENCE,
     ORIGINS,
     actuatorBenchmarksOut,
     actuatorBenchmarksView,
@@ -31,6 +32,10 @@ export const BenchmarkListParams = z.object({
         .enum(ORIGINS)
         .optional()
         .describe("Only published, lab or community runs."),
+    independence: z
+        .enum(INDEPENDENCE)
+        .optional()
+        .describe("Only vendor, vendor-affiliated or independent runs."),
 });
 
 export function listBenchmarksHandler({ url }: ApiContext): Response {
