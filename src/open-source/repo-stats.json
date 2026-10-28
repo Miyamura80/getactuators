@@ -1,0 +1,96 @@
+{
+    "asOf": "2026-10-28",
+    "method": "Stars as shown on each repository page (GitHub rounds above 1,000, e.g. 7.9k) and the newest entry of its commits feed on the default branch. Refresh with: GITHUB_TOKEN=... bun scripts/open-robot-stats.ts",
+    "repos": {
+        "manmaruai/manmaru-yor": {
+            "stars": 2,
+            "starsRounded": false,
+            "lastCommit": "2026-10-06"
+        },
+        "SIGRobotics-UIUC/LeKiwi": {
+            "stars": 1500,
+            "starsRounded": true,
+            "lastCommit": "2026-08-05"
+        },
+        "Vector-Wangel/XLeRobot": {
+            "stars": 5600,
+            "starsRounded": true,
+            "lastCommit": "2026-10-06"
+        },
+        "TheRobotStudio/SO-ARM100": {
+            "stars": 7900,
+            "starsRounded": true,
+            "lastCommit": "2026-10-06"
+        },
+        "AlexanderKoch-Koch/low_cost_robot": {
+            "stars": 3400,
+            "starsRounded": true,
+            "lastCommit": "2024-09-21"
+        },
+        "jess-moss/koch-v1-1": {
+            "stars": 736,
+            "starsRounded": false,
+            "lastCommit": "2024-09-17"
+        },
+        "enactic/openarm": {
+            "stars": 3600,
+            "starsRounded": true,
+            "lastCommit": "2026-10-26"
+        },
+        "PCrnjak/PAROL6-Desktop-robot-arm": {
+            "stars": 3400,
+            "starsRounded": true,
+            "lastCommit": "2026-10-22"
+        },
+        "AngelLM/Thor": {
+            "stars": 1600,
+            "starsRounded": true,
+            "lastCommit": "2025-05-09"
+        },
+        "HybridRobotics/Berkeley-Humanoid-Lite": {
+            "stars": 2000,
+            "starsRounded": true,
+            "lastCommit": "2026-03-10"
+        },
+        "hshi74/toddlerbot": {
+            "stars": 794,
+            "starsRounded": false,
+            "lastCommit": "2026-04-19"
+        },
+        "kscalelabs/kbot": {
+            "stars": 402,
+            "starsRounded": false,
+            "lastCommit": "2025-11-07"
+        },
+        "poppy-project/poppy-humanoid": {
+            "stars": 1100,
+            "starsRounded": true,
+            "lastCommit": "2021-12-06"
+        },
+        "apirrone/Open_Duck_Mini": {
+            "stars": 4500,
+            "starsRounded": true,
+            "lastCommit": "2026-01-31"
+        },
+        "menloresearch/asimov-1": {
+            "stars": 1300,
+            "starsRounded": true,
+            "lastCommit": "2026-10-22"
+        },
+        "open-dynamic-robot-initiative/open_robot_actuator_hardware": {
+            "stars": 1500,
+            "starsRounded": true,
+            "lastCommit": "2022-09-06"
+        },
+        "upkie/upkie": {
+            "stars": 452,
+            "starsRounded": false,
+            "lastCommit": "2026-10-11"
+        },
+        "Nate711/StanfordDoggoProject": {
+            "stars": 2600,
+            "starsRounded": true,
+            "lastCommit": "2024-07-08"
+        }
+    }
+}

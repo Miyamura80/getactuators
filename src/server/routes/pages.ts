@@ -100,6 +100,7 @@ const PAGE_PATHS = [
     "/lab/supply-chain",
     "/humanoids",
     "/metals",
+    "/open-source",
 ];
 
 // Standalone agent documents open with their H1 (no frontmatter). /agents.md

@@ -17,6 +17,7 @@ import * as ld from "./jsonld";
 import { PATHS } from "./links";
 import { agentsBody } from "./manifests";
 import { mdDocument } from "./md";
+import { OPEN_SOURCE_PAGE } from "./open-source";
 import {
     actuatorsBody,
     faqItems,
@@ -143,6 +144,7 @@ const STATIC_PAGES: Page[] = [
     },
     HUMANOIDS_PAGE,
     METALS_PAGE,
+    OPEN_SOURCE_PAGE,
     sub(
         PATHS.agentsPage,
         "spa",

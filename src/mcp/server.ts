@@ -42,6 +42,7 @@ Which tool to use:
 - One actuator in full: get_actuator. Two to ten side by side, with the winner per metric: compare_actuators.
 - Robots: list_robots, get_robot (joints resolved to motors and catalog actuator ids), find_robots_using_actuator.
 - Humanoids joint by joint (actuator type per joint, reported vs estimated, magnet and rare-earth kg): get_humanoid_joints.
+- Open-source robots you can build (arms, humanoids, legged, mobile manipulators): list_open_robots gives licences, an openness score with a link per dimension (CAD, electronics, firmware, software, BOM, assembly, sim, licence), cost to build, GitHub stars, lineage and joints mapped to catalog actuator ids.
 - Sizing a humanoid: humanoid_joint_requirements gives a static torque estimate per joint (stated pose and arithmetic) and the catalog actuators that reach it. Treat estimates as a floor, not a dynamic requirement.
 - Supply chain (who makes magnets, gears and actuators, and where): list_companies, get_company and list_sites. Magnet metals (Nd, Pr, Dy, Tb, Sm, Co): get_metal_supply for country shares by stage, reserves and latest prices; get_metal_prices for a cited price history. Sourced values carry sources and a confidence (reported, estimated or modeled); quote estimates as estimates.
 - Sizing a robot arm: arm_holding_torque takes link lengths, masses, actuator masses and payload and returns static holding torque per joint, catalog actuators per joint and a calculator_url the user can open.
