@@ -1,10 +1,10 @@
 import type { MeasureScope, MeasureStatus, MeasureType } from "../../../../../src/supply-chain/policy/types";
 
-// The /policy symbol set, one stroke weight on a 16-unit grid: a cross for an
-// export control (a barrier), a diamond for a tariff (a price tag), a plus
-// for a subsidy, a square for a standard (a spec sheet). Colour repeats the
-// type; the ring around the mark carries the status, so neither relies on
-// colour alone.
+// The /policy symbol set, one stroke weight on a 16-unit grid: a padlock for
+// an export control, a percent sign for a tariff (a duty rate), a dollar sign
+// for a subsidy, a shield with a check for a standard (safety and
+// conformity). Colour repeats the type; the ring around the mark carries the
+// status, so neither relies on colour alone.
 
 export const TYPE_COLOR: Record<MeasureType, string> = {
     "export-control": "#ff922b",
@@ -18,13 +18,23 @@ export const SCOPE_SIZE: Record<MeasureScope, number> = { product: 12, sector: 1
 function Shape({ type }: { type: MeasureType }) {
     switch (type) {
         case "export-control":
-            return <path d="M4.5 4.5l7 7M11.5 4.5l-7 7" />;
+            return <>
+                <path d="M5.6 7.4V6.1a2.4 2.4 0 0 1 4.8 0v1.3" />
+                <rect x="4.3" y="7.4" width="7.4" height="5" />
+            </>;
         case "tariff":
-            return <path d="M8 3l5 5-5 5-5-5z" />;
+            return <>
+                <path d="M11 4.6 5 11.4" />
+                <circle cx="5.4" cy="5.6" r="1.25" />
+                <circle cx="10.6" cy="10.4" r="1.25" />
+            </>;
         case "subsidy":
-            return <path d="M8 3.5v9M3.5 8h9" />;
+            return <path d="M8 3.3v9.4M10.2 5.7c-.4-.6-1.1-.9-2.2-.9-1.3 0-2.1.6-2.1 1.5 0 2 4.4 1.2 4.4 3.3 0 1-.9 1.6-2.3 1.6-1.1 0-1.9-.4-2.3-1.1" />;
         case "standard":
-            return <rect x="4" y="4" width="8" height="8" />;
+            return <>
+                <path d="M8 3.2l4.2 1.5v3.2c0 2.5-1.7 4.1-4.2 4.9-2.5-.8-4.2-2.4-4.2-4.9V4.7z" />
+                <path d="M6.1 8.1l1.4 1.4 2.5-2.7" />
+            </>;
     }
 }
 
