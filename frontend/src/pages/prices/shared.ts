@@ -1,24 +1,52 @@
-import { PRICE_HISTORY, toTime } from "../../../../src/prices/history";
-import type { PricedActuator } from "../../../../src/prices/types";
+import { useEffect, useRef, useState } from "react";
+import { toTime } from "../../../../src/prices/history";
+import type { NmPoint } from "../../../../src/prices/trends";
+import type { PriceObservation, PricedActuator } from "../../../../src/prices/types";
 import { ACTUATORS } from "../../lib/data";
 import { CATEGORIES, CATEGORY_MAP, type CategorySlug } from "../../types";
 
 // What the /prices views share: the catalog as the analysis wants it, one
-// colour per class (the catalog's category hue), number formats and a time
-// scale.
+// colour per class (the catalog's category hue), number formats, scales and
+// a width hook.
 
 export const PRICED: PricedActuator[] = ACTUATORS;
 export const byId = new Map(ACTUATORS.map((a) => [a.id, a]));
 
-// Actuators with any recorded point, by name, for the history picker; the
-// ?actuator= value falls back to the first.
-export const HISTORY_IDS = [...new Set(PRICE_HISTORY.points.map((p) => p.actuatorId))]
-    .filter((id) => byId.has(id))
-    .sort((a, b) => (byId.get(a)?.name ?? a).localeCompare(byId.get(b)?.name ?? b));
+// Actuators with any recorded point, by name, for the history picker.
+export const historyIds = (points: readonly PriceObservation[]) =>
+    [...new Set(points.map((p) => p.actuatorId))]
+        .filter((id) => byId.has(id))
+        .sort((a, b) => (byId.get(a)?.name ?? a).localeCompare(byId.get(b)?.name ?? b));
 
-export function readActuator(search: string): string {
+// The ?actuator= value when it names one of `ids`, else "".
+export function readActuator(search: string, ids: readonly string[]): string {
     const id = new URLSearchParams(search).get("actuator") ?? "";
-    return HISTORY_IDS.includes(id) ? id : (HISTORY_IDS[0] ?? "");
+    return ids.includes(id) ? id : "";
+}
+
+// Today's snapshot: each actuator once, at its latest $/Nm.
+export function latestNm(pts: readonly NmPoint[]): NmPoint[] {
+    const last = new Map<string, NmPoint>();
+    for (const p of [...pts].sort((a, b) => a.date.localeCompare(b.date))) last.set(p.actuatorId, p);
+    return [...last.values()];
+}
+
+// Rendered width of an element, so a chart can lay out in real pixels and
+// keep its text legible on a phone. Falls back until the first measurement.
+export function useWidth<T extends HTMLElement>(fallback: number) {
+    const ref = useRef<T>(null);
+    const [w, setW] = useState(fallback);
+    useEffect(() => {
+        const el = ref.current;
+        if (!el || typeof ResizeObserver === "undefined") return;
+        const ro = new ResizeObserver(([e]) => {
+            const v = Math.round(e?.contentRect.width ?? 0);
+            if (v > 0) setW(v);
+        });
+        ro.observe(el);
+        return () => ro.disconnect();
+    }, []);
+    return [ref, w] as const;
 }
 
 export const CLASSES = CATEGORIES;

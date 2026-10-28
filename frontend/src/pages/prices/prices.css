@@ -1,5 +1,6 @@
-/* /prices: four numbered views, instrument HUD per BRAND.md: square, thin
-   rules, numbers in mono. Also the sparkline on catalog pages. */
+/* /prices: today's strip, then trend views as they unlock. Instrument HUD
+   per BRAND.md: square, thin rules, numbers in mono. Also the sparkline on
+   catalog pages. */
 
 .pr-cover { display: flex; flex-wrap: wrap; gap: 24px; margin: 16px 0 0; }
 .pr-cover div { display: grid; gap: 2px; }
@@ -55,18 +56,15 @@
 
 .pr-chart { display: block; width: 100%; height: auto; border: 1px solid var(--line); }
 .pr-grid line { stroke: var(--line); stroke-width: 1; }
-.pr-grid text, .pr-axis, .pr-box-label { fill: var(--muted); font: 10px var(--mono); }
+.pr-grid text, .pr-axis { fill: var(--muted); font: 10px var(--mono); }
 .pr-dot { stroke: var(--black); stroke-width: 2; }
 .pr-dot:hover { stroke: var(--text); }
 .pr-fit { stroke-width: 2; stroke-dasharray: 6 4; }
 .pr-step { fill: none; stroke: var(--cyan); stroke-width: 2; }
-.pr-view .pr-step + circle, .pr-view svg > .pr-dot { fill: var(--cyan); }
+.pr-hist-dot { fill: var(--cyan); }
 .pr-oos { fill: var(--muted); font: 600 14px var(--mono); }
 .pr-line path { fill: none; stroke: currentColor; stroke-width: 2; }
 .pr-line circle { fill: currentColor; stroke: var(--black); stroke-width: 2; }
-.pr-box .pr-whisker { stroke: var(--muted); stroke-width: 1.5; }
-.pr-box rect { fill: var(--cyan-dim, rgba(77, 171, 247, 0.35)); stroke: var(--cyan); stroke-width: 1; }
-.pr-box .pr-median { stroke: var(--text); stroke-width: 2; }
 
 .pr-legend { display: flex; flex-wrap: wrap; gap: 16px; margin: 0 0 8px; padding: 0; list-style: none; font: 12px var(--mono); color: var(--text); }
 .pr-fits { width: 100%; margin-top: 12px; border-collapse: collapse; font: 12px/1.4 var(--mono); }
@@ -85,6 +83,52 @@
 .pr-method { margin-top: 32px; padding: 14px 0; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; line-height: 1.5; }
 .pr-method ul { padding-left: 18px; }
 
+/* 01: today's strip. Laid out in real pixels (useWidth), so text stays 11px. */
+.pr-strip { display: block; width: 100%; height: auto; overflow: visible; }
+.pr-strip .pr-grid text { font-size: 10px; }
+.pr-rule { stroke: var(--line); }
+.pr-row-label { fill: var(--text); font: 600 11px var(--mono); }
+.pr-muted { fill: var(--muted); color: var(--muted); font-weight: 400; }
+.pr-cheap { fill: var(--text); font: 11px var(--mono); }
+.pr-cheap-v { fill: var(--cyan); font-weight: 600; }
+.pr-ring { fill: none; stroke: var(--cyan); stroke-width: 1; }
+.pr-strip .pr-dot { cursor: pointer; outline: none; }
+.pr-strip .pr-dot:focus-visible, .pr-strip .pr-dot.is-sel { stroke: var(--text); stroke-width: 2; }
+.pr-tip rect { fill: var(--black); stroke: var(--line-strong); }
+.pr-tip text { fill: var(--text); font: 11px var(--mono); }
+.pr-legend-sm { margin: 0; gap: 12px; font-size: 11px; color: var(--muted); }
+
+.pr-readout { margin-top: 16px; padding: 14px 0 0; border-top: 1px solid var(--line); }
+.pr-readout-k { margin: 0 0 6px; font: 600 10px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.pr-readout-main { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; }
+.pr-readout-name { display: inline-flex; align-items: center; gap: 8px; color: var(--text); font-size: 18px; font-weight: 600; text-decoration: none; }
+.pr-readout-name:hover { text-decoration: underline; }
+.pr-readout-name i { width: 8px; height: 8px; flex: none; }
+.pr-readout .pr-latest { font: 600 22px/1.2 var(--mono); color: var(--cyan); }
+.pr-readout-sub { margin: 6px 0 0; font: 12px/1.5 var(--mono); color: var(--muted); }
+.pr-readout-sub a { color: var(--muted); }
+.pr-readout-sub a:hover { color: var(--text); }
+
+/* Trends waiting on data: one row per view, progress to its threshold. */
+.pr-gate { border: 1px dashed var(--line-strong); padding: 6px 16px 14px; }
+.pr-gate ul { margin: 0; padding: 0; list-style: none; }
+.pr-gate li {
+    display: grid;
+    grid-template-columns: minmax(0, 200px) minmax(80px, 1fr) minmax(0, 170px);
+    align-items: center;
+    gap: 16px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+    font: 12px var(--mono);
+}
+.pr-gate-label { color: var(--text); }
+.pr-gate-n { color: var(--text); text-align: right; white-space: nowrap; }
+.pr-gate progress { width: 100%; height: 2px; border: 0; appearance: none; background: var(--line-strong); }
+.pr-gate progress::-webkit-progress-bar { background: var(--line-strong); }
+.pr-gate progress::-webkit-progress-value { background: var(--cyan); }
+.pr-gate progress::-moz-progress-bar { background: var(--cyan); }
+.pr-gate .pr-note { margin-top: 12px; }
+
 /* Catalog-page sparkline */
 .pr-spark { display: inline-flex; align-items: center; gap: 10px; margin-top: 12px; color: var(--muted); font: 11px var(--mono); text-decoration: none; }
 .pr-spark:hover span { color: var(--text); text-decoration: underline; }
@@ -95,4 +139,7 @@
 @media (max-width: 640px) {
     .pr-fits th { white-space: normal; }
     .pr-cover { gap: 16px; }
+    .pr-gate { padding: 4px 12px 12px; }
+    .pr-gate li { grid-template-columns: minmax(0, 1fr) auto; gap: 8px 12px; }
+    .pr-gate progress { grid-column: 1 / -1; grid-row: 2; }
 }

@@ -1,14 +1,20 @@
 import { PRICE_HISTORY, historyOf, priced, summarize } from "../../../../src/prices/history";
-import { H, HISTORY_IDS, M, W, byId, pct, timeAxis, tickLabel, usd } from "./shared";
+import type { PriceObservation } from "../../../../src/prices/types";
+import { H, M, W, byId, pct, timeAxis, tickLabel, usd } from "./shared";
 
-// 03: one actuator's listed price as a step chart (a price holds until the
+// One actuator's listed price as a step chart (a price holds until the
 // next reading), with every point's method, currency, FX rate and source.
 
-export function ActuatorHistory({ id, onPick }: { id: string; onPick: (id: string) => void }) {
+export function ActuatorHistory({ id, ids, points: all, onPick }: {
+    id: string;
+    ids: readonly string[];
+    points: readonly PriceObservation[];
+    onPick: (id: string) => void;
+}) {
     const a = byId.get(id);
-    const points = historyOf(id);
+    const points = historyOf(id, all);
     const p = priced(points);
-    const s = summarize(id);
+    const s = summarize(id, all);
     const { x, ticks } = timeAxis([...points.map((q) => q.date), PRICE_HISTORY.updated]);
     const vals = p.map((q) => q.priceUsd);
     const top = Math.max(...vals, 1) * 1.15;
@@ -27,7 +33,7 @@ export function ActuatorHistory({ id, onPick }: { id: string; onPick: (id: strin
             <label className="pr-pick">
                 <span>Actuator</span>
                 <select value={id} onChange={(e) => onPick(e.target.value)}>
-                    {HISTORY_IDS.map((h) => <option key={h} value={h}>{byId.get(h)?.name ?? h} ({byId.get(h)?.brand})</option>)}
+                    {ids.map((h) => <option key={h} value={h}>{byId.get(h)?.name ?? h} ({byId.get(h)?.brand})</option>)}
                 </select>
             </label>
             {s.latest
@@ -43,7 +49,7 @@ export function ActuatorHistory({ id, onPick }: { id: string; onPick: (id: strin
                 </g>)}
                 {ticks.map((t) => <text key={t} className="pr-axis" x={x(t)} y={H - M.b + 16} textAnchor="middle">{tickLabel(t)}</text>)}
                 <path className="pr-step" d={d} />
-                {p.map((q) => <circle key={`${q.date}-${q.method}`} className="pr-dot" cx={x(q.date)} cy={y(q.priceUsd)} r={4}>
+                {p.map((q) => <circle key={`${q.date}-${q.method}`} className="pr-dot pr-hist-dot" cx={x(q.date)} cy={y(q.priceUsd)} r={4}>
                     <title>{`${q.date}: ${usd(q.priceUsd)} (${q.method})`}</title>
                 </circle>)}
                 {points.filter((q) => q.inStock === false).map((q) => <text key={`oos-${q.date}`} className="pr-oos" x={x(q.date)} y={H - M.b - 4} textAnchor="middle">

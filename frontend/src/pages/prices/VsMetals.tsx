@@ -1,15 +1,16 @@
 import { MIN_CORRELATION_MONTHS, lagCorrelation, ndprByMonth, priceIndex } from "../../../../src/prices/trends";
+import type { PriceObservation } from "../../../../src/prices/types";
 import { H, M, W, tickLabel, timeAxis } from "./shared";
 
-// 04: the chain-weighted actuator price index against NdPr oxide, both
+// The chain-weighted actuator price index against NdPr oxide, both
 // rebased to 100 in the index's first month so one axis serves both, with
 // the lagged correlation of monthly changes.
 
 const NDPR = "#ffd43b";
 const INDEX = "#4dabf7";
 
-export function VsMetals() {
-    const index = priceIndex();
+export function VsMetals({ points }: { points: readonly PriceObservation[] }) {
+    const index = priceIndex(points);
     const months = index.map((p) => p.month);
     const ndpr = ndprByMonth(months);
     const base = ndpr.find((v) => v != null) ?? null;
