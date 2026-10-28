@@ -137,7 +137,7 @@ function tagFor(path: string): string {
     )
         return "supply-chain";
     if (path.includes("/patents")) return "supply-chain";
-    if (path.includes("/actuators")) return "actuators";
+    if (path.includes("/actuators") || path.includes("/benchmarks")) return "actuators";
     if (path.startsWith("/api/v1/")) return "taxonomy";
     return "meta";
 }

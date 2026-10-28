@@ -19,6 +19,8 @@ COPY src/open-source ./src/open-source
 COPY src/brands ./src/brands
 # The supply-chain registry and kit helpers (zod schemas stay server-side).
 COPY src/supply-chain ./src/supply-chain
+# Measured benchmark runs (bundled from data/benchmarks) and their views.
+COPY src/benchmarks ./src/benchmarks
 # Logo.dev publishable key (public), baked into the bundle; unset draws monograms.
 ARG VITE_LOGO_DEV_TOKEN=""
 ENV VITE_LOGO_DEV_TOKEN=$VITE_LOGO_DEV_TOKEN

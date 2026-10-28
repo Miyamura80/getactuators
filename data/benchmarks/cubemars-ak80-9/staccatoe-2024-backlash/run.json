@@ -1,0 +1,31 @@
+{
+    "actuatorId": "cubemars-ak80-9",
+    "runId": "staccatoe-2024-backlash",
+    "date": "2024-04",
+    "origin": "published",
+    "method": "reported",
+    "source": {
+        "url": "https://arxiv.org/abs/2404.05039",
+        "title": "Perera et al., StaccaToe: A Single-Leg Robot that Mimics the Human Leg and Toe (arXiv 2404.05039)",
+        "locator": "Knee actuator backlash measurement"
+    },
+    "unit": "AK80-9 KV100 V3.0 (StaccaToe knee)",
+    "rig": {
+        "torqueSensor": null,
+        "accuracyPct": null,
+        "encoder": "Actuator motor encoder",
+        "ambientC": null,
+        "busV": null,
+        "controller": "CubeMars stock driver"
+    },
+    "backlashArcmin": 9,
+    "uncertainty": {},
+    "claims": [
+        {
+            "metric": "backlashArcmin",
+            "value": 11.4,
+            "source": "Manufacturer specification of 0.19 deg, as quoted by Perera et al."
+        }
+    ],
+    "notes": "Output shaft rigidly fixed while torques were commanded; backlash read from the motor encoder as 0.15 deg at the output."
+}

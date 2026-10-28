@@ -4,6 +4,7 @@ import pkg from "../../package.json";
 import { registerResources } from "./resources";
 import { type ToolDef, registerTools } from "./tool";
 import { actuatorTools } from "./tools/actuators";
+import { benchmarkTools } from "./tools/benchmarks";
 import { compareTools } from "./tools/compare";
 import { engineeringTools } from "./tools/engineering";
 import { patentTools } from "./tools/patents";
@@ -30,6 +31,7 @@ export const CATALOG_TOOLS: readonly ToolDef[] = [
     ...engineeringTools,
     ...supplyChainTools,
     ...patentTools,
+    ...benchmarkTools,
 ];
 
 export const INSTRUCTIONS = `actuatorlist is an open, read-only catalog of robot actuators and the robots that use them. No account or key is needed and no tool changes anything.
@@ -48,6 +50,7 @@ Which tool to use:
 - Sizing a humanoid: humanoid_joint_requirements gives a static torque estimate per joint (stated pose and arithmetic) and the catalog actuators that reach it. Treat estimates as a floor, not a dynamic requirement.
 - Supply chain (who makes magnets, gears and actuators, and where): list_companies, get_company and list_sites. Magnet metals (Nd, Pr, Dy, Tb, Sm, Co): get_metal_supply for country shares by stage, reserves and latest prices; get_metal_prices for a cited price history. Sourced values carry sources and a confidence (reported, estimated or modeled); quote estimates as estimates.
 - Patents (who files actuator and magnet inventions, and where): get_patent_landscape for one technology. If status is not_collected, say no counts exist yet.
+- Measured performance vs the datasheet (dyno runs, thermal holds, backlash; published, lab or community origin): get_benchmarks. Quote the run's source and origin with the number.
 - Sizing a robot arm: arm_holding_torque takes link lengths, masses, actuator masses and payload and returns static holding torque per joint, catalog actuators per joint and a calculator_url the user can open.
 Bulk snapshots are also exposed as resources (catalog://actuators, catalog://robots, catalog://categories, actuator://{id}, robot://{id}). Website: ${SITE_URL}.`;
 

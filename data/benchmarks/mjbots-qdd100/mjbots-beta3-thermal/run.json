@@ -1,0 +1,41 @@
+{
+    "actuatorId": "mjbots-qdd100",
+    "runId": "mjbots-beta3-thermal",
+    "date": "2026-10",
+    "origin": "published",
+    "method": "reported",
+    "source": {
+        "url": "https://mjbots.com/products/qdd100-beta-3-developer-kit",
+        "title": "mjbots: qdd100 beta 3 developer kit (product page)",
+        "locator": "Specifications: torque measured at zero speed in a 20 C lab, no airflow or heatsink, until limiting occurs"
+    },
+    "unit": "qdd100 beta 3 with integrated moteus controller",
+    "rig": {
+        "torqueSensor": null,
+        "accuracyPct": null,
+        "encoder": null,
+        "ambientC": 20,
+        "busV": 24,
+        "controller": "moteus (integrated)"
+    },
+    "thermal": [
+        {
+            "torqueNm": 16,
+            "tToLimitS": 1
+        },
+        {
+            "torqueNm": 10,
+            "tToLimitS": 60
+        },
+        {
+            "torqueNm": 6,
+            "tToLimitS": 400
+        },
+        {
+            "torqueNm": 3.3,
+            "tToLimitS": null
+        }
+    ],
+    "uncertainty": {},
+    "notes": "Vendor test table. The 16 Nm row is given as under 1 s; 3.3 Nm is held indefinitely. Stall (zero speed) only, so winding rise and speed dependence are not reported. Applies to beta 3 hardware."
+}

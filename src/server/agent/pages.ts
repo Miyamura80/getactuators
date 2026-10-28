@@ -3,6 +3,7 @@ import { compareBody } from "./compare";
 
 import { INVESTORS_PATH } from "@/investors";
 import { STARTUPS_PATH } from "@/startups";
+import { BENCHMARKS_PAGE } from "./benchmarks";
 import {
     actuatorBody,
     actuatorPath,
@@ -148,6 +149,7 @@ const STATIC_PAGES: Page[] = [
     // Indexed once the first patent snapshot is committed; served either way.
     ...(PATENTS_PAGE.noindex ? [] : [PATENTS_PAGE]),
     OPEN_SOURCE_PAGE,
+    BENCHMARKS_PAGE,
     sub(
         PATHS.agentsPage,
         "spa",

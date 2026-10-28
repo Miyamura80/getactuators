@@ -1,0 +1,31 @@
+{
+    "actuatorId": "feetech-sts3215",
+    "runId": "robonine-dial-indicator",
+    "date": "2026-10",
+    "origin": "published",
+    "method": "reported",
+    "source": {
+        "url": "https://robonine.com/testing-of-feetech-sts3215-servomotor-backlash-repeatability-and-torque/",
+        "title": "Robonine: Testing of Feetech STS3215 Servomotor: Backlash, Repeatability, and Torque",
+        "locator": "Backlash section, dial indicator"
+    },
+    "unit": "STS3215 C018 (12 V, 1:345, 30 kg.cm)",
+    "rig": {
+        "torqueSensor": null,
+        "accuracyPct": null,
+        "encoder": "Dial indicator on the output",
+        "ambientC": null,
+        "busV": 12,
+        "controller": null
+    },
+    "backlashArcmin": 51.9,
+    "uncertainty": {},
+    "claims": [
+        {
+            "metric": "backlashArcmin",
+            "value": 30,
+            "source": "Feetech datasheet limit of 0.5 deg or less, as quoted by Robonine"
+        }
+    ],
+    "notes": "Angular backlash of 0.0151 rad (about 0.87 deg). The servo also has a 10-count firmware dead zone, so part of the play may be control rather than gears."
+}

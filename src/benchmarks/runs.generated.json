@@ -1,0 +1,300 @@
+{
+    "runs": [
+        {
+            "actuatorId": "cubemars-ak80-9",
+            "runId": "staccatoe-2024-backlash",
+            "date": "2024-04",
+            "origin": "published",
+            "method": "reported",
+            "source": {
+                "url": "https://arxiv.org/abs/2404.05039",
+                "title": "Perera et al., StaccaToe: A Single-Leg Robot that Mimics the Human Leg and Toe (arXiv 2404.05039)",
+                "locator": "Knee actuator backlash measurement"
+            },
+            "unit": "AK80-9 KV100 V3.0 (StaccaToe knee)",
+            "rig": {
+                "torqueSensor": null,
+                "accuracyPct": null,
+                "encoder": "Actuator motor encoder",
+                "ambientC": null,
+                "busV": null,
+                "controller": "CubeMars stock driver"
+            },
+            "backlashArcmin": 9,
+            "uncertainty": {},
+            "claims": [
+                {
+                    "metric": "backlashArcmin",
+                    "value": 11.4,
+                    "source": "Manufacturer specification of 0.19 deg, as quoted by Perera et al."
+                }
+            ],
+            "notes": "Output shaft rigidly fixed while torques were commanded; backlash read from the motor encoder as 0.15 deg at the output."
+        },
+        {
+            "actuatorId": "feetech-sts3215",
+            "runId": "hardwarex-2026-test-stand",
+            "date": "2026",
+            "origin": "published",
+            "method": "reported",
+            "source": {
+                "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13087586/",
+                "title": "Kotov, An open-source test stand for backlash measurement in low-cost UART servo motors (HardwareX, 2026)",
+                "locator": "Results, single STS3215 with default settings"
+            },
+            "unit": "STS3215 (single servo, default settings)",
+            "rig": {
+                "torqueSensor": "Two STS3215 puller servos loading through elastic bands",
+                "accuracyPct": null,
+                "encoder": "Servo output encoder, 12-bit",
+                "ambientC": null,
+                "busV": null,
+                "controller": "Node.js controller over UART"
+            },
+            "backlashArcmin": 37.2,
+            "uncertainty": {},
+            "claims": [
+                {
+                    "metric": "backlashArcmin",
+                    "value": 30,
+                    "source": "Feetech datasheet limit of 0.5 deg or less"
+                }
+            ],
+            "notes": "Unloaded backlash about 0.62 deg (1.08 mm at 100 mm radius); loaded backlash about 1.30 deg (2.27 mm at 100 mm). The stored value is the unloaded figure. The stand's hardware, code and logs are open (roboninecom/Measuring-Backlash-in-Popular-UART-Servos)."
+        },
+        {
+            "actuatorId": "feetech-sts3215",
+            "runId": "robonine-dial-indicator",
+            "date": "2026-10",
+            "origin": "published",
+            "method": "reported",
+            "source": {
+                "url": "https://robonine.com/testing-of-feetech-sts3215-servomotor-backlash-repeatability-and-torque/",
+                "title": "Robonine: Testing of Feetech STS3215 Servomotor: Backlash, Repeatability, and Torque",
+                "locator": "Backlash section, dial indicator"
+            },
+            "unit": "STS3215 C018 (12 V, 1:345, 30 kg.cm)",
+            "rig": {
+                "torqueSensor": null,
+                "accuracyPct": null,
+                "encoder": "Dial indicator on the output",
+                "ambientC": null,
+                "busV": 12,
+                "controller": null
+            },
+            "backlashArcmin": 51.9,
+            "uncertainty": {},
+            "claims": [
+                {
+                    "metric": "backlashArcmin",
+                    "value": 30,
+                    "source": "Feetech datasheet limit of 0.5 deg or less, as quoted by Robonine"
+                }
+            ],
+            "notes": "Angular backlash of 0.0151 rad (about 0.87 deg). The servo also has a 10-count firmware dead zone, so part of the play may be control rather than gears."
+        },
+        {
+            "actuatorId": "feetech-sts3250",
+            "runId": "branikita-stall-test",
+            "date": "2026-10",
+            "origin": "published",
+            "method": "reported",
+            "source": {
+                "url": "https://huggingface.co/posts/branikita/935466322450846",
+                "title": "branikita: FEETECH STS3250 Stall Torque and Repeatability Tests (Hugging Face post)",
+                "locator": "Stall torque result"
+            },
+            "unit": "STS3250",
+            "rig": {
+                "torqueSensor": null,
+                "accuracyPct": null,
+                "encoder": null,
+                "ambientC": null,
+                "busV": null,
+                "controller": null
+            },
+            "torqueSpeed": [
+                {
+                    "rpm": 0,
+                    "torqueNm": 4.71
+                }
+            ],
+            "uncertainty": {},
+            "notes": "Up to 48 kg.cm (4.71 Nm) for a brief moment, then about 25 kg.cm (2.45 Nm) sustained after the overload protection activated. Supply voltage and lever method are not stated."
+        },
+        {
+            "actuatorId": "feetech-sts3250",
+            "runId": "hardwarex-2026-test-stand",
+            "date": "2026",
+            "origin": "published",
+            "method": "reported",
+            "source": {
+                "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13087586/",
+                "title": "Kotov, An open-source test stand for backlash measurement in low-cost UART servo motors (HardwareX, 2026)",
+                "locator": "Results, single STS3250"
+            },
+            "unit": "STS3250 (single servo)",
+            "rig": {
+                "torqueSensor": "Two STS3215 puller servos loading through elastic bands",
+                "accuracyPct": null,
+                "encoder": "Servo output encoder, 12-bit",
+                "ambientC": null,
+                "busV": null,
+                "controller": "Node.js controller over UART"
+            },
+            "backlashArcmin": 7.8,
+            "uncertainty": {},
+            "claims": [
+                {
+                    "metric": "backlashArcmin",
+                    "value": 30,
+                    "source": "Feetech datasheet limit of 0.5 deg or less"
+                }
+            ],
+            "notes": "Unloaded backlash 1.48 counts, about 0.13 deg; loaded backlash 3.78 counts, about 0.33 deg, at a 100 mm radius. The stored value is the unloaded figure."
+        },
+        {
+            "actuatorId": "feetech-sts3250",
+            "runId": "robonine-evaluation",
+            "date": "2026-10",
+            "origin": "published",
+            "method": "reported",
+            "source": {
+                "url": "https://robonine.com/feetech-sts3250-smart-actuator-evaluation-of-accuracy-torque-and-backlash/",
+                "title": "Robonine: Feetech STS3250 Smart Actuator: Evaluation of Accuracy, Torque and Backlash",
+                "locator": "Backlash result"
+            },
+            "unit": "STS3250 (12 V, 50 kg.cm)",
+            "rig": {
+                "torqueSensor": null,
+                "accuracyPct": null,
+                "encoder": null,
+                "ambientC": null,
+                "busV": 12,
+                "controller": null
+            },
+            "backlashArcmin": 25.8,
+            "uncertainty": {},
+            "claims": [
+                {
+                    "metric": "backlashArcmin",
+                    "value": 30,
+                    "source": "Feetech datasheet limit of 0.5 deg or less, as quoted by Robonine"
+                }
+            ],
+            "notes": "Mechanical backlash of 0.43 deg, within the 0.5 deg specification. A different method from the HardwareX test stand, so the two are not directly comparable."
+        },
+        {
+            "actuatorId": "mjbots-qdd100",
+            "runId": "mjbots-beta3-thermal",
+            "date": "2026-10",
+            "origin": "published",
+            "method": "reported",
+            "source": {
+                "url": "https://mjbots.com/products/qdd100-beta-3-developer-kit",
+                "title": "mjbots: qdd100 beta 3 developer kit (product page)",
+                "locator": "Specifications: torque measured at zero speed in a 20 C lab, no airflow or heatsink, until limiting occurs"
+            },
+            "unit": "qdd100 beta 3 with integrated moteus controller",
+            "rig": {
+                "torqueSensor": null,
+                "accuracyPct": null,
+                "encoder": null,
+                "ambientC": 20,
+                "busV": 24,
+                "controller": "moteus (integrated)"
+            },
+            "thermal": [
+                {
+                    "torqueNm": 16,
+                    "tToLimitS": 1
+                },
+                {
+                    "torqueNm": 10,
+                    "tToLimitS": 60
+                },
+                {
+                    "torqueNm": 6,
+                    "tToLimitS": 400
+                },
+                {
+                    "torqueNm": 3.3,
+                    "tToLimitS": null
+                }
+            ],
+            "uncertainty": {},
+            "notes": "Vendor test table. The 16 Nm row is given as under 1 s; 3.3 Nm is held indefinitely. Stall (zero speed) only, so winding rise and speed dependence are not reported. Applies to beta 3 hardware."
+        },
+        {
+            "actuatorId": "steadywin-gim6010-8",
+            "runId": "hackaday-spider-bot-stall",
+            "date": "2026-10",
+            "origin": "published",
+            "method": "reported",
+            "source": {
+                "url": "https://hackaday.io/project/202366-the-unnamed-spider-bot/log/239789-steadywin-gim6010-8-stock-controller-vs-odrive-vs-tinymovr",
+                "title": "The Unnamed Spider Bot: Steadywin GIM6010-8, stock controller vs ODrive vs Tinymovr (Hackaday.io log)",
+                "locator": "Stock controller stall test"
+            },
+            "unit": "GIM6010-8 with the stock driver (ODrive clone, customised 0.5.x firmware)",
+            "rig": {
+                "torqueSensor": "Force reading at the end of a 200 mm arm",
+                "accuracyPct": null,
+                "encoder": null,
+                "ambientC": null,
+                "busV": null,
+                "controller": "Stock Steadywin driver at 24 A",
+                "firmware": "ODrive 0.5.x (vendor fork)"
+            },
+            "torqueSpeed": [
+                {
+                    "rpm": 0,
+                    "torqueNm": 11
+                }
+            ],
+            "uncertainty": {},
+            "notes": "Stall force fluctuated around 55 N at the end of a 200 mm arm at 24 A, about 11 Nm. The same log found that an ODrive Micro (7 A rated) limited stall torque to about 4.8 Nm, which explains a lower 3 Nm figure reported elsewhere."
+        },
+        {
+            "actuatorId": "xiaomi-cybergear",
+            "runId": "manual-overload-table",
+            "date": "2026-10",
+            "origin": "published",
+            "method": "reported",
+            "source": {
+                "url": "https://roboticscv.com/wp-content/uploads/pdf/CyberGear%E5%BE%AE%E7%94%B5%E6%9C%BA%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E%E4%B9%A6.pdf",
+                "title": "Xiaomi CyberGear micromotor manual (Chinese, third-party mirror)",
+                "locator": "PDF pp4-5, section 1.3.15 overload table"
+            },
+            "unit": "Original CyberGear, 24 V, 7.75:1 (not CyberGear 2.0)",
+            "rig": {
+                "torqueSensor": null,
+                "accuracyPct": null,
+                "encoder": null,
+                "ambientC": 25,
+                "busV": 24,
+                "controller": "CyberGear integrated driver"
+            },
+            "thermal": [
+                {
+                    "torqueNm": 11,
+                    "tToLimitS": 45
+                },
+                {
+                    "torqueNm": 10,
+                    "tToLimitS": 60
+                },
+                {
+                    "torqueNm": 9,
+                    "tToLimitS": 90
+                },
+                {
+                    "torqueNm": 7,
+                    "tToLimitS": 320
+                }
+            ],
+            "uncertainty": {},
+            "notes": "Vendor overload table at 24 rpm and 25 C ambient; each row ends when the winding reaches 120 C. The starting winding temperature is not stated, so the rise is not recorded. The same manual sets the board limit at 80 C and the default CAN motor warning and fault at 75 and 80 C, below the 120 C endpoint."
+        }
+    ]
+}
