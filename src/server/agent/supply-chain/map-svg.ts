@@ -1,6 +1,12 @@
 import { existsSync, readFileSync } from "node:fs";
 import type { Segment } from "@/supply-chain/companies";
-import { GEO_DIR, type MapPin, WORLD_FILE, WORLD_VIEW } from "@/supply-chain/map";
+import {
+    GEO_DIR,
+    type MapPin,
+    SEGMENT_COLOR,
+    WORLD_FILE,
+    WORLD_VIEW,
+} from "@/supply-chain/map";
 import { geoGraticule10, geoNaturalEarth1, geoPath } from "d3-geo";
 import { feature } from "topojson-client";
 import { DIST_DIR } from "../../static";
@@ -14,7 +20,6 @@ import { esc } from "../html/head";
 const LAND = "#121212";
 const EDGE = "#383838";
 const RAMP = ["#0f1d1c", "#1e3a39", "#325f5d", "#4a8e8b", "#6ac6c2"];
-const PIN = "#c3fffd";
 
 // The world outlines, read once: the built copy in production, the source
 // copy in a checkout without a frontend build.
@@ -111,8 +116,9 @@ export function worldMapSvg({
             if (!at) return "";
             const [x, y] = at.map((n) => Math.round(n * 10) / 10) as [number, number];
             const hollow = p.precision !== "site";
-            return `<g fill="${hollow ? "#000" : PIN}">${SHAPE[p.segment](x, y)}<title>${esc(p.label)}</title></g>`;
+            const c = SEGMENT_COLOR[p.segment];
+            return `<g fill="${hollow ? "#000" : c}" stroke="${c}">${SHAPE[p.segment](x, y)}<title>${esc(p.label)}</title></g>`;
         })
         .join("");
-    return `<figure class="ga-map" style="margin:16px 0"><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(label)}" style="width:100%;height:auto;display:block;background:#000;border:1px solid #242424"><path d="${path({ type: "Sphere" })}" fill="#050505" stroke="#242424"/><path d="${path(geoGraticule10())}" fill="none" stroke="#161616"/><g stroke="${EDGE}" stroke-width="0.5">${land}</g><g stroke="${PIN}" stroke-width="1">${marks}</g></svg></figure>`;
+    return `<figure class="ga-map" style="margin:16px 0"><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(label)}" style="width:100%;height:auto;display:block;background:#000;border:1px solid #242424"><path d="${path({ type: "Sphere" })}" fill="#050505" stroke="#242424"/><path d="${path(geoGraticule10())}" fill="none" stroke="#161616"/><g stroke="${EDGE}" stroke-width="0.5">${land}</g><g stroke-width="1">${marks}</g></svg></figure>`;
 }

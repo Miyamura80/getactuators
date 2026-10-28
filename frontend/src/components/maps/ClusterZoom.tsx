@@ -1,8 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
-import type { MapPin, NamedCluster } from "../../../../src/supply-chain/map";
-import { boxOf, clusterBox, groupPoints, insideCluster, type Placed } from "./cluster";
+import { SEGMENTS } from "../../../../src/supply-chain/companies";
+import { type MapPin, type NamedCluster, SEGMENT_COLOR } from "../../../../src/supply-chain/map";
+import { boxOf, clusterBox, groupName, groupPoints, insideCluster, type Placed } from "./cluster";
+import type { LabelItem } from "./labels";
 import { type Box, type Point, inView, pct, toScreen, useMap } from "./map-context";
+import { useMapLabels } from "./MapLabels";
 import { PinGlyph, PinTable, Pins, pinName } from "./Pins";
 
 export interface ClusterZoomProps {
@@ -16,14 +19,22 @@ export interface ClusterZoomProps {
     selectedId?: string | null;
     onSelect?: (pin: MapPin) => void;
     table?: string;
+    // On-map text: company names and group callouts (true), group callouts
+    // only ("groups", for a busy world map), or none.
+    labels?: boolean | "groups";
 }
 
 const MAX_K = 12;
 const MIN_BOX_PX = 44;
+// Group marker half-size in CSS pixels, for label collision.
+const GROUP_R = 15;
 
 // Pins that group while they overlap: a numbered marker zooms to its members
 // (d3-zoom), named clusters draw as a dashed box with a label that zooms to it.
-export function ClusterZoom({ pins, radius = 28, clusters = [], activeCluster, onCluster, selectedId, onSelect, table = "Sites" }: ClusterZoomProps) {
+// A group marker carries a strip of its members' segment colours and, when
+// its members share a named cluster, a company or a region, a callout naming
+// it ("Yangtze River Delta").
+export function ClusterZoom({ pins, radius = 28, clusters = [], activeCluster, onCluster, selectedId, onSelect, table = "Sites", labels = true }: ClusterZoomProps) {
     const map = useMap();
     const { width, height, project, zoom, scale, svgLayer, belowLayer, zoomTo } = map;
     const r = radius / scale;
@@ -55,6 +66,15 @@ export function ClusterZoom({ pins, radius = 28, clusters = [], activeCluster, o
     // the map always lists them.
     const shown = named.map((n) => ({ ...n, screen: [toScreen(n.box[0], zoom), toScreen(n.box[1], zoom)] as Box }))
         .filter((n) => (n.screen[1][0] - n.screen[0][0]) * scale >= MIN_BOX_PX);
+    const tagged = new Set(shown.map((n) => n.c.label));
+    const multi = groups.filter((g) => g.ids.length > 1).map((g) => {
+        const members = g.ids.flatMap((id) => byId.get(id) ?? []);
+        const name = groupName(members, clusters);
+        return { g, key: g.ids.join("|"), members, name: name && !tagged.has(name) ? name : null };
+    });
+    // Every group registers (an unnamed one as a bare obstacle).
+    const callouts: LabelItem[] = multi.map(({ g, key, name }) => ({ id: `group-${key}`, at: g.at, text: labels && name ? name : "", priority: 3, tone: "cluster", r: GROUP_R }));
+    useMapLabels(`groups${useId()}`, callouts);
     return <>
         {svgLayer ? createPortal(<g className="mk-clusters">
             {shown.map(({ c, screen: [[x0, y0], [x1, y1]] }) => <rect key={c.id} className={`mk-cluster-box${c.id === activeCluster ? " is-active" : ""}`}
@@ -77,21 +97,23 @@ export function ClusterZoom({ pins, radius = 28, clusters = [], activeCluster, o
                 {c.label}<b>{n}</b>
             </button>)}
         </div>, belowLayer) : null}
-        <Pins pins={singles} selectedId={selectedId} onSelect={onSelect} table={false} />
-        {groups.filter((g) => g.ids.length > 1).map((g) => {
-            const key = g.ids.join("|");
-            const members = g.ids.flatMap((id) => byId.get(id) ?? []);
+        <Pins pins={singles} selectedId={selectedId} onSelect={onSelect} table={false} labels={labels === true} />
+        {multi.map(({ g, key, members, name }) => {
             const box = boxOf(g.ids.map((id) => base.get(id)).filter((p): p is Point => !!p));
             // Still overlapping at full zoom (several sites share a city): a
             // click lists the members instead of zooming.
             const tiny = Math.max(box[1][0] - box[0][0], box[1][1] - box[0][1]) * MAX_K < r || zoom.k >= MAX_K * 0.98;
             const hasSelected = members.some((m) => m.id === selectedId);
+            const mix = SEGMENTS.map((s) => ({ s, n: members.filter((m) => m.segment === s).length })).filter((x) => x.n > 0);
             return <div key={key} className="mk-group" style={pct(g.at, width, height)}>
                 <button type="button" className={`mk-cluster${hasSelected ? " is-selected" : ""}`}
-                    aria-label={`${members.length} sites: ${members.map((m) => m.label).join("; ")}. ${tiny ? "List them" : "Zoom in"}`}
+                    aria-label={`${name ? `${name}, ` : ""}${members.length} sites: ${members.map((m) => m.label).join("; ")}. ${tiny ? "List them" : "Zoom in"}`}
                     aria-expanded={tiny ? open === key : undefined}
                     onClick={() => (tiny ? setOpen(open === key ? null : key) : zoomTo(box, MAX_K))}>
                     {members.length}
+                    <span className="mk-mix" aria-hidden="true">
+                        {mix.map(({ s, n }) => <i key={s} style={{ flexGrow: n, background: SEGMENT_COLOR[s] }} />)}
+                    </span>
                 </button>
                 {tiny && open === key ? <ul className="mk-group-list">
                     {members.map((m) => <li key={m.id}>

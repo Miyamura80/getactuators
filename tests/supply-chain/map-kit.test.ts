@@ -1,9 +1,14 @@
 import { describe, expect, test } from "bun:test";
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { auditRegistry } from "@/supply-chain/audit";
+import { SEGMENTS } from "@/supply-chain/companies";
+import { COUNTRIES } from "@/supply-chain/countries";
 import { LAB_CLUSTERS, labNdStep, labRobotFlow } from "@/supply-chain/lab-kit";
 import {
     ADMIN1_COUNTRIES,
+    REFERENCE_CITIES,
+    SEGMENT_COLOR,
+    SEGMENT_SHORT,
     WORLD_FILE,
     admin1File,
     arcsTouching,
@@ -81,6 +86,34 @@ describe("map data", () => {
         expect(arcsTouching(arcs, "KR").map((a) => a.id)).toEqual([
             "hyundai-mobis--boston-dynamics",
         ]);
+    });
+
+    test("pins carry the short company label and region for on-map callouts", () => {
+        const hotaka = sitePins().find((p) => p.id === "hds-hotaka");
+        expect(hotaka?.company).toBe("Harmonic Drive Systems");
+        expect(hotaka?.admin1).toBe("Nagano");
+        expect(hotaka?.label.startsWith(`${hotaka?.company} · `)).toBe(true);
+    });
+
+    test("each segment has its own colour and short key name", () => {
+        const colours = SEGMENTS.map((s) => SEGMENT_COLOR[s]);
+        expect(new Set(colours).size).toBe(SEGMENTS.length);
+        for (const c of colours) expect(c).toMatch(/^#[0-9a-f]{6}$/);
+        for (const s of SEGMENTS) expect(SEGMENT_SHORT[s].length).toBeLessThan(20);
+    });
+
+    test("reference cities: one capital per country map, inside its box", () => {
+        for (const code of ADMIN1_COUNTRIES) {
+            const cities = REFERENCE_CITIES[code];
+            expect(cities.filter((c) => c.capital)).toHaveLength(1);
+            const [minLat, minLon, maxLat, maxLon] = COUNTRIES[code].bbox;
+            for (const c of cities) {
+                expect(c.lat).toBeGreaterThanOrEqual(minLat);
+                expect(c.lat).toBeLessThanOrEqual(maxLat);
+                expect(c.lon).toBeGreaterThanOrEqual(minLon);
+                expect(c.lon).toBeLessThanOrEqual(maxLon);
+            }
+        }
     });
 
     test("every lab cluster holds at least one site", () => {
