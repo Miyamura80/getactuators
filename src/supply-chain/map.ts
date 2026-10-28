@@ -1,4 +1,4 @@
-import type { Segment } from "./companies";
+import { SEGMENTS, type Segment } from "./companies";
 import type { CountryCode } from "./countries";
 import type { SupplyLink } from "./links";
 import { activeLinks, companyAnchor, getCompany } from "./registry";
@@ -42,16 +42,73 @@ export interface LonLat {
     lat: number;
 }
 
-// Segment identity on every map: a colour paired with a marker shape (see
-// SEGMENT_SHAPE in Pins.tsx), so colour is never the only channel. Validated
-// as a categorical set on the dark surface (OKLCH L 0.665; CVD-separable
-// with the shapes as secondary encoding).
+// Segment identity on every map: a colour tile with the segment's object
+// knocked out of it (SEGMENT_PICTO), the /policy "object tile" language, so
+// colour is never the only channel. Validated as a categorical set on the
+// dark surface (OKLCH L 0.665; CVD-separable with the pictograms as the
+// secondary encoding).
 export const SEGMENT_COLOR: Record<Segment, string> = {
     "ree-mining-refining": "#e36e13",
     "magnets-motors": "#a577eb",
     "gears-screws-bearings": "#af9100",
     "robot-actuator-oem": "#e06099",
 };
+
+// One pictogram per segment on a 24-unit grid, drawn into the tile's middle
+// (TILE_MARK): `line` is stroked, `solid` is stroked and filled. Chosen by
+// rendering candidates at 14 to 18 px: a pickaxe (mining), a horseshoe
+// magnet with solid poles, a six-tooth gear, an industrial robot arm.
+export const SEGMENT_PICTO: Record<Segment, { line: string; solid?: string }> = {
+    "ree-mining-refining": {
+        line: "M3.5 21 14 10.5",
+        solid: "M7 4.5C13 2 20.5 6 20.5 17 17.5 10.5 13.5 7.5 7 4.5z",
+    },
+    "magnets-motors": {
+        line: "M6.5 4v8a5.5 5.5 0 0 0 11 0V4",
+        solid: "M4 3.5h5v4H4zM15 3.5h5v4h-5z",
+    },
+    "gears-screws-bearings": {
+        line: "M9.07 4.77 9.53 1.49 14.47 1.49 14.93 4.77 16.79 5.85 19.87 4.61 22.34 8.88 19.73 10.93 19.73 13.07 22.34 15.12 19.87 19.39 16.79 18.15 14.93 19.23 14.47 22.51 9.53 22.51 9.07 19.23 7.21 18.15 4.13 19.39 1.66 15.12 4.27 13.07 4.27 10.93 1.66 8.88 4.13 4.61 7.21 5.85zM14.6 12a2.6 2.6 0 1 1-5.2 0 2.6 2.6 0 1 1 5.2 0",
+    },
+    "robot-actuator-oem": {
+        line: "M3 21.5h12M9 17 6 9.5l9.5-4M15.5 5.5 20 3.5M15.5 5.5l3 4",
+        solid: "M6 21.5V18h6v3.5zM8.2 9.5a2.2 2.2 0 1 1-4.4 0 2.2 2.2 0 1 1 4.4 0",
+    },
+};
+
+// Tile geometry both renderers share: a rounded square on the 24 grid, the
+// pictogram scaled into its middle, strokes in grid units.
+export const TILE_MARK = "translate(3.6 3.6) scale(0.7)";
+export const TILE_STROKE = { tile: 1.6, mark: 2.6, dash: "2.4 2" } as const;
+
+// What a group of pins holds, segment by segment in chain order (rare
+// earths, magnets & motors, gears & bearings, robot makers).
+export interface SegmentCount {
+    segment: Segment;
+    n: number;
+}
+
+export function segmentMix(pins: readonly { segment: Segment }[]): SegmentCount[] {
+    return SEGMENTS.map((segment) => ({
+        segment,
+        n: pins.filter((p) => p.segment === segment).length,
+    })).filter((c) => c.n > 0);
+}
+
+const SITE_NOUN: Record<Segment, string> = {
+    "ree-mining-refining": "rare earth site",
+    "magnets-motors": "magnet and motor site",
+    "gears-screws-bearings": "gear and bearing site",
+    "robot-actuator-oem": "robot maker site",
+};
+
+// "3 magnet and motor sites, 1 robot maker site": what a group holds, for
+// its accessible name.
+export function mixPhrase(mix: readonly SegmentCount[]): string {
+    return mix
+        .map(({ segment, n }) => `${n} ${SITE_NOUN[segment]}${n === 1 ? "" : "s"}`)
+        .join(", ");
+}
 
 // Short names for the in-map key, where the full SEGMENT_LABEL wraps.
 export const SEGMENT_SHORT: Record<Segment, string> = {
@@ -97,8 +154,8 @@ export const REFERENCE_CITIES: Record<Admin1Country, readonly RefCity[]> = {
     ],
 };
 
-// One marker. Shape and colour encode the segment; `precision` other than
-// "site" draws the marker hollow because the pin is a city centre, not the
+// One marker. Tile colour and pictogram encode the segment; `precision` other
+// than "site" draws the tile hollow (dashed) because the pin is a city centre, not the
 // gate. `company` is the short on-map label, `admin1` names a group of pins
 // that share a region.
 export interface MapPin extends LonLat {

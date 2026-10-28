@@ -3,33 +3,16 @@ import { countryName } from "../../../../src/country-flag";
 import { SEGMENTS, SEGMENT_LABEL, type Segment } from "../../../../src/supply-chain/companies";
 import { type MapPin, SEGMENT_COLOR, SEGMENT_SHORT } from "../../../../src/supply-chain/map";
 import { monogram } from "../flows/graph-layout";
+import { ObjectTile } from "../glyphs/ObjectTile";
 import type { LabelItem } from "./labels";
 import { type Point, inView, pct, toScreen, useMap } from "./map-context";
 import { useMapLabels } from "./MapLabels";
 import { OverlayTable } from "./MapTable";
+import { SegmentTile } from "./SegmentTile";
 
-// Marker shape and colour both encode the segment (SEGMENT_COLOR), so a
-// reader who cannot tell the hues apart still reads the shape.
-export const SEGMENT_SHAPE: Record<Segment, "circle" | "diamond" | "square" | "triangle"> = {
-    "ree-mining-refining": "circle",
-    "magnets-motors": "diamond",
-    "gears-screws-bearings": "square",
-    "robot-actuator-oem": "triangle",
-};
-
-const SHAPE_PATH = {
-    circle: <circle cx="6" cy="6" r="4.5" />,
-    diamond: <path d="M6 0.8 11.2 6 6 11.2 0.8 6Z" />,
-    square: <rect x="1.8" y="1.8" width="8.4" height="8.4" />,
-    triangle: <path d="M6 1 11.2 10.4H0.8Z" />,
-};
-
-// `neutral` drops the segment colour (the key's "city centre" swatch).
-export function PinGlyph({ segment, hollow = false, neutral = false }: { segment: Segment; hollow?: boolean; neutral?: boolean }) {
-    return <svg className={`mk-glyph${hollow ? " is-hollow" : ""}`} viewBox="0 0 12 12" aria-hidden="true" style={neutral ? undefined : { color: SEGMENT_COLOR[segment] }}>
-        {SHAPE_PATH[SEGMENT_SHAPE[segment]]}
-    </svg>;
-}
+// A site marker is its segment's object tile (SegmentTile): colour and
+// pictogram both say what is there, so neither relies on the other.
+export const PIN_SIZE = 16;
 
 const PRECISION_TEXT: Record<MapPin["precision"], string> = {
     site: "exact site",
@@ -47,8 +30,8 @@ function siteOf(p: MapPin): string {
     return head && p.label.startsWith(head) ? p.label.slice(head.length) : p.label;
 }
 
-// Marker half-size in CSS pixels, for label collision.
-const PIN_R = 6;
+// Marker half-size in CSS pixels, for label collision (tile plus stroke).
+const PIN_R = PIN_SIZE / 2 + 1;
 
 // The always-on company name beside a marker; exact sites outrank city
 // centres when space runs out.
@@ -92,7 +75,7 @@ export function Pins({ pins, selectedId, onSelect, table = "Sites", labels = tru
                 aria-pressed={selected}
                 onClick={() => onSelect?.(p)}
             >
-                <PinGlyph segment={p.segment} hollow={p.precision !== "site"} />
+                <SegmentTile segment={p.segment} hollow={p.precision !== "site"} size={PIN_SIZE} />
                 <span className="mk-tip" aria-hidden="true">
                     <b className="mk-mono" style={{ borderColor: SEGMENT_COLOR[p.segment] }}>{monogram(p.company ?? p.label)}</b>
                     <span>{p.company ?? p.label}{p.company ? <i>{siteOf(p)}</i> : null}</span>
@@ -111,16 +94,17 @@ export function PinTable({ caption, pins }: { caption: string; pins: readonly Ma
     />;
 }
 
-// Shape and colour key for the segments, plus the hollow = approximate
-// convention. Given `pins`, it lists only the segments present, with counts.
+// Tile key for the segments, plus the hollow = approximate convention (a
+// bare dashed tile, as /policy keys its statuses). Given `pins`, it lists
+// only the segments present, with counts.
 export function PinLegend({ segments = SEGMENTS, pins }: { segments?: readonly Segment[]; pins?: readonly MapPin[] }) {
     const count = (s: Segment) => pins?.filter((p) => p.segment === s).length ?? 0;
     const shown = pins ? segments.filter((s) => count(s) > 0) : segments;
     const approx = !pins || pins.some((p) => p.precision !== "site");
     return <ul className="mk-key">
         {shown.map((s) => <li key={s} title={SEGMENT_LABEL[s]}>
-            <PinGlyph segment={s} />{pins ? SEGMENT_SHORT[s] : SEGMENT_LABEL[s]}{pins ? <b>{count(s)}</b> : null}
+            <SegmentTile segment={s} size={14} />{pins ? SEGMENT_SHORT[s] : SEGMENT_LABEL[s]}{pins ? <b>{count(s)}</b> : null}
         </li>)}
-        {approx ? <li className="is-approx"><PinGlyph segment="ree-mining-refining" hollow neutral />City centre</li> : null}
+        {approx ? <li className="is-approx"><ObjectTile className="mk-tile" hollow size={14} />City centre</li> : null}
     </ul>;
 }

@@ -1,4 +1,5 @@
 import type { MeasureScope, MeasureStatus, MeasureType } from "../../../../../src/supply-chain/policy/types";
+import { ObjectTile } from "../../../components/glyphs/ObjectTile";
 
 // The /policy symbol set: each type is the object it acts like, knocked out
 // of a solid colour tile on a 24-unit grid. A boom gate for an export
@@ -23,7 +24,7 @@ function Shape({ type }: { type: MeasureType }) {
             return <>
                 <path d="M4.5 21.5V7.5h3.2v14M2.5 21.5h7.5" />
                 <rect x="7.7" y="8.6" width="13.8" height="4.2" />
-                <path d="M10.4 8.6h2.6v4.2h-2.6zM15.6 8.6h2.6v4.2h-2.6z" className="pl-solid" />
+                <path d="M10.4 8.6h2.6v4.2h-2.6zM15.6 8.6h2.6v4.2h-2.6z" className="ot-solid" />
             </>;
         case "tariff":
             return <>
@@ -49,13 +50,6 @@ function Shape({ type }: { type: MeasureType }) {
 
 const HOLLOW: ReadonlySet<MeasureStatus> = new Set(["announced", "draft"]);
 
-// The tile: solid, or a dashed outline while the measure is not yet in force.
-function Tile({ status }: { status: MeasureStatus }) {
-    return HOLLOW.has(status)
-        ? <rect x="1" y="1" width="22" height="22" rx="5" className="pl-tile is-hollow" />
-        : <rect x="1" y="1" width="22" height="22" rx="5" className="pl-tile" />;
-}
-
 function PauseBadge() {
     return <g className="pl-pause">
         <circle cx="21.5" cy="21.5" r="3.8" />
@@ -68,20 +62,17 @@ export function TypeGlyph({ type, status = "in-force", size = 16 }: {
     status?: MeasureStatus;
     size?: number;
 }) {
-    return <svg className={`pl-glyph pl-st-${status}`} width={size} height={size} viewBox="0 0 24 24"
-        aria-hidden="true" style={{ color: TYPE_COLOR[type] }}>
-        <Tile status={status} />
-        <g className="pl-mark" transform="translate(3.6 3.6) scale(0.7)"><Shape type={type} /></g>
-        {status === "suspended" ? <PauseBadge /> : null}
-    </svg>;
+    // The tile is solid, or a dashed outline while not yet in force.
+    return <ObjectTile className={`pl-glyph pl-st-${status}`} size={size} color={TYPE_COLOR[type]} hollow={HOLLOW.has(status)}
+        after={status === "suspended" ? <PauseBadge /> : null}>
+        <Shape type={type} />
+    </ObjectTile>;
 }
 
 // The status key on its own: the same tile treatment in neutral grey.
 export function StatusGlyph({ status, size = 14 }: { status: MeasureStatus; size?: number }) {
-    return <svg className={`pl-glyph pl-st-${status} is-key`} width={size} height={size} viewBox="0 0 24 24" aria-hidden="true">
-        <Tile status={status} />
-        {status === "suspended" ? <PauseBadge /> : null}
-    </svg>;
+    return <ObjectTile className={`pl-glyph pl-st-${status} is-key`} size={size} hollow={HOLLOW.has(status)}
+        after={status === "suspended" ? <PauseBadge /> : null} />;
 }
 
 export function FeedIcon() {

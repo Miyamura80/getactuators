@@ -54,11 +54,11 @@
     cursor: pointer;
     color: var(--cyan);
 }
-.mk-glyph { width: 11px; height: 11px; overflow: visible; }
-.mk-glyph > * { fill: currentColor; stroke: currentColor; stroke-width: 1.2; }
-.mk-glyph.is-hollow > * { fill: #000; }
-.mk-pin:hover .mk-glyph, .mk-pin:focus-visible .mk-glyph { transform: scale(1.35); }
-.mk-pin:focus-visible { outline: 1px solid var(--cyan); outline-offset: -3px; }
+/* Segment tiles (SegmentTile.tsx over the shared object tile). */
+.mk-tile { display: block; }
+.mk-pin .mk-tile { transition: transform 120ms; }
+.mk-pin:hover .mk-tile, .mk-pin:focus-visible .mk-tile { transform: scale(1.25); }
+.mk-pin:focus-visible { outline: 1px solid var(--cyan); outline-offset: -1px; }
 .mk-pin.is-selected { color: var(--text); z-index: 2; }
 .mk-pin.is-selected::after {
     content: "";
@@ -124,9 +124,11 @@
 /* Hovering or focusing a marker hands it the stage: the labels recede. */
 .mk-html:has(.mk-pin:hover, .mk-pin:focus-visible, .mk-cluster:hover, .mk-cluster:focus-visible) .mk-labels { opacity: 0.2; }
 
-/* Segment mix of a group, as a strip along its marker's foot. */
-.mk-mix { position: absolute; left: 0; right: 0; bottom: 0; display: flex; gap: 1px; height: 3px; background: #000; }
-.mk-mix i { display: block; min-width: 3px; }
+/* What a group holds: its segment tiles in chain order, each with a site
+   count when more than one (SegmentMix; columns set inline). */
+.mk-mix { display: inline-grid; justify-items: start; }
+.mk-mix-cell { display: inline-flex; align-items: flex-end; gap: 1px; }
+.mk-mix-cell b { font: 600 10px/1 var(--mono); color: var(--text); font-variant-numeric: tabular-nums; }
 
 /* Country maps: lighter land, faint internal borders, a bright coastline.
    The site-density ramp stays dim so coloured pins keep the contrast and a
@@ -154,17 +156,20 @@
     position: relative;
     display: grid;
     place-items: center;
-    min-width: 26px;
-    height: 26px;
-    padding: 0 6px;
+    margin: 0;
+    padding: 2px;
     background: #000;
-    border: 1px solid var(--cyan);
-    color: var(--cyan);
-    font: 600 11px/1 var(--mono);
+    border: 1px solid var(--line-strong);
+    color: var(--text);
     cursor: pointer;
+    transition: border-color 120ms, background-color 120ms;
 }
-.mk-cluster:hover, .mk-cluster:focus-visible { background: var(--cyan); color: #000; outline: none; }
-.mk-cluster.is-selected { border-color: var(--text); color: var(--text); }
+.mk-cluster:hover, .mk-cluster:focus-visible { border-color: var(--cyan); background: var(--panel-2); outline: none; }
+.mk-cluster:focus-visible { box-shadow: 0 0 0 1px var(--cyan); }
+.mk-cluster[aria-expanded="true"] { border-color: var(--cyan); }
+.mk-cluster.is-selected { border-color: var(--text); }
+.mk-html:has(.mk-cluster:hover, .mk-cluster:focus-visible) .mk-group:not(:hover, :focus-within) { opacity: 0.45; }
+.mk-group { transition: opacity 120ms; }
 .mk-group-list {
     position: absolute;
     top: calc(100% + 4px);
@@ -215,7 +220,6 @@
     cursor: pointer;
 }
 .mk-cluster-tag.is-end { transform: translate(-100%, calc(-100% - 2px)); }
-.mk-cluster-tag b { color: var(--cyan); font-weight: 600; }
 .mk-cluster-index { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .mk-cluster-index button {
     display: inline-flex;
@@ -232,7 +236,8 @@
     cursor: pointer;
 }
 .mk-cluster-index svg { width: 10px; height: 10px; fill: none; stroke: currentColor; stroke-width: 1.3; }
-.mk-cluster-index b { color: var(--cyan); }
+.mk-cluster-index .mk-mix { margin-left: 4px; }
+.mk-cluster-index .mk-mix-cell b { font-size: 9.5px; letter-spacing: 0; color: var(--muted); }
 .mk-cluster-index button:hover, .mk-cluster-index button:focus-visible, .mk-cluster-index button[aria-pressed="true"] { color: var(--text); border-color: var(--cyan); outline: none; }
 .mk-cluster-tag:hover, .mk-cluster-tag:focus-visible, .mk-cluster-tag.is-active { color: var(--text); border-color: var(--cyan); outline: none; }
 
@@ -331,7 +336,6 @@ span.mk-chip { border-style: dashed; color: var(--muted); }
 .mk-ramp i[data-step="5"] { background: color-mix(in srgb, var(--cyan-dim) 88%, #000); }
 .mk-key { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 8px 0 0; padding: 0; list-style: none; font: 500 11px/1.2 var(--sans); color: var(--muted); }
 .mk-key li { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
-.mk-key .mk-glyph { color: var(--muted); }
 
 /* Hidden table equivalents */
 .mk-sr, .mk-table {
@@ -395,5 +399,5 @@ span.mk-chip { border-style: dashed; color: var(--muted); }
 @keyframes mk-up { from { opacity: 0; transform: translateY(16px); } }
 @media (prefers-reduced-motion: reduce) {
     .mk-drawer { animation: none; }
-    .mk-land, .mk-arc-line, .mk-tip, .mk-labels { transition: none; }
+    .mk-land, .mk-arc-line, .mk-tip, .mk-labels, .mk-pin .mk-tile, .mk-cluster, .mk-group { transition: none; }
 }

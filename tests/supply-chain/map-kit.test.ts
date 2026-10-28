@@ -8,13 +8,17 @@ import {
     ADMIN1_COUNTRIES,
     REFERENCE_CITIES,
     SEGMENT_COLOR,
+    SEGMENT_PICTO,
     SEGMENT_SHORT,
     WORLD_FILE,
     admin1File,
     arcsTouching,
+    mixPhrase,
+    segmentMix,
     sitePins,
     supplyArcs,
 } from "@/supply-chain/map";
+import { groupPoints, mixSize } from "@/supply-chain/map-groups";
 import { activeLinks, companyAnchor } from "@/supply-chain/registry";
 import { SITES } from "@/supply-chain/sites";
 import { feature } from "topojson-client";
@@ -100,6 +104,56 @@ describe("map data", () => {
         expect(new Set(colours).size).toBe(SEGMENTS.length);
         for (const c of colours) expect(c).toMatch(/^#[0-9a-f]{6}$/);
         for (const s of SEGMENTS) expect(SEGMENT_SHORT[s].length).toBeLessThan(20);
+    });
+
+    test("each segment has its own pictogram on the 24-unit grid", () => {
+        const lines = SEGMENTS.map((s) => SEGMENT_PICTO[s].line);
+        expect(new Set(lines).size).toBe(SEGMENTS.length);
+        for (const s of SEGMENTS) {
+            const { line, solid } = SEGMENT_PICTO[s];
+            for (const d of [line, solid ?? ""]) {
+                const nums = (d.match(/-?\d*\.?\d+/g) ?? []).map(Number);
+                // Absolute coordinates stay on the grid (arc radii included).
+                for (const n of nums) expect(Math.abs(n)).toBeLessThanOrEqual(24);
+            }
+        }
+    });
+
+    test("a group's mix lists segments in chain order, named for screen readers", () => {
+        const pins = sitePins().filter((p) => p.country === "JP");
+        const mix = segmentMix(pins);
+        expect(mix.map((m) => m.segment)).toEqual(
+            SEGMENTS.filter((s) => pins.some((p) => p.segment === s)),
+        );
+        expect(mix.reduce((s, m) => s + m.n, 0)).toBe(pins.length);
+        expect(
+            mixPhrase([
+                { segment: "magnets-motors", n: 3 },
+                { segment: "gears-screws-bearings", n: 2 },
+                { segment: "robot-actuator-oem", n: 1 },
+            ]),
+        ).toBe(
+            "3 magnet and motor sites, 2 gear and bearing sites, 1 robot maker site",
+        );
+    });
+
+    test("group geometry: overlapping points group, block size fits its tiles", () => {
+        const groups = groupPoints(
+            [
+                { id: "a", at: [0, 0] },
+                { id: "b", at: [5, 0] },
+                { id: "c", at: [100, 0] },
+            ],
+            10,
+        );
+        expect(groups.map((g) => g.ids.sort())).toEqual([["a", "b"], ["c"]]);
+        const one: [number, number] = mixSize([{ segment: "magnets-motors", n: 1 }]);
+        expect(one).toEqual([16 + 6, 16 + 6]);
+        const row = mixSize([
+            { segment: "magnets-motors", n: 1 },
+            { segment: "robot-actuator-oem", n: 1 },
+        ]);
+        expect(row).toEqual([16 * 2 + 2 + 6, 22]);
     });
 
     test("reference cities: one capital per country map, inside its box", () => {
