@@ -126,17 +126,19 @@ export function ValueSankey({ nodes, links, label, unit = "USD", format, selecte
                 </div>;
             })}
         </div>
-        <table className="fk-sr">
-            <caption>{label}</caption>
-            <thead><tr><th scope="col">Node</th><th scope="col">Value</th><th scope="col">Value added</th><th scope="col">Flows into</th></tr></thead>
-            <tbody>
-                {layout.nodes.map((n) => <tr key={n.id}>
-                    <th scope="row">{byId.get(n.id)?.label ?? n.id}</th>
-                    <td>{fmt(n.value)}</td>
-                    <td>{fmt(valueAdded(n))}</td>
-                    <td>{links.filter((l) => l.source === n.id).map((l) => byId.get(l.target)?.label ?? l.target).join(", ")}</td>
-                </tr>)}
-            </tbody>
-        </table>
+        <div className="fk-sr">
+            <table>
+                <caption>{label}</caption>
+                <thead><tr><th scope="col">Node</th><th scope="col">Value</th><th scope="col">Value added</th><th scope="col">Flows into</th></tr></thead>
+                <tbody>
+                    {layout.nodes.map((n) => <tr key={n.id}>
+                        <th scope="row">{byId.get(n.id)?.label ?? n.id}</th>
+                        <td>{fmt(n.value)}</td>
+                        <td>{fmt(valueAdded(n))}</td>
+                        <td>{links.filter((l) => l.source === n.id).map((l) => byId.get(l.target)?.label ?? l.target).join(", ")}</td>
+                    </tr>)}
+                </tbody>
+            </table>
+        </div>
     </figure>;
 }
