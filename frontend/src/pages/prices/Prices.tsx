@@ -8,9 +8,12 @@ import { ActuatorHistory } from "./ActuatorHistory";
 import { NmOverTime } from "./NmOverTime";
 import { gates } from "./readiness";
 import { SelectedReadout } from "./selected-readout";
-import { PRICED, historyIds, latestNm, perNmText, readActuator } from "./shared";
+import { buildListings } from "./listings";
+import { PRICED, historyIds, latestNm, perNmText } from "./shared";
+import { SpecFinder } from "./spec-finder";
 import { TodayStrip } from "./today-strip";
 import { TrendGate } from "./trend-gate";
+import { type Spec, readSpec, specUrl } from "./url-state";
 import { VsMetals } from "./VsMetals";
 import "../tools.css";
 import "./prices.css";
@@ -25,11 +28,13 @@ function Section({ n, id, title, children }: { n: number; id: string; title: str
 }
 
 // /prices: today's $/Nm across the catalog first, because one snapshot
-// supports that and little else. The trend views (learning curve, one
+// supports that and little else. Then the buyer's search: a torque spec,
+// the matches ranked by $/Nm and price against torque. The trend views (learning curve, one
 // actuator's history, price vs NdPr) each appear once the history clears
 // its threshold; until then they wait in one progress panel. Data:
 // data/prices/history.json, committed by the weekly snapshot bot. `points`
-// is for tests.
+// is for tests. One query state (url-state.ts) holds the spec and the
+// selected actuator; every view reads and writes it through `update`.
 export function Prices({ menuOpen = false, points = PRICE_HISTORY.points }: {
     menuOpen?: boolean;
     points?: readonly PriceObservation[];
@@ -39,7 +44,9 @@ export function Prices({ menuOpen = false, points = PRICE_HISTORY.points }: {
     const ids = useMemo(() => latest.map((p) => p.actuatorId), [latest]);
     const cheapest = useMemo(() => latest.reduce<(typeof latest)[number] | undefined>((m, p) => (!m || p.usdPerNm < m.usdPerNm ? p : m), undefined), [latest]);
     const gs = useMemo(() => gates(nm, points), [nm, points]);
-    const [actuator, setActuator] = useState(() => readActuator(window.location.search, ids));
+    const listings = useMemo(() => buildListings(points), [points]);
+    const [spec, setSpec] = useState<Spec>(() => readSpec(window.location.search));
+    const actuator = ids.includes(spec.actuator) ? spec.actuator : "";
     const c = coverage(points);
     const median = boxStats(latest.map((p) => p.usdPerNm))?.median;
     useEffect(() => {
@@ -47,12 +54,18 @@ export function Prices({ menuOpen = false, points = PRICE_HISTORY.points }: {
         document.title = TITLE;
         return () => { document.title = prev; };
     }, []);
-    const pick = (id: string) => {
-        setActuator(id);
-        const q = new URLSearchParams(window.location.search);
-        q.set("actuator", id);
-        window.history.replaceState(window.history.state, "", `${PRICES_PATH}?${q}${window.location.hash}`);
+    // A deep link's #anchor (the catalog sparkline's #history) exists only
+    // once the page has rendered, so scroll to it then.
+    useEffect(() => {
+        const hash = window.location.hash.slice(1);
+        if (hash) document.getElementById(hash)?.scrollIntoView?.();
+    }, []);
+    const update = (patch: Partial<Spec>) => {
+        const next = { ...spec, ...patch };
+        setSpec(next);
+        window.history.replaceState(window.history.state, "", specUrl(next, window.location.search, window.location.hash));
     };
+    const pick = (id: string) => update({ actuator: id });
     const selected = latest.find((p) => p.actuatorId === actuator) ?? cheapest;
     const open = new Set(gs.filter((g) => g.open).map((g) => g.id));
     const waiting = gs.filter((g) => !g.open);
@@ -80,6 +93,10 @@ export function Prices({ menuOpen = false, points = PRICE_HISTORY.points }: {
                             anchor={open.has("history") ? undefined : "history"} />
                     </>
                     : <p className="pr-empty">No priced actuator with a peak torque yet.</p>}
+            </Section>
+            <Section n={n++} id="find" title="Find one for your spec">
+                <SpecFinder listings={listings} spec={spec} selected={actuator}
+                    spark={open.has("history") ? [...points.map((p) => p.date)].sort()[0] : undefined} onSpec={update} />
             </Section>
             {open.has("curve") ? <Section n={n++} id="per-nm" title="$/Nm over time">
                 <NmOverTime points={nm} />

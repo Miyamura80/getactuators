@@ -1,4 +1,4 @@
-/* /prices: today's strip, then trend views as they unlock. Instrument HUD
+/* /prices: today's strip, the spec search, then trend views as they unlock. Instrument HUD
    per BRAND.md: square, thin rules, numbers in mono. Also the sparkline on
    catalog pages. */
 
@@ -133,8 +133,131 @@
 .pr-spark { display: inline-flex; align-items: center; gap: 10px; margin-top: 12px; color: var(--muted); font: 11px var(--mono); text-decoration: none; }
 .pr-spark:hover span { color: var(--text); text-decoration: underline; }
 .pr-spark:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
-.pr-spark path { fill: none; stroke: var(--cyan); stroke-width: 2; }
-.pr-spark circle { fill: var(--cyan); }
+.pr-spark-svg path { fill: none; stroke: var(--cyan); stroke-width: 2; }
+.pr-spark-svg circle { fill: var(--cyan); }
+
+/* 02: spec search. One ruled strip of fields, torque first and widest. */
+.pr-spec {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+    border: 1px solid var(--line-strong);
+}
+.pr-field { display: grid; gap: 8px; min-width: 0; padding: 10px 14px; border-left: 1px solid var(--line-strong); }
+.pr-field:first-child { border-left: 0; }
+.pr-field > span:first-child { font: 600 10px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.pr-input { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
+.pr-input em { font: 600 14px var(--mono); font-style: normal; color: var(--muted); }
+.pr-input input {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--text);
+    font: 600 20px/1.2 var(--mono);
+    font-variant-numeric: tabular-nums;
+    outline: none;
+}
+.pr-input input::placeholder { color: var(--line-strong); }
+.pr-field-nm .pr-input input { color: var(--cyan); }
+.pr-field:focus-within { box-shadow: inset 0 0 0 1px var(--cyan); }
+.pr-field select {
+    min-width: 0;
+    width: 100%;
+    min-height: 28px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--text);
+    font: 600 13px var(--mono);
+    outline: none;
+}
+.pr-field select option { background: var(--panel); }
+
+.pr-summary { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; margin: 10px 0 14px; font: 12px/1.5 var(--mono); color: var(--muted); }
+.pr-summary b { color: var(--text); font-weight: 600; }
+.pr-clear, .pr-more {
+    padding: 2px 8px;
+    border: 1px solid var(--line-strong);
+    background: transparent;
+    color: var(--muted);
+    font: 600 11px var(--mono);
+    cursor: pointer;
+}
+.pr-clear { margin-left: auto; }
+.pr-more { margin-top: 10px; padding: 6px 12px; }
+.pr-clear:hover, .pr-more:hover { color: var(--text); }
+
+/* Ranked list beside the scatter; the scatter stays in view while scrolling. */
+.pr-tool { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 420px); gap: 16px 32px; align-items: start; }
+.pr-tool > .pr-scatter { position: sticky; top: 8px; }
+.pr-matches { min-width: 0; }
+.pr-match-list { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.pr-match {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr) 60px 72px 96px;
+    grid-template-areas: "rank name tq price sel" "rank meta tq price sel";
+    column-gap: 10px;
+    align-items: center;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--line);
+}
+.pr-match:hover, .pr-match.is-sel { background: var(--panel); }
+.pr-match.is-sel { box-shadow: inset 2px 0 0 var(--cyan); }
+.pr-rank { grid-area: rank; align-self: start; padding-top: 2px; font: 600 11px var(--mono); color: var(--muted); text-align: right; }
+.pr-name { grid-area: name; overflow: hidden; color: var(--text); font-weight: 600; font-size: 14px; text-decoration: none; white-space: nowrap; text-overflow: ellipsis; }
+.pr-name:hover { text-decoration: underline; }
+.pr-name:focus-visible, .pr-sel-btn:focus-visible, .pr-more:focus-visible, .pr-clear:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.pr-meta { grid-area: meta; display: flex; align-items: center; gap: 10px; min-width: 0; overflow: hidden; font: 11px var(--mono); color: var(--muted); white-space: nowrap; }
+.pr-cls { overflow: hidden; text-overflow: ellipsis; }
+.pr-cls i { display: inline-block; width: 8px; height: 8px; margin-right: 6px; }
+.pr-num { font: 13px var(--mono); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; color: var(--muted); }
+.pr-tq { grid-area: tq; }
+.pr-price { grid-area: price; color: var(--text); }
+.pr-sel-btn {
+    grid-area: sel;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    justify-self: end;
+    padding: 2px 4px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--muted);
+    font: 10px var(--mono);
+    cursor: pointer;
+}
+.pr-sel-btn:hover { border-color: var(--line-strong); }
+.pr-pernm { font: 600 13px var(--mono); font-variant-numeric: tabular-nums; color: var(--text); }
+.pr-match.is-best .pr-pernm, .pr-match.is-sel .pr-pernm { color: var(--cyan); }
+.pr-sel-btn .pr-spark-svg path { stroke: var(--muted); stroke-width: 1.5; }
+.pr-sel-btn .pr-spark-svg circle { fill: var(--text); }
+.pr-chg.is-down { color: var(--cyan); }
+
+/* Price vs peak torque */
+.pr-scatter { margin: 0; min-width: 0; }
+.pr-scatter .pr-chart { width: 100%; height: auto; }
+.pr-zone { fill: rgba(195, 255, 253, 0.06); stroke: var(--cyan); stroke-width: 1; stroke-dasharray: 3 3; }
+.pr-iso line { stroke: var(--line-strong); stroke-width: 1; }
+.pr-iso text { fill: var(--muted); font: 9px var(--mono); paint-order: stroke; stroke: var(--black); stroke-width: 3px; }
+.pr-frontier { fill: none; stroke: var(--text); stroke-width: 1.5; stroke-dasharray: 5 3; opacity: 0.8; }
+.pr-sc-dot { fill: var(--line-strong); stroke: var(--black); stroke-width: 1; cursor: pointer; }
+.pr-sc-dot.is-match { stroke-width: 1.5; }
+.pr-sc-dot.is-match.is-front { stroke: var(--text); }
+.pr-sc-dot:hover { stroke: var(--text); }
+.pr-hot circle { fill: none; stroke: var(--cyan); stroke-width: 1.5; }
+.pr-hot text { fill: var(--text); font: 600 11px var(--mono); paint-order: stroke; stroke: var(--black); stroke-width: 3px; }
+.pr-sc-legend { gap: 6px 16px; margin: 8px 0 0; font-size: 11px; color: var(--muted); }
+.pr-sc-legend i { vertical-align: middle; }
+.pr-key-match { border-radius: 50%; background: conic-gradient(hsl(152 70% 62%) 0 33%, hsl(210 70% 62%) 0 66%, hsl(28 70% 62%) 0); }
+.pr-sc-legend .pr-key-front { width: 16px; height: 0; border-top: 1.5px dashed var(--text); }
+
+@media (max-width: 960px) {
+    .pr-tool { grid-template-columns: minmax(0, 1fr); }
+    .pr-tool > .pr-scatter { position: static; }
+}
 
 @media (max-width: 640px) {
     .pr-fits th { white-space: normal; }
@@ -142,4 +265,12 @@
     .pr-gate { padding: 4px 12px 12px; }
     .pr-gate li { grid-template-columns: minmax(0, 1fr) auto; gap: 8px 12px; }
     .pr-gate progress { grid-column: 1 / -1; grid-row: 2; }
+    .pr-spec { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .pr-field:nth-child(3) { border-left: 0; }
+    .pr-field:nth-child(n + 3) { border-top: 1px solid var(--line-strong); }
+    .pr-match {
+        grid-template-columns: 22px minmax(0, 1fr) auto auto;
+        grid-template-areas: "rank name name sel" "rank meta tq price";
+        row-gap: 4px;
+    }
 }

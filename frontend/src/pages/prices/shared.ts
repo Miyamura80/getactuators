@@ -18,12 +18,6 @@ export const historyIds = (points: readonly PriceObservation[]) =>
         .filter((id) => byId.has(id))
         .sort((a, b) => (byId.get(a)?.name ?? a).localeCompare(byId.get(b)?.name ?? b));
 
-// The ?actuator= value when it names one of `ids`, else "".
-export function readActuator(search: string, ids: readonly string[]): string {
-    const id = new URLSearchParams(search).get("actuator") ?? "";
-    return ids.includes(id) ? id : "";
-}
-
 // Today's snapshot: each actuator once, at its latest $/Nm.
 export function latestNm(pts: readonly NmPoint[]): NmPoint[] {
     const last = new Map<string, NmPoint>();
@@ -87,17 +81,24 @@ export function timeAxis(dates: string[]) {
 export const tickLabel = (date: string) =>
     new Date(`${date}T00:00:00Z`).toLocaleDateString("en-US", { month: "short", year: "numeric", timeZone: "UTC" });
 
-// Log scale over [lo, hi] with decade and 2x/5x ticks inside the range.
-export function logAxis(lo: number, hi: number, top: number, bottom: number) {
+// Log scale mapping [lo, hi] onto [r0, r1], with decade and 2x/5x ticks
+// inside the range.
+export function logScale(lo: number, hi: number, r0: number, r1: number) {
     const a = Math.log10(lo);
     const b = Math.log10(hi);
     const span = b - a || 1;
-    const y = (v: number) => bottom - ((Math.log10(v) - a) / span) * (bottom - top);
+    const f = (v: number) => r0 + ((Math.log10(v) - a) / span) * (r1 - r0);
     const ticks: number[] = [];
     for (let e = Math.floor(a); e <= Math.ceil(b); e++)
         for (const m of [1, 2, 5]) {
-            const v = m * 10 ** e;
+            const v = Number((m * 10 ** e).toPrecision(3));
             if (v >= lo && v <= hi) ticks.push(v);
         }
-    return { y, ticks };
+    return { f, ticks };
+}
+
+// The same, vertical: lo at the bottom.
+export function logAxis(lo: number, hi: number, top: number, bottom: number) {
+    const { f, ticks } = logScale(lo, hi, bottom, top);
+    return { y: f, ticks };
 }

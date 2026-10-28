@@ -1,7 +1,7 @@
 import { type KeyboardEvent, useRef, useState } from "react";
 import { type NmPoint, boxStats } from "../../../../src/prices/trends";
 import { beeswarm } from "./beeswarm";
-import { CLASSES, byId, classColor, logAxis, perNmText, useWidth } from "./shared";
+import { CLASSES, byId, classColor, logScale, perNmText, useWidth } from "./shared";
 
 // 01: today's $/Nm for every priced actuator as a strip per class (or
 // country) on one log axis. Each dot is an actuator: hover or focus names it,
@@ -55,8 +55,7 @@ export function TodayStrip({ latest, selected, onPick }: {
     const hi = Math.max(...vals) * 1.25;
     const x0 = PAD + R + 2;
     const x1 = w - PAD - R - 2;
-    const { y: flip, ticks } = logAxis(lo, hi, x0, x1);
-    const x = (v: number) => x0 + x1 - flip(v);
+    const { f: x, ticks } = logScale(lo, hi, x0, x1);
 
     let top = 0;
     const rows: Row[] = groupsOf(latest, by).map((g) => {
