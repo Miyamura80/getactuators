@@ -1,10 +1,12 @@
 import type { MeasureScope, MeasureStatus, MeasureType } from "../../../../../src/supply-chain/policy/types";
 
-// The /policy symbol set, one stroke weight on a 16-unit grid: a padlock for
-// an export control, a percent sign for a tariff (a duty rate), a dollar sign
-// for a subsidy, a shield with a check for a standard (safety and
-// conformity). Colour repeats the type; the ring around the mark carries the
-// status, so neither relies on colour alone.
+// The /policy symbol set: each type is the object it acts like, knocked out
+// of a solid colour tile on a 24-unit grid. A boom gate for an export
+// control, a price tag with a percent sign for a tariff, a banknote for a
+// subsidy, a rosette with a check for a standard. Colour repeats the type.
+// The tile itself carries the status (solid in force, dashed outline when
+// announced or draft, a pause badge when suspended, faded once expired), so
+// neither type nor status relies on colour alone.
 
 export const TYPE_COLOR: Record<MeasureType, string> = {
     "export-control": "#ff922b",
@@ -13,62 +15,72 @@ export const TYPE_COLOR: Record<MeasureType, string> = {
     standard: "#b197fc",
 };
 
-export const SCOPE_SIZE: Record<MeasureScope, number> = { product: 12, sector: 15, economy: 19 };
+export const SCOPE_SIZE: Record<MeasureScope, number> = { product: 14, sector: 17, economy: 21 };
 
 function Shape({ type }: { type: MeasureType }) {
     switch (type) {
         case "export-control":
             return <>
-                <path d="M5.6 7.4V6.1a2.4 2.4 0 0 1 4.8 0v1.3" />
-                <rect x="4.3" y="7.4" width="7.4" height="5" />
+                <path d="M4.5 21.5V7.5h3.2v14M2.5 21.5h7.5" />
+                <rect x="7.7" y="8.6" width="13.8" height="4.2" />
+                <path d="M10.4 8.6h2.6v4.2h-2.6zM15.6 8.6h2.6v4.2h-2.6z" className="pl-solid" />
             </>;
         case "tariff":
             return <>
-                <path d="M11 4.6 5 11.4" />
-                <circle cx="5.4" cy="5.6" r="1.25" />
-                <circle cx="10.6" cy="10.4" r="1.25" />
+                <path d="M3 12.5 11.5 4H20v8.5L11.5 21z" />
+                <path d="M9.6 15.6l5.2-5.2" />
+                <circle cx="10" cy="11" r="1.2" />
+                <circle cx="14.4" cy="15.2" r="1.2" />
             </>;
         case "subsidy":
-            return <path d="M8 3.3v9.4M10.2 5.7c-.4-.6-1.1-.9-2.2-.9-1.3 0-2.1.6-2.1 1.5 0 2 4.4 1.2 4.4 3.3 0 1-.9 1.6-2.3 1.6-1.1 0-1.9-.4-2.3-1.1" />;
+            return <>
+                <rect x="2.5" y="6.5" width="19" height="11" rx="1" />
+                <circle cx="12" cy="12" r="2.8" />
+                <path d="M5.5 9.5v5M18.5 9.5v5" />
+            </>;
         case "standard":
             return <>
-                <path d="M8 3.2l4.2 1.5v3.2c0 2.5-1.7 4.1-4.2 4.9-2.5-.8-4.2-2.4-4.2-4.9V4.7z" />
-                <path d="M6.1 8.1l1.4 1.4 2.5-2.7" />
+                <circle cx="12" cy="9.5" r="6" />
+                <path d="M8.6 14.4 7 21.5l5-2.4 5 2.4-1.6-7.1" />
+                <path d="M9.4 9.6l1.8 1.8 3.4-3.6" />
             </>;
     }
 }
 
-// Ring styles: solid for in force, dotted for announced and draft, dashed for
-// suspended, none for expired (the mark itself fades).
-const RING: Partial<Record<MeasureStatus, string>> = {
-    "in-force": "",
-    announced: "1 2",
-    draft: "1 2",
-    suspended: "3 2",
-};
+const HOLLOW: ReadonlySet<MeasureStatus> = new Set(["announced", "draft"]);
 
-export function TypeGlyph({ type, status = "in-force", size = 16, ring = true }: {
+// The tile: solid, or a dashed outline while the measure is not yet in force.
+function Tile({ status }: { status: MeasureStatus }) {
+    return HOLLOW.has(status)
+        ? <rect x="1" y="1" width="22" height="22" rx="5" className="pl-tile is-hollow" />
+        : <rect x="1" y="1" width="22" height="22" rx="5" className="pl-tile" />;
+}
+
+function PauseBadge() {
+    return <g className="pl-pause">
+        <circle cx="21.5" cy="21.5" r="3.8" />
+        <path d="M20.3 19.9v3.2M22.7 19.9v3.2" />
+    </g>;
+}
+
+export function TypeGlyph({ type, status = "in-force", size = 16 }: {
     type: MeasureType;
     status?: MeasureStatus;
     size?: number;
-    ring?: boolean;
 }) {
-    const dash = RING[status];
-    return <svg className={`pl-glyph pl-st-${status}`} width={size} height={size} viewBox="0 0 16 16"
+    return <svg className={`pl-glyph pl-st-${status}`} width={size} height={size} viewBox="0 0 24 24"
         aria-hidden="true" style={{ color: TYPE_COLOR[type] }}>
-        {ring && dash !== undefined
-            ? <circle cx="8" cy="8" r="7.2" className="pl-ring" strokeDasharray={dash || undefined} />
-            : null}
-        <g className="pl-mark"><Shape type={type} /></g>
+        <Tile status={status} />
+        <g className="pl-mark" transform="translate(3.6 3.6) scale(0.7)"><Shape type={type} /></g>
+        {status === "suspended" ? <PauseBadge /> : null}
     </svg>;
 }
 
-// The status key on its own: the ring around a plain dot.
+// The status key on its own: the same tile treatment in neutral grey.
 export function StatusGlyph({ status, size = 14 }: { status: MeasureStatus; size?: number }) {
-    const dash = RING[status];
-    return <svg className={`pl-glyph pl-st-${status}`} width={size} height={size} viewBox="0 0 16 16" aria-hidden="true">
-        {dash !== undefined ? <circle cx="8" cy="8" r="7.2" className="pl-ring" strokeDasharray={dash || undefined} /> : null}
-        <circle cx="8" cy="8" r="2.2" className="pl-dot" />
+    return <svg className={`pl-glyph pl-st-${status} is-key`} width={size} height={size} viewBox="0 0 24 24" aria-hidden="true">
+        <Tile status={status} />
+        {status === "suspended" ? <PauseBadge /> : null}
     </svg>;
 }
 

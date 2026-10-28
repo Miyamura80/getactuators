@@ -99,7 +99,7 @@ export function Policy({ menuOpen = false }: { menuOpen?: boolean }) {
                     <div className="pl-types" role="group" aria-label="Type">
                         {MEASURE_TYPES.map((t) => <button key={t} type="button" aria-pressed={filters.types.includes(t)}
                             onClick={() => update({ types: toggle(MEASURE_TYPES, filters.types, t) })}>
-                            <TypeGlyph type={t} ring={false} />
+                            <TypeGlyph type={t} />
                             <span>{MEASURE_TYPE_LABEL[t]}</span>
                             <b>{typeCount(t)}</b>
                         </button>)}
