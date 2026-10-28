@@ -4,9 +4,9 @@ import { afterEach, beforeEach, expect, test } from "bun:test";
 import { act, cleanup, fireEvent, render } from "@testing-library/react";
 import { clipArc, edgePoint } from "../src/components/maps/arc-geometry";
 import { choroplethScale } from "../src/components/maps/choropleth";
-import { groupName, groupPoints } from "../src/components/maps/cluster";
+import { groupName, groupPoints, mergeOverlapping } from "../src/components/maps/cluster";
 import { ClusterZoom } from "../src/components/maps/ClusterZoom";
-import { labelSize, placeLabels } from "../src/components/maps/labels";
+import { labelOffset, labelSize, placeLabels } from "../src/components/maps/labels";
 import { niceScale } from "../src/components/maps/ScaleBar";
 import { LAB_CLUSTERS } from "../../src/supply-chain/lab-kit";
 import type { MapTopology } from "../src/components/maps/geo";
@@ -23,10 +23,12 @@ import { SupplyGraph } from "../src/components/flows/SupplyGraph";
 import { ValueSankey } from "../src/components/flows/ValueSankey";
 import { FootnotesProvider } from "../src/components/supply-chain/footnotes";
 import { LabMaps } from "../src/pages/supply-chain/lab/LabMaps";
-import { SEGMENT_COLOR, arcsTouching, sitePins, supplyArcs } from "../../src/supply-chain/map";
+import { SEGMENT_COLOR, SEGMENT_PICTO, arcsTouching, mixPhrase, segmentMix, sitePins, supplyArcs } from "../../src/supply-chain/map";
+import { mixSize } from "../../src/supply-chain/map-groups";
 const geo = (f: string) => JSON.parse(readFileSync(new URL(`../public/geo/${f}`, import.meta.url), "utf8")) as MapTopology;
 const WORLD = geo("world-110m.json");
 const JP = geo("jp-admin1.json");
+const CN = geo("cn-admin1.json");
 
 afterEach(cleanup);
 beforeEach(() => window.history.replaceState({}, "", "/lab/supply-chain"));
@@ -72,10 +74,55 @@ test("pins are keyboard-focusable buttons named by site, segment and precision",
     expect(pin.getAttribute("aria-label")).toContain("Rare earth mining & refining");
     const hollow = c.querySelector('[data-pin="mp-las-vegas"]');
     expect(hollow?.getAttribute("aria-label")).toContain("(city centre)");
-    expect(hollow?.querySelector(".mk-glyph.is-hollow")).not.toBeNull();
-    // Shape encodes the segment.
-    expect(pin.querySelector("circle")).not.toBeNull();
-    expect(c.querySelector('[data-pin="tesla-austin"] path')?.getAttribute("d")).toContain("Z");
+    // A city centre is a hollow (dashed) tile, an exact site a solid one.
+    expect(hollow?.querySelector(".ot-tile.is-hollow")).not.toBeNull();
+    expect(pin.querySelector(".ot-tile.is-hollow")).toBeNull();
+    // The pictogram encodes the segment: a pickaxe here, a robot arm at Tesla.
+    expect(pin.querySelector(".ot-mark path")?.getAttribute("d")).toBe(SEGMENT_PICTO["ree-mining-refining"].line);
+    expect(c.querySelector('[data-pin="tesla-austin"] .ot-mark path')?.getAttribute("d")).toBe(SEGMENT_PICTO["robot-actuator-oem"].line);
+});
+
+test("group markers show what they hold: segment tiles in chain order with counts", () => {
+    const here = PINS.filter((p) => p.country === "CN");
+    const c = render(<CountryMap code="CN" sites={here} topology={CN}>
+        <ClusterZoom pins={here} clusters={LAB_CLUSTERS} />
+    </CountryMap>).container;
+    const groups = [...c.querySelectorAll<HTMLButtonElement>(".mk-cluster")];
+    expect(groups.length).toBeGreaterThan(0);
+    for (const g of groups) {
+        expect(g.tagName).toBe("BUTTON");
+        const ids = (g.getAttribute("data-group") ?? "").split("|");
+        const mix = segmentMix(here.filter((p) => ids.includes(p.id)));
+        // One tile per segment present, in chain order, with a count above one.
+        const cells = [...g.querySelectorAll(".mk-mix-cell")];
+        expect(cells.map((cell) => cell.querySelector(".ot-mark path")?.getAttribute("d"))).toEqual(mix.map((m) => SEGMENT_PICTO[m.segment].line));
+        expect(cells.map((cell) => cell.querySelector("b")?.textContent ?? "1")).toEqual(mix.map((m) => String(m.n)));
+        // The accessible name lists the same contents; no bare count.
+        expect(g.getAttribute("aria-label")).toContain(mixPhrase(mix));
+        expect(g.textContent).not.toBe(String(ids.length));
+    }
+    // Named by what members share, then what is there, then the action.
+    const baotou = groups.find((g) => g.getAttribute("aria-label")?.startsWith("Baotou:"));
+    expect(baotou?.getAttribute("aria-label")).toBe("Baotou: 1 rare earth site, 2 magnet and motor sites. List them");
+    // Sites sharing a city still open as a list, each row with its tile.
+    act(() => { fireEvent.click(baotou as Element); });
+    expect(baotou?.getAttribute("aria-expanded")).toBe("true");
+    expect(c.querySelectorAll(".mk-group-list li .mk-tile")).toHaveLength(3);
+    // The cluster index under the map carries the same tiles and name.
+    const index = [...c.querySelectorAll(".mk-cluster-index button")];
+    expect(index.every((b) => b.querySelector(".mk-mix .ot") && /: \d+ /.test(b.getAttribute("aria-label") ?? ""))).toBe(true);
+});
+
+test("group markers never overlap each other or a lone pin", () => {
+    const sizes = new Map<string, [number, number]>([["a", [40, 40]], ["b", [17, 17]], ["c", [17, 17]]]);
+    const placed = [{ id: "a", at: [0, 0] as [number, number] }, { id: "b", at: [25, 0] as [number, number] }, { id: "c", at: [100, 0] as [number, number] }];
+    const sizeOf = (ids: readonly string[]): [number, number] => (ids.length === 1 ? sizes.get(ids[0] as string) ?? [0, 0] : [60, 40]);
+    const merged = mergeOverlapping(placed.map((p) => ({ ids: [p.id], at: p.at })), new Map(placed.map((p) => [p.id, p.at])), sizeOf);
+    expect(merged.map((g) => g.ids)).toEqual([["a", "b"], ["c"]]);
+    // Sized like the markup: a 2 x 2 block of 16 px tiles, counts beside.
+    const [w, h] = mixSize([{ segment: "magnets-motors", n: 3 }, { segment: "gears-screws-bearings", n: 1 }, { segment: "robot-actuator-oem", n: 12 }]);
+    expect(h).toBe(16 * 2 + 2 + 4 + 2);
+    expect(w).toBeGreaterThan(16 * 2 + 2 + 4 + 2);
 });
 
 test("every map carries a hidden table equivalent", () => {
@@ -108,12 +155,12 @@ test("arc geometry: clip at the frame and drop floating runs", () => {
     expect(edgePoint([50, 50], [50, 150], 100, 100)).toEqual([50, 100]);
 });
 
-test("pins pair segment colour with shape; hover card carries the monogram and site", () => {
+test("pins pair segment colour with a pictogram; hover card carries the monogram and site", () => {
     const c = render(<WorldMap label="Sites" topology={WORLD}><Pins pins={PINS} /></WorldMap>).container;
     const pin = c.querySelector('[data-pin="mp-mountain-pass"]') as HTMLElement;
-    const glyph = pin.querySelector(".mk-glyph") as SVGElement;
+    const glyph = pin.querySelector(".mk-tile") as SVGElement;
     expect(glyph.getAttribute("style")).toContain(SEGMENT_COLOR["ree-mining-refining"]);
-    expect(glyph.querySelector("circle")).not.toBeNull();
+    expect(glyph.querySelector(".ot-mark .ot-solid")?.getAttribute("d")).toBe(SEGMENT_PICTO["ree-mining-refining"].solid);
     expect(pin.querySelector(".mk-mono")?.textContent).toBe("MM");
     expect(pin.querySelector(".mk-tip i")?.textContent).toBe("Mountain Pass mine and separation plant");
 });
@@ -151,6 +198,14 @@ test("label placement: priority first, no overlaps, markers and HUD kept clear",
     expect(placed[0]?.side).toBe("right");
     expect(placed[1]?.side).toBe("left");
     expect(labelSize(item("x", 0, 0)).every((n) => n > 0)).toBe(true);
+    // A wide group marker keeps labels clear of its whole tile block.
+    const block = { ...item("block", 100, 1), r: 30, ry: 8 };
+    expect(labelOffset(block, "right")[0]).toBe(33);
+    expect(labelOffset(block, "top")[1]).toBe(-(8 + 3 + 14));
+    // "near" has no room right and its left label would cover the block, so
+    // it drops; the block's own label goes above it.
+    const beside = placeLabels([block, item("near", 125, 2)], 160, 100, 1);
+    expect(beside.map((p) => [p.item.id, p.side])).toEqual([["block", "top"]]);
 });
 
 test("groups take the name their members share: cluster, company, then region", () => {

@@ -16,8 +16,10 @@ export interface LabelItem {
     text: string;
     priority: number;
     tone: LabelTone;
-    // Half-size of the marker in CSS pixels: an obstacle for every label.
+    // Half-width of the marker in CSS pixels: an obstacle for every label.
     r: number;
+    // Half-height, when the marker is not square (a group's tile block).
+    ry?: number;
     // City dots are drawn by the label layer itself.
     dot?: "city" | "capital";
 }
@@ -43,12 +45,22 @@ export function labelSize(item: LabelItem): [number, number] {
     return [Math.ceil(item.text.length * CHAR_PX[item.tone]) + 8, LABEL_H[item.tone]];
 }
 
-function rectFor(at: Point, r: number, [w, h]: [number, number], side: Side): Rect {
-    const [x, y] = at;
-    if (side === "right") return [x + r + GAP, y - h / 2, x + r + GAP + w, y + h / 2];
-    if (side === "left") return [x - r - GAP - w, y - h / 2, x - r - GAP, y + h / 2];
-    if (side === "top") return [x - w / 2, y - r - GAP - h, x + w / 2, y - r - GAP];
-    return [x - w / 2, y + r + GAP, x + w / 2, y + r + GAP + h];
+// Where a label's box sits beside its marker, in CSS pixels from the marker
+// centre: [left, top] offsets for each side.
+export function labelOffset(item: LabelItem, side: Side): Point {
+    const [w, h] = labelSize(item);
+    const rx = item.r + GAP;
+    const ry = (item.ry ?? item.r) + GAP;
+    if (side === "right") return [rx, -h / 2];
+    if (side === "left") return [-rx - w, -h / 2];
+    if (side === "top") return [-w / 2, -ry - h];
+    return [-w / 2, ry];
+}
+
+function rectFor(at: Point, item: LabelItem, side: Side): Rect {
+    const [w, h] = labelSize(item);
+    const [dx, dy] = labelOffset(item, side);
+    return [at[0] + dx, at[1] + dy, at[0] + dx + w, at[1] + dy + h];
 }
 
 const hits = (a: Rect, b: Rect) => a[0] < b[2] && b[0] < a[2] && a[1] < b[3] && b[1] < a[3];
@@ -60,7 +72,8 @@ export function placeLabels(items: readonly LabelItem[], width: number, height: 
     const px = (p: Point): Point => [p[0] * scale, p[1] * scale];
     const markers: Rect[] = items.map((i) => {
         const [x, y] = px(i.at);
-        return [x - i.r, y - i.r, x + i.r, y + i.r];
+        const ry = i.ry ?? i.r;
+        return [x - i.r, y - ry, x + i.r, y + ry];
     });
     const taken: Rect[] = [...reserved];
     const out: PlacedLabel[] = [];
@@ -70,9 +83,8 @@ export function placeLabels(items: readonly LabelItem[], width: number, height: 
         if (!item.text) continue;
         const at = px(item.at);
         if (at[0] < 0 || at[0] > W || at[1] < 0 || at[1] > H) continue;
-        const size = labelSize(item);
         for (const side of SIDES) {
-            const rect = rectFor(at, item.r, size, side);
+            const rect = rectFor(at, item, side);
             if (rect[0] < 2 || rect[1] < 2 || rect[2] > W - 2 || rect[3] > H - 2) continue;
             if (taken.some((t) => hits(t, rect))) continue;
             if (markers.some((m, j) => j !== i && hits(m, rect))) continue;

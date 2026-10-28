@@ -1,0 +1,9 @@
+/* Object tiles (ObjectTile.tsx): solid colour, object knocked out in black;
+   hollow is a dashed outline with the object in the colour. */
+.ot { flex: none; overflow: visible; }
+.ot .ot-tile { fill: currentColor; stroke: currentColor; stroke-width: 1.6; }
+.ot .ot-tile.is-hollow { fill: var(--bg, #000); stroke-dasharray: 2.4 2; }
+.ot .ot-mark { fill: none; stroke: #000; stroke-width: 2.6; stroke-linejoin: round; stroke-linecap: round; }
+.ot .ot-mark .ot-solid { fill: #000; }
+.ot .ot-tile.is-hollow + .ot-mark { stroke: currentColor; }
+.ot .ot-tile.is-hollow + .ot-mark .ot-solid { fill: currentColor; }
