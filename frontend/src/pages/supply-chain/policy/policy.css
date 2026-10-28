@@ -20,12 +20,17 @@
 
 /* Glyphs */
 .pl-glyph { flex: none; overflow: visible; }
-.pl-glyph .pl-mark { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: miter; }
-.pl-glyph .pl-ring { fill: none; stroke: var(--muted); stroke-width: 1; }
-.pl-glyph .pl-dot { fill: var(--text); }
-.pl-st-in-force .pl-ring { stroke: var(--text); }
+.pl-glyph .pl-tile { fill: currentColor; stroke: currentColor; stroke-width: 1.6; }
+.pl-glyph .pl-tile.is-hollow { fill: var(--bg, #000); stroke-dasharray: 2.4 2; }
+.pl-glyph .pl-mark { fill: none; stroke: #000; stroke-width: 2.6; stroke-linejoin: round; stroke-linecap: round; }
+.pl-glyph .pl-mark .pl-solid { fill: #000; }
+.pl-glyph .pl-tile.is-hollow + .pl-mark { stroke: currentColor; }
+.pl-glyph .pl-tile.is-hollow + .pl-mark .pl-solid { fill: currentColor; }
+.pl-glyph .pl-pause circle { fill: var(--bg, #000); stroke: currentColor; stroke-width: 1.2; }
+.pl-glyph .pl-pause path { fill: none; stroke: currentColor; stroke-width: 1.2; }
+.pl-glyph.is-key { color: var(--muted); }
+.pl-st-in-force.is-key { color: var(--text); }
 .pl-st-expired { opacity: 0.4; }
-.pl-st-draft .pl-mark { stroke-width: 1.2; }
 
 /* Filters */
 .pl-filters { display: grid; gap: 10px; padding: 18px 0 14px; }
@@ -139,7 +144,7 @@
 }
 .pl-marker:hover::after, .pl-marker:focus-visible::after { opacity: 1; }
 .pl-marker[aria-pressed="true"] { z-index: 3; }
-.pl-marker[aria-pressed="true"] .pl-ring { stroke: var(--cyan); stroke-width: 1.4; }
+.pl-marker[aria-pressed="true"] { outline: 2px solid var(--cyan); outline-offset: 1px; }
 .has-focus .pl-item:not(.is-on) .pl-marker { opacity: 0.18; }
 .has-focus .pl-item:not(.is-on) .pl-marker:hover, .has-focus .pl-item:not(.is-on) .pl-marker:focus-visible { opacity: 0.8; }
 .pl-bar { position: absolute; height: 2px; background: currentColor; animation: pl-trace 260ms ease-out both; transform-origin: left; }
