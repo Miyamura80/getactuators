@@ -15,8 +15,6 @@
 }
 .pg-label span { color: var(--line-strong); font-variant-numeric: tabular-nums; }
 .pg-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-/* The core card spans two of the three contributor columns, on the same grid. */
-.pg-core .pc-core { grid-column: span 2; }
 
 .pc {
     --face: 88px;
@@ -49,7 +47,8 @@
 .pc:focus-within::before,
 .pc:focus-within::after { border-color: var(--cyan); }
 
-.pc-core { --face: 132px; flex-direction: row; align-items: center; gap: 24px; padding: 24px; }
+/* The core card spans two of the three contributor columns, on the same grid. */
+.pc-core { grid-column: span 2; --face: 132px; flex-direction: row; align-items: center; gap: 24px; padding: 24px; }
 
 .pc-face {
     flex: none;
@@ -146,8 +145,7 @@
 
 @media (max-width: 860px) {
     .pg-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; }
-    .pg-core .pc-core { grid-column: auto; }
     .pc { --face: 64px; flex-direction: row; align-items: flex-start; gap: 16px; padding: 16px; }
-    .pc-core { --face: 88px; align-items: center; }
+    .pc-core { grid-column: auto; --face: 88px; align-items: center; }
     .pc-core .pc-name { font-size: 22px; }
 }

@@ -2,11 +2,11 @@ import { useEffect } from "react";
 import { PublicHeader } from "../components/PublicHeader";
 import { PublicFooter } from "../components/PublicFooter";
 import { PeopleGrid } from "../components/people/PeopleGrid";
-import { CONTRIBUTORS_PATH, peopleIn } from "../../../src/people";
+import { CONTRIBUTORS, CONTRIBUTORS_PATH } from "../../../src/people";
+import { REPO_URL } from "../../../src/public-navigation";
 import "./tools.css";
 
 const TITLE = "Contributors";
-const REPO = "https://github.com/Miyamura80/getactuators";
 
 export function Contributors({ menuOpen = false }: { menuOpen?: boolean }) {
     useEffect(() => {
@@ -26,11 +26,11 @@ export function Contributors({ menuOpen = false }: { menuOpen?: boolean }) {
                     <h1>Who builds actuatorlist</h1>
                 </header>
 
-                <PeopleGrid label="Core" people={peopleIn("contributor-core")} core />
-                <PeopleGrid label="Contributors" people={peopleIn("contributor")} />
+                <PeopleGrid label="Core" people={CONTRIBUTORS.filter((p) => p.contributor === "core")} />
+                <PeopleGrid label="Contributors" people={CONTRIBUTORS.filter((p) => p.contributor === "member")} />
 
                 <div className="ctb-foot">
-                    <a className="req-cta" href={REPO} target="_blank" rel="noopener">
+                    <a className="req-cta" href={REPO_URL} target="_blank" rel="noopener">
                         Contribute on GitHub
                     </a>
                     <p>

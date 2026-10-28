@@ -1,16 +1,8 @@
 // Shared people registry: who appears on /contributors (and later /people),
 // with a headshot and the logo of their main affiliation.
 
-// Sources registry ids (#71). Plain strings until that registry lands.
-export type SourceId = string;
-
-export type Licence =
-    | "consent"
-    | "press-kit"
-    | "cc-by"
-    | "cc-by-sa"
-    | "public-domain"
-    | "own";
+export const LICENCES = ["consent", "own", "press-kit"] as const;
+export type Licence = (typeof LICENCES)[number];
 
 // A self-hosted image. `path` is the served URL; the file lives under
 // frontend/public at the same path (frontend/public/people/<id>.webp,
@@ -24,50 +16,20 @@ export interface ImageAsset {
     retrieved: string;
 }
 
-export type LinkKind = "github" | "web" | "x" | "linkedin" | "scholar";
-
-export type PersonList = "contributor-core" | "contributor" | "people";
-
-export interface Person {
-    id: string;
-    name: string;
-    localName?: string;
-    role: string;
-    affiliation: { orgId: string; title?: string };
-    headshot?: ImageAsset;
-    links: { kind: LinkKind; url: string }[];
-    lists: PersonList[];
-    // At most 40 words.
-    bio?: string;
-    // One line on what they contributed to actuatorlist.
-    contribution?: string;
-    // Extra commit emails, beyond the GitHub noreply address derived from a
-    // github link, used to count their commits in git history.
-    gitEmails?: string[];
-    sources?: SourceId[];
-    // Facts the owner still has to confirm before merge (#85). Rendered as
-    // written meanwhile; drop an entry once it is confirmed.
-    unconfirmed?: { field: "name" | "github"; question: string }[];
+// src/people/assets.json: image records keyed by person id and org id.
+export interface AssetFile {
+    people: Record<string, ImageAsset>;
+    orgs: Record<string, ImageAsset>;
 }
+
+export type LinkKind = "github" | "web" | "x" | "linkedin" | "scholar";
 
 export interface Org {
     id: string;
     name: string;
     url: string;
     logo?: ImageAsset;
-    // Supply-chain Company registry id (#71), when the org has a record there.
-    companyId?: string;
     // src/brands registry id: without a self-hosted logo, the org is drawn
     // with that brand's CompanyLogo tile.
     brandId?: string;
-}
-
-// Commit counts per person, snapshotted from git history by
-// `bun scripts/people-assets.ts contributions`.
-export interface Contribution {
-    commits: number;
-    // Squash-merged pull requests (subjects ending in "(#123)").
-    pullRequests: number;
-    first: string;
-    last: string;
 }

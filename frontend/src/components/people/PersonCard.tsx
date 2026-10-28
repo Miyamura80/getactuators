@@ -1,13 +1,14 @@
-import { initials, orgOf, type LinkKind, type Person } from "../../../../src/people";
+import { LINK_LABEL, orgOf, type LinkKind, type Person } from "../../../../src/people";
 import { OrgLogo } from "./OrgLogo";
 
-const LINK_LABEL: Record<LinkKind, string> = {
-    github: "GitHub",
-    web: "Website",
-    x: "X",
-    linkedin: "LinkedIn",
-    scholar: "Google Scholar",
-};
+function initials(name: string): string {
+    return name
+        .split(/\s+/)
+        .filter(Boolean)
+        .map((w) => w[0]?.toUpperCase() ?? "")
+        .slice(0, 2)
+        .join("");
+}
 
 // simple-icons marks (viewBox 0 0 24 24); web and scholar share a globe.
 const BRAND_PATH: Partial<Record<LinkKind, string>> = {
@@ -33,7 +34,7 @@ function LinkIcon({ kind }: { kind: LinkKind }) {
     );
 }
 
-export function Headshot({ person }: { person: Person }) {
+function Headshot({ person }: { person: Person }) {
     return (
         <div className="pc-face">
             {person.headshot ? (
@@ -47,23 +48,16 @@ export function Headshot({ person }: { person: Person }) {
     );
 }
 
-// One person: headshot, name, affiliation (contributors only) and links.
-// `core` draws the larger card; `showRole` adds the role under the name.
-export function PersonCard({
-    person,
-    core = false,
-    showRole = core,
-}: {
-    person: Person;
-    core?: boolean;
-    showRole?: boolean;
-}) {
+// One person: headshot, name and links. The core card (person.contributor
+// "core") is larger and adds the role; every other card adds the affiliation.
+export function PersonCard({ person }: { person: Person }) {
+    const core = person.contributor === "core";
     return (
         <article className={`pc${core ? " pc-core" : ""}`} aria-label={person.name}>
             <Headshot person={person} />
             <div className="pc-body">
                 <h3 className="pc-name">{person.name}</h3>
-                {showRole && <p className="pc-role">{person.role}</p>}
+                {core && <p className="pc-role">{person.role}</p>}
                 {!core && <OrgLogo org={orgOf(person)} />}
                 {person.links.length > 0 && (
                     <div className="pc-links">

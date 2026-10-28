@@ -5,7 +5,7 @@ import { mountApp } from "../src/startup";
 import { Contributors } from "../src/pages/Contributors";
 import { PersonCard } from "../src/components/people/PersonCard";
 import { OrgLogo } from "../src/components/people/OrgLogo";
-import { ORGS, PEOPLE, peopleIn } from "../../src/people";
+import { CONTRIBUTORS, ORGS, PEOPLE } from "../../src/people";
 import { FOOTER_GROUPS } from "../../src/public-navigation";
 
 afterEach(cleanup);
@@ -31,10 +31,8 @@ test("the app routes /contributors to the contributors page", async () => {
 test("/contributors shows the core card first, then every contributor", () => {
     const view = render(<Contributors />);
     const cards = [...view.container.querySelectorAll("article.pc")];
-    const expected = [...peopleIn("contributor-core"), ...peopleIn("contributor")].map((p) => p.name);
-    expect(cards.map((c) => c.getAttribute("aria-label"))).toEqual(expected);
-    expect(cards[0]?.classList.contains("pc-core")).toBe(true);
-    expect(view.container.querySelectorAll(".pc-core")).toHaveLength(peopleIn("contributor-core").length);
+    expect(cards.map((c) => c.getAttribute("aria-label"))).toEqual(CONTRIBUTORS.map((p) => p.name));
+    expect(cards.map((c) => c.classList.contains("pc-core"))).toEqual(CONTRIBUTORS.map((p) => p.contributor === "core"));
 });
 
 test("one CTA, a /contact route for changes, and the shared footer", () => {
@@ -70,7 +68,7 @@ test("contributor cards show their affiliation; the core card and every card ski
 });
 
 test("org logos: a mask silhouette, the shared CompanyLogo for a registry brand, else a wordmark", () => {
-    for (const org of ORGS) {
+    for (const org of Object.values(ORGS)) {
         const view = render(<OrgLogo org={org} />);
         if (org.logo) {
             const mark = view.container.querySelector<HTMLElement>(".org-mark");
@@ -88,7 +86,7 @@ test("org logos: a mask silhouette, the shared CompanyLogo for a registry brand,
 
 test("profile links are labelled icon links that open safely", () => {
     const person = PEOPLE.find((p) => p.links.length > 0)!;
-    const view = render(<PersonCard person={person} core />);
+    const view = render(<PersonCard person={person} />);
     const links = [...view.container.querySelectorAll(".pc-links a")];
     expect(links).toHaveLength(person.links.length);
     for (const a of links) {

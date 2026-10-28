@@ -2,39 +2,34 @@ import { describe, expect, test } from "bun:test";
 import { existsSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { resolveBrand } from "@/brands";
-import { ORGS, PEOPLE, contributionOf, orgOf } from "@/people";
+import { LICENCES, ORGS, PEOPLE } from "@/people";
 import type { ImageAsset } from "@/people";
 import sharp from "sharp";
 import { MAX_BYTES, headshot, logo } from "../../scripts/people-assets";
 
 const PUBLIC = "frontend/public";
-const LICENCES = ["consent", "press-kit", "cc-by", "cc-by-sa", "public-domain", "own"];
 
 const assets: [string, ImageAsset][] = [
     ...PEOPLE.flatMap((p) =>
         p.headshot ? [[p.id, p.headshot] as [string, ImageAsset]] : [],
     ),
-    ...ORGS.flatMap((o) => (o.logo ? [[o.id, o.logo] as [string, ImageAsset]] : [])),
+    ...Object.values(ORGS).flatMap((o) =>
+        o.logo ? [[o.id, o.logo] as [string, ImageAsset]] : [],
+    ),
 ];
 
 describe("people registry", () => {
-    test("ids are unique and every affiliation resolves", () => {
+    test("person ids are unique", () => {
         expect(new Set(PEOPLE.map((p) => p.id)).size).toBe(PEOPLE.length);
-        expect(new Set(ORGS.map((o) => o.id)).size).toBe(ORGS.length);
-        for (const p of PEOPLE) expect(orgOf(p).id).toBe(p.affiliation.orgId);
-    });
-
-    test("bios stay within 40 words", () => {
-        for (const p of PEOPLE)
-            expect(
-                (p.bio ?? "").split(/\s+/).filter(Boolean).length,
-            ).toBeLessThanOrEqual(40);
     });
 
     test("every asset has a licence, a source and a retrieved date, and fits 80 KB", () => {
         expect(assets.length).toBeGreaterThan(0);
         for (const [id, a] of assets) {
-            expect({ id, licence: LICENCES.includes(a.licence) }).toEqual({
+            expect({
+                id,
+                licence: (LICENCES as readonly string[]).includes(a.licence),
+            }).toEqual({
                 id,
                 licence: true,
             });
@@ -59,24 +54,9 @@ describe("people registry", () => {
         }
     });
 
-    test("every unconfirmed fact names a question", () => {
-        for (const p of PEOPLE)
-            for (const u of p.unconfirmed ?? [])
-                expect(u.question.length).toBeGreaterThan(0);
-    });
-
     test("every org brandId resolves in the brand registry", () => {
-        for (const o of ORGS)
+        for (const o of Object.values(ORGS))
             if (o.brandId) expect(resolveBrand(o.brandId)?.id).toBe(o.brandId);
-    });
-
-    test("contribution snapshots are well formed", () => {
-        for (const p of PEOPLE) {
-            const c = contributionOf(p);
-            if (!c) continue;
-            expect(c.commits).toBeGreaterThanOrEqual(c.pullRequests);
-            expect(c.first <= c.last).toBe(true);
-        }
     });
 });
 

@@ -2,28 +2,17 @@ import type { Person } from "../../../../src/people";
 import { PersonCard } from "./PersonCard";
 import "./people.css";
 
-// A labelled group of person cards: a mono heading with the count, then the
-// grid. `core` draws every card at the larger size.
-export function PeopleGrid({
-    label,
-    people,
-    core = false,
-    showRole,
-}: {
-    label: string;
-    people: Person[];
-    core?: boolean;
-    showRole?: boolean;
-}) {
+// A labelled group of person cards: a mono heading with the count, then the grid.
+export function PeopleGrid({ label, people }: { label: string; people: Person[] }) {
     return (
         <section className="pg" aria-label={label}>
             <h2 className="pg-label">
                 {label}
                 <span>{people.length}</span>
             </h2>
-            <div className={`pg-grid${core ? " pg-core" : ""}`}>
+            <div className="pg-grid">
                 {people.map((p) => (
-                    <PersonCard key={p.id} person={p} core={core} showRole={showRole} />
+                    <PersonCard key={p.id} person={p} />
                 ))}
             </div>
         </section>
