@@ -1,0 +1,21 @@
+{
+    "id": 7001,
+    "title": "Example Joint Module",
+    "handle": "example-joint-module",
+    "variants": [
+        {
+            "id": 1,
+            "title": "24V / single encoder",
+            "price": 18900,
+            "available": true,
+            "sku": "EJM-24"
+        },
+        {
+            "id": 2,
+            "title": "48V / dual encoder 2EC",
+            "price": 21900,
+            "available": true,
+            "sku": "EJM-48-2EC"
+        }
+    ]
+}

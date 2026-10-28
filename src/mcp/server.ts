@@ -8,6 +8,7 @@ import { benchmarkTools } from "./tools/benchmarks";
 import { compareTools } from "./tools/compare";
 import { engineeringTools } from "./tools/engineering";
 import { patentTools } from "./tools/patents";
+import { priceTools } from "./tools/prices";
 import { robotTools } from "./tools/robots";
 import { supplyChainTools } from "./tools/supply-chain";
 
@@ -32,6 +33,7 @@ export const CATALOG_TOOLS: readonly ToolDef[] = [
     ...supplyChainTools,
     ...patentTools,
     ...benchmarkTools,
+    ...priceTools,
 ];
 
 export const INSTRUCTIONS = `actuatorlist is an open, read-only catalog of robot actuators and the robots that use them. No account or key is needed and no tool changes anything.
@@ -51,6 +53,7 @@ Which tool to use:
 - Supply chain (who makes magnets, gears and actuators, and where): list_companies, get_company and list_sites. Magnet metals (Nd, Pr, Dy, Tb, Sm, Co): get_metal_supply for country shares by stage, reserves and latest prices; get_metal_prices for a cited price history. Sourced values carry sources and a confidence (reported, estimated or modeled); quote estimates as estimates.
 - Patents (who files actuator and magnet inventions, and where): get_patent_landscape for one technology. If status is not_collected, say no counts exist yet.
 - Measured performance vs the datasheet (dyno runs, thermal holds, backlash; published, lab or community origin): get_benchmarks. Quote the run's source and origin with the number.
+- Price history of one actuator (listed price over time with method, source URL and FX rate per point, latest $/Nm, one-year change): get_price_history.
 - Sizing a robot arm: arm_holding_torque takes link lengths, masses, actuator masses and payload and returns static holding torque per joint, catalog actuators per joint and a calculator_url the user can open.
 Bulk snapshots are also exposed as resources (catalog://actuators, catalog://robots, catalog://categories, actuator://{id}, robot://{id}). Website: ${SITE_URL}.`;
 

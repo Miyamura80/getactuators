@@ -1,0 +1,7 @@
+[
+    ["timestamp", "original", "statuscode"],
+    ["20240105101500", "https://shop.example.com/products/example-joint-module", "200"],
+    ["20240119080000", "https://shop.example.com/products/example-joint-module", "200"],
+    ["20240302120000", "https://shop.example.com/products/example-joint-module", "200"],
+    ["20240410090000", "https://shop.example.com/products/example-joint-module", "301"]
+]

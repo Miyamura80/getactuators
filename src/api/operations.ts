@@ -40,6 +40,7 @@ import {
     listOpenRobotsHandler,
 } from "./open-robots";
 import { ActuatorListParams, CompareQueryParams, RobotListParams } from "./params";
+import { PriceHistorySchema, getPriceHistoryHandler } from "./prices";
 import {
     PatentLandscapeParams,
     PatentLandscapeSchema,
@@ -149,6 +150,23 @@ export const OPERATIONS: Operation[] = [
         errors: [404],
         example: "/api/v1/actuators/robstride-02",
         handler: getActuatorById,
+    },
+    {
+        operationId: "get_price_history",
+        method: "GET",
+        path: "/api/v1/prices/:actuatorId",
+        summary: "Price history of one actuator",
+        description:
+            "Every recorded listed price of one actuator, oldest first, in USD with the original currency, FX rate, method (jsonld, shopify, woocommerce, selector, wayback or manual) and source URL per point, plus the latest price, $/Nm and one-year change. Out-of-stock reads carry `in_stock: false` and no price.",
+        pathParam: {
+            name: "actuatorId",
+            description: "Actuator id (slug).",
+            example: "robstride-02",
+        },
+        response: PriceHistorySchema,
+        errors: [404],
+        example: "/api/v1/prices/robstride-02",
+        handler: getPriceHistoryHandler,
     },
     {
         operationId: "list_robots",

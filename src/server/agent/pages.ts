@@ -18,6 +18,7 @@ import * as ld from "./jsonld";
 import { PATHS } from "./links";
 import { agentsBody } from "./manifests";
 import { PATENTS_PAGE } from "./market/patents";
+import { PRICES_PAGE } from "./market/prices";
 import { mdDocument } from "./md";
 import { OPEN_SOURCE_PAGE } from "./open-source";
 import {
@@ -150,6 +151,7 @@ const STATIC_PAGES: Page[] = [
     ...(PATENTS_PAGE.noindex ? [] : [PATENTS_PAGE]),
     OPEN_SOURCE_PAGE,
     BENCHMARKS_PAGE,
+    PRICES_PAGE,
     sub(
         PATHS.agentsPage,
         "spa",

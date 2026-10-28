@@ -21,6 +21,9 @@ COPY src/brands ./src/brands
 COPY src/supply-chain ./src/supply-chain
 # Measured benchmark runs (bundled from data/benchmarks) and their views.
 COPY src/benchmarks ./src/benchmarks
+# Actuator price history and its analysis (/prices, catalog sparklines).
+COPY src/prices ./src/prices
+COPY data/prices ./data/prices
 # Logo.dev publishable key (public), baked into the bundle; unset draws monograms.
 ARG VITE_LOGO_DEV_TOKEN=""
 ENV VITE_LOGO_DEV_TOKEN=$VITE_LOGO_DEV_TOKEN
@@ -33,6 +36,7 @@ RUN bun install --frozen-lockfile --production --ignore-scripts
 COPY --from=build /app/frontend/dist ./frontend/dist
 COPY frontend/src/data ./frontend/src/data
 COPY src ./src
+COPY data ./data
 # Served as-is by src/server/routes: the agent skill and the og:images.
 COPY skills ./skills
 COPY media/og-image.png media/og-startups.png media/og-investors.png ./media/

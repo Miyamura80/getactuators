@@ -23,6 +23,7 @@ export function serializeActuator(a: Actuator): ApiActuator {
         image_url: a.image_url ?? null,
         url: absoluteUrl(`/actuators/${encodeURIComponent(a.id)}`),
         api_url: actuatorApiUrl(a.id),
+        price_history_url: absoluteUrl(`/api/v1/prices/${encodeURIComponent(a.id)}`),
     };
 }
 

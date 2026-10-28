@@ -1,0 +1,9 @@
+# Example robots.txt
+User-agent: *
+Disallow: /cart
+Disallow: /checkout
+Allow: /products/
+
+User-agent: actuatorlist-price-bot
+Disallow: /private/
+Allow: /private/ok$

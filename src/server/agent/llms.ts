@@ -87,6 +87,10 @@ ${link("Actuator benchmarks", "/benchmarks.md", "measured torque, thermal holds 
 
 ${link("Magnet metals", "/metals.md", "Nd, Pr, Dy, Tb, Sm and Co: country share at each stage from mine to magnet, USGS reserves and years of supply, cited price history and the events behind it; same data from the MCP tools get_metal_supply and get_metal_prices")}${patentsLink()}
 
+## Market intelligence (markdown)
+
+${link("Actuator prices", "/prices.md", "price history from weekly store snapshots: latest price and 1-year change per actuator, $/Nm trend by class, price index against NdPr oxide; per-actuator history from the MCP tool get_price_history and GET /api/v1/prices/{actuatorId}")}
+
 ## About
 
 ${link("About", "/about.md", "who runs the catalog and how data is verified")}
