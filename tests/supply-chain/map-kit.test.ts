@@ -110,8 +110,8 @@ describe("map data", () => {
         const lines = SEGMENTS.map((s) => SEGMENT_PICTO[s].line);
         expect(new Set(lines).size).toBe(SEGMENTS.length);
         for (const s of SEGMENTS) {
-            const { line, solid } = SEGMENT_PICTO[s];
-            for (const d of [line, solid ?? ""]) {
+            const { line, solid, cut } = SEGMENT_PICTO[s];
+            for (const d of [line, solid ?? "", cut ?? ""]) {
                 const nums = (d.match(/-?\d*\.?\d+/g) ?? []).map(Number);
                 // Absolute coordinates stay on the grid (arc radii included).
                 for (const n of nums) expect(Math.abs(n)).toBeLessThanOrEqual(24);

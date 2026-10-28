@@ -5,5 +5,8 @@
 .ot .ot-tile.is-hollow { fill: var(--bg, #000); stroke-dasharray: 2.4 2; }
 .ot .ot-mark { fill: none; stroke: #000; stroke-width: 2.6; stroke-linejoin: round; stroke-linecap: round; }
 .ot .ot-mark .ot-solid { fill: #000; }
+/* Holes punched back through a solid, in the tile colour. */
+.ot .ot-mark .ot-cut { fill: currentColor; stroke: none; }
 .ot .ot-tile.is-hollow + .ot-mark { stroke: currentColor; }
 .ot .ot-tile.is-hollow + .ot-mark .ot-solid { fill: currentColor; }
+.ot .ot-tile.is-hollow + .ot-mark .ot-cut { fill: var(--bg, #000); }

@@ -102,11 +102,11 @@ function segmentTileSvg(
 ): string {
     const c = SEGMENT_COLOR[segment];
     const ink = hollow ? c : "#000";
-    const { line, solid } = SEGMENT_PICTO[segment];
+    const { line, solid, cut } = SEGMENT_PICTO[segment];
     const at = `translate(${round(x - TILE / 2)} ${round(y - TILE / 2)}) scale(${TILE / 24})`;
     const dash = hollow ? ` stroke-dasharray="${TILE_STROKE.dash}"` : "";
     const named = title ? `<title>${esc(title)}</title>` : "";
-    return `<g transform="${at}">${named}<rect x="1" y="1" width="22" height="22" rx="5" fill="${hollow ? "#000" : c}" stroke="${c}" stroke-width="${TILE_STROKE.tile}"${dash}/><g transform="${TILE_MARK}" fill="none" stroke="${ink}" stroke-width="${TILE_STROKE.mark}" stroke-linecap="round" stroke-linejoin="round"><path d="${line}"/>${solid ? `<path d="${solid}" fill="${ink}"/>` : ""}</g></g>`;
+    return `<g transform="${at}">${named}<rect x="1" y="1" width="22" height="22" rx="5" fill="${hollow ? "#000" : c}" stroke="${c}" stroke-width="${TILE_STROKE.tile}"${dash}/><g transform="${TILE_MARK}" fill="none" stroke="${ink}" stroke-width="${TILE_STROKE.mark}" stroke-linecap="round" stroke-linejoin="round"><path d="${line}"/>${solid ? `<path d="${solid}" fill="${ink}"/>` : ""}${cut ? `<path d="${cut}" fill="${hollow ? "#000" : c}" stroke="none"/>` : ""}</g></g>`;
 }
 
 const round = (n: number) => Math.round(n * 10) / 10;

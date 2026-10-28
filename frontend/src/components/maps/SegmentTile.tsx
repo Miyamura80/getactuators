@@ -4,13 +4,14 @@ import { MIX_GAP, type MixLayout, mixColumns } from "../../../../src/supply-chai
 import { ObjectTile } from "../glyphs/ObjectTile";
 
 // A segment as an object tile: pickaxe (rare earths), horseshoe magnet
-// (magnets & motors), gear (gears & bearings), robot head (robot makers).
+// (magnets & motors), gear (gears & bearings), robot face (robot makers).
 // Hollow (dashed) when the location is a city or region centre.
 export function SegmentTile({ segment, hollow = false, size = 16 }: { segment: Segment; hollow?: boolean; size?: number }) {
-    const { line, solid } = SEGMENT_PICTO[segment];
+    const { line, solid, cut } = SEGMENT_PICTO[segment];
     return <ObjectTile className="mk-tile" color={SEGMENT_COLOR[segment]} hollow={hollow} size={size}>
         <path d={line} />
         {solid ? <path d={solid} className="ot-solid" /> : null}
+        {cut ? <path d={cut} className="ot-cut" /> : null}
     </ObjectTile>;
 }
 
