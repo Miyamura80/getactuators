@@ -2,6 +2,7 @@ import { ACTUATORS, type Actuator, CATEGORIES, type Robot } from "@/catalog";
 import { evidenceFor, fieldCaveat } from "@/catalog/evidence";
 import { resolveJoints, robotsUsingActuator } from "@/catalog/query";
 import { absoluteUrl } from "../site";
+import { measuredSection } from "./benchmarks-md";
 import { engineeringEvidenceSection } from "./engineering-evidence";
 import { bullets, humanize, mdLink, mdTable, mdText, num, usd } from "./md";
 import {
@@ -132,6 +133,8 @@ export function actuatorBody(a: Actuator): string {
             "## Engineering comparison\n\nRead the [AK80-9 V3.0 KV100 versus original CyberGear comparison](/comparisons/cubemars-ak80-9-vs-xiaomi-cybergear) for source-qualified efficiency, thermal duty, precision and modeling boundaries. Hardware/firmware identity and unresolved document conflicts matter; this is not a matched bench test. See the [selection guide](/guides/robot-actuator-selection) for a proposed validation protocol.",
         );
     }
+    const measured = measuredSection(a.id);
+    if (measured) sections.push(measured);
     const researchedEvidence = engineeringEvidenceSection(a.id);
     if (researchedEvidence) sections.push(researchedEvidence);
     const sources = [

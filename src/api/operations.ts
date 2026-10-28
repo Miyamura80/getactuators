@@ -1,5 +1,12 @@
 import type { z } from "zod";
 import {
+    ActuatorBenchmarksSchema,
+    BenchmarkListParams,
+    BenchmarkListSchema,
+    getActuatorBenchmarksHandler,
+    listBenchmarksHandler,
+} from "./benchmarks";
+import {
     compareActuatorsGet,
     compareActuatorsPost,
     getActuatorById,
@@ -309,5 +316,35 @@ export const OPERATIONS: Operation[] = [
         errors: [404],
         example: "/api/v1/humanoids/unitree-g1",
         handler: getHumanoidById,
+    },
+    {
+        operationId: "list_benchmarks",
+        method: "GET",
+        path: "/api/v1/benchmarks",
+        summary: "List measured benchmark runs",
+        description:
+            "Measured actuator runs from published tests (papers, vendor test reports, reviewer tests) and community dyno submissions: torque-speed points, thermal holds (time to thermal limit), backlash, stiffness, friction, ripple, bandwidth, latency and repeatability, each with origin, rig, uncertainty and source.",
+        query: BenchmarkListParams,
+        response: BenchmarkListSchema,
+        errors: [400],
+        example: "/api/v1/benchmarks?actuator=feetech-sts3215",
+        handler: listBenchmarksHandler,
+    },
+    {
+        operationId: "get_actuator_benchmarks",
+        method: "GET",
+        path: "/api/v1/benchmarks/:id",
+        summary: "Get one actuator's measured runs vs its datasheet",
+        description:
+            "Every measured run of one catalog actuator plus a datasheet-vs-measured comparison (ratio and verdict per metric) and its measured continuous torque density when a continuous hold was measured. Empty runs mean nothing has been measured yet.",
+        pathParam: {
+            name: "id",
+            description: "Actuator id (slug).",
+            example: "mjbots-qdd100",
+        },
+        response: ActuatorBenchmarksSchema,
+        errors: [404],
+        example: "/api/v1/benchmarks/mjbots-qdd100",
+        handler: getActuatorBenchmarksHandler,
     },
 ];

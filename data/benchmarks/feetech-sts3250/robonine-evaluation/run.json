@@ -1,0 +1,31 @@
+{
+    "actuatorId": "feetech-sts3250",
+    "runId": "robonine-evaluation",
+    "date": "2026-10",
+    "origin": "published",
+    "method": "reported",
+    "source": {
+        "url": "https://robonine.com/feetech-sts3250-smart-actuator-evaluation-of-accuracy-torque-and-backlash/",
+        "title": "Robonine: Feetech STS3250 Smart Actuator: Evaluation of Accuracy, Torque and Backlash",
+        "locator": "Backlash result"
+    },
+    "unit": "STS3250 (12 V, 50 kg.cm)",
+    "rig": {
+        "torqueSensor": null,
+        "accuracyPct": null,
+        "encoder": null,
+        "ambientC": null,
+        "busV": 12,
+        "controller": null
+    },
+    "backlashArcmin": 25.8,
+    "uncertainty": {},
+    "claims": [
+        {
+            "metric": "backlashArcmin",
+            "value": 30,
+            "source": "Feetech datasheet limit of 0.5 deg or less, as quoted by Robonine"
+        }
+    ],
+    "notes": "Mechanical backlash of 0.43 deg, within the 0.5 deg specification. A different method from the HardwareX test stand, so the two are not directly comparable."
+}

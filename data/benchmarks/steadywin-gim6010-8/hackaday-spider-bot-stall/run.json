@@ -1,0 +1,30 @@
+{
+    "actuatorId": "steadywin-gim6010-8",
+    "runId": "hackaday-spider-bot-stall",
+    "date": "2026-10",
+    "origin": "published",
+    "method": "reported",
+    "source": {
+        "url": "https://hackaday.io/project/202366-the-unnamed-spider-bot/log/239789-steadywin-gim6010-8-stock-controller-vs-odrive-vs-tinymovr",
+        "title": "The Unnamed Spider Bot: Steadywin GIM6010-8, stock controller vs ODrive vs Tinymovr (Hackaday.io log)",
+        "locator": "Stock controller stall test"
+    },
+    "unit": "GIM6010-8 with the stock driver (ODrive clone, customised 0.5.x firmware)",
+    "rig": {
+        "torqueSensor": "Force reading at the end of a 200 mm arm",
+        "accuracyPct": null,
+        "encoder": null,
+        "ambientC": null,
+        "busV": null,
+        "controller": "Stock Steadywin driver at 24 A",
+        "firmware": "ODrive 0.5.x (vendor fork)"
+    },
+    "torqueSpeed": [
+        {
+            "rpm": 0,
+            "torqueNm": 11
+        }
+    ],
+    "uncertainty": {},
+    "notes": "Stall force fluctuated around 55 N at the end of a 200 mm arm at 24 A, about 11 Nm. The same log found that an ODrive Micro (7 A rated) limited stall torque to about 4.8 Nm, which explains a lower 3 Nm figure reported elsewhere."
+}

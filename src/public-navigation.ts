@@ -74,6 +74,7 @@ export const FOOTER_GROUPS = [
             ["/startups", "Actuator startups"],
             ["/investors", "Actuator investors"],
             ["/humanoids", "Humanoid joint map"],
+            ["/benchmarks", "Actuator benchmarks"],
             ["/comparisons/cubemars-ak80-9-vs-xiaomi-cybergear", "AK80-9 vs CyberGear"],
             ["/faq", "FAQ"],
             ["/agents", "For AI agents"],

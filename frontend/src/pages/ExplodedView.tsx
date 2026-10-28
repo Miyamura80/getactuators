@@ -1,5 +1,6 @@
 import { PublicHeader } from "../components/PublicHeader";
 import { EngineeringEvidencePanel } from "../components/EngineeringEvidencePanel";
+import { MeasuredPanel } from "../components/benchmarks/BenchmarkViews";
 import { evidenceFor, fieldCaveat, isReducerFamily } from "../../../src/catalog/evidence";
 import { useEffect, useRef } from "react";
 import { ACTUATORS } from "../lib/data";
@@ -152,6 +153,7 @@ export function ExplodedView({ id, menuOpen = false }: Props) {
                     </div>
                 </div>
             </div>
+            <MeasuredPanel id={id} />
             <EngineeringEvidencePanel id={id} />
         </div>
     );

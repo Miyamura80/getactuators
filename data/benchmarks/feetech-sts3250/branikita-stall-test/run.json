@@ -1,0 +1,29 @@
+{
+    "actuatorId": "feetech-sts3250",
+    "runId": "branikita-stall-test",
+    "date": "2026-10",
+    "origin": "published",
+    "method": "reported",
+    "source": {
+        "url": "https://huggingface.co/posts/branikita/935466322450846",
+        "title": "branikita: FEETECH STS3250 Stall Torque and Repeatability Tests (Hugging Face post)",
+        "locator": "Stall torque result"
+    },
+    "unit": "STS3250",
+    "rig": {
+        "torqueSensor": null,
+        "accuracyPct": null,
+        "encoder": null,
+        "ambientC": null,
+        "busV": null,
+        "controller": null
+    },
+    "torqueSpeed": [
+        {
+            "rpm": 0,
+            "torqueNm": 4.71
+        }
+    ],
+    "uncertainty": {},
+    "notes": "Up to 48 kg.cm (4.71 Nm) for a brief moment, then about 25 kg.cm (2.45 Nm) sustained after the overload protection activated. Supply voltage and lever method are not stated."
+}

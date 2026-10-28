@@ -5,6 +5,8 @@ import { EngineeringEvidencePanel } from "../components/EngineeringEvidencePanel
 import { CompanyLogo } from "../components/CompanyLogo";
 import { compareEvent, useCompareSelection } from "../lib/compare-selection";
 import { COMPARE_SPECS, revisionNote } from "../../../src/catalog/compare";
+import { TorqueSpeedChart } from "../components/benchmarks/BenchmarkViews";
+import { torqueSpeedSeries } from "../../../src/benchmarks";
 
 export function Compare({ menuOpen = false }: { menuOpen?: boolean }) {
     const selection = useCompareSelection();
@@ -38,6 +40,10 @@ export function Compare({ menuOpen = false }: { menuOpen?: boolean }) {
                     <tbody>{COMPARE_SPECS.map(spec => <tr key={spec.label}><th scope="row">{spec.label}</th>{selection.rows.map(a => <td key={a.id}>{spec.display(a)}</td>)}</tr>)}</tbody>
                 </table>
             </div>}
+            {selection.rows.length >= 2 && torqueSpeedSeries(selection.ids).length > 0 && <details className="compare-measured">
+                <summary>Measured torque-speed overlay</summary>
+                <TorqueSpeedChart ids={selection.ids} />
+            </details>}
             <p>Sensor bits are not loaded accuracy. CAD geometry is not a calibrated simulation model. Thermal duty and efficiency require matched operating conditions.</p>
         </main>
         <PublicFooter />

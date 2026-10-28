@@ -192,10 +192,15 @@ citation_audit: check_bun ## Fail if any supply-chain number is uncited
 	@bun run scripts/citation-audit.ts
 	@echo "$(GREEN)✅ Citation audit completed.$(RESET)"
 
+validate_benchmarks: check_bun ## Validate benchmark runs in data/benchmarks and their bundle
+	@echo "$(YELLOW)🔍 Validating benchmark runs...$(RESET)"
+	@bun run scripts/validate-benchmarks.ts
+	@echo "$(GREEN)✅ Benchmark validation completed.$(RESET)"
+
 validate_data: check_bun ## Validate actuator + robot datasets (report only, non-blocking)
 	@echo "$(YELLOW)🔍 Validating datasets...$(RESET)"
 	@bun run scripts/validate_actuators.ts
 	@echo "$(GREEN)✅ Dataset validation completed.$(RESET)"
 
-ci: lint deadcode typecheck tech_debt duplicate_code import_lint lint_links check_ai_writing citation_audit sync-agent-config-check ## Run all CI checks
+ci: lint deadcode typecheck tech_debt duplicate_code import_lint lint_links check_ai_writing citation_audit validate_benchmarks sync-agent-config-check ## Run all CI checks
 	@echo "$(GREEN)✅ CI checks completed.$(RESET)"

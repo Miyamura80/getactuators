@@ -1,0 +1,31 @@
+{
+    "actuatorId": "feetech-sts3215",
+    "runId": "hardwarex-2026-test-stand",
+    "date": "2026",
+    "origin": "published",
+    "method": "reported",
+    "source": {
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13087586/",
+        "title": "Kotov, An open-source test stand for backlash measurement in low-cost UART servo motors (HardwareX, 2026)",
+        "locator": "Results, single STS3215 with default settings"
+    },
+    "unit": "STS3215 (single servo, default settings)",
+    "rig": {
+        "torqueSensor": "Two STS3215 puller servos loading through elastic bands",
+        "accuracyPct": null,
+        "encoder": "Servo output encoder, 12-bit",
+        "ambientC": null,
+        "busV": null,
+        "controller": "Node.js controller over UART"
+    },
+    "backlashArcmin": 37.2,
+    "uncertainty": {},
+    "claims": [
+        {
+            "metric": "backlashArcmin",
+            "value": 30,
+            "source": "Feetech datasheet limit of 0.5 deg or less"
+        }
+    ],
+    "notes": "Unloaded backlash about 0.62 deg (1.08 mm at 100 mm radius); loaded backlash about 1.30 deg (2.27 mm at 100 mm). The stored value is the unloaded figure. The stand's hardware, code and logs are open (roboninecom/Measuring-Backlash-in-Popular-UART-Servos)."
+}
