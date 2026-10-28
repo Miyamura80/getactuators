@@ -86,13 +86,6 @@ function loadExistingEnv(): Record<string, string> {
     return result;
 }
 
-// Example values in .env.example that are not real settings.
-const PLACEHOLDER_VALUES = new Set(["pk_..."]);
-
-function hasRealValue(value: string): boolean {
-    return !!value && !PLACEHOLDER_VALUES.has(value);
-}
-
 function buildEnvOptions(
     entries: EnvEntry[],
     existing: Record<string, string>,
@@ -106,7 +99,7 @@ function buildEnvOptions(
     for (const [group, groupEntries] of Object.entries(groups)) {
         for (const entry of groupEntries) {
             const existingVal = existing[entry.key];
-            const configured = existingVal && hasRealValue(existingVal);
+            const configured = !!existingVal;
             options.push({
                 value: entry.key,
                 label: entry.key,
@@ -122,8 +115,7 @@ async function promptEnvValue(
     entry: EnvEntry | undefined,
     existing: Record<string, string>,
 ): Promise<string | undefined> {
-    const defaultVal =
-        existing[key] && hasRealValue(existing[key]) ? existing[key] : undefined;
+    const defaultVal = existing[key] || undefined;
 
     if (isSecretKey(key)) {
         const val = exitIfCancelled(await p.password({ message: `${key}:` }));
@@ -227,7 +219,7 @@ async function cmdRename(): Promise<boolean> {
     p.log.success("Updated package.json");
 
     // Replace template name and description across project files
-    const filesToUpdate = ["README.md", "src/index.ts", "scripts/README.md"];
+    const filesToUpdate = ["README.md", "scripts/README.md"];
 
     for (const relPath of filesToUpdate) {
         const filePath = join(REPO_ROOT, relPath);

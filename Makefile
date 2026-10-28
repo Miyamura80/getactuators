@@ -89,13 +89,12 @@ view_deps_size_by_package: check_bun ## Show node_modules size by package
 ########################################################
 
 ### Running
-all: check_bun ## Install deps and run main application
+all: check_bun ## Install deps and serve the site
 	@bun install
-	@echo "$(GREEN)🏁 Running main application...$(RESET)"
+	@echo "$(GREEN)🏁 Serving the site...$(RESET)"
 	@bun run start
-	@echo "$(GREEN)✅ Main application run completed.$(RESET)"
 
-dev: check_bun ## Run in watch mode
+dev: check_bun ## Serve the site in watch mode
 	@bun run dev
 
 ########################################################

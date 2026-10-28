@@ -23,7 +23,7 @@ of the file maps subcommands to those functions.
    - `onboard.ts` - the orchestrator step list and each `cmd*` function, so you
      know precisely what renaming, dependency install, env config, and hook
      setup will touch
-   - `src/` (entrypoint `src/index.ts`), `tests/`, and the two independent
+   - `src/` (server entrypoint `scripts/serve_frontend.ts`), `tests/`, and the two independent
      dependency trees under `docs/` (Next.js/Fumadocs) and `frontend/`
      (Vite/React) - each has its own `package.json`
    - Systems onboarding does NOT manage (handle these manually - see step 6):
@@ -57,8 +57,8 @@ of the file maps subcommands to those functions.
    - **hooks** - installs git hooks via `prek` (`prek install`).
 
 5. Verify the result after onboarding:
-   - `bun install` succeeded and `bun run start` (or `make all`) runs the
-     entrypoint.
+   - `bun install` succeeded and `bun run start` (or `make all`) serves the
+     site (after `bun run build` has built `frontend/dist`).
    - `make ci` passes (lint, deadcode, typecheck, lint_links, and the other
      wired checks). If scope was small, run at minimum `make fmt`, `make lint`,
      and `make typecheck`.
