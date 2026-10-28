@@ -26,6 +26,8 @@ COPY src/prices ./src/prices
 COPY data/prices ./data/prices
 # Patent landscape scopes and snapshot (/patents).
 COPY src/patents ./src/patents
+# SDK rubric, evidence and scores (/sdk, actuator SDK badge).
+COPY src/sdk ./src/sdk
 # Logo.dev publishable key (public), baked into the bundle; unset draws monograms.
 ARG VITE_LOGO_DEV_TOKEN=""
 ENV VITE_LOGO_DEV_TOKEN=$VITE_LOGO_DEV_TOKEN

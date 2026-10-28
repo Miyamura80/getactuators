@@ -39,6 +39,7 @@ const EXPECTED_TOOLS = [
     "list_open_robots",
     "get_benchmarks",
     "get_price_history",
+    "get_sdk_score",
 ];
 
 const usedActuator = ACTUATORS.find((a) => robotsUsingActuator(a.id).length > 0);

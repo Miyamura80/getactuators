@@ -197,6 +197,11 @@ validate_benchmarks: check_bun ## Validate benchmark runs in data/benchmarks and
 	@bun run scripts/validate-benchmarks.ts
 	@echo "$(GREEN)✅ Benchmark validation completed.$(RESET)"
 
+sdk_signals: check_bun ## Re-collect /sdk evidence and scores (git, HN, Reddit, ROS Discourse)
+	@echo "$(YELLOW)🔍 Collecting SDK signals...$(RESET)"
+	@bun run scripts/sdk-signals/run.ts
+	@echo "$(GREEN)✅ SDK signals written to src/sdk/data.$(RESET)"
+
 validate_data: check_bun ## Validate actuator + robot datasets (report only, non-blocking)
 	@echo "$(YELLOW)🔍 Validating datasets...$(RESET)"
 	@bun run scripts/validate_actuators.ts

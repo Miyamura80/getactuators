@@ -1,5 +1,6 @@
 import { ACTUATORS, CATEGORIES } from "@/catalog";
 import { listBrands, queryActuators, robotsUsingActuator } from "@/catalog/query";
+import { sdkRef, sdkRefOut } from "@/sdk/views";
 import { z } from "zod";
 import {
     actuatorIdSchema,
@@ -90,6 +91,7 @@ const getActuatorTool = defineTool({
     output: z.object({
         actuator: actuatorSchema,
         robots_using: z.array(robotRefSchema),
+        sdk: sdkRefOut,
     }),
     run: ({ id }) => {
         const a = requireActuator(id);
@@ -100,6 +102,7 @@ const getActuatorTool = defineTool({
                 name: r.name,
                 brand: r.brand,
             })),
+            sdk: sdkRef(a.id, (a.comm ?? []).length > 0),
         };
     },
 });

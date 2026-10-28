@@ -32,6 +32,8 @@ import { Benchmarks } from "./pages/benchmarks/Benchmarks";
 import { BENCHMARKS_PATH } from "../../src/benchmarks";
 import { Prices } from "./pages/prices/Prices";
 import { PRICES_PATH } from "../../src/prices/history";
+import { Sdk } from "./pages/sdk/Sdk";
+import { SDK_PATH } from "../../src/sdk";
 
 function Page({ menuOpen }: { menuOpen: boolean }) {
     const path = usePath();
@@ -51,6 +53,7 @@ function Page({ menuOpen }: { menuOpen: boolean }) {
     if (path === OPEN_SOURCE_PATH) return <OpenSource menuOpen={menuOpen} />;
     if (path === BENCHMARKS_PATH) return <Benchmarks menuOpen={menuOpen} />;
     if (path === PRICES_PATH) return <Prices menuOpen={menuOpen} />;
+    if (path === SDK_PATH) return <Sdk menuOpen={menuOpen} />;
     if (path.startsWith("/actuators/")) {
         const raw = path.slice("/actuators/".length);
         let id = raw;

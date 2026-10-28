@@ -140,7 +140,8 @@ function tagFor(path: string): string {
     if (
         path.includes("/actuators") ||
         path.includes("/benchmarks") ||
-        path.includes("/prices")
+        path.includes("/prices") ||
+        path.includes("/sdk")
     )
         return "actuators";
     if (path.startsWith("/api/v1/")) return "taxonomy";

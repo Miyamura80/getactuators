@@ -1,0 +1,4943 @@
+{
+    "asOf": "2026-10-28",
+    "rubricVersion": 1,
+    "brands": [
+        {
+            "brand": "nabtesco",
+            "name": "Nabtesco",
+            "applicable": false,
+            "actuatorIds": ["nabtesco-rv-42n"],
+            "dimensions": {
+                "protocol": {
+                    "score": null,
+                    "checks": []
+                },
+                "bindings": {
+                    "score": null,
+                    "checks": []
+                },
+                "ros_sim": {
+                    "score": null,
+                    "checks": []
+                },
+                "docs": {
+                    "score": null,
+                    "checks": []
+                },
+                "firmware": {
+                    "score": null,
+                    "checks": []
+                },
+                "support": {
+                    "score": null,
+                    "checks": []
+                },
+                "reliability": {
+                    "score": null,
+                    "checks": []
+                }
+            },
+            "capabilities": {
+                "python": null,
+                "cpp": null,
+                "rust": null,
+                "ros2": null,
+                "ros2_control": null,
+                "urdf": null,
+                "mjcf": null,
+                "open_firmware": null,
+                "documented_protocol": null
+            },
+            "evidenceCount": 0,
+            "medianPricePerNm": null
+        },
+        {
+            "brand": "unitree",
+            "name": "Unitree",
+            "applicable": true,
+            "actuatorIds": ["unitree-m107", "unitree-go-m8010-6"],
+            "dimensions": {
+                "protocol": {
+                    "score": 6,
+                    "checks": [
+                        {
+                            "id": "protocol-doc",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "open-licence",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:unitree:unitreerobotics/unitree_actuator_sdk:licence"
+                            ]
+                        },
+                        {
+                            "id": "open-implementation",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:unitree:unitreerobotics/unitree_actuator_sdk:lang:python"
+                            ]
+                        }
+                    ]
+                },
+                "bindings": {
+                    "score": 3,
+                    "checks": [
+                        {
+                            "id": "python",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:unitree:unitreerobotics/unitree_actuator_sdk:lang:python"
+                            ]
+                        },
+                        {
+                            "id": "cpp",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "rust",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 1,
+                            "evidence": []
+                        },
+                        {
+                            "id": "maintained",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "ros_sim": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "ros2-package",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "ros2-control",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "sim-model",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "docs": {
+                    "score": 8.8,
+                    "checks": [
+                        {
+                            "id": "docs-present",
+                            "status": "pass",
+                            "points": 4,
+                            "max": 4,
+                            "evidence": [
+                                "gh:unitree:unitreerobotics/unitree_actuator_sdk:docs"
+                            ]
+                        },
+                        {
+                            "id": "examples",
+                            "status": "partial",
+                            "points": 1.8,
+                            "max": 3,
+                            "evidence": [
+                                "gh:unitree:unitreerobotics/unitree_actuator_sdk:examples"
+                            ]
+                        },
+                        {
+                            "id": "english",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:unitree:unitreerobotics/unitree_actuator_sdk:docs-english"
+                            ]
+                        }
+                    ]
+                },
+                "firmware": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "open-firmware",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "config-tool",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "firmware-update",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "support": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "activity",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "community-repos",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "discussion",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "issue-response",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "reliability": {
+                    "score": null,
+                    "checks": [
+                        {
+                            "id": "comms-reports",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 10,
+                            "evidence": []
+                        }
+                    ]
+                }
+            },
+            "capabilities": {
+                "python": "official",
+                "cpp": null,
+                "rust": null,
+                "ros2": null,
+                "ros2_control": null,
+                "urdf": null,
+                "mjcf": null,
+                "open_firmware": null,
+                "documented_protocol": null
+            },
+            "evidenceCount": 7,
+            "medianPricePerNm": 15.57
+        },
+        {
+            "brand": "myactuator",
+            "name": "MyActuator",
+            "applicable": true,
+            "actuatorIds": [
+                "myactuator-rmd-x8-120",
+                "myactuator-rmd-x8-pro-v2",
+                "myactuator-rmd-x6-8",
+                "myactuator-rmd-l-9015",
+                "myactuator-rmd-x10-s2-v3"
+            ],
+            "dimensions": {
+                "protocol": {
+                    "score": 4.5,
+                    "checks": [
+                        {
+                            "id": "protocol-doc",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "open-licence",
+                            "status": "partial",
+                            "points": 1.5,
+                            "max": 3,
+                            "evidence": ["gh:myactuator:2b-t/myactuator_rmd:licence"]
+                        },
+                        {
+                            "id": "open-implementation",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": ["gh:myactuator:2b-t/myactuator_rmd:lang:cpp"]
+                        }
+                    ]
+                },
+                "bindings": {
+                    "score": 1.5,
+                    "checks": [
+                        {
+                            "id": "python",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "cpp",
+                            "status": "partial",
+                            "points": 1.5,
+                            "max": 3,
+                            "evidence": ["gh:myactuator:2b-t/myactuator_rmd:lang:cpp"]
+                        },
+                        {
+                            "id": "rust",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 1,
+                            "evidence": []
+                        },
+                        {
+                            "id": "maintained",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "ros_sim": {
+                    "score": 2,
+                    "checks": [
+                        {
+                            "id": "ros2-package",
+                            "status": "partial",
+                            "points": 2,
+                            "max": 4,
+                            "evidence": [
+                                "gh:myactuator:2b-t/myactuator_rmd:ros2-package"
+                            ]
+                        },
+                        {
+                            "id": "ros2-control",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "sim-model",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "docs": {
+                    "score": 5.5,
+                    "checks": [
+                        {
+                            "id": "docs-present",
+                            "status": "pass",
+                            "points": 4,
+                            "max": 4,
+                            "evidence": [
+                                "catalog:myactuator:https://www.myactuator.com/downloads-lseries",
+                                "catalog:myactuator:https://www.myactuator.com/downloads-xseries"
+                            ]
+                        },
+                        {
+                            "id": "examples",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "english",
+                            "status": "partial",
+                            "points": 1.5,
+                            "max": 3,
+                            "evidence": [
+                                "gh:myactuator:2b-t/myactuator_rmd:docs-english"
+                            ]
+                        }
+                    ]
+                },
+                "firmware": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "open-firmware",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "config-tool",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "firmware-update",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "support": {
+                    "score": 1.5,
+                    "checks": [
+                        {
+                            "id": "activity",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "community-repos",
+                            "status": "partial",
+                            "points": 1.5,
+                            "max": 3,
+                            "evidence": ["gh:myactuator:2b-t/myactuator_rmd:repo"]
+                        },
+                        {
+                            "id": "discussion",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "issue-response",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "reliability": {
+                    "score": null,
+                    "checks": [
+                        {
+                            "id": "comms-reports",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 10,
+                            "evidence": []
+                        }
+                    ]
+                }
+            },
+            "capabilities": {
+                "python": null,
+                "cpp": "community",
+                "rust": null,
+                "ros2": "community",
+                "ros2_control": null,
+                "urdf": null,
+                "mjcf": null,
+                "open_firmware": null,
+                "documented_protocol": null
+            },
+            "evidenceCount": 9,
+            "medianPricePerNm": 14.27
+        },
+        {
+            "brand": "robstride",
+            "name": "RobStride",
+            "applicable": true,
+            "actuatorIds": [
+                "robstride-04",
+                "robstride-03",
+                "robstride-00",
+                "robstride-01",
+                "robstride-02"
+            ],
+            "dimensions": {
+                "protocol": {
+                    "score": 8.5,
+                    "checks": [
+                        {
+                            "id": "protocol-doc",
+                            "status": "pass",
+                            "points": 4,
+                            "max": 4,
+                            "evidence": [
+                                "gh:robstride:RobStride/Product_Information:protocol-doc"
+                            ]
+                        },
+                        {
+                            "id": "open-licence",
+                            "status": "partial",
+                            "points": 1.5,
+                            "max": 3,
+                            "evidence": [
+                                "gh:robstride:Seeed-Projects/RobStride_Control:licence",
+                                "gh:robstride:sirwart/robstride:licence"
+                            ]
+                        },
+                        {
+                            "id": "open-implementation",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:robstride:RobStride/SampleProgram:lang:cpp"
+                            ]
+                        }
+                    ]
+                },
+                "bindings": {
+                    "score": 7.5,
+                    "checks": [
+                        {
+                            "id": "python",
+                            "status": "partial",
+                            "points": 1.5,
+                            "max": 3,
+                            "evidence": [
+                                "gh:robstride:Seeed-Projects/RobStride_Control:lang:python",
+                                "gh:robstride:sirwart/robstride:lang:python"
+                            ]
+                        },
+                        {
+                            "id": "cpp",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:robstride:RobStride/SampleProgram:lang:cpp"
+                            ]
+                        },
+                        {
+                            "id": "rust",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 1,
+                            "evidence": []
+                        },
+                        {
+                            "id": "maintained",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:robstride:RobStride/Product_Information:activity",
+                                "gh:robstride:RobStride/robstride_ros_sample:activity"
+                            ]
+                        }
+                    ]
+                },
+                "ros_sim": {
+                    "score": 4,
+                    "checks": [
+                        {
+                            "id": "ros2-package",
+                            "status": "pass",
+                            "points": 4,
+                            "max": 4,
+                            "evidence": [
+                                "gh:robstride:RobStride/robstride_ros_sample:ros2-package"
+                            ]
+                        },
+                        {
+                            "id": "ros2-control",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "sim-model",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "docs": {
+                    "score": 7.9,
+                    "checks": [
+                        {
+                            "id": "docs-present",
+                            "status": "pass",
+                            "points": 4,
+                            "max": 4,
+                            "evidence": [
+                                "gh:robstride:RobStride/Product_Information:docs",
+                                "gh:robstride:RobStride/robstride_ros_sample:docs",
+                                "gh:robstride:RobStride/SampleProgram:docs"
+                            ]
+                        },
+                        {
+                            "id": "examples",
+                            "status": "partial",
+                            "points": 0.9,
+                            "max": 3,
+                            "evidence": [
+                                "gh:robstride:Seeed-Projects/RobStride_Control:examples"
+                            ]
+                        },
+                        {
+                            "id": "english",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:robstride:RobStride/Product_Information:docs-english"
+                            ]
+                        }
+                    ]
+                },
+                "firmware": {
+                    "score": 3,
+                    "checks": [
+                        {
+                            "id": "open-firmware",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "config-tool",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "firmware-update",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:robstride:RobStride/Product_Information:firmware-update"
+                            ]
+                        }
+                    ]
+                },
+                "support": {
+                    "score": 5.4,
+                    "checks": [
+                        {
+                            "id": "activity",
+                            "status": "partial",
+                            "points": 2.4,
+                            "max": 4,
+                            "evidence": [
+                                "gh:robstride:RobStride/Product_Information:activity",
+                                "gh:robstride:RobStride/robstride_ros_sample:activity"
+                            ]
+                        },
+                        {
+                            "id": "community-repos",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:robstride:Seeed-Projects/RobStride_Control:repo",
+                                "gh:robstride:sirwart/robstride:repo"
+                            ]
+                        },
+                        {
+                            "id": "discussion",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "issue-response",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "reliability": {
+                    "score": null,
+                    "checks": [
+                        {
+                            "id": "comms-reports",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 10,
+                            "evidence": []
+                        }
+                    ]
+                }
+            },
+            "capabilities": {
+                "python": "community",
+                "cpp": "official",
+                "rust": null,
+                "ros2": "official",
+                "ros2_control": null,
+                "urdf": null,
+                "mjcf": null,
+                "open_firmware": null,
+                "documented_protocol": "official"
+            },
+            "evidenceCount": 28,
+            "medianPricePerNm": 8.47
+        },
+        {
+            "brand": "steadywin",
+            "name": "Steadywin",
+            "applicable": true,
+            "actuatorIds": [
+                "steadywin-gim6010-36",
+                "steadywin-gim8108-8",
+                "steadywin-gim6010-8",
+                "steadywin-gim8115-36"
+            ],
+            "dimensions": {
+                "protocol": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "protocol-doc",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "open-licence",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "open-implementation",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "bindings": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "python",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "cpp",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "rust",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 1,
+                            "evidence": []
+                        },
+                        {
+                            "id": "maintained",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "ros_sim": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "ros2-package",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "ros2-control",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "sim-model",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "docs": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "docs-present",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "examples",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "english",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "firmware": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "open-firmware",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "config-tool",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "firmware-update",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "support": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "activity",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "community-repos",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "discussion",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "issue-response",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "reliability": {
+                    "score": null,
+                    "checks": [
+                        {
+                            "id": "comms-reports",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 10,
+                            "evidence": []
+                        }
+                    ]
+                }
+            },
+            "capabilities": {
+                "python": null,
+                "cpp": null,
+                "rust": null,
+                "ros2": null,
+                "ros2_control": null,
+                "urdf": null,
+                "mjcf": null,
+                "open_firmware": null,
+                "documented_protocol": null
+            },
+            "evidenceCount": 0,
+            "medianPricePerNm": 5.42
+        },
+        {
+            "brand": "feetech",
+            "name": "Feetech",
+            "applicable": true,
+            "actuatorIds": [
+                "feetech-sts3250",
+                "feetech-sts3215",
+                "feetech-scs15",
+                "feetech-sts3215-c001"
+            ],
+            "dimensions": {
+                "protocol": {
+                    "score": 6,
+                    "checks": [
+                        {
+                            "id": "protocol-doc",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "open-licence",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:feetech:ftservo/FTServo_Arduino:licence",
+                                "gh:feetech:ftservo/FTServo_Python:licence"
+                            ]
+                        },
+                        {
+                            "id": "open-implementation",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:feetech:ftservo/FTServo_Arduino:lang:cpp",
+                                "gh:feetech:ftservo/FTServo_Python:lang:python"
+                            ]
+                        }
+                    ]
+                },
+                "bindings": {
+                    "score": 9,
+                    "checks": [
+                        {
+                            "id": "python",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:feetech:ftservo/FTServo_Python:lang:python"
+                            ]
+                        },
+                        {
+                            "id": "cpp",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": ["gh:feetech:ftservo/FTServo_Arduino:lang:cpp"]
+                        },
+                        {
+                            "id": "rust",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 1,
+                            "evidence": []
+                        },
+                        {
+                            "id": "maintained",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": ["gh:feetech:ftservo/FTServo_Python:activity"]
+                        }
+                    ]
+                },
+                "ros_sim": {
+                    "score": 1.5,
+                    "checks": [
+                        {
+                            "id": "ros2-package",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "ros2-control",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "sim-model",
+                            "status": "partial",
+                            "points": 1.5,
+                            "max": 3,
+                            "evidence": [
+                                "gh:feetech:TheRobotStudio/SO-ARM100:mjcf",
+                                "gh:feetech:TheRobotStudio/SO-ARM100:urdf"
+                            ]
+                        }
+                    ]
+                },
+                "docs": {
+                    "score": 10,
+                    "checks": [
+                        {
+                            "id": "docs-present",
+                            "status": "pass",
+                            "points": 4,
+                            "max": 4,
+                            "evidence": [
+                                "gh:feetech:ftservo/FTServo_Arduino:docs",
+                                "gh:feetech:ftservo/FTServo_Python:docs"
+                            ]
+                        },
+                        {
+                            "id": "examples",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:feetech:ftservo/FTServo_Arduino:examples",
+                                "gh:feetech:huggingface/lerobot:examples"
+                            ]
+                        },
+                        {
+                            "id": "english",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:feetech:ftservo/FTServo_Python:docs-english"
+                            ]
+                        }
+                    ]
+                },
+                "firmware": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "open-firmware",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "config-tool",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "firmware-update",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "support": {
+                    "score": 6,
+                    "checks": [
+                        {
+                            "id": "activity",
+                            "status": "partial",
+                            "points": 1.2,
+                            "max": 4,
+                            "evidence": ["gh:feetech:ftservo/FTServo_Python:activity"]
+                        },
+                        {
+                            "id": "community-repos",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:feetech:Adam-Software/Feetech-Servo-SDK:repo",
+                                "gh:feetech:huggingface/lerobot:repo",
+                                "gh:feetech:TheRobotStudio/SO-ARM100:repo"
+                            ]
+                        },
+                        {
+                            "id": "discussion",
+                            "status": "partial",
+                            "points": 1.8,
+                            "max": 3,
+                            "evidence": [
+                                "hn:feetech:44242551",
+                                "hn:feetech:47021076",
+                                "hn:feetech:47790347"
+                            ]
+                        },
+                        {
+                            "id": "issue-response",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "reliability": {
+                    "score": null,
+                    "checks": [
+                        {
+                            "id": "comms-reports",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 10,
+                            "evidence": []
+                        }
+                    ]
+                }
+            },
+            "capabilities": {
+                "python": "official",
+                "cpp": "official",
+                "rust": null,
+                "ros2": null,
+                "ros2_control": null,
+                "urdf": "community",
+                "mjcf": "community",
+                "open_firmware": null,
+                "documented_protocol": null
+            },
+            "evidenceCount": 35,
+            "medianPricePerNm": 8.09
+        },
+        {
+            "brand": "robotis",
+            "name": "Robotis",
+            "applicable": true,
+            "actuatorIds": [
+                "dynamixel-xm540-w270-t",
+                "dynamixel-xh540-w270-t",
+                "dynamixel-h54-200-s500-r",
+                "dynamixel-xm430-w350-t",
+                "dynamixel-xl330-m288-t",
+                "dynamixel-xl430-w250-t",
+                "dynamixel-xc430-w150-t",
+                "dynamixel-ph54-200-s500-r",
+                "dynamixel-pm54-060-s250-r",
+                "dynamixel-xl330-m077-t",
+                "dynamixel-xc430-w240-t"
+            ],
+            "dimensions": {
+                "protocol": {
+                    "score": 10,
+                    "checks": [
+                        {
+                            "id": "protocol-doc",
+                            "status": "pass",
+                            "points": 4,
+                            "max": 4,
+                            "evidence": ["gh:robotis:ROBOTIS-GIT/emanual:protocol-doc"]
+                        },
+                        {
+                            "id": "open-licence",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:robotis:ROBOTIS-GIT/dynamixel_hardware_interface:licence",
+                                "gh:robotis:ROBOTIS-GIT/dynamixel_interfaces:licence",
+                                "gh:robotis:ROBOTIS-GIT/dynamixel-workbench:licence",
+                                "gh:robotis:ROBOTIS-GIT/Dynamixel2Arduino:licence",
+                                "gh:robotis:ROBOTIS-GIT/DynamixelSDK:licence",
+                                "gh:robotis:ROBOTIS-GIT/emanual:licence"
+                            ]
+                        },
+                        {
+                            "id": "open-implementation",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:robotis:ROBOTIS-GIT/dynamixel_hardware_interface:lang:cpp",
+                                "gh:robotis:ROBOTIS-GIT/dynamixel_hardware_interface:lang:python",
+                                "gh:robotis:ROBOTIS-GIT/dynamixel-workbench:lang:cpp",
+                                "gh:robotis:ROBOTIS-GIT/Dynamixel2Arduino:lang:cpp",
+                                "gh:robotis:ROBOTIS-GIT/DynamixelSDK:lang:cpp",
+                                "gh:robotis:ROBOTIS-GIT/DynamixelSDK:lang:python"
+                            ]
+                        }
+                    ]
+                },
+                "bindings": {
+                    "score": 9,
+                    "checks": [
+                        {
+                            "id": "python",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:robotis:ROBOTIS-GIT/dynamixel_hardware_interface:lang:python",
+                                "gh:robotis:ROBOTIS-GIT/DynamixelSDK:lang:python"
+                            ]
+                        },
+                        {
+                            "id": "cpp",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:robotis:ROBOTIS-GIT/dynamixel_hardware_interface:lang:cpp",
+                                "gh:robotis:ROBOTIS-GIT/dynamixel-workbench:lang:cpp",
+                                "gh:robotis:ROBOTIS-GIT/Dynamixel2Arduino:lang:cpp",
+                                "gh:robotis:ROBOTIS-GIT/DynamixelSDK:lang:cpp"
+                            ]
+                        },
+                        {
+                            "id": "rust",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 1,
+                            "evidence": []
+                        },
+                        {
+                            "id": "maintained",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:robotis:ROBOTIS-GIT/dynamixel_hardware_interface:activity",
+                                "gh:robotis:ROBOTIS-GIT/Dynamixel2Arduino:activity",
+                                "gh:robotis:ROBOTIS-GIT/DynamixelSDK:activity",
+                                "gh:robotis:ROBOTIS-GIT/emanual:activity"
+                            ]
+                        }
+                    ]
+                },
+                "ros_sim": {
+                    "score": 7,
+                    "checks": [
+                        {
+                            "id": "ros2-package",
+                            "status": "pass",
+                            "points": 4,
+                            "max": 4,
+                            "evidence": [
+                                "gh:robotis:ROBOTIS-GIT/dynamixel_hardware_interface:ros2-package",
+                                "gh:robotis:ROBOTIS-GIT/dynamixel_interfaces:ros2-package",
+                                "gh:robotis:ROBOTIS-GIT/dynamixel-workbench:ros2-package",
+                                "gh:robotis:ROBOTIS-GIT/DynamixelSDK:ros2-package"
+                            ]
+                        },
+                        {
+                            "id": "ros2-control",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:robotis:ROBOTIS-GIT/dynamixel_hardware_interface:ros2-control"
+                            ]
+                        },
+                        {
+                            "id": "sim-model",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "docs": {
+                    "score": 10,
+                    "checks": [
+                        {
+                            "id": "docs-present",
+                            "status": "pass",
+                            "points": 4,
+                            "max": 4,
+                            "evidence": [
+                                "catalog:robotis:https://docs.robotis.com/docs/dxl/model_reference/pro_series/pro_h_series/h54-200-s500-r/",
+                                "catalog:robotis:https://docs.robotis.com/docs/dxl/model_reference/x_series/xc_series/xc430-w150/",
+                                "catalog:robotis:https://docs.robotis.com/docs/dxl/model_reference/x_series/xl_series/xl330-m288/",
+                                "catalog:robotis:https://docs.robotis.com/docs/dxl/model_reference/x_series/xm_series/xm540-w270/",
+                                "catalog:robotis:https://emanual.robotis.com/docs/en/dxl/p/ph54-200-s500-r/",
+                                "catalog:robotis:https://emanual.robotis.com/docs/en/dxl/p/pm54-060-s250-r/",
+                                "catalog:robotis:https://emanual.robotis.com/docs/en/dxl/pro/h54-200-s500-r/",
+                                "catalog:robotis:https://emanual.robotis.com/docs/en/dxl/x/xc430-w150/",
+                                "catalog:robotis:https://emanual.robotis.com/docs/en/dxl/x/xc430-w240/",
+                                "catalog:robotis:https://emanual.robotis.com/docs/en/dxl/x/xh540-w270/",
+                                "catalog:robotis:https://emanual.robotis.com/docs/en/dxl/x/xl330-m077/",
+                                "catalog:robotis:https://emanual.robotis.com/docs/en/dxl/x/xl330-m288/",
+                                "catalog:robotis:https://emanual.robotis.com/docs/en/dxl/x/xl430-w250/",
+                                "catalog:robotis:https://emanual.robotis.com/docs/en/dxl/x/xm430-w350/",
+                                "catalog:robotis:https://emanual.robotis.com/docs/en/dxl/x/xm540-w270/",
+                                "gh:robotis:ROBOTIS-GIT/dynamixel_hardware_interface:docs",
+                                "gh:robotis:ROBOTIS-GIT/dynamixel_interfaces:docs",
+                                "gh:robotis:ROBOTIS-GIT/dynamixel-workbench:docs",
+                                "gh:robotis:ROBOTIS-GIT/Dynamixel2Arduino:docs",
+                                "gh:robotis:ROBOTIS-GIT/DynamixelSDK:docs",
+                                "gh:robotis:ROBOTIS-GIT/emanual:docs"
+                            ]
+                        },
+                        {
+                            "id": "examples",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:robotis:huggingface/lerobot:examples",
+                                "gh:robotis:ROBOTIS-GIT/dynamixel-workbench:examples",
+                                "gh:robotis:ROBOTIS-GIT/Dynamixel2Arduino:examples",
+                                "gh:robotis:ROBOTIS-GIT/DynamixelSDK:examples"
+                            ]
+                        },
+                        {
+                            "id": "english",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:robotis:ROBOTIS-GIT/dynamixel_hardware_interface:docs-english",
+                                "gh:robotis:ROBOTIS-GIT/emanual:docs-english"
+                            ]
+                        }
+                    ]
+                },
+                "firmware": {
+                    "score": 6,
+                    "checks": [
+                        {
+                            "id": "open-firmware",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "config-tool",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": ["gh:robotis:ROBOTIS-GIT/emanual:config-tool"]
+                        },
+                        {
+                            "id": "firmware-update",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:robotis:ROBOTIS-GIT/emanual:firmware-update"
+                            ]
+                        }
+                    ]
+                },
+                "support": {
+                    "score": 8.5,
+                    "checks": [
+                        {
+                            "id": "activity",
+                            "status": "pass",
+                            "points": 4,
+                            "max": 4,
+                            "evidence": [
+                                "gh:robotis:ROBOTIS-GIT/dynamixel_hardware_interface:activity",
+                                "gh:robotis:ROBOTIS-GIT/Dynamixel2Arduino:activity",
+                                "gh:robotis:ROBOTIS-GIT/DynamixelSDK:activity",
+                                "gh:robotis:ROBOTIS-GIT/emanual:activity"
+                            ]
+                        },
+                        {
+                            "id": "community-repos",
+                            "status": "partial",
+                            "points": 1.5,
+                            "max": 3,
+                            "evidence": ["gh:robotis:huggingface/lerobot:repo"]
+                        },
+                        {
+                            "id": "discussion",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "hn:robotis:19126636",
+                                "hn:robotis:19657887",
+                                "hn:robotis:33593359",
+                                "hn:robotis:33593360",
+                                "hn:robotis:35812475",
+                                "hn:robotis:39902573",
+                                "hn:robotis:39903171",
+                                "hn:robotis:39903717",
+                                "hn:robotis:42100068",
+                                "hn:robotis:43827267",
+                                "hn:robotis:45506608",
+                                "hn:robotis:47065693",
+                                "hn:robotis:49471493",
+                                "hn:robotis:6845701",
+                                "hn:robotis:6845728",
+                                "hn:robotis:7281773"
+                            ]
+                        },
+                        {
+                            "id": "issue-response",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "reliability": {
+                    "score": null,
+                    "checks": [
+                        {
+                            "id": "comms-reports",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 10,
+                            "evidence": []
+                        }
+                    ]
+                }
+            },
+            "capabilities": {
+                "python": "official",
+                "cpp": "official",
+                "rust": null,
+                "ros2": "official",
+                "ros2_control": "official",
+                "urdf": null,
+                "mjcf": null,
+                "open_firmware": null,
+                "documented_protocol": "official"
+            },
+            "evidenceCount": 81,
+            "medianPricePerNm": 60.26
+        },
+        {
+            "brand": "cubemars",
+            "name": "CubeMars",
+            "applicable": true,
+            "actuatorIds": [
+                "cubemars-ak10-9",
+                "cubemars-ak70-10",
+                "cubemars-ak80-9",
+                "cubemars-ak80-6",
+                "cubemars-ak60-6",
+                "cubemars-ri60-kv120",
+                "cubemars-ri80-v2-kv75",
+                "cubemars-r60-kv115"
+            ],
+            "dimensions": {
+                "protocol": {
+                    "score": 4.5,
+                    "checks": [
+                        {
+                            "id": "protocol-doc",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "open-licence",
+                            "status": "partial",
+                            "points": 1.5,
+                            "max": 3,
+                            "evidence": [
+                                "gh:cubemars:dfki-ric-underactuated-lab/mini-cheetah-tmotor-python-can:licence"
+                            ]
+                        },
+                        {
+                            "id": "open-implementation",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:cubemars:dfki-ric-underactuated-lab/mini-cheetah-tmotor-python-can:lang:python",
+                                "gh:cubemars:neurobionics/TMotorCANControl:lang:python"
+                            ]
+                        }
+                    ]
+                },
+                "bindings": {
+                    "score": 1.5,
+                    "checks": [
+                        {
+                            "id": "python",
+                            "status": "partial",
+                            "points": 1.5,
+                            "max": 3,
+                            "evidence": [
+                                "gh:cubemars:dfki-ric-underactuated-lab/mini-cheetah-tmotor-python-can:lang:python",
+                                "gh:cubemars:neurobionics/TMotorCANControl:lang:python"
+                            ]
+                        },
+                        {
+                            "id": "cpp",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "rust",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 1,
+                            "evidence": []
+                        },
+                        {
+                            "id": "maintained",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "ros_sim": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "ros2-package",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "ros2-control",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "sim-model",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "docs": {
+                    "score": 8.5,
+                    "checks": [
+                        {
+                            "id": "docs-present",
+                            "status": "pass",
+                            "points": 4,
+                            "max": 4,
+                            "evidence": [
+                                "catalog:cubemars:https://www.cubemars.com/images/file/20240523/1716429938564781.pdf"
+                            ]
+                        },
+                        {
+                            "id": "examples",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:cubemars:neurobionics/TMotorCANControl:examples"
+                            ]
+                        },
+                        {
+                            "id": "english",
+                            "status": "partial",
+                            "points": 1.5,
+                            "max": 3,
+                            "evidence": [
+                                "gh:cubemars:dfki-ric-underactuated-lab/mini-cheetah-tmotor-python-can:docs-english",
+                                "gh:cubemars:neurobionics/TMotorCANControl:docs-english"
+                            ]
+                        }
+                    ]
+                },
+                "firmware": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "open-firmware",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "config-tool",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "firmware-update",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "support": {
+                    "score": 3,
+                    "checks": [
+                        {
+                            "id": "activity",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "community-repos",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:cubemars:dfki-ric-underactuated-lab/mini-cheetah-tmotor-python-can:repo",
+                                "gh:cubemars:neurobionics/TMotorCANControl:repo"
+                            ]
+                        },
+                        {
+                            "id": "discussion",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "issue-response",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "reliability": {
+                    "score": null,
+                    "checks": [
+                        {
+                            "id": "comms-reports",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 10,
+                            "evidence": []
+                        }
+                    ]
+                }
+            },
+            "capabilities": {
+                "python": "community",
+                "cpp": null,
+                "rust": null,
+                "ros2": null,
+                "ros2_control": null,
+                "urdf": null,
+                "mjcf": null,
+                "open_firmware": null,
+                "documented_protocol": null
+            },
+            "evidenceCount": 13,
+            "medianPricePerNm": 26.36
+        },
+        {
+            "brand": "damiao",
+            "name": "DAMIAO",
+            "applicable": true,
+            "actuatorIds": [
+                "damiao-dm-j8009-2ec",
+                "damiao-dm-j10010-2ec",
+                "damiao-dm-j4310-2ec",
+                "damiao-dm-j4340-2ec",
+                "damiao-dm-j6248p-2ec",
+                "damiao-dm-j4340p-2ec"
+            ],
+            "dimensions": {
+                "protocol": {
+                    "score": 5.5,
+                    "checks": [
+                        {
+                            "id": "protocol-doc",
+                            "status": "pass",
+                            "points": 4,
+                            "max": 4,
+                            "evidence": [
+                                "gh:damiao:dmBots/DM-J4310-2EC:protocol-doc",
+                                "gh:damiao:dmBots/DM-J4340-2EC:protocol-doc",
+                                "gh:damiao:dmBots/DM-J8009-2EC:protocol-doc"
+                            ]
+                        },
+                        {
+                            "id": "open-licence",
+                            "status": "partial",
+                            "points": 1.5,
+                            "max": 3,
+                            "evidence": ["gh:damiao:cmjang/DM_Control_Python:licence"]
+                        },
+                        {
+                            "id": "open-implementation",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "bindings": {
+                    "score": 3,
+                    "checks": [
+                        {
+                            "id": "python",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "cpp",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "rust",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 1,
+                            "evidence": []
+                        },
+                        {
+                            "id": "maintained",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:damiao:dmBots/DM-J4310-2EC:activity",
+                                "gh:damiao:dmBots/DM-J4340-2EC:activity",
+                                "gh:damiao:dmBots/DM-J8009-2EC:activity"
+                            ]
+                        }
+                    ]
+                },
+                "ros_sim": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "ros2-package",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "ros2-control",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "sim-model",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "docs": {
+                    "score": 7,
+                    "checks": [
+                        {
+                            "id": "docs-present",
+                            "status": "pass",
+                            "points": 4,
+                            "max": 4,
+                            "evidence": [
+                                "gh:damiao:dmBots/DM-J4310-2EC:docs",
+                                "gh:damiao:dmBots/DM-J4340-2EC:docs",
+                                "gh:damiao:dmBots/DM-J8009-2EC:docs"
+                            ]
+                        },
+                        {
+                            "id": "examples",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "english",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:damiao:dmBots/DM-J4310-2EC:docs-english",
+                                "gh:damiao:dmBots/DM-J4340-2EC:docs-english",
+                                "gh:damiao:dmBots/DM-J8009-2EC:docs-english"
+                            ]
+                        }
+                    ]
+                },
+                "firmware": {
+                    "score": 3,
+                    "checks": [
+                        {
+                            "id": "open-firmware",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "config-tool",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "firmware-update",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:damiao:dmBots/DM-J4310-2EC:firmware-update",
+                                "gh:damiao:dmBots/DM-J4340-2EC:firmware-update",
+                                "gh:damiao:dmBots/DM-J8009-2EC:firmware-update"
+                            ]
+                        }
+                    ]
+                },
+                "support": {
+                    "score": 3.9,
+                    "checks": [
+                        {
+                            "id": "activity",
+                            "status": "partial",
+                            "points": 2.4,
+                            "max": 4,
+                            "evidence": [
+                                "gh:damiao:dmBots/DM-J4310-2EC:activity",
+                                "gh:damiao:dmBots/DM-J4340-2EC:activity",
+                                "gh:damiao:dmBots/DM-J8009-2EC:activity"
+                            ]
+                        },
+                        {
+                            "id": "community-repos",
+                            "status": "partial",
+                            "points": 1.5,
+                            "max": 3,
+                            "evidence": ["gh:damiao:cmjang/DM_Control_Python:repo"]
+                        },
+                        {
+                            "id": "discussion",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "issue-response",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "reliability": {
+                    "score": null,
+                    "checks": [
+                        {
+                            "id": "comms-reports",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 10,
+                            "evidence": []
+                        }
+                    ]
+                }
+            },
+            "capabilities": {
+                "python": null,
+                "cpp": null,
+                "rust": null,
+                "ros2": null,
+                "ros2_control": null,
+                "urdf": null,
+                "mjcf": null,
+                "open_firmware": null,
+                "documented_protocol": "official"
+            },
+            "evidenceCount": 23,
+            "medianPricePerNm": 6.11
+        },
+        {
+            "brand": "innfos",
+            "name": "INNFOS",
+            "applicable": true,
+            "actuatorIds": ["innfos-sca-qdd-lite-ne30-36"],
+            "dimensions": {
+                "protocol": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "protocol-doc",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "open-licence",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "open-implementation",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "bindings": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "python",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "cpp",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "rust",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 1,
+                            "evidence": []
+                        },
+                        {
+                            "id": "maintained",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "ros_sim": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "ros2-package",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "ros2-control",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "sim-model",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "docs": {
+                    "score": 5.8,
+                    "checks": [
+                        {
+                            "id": "docs-present",
+                            "status": "pass",
+                            "points": 4,
+                            "max": 4,
+                            "evidence": [
+                                "gh:innfos:INNFOS/innfos-cpp-sdk:docs",
+                                "gh:innfos:mintasca/innfos-gluon-controller:docs"
+                            ]
+                        },
+                        {
+                            "id": "examples",
+                            "status": "partial",
+                            "points": 1.8,
+                            "max": 3,
+                            "evidence": [
+                                "gh:innfos:INNFOS/innfos-cpp-sdk:examples",
+                                "gh:innfos:mintasca/innfos-gluon-controller:examples"
+                            ]
+                        },
+                        {
+                            "id": "english",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "firmware": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "open-firmware",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "config-tool",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "firmware-update",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "support": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "activity",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "community-repos",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "discussion",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "issue-response",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "reliability": {
+                    "score": null,
+                    "checks": [
+                        {
+                            "id": "comms-reports",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 10,
+                            "evidence": []
+                        }
+                    ]
+                }
+            },
+            "capabilities": {
+                "python": null,
+                "cpp": null,
+                "rust": null,
+                "ros2": null,
+                "ros2_control": null,
+                "urdf": null,
+                "mjcf": null,
+                "open_firmware": null,
+                "documented_protocol": null
+            },
+            "evidenceCount": 8,
+            "medianPricePerNm": null
+        },
+        {
+            "brand": "waveshare",
+            "name": "Waveshare",
+            "applicable": true,
+            "actuatorIds": ["waveshare-st3215", "waveshare-sc15"],
+            "dimensions": {
+                "protocol": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "protocol-doc",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "open-licence",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "open-implementation",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "bindings": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "python",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "cpp",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "rust",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 1,
+                            "evidence": []
+                        },
+                        {
+                            "id": "maintained",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "ros_sim": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "ros2-package",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "ros2-control",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "sim-model",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "docs": {
+                    "score": 4,
+                    "checks": [
+                        {
+                            "id": "docs-present",
+                            "status": "pass",
+                            "points": 4,
+                            "max": 4,
+                            "evidence": [
+                                "catalog:waveshare:https://www.waveshare.com/wiki/ST3215_Servo"
+                            ]
+                        },
+                        {
+                            "id": "examples",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "english",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "firmware": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "open-firmware",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "config-tool",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "firmware-update",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "support": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "activity",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "community-repos",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "discussion",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "issue-response",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "reliability": {
+                    "score": null,
+                    "checks": [
+                        {
+                            "id": "comms-reports",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 10,
+                            "evidence": []
+                        }
+                    ]
+                }
+            },
+            "capabilities": {
+                "python": null,
+                "cpp": null,
+                "rust": null,
+                "ros2": null,
+                "ros2_control": null,
+                "urdf": null,
+                "mjcf": null,
+                "open_firmware": null,
+                "documented_protocol": null
+            },
+            "evidenceCount": 1,
+            "medianPricePerNm": 8.28
+        },
+        {
+            "brand": "harmonic-drive",
+            "name": "Harmonic Drive",
+            "applicable": true,
+            "actuatorIds": [
+                "harmonic-drive-lpa-20",
+                "harmonic-drive-fha-14c-100",
+                "harmonic-drive-sha-cg",
+                "harmonic-drive-cha-series"
+            ],
+            "dimensions": {
+                "protocol": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "protocol-doc",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "open-licence",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "open-implementation",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "bindings": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "python",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "cpp",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "rust",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 1,
+                            "evidence": []
+                        },
+                        {
+                            "id": "maintained",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "ros_sim": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "ros2-package",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "ros2-control",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "sim-model",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "docs": {
+                    "score": 4,
+                    "checks": [
+                        {
+                            "id": "docs-present",
+                            "status": "pass",
+                            "points": 4,
+                            "max": 4,
+                            "evidence": [
+                                "catalog:harmonic-drive:https://www.harmonicdrive.net/_hd/content/catalogs/pdf/fha-c-miniature-spec-sheet-24v.pdf",
+                                "catalog:harmonic-drive:https://www.harmonicdrive.net/_hd/Content/documents1/Group%20Integrated%20Brochure.pdf"
+                            ]
+                        },
+                        {
+                            "id": "examples",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "english",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "firmware": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "open-firmware",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "config-tool",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "firmware-update",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "support": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "activity",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "community-repos",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "discussion",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "issue-response",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "reliability": {
+                    "score": null,
+                    "checks": [
+                        {
+                            "id": "comms-reports",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 10,
+                            "evidence": []
+                        }
+                    ]
+                }
+            },
+            "capabilities": {
+                "python": null,
+                "cpp": null,
+                "rust": null,
+                "ros2": null,
+                "ros2_control": null,
+                "urdf": null,
+                "mjcf": null,
+                "open_firmware": null,
+                "documented_protocol": null
+            },
+            "evidenceCount": 2,
+            "medianPricePerNm": null
+        },
+        {
+            "brand": "xiaomi",
+            "name": "Xiaomi",
+            "applicable": true,
+            "actuatorIds": ["xiaomi-cybergear"],
+            "dimensions": {
+                "protocol": {
+                    "score": 6.5,
+                    "checks": [
+                        {
+                            "id": "protocol-doc",
+                            "status": "partial",
+                            "points": 2,
+                            "max": 4,
+                            "evidence": [
+                                "gh:xiaomi:belovictor/cybergear-docs:protocol-doc"
+                            ]
+                        },
+                        {
+                            "id": "open-licence",
+                            "status": "partial",
+                            "points": 1.5,
+                            "max": 3,
+                            "evidence": [
+                                "gh:xiaomi:project-sternbergia/cybergear_m5:licence"
+                            ]
+                        },
+                        {
+                            "id": "open-implementation",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:xiaomi:project-sternbergia/cybergear_m5:lang:cpp"
+                            ]
+                        }
+                    ]
+                },
+                "bindings": {
+                    "score": 1.5,
+                    "checks": [
+                        {
+                            "id": "python",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "cpp",
+                            "status": "partial",
+                            "points": 1.5,
+                            "max": 3,
+                            "evidence": [
+                                "gh:xiaomi:project-sternbergia/cybergear_m5:lang:cpp"
+                            ]
+                        },
+                        {
+                            "id": "rust",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 1,
+                            "evidence": []
+                        },
+                        {
+                            "id": "maintained",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "ros_sim": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "ros2-package",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "ros2-control",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "sim-model",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "docs": {
+                    "score": 5.3,
+                    "checks": [
+                        {
+                            "id": "docs-present",
+                            "status": "partial",
+                            "points": 2,
+                            "max": 4,
+                            "evidence": [
+                                "gh:xiaomi:belovictor/cybergear-docs:docs",
+                                "gh:xiaomi:project-sternbergia/cybergear_m5:docs"
+                            ]
+                        },
+                        {
+                            "id": "examples",
+                            "status": "partial",
+                            "points": 1.8,
+                            "max": 3,
+                            "evidence": [
+                                "gh:xiaomi:project-sternbergia/cybergear_m5:examples"
+                            ]
+                        },
+                        {
+                            "id": "english",
+                            "status": "partial",
+                            "points": 1.5,
+                            "max": 3,
+                            "evidence": [
+                                "gh:xiaomi:belovictor/cybergear-docs:docs-english",
+                                "gh:xiaomi:project-sternbergia/cybergear_m5:docs-english"
+                            ]
+                        }
+                    ]
+                },
+                "firmware": {
+                    "score": 1.5,
+                    "checks": [
+                        {
+                            "id": "open-firmware",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "config-tool",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "firmware-update",
+                            "status": "partial",
+                            "points": 1.5,
+                            "max": 3,
+                            "evidence": [
+                                "gh:xiaomi:belovictor/cybergear-docs:firmware-update"
+                            ]
+                        }
+                    ]
+                },
+                "support": {
+                    "score": 3.9,
+                    "checks": [
+                        {
+                            "id": "activity",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "community-repos",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:xiaomi:belovictor/cybergear-docs:repo",
+                                "gh:xiaomi:project-sternbergia/cybergear_m5:repo"
+                            ]
+                        },
+                        {
+                            "id": "discussion",
+                            "status": "partial",
+                            "points": 0.9,
+                            "max": 3,
+                            "evidence": ["hn:xiaomi:40719584"]
+                        },
+                        {
+                            "id": "issue-response",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "reliability": {
+                    "score": null,
+                    "checks": [
+                        {
+                            "id": "comms-reports",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 10,
+                            "evidence": []
+                        }
+                    ]
+                }
+            },
+            "capabilities": {
+                "python": null,
+                "cpp": "community",
+                "rust": null,
+                "ros2": null,
+                "ros2_control": null,
+                "urdf": null,
+                "mjcf": null,
+                "open_firmware": null,
+                "documented_protocol": "community"
+            },
+            "evidenceCount": 14,
+            "medianPricePerNm": 14.92
+        },
+        {
+            "brand": "hiwonder",
+            "name": "Hiwonder",
+            "applicable": true,
+            "actuatorIds": ["hiwonder-lx-16a"],
+            "dimensions": {
+                "protocol": {
+                    "score": 4.5,
+                    "checks": [
+                        {
+                            "id": "protocol-doc",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "open-licence",
+                            "status": "partial",
+                            "points": 1.5,
+                            "max": 3,
+                            "evidence": ["gh:hiwonder:ethanlipson/PyLX-16A:licence"]
+                        },
+                        {
+                            "id": "open-implementation",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": ["gh:hiwonder:ethanlipson/PyLX-16A:lang:python"]
+                        }
+                    ]
+                },
+                "bindings": {
+                    "score": 1.5,
+                    "checks": [
+                        {
+                            "id": "python",
+                            "status": "partial",
+                            "points": 1.5,
+                            "max": 3,
+                            "evidence": ["gh:hiwonder:ethanlipson/PyLX-16A:lang:python"]
+                        },
+                        {
+                            "id": "cpp",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "rust",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 1,
+                            "evidence": []
+                        },
+                        {
+                            "id": "maintained",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "ros_sim": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "ros2-package",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "ros2-control",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "sim-model",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "docs": {
+                    "score": 2,
+                    "checks": [
+                        {
+                            "id": "docs-present",
+                            "status": "partial",
+                            "points": 2,
+                            "max": 4,
+                            "evidence": ["gh:hiwonder:ethanlipson/PyLX-16A:docs"]
+                        },
+                        {
+                            "id": "examples",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "english",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "firmware": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "open-firmware",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "config-tool",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "firmware-update",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "support": {
+                    "score": 3.3,
+                    "checks": [
+                        {
+                            "id": "activity",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "community-repos",
+                            "status": "partial",
+                            "points": 1.5,
+                            "max": 3,
+                            "evidence": ["gh:hiwonder:ethanlipson/PyLX-16A:repo"]
+                        },
+                        {
+                            "id": "discussion",
+                            "status": "partial",
+                            "points": 1.8,
+                            "max": 3,
+                            "evidence": [
+                                "hn:hiwonder:47018873",
+                                "hn:hiwonder:47790347",
+                                "hn:hiwonder:49993797"
+                            ]
+                        },
+                        {
+                            "id": "issue-response",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "reliability": {
+                    "score": null,
+                    "checks": [
+                        {
+                            "id": "comms-reports",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 10,
+                            "evidence": []
+                        }
+                    ]
+                }
+            },
+            "capabilities": {
+                "python": "community",
+                "cpp": null,
+                "rust": null,
+                "ros2": null,
+                "ros2_control": null,
+                "urdf": null,
+                "mjcf": null,
+                "open_firmware": null,
+                "documented_protocol": null
+            },
+            "evidenceCount": 8,
+            "medianPricePerNm": 9.95
+        },
+        {
+            "brand": "mjbots",
+            "name": "mjbots",
+            "applicable": true,
+            "actuatorIds": ["mjbots-qdd100", "mjbots-moteus-r4-11", "mjbots-moteus-c1"],
+            "dimensions": {
+                "protocol": {
+                    "score": 10,
+                    "checks": [
+                        {
+                            "id": "protocol-doc",
+                            "status": "pass",
+                            "points": 4,
+                            "max": 4,
+                            "evidence": [
+                                "gh:mjbots:mjbots/moteus:protocol-doc",
+                                "gh:mjbots:mjbots/pi3hat:protocol-doc"
+                            ]
+                        },
+                        {
+                            "id": "open-licence",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:mjbots:mjbots/moteus_ros2:licence",
+                                "gh:mjbots:mjbots/moteus:licence",
+                                "gh:mjbots:mjbots/pi3hat:licence"
+                            ]
+                        },
+                        {
+                            "id": "open-implementation",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:mjbots:mjbots/moteus_ros2:lang:python",
+                                "gh:mjbots:mjbots/moteus:lang:cpp",
+                                "gh:mjbots:mjbots/moteus:lang:python",
+                                "gh:mjbots:mjbots/moteus:lang:rust",
+                                "gh:mjbots:mjbots/pi3hat:lang:cpp",
+                                "gh:mjbots:mjbots/pi3hat:lang:python",
+                                "gh:mjbots:mjbots/pi3hat:lang:rust"
+                            ]
+                        }
+                    ]
+                },
+                "bindings": {
+                    "score": 10,
+                    "checks": [
+                        {
+                            "id": "python",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:mjbots:mjbots/moteus_ros2:lang:python",
+                                "gh:mjbots:mjbots/moteus:lang:python",
+                                "gh:mjbots:mjbots/pi3hat:lang:python"
+                            ]
+                        },
+                        {
+                            "id": "cpp",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:mjbots:mjbots/moteus:lang:cpp",
+                                "gh:mjbots:mjbots/pi3hat:lang:cpp"
+                            ]
+                        },
+                        {
+                            "id": "rust",
+                            "status": "pass",
+                            "points": 1,
+                            "max": 1,
+                            "evidence": [
+                                "gh:mjbots:mjbots/moteus:lang:rust",
+                                "gh:mjbots:mjbots/pi3hat:lang:rust"
+                            ]
+                        },
+                        {
+                            "id": "maintained",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:mjbots:mjbots/moteus:activity",
+                                "gh:mjbots:mjbots/pi3hat:activity"
+                            ]
+                        }
+                    ]
+                },
+                "ros_sim": {
+                    "score": 4,
+                    "checks": [
+                        {
+                            "id": "ros2-package",
+                            "status": "pass",
+                            "points": 4,
+                            "max": 4,
+                            "evidence": ["gh:mjbots:mjbots/moteus_ros2:ros2-package"]
+                        },
+                        {
+                            "id": "ros2-control",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "sim-model",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "docs": {
+                    "score": 10,
+                    "checks": [
+                        {
+                            "id": "docs-present",
+                            "status": "pass",
+                            "points": 4,
+                            "max": 4,
+                            "evidence": [
+                                "gh:mjbots:mjbots/moteus_ros2:docs",
+                                "gh:mjbots:mjbots/moteus:docs",
+                                "gh:mjbots:mjbots/pi3hat:docs"
+                            ]
+                        },
+                        {
+                            "id": "examples",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:mjbots:mjbots/moteus:examples",
+                                "gh:mjbots:mjbots/pi3hat:examples"
+                            ]
+                        },
+                        {
+                            "id": "english",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:mjbots:mjbots/moteus_ros2:docs-english",
+                                "gh:mjbots:mjbots/moteus:docs-english",
+                                "gh:mjbots:mjbots/pi3hat:docs-english"
+                            ]
+                        }
+                    ]
+                },
+                "firmware": {
+                    "score": 10,
+                    "checks": [
+                        {
+                            "id": "open-firmware",
+                            "status": "pass",
+                            "points": 4,
+                            "max": 4,
+                            "evidence": ["gh:mjbots:mjbots/moteus:firmware-source"]
+                        },
+                        {
+                            "id": "config-tool",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": ["gh:mjbots:mjbots/moteus:config-tool"]
+                        },
+                        {
+                            "id": "firmware-update",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:mjbots:mjbots/moteus:firmware-update",
+                                "gh:mjbots:mjbots/pi3hat:firmware-update"
+                            ]
+                        }
+                    ]
+                },
+                "support": {
+                    "score": 5.8,
+                    "checks": [
+                        {
+                            "id": "activity",
+                            "status": "pass",
+                            "points": 4,
+                            "max": 4,
+                            "evidence": [
+                                "gh:mjbots:mjbots/moteus:activity",
+                                "gh:mjbots:mjbots/pi3hat:activity"
+                            ]
+                        },
+                        {
+                            "id": "community-repos",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "discussion",
+                            "status": "partial",
+                            "points": 1.8,
+                            "max": 3,
+                            "evidence": [
+                                "hn:mjbots:29237920",
+                                "hn:mjbots:32383586",
+                                "hn:mjbots:45780851",
+                                "hn:mjbots:47021076"
+                            ]
+                        },
+                        {
+                            "id": "issue-response",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "reliability": {
+                    "score": null,
+                    "checks": [
+                        {
+                            "id": "comms-reports",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 10,
+                            "evidence": []
+                        }
+                    ]
+                }
+            },
+            "capabilities": {
+                "python": "official",
+                "cpp": "official",
+                "rust": "official",
+                "ros2": "official",
+                "ros2_control": null,
+                "urdf": null,
+                "mjcf": null,
+                "open_firmware": "official",
+                "documented_protocol": "official"
+            },
+            "evidenceCount": 35,
+            "medianPricePerNm": 54.94
+        },
+        {
+            "brand": "ipower",
+            "name": "iPower",
+            "applicable": false,
+            "actuatorIds": ["ipower-gm8112-80t"],
+            "dimensions": {
+                "protocol": {
+                    "score": null,
+                    "checks": []
+                },
+                "bindings": {
+                    "score": null,
+                    "checks": []
+                },
+                "ros_sim": {
+                    "score": null,
+                    "checks": []
+                },
+                "docs": {
+                    "score": null,
+                    "checks": []
+                },
+                "firmware": {
+                    "score": null,
+                    "checks": []
+                },
+                "support": {
+                    "score": null,
+                    "checks": []
+                },
+                "reliability": {
+                    "score": null,
+                    "checks": []
+                }
+            },
+            "capabilities": {
+                "python": null,
+                "cpp": null,
+                "rust": null,
+                "ros2": null,
+                "ros2_control": null,
+                "urdf": null,
+                "mjcf": null,
+                "open_firmware": null,
+                "documented_protocol": null
+            },
+            "evidenceCount": 0,
+            "medianPricePerNm": null
+        },
+        {
+            "brand": "spinea",
+            "name": "Spinea",
+            "applicable": false,
+            "actuatorIds": ["spinea-drivespin-ds110"],
+            "dimensions": {
+                "protocol": {
+                    "score": null,
+                    "checks": []
+                },
+                "bindings": {
+                    "score": null,
+                    "checks": []
+                },
+                "ros_sim": {
+                    "score": null,
+                    "checks": []
+                },
+                "docs": {
+                    "score": null,
+                    "checks": []
+                },
+                "firmware": {
+                    "score": null,
+                    "checks": []
+                },
+                "support": {
+                    "score": null,
+                    "checks": []
+                },
+                "reliability": {
+                    "score": null,
+                    "checks": []
+                }
+            },
+            "capabilities": {
+                "python": null,
+                "cpp": null,
+                "rust": null,
+                "ros2": null,
+                "ros2_control": null,
+                "urdf": null,
+                "mjcf": null,
+                "open_firmware": null,
+                "documented_protocol": null
+            },
+            "evidenceCount": 0,
+            "medianPricePerNm": null
+        },
+        {
+            "brand": "atar",
+            "name": "ATAR",
+            "applicable": true,
+            "actuatorIds": ["atar-arc-cycloidal-joint"],
+            "dimensions": {
+                "protocol": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "protocol-doc",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "open-licence",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "open-implementation",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "bindings": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "python",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "cpp",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "rust",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 1,
+                            "evidence": []
+                        },
+                        {
+                            "id": "maintained",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "ros_sim": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "ros2-package",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "ros2-control",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "sim-model",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "docs": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "docs-present",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "examples",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "english",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "firmware": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "open-firmware",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "config-tool",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "firmware-update",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "support": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "activity",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "community-repos",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "discussion",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "issue-response",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "reliability": {
+                    "score": null,
+                    "checks": [
+                        {
+                            "id": "comms-reports",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 10,
+                            "evidence": []
+                        }
+                    ]
+                }
+            },
+            "capabilities": {
+                "python": null,
+                "cpp": null,
+                "rust": null,
+                "ros2": null,
+                "ros2_control": null,
+                "urdf": null,
+                "mjcf": null,
+                "open_firmware": null,
+                "documented_protocol": null
+            },
+            "evidenceCount": 0,
+            "medianPricePerNm": null
+        },
+        {
+            "brand": "maxon",
+            "name": "maxon",
+            "applicable": false,
+            "actuatorIds": ["maxon-ec-frameless-90-flat-260w"],
+            "dimensions": {
+                "protocol": {
+                    "score": null,
+                    "checks": []
+                },
+                "bindings": {
+                    "score": null,
+                    "checks": []
+                },
+                "ros_sim": {
+                    "score": null,
+                    "checks": []
+                },
+                "docs": {
+                    "score": null,
+                    "checks": []
+                },
+                "firmware": {
+                    "score": null,
+                    "checks": []
+                },
+                "support": {
+                    "score": null,
+                    "checks": []
+                },
+                "reliability": {
+                    "score": null,
+                    "checks": []
+                }
+            },
+            "capabilities": {
+                "python": null,
+                "cpp": null,
+                "rust": null,
+                "ros2": null,
+                "ros2_control": null,
+                "urdf": null,
+                "mjcf": null,
+                "open_firmware": null,
+                "documented_protocol": null
+            },
+            "evidenceCount": 0,
+            "medianPricePerNm": null
+        },
+        {
+            "brand": "tq-systems",
+            "name": "TQ-Systems",
+            "applicable": false,
+            "actuatorIds": ["tq-robodrive-ilm85x26"],
+            "dimensions": {
+                "protocol": {
+                    "score": null,
+                    "checks": []
+                },
+                "bindings": {
+                    "score": null,
+                    "checks": []
+                },
+                "ros_sim": {
+                    "score": null,
+                    "checks": []
+                },
+                "docs": {
+                    "score": null,
+                    "checks": []
+                },
+                "firmware": {
+                    "score": null,
+                    "checks": []
+                },
+                "support": {
+                    "score": null,
+                    "checks": []
+                },
+                "reliability": {
+                    "score": null,
+                    "checks": []
+                }
+            },
+            "capabilities": {
+                "python": null,
+                "cpp": null,
+                "rust": null,
+                "ros2": null,
+                "ros2_control": null,
+                "urdf": null,
+                "mjcf": null,
+                "open_firmware": null,
+                "documented_protocol": null
+            },
+            "evidenceCount": 1,
+            "medianPricePerNm": null
+        },
+        {
+            "brand": "allied-motion",
+            "name": "Allied Motion",
+            "applicable": false,
+            "actuatorIds": ["allied-motion-megaflux-mf0127"],
+            "dimensions": {
+                "protocol": {
+                    "score": null,
+                    "checks": []
+                },
+                "bindings": {
+                    "score": null,
+                    "checks": []
+                },
+                "ros_sim": {
+                    "score": null,
+                    "checks": []
+                },
+                "docs": {
+                    "score": null,
+                    "checks": []
+                },
+                "firmware": {
+                    "score": null,
+                    "checks": []
+                },
+                "support": {
+                    "score": null,
+                    "checks": []
+                },
+                "reliability": {
+                    "score": null,
+                    "checks": []
+                }
+            },
+            "capabilities": {
+                "python": null,
+                "cpp": null,
+                "rust": null,
+                "ros2": null,
+                "ros2_control": null,
+                "urdf": null,
+                "mjcf": null,
+                "open_firmware": null,
+                "documented_protocol": null
+            },
+            "evidenceCount": 0,
+            "medianPricePerNm": null
+        },
+        {
+            "brand": "odrive",
+            "name": "ODrive",
+            "applicable": true,
+            "actuatorIds": ["odrive-v36", "odrive-s1", "odrive-pro"],
+            "dimensions": {
+                "protocol": {
+                    "score": 10,
+                    "checks": [
+                        {
+                            "id": "protocol-doc",
+                            "status": "pass",
+                            "points": 4,
+                            "max": 4,
+                            "evidence": ["gh:odrive:odriverobotics/ODrive:protocol-doc"]
+                        },
+                        {
+                            "id": "open-licence",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:odrive:odriverobotics/ODrive:licence",
+                                "gh:odrive:odriverobotics/ros_odrive:licence"
+                            ]
+                        },
+                        {
+                            "id": "open-implementation",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:odrive:odriverobotics/ODrive:lang:cpp",
+                                "gh:odrive:odriverobotics/ODrive:lang:python",
+                                "gh:odrive:odriverobotics/ros_odrive:lang:cpp"
+                            ]
+                        }
+                    ]
+                },
+                "bindings": {
+                    "score": 9,
+                    "checks": [
+                        {
+                            "id": "python",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": ["gh:odrive:odriverobotics/ODrive:lang:python"]
+                        },
+                        {
+                            "id": "cpp",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:odrive:odriverobotics/ODrive:lang:cpp",
+                                "gh:odrive:odriverobotics/ros_odrive:lang:cpp"
+                            ]
+                        },
+                        {
+                            "id": "rust",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 1,
+                            "evidence": []
+                        },
+                        {
+                            "id": "maintained",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:odrive:odriverobotics/ODrive:activity",
+                                "gh:odrive:odriverobotics/ros_odrive:activity"
+                            ]
+                        }
+                    ]
+                },
+                "ros_sim": {
+                    "score": 10,
+                    "checks": [
+                        {
+                            "id": "ros2-package",
+                            "status": "pass",
+                            "points": 4,
+                            "max": 4,
+                            "evidence": [
+                                "gh:odrive:odriverobotics/ros_odrive:ros2-package"
+                            ]
+                        },
+                        {
+                            "id": "ros2-control",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:odrive:odriverobotics/ros_odrive:ros2-control"
+                            ]
+                        },
+                        {
+                            "id": "sim-model",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": ["gh:odrive:odriverobotics/ros_odrive:urdf"]
+                        }
+                    ]
+                },
+                "docs": {
+                    "score": 7.9,
+                    "checks": [
+                        {
+                            "id": "docs-present",
+                            "status": "pass",
+                            "points": 4,
+                            "max": 4,
+                            "evidence": [
+                                "catalog:odrive:https://docs.odriverobotics.com/v/latest/hardware/odrive-comparison.html",
+                                "catalog:odrive:https://docs.odriverobotics.com/v/latest/hardware/pro-datasheet.html",
+                                "catalog:odrive:https://docs.odriverobotics.com/v/latest/hardware/s1-datasheet.html",
+                                "gh:odrive:odriverobotics/ODrive:docs",
+                                "gh:odrive:odriverobotics/ros_odrive:docs"
+                            ]
+                        },
+                        {
+                            "id": "examples",
+                            "status": "partial",
+                            "points": 0.9,
+                            "max": 3,
+                            "evidence": ["gh:odrive:odriverobotics/ODrive:examples"]
+                        },
+                        {
+                            "id": "english",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:odrive:odriverobotics/ODrive:docs-english",
+                                "gh:odrive:odriverobotics/ros_odrive:docs-english"
+                            ]
+                        }
+                    ]
+                },
+                "firmware": {
+                    "score": 10,
+                    "checks": [
+                        {
+                            "id": "open-firmware",
+                            "status": "pass",
+                            "points": 4,
+                            "max": 4,
+                            "evidence": [
+                                "gh:odrive:odriverobotics/ODrive:firmware-source"
+                            ]
+                        },
+                        {
+                            "id": "config-tool",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": ["gh:odrive:odriverobotics/ODrive:config-tool"]
+                        },
+                        {
+                            "id": "firmware-update",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:odrive:odriverobotics/ODrive:firmware-update"
+                            ]
+                        }
+                    ]
+                },
+                "support": {
+                    "score": 3,
+                    "checks": [
+                        {
+                            "id": "activity",
+                            "status": "partial",
+                            "points": 1.2,
+                            "max": 4,
+                            "evidence": [
+                                "gh:odrive:odriverobotics/ODrive:activity",
+                                "gh:odrive:odriverobotics/ros_odrive:activity"
+                            ]
+                        },
+                        {
+                            "id": "community-repos",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "discussion",
+                            "status": "partial",
+                            "points": 1.8,
+                            "max": 3,
+                            "evidence": [
+                                "hn:odrive:14280090",
+                                "hn:odrive:14281620",
+                                "hn:odrive:14281728",
+                                "hn:odrive:14721836",
+                                "hn:odrive:25830061",
+                                "hn:odrive:27997147",
+                                "hn:odrive:29086282",
+                                "hn:odrive:46630104",
+                                "hn:odrive:47126195"
+                            ]
+                        },
+                        {
+                            "id": "issue-response",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "reliability": {
+                    "score": null,
+                    "checks": [
+                        {
+                            "id": "comms-reports",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 10,
+                            "evidence": []
+                        }
+                    ]
+                }
+            },
+            "capabilities": {
+                "python": "official",
+                "cpp": "official",
+                "rust": null,
+                "ros2": "official",
+                "ros2_control": "official",
+                "urdf": "official",
+                "mjcf": null,
+                "open_firmware": "official",
+                "documented_protocol": "official"
+            },
+            "evidenceCount": 33,
+            "medianPricePerNm": null
+        },
+        {
+            "brand": "vesc",
+            "name": "VESC / Trampa",
+            "applicable": true,
+            "actuatorIds": ["trampa-vesc-6-mkvi"],
+            "dimensions": {
+                "protocol": {
+                    "score": 10,
+                    "checks": [
+                        {
+                            "id": "protocol-doc",
+                            "status": "pass",
+                            "points": 4,
+                            "max": 4,
+                            "evidence": [
+                                "gh:vesc:vedderb/bldc:protocol-doc",
+                                "gh:vesc:vedderb/vesc_pkg:protocol-doc"
+                            ]
+                        },
+                        {
+                            "id": "open-licence",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:vesc:vedderb/vesc_pkg:licence",
+                                "gh:vesc:vedderb/vesc_tool:licence"
+                            ]
+                        },
+                        {
+                            "id": "open-implementation",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:vesc:vedderb/bldc:lang:cpp",
+                                "gh:vesc:vedderb/bldc:lang:python",
+                                "gh:vesc:vedderb/vesc_pkg:lang:cpp",
+                                "gh:vesc:vedderb/vesc_pkg:lang:python",
+                                "gh:vesc:vedderb/vesc_tool:lang:cpp"
+                            ]
+                        }
+                    ]
+                },
+                "bindings": {
+                    "score": 9,
+                    "checks": [
+                        {
+                            "id": "python",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:vesc:vedderb/bldc:lang:python",
+                                "gh:vesc:vedderb/vesc_pkg:lang:python"
+                            ]
+                        },
+                        {
+                            "id": "cpp",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:vesc:vedderb/bldc:lang:cpp",
+                                "gh:vesc:vedderb/vesc_pkg:lang:cpp",
+                                "gh:vesc:vedderb/vesc_tool:lang:cpp"
+                            ]
+                        },
+                        {
+                            "id": "rust",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 1,
+                            "evidence": []
+                        },
+                        {
+                            "id": "maintained",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:vesc:vedderb/bldc:activity",
+                                "gh:vesc:vedderb/vesc_pkg:activity",
+                                "gh:vesc:vedderb/vesc_tool:activity"
+                            ]
+                        }
+                    ]
+                },
+                "ros_sim": {
+                    "score": 3.5,
+                    "checks": [
+                        {
+                            "id": "ros2-package",
+                            "status": "partial",
+                            "points": 2,
+                            "max": 4,
+                            "evidence": ["gh:vesc:sbgisen/vesc:ros2-package"]
+                        },
+                        {
+                            "id": "ros2-control",
+                            "status": "partial",
+                            "points": 1.5,
+                            "max": 3,
+                            "evidence": ["gh:vesc:sbgisen/vesc:ros2-control"]
+                        },
+                        {
+                            "id": "sim-model",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "docs": {
+                    "score": 10,
+                    "checks": [
+                        {
+                            "id": "docs-present",
+                            "status": "pass",
+                            "points": 4,
+                            "max": 4,
+                            "evidence": [
+                                "gh:vesc:vedderb/bldc:docs",
+                                "gh:vesc:vedderb/vesc_pkg:docs",
+                                "gh:vesc:vedderb/vesc_tool:docs"
+                            ]
+                        },
+                        {
+                            "id": "examples",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:vesc:vedderb/bldc:examples",
+                                "gh:vesc:vedderb/vesc_pkg:examples"
+                            ]
+                        },
+                        {
+                            "id": "english",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:vesc:vedderb/bldc:docs-english",
+                                "gh:vesc:vedderb/vesc_pkg:docs-english",
+                                "gh:vesc:vedderb/vesc_tool:docs-english"
+                            ]
+                        }
+                    ]
+                },
+                "firmware": {
+                    "score": 7,
+                    "checks": [
+                        {
+                            "id": "open-firmware",
+                            "status": "pass",
+                            "points": 4,
+                            "max": 4,
+                            "evidence": ["gh:vesc:vedderb/bldc:firmware-source"]
+                        },
+                        {
+                            "id": "config-tool",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": ["gh:vesc:vedderb/vesc_tool:config-tool"]
+                        },
+                        {
+                            "id": "firmware-update",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "support": {
+                    "score": 10,
+                    "checks": [
+                        {
+                            "id": "activity",
+                            "status": "pass",
+                            "points": 4,
+                            "max": 4,
+                            "evidence": [
+                                "gh:vesc:vedderb/bldc:activity",
+                                "gh:vesc:vedderb/vesc_pkg:activity",
+                                "gh:vesc:vedderb/vesc_tool:activity"
+                            ]
+                        },
+                        {
+                            "id": "community-repos",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:vesc:f1tenth/vesc:repo",
+                                "gh:vesc:sbgisen/vesc:repo"
+                            ]
+                        },
+                        {
+                            "id": "discussion",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "hn:vesc:16228109",
+                                "hn:vesc:16900960",
+                                "hn:vesc:22315998",
+                                "hn:vesc:22320732",
+                                "hn:vesc:29086282",
+                                "hn:vesc:37718288",
+                                "hn:vesc:37719673",
+                                "hn:vesc:37719806",
+                                "hn:vesc:37720092",
+                                "hn:vesc:37730592",
+                                "hn:vesc:41970537",
+                                "hn:vesc:49853568",
+                                "hn:vesc:49939050"
+                            ]
+                        },
+                        {
+                            "id": "issue-response",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "reliability": {
+                    "score": null,
+                    "checks": [
+                        {
+                            "id": "comms-reports",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 10,
+                            "evidence": []
+                        }
+                    ]
+                }
+            },
+            "capabilities": {
+                "python": "official",
+                "cpp": "official",
+                "rust": null,
+                "ros2": "community",
+                "ros2_control": "community",
+                "urdf": null,
+                "mjcf": null,
+                "open_firmware": "official",
+                "documented_protocol": "official"
+            },
+            "evidenceCount": 52,
+            "medianPricePerNm": null
+        },
+        {
+            "brand": "trinamic",
+            "name": "Trinamic",
+            "applicable": true,
+            "actuatorIds": ["trinamic-tmc4671"],
+            "dimensions": {
+                "protocol": {
+                    "score": 6,
+                    "checks": [
+                        {
+                            "id": "protocol-doc",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "open-licence",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:trinamic:analogdevicesinc/PyTrinamic:licence",
+                                "gh:trinamic:analogdevicesinc/TMC-API:licence"
+                            ]
+                        },
+                        {
+                            "id": "open-implementation",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:trinamic:analogdevicesinc/PyTrinamic:lang:python",
+                                "gh:trinamic:analogdevicesinc/TMC-API:lang:cpp"
+                            ]
+                        }
+                    ]
+                },
+                "bindings": {
+                    "score": 9,
+                    "checks": [
+                        {
+                            "id": "python",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:trinamic:analogdevicesinc/PyTrinamic:lang:python"
+                            ]
+                        },
+                        {
+                            "id": "cpp",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:trinamic:analogdevicesinc/TMC-API:lang:cpp"
+                            ]
+                        },
+                        {
+                            "id": "rust",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 1,
+                            "evidence": []
+                        },
+                        {
+                            "id": "maintained",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:trinamic:analogdevicesinc/PyTrinamic:activity",
+                                "gh:trinamic:analogdevicesinc/TMC-API:activity"
+                            ]
+                        }
+                    ]
+                },
+                "ros_sim": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "ros2-package",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "ros2-control",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "sim-model",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "docs": {
+                    "score": 10,
+                    "checks": [
+                        {
+                            "id": "docs-present",
+                            "status": "pass",
+                            "points": 4,
+                            "max": 4,
+                            "evidence": [
+                                "catalog:trinamic:https://www.analog.com/media/en/technical-documentation/data-sheets/TMC4671-LA_datasheet_rev2.08.pdf",
+                                "gh:trinamic:analogdevicesinc/PyTrinamic:docs",
+                                "gh:trinamic:analogdevicesinc/TMC-API:docs"
+                            ]
+                        },
+                        {
+                            "id": "examples",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:trinamic:analogdevicesinc/PyTrinamic:examples",
+                                "gh:trinamic:analogdevicesinc/TMC-API:examples"
+                            ]
+                        },
+                        {
+                            "id": "english",
+                            "status": "pass",
+                            "points": 3,
+                            "max": 3,
+                            "evidence": [
+                                "gh:trinamic:analogdevicesinc/PyTrinamic:docs-english",
+                                "gh:trinamic:analogdevicesinc/TMC-API:docs-english"
+                            ]
+                        }
+                    ]
+                },
+                "firmware": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "open-firmware",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "config-tool",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "firmware-update",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "support": {
+                    "score": 5.8,
+                    "checks": [
+                        {
+                            "id": "activity",
+                            "status": "pass",
+                            "points": 4,
+                            "max": 4,
+                            "evidence": [
+                                "gh:trinamic:analogdevicesinc/PyTrinamic:activity",
+                                "gh:trinamic:analogdevicesinc/TMC-API:activity"
+                            ]
+                        },
+                        {
+                            "id": "community-repos",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "discussion",
+                            "status": "partial",
+                            "points": 1.8,
+                            "max": 3,
+                            "evidence": [
+                                "hn:trinamic:25833279",
+                                "hn:trinamic:27299116",
+                                "hn:trinamic:43245583",
+                                "hn:trinamic:48387507"
+                            ]
+                        },
+                        {
+                            "id": "issue-response",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "reliability": {
+                    "score": null,
+                    "checks": [
+                        {
+                            "id": "comms-reports",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 10,
+                            "evidence": []
+                        }
+                    ]
+                }
+            },
+            "capabilities": {
+                "python": "official",
+                "cpp": "official",
+                "rust": null,
+                "ros2": null,
+                "ros2_control": null,
+                "urdf": null,
+                "mjcf": null,
+                "open_firmware": null,
+                "documented_protocol": null
+            },
+            "evidenceCount": 19,
+            "medianPricePerNm": null
+        },
+        {
+            "brand": "leaderdrive",
+            "name": "Leaderdrive",
+            "applicable": false,
+            "actuatorIds": ["leaderdrive-lhs", "leaderdrive-lhd", "leaderdrive-lcs"],
+            "dimensions": {
+                "protocol": {
+                    "score": null,
+                    "checks": []
+                },
+                "bindings": {
+                    "score": null,
+                    "checks": []
+                },
+                "ros_sim": {
+                    "score": null,
+                    "checks": []
+                },
+                "docs": {
+                    "score": null,
+                    "checks": []
+                },
+                "firmware": {
+                    "score": null,
+                    "checks": []
+                },
+                "support": {
+                    "score": null,
+                    "checks": []
+                },
+                "reliability": {
+                    "score": null,
+                    "checks": []
+                }
+            },
+            "capabilities": {
+                "python": null,
+                "cpp": null,
+                "rust": null,
+                "ros2": null,
+                "ros2_control": null,
+                "urdf": null,
+                "mjcf": null,
+                "open_firmware": null,
+                "documented_protocol": null
+            },
+            "evidenceCount": 0,
+            "medianPricePerNm": null
+        },
+        {
+            "brand": "nidec",
+            "name": "Nidec",
+            "applicable": false,
+            "actuatorIds": ["nidec-flexwave-wpg", "nidec-smart-flexwave-srh"],
+            "dimensions": {
+                "protocol": {
+                    "score": null,
+                    "checks": []
+                },
+                "bindings": {
+                    "score": null,
+                    "checks": []
+                },
+                "ros_sim": {
+                    "score": null,
+                    "checks": []
+                },
+                "docs": {
+                    "score": null,
+                    "checks": []
+                },
+                "firmware": {
+                    "score": null,
+                    "checks": []
+                },
+                "support": {
+                    "score": null,
+                    "checks": []
+                },
+                "reliability": {
+                    "score": null,
+                    "checks": []
+                }
+            },
+            "capabilities": {
+                "python": null,
+                "cpp": null,
+                "rust": null,
+                "ros2": null,
+                "ros2_control": null,
+                "urdf": null,
+                "mjcf": null,
+                "open_firmware": null,
+                "documented_protocol": null
+            },
+            "evidenceCount": 0,
+            "medianPricePerNm": null
+        },
+        {
+            "brand": "lkmtech",
+            "name": "LKMTech",
+            "applicable": true,
+            "actuatorIds": ["lkmtech-mg5010e-i36-v3"],
+            "dimensions": {
+                "protocol": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "protocol-doc",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "open-licence",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "open-implementation",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "bindings": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "python",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "cpp",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "rust",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 1,
+                            "evidence": []
+                        },
+                        {
+                            "id": "maintained",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "ros_sim": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "ros2-package",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "ros2-control",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "sim-model",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "docs": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "docs-present",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "examples",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "english",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "firmware": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "open-firmware",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "config-tool",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "firmware-update",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "support": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "activity",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "community-repos",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "discussion",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "issue-response",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "reliability": {
+                    "score": null,
+                    "checks": [
+                        {
+                            "id": "comms-reports",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 10,
+                            "evidence": []
+                        }
+                    ]
+                }
+            },
+            "capabilities": {
+                "python": null,
+                "cpp": null,
+                "rust": null,
+                "ros2": null,
+                "ros2_control": null,
+                "urdf": null,
+                "mjcf": null,
+                "open_firmware": null,
+                "documented_protocol": null
+            },
+            "evidenceCount": 0,
+            "medianPricePerNm": 9.6
+        },
+        {
+            "brand": "encos",
+            "name": "ENCOS",
+            "applicable": true,
+            "actuatorIds": [
+                "encos-ec-a6416-p2-25",
+                "encos-ec-a4315-p2-36",
+                "encos-ec-a4310-p2-36",
+                "encos-ec-a5013-h17-100",
+                "encos-ec-a3814-h14-107"
+            ],
+            "dimensions": {
+                "protocol": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "protocol-doc",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "open-licence",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "open-implementation",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "bindings": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "python",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "cpp",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "rust",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 1,
+                            "evidence": []
+                        },
+                        {
+                            "id": "maintained",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "ros_sim": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "ros2-package",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "ros2-control",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "sim-model",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "docs": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "docs-present",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "examples",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "english",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "firmware": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "open-firmware",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "config-tool",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "firmware-update",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "support": {
+                    "score": 0,
+                    "checks": [
+                        {
+                            "id": "activity",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 4,
+                            "evidence": []
+                        },
+                        {
+                            "id": "community-repos",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "discussion",
+                            "status": "fail",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        },
+                        {
+                            "id": "issue-response",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 3,
+                            "evidence": []
+                        }
+                    ]
+                },
+                "reliability": {
+                    "score": null,
+                    "checks": [
+                        {
+                            "id": "comms-reports",
+                            "status": "unknown",
+                            "points": 0,
+                            "max": 10,
+                            "evidence": []
+                        }
+                    ]
+                }
+            },
+            "capabilities": {
+                "python": null,
+                "cpp": null,
+                "rust": null,
+                "ros2": null,
+                "ros2_control": null,
+                "urdf": null,
+                "mjcf": null,
+                "open_firmware": null,
+                "documented_protocol": null
+            },
+            "evidenceCount": 0,
+            "medianPricePerNm": 16.67
+        }
+    ]
+}

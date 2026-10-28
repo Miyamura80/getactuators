@@ -29,6 +29,7 @@ import {
     robotsBody,
     topBy,
 } from "./pages-md";
+import { SDK_PAGE } from "./sdk/page";
 import { actuatorSeoTitle } from "./seo-titles";
 import { startupsBody } from "./startups";
 import { METALS_PAGE } from "./supply-chain/metals";
@@ -152,6 +153,7 @@ const STATIC_PAGES: Page[] = [
     OPEN_SOURCE_PAGE,
     BENCHMARKS_PAGE,
     PRICES_PAGE,
+    SDK_PAGE,
     sub(
         PATHS.agentsPage,
         "spa",

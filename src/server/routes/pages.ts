@@ -104,6 +104,7 @@ const PAGE_PATHS = [
     "/open-source",
     "/benchmarks",
     "/prices",
+    "/sdk",
 ];
 
 // Standalone agent documents open with their H1 (no frontmatter). /agents.md

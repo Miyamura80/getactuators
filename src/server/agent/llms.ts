@@ -91,6 +91,10 @@ ${link("Magnet metals", "/metals.md", "Nd, Pr, Dy, Tb, Sm and Co: country share 
 
 ${link("Actuator prices", "/prices.md", "price history from weekly store snapshots: latest price and 1-year change per actuator, $/Nm trend by class, price index against NdPr oxide; per-actuator history from the MCP tool get_price_history and GET /api/v1/prices/{actuatorId}")}
 
+## Developer ecosystem (markdown)
+
+${link("Best actuator SDKs", "/sdk.md", "brands scored on protocol openness, bindings, ROS 2 and sim, docs, firmware, support and reliability, each check linked to the GitHub file or post behind it; same data from the MCP tool get_sdk_score and GET /api/v1/sdk")}
+
 ## About
 
 ${link("About", "/about.md", "who runs the catalog and how data is verified")}

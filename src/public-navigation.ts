@@ -77,6 +77,7 @@ export const FOOTER_GROUPS = [
             ["/open-source", "Open-source robots"],
             ["/benchmarks", "Actuator benchmarks"],
             ["/prices", "Actuator prices"],
+            ["/sdk", "Best actuator SDKs"],
             ["/comparisons/cubemars-ak80-9-vs-xiaomi-cybergear", "AK80-9 vs CyberGear"],
             ["/faq", "FAQ"],
             ["/agents", "For AI agents"],
