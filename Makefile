@@ -35,24 +35,8 @@ help: ## Show this help message
 
 ### Onboarding & Setup
 .PHONY: onboard
-onboard: check_bun ## Interactive onboarding CLI (rename, deps, env, hooks, media)
+onboard: check_bun ## Interactive onboarding CLI (rename, deps, env, hooks)
 	@bun run onboard.ts
-
-########################################################
-# Asset Generation
-########################################################
-
-### Asset Generation
-.PHONY: banner logo
-banner: check_bun ## Generate project banner image
-	@echo "$(YELLOW)🎨 Generating banner...$(RESET)"
-	@bun run scripts/generate-banner.ts
-	@echo "$(GREEN)✅ Banner generated at media/banner.png$(RESET)"
-
-logo: check_bun ## Generate logo, icons, and favicon
-	@echo "$(YELLOW)🎨 Generating logo suite...$(RESET)"
-	@bun run scripts/generate-logo.ts
-	@echo "$(GREEN)✅ Logo suite generated in frontend/public/$(RESET)"
 
 ########################################################
 # Check dependencies
@@ -105,13 +89,12 @@ view_deps_size_by_package: check_bun ## Show node_modules size by package
 ########################################################
 
 ### Running
-all: check_bun ## Install deps and run main application
+all: check_bun ## Install deps and serve the site
 	@bun install
-	@echo "$(GREEN)🏁 Running main application...$(RESET)"
+	@echo "$(GREEN)🏁 Serving the site...$(RESET)"
 	@bun run start
-	@echo "$(GREEN)✅ Main application run completed.$(RESET)"
 
-dev: check_bun ## Run in watch mode
+dev: check_bun ## Serve the site in watch mode
 	@bun run dev
 
 ########################################################

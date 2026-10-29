@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test";
 import { REPO_URL, isRepoHref, withRepoMarks } from "@/repo-link";
-import { get } from "./agent-helpers";
+import { get, getMarkdown } from "./agent-helpers";
 
 const MARK = 'class="gh-mark"';
 const count = (s: string, needle: string) => s.split(needle).length - 1;
@@ -32,4 +32,17 @@ test("the API docs page marks its repository link", async () => {
     const html = await (await get("/docs/api")).text();
     expect(html).toContain(`<a href="${REPO_URL}"><svg ${MARK}`);
     expect(await (await get("/docs/api.md")).text()).not.toContain("gh-mark");
+});
+
+test("markdown pages mark repo links in HTML, never in the Markdown twin", async () => {
+    const main = (html: string) =>
+        /<main class="ga-main">[\s\S]*?<\/main>/.exec(html)?.[0] ?? "";
+    const about = main(await (await get("/about")).text());
+    expect(about).toContain(`<a href="${REPO_URL}"><svg ${MARK}`);
+    expect(count(about, MARK)).toBe(1);
+    const faq = main(await (await get("/faq")).text());
+    expect(faq).toContain(`<a href="${REPO_URL}"><svg ${MARK}`);
+    for (const path of ["/about", "/faq"])
+        expect(await (await getMarkdown(path)).text()).not.toContain("<svg");
+    expect(await (await get("/llms.txt")).text()).not.toContain("<svg");
 });

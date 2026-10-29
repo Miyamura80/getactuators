@@ -68,3 +68,14 @@ export function findSites({ country, stage, company, kind }: SiteFilter = {}): S
             (!kind || s.kind === kind),
     ).sort((a, b) => a.id.localeCompare(b.id));
 }
+
+// Where a company sits on a map: its headquarters, else its first site.
+export function companyAnchor(companyId: string): Site | undefined {
+    const sites = sitesOf(companyId);
+    return sites.find((s) => s.kind === "hq") ?? sites[0];
+}
+
+// Supply links that are still current (no `ended` month).
+export function activeLinks(): SupplyLink[] {
+    return SUPPLY_LINKS.filter((l) => !l.ended);
+}

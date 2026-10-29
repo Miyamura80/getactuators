@@ -1,0 +1,177 @@
+/* Flow kit: value-added Sankey, company graph, badges and step chips.
+   Bands are grey until a path is lit; the lit path turns cyan and the rest
+   recede, so one chain reads at a time. */
+
+.fk-sr {
+    position: absolute !important;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Readout: the HUD line above a chart */
+.fk-readout {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    min-height: 22px;
+    margin-bottom: 10px;
+    font-size: 13px;
+}
+.fk-readout-name { font-weight: 600; }
+.fk-readout b { font: 600 15px/1 var(--mono); color: var(--cyan); font-variant-numeric: tabular-nums; }
+.fk-readout-sub { font: 500 11px/1 var(--mono); color: var(--muted); }
+
+/* Sankey */
+.fk-sankey { position: relative; margin: 0; min-width: 0; }
+.fk-sankey-stage { position: relative; }
+.fk-sankey-stage > svg { position: absolute; inset: 0; display: block; overflow: visible; }
+.fk-link { fill: none; stroke: #2a2f30; stroke-opacity: 0.9; transition: stroke 150ms, stroke-opacity 150ms; }
+.fk-sankey.has-focus .fk-link { stroke-opacity: 0.25; }
+.fk-sankey.has-focus .fk-link.is-lit { stroke: var(--cyan-dim); stroke-opacity: 0.45; }
+.fk-node { fill: var(--muted); transition: fill 150ms, opacity 150ms; }
+.fk-sankey.has-focus .fk-node { opacity: 0.3; }
+.fk-sankey.has-focus .fk-node.is-lit { opacity: 1; fill: var(--cyan); }
+.fk-node.is-selected { fill: var(--text); }
+.fk-node-hit {
+    position: absolute;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    z-index: 2;
+}
+.fk-node-hit:focus-visible { outline: 1px solid var(--cyan); outline-offset: 0; }
+.fk-node-hit.is-selected { outline: 1px solid var(--text); }
+.fk-label {
+    position: absolute;
+    display: grid;
+    gap: 2px;
+    max-width: 210px;
+    pointer-events: none;
+    transform: translateY(-50%);
+    transition: opacity 150ms;
+    z-index: 1;
+}
+.fk-label.is-left { text-align: right; justify-items: end; }
+.fk-label.is-below { transform: none; max-width: none; }
+.fk-label.is-dim { opacity: 0.25; }
+.fk-label-line { display: flex; align-items: baseline; gap: 6px; white-space: nowrap; }
+.fk-label.is-left .fk-label-line { justify-content: flex-end; }
+.fk-label-name { font: 500 12px/1.25 var(--sans); color: var(--text); }
+.fk-label-value { font: 600 11px/1.2 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.fk-label-badges { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 2px; pointer-events: auto; }
+.fk-label.is-left .fk-label-badges { justify-content: flex-end; }
+
+/* Badges */
+.fk-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 1px 5px;
+    border: 1px solid var(--line-strong);
+    background: #000;
+    font: 600 10px/1.4 var(--mono);
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+.fk-badge-body { display: inline-flex; align-items: center; gap: 4px; }
+.fk-badge-glyph { width: 10px; height: 10px; fill: none; stroke: var(--muted); stroke-width: 1.2; }
+.fk-badge-glyph .is-fill { fill: var(--muted); stroke: none; }
+.fk-badge-idiot-index .fk-badge-glyph { stroke: var(--cyan); }
+.fk-badge.sc-value-estimated .sc-num { text-decoration: underline dotted var(--muted); text-underline-offset: 3px; }
+.fk-badge.sc-value-modeled .sc-num { color: var(--muted); }
+.fk-badge .sc-tag { padding: 0 3px; font-size: 8px; }
+.fk-badge .sc-ref sup a { font-size: 10px; }
+.fk-meter { display: inline-block; width: 22px; height: 4px; background: var(--line); }
+.fk-meter i { display: block; height: 100%; }
+.fk-badge-concentration .flag { font-size: 11px; }
+.fk-badge-concentration.is-dominant { border-color: var(--muted); }
+
+/* Process step chip */
+.fk-step {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 1px 6px;
+    border: 1px solid var(--line-strong);
+    color: var(--muted);
+    font: 500 10px/1.5 var(--mono);
+    text-decoration: none;
+    white-space: nowrap;
+}
+.fk-step svg { width: 10px; height: 10px; fill: none; stroke: currentColor; stroke-width: 1.1; }
+.fk-step:hover, .fk-step:focus-visible { color: var(--cyan); border-color: var(--cyan); outline: none; }
+
+/* Supply graph */
+.fk-graph { position: relative; margin: 0; min-width: 0; }
+.fk-graph-stage { position: relative; display: grid; gap: 0 56px; align-items: center; }
+.fk-graph.is-vertical .fk-graph-stage { grid-template-columns: 1fr; gap: 36px; }
+.fk-wires { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.fk-wire { fill: none; stroke: var(--line-strong); stroke-width: 1.2; transition: stroke 150ms, opacity 150ms; }
+.fk-wire.is-estimated { stroke-dasharray: 4 3; }
+.fk-graph.has-focus .fk-wire { opacity: 0.25; }
+.fk-graph.has-focus .fk-wire.is-lit { opacity: 1; stroke: var(--cyan); }
+.fk-wire-label {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    max-width: 150px;
+    padding: 2px 6px;
+    border: 1px solid var(--cyan-dim);
+    background: #000;
+    font: 500 10px/1.3 var(--mono);
+    color: var(--text);
+    text-align: center;
+    pointer-events: none;
+    z-index: 3;
+}
+.fk-layer { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; position: relative; z-index: 1; }
+.fk-graph.is-vertical .fk-layer { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+.fk-card {
+    display: grid;
+    gap: 6px;
+    padding: 8px;
+    border: 1px solid var(--line-strong);
+    background: var(--panel);
+    transition: opacity 150ms, border-color 150ms;
+}
+.fk-card.is-dim { opacity: 0.3; }
+.fk-card.is-selected { border-color: var(--cyan); }
+.fk-card-main {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 2px 8px;
+    align-items: center;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--text);
+    text-align: left;
+    cursor: pointer;
+}
+.fk-card-main:focus-visible { outline: 1px solid var(--cyan); outline-offset: 4px; }
+.fk-mono {
+    grid-row: span 2;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--line-strong);
+    font: 600 11px/1 var(--mono);
+    color: var(--cyan);
+}
+.fk-card-name { font: 600 13px/1.2 var(--sans); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fk-card-meta { display: flex; align-items: center; gap: 4px; font: 500 10px/1.2 var(--mono); color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
+.fk-card-meta > span:not(.flag) { margin-left: 4px; }
+.fk-card-badges { display: flex; flex-wrap: wrap; gap: 4px; }
+
+@media (prefers-reduced-motion: reduce) {
+    .fk-link, .fk-node, .fk-label, .fk-wire, .fk-card { transition: none; }
+}

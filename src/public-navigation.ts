@@ -87,6 +87,7 @@ export const FOOTER_GROUPS = [
         label: "Project",
         links: [
             ["/about", "About"],
+            ["/contributors", "Contributors"],
             ["/contact", "Contact"],
             ["/privacy", "Privacy"],
             [REPO_URL, "GitHub"],
