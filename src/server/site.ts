@@ -5,6 +5,9 @@ export const SITE_URL = (process.env.SITE_URL ?? "https://actuatorlist.com").rep
     "",
 );
 
+// Deploy environment (dev, staging or prod); read here so staging can branch on it later.
+export const DEV_ENV = process.env.DEV_ENV ?? "dev";
+
 export const SITE_NAME = "actuatorlist";
 
 export const SITE_DESCRIPTION =
