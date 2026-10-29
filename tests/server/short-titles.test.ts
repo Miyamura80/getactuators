@@ -4,11 +4,11 @@ import { expectTitles } from "./agent-helpers";
 
 const REPO_ROOT = `${import.meta.dir}/../..`;
 
-// The golden hashes lock page content to the catalog as it stood at capture,
-// so short-titles-golden.ts runs in a child process against the frozen copies
+// The golden metadata is tied to the catalog as it stood at capture, so
+// short-titles-golden.ts runs in a child process against the frozen copies
 // served by short-titles-freeze.ts. Catalog data can change; the title work
 // stays guarded.
-test("golden content check passes against the frozen catalog", async () => {
+test("golden metadata check passes against the frozen catalog", async () => {
     const child = Bun.spawn(
         [
             process.execPath,
