@@ -1,3 +1,4 @@
+import { POLICY_SOURCES } from "./policy/sources";
 import type { ReuseAllowlist, SourceReuse } from "./reuse";
 import type { SourceId } from "./sourced";
 
@@ -7,6 +8,7 @@ import type { SourceId } from "./sourced";
 
 export const SOURCE_KINDS = [
     "government",
+    "standards-body",
     "filing",
     "industry-report",
     "teardown",
@@ -603,6 +605,7 @@ export const SOURCES: SourceRef[] = [
         "press",
         "facts",
     ),
+    ...POLICY_SOURCES,
 ];
 
 // Facts sources allowed to back more than FACTS_MAX_RECORDS records (see

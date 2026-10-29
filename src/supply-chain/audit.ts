@@ -29,6 +29,7 @@ import {
     NDFEB_PER_EV,
     NDFEB_PER_HUMANOID,
 } from "./perspective";
+import { POLICY_MEASURES, policyErrors } from "./policy";
 import {
     companySchema,
     siteSchema,
@@ -75,6 +76,7 @@ const DATASETS: Record<string, unknown> = {
     "metals-stage-shares": STAGE_SHARES,
     "metals-reserves": RESERVES,
     "metals-prices": [PRICE_SERIES, NDPR_PRICE_FLOOR],
+    policy: POLICY_MEASURES,
 };
 
 // Records that cite sources without a number of their own.
@@ -83,6 +85,8 @@ const CITING_RECORDS: Record<string, readonly { sources: readonly string[] }[]> 
     "metals-events": METAL_EVENTS,
     "metals-drivers": PRICE_DRIVERS,
     "metals-price-chain": PRICE_CHAIN,
+    "policy-measures": POLICY_MEASURES,
+    "policy-status": POLICY_MEASURES.flatMap((m) => m.statusHistory),
 };
 
 // Numbers that need no citation of their own: coordinates (the site carries
@@ -241,6 +245,7 @@ export function auditRegistry(
         ...schemaErrors("links", supplyLinkSchema, SUPPLY_LINKS),
         ...duplicateIds(),
         ...referenceErrors(),
+        ...policyErrors(today),
     ];
     const used = new Set<string>();
     for (const [where, ids] of citations()) {

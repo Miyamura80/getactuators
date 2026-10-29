@@ -96,7 +96,7 @@ async function expectCatalogPage(
 // Captured from the clean main baseline before implementation.
 test("the full catalog has distinct reviewed metadata", async () => {
     const registered = allPages();
-    expect(registered).toHaveLength(88);
+    expect(registered).toHaveLength(89);
     // Pages added after the baseline capture have their own tests.
     const added = new Set([
         "/faq",
@@ -109,6 +109,7 @@ test("the full catalog has distinct reviewed metadata", async () => {
         "/humanoids",
         "/contributors",
         "/metals",
+        "/policy",
     ]);
     const pages = registered.filter((page) => !added.has(page.path));
     expect(ACTUATORS).toHaveLength(68);

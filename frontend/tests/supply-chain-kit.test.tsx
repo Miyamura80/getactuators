@@ -81,9 +81,9 @@ test("legend shows all three confidence styles", () => {
 });
 
 test("supply-chain menu lists live pages only", () => {
-    expect([...SUPPLY_CHAIN_PAGES_LIVE]).toEqual(["/metals"]);
+    expect([...SUPPLY_CHAIN_PAGES_LIVE]).toEqual(["/metals", "/policy"]);
     const view = render(<PublicHeader path="/" />);
-    expect([...view.container.querySelectorAll(".site-sub-panel a")].map((a) => a.getAttribute("href"))).toEqual(["/metals"]);
+    expect([...view.container.querySelectorAll(".site-sub-panel a")].map((a) => a.getAttribute("href"))).toEqual(["/metals", "/policy"]);
     cleanup();
     expect(supplyChainMenu(false, new Set())).toEqual([]);
     expect(supplyChainMenu(false, new Set(["/metals"]))).toEqual([
@@ -91,7 +91,7 @@ test("supply-chain menu lists live pages only", () => {
     ]);
     const preview = render(<PublicHeader path="/lab/supply-chain" supplyChainPreview />);
     expect(preview.container.querySelectorAll(".site-sub-soon")).toHaveLength(7);
-    expect(preview.container.querySelectorAll(".site-sub-panel a")).toHaveLength(1);
+    expect(preview.container.querySelectorAll(".site-sub-panel a")).toHaveLength(2);
 });
 
 test("lab page renders every kit component", () => {
