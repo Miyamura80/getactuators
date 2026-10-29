@@ -10,7 +10,7 @@ COPY frontend ./frontend
 COPY src/catalog/gallery.ts src/catalog/evidence.ts src/catalog/compare.ts src/catalog/engineering-evidence.ts src/catalog/shortlist.ts src/catalog/brands.ts src/catalog/index.ts src/catalog/types.ts ./src/catalog/
 COPY src/server/agent/humanoid-joints.ts ./src/server/agent/
 COPY src/engineering/arm-torque.ts ./src/engineering/
-COPY src/public-navigation.ts src/public-navigation.css ./src/
+COPY src/public-navigation.ts src/public-navigation.css src/repo-link.ts ./src/
 # Page data the browser imports directly.
 COPY src/startups.ts src/investors.ts src/country-flag.ts ./src/
 COPY src/humanoids ./src/humanoids
