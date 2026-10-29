@@ -27,6 +27,9 @@ import type { Sourced } from "../../../../src/supply-chain/sourced";
 import "../tools.css";
 import "../../components/supply-chain/supply-chain.css";
 import "../../components/supply-chain/perspective.css";
+import type { MapTopology } from "../../components/maps/geo";
+import { LabFlows } from "./lab/LabFlows";
+import { LabMaps } from "./lab/LabMaps";
 import "./lab.css";
 
 const TITLE = "Supply-chain kit";
@@ -52,7 +55,11 @@ function market(id: string) {
 
 // Hidden QA page: every shared supply-chain component, rendered with cited
 // fixtures. Noindex; not in the sitemap or llms.txt.
-export function SupplyChainLab({ menuOpen = false }: { menuOpen?: boolean }) {
+export function SupplyChainLab({ menuOpen = false, topologies }: {
+    menuOpen?: boolean;
+    // Preloaded map outlines (tests); the page fetches them otherwise.
+    topologies?: Partial<Record<string, MapTopology>>;
+}) {
     useEffect(() => {
         const prev = document.title;
         document.title = TITLE;
@@ -122,8 +129,18 @@ export function SupplyChainLab({ menuOpen = false }: { menuOpen?: boolean }) {
                     </div>
                 </section>
 
+                <section className="sc-lab-sec" aria-labelledby="sc-lab-maps">
+                    <h2 id="sc-lab-maps"><span>05</span>Map kit</h2>
+                    <LabMaps topologies={topologies} />
+                </section>
+
+                <section className="sc-lab-sec" aria-labelledby="sc-lab-flows">
+                    <h2 id="sc-lab-flows"><span>06</span>Flow kit</h2>
+                    <LabFlows />
+                </section>
+
                 <section className="sc-lab-sec" aria-labelledby="sc-lab-3d">
-                    <h2 id="sc-lab-3d"><span>05</span>3D explode kit</h2>
+                    <h2 id="sc-lab-3d"><span>07</span>3D explode kit</h2>
                     <Suspense fallback={<div className="sc-lab-3d-wait" />}>
                         <ExplodeKitDemo />
                     </Suspense>
