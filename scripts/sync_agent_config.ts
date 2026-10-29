@@ -22,7 +22,6 @@ import {
 } from "node:fs";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
-import { parse as parseYaml } from "yaml";
 
 const REPO = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const SHARED_SKILLS = join(REPO, ".agents", "skills");
@@ -153,7 +152,7 @@ function parseMd(path: string): { meta: Frontmatter; body: string } {
     const text = readFileSync(path, "utf-8");
     const m = text.match(FRONTMATTER_RE);
     if (!m) die(`${path}: missing YAML frontmatter`);
-    const meta = (parseYaml(m[1] ?? "") as Frontmatter) ?? {};
+    const meta = (Bun.YAML.parse(m[1] ?? "") as Frontmatter) ?? {};
     const body = (m[2] ?? "").replace(/^[\r\n]+/, "");
     return { meta, body };
 }
