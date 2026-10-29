@@ -11,7 +11,7 @@ Super-opinionated Bun/TypeScript stack for fast development. Uses `bun` as runti
 
 ```bash
 # Onboarding & Setup
-make onboard        # Interactive onboarding CLI (rename, deps, env, hooks, media)
+make onboard        # Interactive onboarding CLI (rename, deps, env, hooks)
 make setup          # Install dependencies (bun install)
 make all            # Install deps and run main application
 make dev            # Run in watch mode
@@ -33,12 +33,12 @@ make ci             # Run all CI checks (lint, deadcode, typecheck, lint_links)
 bun install         # Install dependencies
 bun add <pkg>       # Add new dependency
 bun add -d <pkg>    # Add dev dependency
-bun run src/index.ts # Run TypeScript files
+bun run scripts/serve_frontend.ts # Serve frontend/dist and agent routes
 ```
 
 ## Architecture
 
-- **src/** - Source code (entrypoint: `src/index.ts`)
+- **src/** - Source code (server entrypoint: `scripts/serve_frontend.ts`, which starts `src/server/app.ts`)
 - **tests/** - Test files (bun test)
 - **frontend/** - Frontend app (Vite/React, separate dependency tree)
 - **src/server/** - Bun server for the site and its agent surfaces. Add a surface by adding a module to `src/server/routes/` (auto-discovered). Markdown, llms.txt, JSON-LD and `/.well-known` builders live in `src/server/agent/`.

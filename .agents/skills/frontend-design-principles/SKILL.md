@@ -51,9 +51,3 @@ Two frontends live here with separate dependency trees, so "reuse" means reuse
   `components/icons.tsx` with inline SVG components and resolve them from an
   `icon()` handler in `lib/source.ts`, keyed off each page's `icon:`
   frontmatter. Ship the mark in the bundle; never hot-link an external asset.
-
-**Generated brand assets**
-
-- `scripts/generate-logo.ts` and `scripts/generate-banner.ts` produce the
-  project logo and README banner, and `make onboard` drives them. Regenerate
-  through those scripts instead of hand-editing their output.
