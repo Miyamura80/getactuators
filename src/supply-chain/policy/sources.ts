@@ -137,7 +137,7 @@ export const POLICY_SOURCES: PolicySource[] = [
         "mof-tariff-us-2025-10",
         "Customs Tariff Commission of the State Council",
         "Announcement on adjusting additional tariffs on US goods (24% suspended one more year)",
-        "http://m.mof.gov.cn/zcfb/202511/t20251105_3975756.htm",
+        "https://m.mof.gov.cn/zcfb/202511/t20251105_3975756.htm",
     ),
     doc(
         "gov-cn-mic2025",
@@ -548,6 +548,11 @@ export const POLICY_SOURCES: PolicySource[] = [
         "iso-10218-1-2011",
         "ISO 10218-1:2011 Robots and robotic devices: Safety requirements for industrial robots, Part 1",
         "https://www.iso.org/standard/51330.html",
+    ),
+    iso(
+        "iso-10218-2-2011",
+        "ISO 10218-2:2011 Robots and robotic devices: Safety requirements for industrial robots, Part 2: Robot systems and integration",
+        "https://www.iso.org/standard/41571.html",
     ),
     iso(
         "iso-10218-1-2025",

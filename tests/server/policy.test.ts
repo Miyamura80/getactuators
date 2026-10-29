@@ -95,6 +95,7 @@ describe("REST /api/v1/policy", () => {
         const other = PolicyListSchema.parse(
             await (await get("/api/v1/policy?jurisdiction=OTHER")).json(),
         );
+        expect(other.results.length).toBeGreaterThan(0);
         expect(other.results.every((m) => m.lane === "OTHER")).toBe(true);
     });
 

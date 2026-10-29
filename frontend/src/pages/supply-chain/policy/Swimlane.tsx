@@ -51,16 +51,18 @@ const LANE_SHORT: Record<PolicyLane, string> = {
 };
 
 function describe(m: PolicyMeasure): string {
-    return `${m.title}. ${MEASURE_TYPE_LABEL[m.type]}, ${MEASURE_STATUS_LABEL[m.status].toLowerCase()}, ${startDate(m)}`;
+    return `${m.title}. ${POLICY_LANE_LABEL[laneOf(m)]}. ${MEASURE_TYPE_LABEL[m.type]}, ${MEASURE_STATUS_LABEL[m.status].toLowerCase()}, ${startDate(m)}`;
 }
 
-export function Swimlane({ measures, today, focus, onFocus }: {
+export function Swimlane({ measures, today, focus: picked, onFocus }: {
     measures: readonly PolicyMeasure[];
     today: string;
     focus: string | null;
     onFocus: (id: string | null) => void;
 }) {
     const now = yearOf(today);
+    // A measure the filters hide cannot hold the focus.
+    const focus = picked && measures.some((m) => m.id === picked) ? picked : null;
     const scroller = useRef<HTMLDivElement>(null);
     // Narrow screens scroll the chart sideways: start at the recent end, or
     // at the measure in focus.

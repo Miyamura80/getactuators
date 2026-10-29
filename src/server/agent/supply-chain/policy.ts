@@ -154,6 +154,7 @@ export const POLICY_PAGE: Page = {
                 "Japan",
                 "South Korea",
                 "Australia",
+                "International",
             ],
             dateModified: POLICY_AS_OF,
             distribution: [

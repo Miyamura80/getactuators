@@ -205,7 +205,7 @@ export const JP_MEASURES: PolicyMeasure[] = [
         type: "subsidy",
         title: "Grant for Shin-Etsu rare earth refining in Japan",
         summary:
-            "The first critical minerals plan of 2026: about ¥17.5 billion for Shin-Etsu Chemical to build new rare earth refining equipment in Japan. Santoku received the second, for a similar plan, in July.",
+            "The first critical minerals plan of 2026: about ¥17.5 billion for Shin-Etsu Chemical to build new rare earth refining equipment in Japan.",
         issuer: "METI",
         announced: "2026-05-19",
         status: "in-force",
@@ -218,7 +218,7 @@ export const JP_MEASURES: PolicyMeasure[] = [
         ],
         stages: ["separation", "metal-alloy"],
         scope: "product",
-        companiesAffected: ["Shin-Etsu Chemical", "Santoku"],
+        companiesAffected: ["Shin-Etsu Chemical"],
         sources: ["meti-minerals-programme"],
     },
     {

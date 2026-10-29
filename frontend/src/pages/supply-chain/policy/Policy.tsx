@@ -59,7 +59,10 @@ export function Policy({ menuOpen = false }: { menuOpen?: boolean }) {
         return () => { document.title = prev; };
     }, []);
     useEffect(() => {
-        const onHash = () => setFocus(readMeasure(window.location.hash));
+        const onHash = () => {
+            if (window.location.hash.startsWith("#sc-source-")) return;
+            setFocus(readMeasure(window.location.hash));
+        };
         window.addEventListener("hashchange", onHash);
         return () => window.removeEventListener("hashchange", onHash);
     }, []);

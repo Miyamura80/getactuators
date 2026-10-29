@@ -46,6 +46,7 @@ test("type and status filters narrow the markers and land in the URL", () => {
     expect(c.querySelectorAll(".pl-marker")).toHaveLength(controls.length);
     expect(window.location.search).toBe("?type=export-control");
     act(() => { fireEvent.click(within(view.getByRole("group", { name: "Status" })).getByRole("button", { name: /Suspended/ })); });
+    expect(window.location.search).toBe("?type=export-control&status=suspended");
     expect(c.querySelectorAll(".pl-marker")).toHaveLength(controls.filter((m) => m.status === "suspended").length);
     act(() => { fireEvent.click(view.getByRole("button", { name: /clear/ })); });
     expect(c.querySelectorAll(".pl-marker")).toHaveLength(POLICY_MEASURES.length);

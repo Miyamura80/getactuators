@@ -17,17 +17,26 @@ export const INTL_MEASURES: PolicyMeasure[] = [
         expires: "2025-02",
         status: "expired",
         statusHistory: [
-            { date: "2011", status: "in-force", sources: ["iso-10218-1-2011"] },
+            {
+                date: "2011",
+                status: "in-force",
+                sources: ["iso-10218-1-2011", "iso-10218-2-2011"],
+            },
             {
                 date: "2025-02",
                 status: "expired",
-                note: "Replaced by ISO 10218-1:2025.",
-                sources: ["iso-10218-1-2011", "iso-10218-1-2025"],
+                note: "Replaced by ISO 10218-1:2025 and ISO 10218-2:2025.",
+                sources: [
+                    "iso-10218-1-2011",
+                    "iso-10218-2-2011",
+                    "iso-10218-1-2025",
+                    "iso-10218-2-2025",
+                ],
             },
         ],
         stages: ["actuator", "robot"],
         scope: "sector",
-        sources: ["iso-10218-1-2011"],
+        sources: ["iso-10218-1-2011", "iso-10218-2-2011"],
     },
     {
         id: "iso-10218-2025",
