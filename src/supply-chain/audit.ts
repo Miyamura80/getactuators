@@ -2,6 +2,7 @@ import { COMPANIES } from "./companies";
 import { insideCountry } from "./countries";
 import { LAB_MINING_HHI, LAB_STAGE_SHARES } from "./lab-fixtures";
 import { LAB_TESLA_MARGIN, labNdStep } from "./lab-kit";
+import { humanoidLicenceErrors, licenceErrors } from "./licence";
 import { SUPPLY_LINKS } from "./links";
 import { SEGMENT_MARKETS } from "./market-share";
 import {
@@ -37,7 +38,7 @@ import {
 } from "./schemas";
 import { SITES } from "./sites";
 import { type Sourced, isSourced } from "./sourced";
-import { SOURCES, getSource } from "./sources";
+import { FACTS_ALLOWLIST, SOURCES, getSource } from "./sources";
 
 // Integrity checks over every supply-chain dataset, shared by the registry
 // tests and scripts/citation-audit.ts. `errors` fail CI; `warnings` do not.
@@ -254,6 +255,16 @@ export function auditRegistry(
             if (!getSource(id)) errors.push(`${where}: unknown source "${id}"`);
         }
     }
+    errors.push(
+        ...licenceErrors({
+            name: "supply-chain",
+            file: "src/supply-chain/sources.ts",
+            sources: SOURCES,
+            citations: citations(),
+            allowlist: FACTS_ALLOWLIST,
+        }),
+        ...humanoidLicenceErrors(),
+    );
     const values = sourcedValueIssues(today);
     const orphans = SOURCES.filter((s) => !used.has(s.id)).map(
         (s) => `orphan source "${s.id}"`,

@@ -7,6 +7,7 @@ import { mdDocument, mdStandalone } from "../agent/md";
 import { htmlResponse, markdownResponse, wantsMarkdown } from "../agent/negotiate";
 import { findPage, findPageForMarkdown, pageMarkdown } from "../agent/pages";
 import { measurementHtml } from "../measurement";
+import { CODE_LICENSE, DATA_LICENSE } from "../site";
 import type { Handler, Route } from "../types";
 
 // HTML pages and their markdown twins. Each page answers:
@@ -122,7 +123,7 @@ export const routes: Route[] = [
     doc(
         PATHS.pricingMd,
         "actuatorlist pricing",
-        "actuatorlist is free: one plan, no keys, 120 requests per minute per IP, MIT License.",
+        `actuatorlist is free: one plan, no keys, 120 requests per minute per IP, ${CODE_LICENSE.spdx} code and ${DATA_LICENSE.name} data.`,
         pricingBody,
     ),
     ...PAGE_PATHS.map((path): Route => ({ method: "GET", path, handler: page })),

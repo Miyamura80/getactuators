@@ -8,6 +8,7 @@ import { labRobotFlow } from "@/supply-chain/lab-kit";
 import { sitePins, supplyArcs } from "@/supply-chain/map";
 import { marketOf } from "@/supply-chain/market-share";
 import { getCompany } from "@/supply-chain/registry";
+import { DEMO_SCENES, MAGNET_PRESS_LOOP } from "@/supply-chain/scenes/demos";
 import { mdTable, mdText } from "../md";
 import { type Footnotes, footnotes } from "./footnotes";
 import { worldMapSvg } from "./map-svg";
@@ -100,6 +101,21 @@ Berkeley Humanoid Lite's cost BOM as a value-added Sankey (from the /humanoids d
 ${mdTable(["From", "To", "US$"], flows)}`;
 }
 
+// The 3D kit demos as text: each assembly's parts in explode order.
+function explodeKitSection(): string {
+    const scenes = DEMO_SCENES.map(
+        (s) => `- **${s.title}**: ${s.parts.map((p) => mdText(p.label)).join(", ")}`,
+    );
+    const steps = (MAGNET_PRESS_LOOP.steps ?? []).map((s) => s.label).join(" > ");
+    return `## 3D explode kit
+
+Generic demo assemblies, not teardowns. Parts in explode order:
+
+${scenes.join("\n")}
+
+Process loop, ${MAGNET_PRESS_LOOP.title.toLowerCase()}: ${steps}.`;
+}
+
 // Markdown twin of /lab/supply-chain: the cited kit fixtures as text, with
 // footnotes. Noindex and left out of the sitemap and llms.txt.
 export function supplyChainLabBody(): string {
@@ -144,6 +160,7 @@ A dash means no public share was found.
 ${SEGMENTS.map((seg) => segmentSection(fn, seg)).join("\n\n")}
 
 ${kitSections()}
+${explodeKitSection()}
 
 ${fn.section()}`;
 }

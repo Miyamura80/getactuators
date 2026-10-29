@@ -1,7 +1,8 @@
 import { auditRegistry } from "@/supply-chain/audit";
 
 // CI gate for the supply-chain registry: every number cited, every source id
-// resolvable, every site inside its country. Warnings (orphan sources,
+// resolvable, every site inside its country, every source's data licence
+// respected (src/supply-chain/licence.ts). Warnings (orphan sources,
 // estimates without a method note) print but do not fail.
 
 const { errors, warnings } = auditRegistry();

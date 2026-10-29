@@ -6,6 +6,8 @@
 // an import cycle, since ../sources spreads this list into SOURCES.
 type Kind = "government" | "standards-body" | "filing" | "press";
 
+type Reuse = "open" | "facts" | "restricted";
+
 interface PolicySource {
     id: string;
     title: string;
@@ -13,6 +15,35 @@ interface PolicySource {
     url: string;
     accessed: string;
     kind: Kind;
+    reuse: Reuse;
+}
+
+// Reuse by publisher (see AGENTS.md "Data sourcing and licences"). Open only
+// where the licence is clear: US federal works are public domain, EU
+// documents are reusable under the Commission's CC BY 4.0 policy, and METI
+// and the Cabinet Office publish under Japan's CC BY compatible government
+// terms. Other governments, standards catalogues, press and filings are
+// facts; a licensed price feed is restricted.
+const OPEN_HOSTS = [
+    "ustr.gov",
+    "www.federalregister.gov",
+    "www.govinfo.gov",
+    "www.whitehouse.gov",
+    "www.war.gov",
+    "www.businessdefense.gov",
+    "www.nist.gov",
+    "www.supremecourt.gov",
+    "ec.europa.eu",
+    "eur-lex.europa.eu",
+    "www.meti.go.jp",
+    "www.cao.go.jp",
+];
+const RESTRICTED_HOSTS = ["www.fastmarkets.com"];
+
+function reuseOf(url: string): Reuse {
+    const host = new URL(url).host;
+    if (OPEN_HOSTS.includes(host)) return "open";
+    return RESTRICTED_HOSTS.includes(host) ? "restricted" : "facts";
 }
 
 function doc(
@@ -22,7 +53,15 @@ function doc(
     url: string,
     kind: Kind = "government",
 ): PolicySource {
-    return { id, publisher, title, url, kind, accessed: "2026-10-27" };
+    return {
+        id,
+        publisher,
+        title,
+        url,
+        kind,
+        reuse: reuseOf(url),
+        accessed: "2026-10-27",
+    };
 }
 
 const iso = (id: string, title: string, url: string) =>

@@ -27,6 +27,9 @@ test("the lab twin renders markdown footnotes and a Sources section", async () =
         expect(md).toContain("MP Materials revenue: $224.4M[^");
         expect(md).toContain("~$5.8-6B[^");
         expect(md).toContain("(model");
+        expect(md).toContain("## 3D explode kit");
+        expect(md).toContain("- **Strain-wave joint**: Optical encoder, Housing,");
+        expect(md).toContain("Fill > Align > Press > Eject.");
         expect(md).toContain("## Sources");
         expect(md).toMatch(
             /\[\^1\]: USGS, "Mineral Commodity Summaries 2026: Rare Earths"\. https:\/\/pubs\.usgs\.gov/,
