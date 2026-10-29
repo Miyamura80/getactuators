@@ -132,6 +132,13 @@ const PRIMARY_KINDS = new Set(["government", "standards-body"]);
 const sourceKind = new Map(SOURCES.map((s) => [s.id, s.kind]));
 const words = (s: string) => s.trim().split(/\s+/).length;
 const DATE = /^\d{4}(-\d{2}(-\d{2})?)?$/;
+// YYYY, YYYY-MM or YYYY-MM-DD, and a real month and day.
+function isDate(d: string): boolean {
+    if (!DATE.test(d)) return false;
+    const [y, m = 1, day = 1] = d.split("-").map(Number);
+    const t = new Date(Date.UTC(y ?? 0, m - 1, day));
+    return t.getUTCMonth() === m - 1 && t.getUTCDate() === day;
+}
 
 // Integrity rules the citation audit and tests enforce on the dataset.
 export function measureErrors(
@@ -154,7 +161,7 @@ export function measureErrors(
     if (!m.sources.some((id) => PRIMARY_KINDS.has(sourceKind.get(id) ?? "")))
         e.push(`${at}: no primary (government or standards body) source`);
     for (const d of [m.announced, m.effective, m.expires])
-        if (d !== undefined && !DATE.test(d)) e.push(`${at}: bad date ${d}`);
+        if (d !== undefined && !isDate(d)) e.push(`${at}: bad date ${d}`);
     return [...e, ...historyErrors(m, today)];
 }
 
@@ -165,7 +172,7 @@ function historyErrors(m: PolicyMeasure, today: string): string[] {
     const h = m.statusHistory;
     if (h.length === 0) e.push(`${at}: empty statusHistory`);
     h.forEach((c, i) => {
-        if (!DATE.test(c.date)) e.push(`${at}: bad status date ${c.date}`);
+        if (!isDate(c.date)) e.push(`${at}: bad status date ${c.date}`);
         if (c.date > today) e.push(`${at}: status date ${c.date} is in the future`);
         if (c.sources.length === 0) e.push(`${at}: status ${c.date} has no source`);
         const prev = h[i - 1];

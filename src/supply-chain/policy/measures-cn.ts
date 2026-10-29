@@ -159,7 +159,6 @@ export const CN_MEASURES: PolicyMeasure[] = [
         ],
         stages: ["separation", "metal-alloy", "magnet"],
         scope: "product",
-        hsCodes: ["2805301910"],
         elements: ["Sm", "Gd", "Tb", "Dy", "Lu", "Sc", "Y"],
         sources: ["mofcom-2025-18", "usgs-mcs-2026-ree", "nus-eai-rare-earths-2025"],
         metals: {

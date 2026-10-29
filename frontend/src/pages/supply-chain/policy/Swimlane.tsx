@@ -20,8 +20,14 @@ import { SCOPE_SIZE, TYPE_COLOR, TypeGlyph } from "./glyphs";
 const X0 = 2011;
 const X1 = 2027.5;
 const TRACK = 24;
+// Markers sharing a track sit at least one marker width apart at the chart's
+// narrowest (720px less the 128px lane head and the track's 2 x 14px margin).
+const MARKER_PX = 24;
+const GAP_YEARS = (MARKER_PX / (720 - 128 - 28)) * (X1 - X0);
 const YEARS = Array.from({ length: X1 - X0 + 0.5 }, (_, i) => X0 + i);
 
+// Names near either edge open inward so the chart edge does not clip them.
+const tipAt = (year: number) => ((year - X0) / (X1 - X0) < 0.3 ? "start" : (year - X0) / (X1 - X0) > 0.6 ? "end" : undefined);
 const pos = (year: number) => `${(((year - X0) / (X1 - X0)) * 100).toFixed(3)}%`;
 
 const LANE_MARK: Record<PolicyLane, string> = {
@@ -62,7 +68,10 @@ export function Swimlane({ measures, today, focus, onFocus }: {
         const el = scroller.current;
         if (!el || el.scrollWidth <= el.clientWidth) return;
         const mark = focus ? el.querySelector<HTMLElement>(`[data-measure="${focus}"] .pl-marker`) : null;
-        el.scrollLeft = mark ? mark.offsetLeft - el.clientWidth / 2 : el.scrollWidth;
+        if (!mark) { el.scrollLeft = el.scrollWidth; return; }
+        // The marker's offsetLeft is relative to its lane track, not the scroller.
+        const r = mark.getBoundingClientRect();
+        el.scrollLeft += r.left + r.width / 2 - (el.getBoundingClientRect().left + el.clientWidth / 2);
     }, [focus]);
     return <div ref={scroller} className={`pl-scroll${focus ? " has-focus" : ""}`}>
         <div className="pl-chart" role="group" aria-label="Measures by jurisdiction over time">
@@ -74,7 +83,7 @@ export function Swimlane({ measures, today, focus, onFocus }: {
             </div>
             {POLICY_LANES.map((lane) => {
                 const inLane = measures.filter((m) => laneOf(m) === lane);
-                const { placed, tracks } = placeLane(inLane, today);
+                const { placed, tracks } = placeLane(inLane, today, GAP_YEARS);
                 return <div key={lane} className="pl-lane" data-lane={lane}>
                     <div className="pl-lane-head" title={POLICY_LANE_LABEL[lane]}>
                         <span className="pl-lane-mark" aria-hidden="true">{LANE_MARK[lane]}</span>
@@ -96,7 +105,7 @@ export function Swimlane({ measures, today, focus, onFocus }: {
                                         style={{ left: pos(s.from), width: `calc(${pos(s.to)} - ${pos(s.from)})`, top: top + TRACK / 2 - 1, color: TYPE_COLOR[m.type] }} />)
                                     : null}
                                 <button type="button" className="pl-marker" aria-pressed={on}
-                                    aria-label={describe(m)} data-tip={m.title}
+                                    aria-label={describe(m)} data-tip={m.title} data-tip-at={tipAt(p.start)}
                                     style={{ left: pos(p.start), top }}
                                     onClick={() => onFocus(on ? null : m.id)}>
                                     <TypeGlyph type={m.type} status={m.status} size={size} />

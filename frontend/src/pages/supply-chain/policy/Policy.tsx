@@ -75,8 +75,11 @@ export function Policy({ menuOpen = false }: { menuOpen?: boolean }) {
     const pick = useCallback((id: string | null) => {
         setFocus(id);
         pushURL(window.location.search, id ? `#measure=${id}` : "");
-        if (id) requestAnimationFrame(() => cardRef.current?.scrollIntoView?.({ block: "nearest" }));
     }, []);
+    // Bring the open card into view, including a /policy#measure= deep link.
+    useEffect(() => {
+        if (focus) requestAnimationFrame(() => cardRef.current?.scrollIntoView?.({ block: "nearest" }));
+    }, [focus]);
     useEffect(() => {
         const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") pick(null); };
         window.addEventListener("keydown", onKey);

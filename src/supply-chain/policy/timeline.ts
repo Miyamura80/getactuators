@@ -23,8 +23,8 @@ export function segments(m: PolicyMeasure, today: string): Segment[] {
     const now = yearOf(today);
     const end = m.expires && m.expires < today ? yearOf(m.expires) : now;
     const out: Segment[] = [];
-    m.statusHistory.forEach((c, i) => {
-        if (c.status === "expired") return;
+    for (const [i, c] of m.statusHistory.entries()) {
+        if (c.status === "expired") break;
         const next = m.statusHistory[i + 1];
         const from = yearOf(c.date);
         const to = Math.min(next ? yearOf(next.date) : end, end);
@@ -32,7 +32,7 @@ export function segments(m: PolicyMeasure, today: string): Segment[] {
         if (last && last.status === c.status && last.to >= from)
             last.to = Math.max(last.to, to);
         else if (to > from) out.push({ from, to, status: c.status });
-    });
+    }
     return out;
 }
 

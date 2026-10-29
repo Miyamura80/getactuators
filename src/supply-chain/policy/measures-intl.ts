@@ -146,7 +146,7 @@ export const INTL_MEASURES: PolicyMeasure[] = [
         summary:
             "Requirements for safety-related servo and variable speed drives within the IEC 61508 framework: the safe torque off, safe stop and safely limited speed functions in robot joint drives. The 2016 edition replaced the 2007 one.",
         issuer: "IEC",
-        effective: "2016-04-18",
+        effective: "2007",
         status: "in-force",
         statusHistory: [
             { date: "2007", status: "in-force", sources: ["iec-61800-5-2-2007"] },

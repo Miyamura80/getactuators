@@ -165,8 +165,7 @@ const listPolicyMeasures = defineTool({
     input: z.object({
         jurisdiction: z
             .string()
-            .min(2)
-            .max(5)
+            .regex(/^[A-Za-z]{2,5}$/)
             .optional()
             .describe("ISO 3166 alpha-2 code, EU, INTL or OTHER."),
         type: z

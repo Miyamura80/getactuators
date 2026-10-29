@@ -64,7 +64,7 @@ function describe(s: PriceSeries, p: PricePoint): string {
 function readLink(search: string): { event: string | null; at: number | null } {
     const q = new URLSearchParams(search);
     const at = /^\d{4}-(0[1-9]|1[0-2])$/.test(q.get("at") ?? "") ? eventTime(q.get("at") ?? "") : null;
-    return { event: q.get("event"), at };
+    return { event: q.get("event"), at: at !== null && at >= X0 && at < X1 ? at : null };
 }
 
 export function PriceChart() {

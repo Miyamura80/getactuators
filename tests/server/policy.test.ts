@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { PolicyListSchema, PolicyMeasureSchema } from "@/api/policy";
-import { POLICY_MEASURES } from "@/supply-chain/policy";
+import { POLICY_MEASURES, policyChanges } from "@/supply-chain/policy";
 import { get, getMarkdown } from "./agent-helpers";
 import { callTool } from "./mcp-helpers";
 
@@ -33,6 +33,7 @@ describe("/policy page, twin and feed", () => {
                 expect(md).toContain(h);
             const rows = md.split("\n").filter((l) => /^\| \d{4}/.test(l));
             expect(rows).toHaveLength(POLICY_MEASURES.length);
+            for (const m of POLICY_MEASURES) expect(md).toContain(`\`${m.id}\``);
             const dates = rows.map((r) => r.split(" | ")[0]?.slice(2) ?? "");
             expect(dates).toEqual([...dates].sort());
             expect(md).toContain("`cn-mofcom-2025-18`");
@@ -54,6 +55,14 @@ describe("/policy page, twin and feed", () => {
         ].map((m) => m[1] ?? "");
         expect(updated.length).toBe(50);
         expect(updated).toEqual([...updated].sort().reverse());
+        const ids = [
+            ...xml.matchAll(/<entry>\s*<id>[^<]*\/policy\/([^<]+)<\/id>/g),
+        ].map((m) => m[1]);
+        expect(ids).toEqual(
+            policyChanges()
+                .slice(0, 50)
+                .map((c) => `${c.measure.id}/${c.index}`),
+        );
         expect(xml).toContain("https://actuatorlist.com/policy#measure=");
     });
 });
@@ -78,6 +87,11 @@ describe("REST /api/v1/policy", () => {
             await (await get("/api/v1/policy?stage=magnet&status=suspended")).json(),
         );
         expect(magnets.results.map((m) => m.id)).toContain("cn-mofcom-2025-57");
+        expect(
+            magnets.results.every(
+                (m) => m.stages.includes("magnet") && m.status === "suspended",
+            ),
+        ).toBe(true);
         const other = PolicyListSchema.parse(
             await (await get("/api/v1/policy?jurisdiction=OTHER")).json(),
         );

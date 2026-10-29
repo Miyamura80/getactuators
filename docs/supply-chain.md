@@ -192,8 +192,8 @@ year's annual average, else the last earlier point with `carried: true`.
 
 Government measures (export controls, tariffs, subsidies, standards) live once
 in `src/supply-chain/policy/`: `/policy` draws them, `/metals` pins the ones
-with a `metals` link on its price chart, and country pages read their strip
-from `measuresForCountry(code)`. Each measure needs a government or
+with a `metals` link on its price chart, and the country pages (#79) are to
+read their strip from `measuresForCountry(code)`. Each measure needs a government or
 standards-body source and a dated, sourced `statusHistory`, oldest first.
 
 Every number in a response carries `as_of`, `confidence`, `note` and the full

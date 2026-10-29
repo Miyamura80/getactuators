@@ -43,6 +43,20 @@ describe("policy dataset", () => {
         );
     });
 
+    test("a date that is not on the calendar fails", () => {
+        const m = { ...base, effective: "2025-02-30" };
+        expect(
+            measureErrors(m, POLICY_AS_OF).some((e) =>
+                e.includes("bad date 2025-02-30"),
+            ),
+        ).toBe(true);
+        expect(
+            measureErrors({ ...base, effective: "2024-02-29" }, POLICY_AS_OF).some(
+                (e) => e.includes("bad date"),
+            ),
+        ).toBe(false);
+    });
+
     test("an out-of-order statusHistory fails", () => {
         const m = { ...base, statusHistory: [...base.statusHistory].reverse() };
         expect(
@@ -77,16 +91,17 @@ describe("policy dataset", () => {
     });
 
     test("filters and country strips", () => {
+        const usSubsidies = findMeasures({ jurisdiction: "us", type: "subsidy" });
+        expect(usSubsidies.length).toBeGreaterThan(0);
         expect(
-            findMeasures({ jurisdiction: "us", type: "subsidy" }).every(
-                (m) => m.jurisdiction === "US",
-            ),
+            usSubsidies.every((m) => m.jurisdiction === "US" && m.type === "subsidy"),
         ).toBe(true);
         const jp = measuresForCountry("JP");
         expect(jp.length).toBeGreaterThan(5);
         expect(jp.every((m) => m.jurisdiction === "JP")).toBe(true);
         const changes = policyChanges();
-        expect(changes[0]!.date >= changes.at(-1)!.date).toBe(true);
+        const dates = changes.map((c) => c.date);
+        expect(dates).toEqual([...dates].sort().reverse());
     });
 });
 
