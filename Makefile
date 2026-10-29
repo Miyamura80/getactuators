@@ -170,7 +170,7 @@ check_ai_writing: check_bun ## Check for AI-written content
 	@bun run scripts/check_ai_writing.ts
 	@echo "$(GREEN)✅ AI writing check completed.$(RESET)"
 
-citation_audit: check_bun ## Fail if any supply-chain number is uncited
+citation_audit: check_bun ## Fail if any sourced number is uncited or breaks its source licence
 	@echo "$(YELLOW)🔍 Auditing supply-chain citations...$(RESET)"
 	@bun run scripts/citation-audit.ts
 	@echo "$(GREEN)✅ Citation audit completed.$(RESET)"

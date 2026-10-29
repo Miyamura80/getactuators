@@ -111,7 +111,7 @@ function nodes(s: JointSpec): CanonicalJoint[] {
     );
 }
 
-const MAGNET_SOURCES = [
+export const MAGNET_SOURCES = [
     "fai-magnets",
     "frameless-ri60",
     "frameless-ri80",
