@@ -37,7 +37,9 @@ export function useLocationKey(): string {
     );
 }
 
-export function navigate(to: string): void {
+// `keepScroll` is for in-page state such as a selected map pin, where the
+// view should stay put.
+export function navigate(to: string, { keepScroll = false }: { keepScroll?: boolean } = {}): void {
     const target = new URL(to, window.location.href);
     // Indexable route changes are document navigations: the server owns both
     // the head (including JSON-LD) and the persistent catalog/FAQ content.
@@ -49,7 +51,7 @@ export function navigate(to: string): void {
     }
     // A hash target scrolls itself to the anchor, so skip the reset-to-top that
     // top-level page changes want. A bare same-path click still resets to top.
-    const hasHash = to.includes("#");
+    const hasHash = keepScroll || to.includes("#");
     if (to === `${window.location.pathname}${window.location.search}${window.location.hash}`) {
         if (!hasHash) window.scrollTo({ top: 0 });
         return;
