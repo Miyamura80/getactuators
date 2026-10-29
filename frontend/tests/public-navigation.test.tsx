@@ -95,6 +95,7 @@ test("footer GitHub link leads with one decorative GitHub mark", () => {
     const link = view.container.querySelector(`footer a[href="${REPO_URL}"]`);
     const marks = link?.querySelectorAll("svg.gh-mark") ?? [];
     expect(marks).toHaveLength(1);
+    expect(link?.firstElementChild?.matches("svg.gh-mark")).toBe(true);
     expect(link?.firstElementChild?.getAttribute("aria-hidden")).toBe("true");
     expect(view.container.querySelectorAll("footer svg.gh-mark")).toHaveLength(1);
     cleanup();
