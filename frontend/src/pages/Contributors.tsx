@@ -1,9 +1,10 @@
 import { useEffect } from "react";
 import { PublicHeader } from "../components/PublicHeader";
 import { PublicFooter } from "../components/PublicFooter";
+import { GitHubMark } from "../components/GitHubMark";
 import { PeopleGrid } from "../components/people/PeopleGrid";
 import { CONTRIBUTORS, CONTRIBUTORS_PATH } from "../../../src/people";
-import { REPO_URL } from "../../../src/public-navigation";
+import { REPO_URL } from "../../../src/repo-link";
 import "./tools.css";
 
 const TITLE = "Contributors";
@@ -31,6 +32,7 @@ export function Contributors({ menuOpen = false }: { menuOpen?: boolean }) {
 
                 <div className="ctb-foot">
                     <a className="req-cta" href={REPO_URL} target="_blank" rel="noopener">
+                        <GitHubMark />
                         Contribute on GitHub
                     </a>
                     <p>

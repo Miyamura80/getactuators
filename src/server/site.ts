@@ -13,7 +13,7 @@ export const SITE_NAME = "actuatorlist";
 export const SITE_DESCRIPTION =
     "Open, spec-level directory of robot actuators (QDD motors, integrated joints, smart servos, harmonic and cycloidal reducers) and the robots that use them.";
 
-export { REPO_URL } from "../public-navigation";
+export { REPO_URL } from "../repo-link";
 
 // License facts, stated once for every surface (pages, markdown twins,
 // OpenAPI, JSON-LD). LICENSE and LICENSE-DATA hold the full terms.
