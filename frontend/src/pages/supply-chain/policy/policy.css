@@ -18,14 +18,8 @@
 .pl-cta:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
 .pl-mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 
-/* Glyphs */
-.pl-glyph { flex: none; overflow: visible; }
-.pl-glyph .pl-tile { fill: currentColor; stroke: currentColor; stroke-width: 1.6; }
-.pl-glyph .pl-tile.is-hollow { fill: var(--bg, #000); stroke-dasharray: 2.4 2; }
-.pl-glyph .pl-mark { fill: none; stroke: #000; stroke-width: 2.6; stroke-linejoin: round; stroke-linecap: round; }
-.pl-glyph .pl-mark .pl-solid { fill: #000; }
-.pl-glyph .pl-tile.is-hollow + .pl-mark { stroke: currentColor; }
-.pl-glyph .pl-tile.is-hollow + .pl-mark .pl-solid { fill: currentColor; }
+/* Glyphs: the shared object tile (components/glyphs/object-tile.css) plus
+   the suspended badge. */
 .pl-glyph .pl-pause circle { fill: var(--bg, #000); stroke: currentColor; stroke-width: 1.2; }
 .pl-glyph .pl-pause path { fill: none; stroke: currentColor; stroke-width: 1.2; }
 .pl-glyph.is-key { color: var(--muted); }
