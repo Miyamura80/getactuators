@@ -92,6 +92,7 @@ const PAGE_PATHS = [
     "/investors",
     "/faq",
     "/about",
+    "/contributors",
     "/contact",
     "/privacy",
     "/guides",

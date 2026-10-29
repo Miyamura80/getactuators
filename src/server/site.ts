@@ -5,12 +5,15 @@ export const SITE_URL = (process.env.SITE_URL ?? "https://actuatorlist.com").rep
     "",
 );
 
+// Deploy environment (dev, staging or prod); read here so staging can branch on it later.
+export const DEV_ENV = process.env.DEV_ENV ?? "dev";
+
 export const SITE_NAME = "actuatorlist";
 
 export const SITE_DESCRIPTION =
     "Open, spec-level directory of robot actuators (QDD motors, integrated joints, smart servos, harmonic and cycloidal reducers) and the robots that use them.";
 
-export const REPO_URL = "https://github.com/Miyamura80/getactuators";
+export { REPO_URL } from "../public-navigation";
 
 // License facts, stated once for every surface (pages, markdown twins,
 // OpenAPI, JSON-LD). LICENSE and LICENSE-DATA hold the full terms.
