@@ -1,4 +1,6 @@
 // Dependency-neutral navigation shared by runtime HTML and the browser build.
+import { GITHUB_MARK_SVG, REPO_URL, isRepoHref } from "./repo-link";
+
 export const PUBLIC_LINKS = [
     ["/", "Leaderboard"],
     ["/robots", "Robot types"],
@@ -87,7 +89,7 @@ export const FOOTER_GROUPS = [
             ["/about", "About"],
             ["/contact", "Contact"],
             ["/privacy", "Privacy"],
-            ["https://github.com/Miyamura80/getactuators", "GitHub"],
+            [REPO_URL, "GitHub"],
         ],
     },
     ...(liveSupplyChain.length > 0
@@ -107,5 +109,5 @@ export function publicHeader(path: string): string {
 }
 
 export function publicFooter(): string {
-    return `<footer class="site-footer"><nav aria-label="Footer">${FOOTER_GROUPS.map((group) => `<section><h2>${group.label}</h2>${group.links.map(([href, label]) => `<a href="${href}">${label}</a>`).join("")}</section>`).join("")}</nav></footer>`;
+    return `<footer class="site-footer"><nav aria-label="Footer">${FOOTER_GROUPS.map((group) => `<section><h2>${group.label}</h2>${group.links.map(([href, label]) => `<a href="${href}">${isRepoHref(href) ? GITHUB_MARK_SVG : ""}${label}</a>`).join("")}</section>`).join("")}</nav></footer>`;
 }

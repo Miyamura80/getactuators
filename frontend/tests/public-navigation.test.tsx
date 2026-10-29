@@ -11,6 +11,7 @@ import { ActuatorsPage } from "../src/pages/actuators/ActuatorsPage";
 import { Agents } from "../src/pages/Agents";
 import { ExplodedView } from "../src/pages/ExplodedView";
 import { FOOTER_GROUPS } from "../../src/public-navigation";
+import { REPO_URL } from "../../src/repo-link";
 
 afterEach(cleanup);
 
@@ -87,6 +88,16 @@ test("each public SPA surface has exactly one shared grouped footer", () => {
         }
         cleanup();
     }
+});
+
+test("footer GitHub link leads with one decorative GitHub mark", () => {
+    const view = render(<Home />);
+    const link = view.container.querySelector(`footer a[href="${REPO_URL}"]`);
+    const marks = link?.querySelectorAll("svg.gh-mark") ?? [];
+    expect(marks).toHaveLength(1);
+    expect(link?.firstElementChild?.getAttribute("aria-hidden")).toBe("true");
+    expect(view.container.querySelectorAll("footer svg.gh-mark")).toHaveLength(1);
+    cleanup();
 });
 
 test("the full dataset table keeps its datasheet warning", () => {
