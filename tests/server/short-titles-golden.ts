@@ -326,6 +326,7 @@ test("the full catalog has distinct reviewed metadata without content changes", 
         "/startups",
         "/investors",
         "/humanoids",
+        "/contributors",
         "/metals",
         "/policy",
     ]);

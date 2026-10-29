@@ -1,0 +1,40 @@
+{
+    "people": {
+        "eito-miyamura": {
+            "path": "/people/eito-miyamura.webp",
+            "sourceUrl": "https://github.com/Miyamura80.png",
+            "licence": "consent",
+            "credit": "GitHub avatar, used with consent",
+            "retrieved": "2026-10-25"
+        },
+        "soumil-sahjpall": {
+            "path": "/people/soumil-sahjpall.webp",
+            "sourceUrl": "https://www.linkedin.com/in/soumil-sahjpall/",
+            "licence": "consent",
+            "credit": "LinkedIn profile photo, used with consent",
+            "retrieved": "2026-10-26"
+        },
+        "cornelia-weinzierl": {
+            "path": "/people/cornelia-weinzierl.webp",
+            "sourceUrl": "https://www.linkedin.com/in/cornelia-weinzierl/",
+            "licence": "consent",
+            "credit": "LinkedIn profile photo, used with consent",
+            "retrieved": "2026-10-26"
+        },
+        "shota-yoshikai": {
+            "path": "/people/shota-yoshikai.webp",
+            "sourceUrl": "https://jp.linkedin.com/in/shota-yoshikai",
+            "licence": "consent",
+            "credit": "LinkedIn profile photo, used with consent",
+            "retrieved": "2026-10-26"
+        }
+    },
+    "orgs": {
+        "actuatorlist": {
+            "path": "/orgs/actuatorlist.svg",
+            "sourceUrl": "https://actuatorlist.com/favicon.svg",
+            "licence": "own",
+            "retrieved": "2026-10-25"
+        }
+    }
+}

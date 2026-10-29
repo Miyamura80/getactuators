@@ -205,6 +205,13 @@ export const SOURCES: SourceRef[] = [
         "press",
     ),
     src(
+        "tesla-10k-2024",
+        "Tesla (SEC)",
+        "Tesla, Inc. Form 10-K for fiscal year 2024",
+        "https://www.sec.gov/Archives/edgar/data/1318605/000162828025003063/tsla-20241231.htm",
+        "filing",
+    ),
+    src(
         "cnevpost-optimus-audits-2026",
         "CnEVPost",
         "Tesla audits China suppliers ahead of Optimus mass production",

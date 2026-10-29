@@ -1,4 +1,6 @@
 // Dependency-neutral navigation shared by runtime HTML and the browser build.
+export const REPO_URL = "https://github.com/Miyamura80/getactuators";
+
 export const PUBLIC_LINKS = [
     ["/", "Leaderboard"],
     ["/robots", "Robot types"],
@@ -87,9 +89,10 @@ export const FOOTER_GROUPS = [
         label: "Project",
         links: [
             ["/about", "About"],
+            ["/contributors", "Contributors"],
             ["/contact", "Contact"],
             ["/privacy", "Privacy"],
-            ["https://github.com/Miyamura80/getactuators", "GitHub"],
+            [REPO_URL, "GitHub"],
         ],
     },
     ...(liveSupplyChain.length > 0
