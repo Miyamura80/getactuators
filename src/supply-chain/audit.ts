@@ -1,6 +1,7 @@
 import { COMPANIES } from "./companies";
 import { insideCountry } from "./countries";
 import { LAB_MINING_HHI, LAB_STAGE_SHARES } from "./lab-fixtures";
+import { LAB_TESLA_MARGIN, labNdStep } from "./lab-kit";
 import { humanoidLicenceErrors, licenceErrors } from "./licence";
 import { SUPPLY_LINKS } from "./links";
 import { SEGMENT_MARKETS } from "./market-share";
@@ -53,6 +54,7 @@ const DATASETS: Record<string, unknown> = {
     links: SUPPLY_LINKS,
     "lab-stage-shares": LAB_STAGE_SHARES,
     "lab-values": [LAB_MINING_HHI],
+    "lab-kit-values": [LAB_TESLA_MARGIN, labNdStep()],
     "market-share": SEGMENT_MARKETS,
     "perspective-units": [
         NDFEB_PER_HUMANOID,
