@@ -37,7 +37,7 @@ test("query selection is noindex across served HTML, Markdown twins and content 
     expect(await (await get("/sitemap.xml")).text()).not.toContain("?compare=");
 });
 
-test("a page that is itself noindex keeps no canonical", async () => {
+test("a page that is itself noindex has no canonical in its HTML head", async () => {
     const html = await (await get("/lab/supply-chain")).text();
     expect(html).toContain('<meta name="robots" content="noindex, follow">');
     expect(html).not.toContain('rel="canonical"');

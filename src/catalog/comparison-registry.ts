@@ -213,13 +213,14 @@ export function comparisonTitle(
     );
 }
 
-// Pure snapshot factory: callers cache only their immutable production catalog.
-// Synthetic or mutable record inputs always get a fresh snapshot.
 function frozenPair<T extends ComparisonPair>(pair: T): Readonly<T> {
     const copy = { ...pair, ids: [...pair.ids] as [string, string] };
     Object.freeze(copy.ids);
     return Object.freeze(copy);
 }
+
+// Pure snapshot factory: callers cache only their immutable production catalog.
+// Synthetic or mutable record inputs always get a fresh snapshot.
 export function comparisonSnapshot(
     records: readonly ComparisonRecord[],
     authoredList: readonly AuthoredComparison[] = AUTHORED_COMPARISONS,
