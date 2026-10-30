@@ -1,7 +1,8 @@
 /* /startups: treemaps of funding and reported output. Same drafting-sheet
    rules as tools.css; tiles are flat fills, undisclosed ones hatched. */
 
-.su-toggle { margin: 20px 0 16px; max-width: 520px; }
+.su-toggle { margin: 20px 0 16px; max-width: 360px; }
+.su-toggle label { min-height: 30px; font-size: 12px; }
 .su-maps { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; }
 .su-maps.both { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .su-map { margin: 0; border: 1px solid var(--line); padding: 12px; min-width: 0; }
@@ -72,6 +73,7 @@
 @media (max-width: 860px) {
     .tool-main:has(.su-maps) { padding: 0 16px 24px; }
     .su-maps.both { grid-template-columns: minmax(0, 1fr); }
+    .su-toggle label { min-height: 40px; }
     .su-head,
     .su-row summary { grid-template-columns: minmax(0, 1fr) auto auto 14px; gap: 10px; padding: 10px 8px; font-size: 14px; }
     .su-head { display: none; }
