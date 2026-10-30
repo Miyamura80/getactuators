@@ -192,6 +192,8 @@ const INVESTORS: Row[] = [
     ["8vc", "8VC", "8vc.com"],
     ["ivp", "IVP", "ivp.com"],
     ["greycroft", "Greycroft", "greycroft.com"],
+    // 燈 (Akari Inc.), Aster's largest shareholder since Sep 2026; domain unverified.
+    ["akari", "Akari", null, ["燈"]],
 ];
 
 const host = (url: string): string => new URL(url).hostname.replace(/^www\./, "");

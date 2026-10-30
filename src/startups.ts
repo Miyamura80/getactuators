@@ -97,15 +97,16 @@ export const STARTUPS: Startup[] = [
         url: "https://www.ast-aster.biz/",
         hq: "Yokote, Akita",
         country: "JP",
-        raisedUsd: null,
-        round: "Strategic (DBJ Apr 2024; Akari alliance Aug 2026)",
-        leadInvestor: null,
+        // ¥500M, the only round with a disclosed amount, at ~¥110/$ (Sep 2021).
+        raisedUsd: 4_500_000,
+        round: "¥500M (Sep 2021); Akari stake (Sep 2026), amount undisclosed",
+        leadInvestor: "Akari",
         unitsPerMonth: null,
         volumeNote:
-            "No monthly rate disclosed. Makes ASTERMOTOR motors from its own laminated-coil process; DBJ backed its move into mass production in 2024.",
+            "No monthly rate disclosed. Makes ASTERMOTOR drone and robot motors from its own laminated-coil process; plans a new plant in 2027 to raise output about 20x by FY2028. Press put the Akari investment at several billion yen, which Aster has not confirmed.",
         source: {
-            label: "DBJ, Apr 2024",
-            url: "https://www.dbj.jp/en/topics/dbj_news/2024/html/20240405_204766.html",
+            label: "Aster, Sep 2021",
+            url: "https://www.ast-aster.biz/en/news-1/%E7%AC%AC%E4%B8%89%E8%80%85%E5%89%B2%E5%BD%93%E5%A2%97%E8%B3%87%E3%81%AB%E3%82%88%E3%82%8B5%E5%84%84%E5%86%86%E3%81%AE%E8%B3%87%E9%87%91%E8%AA%BF%E9%81%94%E3%82%92%E5%AE%9F%E6%96%BD",
         },
     },
 ];
