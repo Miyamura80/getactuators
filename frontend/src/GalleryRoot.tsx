@@ -1,4 +1,4 @@
-import { ActuatorsGallery } from "./pages/ActuatorsGallery";
+import { ActuatorsPage } from "./pages/actuators/ActuatorsPage";
 import { CommandPalette } from "./components/CommandPalette";
 
 // A fixed gallery tree avoids the router's homepage server snapshot during hydration.
@@ -6,7 +6,7 @@ import { CommandPalette } from "./components/CommandPalette";
 export function GalleryRoot({ menuOpen = false }: { menuOpen?: boolean }) {
     return (
         <>
-            <ActuatorsGallery menuOpen={menuOpen} />
+            <ActuatorsPage menuOpen={menuOpen} prerendered />
             <CommandPalette />
         </>
     );

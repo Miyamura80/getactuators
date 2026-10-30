@@ -20,8 +20,10 @@ test("gallery discovers only its first actual photo in the server head before Ja
         "/actuators?sort=price_usd&category=smart_servo",
     ]) {
         const html = await (await get(path)).text();
-        // Gallery has no URL filter/sort controls; query parameters do not change it.
-        expect(photoPreloads(html)).toEqual(["/actuator-images/nabtesco-rv-42n.webp"]);
+        // Unrelated query parameters do not change the default (by type) gallery.
+        expect(photoPreloads(html)).toEqual([
+            "/actuator-images/steadywin-gim8108-8.webp",
+        ]);
         expect(html.indexOf('as="image"')).toBeLessThan(html.indexOf("</head>"));
     }
 });
@@ -29,11 +31,13 @@ test("gallery discovers only its first actual photo in the server head before Ja
 test("other pages and gallery markdown do not preload gallery photos", async () => {
     for (const path of [
         "/",
-        "/all",
+        "/actuators?view=list",
         "/robots",
         "/guides",
         "/actuators/cubemars-ak80-9",
         "/actuators.md",
+        // Its first card is only known after hydration.
+        "/actuators?by=application",
     ]) {
         expect(photoPreloads(await (await get(path)).text()), path).toEqual([]);
     }

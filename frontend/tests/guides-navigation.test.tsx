@@ -3,15 +3,14 @@ import { afterEach, expect, test } from "bun:test";
 import { cleanup, render } from "@testing-library/react";
 import App from "../src/App";
 import { Home } from "../src/pages/Home";
-import { AllActuators } from "../src/pages/AllActuators";
-import { ActuatorsGallery } from "../src/pages/ActuatorsGallery";
+import { ActuatorsPage } from "../src/pages/actuators/ActuatorsPage";
 import { ExplodedView } from "../src/pages/ExplodedView";
 import { Agents } from "../src/pages/Agents";
 
 afterEach(cleanup);
 
 test("visible SPA navigation exposes native document links to engineering guides", () => {
-    for (const view of [<App />, <Home />, <AllActuators />, <ActuatorsGallery />, <ExplodedView id="leaderdrive-lcs" />, <Agents />]) {
+    for (const view of [<App />, <Home />, <ActuatorsPage />, <ExplodedView id="leaderdrive-lcs" />, <Agents />]) {
         const { container, unmount } = render(view);
         const link = container.querySelector<HTMLAnchorElement>('a[href="/guides"]');
         expect(link).not.toBeNull();

@@ -11,7 +11,30 @@ import {
     listUseCasesHandler,
 } from "./handlers";
 import type { ApiHandler } from "./http";
+import {
+    HumanoidDetailSchema,
+    HumanoidListSchema,
+    getHumanoidById,
+    listHumanoids,
+} from "./humanoids";
+import {
+    MetalListSchema,
+    MetalPriceParams,
+    MetalPricesSchema,
+    MetalSupplyParams,
+    MetalSupplySchema,
+    getMetalHandler,
+    getMetalPricesHandler,
+    listMetalsHandler,
+} from "./metals";
 import { ActuatorListParams, CompareQueryParams, RobotListParams } from "./params";
+import {
+    PolicyListParams,
+    PolicyListSchema,
+    PolicyMeasureSchema,
+    getPolicyHandler,
+    listPolicyHandler,
+} from "./policy";
 import {
     ActuatorDetailSchema,
     ActuatorListSchema,
@@ -22,6 +45,16 @@ import {
     RobotDetailSchema,
     RobotListSchema,
 } from "./schemas";
+import {
+    CompanyDetailSchema,
+    CompanyListParams,
+    CompanyListSchema,
+    SiteListParams,
+    SiteListSchema,
+    getCompanyHandler,
+    listCompaniesHandler,
+    listSitesHandler,
+} from "./supply-chain";
 
 // The API surface as data. Routes, the /api index, the OpenAPI document and the
 // developer docs are all generated from this list, so they cannot disagree.
@@ -166,5 +199,152 @@ export const OPERATIONS: Operation[] = [
         errors: [],
         example: "/api/v1/use-cases",
         handler: listUseCasesHandler,
+    },
+    {
+        operationId: "list_companies",
+        method: "GET",
+        path: "/api/v1/companies",
+        summary: "List supply-chain companies",
+        description:
+            "Companies along the actuator supply chain (rare earths, magnets and motors, gears and bearings, robot and actuator makers). Filter by country, stage or segment. Every number carries sources, as-of date and confidence. Cursor-paginated.",
+        query: CompanyListParams,
+        response: CompanyListSchema,
+        errors: [400],
+        example: "/api/v1/companies?country=JP&stage=gearing",
+        handler: listCompaniesHandler,
+    },
+    {
+        operationId: "get_company",
+        method: "GET",
+        path: "/api/v1/companies/:id",
+        summary: "Get one supply-chain company",
+        description:
+            "One company with its sites, the companies it supplies and the companies that supply it, each with citations.",
+        pathParam: { name: "id", description: "Company id (slug).", example: "jl-mag" },
+        response: CompanyDetailSchema,
+        errors: [404],
+        example: "/api/v1/companies/jl-mag",
+        handler: getCompanyHandler,
+    },
+    {
+        operationId: "list_sites",
+        method: "GET",
+        path: "/api/v1/sites",
+        summary: "List supply-chain sites",
+        description:
+            "Headquarters, plants, mines and refineries with coordinates and their precision. Filter by country, stage, company or kind. Cursor-paginated.",
+        query: SiteListParams,
+        response: SiteListSchema,
+        errors: [400],
+        example: "/api/v1/sites?company=jl-mag",
+        handler: listSitesHandler,
+    },
+    {
+        operationId: "list_metals",
+        method: "GET",
+        path: "/api/v1/metals",
+        summary: "List magnet metals",
+        description:
+            "The six metals in an actuator's permanent magnet (Nd, Pr, Dy, Tb for NdFeB; Sm, Co for SmCo) with their role and the leading country at each stage: mining, separation, metal and alloy, magnets.",
+        response: MetalListSchema,
+        errors: [],
+        example: "/api/v1/metals",
+        handler: listMetalsHandler,
+    },
+    {
+        operationId: "get_metal",
+        method: "GET",
+        path: "/api/v1/metals/:element",
+        summary: "Who supplies one magnet metal",
+        description:
+            "Country shares of each stage (or one with `stage`), USGS mine production, reserves and years of supply by country, and the latest cited price of every series for the element. Stages no public source splits by country are marked `gap`.",
+        pathParam: {
+            name: "element",
+            description: "Element id: nd, pr, dy, tb, sm or co.",
+            example: "dy",
+        },
+        query: MetalSupplyParams,
+        response: MetalSupplySchema,
+        errors: [400, 404],
+        example: "/api/v1/metals/dy?stage=separation",
+        handler: getMetalHandler,
+    },
+    {
+        operationId: "get_metal_prices",
+        method: "GET",
+        path: "/api/v1/metal-prices/:series",
+        summary: "Price history of a magnet metal",
+        description:
+            "Cited price points for one series in US$/kg (USGS annual averages and year-end ranges, monthly SMM readings in 2026) with the events that touched the element. `from` and `to` take YYYY-MM.",
+        pathParam: {
+            name: "series",
+            description:
+                "Series id, e.g. ndpr-oxide, dy-oxide, tb-metal-cn, tb-metal-fob, co-metal.",
+            example: "dy-oxide",
+        },
+        query: MetalPriceParams,
+        response: MetalPricesSchema,
+        errors: [400, 404],
+        example: "/api/v1/metal-prices/dy-oxide?from=2020-01",
+        handler: getMetalPricesHandler,
+    },
+    {
+        operationId: "list_policy_measures",
+        method: "GET",
+        path: "/api/v1/policy",
+        summary: "List policy measures on the actuator chain",
+        description:
+            "Export controls, tariffs, subsidies and standards that touch the actuator supply chain (mining to robot) in China, the US, the EU, Japan, Korea, Australia and international standards bodies, oldest first. Each measure has its status history with a primary source per change. Filter by jurisdiction, type, stage or status.",
+        query: PolicyListParams,
+        response: PolicyListSchema,
+        errors: [400],
+        example: "/api/v1/policy?jurisdiction=CN&type=export-control",
+        handler: listPolicyHandler,
+    },
+    {
+        operationId: "get_policy_measure",
+        method: "GET",
+        path: "/api/v1/policy/:id",
+        summary: "Get one policy measure",
+        description:
+            "One measure with its issuer, dates, status history, affected stages, HS codes, companies, award size and sources.",
+        pathParam: {
+            name: "id",
+            description: "Measure id, e.g. cn-mofcom-2025-18.",
+            example: "cn-mofcom-2025-18",
+        },
+        response: PolicyMeasureSchema,
+        errors: [404],
+        example: "/api/v1/policy/cn-mofcom-2025-18",
+        handler: getPolicyHandler,
+    },
+    {
+        operationId: "list_humanoids",
+        method: "GET",
+        path: "/api/v1/humanoids",
+        summary: "List humanoids with actuator totals",
+        description:
+            "Every humanoid on /humanoids with its actuator count by type (QDD, planetary, harmonic, cycloidal, roller screw, ball screw, hydraulic, tendon, undisclosed) and estimated NdFeB magnet and rare-earth (Nd, Pr, Dy, Tb) mass, each with a range and confidence.",
+        response: HumanoidListSchema,
+        errors: [],
+        example: "/api/v1/humanoids",
+        handler: listHumanoids,
+    },
+    {
+        operationId: "get_humanoid",
+        method: "GET",
+        path: "/api/v1/humanoids/:id",
+        summary: "Get one humanoid joint by joint",
+        description:
+            "One humanoid mapped onto the canonical joint set: per joint the actuator type and whether it is reported or estimated (with what it was inferred from), motor, reducer, peak torque or force, gear ratio and motor-side torque, estimated magnet mass and sources.",
+        pathParam: {
+            name: "id",
+            description: "Humanoid id (slug).",
+            example: "unitree-g1",
+        },
+        response: HumanoidDetailSchema,
+        errors: [404],
+        example: "/api/v1/humanoids/unitree-g1",
+        handler: getHumanoidById,
     },
 ];

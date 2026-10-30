@@ -143,7 +143,7 @@ export function RequirementShortlist({
                         Compare top {picks.length} side by side →
                     </a>
                 )}
-                <a href="/all">Browse all {ACTUATORS.length} actuators</a>
+                <a href="/actuators?view=list">Browse all {ACTUATORS.length} actuators</a>
             </p>
         </section>
     );

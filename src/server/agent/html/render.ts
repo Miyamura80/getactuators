@@ -46,7 +46,7 @@ async function loadShell(): Promise<string> {
     return shellCache;
 }
 
-function headMeta(page: Page, noindex = false): HeadMeta {
+function headMeta(page: Page, noindex = page.noindex ?? false): HeadMeta {
     return {
         path: page.path,
         title: page.title,
@@ -59,6 +59,12 @@ function headMeta(page: Page, noindex = false): HeadMeta {
     };
 }
 
+// A page's server-rendered picture (e.g. a map), placed after its H1.
+function withPicture(page: Page, html: string): string {
+    const picture = page.prerender?.() ?? "";
+    return picture ? html.replace("</h1>", `</h1>${picture}`) : html;
+}
+
 // React owns #root: only the built gallery is hydrated; other fallbacks mount.
 // Catalog facts and homepage FAQ live in visible siblings, rendered from the
 // same markdown as the agent twins (FAQ answers also supply JSON-LD). React's
@@ -66,7 +72,8 @@ function headMeta(page: Page, noindex = false): HeadMeta {
 export async function renderSpaPage(
     page: Page,
     visual?: string,
-    noindex = false,
+    search = "",
+    noindex = page.noindex ?? false,
 ): Promise<string> {
     const meta = headMeta(page, noindex);
     const body = page.body();
@@ -76,7 +83,8 @@ export async function renderSpaPage(
     const split = marker === null ? -1 : body.indexOf(marker);
     const fallback = split < 0 ? body : body.slice(0, split);
     const content = split < 0 ? "" : body.slice(split);
-    const fallbackHtml = `<div class="ga-page">${pageBody(fallback, false, undefined, page.path, !content)}</div>`;
+    const fallbackBody = pageBody(fallback, false, undefined, page.path, !content);
+    const fallbackHtml = `<div class="ga-page">${withPicture(page, fallbackBody)}</div>`;
     // Built with the frontend's own React tree; no React dependency at runtime.
     // Bare/backend-only checkouts keep the existing catalog fallback.
     const galleryFile = Bun.file(`${DIST_DIR}/actuators.html`);
@@ -125,8 +133,14 @@ export async function renderSpaPage(
                 // One tiny, already optimized photo: discover the leading gallery
                 // image while the application bundle is still downloading. Do not
                 // preload later cards (especially on a narrow mobile viewport).
+                // The application grouping reorders cards after hydration and
+                // the list view shows no photos, so skip the hint there rather
+                // than fetch the wrong image early.
+                const params = new URLSearchParams(search);
                 const firstPhoto =
-                    page.path === "/actuators"
+                    page.path === "/actuators" &&
+                    params.get("by") !== "application" &&
+                    params.get("view") !== "list"
                         ? galleryCards(ACTUATORS)[0]?.a.image_url
                         : null;
                 if (firstPhoto) {

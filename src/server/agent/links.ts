@@ -32,6 +32,8 @@ export const PATHS = {
     authMd: "/auth.md",
     pricingMd: "/pricing.md",
     ogImage: "/og-image.png",
+    ogStartups: "/og-startups.png",
+    ogInvestors: "/og-investors.png",
 } as const;
 
 interface Endpoint {

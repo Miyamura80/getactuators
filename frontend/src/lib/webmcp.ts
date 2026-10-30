@@ -89,7 +89,7 @@ export interface SearchArgs {
     limit?: number;
 }
 
-// Filter + sort through the same helper the /all table uses, so an agent sees
+// Filter + sort through the same helper the /actuators list view uses, so an agent sees
 // the order a visitor would. Numeric bounds drop rows with unknown values.
 export function searchActuators(args: SearchArgs) {
     const category = CATEGORIES.some((c) => c.slug === args.category)
@@ -101,6 +101,7 @@ export function searchActuators(args: SearchArgs) {
         search: str(args.query),
         categories: new Set(category ? [category] : []),
         useCases: new Set(),
+        countries: new Set(),
         sortKey,
         sortDir: args.sort_dir === "asc" ? "asc" : "desc",
     }).filter((a) => {

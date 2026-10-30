@@ -11,7 +11,7 @@ Super-opinionated Bun/TypeScript stack for fast development. Uses `bun` as runti
 
 ```bash
 # Onboarding & Setup
-make onboard        # Interactive onboarding CLI (rename, deps, env, hooks, media)
+make onboard        # Interactive onboarding CLI (rename, deps, env, hooks)
 make setup          # Install dependencies (bun install)
 make all            # Install deps and run main application
 make dev            # Run in watch mode
@@ -33,12 +33,12 @@ make ci             # Run all CI checks (lint, deadcode, typecheck, lint_links)
 bun install         # Install dependencies
 bun add <pkg>       # Add new dependency
 bun add -d <pkg>    # Add dev dependency
-bun run src/index.ts # Run TypeScript files
+bun run scripts/serve_frontend.ts # Serve frontend/dist and agent routes
 ```
 
 ## Architecture
 
-- **src/** - Source code (entrypoint: `src/index.ts`)
+- **src/** - Source code (server entrypoint: `scripts/serve_frontend.ts`, which starts `src/server/app.ts`)
 - **tests/** - Test files (bun test)
 - **frontend/** - Frontend app (Vite/React, separate dependency tree)
 - **src/server/** - Bun server for the site and its agent surfaces. Add a surface by adding a module to `src/server/routes/` (auto-discovered). Markdown, llms.txt, JSON-LD and `/.well-known` builders live in `src/server/agent/`.
@@ -47,6 +47,21 @@ bun run src/index.ts # Run TypeScript files
 ## Public agent surfaces
 
 The deployed site (actuatorlist.com) is built for AI agents as well as people. If you are an agent using the catalog rather than editing this repo, start at `https://actuatorlist.com/llms.txt`. Other entry points: the MCP server at `/mcp` (Streamable HTTP, no auth), the REST API at `/api` with `/openapi.json`, `/agents.md`, `/auth.md`, `/pricing.md`, and a markdown twin of every page (append `.md` or send `Accept: text/markdown`). Keep these working when changing `src/server/`: `tests/server/agent-*.test.ts` covers them.
+
+## Data sourcing and licences
+
+The dataset is published under CC BY 4.0 (`LICENSE-DATA`). Facts are not copyrightable, so citing single facts is fine; copying a source's table, prose or paid data is not. Sources live in `src/supply-chain/sources.ts` and `src/humanoids/sources.ts`, and every one has a required `reuse` value:
+
+- `open`: public domain or openly licensed (USGS and other government statistics, CC-licensed papers, our own catalog paths). Use it only when the licence is clear; arXiv papers carry per-paper licences, so they default to `facts`.
+- `facts`: a copyrighted page we take individual facts from (news, datasheets, retailers, vendor sites, blogs). This is the default when unsure.
+- `restricted`: may be cited, but its data must not be redistributed (paywalled reports, analyst research, licensed price feeds). It may back at most 3 records.
+
+Rules when adding data:
+
+- Record a source for every new figure, and add the source with its `reuse` value.
+- Never copy a source's prose; write notes and summaries in your own words.
+- Never import a whole third-party table or dataset. A `facts` source backing more than 10 records fails the audit unless it is in that registry's allowlist (`FACTS_ALLOWLIST` or `HUMANOID_FACTS_ALLOWLIST`) with a one-line reason; prefer citing a second source.
+- `make citation_audit` (also in `make ci` and a prek hook on `src/supply-chain/` and `src/humanoids/`) enforces these rules; the logic is in `src/supply-chain/licence.ts`.
 
 ## Code Style
 

@@ -19,6 +19,8 @@ jobs:
 
       - name: Install bun
         uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
@@ -29,21 +31,11 @@ jobs:
       - name: Run tests
         run: make test
 
-      - name: Build
-        run: bun run build
-
-      - name: Bundle runtime config
-        # The config loader resolves global-config.yaml relative to the bundled
-        # index.js (import.meta.dir), so the YAML must ship alongside it in dist/.
-        run: cp src/config/global-config.yaml src/config/production-config.yaml dist/
-
-      - name: Package build artifact
-        run: tar -czf "actuatorlist-${GITHUB_REF_NAME}.tar.gz" -C dist .
-
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
+        # Notes only: the site deploys to Railway from the Dockerfile, so
+        # there is no build artifact to attach.
         with:
-          files: actuatorlist-*.tar.gz
           generate_release_notes: true
           draft: false
           prerelease: false

@@ -1,4 +1,5 @@
 import { publicFooter, publicHeader } from "../../../public-navigation";
+import { withRepoMarks } from "../../../repo-link";
 
 // Body markup shared by the prerendered SPA root and the server-rendered pages:
 // the markdown body rendered to semantic HTML, wrapped in a nav and footer.
@@ -10,7 +11,7 @@ export function markdownToHtml(md: string): string {
         noHtmlSpans: true,
         autolinks: { url: true },
     });
-    return html
+    return withRepoMarks(html)
         .replace(
             /<table>/g,
             '<div class="ga-table-scroll" role="region" aria-label="Scrollable data table" tabindex="0"><table>',

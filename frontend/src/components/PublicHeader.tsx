@@ -1,8 +1,9 @@
 import { useEffect, useRef } from "react";
 import { PUBLIC_LINKS } from "../../../src/public-navigation";
 import { BrandMark } from "./BrandMark";
+import { SupplyChainMenu } from "./supply-chain/SupplyChainMenu";
 
-export function PublicHeader({ path, initialOpen = false }: { path: string; initialOpen?: boolean }) {
+export function PublicHeader({ path, initialOpen = false, supplyChainPreview = false }: { path: string; initialOpen?: boolean; supplyChainPreview?: boolean }) {
     const ref = useRef<HTMLDetailsElement>(null);
     useEffect(() => {
         const menu = ref.current!;
@@ -33,6 +34,7 @@ export function PublicHeader({ path, initialOpen = false }: { path: string; init
                     onClick={() => { if (ref.current) ref.current.open = false; }}>
                     {label}
                 </a>)}
+                <SupplyChainMenu path={path} preview={supplyChainPreview} onNavigate={() => { if (ref.current) ref.current.open = false; }} />
             </nav>
         </details>
     </header>;

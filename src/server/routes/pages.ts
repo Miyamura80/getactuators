@@ -12,6 +12,7 @@ import { mdDocument, mdStandalone } from "../agent/md";
 import { htmlResponse, markdownResponse, wantsMarkdown } from "../agent/negotiate";
 import { findPage, findPageForMarkdown, pageMarkdown } from "../agent/pages";
 import { measurementHtml } from "../measurement";
+import { CODE_LICENSE, DATA_LICENSE } from "../site";
 import type { Handler, Route } from "../types";
 
 // HTML pages and their markdown twins. Each page answers:
@@ -38,6 +39,14 @@ function comparisonRobots(response: Response, path: string, url: URL): Response 
     return response;
 }
 
+// Markdown twin of a page; a noindex page keeps noindex on its twin too,
+// since the HTML robots meta tag does not reach markdown readers.
+function twinResponse(p: Parameters<typeof pageMarkdown>[0]): Response {
+    const res = markdownResponse(pageMarkdown(p));
+    if (p.noindex) res.headers.set("x-robots-tag", "noindex");
+    return res;
+}
+
 const page: Handler = async (req) => {
     const url = new URL(req.url);
     const redirect = comparisonRedirect(url);
@@ -61,17 +70,15 @@ const page: Handler = async (req) => {
             ? { ...found, body: () => compareBody(url.search) }
             : found;
     if (wantsMarkdown(req))
-        return comparisonRobots(
-            markdownResponse(pageMarkdown(selected)),
-            found.path,
-            url,
-        );
+        return comparisonRobots(twinResponse(selected), found.path, url);
     const html =
         found.kind === "spa"
             ? await renderSpaPage(
                   selected,
                   found.path === "/compare" ? compareVisual(url.search) : undefined,
-                  found.path === "/compare" && url.searchParams.has("compare"),
+                  url.search,
+                  (found.noindex ?? false) ||
+                      (found.path === "/compare" && url.searchParams.has("compare")),
               )
             : renderStaticPage(found);
     return comparisonRobots(
@@ -88,12 +95,10 @@ const twin: Handler = (req) => {
     const found = findPageForMarkdown(url.pathname);
     return found
         ? comparisonRobots(
-              markdownResponse(
-                  pageMarkdown(
-                      found.path === "/compare"
-                          ? { ...found, body: () => compareBody(url.search) }
-                          : found,
-                  ),
+              twinResponse(
+                  found.path === "/compare"
+                      ? { ...found, body: () => compareBody(url.search) }
+                      : found,
               ),
               found.path,
               url,
@@ -115,21 +120,27 @@ function doc(path: string, title: string, description: string, body: () => strin
 const PAGE_PATHS = [
     "/",
     "/index.html",
-    "/all",
     "/compare",
     "/actuators",
     "/actuators/:id",
     "/robots",
     "/robot",
     PATHS.agentsPage,
+    "/startups",
+    "/investors",
     "/faq",
     "/about",
+    "/contributors",
     "/contact",
     "/privacy",
     "/guides",
     "/guides/:slug",
     "/comparisons/:slug",
     "/tools/:slug",
+    "/lab/supply-chain",
+    "/humanoids",
+    "/metals",
+    "/policy",
 ];
 
 // Standalone agent documents open with their H1 (no frontmatter). /agents.md
@@ -150,7 +161,7 @@ export const routes: Route[] = [
     doc(
         PATHS.pricingMd,
         "actuatorlist pricing",
-        "actuatorlist is free: one plan, no keys, 120 requests per minute per IP, MIT License.",
+        `actuatorlist is free: one plan, no keys, 120 requests per minute per IP, ${CODE_LICENSE.spdx} code and ${DATA_LICENSE.name} data.`,
         pricingBody,
     ),
     ...PAGE_PATHS.map((path): Route => ({ method: "GET", path, handler: page })),
@@ -159,4 +170,5 @@ export const routes: Route[] = [
     { method: "GET", path: "/guides/:file", handler: twin },
     { method: "GET", path: "/comparisons/:file", handler: twin },
     { method: "GET", path: "/tools/:file", handler: twin },
+    { method: "GET", path: "/lab/:file", handler: twin },
 ];

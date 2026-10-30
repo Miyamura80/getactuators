@@ -1,0 +1,18 @@
+import type { ShareKey } from "../../../../src/supply-chain/concentration";
+
+// Country colour for share visuals (bars, waffles). Bright on black, never
+// the status red or green; the unattributed rest stays grey, kept at 3:1
+// against black so it still reads as a share.
+export const COUNTRY_COLOR: Partial<Record<ShareKey, string>> = {
+    CN: "#ff922b",
+    US: "#4dabf7",
+    JP: "#f783ac",
+    KR: "#9775fa",
+    AU: "#ffd43b",
+    MM: "#a9e34b",
+    TH: "#38d9a9",
+    CD: "#e599f7",
+    ID: "#66d9e8",
+};
+export const COUNTRY_FALLBACK = "#8b95a1";
+export const OTHER_COLOR = "#6b6b6b";

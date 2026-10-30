@@ -7,11 +7,11 @@ import { cleanup, fireEvent, render } from "@testing-library/react";
 import { PublicHeader } from "../src/components/PublicHeader";
 import App from "../src/App";
 import { Home } from "../src/pages/Home";
-import { AllActuators } from "../src/pages/AllActuators";
-import { ActuatorsGallery } from "../src/pages/ActuatorsGallery";
+import { ActuatorsPage } from "../src/pages/actuators/ActuatorsPage";
 import { Agents } from "../src/pages/Agents";
 import { ExplodedView } from "../src/pages/ExplodedView";
 import { FOOTER_GROUPS } from "../../src/public-navigation";
+import { REPO_URL } from "../../src/repo-link";
 
 afterEach(cleanup);
 
@@ -59,7 +59,7 @@ test("resizing to desktop resets the native mobile menu", () => {
 });
 
 test("public SPA headers share native mobile disclosure and active route links", () => {
-    for (const [page, path] of [[<App />, "/"], [<Home />, "/robots"], [<AllActuators />, "/all"], [<ActuatorsGallery />, "/actuators"], [<Agents />, "/agents"], [<ExplodedView id="cubemars-ak80-9" />, "/actuators"]] as const) {
+    for (const [page, path] of [[<App />, "/"], [<Home />, "/robots"], [<ActuatorsPage />, "/actuators"], [<Agents />, "/agents"], [<ExplodedView id="cubemars-ak80-9" />, "/actuators"]] as const) {
         const view = render(page);
         const header = view.container.querySelector("header.site-header")!;
         expect(header).not.toBeNull();
@@ -80,7 +80,7 @@ test("public SPA headers share native mobile disclosure and active route links",
 });
 
 test("each public SPA surface has exactly one shared grouped footer", () => {
-    for (const page of [<App />, <Home />, <AllActuators />, <ActuatorsGallery />, <Agents />]) {
+    for (const page of [<App />, <Home />, <ActuatorsPage />, <Agents />]) {
         const view = render(page);
         expect(view.container.querySelectorAll("footer.site-footer")).toHaveLength(1);
         for (const group of FOOTER_GROUPS) for (const [href, label] of group.links) {
@@ -90,8 +90,19 @@ test("each public SPA surface has exactly one shared grouped footer", () => {
     }
 });
 
+test("footer GitHub link leads with one decorative GitHub mark", () => {
+    const view = render(<Home />);
+    const link = view.container.querySelector(`footer a[href="${REPO_URL}"]`);
+    const marks = link?.querySelectorAll("svg.gh-mark") ?? [];
+    expect(marks).toHaveLength(1);
+    expect(link?.firstElementChild?.matches("svg.gh-mark")).toBe(true);
+    expect(link?.firstElementChild?.getAttribute("aria-hidden")).toBe("true");
+    expect(view.container.querySelectorAll("footer svg.gh-mark")).toHaveLength(1);
+    cleanup();
+});
+
 test("the full dataset table keeps its datasheet warning", () => {
-    const view = render(<AllActuators />);
+    const view = render(<ActuatorsPage />);
     expect(view.container.textContent).toContain("verify against datasheets before engineering use.");
     cleanup();
 });

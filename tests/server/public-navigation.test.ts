@@ -5,7 +5,7 @@ test("static and fallback public headers expose native mobile navigation and act
     for (const path of [
         "/",
         "/robots",
-        "/all",
+        "/actuators",
         "/agents",
         "/faq",
         "/guides",
@@ -36,7 +36,7 @@ test("product footer follows the persistent specifications rather than the trans
 test("public pages have one grouped footer with valid internal links", async () => {
     for (const path of [
         "/",
-        "/all",
+        "/actuators",
         "/robots",
         "/agents",
         "/about",

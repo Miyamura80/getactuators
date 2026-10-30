@@ -1,6 +1,15 @@
 import { ACTUATORS, type Actuator } from "@/catalog";
-import { REPO_URL, SITE_DESCRIPTION, SITE_NAME, SITE_URL, absoluteUrl } from "../site";
+import { CONTRIBUTORS } from "@/people";
+import {
+    DATA_LICENSE,
+    REPO_URL,
+    SITE_DESCRIPTION,
+    SITE_NAME,
+    SITE_URL,
+    absoluteUrl,
+} from "../site";
 import { actuatorPath, actuatorSummary, categoryLabel } from "./catalog-md";
+import { personId } from "./contributors";
 import { CATALOG_UPDATED_AT } from "./freshness";
 import { PATHS } from "./links";
 import type { FaqItem } from "./pages-md";
@@ -13,7 +22,6 @@ type Node = Record<string, unknown>;
 const ORG_ID = `${SITE_URL}/#organization`;
 const SITE_ID = `${SITE_URL}/#website`;
 const DATASET_ID = `${SITE_URL}/#dataset`;
-const MIT = "https://opensource.org/licenses/MIT";
 const FREE_OFFER = { "@type": "Offer", price: "0", priceCurrency: "USD" };
 
 export function organization(): Node {
@@ -45,11 +53,12 @@ export function website(): Node {
         description: SITE_DESCRIPTION,
         inLanguage: "en",
         publisher: { "@id": ORG_ID },
+        contributor: CONTRIBUTORS.map((p) => ({ "@id": personId(p) })),
         potentialAction: {
             "@type": "SearchAction",
             target: {
                 "@type": "EntryPoint",
-                urlTemplate: `${SITE_URL}/all?q={search_term_string}`,
+                urlTemplate: `${SITE_URL}/actuators?view=list&q={search_term_string}`,
             },
             "query-input": "required name=search_term_string",
         },
@@ -62,8 +71,9 @@ export function dataset(): Node {
         "@id": DATASET_ID,
         name: "actuatorlist robot actuator catalog",
         description: `Specifications of ${ACTUATORS.length} robot actuators (QDD motors, integrated joints, smart servos, harmonic and cycloidal reducers) and the robots that use them: torque, speed, weight, torque density, backlash, price and sources.`,
-        url: `${SITE_URL}/all`,
-        license: MIT,
+        url: `${SITE_URL}/actuators`,
+        license: DATA_LICENSE.url,
+        creditText: DATA_LICENSE.credit,
         isAccessibleForFree: true,
         creator: { "@id": ORG_ID },
         dateModified: CATALOG_UPDATED_AT,

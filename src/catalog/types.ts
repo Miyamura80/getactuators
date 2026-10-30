@@ -80,6 +80,21 @@ export interface RobotJoint {
 // fallback art.
 export type RobotKind = "robot_arm" | "humanoid";
 
+// Whether a robot can be bought today. Distinct from an actuator's
+// free-form `availability` string (e.g. "in_production").
+export type RobotAvailability = "shipping" | "preorder" | "quote_only" | "discontinued";
+export type RobotPower = "battery" | "mains";
+// Whether the joint actuators are the maker's own design or bought in.
+export type ActuatorSourcing = "in_house" | "off_the_shelf";
+// What the maker publishes: mechanical CAD, a URDF/MJCF model, SDK source
+// and a bill of materials.
+export interface RobotOpenness {
+    cad: boolean;
+    urdf: boolean;
+    sdk: boolean;
+    bom: boolean;
+}
+
 export interface Robot {
     id: string;
     name: string;
@@ -87,8 +102,11 @@ export interface Robot {
     kind: RobotKind;
     country: string | null;
     country_flag: string | null;
-    dof: number;
+    dof: number | null;
     payload_kg: number | null;
+    // "whole_body" when the payload is a carry figure for the whole robot
+    // rather than per arm, so ratios against per-arm robots can say so.
+    payload_basis?: "per_arm" | "whole_body";
     reach_mm: number | null;
     // Standing height, for humanoids.
     height_m?: number | null;
@@ -102,6 +120,17 @@ export interface Robot {
     image_fit?: "contain" | "cover";
     // Build-time crop for the photo script; not used at runtime.
     image_crop?: [number, number, number, number];
+    // Researched buying, power and openness facts. Optional so a robot can be
+    // listed before it has been researched.
+    power?: RobotPower;
+    // Best quoted runtime per charge; runtime_note carries editions or caveats.
+    runtime_h?: number | null;
+    runtime_note?: string | null;
+    openness?: RobotOpenness;
+    // Null when the maker does not say whose actuators it uses.
+    actuator_sourcing?: ActuatorSourcing | null;
+    availability?: RobotAvailability;
+    lead_time?: string | null;
     summary: string;
     joints: RobotJoint[];
     sources: string[];

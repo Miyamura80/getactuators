@@ -1,23 +1,24 @@
 import "./happydom";
 import { afterEach, beforeEach, expect, test } from "bun:test";
 import { cleanup, fireEvent, render } from "@testing-library/react";
-import { ActuatorsGallery } from "../src/pages/ActuatorsGallery";
+import { ActuatorsPage } from "../src/pages/actuators/ActuatorsPage";
 import { ActuatorThumb } from "../src/components/ActuatorThumb";
 import { ACTUATORS } from "../src/lib/data";
 
 beforeEach(() => {
+    window.localStorage.clear();
     (window as unknown as { happyDOM: { setURL: (url: string) => void } }).happyDOM.setURL("http://localhost:1/actuators");
 });
 afterEach(cleanup);
 
 test("leading gallery photo is eager and high priority, every other photo stays lazy", () => {
-    const { container } = render(<ActuatorsGallery />);
-    const first = container.querySelector('.bento-card img');
-    expect(first?.getAttribute("src")).toBe("/actuator-images/nabtesco-rv-42n.webp");
+    const { container } = render(<ActuatorsPage />);
+    const first = container.querySelector('.bento-thumb img');
+    expect(first?.getAttribute("src")).toBe("/actuator-images/steadywin-gim8108-8.webp");
     expect(first?.getAttribute("loading")).toBe("eager");
     expect(first?.getAttribute("fetchpriority")).toBe("high");
     expect(first?.getAttribute("decoding")).toBe("auto");
-    const photos = [...container.querySelectorAll('.bento-card img')];
+    const photos = [...container.querySelectorAll('.bento-thumb img')];
     expect(photos.length).toBeGreaterThan(20);
     expect(photos.filter(image => image.getAttribute("fetchpriority") === "high")).toHaveLength(1);
     for (const image of photos.slice(1)) {

@@ -1,10 +1,16 @@
 import { ACTUATORS, type Actuator, CATEGORIES, ROBOTS } from "@/catalog";
-import { REPO_URL, SITE_DESCRIPTION, absoluteUrl } from "../site";
+import {
+    CODE_LICENSE,
+    DATA_LICENSE,
+    REPO_URL,
+    SITE_DESCRIPTION,
+    absoluteUrl,
+} from "../site";
 import { actuatorPath, categoryLabel, robotSection } from "./catalog-md";
 import { CATALOG_UPDATED_DATE } from "./freshness";
 import { MCP_TOOLS, PATHS, RATE_LIMIT_PER_MINUTE, REST_ENDPOINTS } from "./links";
 import { whenToUse } from "./manifests";
-import { bullets, humanize, mdLink, mdText, num, usd } from "./md";
+import { bullets, dofText, humanize, mdLink, mdText, num, usd } from "./md";
 import { catalogStats } from "./pages-md";
 
 // llms.txt (https://llmstxt.org) and its long-form and per-section siblings.
@@ -63,8 +69,7 @@ ${link("Agent skill", PATHS.skill, "SKILL.md teaching an agent to use the API an
 ## Catalog pages (markdown)
 
 ${link("Home", "/index.md", "overview, top actuators by torque density, FAQ")}
-${link("All actuators", "/all.md", "every actuator in one table")}
-${link("Gallery", "/actuators.md", "actuators grouped by category")}
+${link("Actuators", "/actuators.md", "every actuator in one table, plus categories")}
 ${link("Robots", "/robots.md", "robots with per-joint motors")}
 
 ## Engineering guides and tools (markdown)
@@ -73,6 +78,11 @@ ${link("Humanoid robot actuators", "/guides/humanoid-robot-actuators.md", "stati
 ${link("Robot actuator selection guide", "/guides/robot-actuator-selection.md", "efficiency, thermal duty, precision and sim2real checks")}
 ${link("Motor torque calculator", "/tools/motor-torque-calculator.md", "torque, power and speed relation, units and worked examples")}
 ${link("Robot arm torque calculator", "/tools/robot-arm-torque-calculator.md", "static holding torque per joint; same model from the MCP tool arm_holding_torque and, on the page, WebMCP tools calculate_arm_holding_torque, set_arm_model and select_arm_joint")}
+
+## Supply chain (markdown)
+
+${link("Magnet metals", "/metals.md", "Nd, Pr, Dy, Tb, Sm and Co: country share at each stage from mine to magnet, USGS reserves and years of supply, cited price history and the events behind it; same data from the MCP tools get_metal_supply and get_metal_prices")}
+${link("Actuator chain policy", "/policy.md", "export controls, tariffs, subsidies and standards from mine to robot with status history and primary sources; MCP list_policy_measures, REST /api/v1/policy, Atom feed /policy/feed.xml")}
 
 ## About
 
@@ -84,7 +94,7 @@ ${link("Privacy", "/privacy.md", "no accounts, cookies or analytics")}
 
 ${link("Sitemap", PATHS.sitemap, "every indexable URL")}
 ${link("JSON Lines feed", PATHS.feed, "one actuator object per line")}
-- [Source repository](${REPO_URL}): dataset, site code and AGENTS.md, MIT License
+- [Source repository](${REPO_URL}): dataset (${DATA_LICENSE.name}), site code (${CODE_LICENSE.name}) and AGENTS.md
 `;
 }
 
@@ -141,8 +151,7 @@ export function actuatorsLlmsTxt(): string {
 
 > ${ACTUATORS.length} robot actuators, each with a markdown spec sheet. Filter them with the REST API (${u("/api/v1/actuators")}) instead of reading every sheet.
 
-- ${mdLink("All actuators table", u("/all.md"))}: every actuator in one markdown table
-- ${mdLink("Gallery by category", u("/actuators.md"))}: grouped by drive type
+- ${mdLink("All actuators table", u("/actuators.md"))}: every actuator in one markdown table
 
 ## Actuators
 
@@ -160,7 +169,7 @@ export function robotsLlmsTxt(): string {
 
 ## Robots
 
-${ROBOTS.map((r) => `- ${mdText(r.name)} by ${mdText(r.brand)}: ${r.dof} DOF, ${usd(r.price_usd)}. ${mdText(r.summary)}`).join("\n")}
+${ROBOTS.map((r) => `- ${mdText(r.name)} by ${mdText(r.brand)}: ${dofText(r.dof)}, ${usd(r.price_usd)}. ${mdText(r.summary)}`).join("\n")}
 `;
 }
 

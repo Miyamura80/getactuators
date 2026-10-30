@@ -32,17 +32,17 @@ test("production frontend build emits the exact initial gallery tree without dup
     root.innerHTML = html;
     const cards = [...root.querySelectorAll<HTMLAnchorElement>(".bento-card")];
     const expected = galleryCards(ACTUATORS);
-    expect(cards).toHaveLength(68);
+    expect(cards).toHaveLength(80);
     expect(cards.map((card) => card.getAttribute("href"))).toEqual(
         expected.map(({ a }) => `/actuators/${encodeURIComponent(a.id)}`),
     );
     expect(
-        [...root.querySelectorAll("img")].map((img) => img.getAttribute("src")),
+        [...root.querySelectorAll(".bento-thumb img")].map((img) => img.getAttribute("src")),
     ).toEqual(expected.flatMap(({ a }) => (a.image_url ? [a.image_url] : [])));
     expect(
         root.querySelectorAll('img[fetchpriority="high"][loading="eager"]'),
     ).toHaveLength(1);
-    expect(root.querySelectorAll('img[loading="lazy"][decoding="async"]')).toHaveLength(
+    expect(root.querySelectorAll('.bento-thumb img[loading="lazy"][decoding="async"]')).toHaveLength(
         expected.filter(({ a }) => a.image_url).length - 1,
     );
     expect(root.querySelectorAll("link[rel=preload]")).toHaveLength(0);
@@ -53,9 +53,10 @@ test("production frontend build emits the exact initial gallery tree without dup
     (
         window as unknown as { happyDOM: { setURL: (url: string) => void } }
     ).happyDOM.setURL("http://localhost:1/actuators");
+    window.localStorage.clear();
     root.dataset.galleryPrerender = "true";
     document.body.append(root);
-    const photos = [...root.querySelectorAll("img")];
+    const photos = [...root.querySelectorAll(".bento-thumb img")];
     photos.forEach((image) =>
         Object.defineProperty(image, "complete", { value: false }),
     );
@@ -68,7 +69,7 @@ test("production frontend build emits the exact initial gallery tree without dup
         const after = [...root.querySelectorAll(".bento-card")];
         expect(after.length).toBe(cards.length);
         expect(after.every((node, index) => node === cards[index])).toBe(true);
-        const afterPhotos = [...root.querySelectorAll("img")];
+        const afterPhotos = [...root.querySelectorAll(".bento-thumb img")];
         expect(afterPhotos.length).toBe(photos.length);
         expect(afterPhotos.every((node, index) => node === photos[index])).toBe(true);
         expect(errors).not.toHaveBeenCalled();

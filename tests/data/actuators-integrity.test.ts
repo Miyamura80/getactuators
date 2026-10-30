@@ -236,6 +236,12 @@ interface RobotRow {
     id: string;
     joints: RobotJointRow[];
     sources: unknown;
+    power?: unknown;
+    runtime_h?: unknown;
+    openness?: Record<string, unknown>;
+    actuator_sourcing?: unknown;
+    availability?: unknown;
+    payload_basis?: unknown;
 }
 
 interface RobotDataShape {
@@ -271,6 +277,43 @@ describe("robots dataset integrity", () => {
         for (const robot of robotData.robots) {
             for (const joint of robot.joints) {
                 expect(motorKeys.has(joint.motor)).toBe(true);
+            }
+        }
+    });
+
+    // The /robots charts read these fields directly, so a bad enum or a runtime
+    // on a robot with no power source would chart wrongly rather than fail.
+    test("researched robot fields use known values", () => {
+        const oneOf = (v: unknown, ok: unknown[]) => v === undefined || ok.includes(v);
+        for (const robot of robotData.robots) {
+            expect(oneOf(robot.power, ["battery", "mains"])).toBe(true);
+            expect(
+                oneOf(robot.actuator_sourcing, ["in_house", "off_the_shelf", null]),
+            ).toBe(true);
+            expect(
+                oneOf(robot.availability, [
+                    "shipping",
+                    "preorder",
+                    "quote_only",
+                    "discontinued",
+                ]),
+            ).toBe(true);
+            expect(oneOf(robot.payload_basis, ["per_arm", "whole_body"])).toBe(true);
+            if (robot.runtime_h != null) {
+                expect(robot.power).toBe("battery");
+                expect(typeof robot.runtime_h === "number" && robot.runtime_h > 0).toBe(
+                    true,
+                );
+            }
+            if (robot.openness) {
+                expect(Object.keys(robot.openness).sort()).toEqual([
+                    "bom",
+                    "cad",
+                    "sdk",
+                    "urdf",
+                ]);
+                for (const v of Object.values(robot.openness))
+                    expect(typeof v).toBe("boolean");
             }
         }
     });

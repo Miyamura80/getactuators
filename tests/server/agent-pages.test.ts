@@ -19,11 +19,13 @@ import {
 
 const PAGES = [
     "/",
-    "/all",
     "/actuators",
     "/robots",
     "/agents",
+    "/startups",
+    "/investors",
     "/about",
+    "/contributors",
     "/contact",
     "/privacy",
 ];
@@ -77,7 +79,6 @@ describe("markdown twins", () => {
     test("every page has a .md URL with frontmatter", async () => {
         const twins = [
             "/index.md",
-            "/all.md",
             "/actuators.md",
             "/robots.md",
             "/about.md",
@@ -156,7 +157,9 @@ describe("HTML pages", () => {
             expect(item[2]).toBe(markdownToHtml(`### ${faq.q}`).trim());
             expect(item[3]?.trim()).toBe(markdownToHtml(mdText(faq.a)).trim());
         }
-        expect(content.match(/<h3>/g)).toHaveLength(canonical.length);
+        // The site header may hold its own h3s (the supply-chain menu).
+        const main = content.slice(content.indexOf("</header>"));
+        expect(main.match(/<h3>/g)).toHaveLength(canonical.length);
         const graph = JSON.parse(
             /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(
                 content,
@@ -370,4 +373,15 @@ describe("real 404s", () => {
         expect(res.status).toBe(404);
         expect(res.headers.get("content-type")).toStartWith("application/problem+json");
     });
+});
+
+test("robots markdown gives humanoid arm reach only where published", async () => {
+    const md = await (await get("/robots.md")).text();
+    const section = (name: string) =>
+        md.slice(
+            md.indexOf(`## ${name} by`),
+            md.indexOf("\n## ", md.indexOf(`## ${name} by`) + 1),
+        );
+    expect(section("H2")).toContain("Arm reach: 690 mm");
+    expect(section("NEO")).not.toContain("Arm reach");
 });

@@ -6,10 +6,11 @@ import { mountApp } from "../src/startup";
 
 for (const [path, selector] of [
     ["/", ".hero"],
-    ["/all", "#table"],
+    ["/actuators?view=list", "#table"],
     ["/compare?compare=cubemars-ak80-9,xiaomi-cybergear", ".compare-page .compare-specs"],
     ["/actuators/cubemars-ak80-9", ".xp-stage"],
     ["/actuators", ".gallery-page"],
+    ["/humanoids", ".hm-page .hm-fig"],
 ]) {
     test(`unprerendered ${path} keeps the existing client mount and persistent sibling`, async () => {
         (

@@ -147,6 +147,10 @@ bun run scripts/serve_frontend.ts # serves frontend/dist and agent routes on :30
 cd frontend && bun run dev
 ```
 
+Company logos use Logo.dev when `VITE_LOGO_DEV_TOKEN` is set in
+`frontend/.env` (or as a Railway variable); without a token, logos without a
+self-hosted image render as monograms. See [docs/brand-logos.md](docs/brand-logos.md).
+
 Main make targets:
 
 | Target | What it does |
@@ -198,4 +202,6 @@ steps.
   [Zod](https://zod.dev), [prek](https://github.com/j178/prek) and
   [Vite](https://vitejs.dev).
 
-Released under the [MIT License](LICENSE).
+- **Code**: [MIT License](LICENSE).
+- **Data** (the actuator, robot, humanoid and supply-chain catalog): [CC BY 4.0](LICENSE-DATA).
+  Credit "actuatorlist.com (Eito Miyamura)"; see LICENSE-DATA for scope.
