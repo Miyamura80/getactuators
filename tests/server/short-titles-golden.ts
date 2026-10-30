@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 import { ACTUATORS } from "@/catalog";
 import { actuatorPath } from "@/server/agent/catalog-md";
 import { CATALOG_UPDATED_DATE } from "@/server/agent/freshness";
+import { GENERATED_COMPARISON_PAGES } from "@/server/agent/generated-comparisons";
 import { markdownToHtml, pageBody } from "@/server/agent/html/body";
 import { documentTitle } from "@/server/agent/html/head";
 import { withToolCards } from "@/server/agent/html/tool-cards";
@@ -96,11 +97,14 @@ async function expectCatalogPage(
 // Captured from the clean main baseline before implementation.
 test("the full catalog has distinct reviewed metadata", async () => {
     const registered = allPages();
-    expect(registered).toHaveLength(89);
+    // Pinned so a generator that silently emits nothing still fails here.
+    expect(GENERATED_COMPARISON_PAGES).toHaveLength(28);
+    expect(registered).toHaveLength(89 + GENERATED_COMPARISON_PAGES.length);
     // Pages added after the baseline capture have their own tests.
     const added = new Set([
         "/faq",
         "/compare",
+        ...GENERATED_COMPARISON_PAGES.map((page) => page.path),
         "/tools/motor-torque-calculator",
         "/guides/humanoid-robot-actuators",
         "/tools/robot-arm-torque-calculator",

@@ -1,3 +1,8 @@
+import { ACTUATORS } from "@/catalog";
+import {
+    canonicalComparisonPath,
+    comparisonDirectory,
+} from "@/catalog/comparison-registry";
 import { compareBody, compareVisual } from "../agent/compare";
 import { renderSpaPage, renderStaticPage } from "../agent/html/render";
 import { PATHS } from "../agent/links";
@@ -16,6 +21,24 @@ import type { Handler, Route } from "../types";
 //   anything else                                         -> HTML
 // and every page also serves `<path>.md` directly.
 
+const comparisons = comparisonDirectory(ACTUATORS);
+function comparisonRedirect(url: URL): Response | null {
+    const canonical = canonicalComparisonPath(url.pathname, comparisons);
+    return canonical && canonical !== url.pathname
+        ? new Response(null, {
+              status: 301,
+              headers: { location: `${canonical}${url.search}` },
+          })
+        : null;
+}
+
+function comparisonRobots(response: Response, path: string, url: URL): Response {
+    if (path === "/compare" && url.searchParams.has("compare")) {
+        response.headers.set("X-Robots-Tag", "noindex, follow");
+    }
+    return response;
+}
+
 // Markdown twin of a page; a noindex page keeps noindex on its twin too,
 // since the HTML robots meta tag does not reach markdown readers.
 function twinResponse(p: Parameters<typeof pageMarkdown>[0]): Response {
@@ -26,6 +49,8 @@ function twinResponse(p: Parameters<typeof pageMarkdown>[0]): Response {
 
 const page: Handler = async (req) => {
     const url = new URL(req.url);
+    const redirect = comparisonRedirect(url);
+    if (redirect) return redirect;
     const found = findPage(url.pathname);
     if (!found) return null;
     if (found.path === "/" && url.searchParams.get("mode") === "agent") {
@@ -44,26 +69,39 @@ const page: Handler = async (req) => {
         found.path === "/compare"
             ? { ...found, body: () => compareBody(url.search) }
             : found;
-    if (wantsMarkdown(req)) return twinResponse(selected);
+    if (wantsMarkdown(req))
+        return comparisonRobots(twinResponse(selected), found.path, url);
     const html =
         found.kind === "spa"
             ? await renderSpaPage(
                   selected,
                   found.path === "/compare" ? compareVisual(url.search) : undefined,
                   url.search,
+                  (found.noindex ?? false) ||
+                      (found.path === "/compare" && url.searchParams.has("compare")),
               )
             : renderStaticPage(found);
-    return htmlResponse(measurementHtml(html, found.path));
+    return comparisonRobots(
+        htmlResponse(measurementHtml(html, found.path)),
+        found.path,
+        url,
+    );
 };
 
 const twin: Handler = (req) => {
     const url = new URL(req.url);
+    const redirect = comparisonRedirect(url);
+    if (redirect) return redirect;
     const found = findPageForMarkdown(url.pathname);
     return found
-        ? twinResponse(
-              found.path === "/compare"
-                  ? { ...found, body: () => compareBody(url.search) }
-                  : found,
+        ? comparisonRobots(
+              twinResponse(
+                  found.path === "/compare"
+                      ? { ...found, body: () => compareBody(url.search) }
+                      : found,
+              ),
+              found.path,
+              url,
           )
         : null;
 };

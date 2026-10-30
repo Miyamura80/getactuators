@@ -15,6 +15,11 @@ export interface CompareActuator {
     price_usd: number | null;
     encoder: string | null;
 }
+export const COMPARISON_PHOTO_NOTE =
+    "Catalog photo; illustrative. Confirm hardware revision/variant.";
+export function comparisonPhotoAlt(a: Pick<CompareActuator, "name">): string {
+    return `${a.name}: illustrative catalog photo; revision/variant unconfirmed`;
+}
 export const UNKNOWN = "Unknown: not documented";
 export function validatedCompareIds(
     search: string,
@@ -43,11 +48,26 @@ export function revisionNote(a: CompareActuator): string {
         return "Original 24 V, 7.75:1, 317 g catalog entry; not a newer or different CyberGear revision.";
     return `${evidence.label}. ${evidence.caveats.join(" ")} Catalog entry only; confirm the exact revision and operating conditions with the linked source.`;
 }
+// Caveats shown once per comparison, not once per model: the photo note, then
+// the revision note, named per model only when the models' notes differ.
+export function comparisonCaveats(rows: readonly CompareActuator[]): string[] {
+    const notes = rows.map((a) => ({ name: a.name, note: revisionNote(a) }));
+    const distinct = [...new Set(notes.map(({ note }) => note))];
+    return [
+        ...(rows.some((a) => a.image_url) ? [COMPARISON_PHOTO_NOTE] : []),
+        ...(distinct.length === 1
+            ? distinct
+            : notes.map(({ name, note }) => `${name}: ${note}`)),
+    ];
+}
 const value = (v: string | number | null, unit = "") =>
     v == null ? UNKNOWN : `${v}${unit}`;
 function qualified(a: CompareActuator, field: string, displayed: string): string {
     const note = fieldCaveat({ id: a.id, verified: a.verified }, field);
     return note ? `${displayed}: ${note}` : displayed;
+}
+export function comparisonHubNumbers(a: CompareActuator): string {
+    return `${qualified(a, "peak_torque_nm", value(a.peak_torque_nm, " N·m"))} peak · ${qualified(a, "weight_g", value(a.weight_g, " g"))}`;
 }
 function engineeringDisplay(a: CompareActuator, topic: EngineeringTopic): string {
     const evidence = engineeringEvidenceFor(a.id);
