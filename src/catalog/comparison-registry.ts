@@ -108,7 +108,13 @@ export function buildComparisonRegistry(
 
 // Preservation exception: an authored evidence dossier overrides the template,
 // including when nearest-peer selection would not propose this pair.
-export const AUTHORED_COMPARISONS = [
+export interface AuthoredComparison {
+    ids: [string, string];
+    category: string;
+    path: string;
+    title: string;
+}
+export const AUTHORED_COMPARISONS: readonly AuthoredComparison[] = [
     {
         ids: ["cubemars-ak80-9", "xiaomi-cybergear"] as [string, string],
         category: "qdd_proprioceptive",
@@ -117,9 +123,14 @@ export const AUTHORED_COMPARISONS = [
     },
 ];
 
-export function authoredComparisonDirectory(records: readonly ComparisonRecord[]) {
+// The authored list is a parameter so tests can pass fixtures instead of
+// editing the production list.
+export function authoredComparisonDirectory(
+    records: readonly ComparisonRecord[],
+    authoredList: readonly AuthoredComparison[] = AUTHORED_COMPARISONS,
+) {
     const paths = new Set<string>();
-    const authored = AUTHORED_COMPARISONS.filter((pair) => {
+    const authored = authoredList.filter((pair) => {
         if (
             pair.ids.length !== 2 ||
             pair.ids[0] === pair.ids[1] ||
@@ -151,9 +162,10 @@ export function authoredComparisonDirectory(records: readonly ComparisonRecord[]
 
 export function comparisonDirectory(
     records: readonly ComparisonRecord[],
+    authoredList: readonly AuthoredComparison[] = AUTHORED_COMPARISONS,
 ): ComparisonPair[] {
     // Validate authored identities before they can suppress generated paths.
-    const authored = authoredComparisonDirectory(records);
+    const authored = authoredComparisonDirectory(records, authoredList);
     const authoredPaths = new Set(authored.map((pair) => pair.path));
     return [
         ...buildComparisonRegistry(records).filter(
@@ -203,18 +215,18 @@ export function comparisonTitle(
 
 // Pure snapshot factory: callers cache only their immutable production catalog.
 // Synthetic or mutable record inputs always get a fresh snapshot.
-export function comparisonSnapshot(records: readonly ComparisonRecord[]) {
-    const directory = comparisonDirectory(records).map((pair) => {
-        const copy = { ...pair, ids: [...pair.ids] as [string, string] };
-        Object.freeze(copy.ids);
-        return Object.freeze(copy);
-    });
-    const authored = authoredComparisonDirectory(records).map((pair) => {
-        const copy = { ...pair, ids: [...pair.ids] as [string, string] };
-        Object.freeze(copy.ids);
-        return Object.freeze(copy);
-    });
-    const groups = groupsForPairs(directory).map((group) =>
+function frozenPair<T extends ComparisonPair>(pair: T): Readonly<T> {
+    const copy = { ...pair, ids: [...pair.ids] as [string, string] };
+    Object.freeze(copy.ids);
+    return Object.freeze(copy);
+}
+export function comparisonSnapshot(
+    records: readonly ComparisonRecord[],
+    authoredList: readonly AuthoredComparison[] = AUTHORED_COMPARISONS,
+) {
+    const directory = comparisonDirectory(records, authoredList).map(frozenPair);
+    const authored = authoredComparisonDirectory(records, authoredList).map(frozenPair);
+    const groups = groupsForPairs(directory, authoredList).map((group) =>
         Object.freeze({ ...group, pairs: Object.freeze(group.pairs) }),
     );
     return Object.freeze({
@@ -224,11 +236,10 @@ export function comparisonSnapshot(records: readonly ComparisonRecord[]) {
     });
 }
 
-export function comparisonGroups(records: readonly ComparisonRecord[]) {
-    return groupsForPairs(comparisonDirectory(records));
-}
-
-function groupsForPairs(pairs: readonly ComparisonPair[]) {
+function groupsForPairs(
+    pairs: readonly ComparisonPair[],
+    authoredList: readonly AuthoredComparison[],
+) {
     return [...new Set(pairs.map((pair) => pair.category))]
         .sort()
         .map((category) => ({
@@ -236,9 +247,7 @@ function groupsForPairs(pairs: readonly ComparisonPair[]) {
             pairs: pairs.filter(
                 (pair) =>
                     pair.category === category &&
-                    !AUTHORED_COMPARISONS.some(
-                        (authored) => authored.path === pair.path,
-                    ),
+                    !authoredList.some((authored) => authored.path === pair.path),
             ),
         }))
         .filter((group) => group.pairs.length > 0);

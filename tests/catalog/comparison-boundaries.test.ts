@@ -116,22 +116,20 @@ test("snapshot freezing does not mutate authored registry metadata", () => {
 
 test("authored metadata cannot replace a different generated pair at its URL", () => {
     const records = ["a", "b", "c", "d"].map((id) => ({ ...base, id }));
-    AUTHORED_COMPARISONS.push({
-        ids: ["c", "d"],
-        category: base.category,
-        path: "/comparisons/a-vs-b",
-        title: "Conflicting authored pair",
-    });
-    try {
-        expect(() => comparisonDirectory(records)).toThrow(
-            "Invalid authored comparison path identity",
-        );
-        expect(() => comparisonSnapshot(records)).toThrow(
-            "Invalid authored comparison path identity",
-        );
-    } finally {
-        AUTHORED_COMPARISONS.pop();
-    }
+    const authored = [
+        {
+            ids: ["c", "d"] as [string, string],
+            category: base.category,
+            path: "/comparisons/a-vs-b",
+            title: "Conflicting authored pair",
+        },
+    ];
+    expect(() => comparisonDirectory(records, authored)).toThrow(
+        "Invalid authored comparison path identity",
+    );
+    expect(() => comparisonSnapshot(records, authored)).toThrow(
+        "Invalid authored comparison path identity",
+    );
 });
 
 test("malformed authored pair identities fail closed on every directory surface", () => {
@@ -144,25 +142,23 @@ test("malformed authored pair identities fail closed on every directory surface"
         ["a", "b", "c"],
     ]) {
         const records = [...new Set(ids)].map((id) => ({ ...base, id }));
-        AUTHORED_COMPARISONS.push({
-            ids: ids as [string, string],
-            category: base.category,
-            path: `/comparisons/${[...ids].sort().join("-vs-")}`,
-            title: "Malformed authored identity",
-        });
-        try {
-            expect(() => comparisonDirectory(records)).toThrow(
-                "Invalid authored comparison IDs",
-            );
-            expect(() => authoredComparisonDirectory(records)).toThrow(
-                "Invalid authored comparison IDs",
-            );
-            expect(() => comparisonSnapshot(records)).toThrow(
-                "Invalid authored comparison IDs",
-            );
-        } finally {
-            AUTHORED_COMPARISONS.pop();
-        }
+        const authored = [
+            {
+                ids: ids as [string, string],
+                category: base.category,
+                path: `/comparisons/${[...ids].sort().join("-vs-")}`,
+                title: "Malformed authored identity",
+            },
+        ];
+        expect(() => comparisonDirectory(records, authored)).toThrow(
+            "Invalid authored comparison IDs",
+        );
+        expect(() => authoredComparisonDirectory(records, authored)).toThrow(
+            "Invalid authored comparison IDs",
+        );
+        expect(() => comparisonSnapshot(records, authored)).toThrow(
+            "Invalid authored comparison IDs",
+        );
     }
 });
 
@@ -182,21 +178,16 @@ test("conflicting duplicate authored metadata fails closed regardless of input o
         [first, second],
         [second, first],
     ]) {
-        AUTHORED_COMPARISONS.push(...entries);
-        try {
-            const records = ["a", "b"].map((id) => ({ ...base, id }));
-            expect(() => comparisonDirectory(records)).toThrow(
-                "Conflicting authored comparison identity",
-            );
-            expect(() => authoredComparisonDirectory(records)).toThrow(
-                "Conflicting authored comparison identity",
-            );
-            expect(() => comparisonSnapshot(records)).toThrow(
-                "Conflicting authored comparison identity",
-            );
-        } finally {
-            AUTHORED_COMPARISONS.splice(-entries.length);
-        }
+        const records = ["a", "b"].map((id) => ({ ...base, id }));
+        expect(() => comparisonDirectory(records, entries)).toThrow(
+            "Conflicting authored comparison identity",
+        );
+        expect(() => authoredComparisonDirectory(records, entries)).toThrow(
+            "Conflicting authored comparison identity",
+        );
+        expect(() => comparisonSnapshot(records, entries)).toThrow(
+            "Conflicting authored comparison identity",
+        );
     }
 });
 
@@ -207,45 +198,38 @@ test("authored overrides normalize reversed IDs without mutating source metadata
         path: "/comparisons/a-vs-b",
         title: "Valid authored dossier",
     };
-    AUTHORED_COMPARISONS.push(entry);
-    try {
-        for (const records of [
-            ["a", "b"].map((id) => ({ ...base, id })),
-            ["a", "b"].map((id) => ({
-                ...base,
-                id,
-                peak_torque_nm: null,
-                rated_torque_nm: null,
-            })),
-        ]) {
-            const expected = { ...entry, ids: ["a", "b"] as [string, string] };
-            expect(comparisonDirectory(records)).toEqual([expected]);
-            expect(authoredComparisonDirectory(records)).toEqual([expected]);
-            const snapshot = comparisonSnapshot(records);
-            expect(snapshot.directory).toEqual([expected]);
-            expect(snapshot.authored).toEqual([expected]);
-            expect(snapshot.groups.flatMap((group) => group.pairs)).toEqual([]);
-            for (const path of [entry.path, "/comparisons/b-vs-a"]) {
-                expect(canonicalComparisonPath(path, snapshot.directory)).toBe(
-                    entry.path,
-                );
-                expect(canonicalComparisonPath(`${path}.md`, snapshot.directory)).toBe(
-                    `${entry.path}.md`,
-                );
-            }
-            expect(entry.ids).toEqual(["b", "a"]);
-            expect(Object.isFrozen(entry.ids)).toBe(false);
+    for (const records of [
+        ["a", "b"].map((id) => ({ ...base, id })),
+        ["a", "b"].map((id) => ({
+            ...base,
+            id,
+            peak_torque_nm: null,
+            rated_torque_nm: null,
+        })),
+    ]) {
+        const expected = { ...entry, ids: ["a", "b"] as [string, string] };
+        expect(comparisonDirectory(records, [entry])).toEqual([expected]);
+        expect(authoredComparisonDirectory(records, [entry])).toEqual([expected]);
+        const snapshot = comparisonSnapshot(records, [entry]);
+        expect(snapshot.directory).toEqual([expected]);
+        expect(snapshot.authored).toEqual([expected]);
+        expect(snapshot.groups.flatMap((group) => group.pairs)).toEqual([]);
+        for (const path of [entry.path, "/comparisons/b-vs-a"]) {
+            expect(canonicalComparisonPath(path, snapshot.directory)).toBe(entry.path);
+            expect(canonicalComparisonPath(`${path}.md`, snapshot.directory)).toBe(
+                `${entry.path}.md`,
+            );
         }
-        for (const records of [
-            [{ ...base, id: "a" }],
-            ["a", "b", "b"].map((id) => ({ ...base, id })),
-        ]) {
-            expect(comparisonDirectory(records)).toEqual([]);
-            expect(authoredComparisonDirectory(records)).toEqual([]);
-            expect(comparisonSnapshot(records).authored).toEqual([]);
-        }
-    } finally {
-        AUTHORED_COMPARISONS.pop();
+        expect(entry.ids).toEqual(["b", "a"]);
+        expect(Object.isFrozen(entry.ids)).toBe(false);
+    }
+    for (const records of [
+        [{ ...base, id: "a" }],
+        ["a", "b", "b"].map((id) => ({ ...base, id })),
+    ]) {
+        expect(comparisonDirectory(records, [entry])).toEqual([]);
+        expect(authoredComparisonDirectory(records, [entry])).toEqual([]);
+        expect(comparisonSnapshot(records, [entry]).authored).toEqual([]);
     }
 });
 

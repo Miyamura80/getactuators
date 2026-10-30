@@ -1,5 +1,6 @@
 import { expect, test } from "bun:test";
 import { ACTUATORS, getActuator } from "@/catalog";
+import { GENERATED_COMPARISON_PAGES } from "@/server/agent/generated-comparisons";
 function model(id: string) {
     const record = getActuator(id);
     if (!record) throw new Error(`Missing test model: ${id}`);
@@ -317,5 +318,14 @@ test("a comparison states each caveat once, not once per model", async () => {
         );
         expect(main.split(note).length - 1).toBeLessThanOrEqual(1);
         expect(main).toContain(note);
+    }
+});
+
+test("generated markdown opens with its own heading, not the /compare intro", () => {
+    for (const page of GENERATED_COMPARISON_PAGES) {
+        const body = page.body();
+        expect(body.startsWith(`# ${page.title}\n\n${page.description}`)).toBe(true);
+        expect(body).not.toContain("# Compare actuators");
+        expect(body).not.toContain("Share the selected URL");
     }
 });

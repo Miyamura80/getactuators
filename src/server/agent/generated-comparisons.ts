@@ -4,7 +4,7 @@ import {
     comparisonDirectory,
 } from "@/catalog/comparison-registry";
 import { fieldCaveat } from "@/catalog/evidence";
-import { compareBody, compareContent } from "./compare";
+import { compareContent, compareSectionsMd } from "./compare";
 import { catalogComparisonLinks } from "./comparison-links";
 import { EDITORIAL_PAGES } from "./editorial";
 import { markdownToHtml } from "./html/body";
@@ -86,10 +86,7 @@ function pairPage(pair: ComparisonPair): Page {
         title,
         description,
         body: () =>
-            `${compareBody(`?compare=${pair.ids.join(",")}`).replace(
-                /^# Compare actuators\n\n[^\n]*/,
-                `# ${title}\n\n${description} Unknown means not documented, not zero.`,
-            )}\n\n${arithmeticMd}\n\n## Catalog source links\n\n${sourcesMd}\n\n${related || "[Browse actuator comparisons](/compare)."}\n\n[Choose other catalog models](/actuators)`,
+            `# ${title}\n\n${description} Unknown means not documented, not zero.\n\n${compareSectionsMd(rows)}\n\n${arithmeticMd}\n\n## Catalog source links\n\n${sourcesMd}\n\n${related || "[Browse actuator comparisons](/compare)."}\n\n[Choose other catalog models](/actuators)`,
         visual,
         jsonLd: () => [
             webPage("WebPage", pair.path, title),

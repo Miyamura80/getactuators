@@ -17,13 +17,18 @@ export function comparisonRows(search: string) {
     );
     return ids.map((id) => ACTUATORS.find((a) => a.id === id)!);
 }
+const COMPARE_INTRO =
+    "# Compare actuators\n\nPick 2–4 actuators in the [gallery](/actuators). Share the selected URL. Unknown means not documented, not zero. Catalog specifications are not matched-condition measurements; no winner is implied.";
 export function compareBody(search = ""): string {
     const rows = comparisonRows(search);
-    const intro =
-        "# Compare actuators\n\nPick 2–4 actuators in the [gallery](/actuators). Share the selected URL. Unknown means not documented, not zero. Catalog specifications are not matched-condition measurements; no winner is implied.";
-    if (rows.length < 2) return `${intro}\n\n${comparisonHub("md")}`;
+    return rows.length < 2
+        ? `${COMPARE_INTRO}\n\n${comparisonHub("md")}`
+        : `${COMPARE_INTRO}\n\n${compareSectionsMd(rows)}`;
+}
+// Model cards, specification table and caveats; callers supply their own heading.
+export function compareSectionsMd(rows: Actuator[]): string {
     const clean = (s: string) => s.replaceAll("|", "\\|").replaceAll("\n", " ");
-    return `${intro}\n\n${rows.map((a) => `## ${a.name}\n\n${a.image_url ? `![${comparisonPhotoAlt(a)}](${a.image_url})\n\n` : "Photo unavailable.\n\n"}[Catalog and sources](/actuators/${a.id})`).join("\n\n")}\n\n## Specifications\n\n| Specification | ${rows.map((a) => clean(a.name)).join(" | ")} |\n| --- | ${rows.map(() => "---").join(" | ")} |\n${COMPARE_SPECS.map((spec) => `| ${spec.label} | ${rows.map((a) => clean(spec.display(a))).join(" | ")} |`).join("\n")}\n\nSensor bits do not establish loaded accuracy. CAD geometry is not a calibrated simulation model. Verify thermal conditions, duty and exact revision before engineering use.\n\n${comparisonCaveats(rows).join("\n\n")}${compareEngineeringSources(rows, "md")}`;
+    return `${rows.map((a) => `## ${a.name}\n\n${a.image_url ? `![${comparisonPhotoAlt(a)}](${a.image_url})\n\n` : "Photo unavailable.\n\n"}[Catalog and sources](/actuators/${a.id})`).join("\n\n")}\n\n## Specifications\n\n| Specification | ${rows.map((a) => clean(a.name)).join(" | ")} |\n| --- | ${rows.map(() => "---").join(" | ")} |\n${COMPARE_SPECS.map((spec) => `| ${spec.label} | ${rows.map((a) => clean(spec.display(a))).join(" | ")} |`).join("\n")}\n\nSensor bits do not establish loaded accuracy. CAD geometry is not a calibrated simulation model. Verify thermal conditions, duty and exact revision before engineering use.\n\n${comparisonCaveats(rows).join("\n\n")}${compareEngineeringSources(rows, "md")}`;
 }
 function productCards(rows: Actuator[]): string {
     return `<div class="compare-products">${rows.map((a) => `<article><a href="/actuators/${esc(a.id)}">${a.image_url ? `<img src="${esc(a.image_url)}" alt="${esc(comparisonPhotoAlt(a))}" width="320" height="320">` : '<div class="compare-no-photo">Photo unavailable</div>'}<h2>${esc(a.name)}</h2></a><a href="/actuators/${esc(a.id)}">Catalog and sources</a></article>`).join("")}</div>`;

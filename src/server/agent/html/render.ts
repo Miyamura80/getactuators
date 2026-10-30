@@ -56,6 +56,7 @@ function headMeta(page: Page, noindex = page.noindex ?? false): HeadMeta {
         image: page.image,
         jsonLd: graph(page.jsonLd()),
         noindex,
+        canonicalWhenNoindex: noindex && !page.noindex,
     };
 }
 
