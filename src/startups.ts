@@ -9,8 +9,11 @@ export interface Startup {
     name: string;
     url: string;
     // Served from frontend/public; a self-hosted copy, no third-party requests.
-    logo: string;
+    // Omitted when we have no copy yet: the UI then falls back to CompanyLogo.
+    logo?: string;
     hq: string;
+    // Country of origin, ISO 3166-1 alpha-2.
+    country: CountryCode;
     // Total disclosed funding in USD.
     raisedUsd: number | null;
     round: string | null;
@@ -22,6 +25,22 @@ export interface Startup {
     source: { label: string; url: string };
 }
 
+export type CountryCode = "US" | "JP";
+
+const COUNTRY_NAMES: Record<CountryCode, string> = {
+    US: "United States",
+    JP: "Japan",
+};
+
+// Flag emoji from the two regional indicator symbols of an ISO code.
+export function countryFlag(code: CountryCode): string {
+    return String.fromCodePoint(...[...code].map((c) => 0x1f1a5 + c.charCodeAt(0)));
+}
+
+export function countryLabel(code: CountryCode): string {
+    return `${countryFlag(code)} ${COUNTRY_NAMES[code]}`;
+}
+
 export const STARTUPS: Startup[] = [
     {
         id: "atlas-motion",
@@ -29,6 +48,7 @@ export const STARTUPS: Startup[] = [
         url: "https://atlasmotion.com/",
         logo: "/logos/startups/atlas-motion.jpg",
         hq: "Long Beach, CA",
+        country: "US",
         raisedUsd: 11_500_000,
         round: "Seed / Series A (Aug 2026)",
         leadInvestor: "Greycroft",
@@ -45,6 +65,7 @@ export const STARTUPS: Startup[] = [
         url: "https://www.westmag.com/",
         logo: "/logos/startups/westmag.png",
         hq: "South San Francisco, CA",
+        country: "US",
         raisedUsd: 11_000_000,
         round: "Seed (closed 2025, announced Jun 2026)",
         leadInvestor: "Andreessen Horowitz",
@@ -62,12 +83,30 @@ export const STARTUPS: Startup[] = [
         url: "https://calderaindustries.ai/",
         logo: "/logos/startups/caldera.svg",
         hq: "United States",
+        country: "US",
         raisedUsd: null,
         round: null,
         leadInvestor: null,
         unitsPerMonth: null,
         volumeNote: "No volume disclosed.",
         source: { label: "calderaindustries.ai", url: "https://calderaindustries.ai/" },
+    },
+    {
+        id: "aster",
+        name: "Aster",
+        url: "https://www.ast-aster.biz/",
+        hq: "Yokote, Akita",
+        country: "JP",
+        raisedUsd: null,
+        round: "Strategic (DBJ Apr 2024; Akari alliance Aug 2026)",
+        leadInvestor: null,
+        unitsPerMonth: null,
+        volumeNote:
+            "No monthly rate disclosed. Makes ASTERMOTOR motors from its own laminated-coil process; DBJ backed its move into mass production in 2024.",
+        source: {
+            label: "DBJ, Apr 2024",
+            url: "https://www.dbj.jp/en/topics/dbj_news/2024/html/20240405_204766.html",
+        },
     },
 ];
 

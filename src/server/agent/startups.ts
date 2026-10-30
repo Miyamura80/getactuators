@@ -1,4 +1,4 @@
-import { STARTUPS, formatMetric } from "@/startups";
+import { STARTUPS, countryLabel, formatMetric } from "@/startups";
 import { mdLink, mdTable } from "./md";
 
 // Markdown twin of /startups: the same figures the treemaps size by.
@@ -6,6 +6,7 @@ export function startupsBody(): string {
     const rows = STARTUPS.map((s) => [
         mdLink(s.name, s.url),
         s.hq,
+        countryLabel(s.country),
         formatMetric("raisedUsd", s.raisedUsd),
         s.round ?? "Undisclosed",
         s.leadInvestor ?? "Undisclosed",
@@ -17,7 +18,7 @@ export function startupsBody(): string {
 
 Venture-backed companies building robot actuators and motors, sized by disclosed funding and by company-reported production.
 
-${mdTable(["Company", "HQ", "Raised", "Round", "Lead", "Reported output", "Source"], rows)}
+${mdTable(["Company", "HQ", "Country", "Raised", "Round", "Lead", "Reported output", "Source"], rows)}
 
 ## Production notes
 

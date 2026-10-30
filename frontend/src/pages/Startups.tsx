@@ -3,6 +3,8 @@ import { PublicHeader } from "../components/PublicHeader";
 import { PublicFooter } from "../components/PublicFooter";
 import { CompanyLogo } from "../components/CompanyLogo";
 import {
+    countryFlag,
+    countryLabel,
     formatMetric,
     STARTUP_METRICS,
     STARTUPS,
@@ -23,6 +25,7 @@ const COLORS: Record<string, string> = {
     "atlas-motion": "var(--cyan)",
     westmag: "#8fb4ff",
     caldera: "#ffc48a",
+    aster: "#b9f2a1",
 };
 
 type View = StartupMetric | "both";
@@ -132,7 +135,7 @@ function Treemap({
                     const dim = focus !== null && focus !== t.s.id;
                     const roomy = known && t.w > 200 && t.h > 100;
                     const clip = `su-clip-${metric}-${t.s.id}`;
-                    const logo = t.w > 120 && t.h > 70;
+                    const logo = t.s.logo !== undefined && t.w > 120 && t.h > 70;
                     const textX = t.x + (logo ? 56 : 16);
                     return (
                         <g
@@ -261,6 +264,9 @@ export function Startups({ menuOpen = false }: { menuOpen?: boolean }) {
                                     <i className="su-swatch" style={{ background: COLORS[s.id] }} />
                                     <CompanyLogo name={s.id} size={22} className="su-logo" />
                                     {s.name}
+                                    <span className="su-flag" role="img" aria-label={countryLabel(s.country)} title={countryLabel(s.country)}>
+                                        {countryFlag(s.country)}
+                                    </span>
                                 </span>
                                 <span className="su-fig">{formatMetric("raisedUsd", s.raisedUsd)}</span>
                                 <span className="su-fig">{formatMetric("unitsPerMonth", s.unitsPerMonth)}</span>
@@ -271,6 +277,8 @@ export function Startups({ menuOpen = false }: { menuOpen?: boolean }) {
                             <dl className="su-detail">
                                 <dt>HQ</dt>
                                 <dd>{s.hq}</dd>
+                                <dt>Country</dt>
+                                <dd>{countryLabel(s.country)}</dd>
                                 <dt>Round</dt>
                                 <dd>{s.round ?? "Undisclosed"}</dd>
                                 <dt>Lead</dt>

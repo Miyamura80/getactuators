@@ -196,12 +196,12 @@ const INVESTORS: Row[] = [
 
 const host = (url: string): string => new URL(url).hostname.replace(/^www\./, "");
 
-// /startups rows carry their own site and a self-hosted logo.
+// /startups rows carry their own site and, usually, a self-hosted logo.
 const STARTUP_ENTRIES: BrandEntry[] = STARTUPS.map((s) => ({
     id: s.id,
     name: s.name,
     domain: host(s.url),
-    logo: s.logo,
+    ...(s.logo ? { logo: s.logo } : {}),
 }));
 
 // Official marks served from frontend/public/logos/brands, each with the page
