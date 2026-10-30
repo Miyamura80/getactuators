@@ -3,6 +3,7 @@
 
 .su-toggle { margin: 20px 0 12px auto; max-width: 360px; }
 .su-toggle label { min-height: 30px; font-size: 12px; }
+.su-eye { display: block; }
 .su-maps { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; }
 .su-maps.both { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .su-map { margin: 0; border: 1px solid var(--line); padding: 12px; min-width: 0; }

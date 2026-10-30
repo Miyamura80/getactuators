@@ -222,7 +222,18 @@ export function Startups({ menuOpen = false }: { menuOpen?: boolean }) {
                 </header>
 
                 <fieldset className="calc-solve su-toggle">
-                    <legend>View</legend>
+                    <legend>
+                        <svg className="su-eye" width="16" height="16" viewBox="0 0 24 24" role="img" aria-label="View">
+                            <path
+                                d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="1.8"
+                                strokeLinejoin="round"
+                            />
+                            <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" strokeWidth="1.8" />
+                        </svg>
+                    </legend>
                     <div className="calc-solve-opts">
                         {VIEWS.map((v) => (
                             <label key={v.id} className={view === v.id ? "on" : ""}>
