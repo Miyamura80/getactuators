@@ -1,7 +1,14 @@
 import { ACTUATORS } from "@/catalog";
-import { comparisonDirectory, comparisonTitle } from "@/catalog/comparison-registry";
+import {
+    AUTHORED_COMPARISONS,
+    comparisonDirectory,
+    comparisonTitle,
+} from "@/catalog/comparison-registry";
 
-const pairs = comparisonDirectory(ACTUATORS);
+// Authored dossiers are linked from their own section, not this catalog-only list.
+const pairs = comparisonDirectory(ACTUATORS).filter(
+    (pair) => !AUTHORED_COMPARISONS.some((authored) => authored.path === pair.path),
+);
 export function catalogComparisonLinks(
     ids: readonly string[],
     heading = "Catalog comparisons",

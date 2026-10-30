@@ -54,7 +54,7 @@ export function comparisonCaveats(rows: readonly CompareActuator[]): string[] {
     const notes = rows.map((a) => ({ name: a.name, note: revisionNote(a) }));
     const distinct = [...new Set(notes.map(({ note }) => note))];
     return [
-        COMPARISON_PHOTO_NOTE,
+        ...(rows.some((a) => a.image_url) ? [COMPARISON_PHOTO_NOTE] : []),
         ...(distinct.length === 1
             ? distinct
             : notes.map(({ name, note }) => `${name}: ${note}`)),

@@ -229,12 +229,17 @@ export function comparisonGroups(records: readonly ComparisonRecord[]) {
 }
 
 function groupsForPairs(pairs: readonly ComparisonPair[]) {
-    return [...new Set(pairs.map((pair) => pair.category))].sort().map((category) => ({
-        category,
-        pairs: pairs.filter(
-            (pair) =>
-                pair.category === category &&
-                !AUTHORED_COMPARISONS.some((authored) => authored.path === pair.path),
-        ),
-    }));
+    return [...new Set(pairs.map((pair) => pair.category))]
+        .sort()
+        .map((category) => ({
+            category,
+            pairs: pairs.filter(
+                (pair) =>
+                    pair.category === category &&
+                    !AUTHORED_COMPARISONS.some(
+                        (authored) => authored.path === pair.path,
+                    ),
+            ),
+        }))
+        .filter((group) => group.pairs.length > 0);
 }

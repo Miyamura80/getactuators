@@ -83,7 +83,7 @@ function comparisonFragmentRestorer(container: HTMLElement): () => void {
     const restore = window.location.pathname === "/compare" &&
         /^compare-[a-z_]+$/.test(id) && target !== null && container.contains(target) &&
         (active === target || active === document.body);
-    const top = target && active === target ? target.getBoundingClientRect().top : 0;
+    const top = target ? target.getBoundingClientRect().top : 0;
     let pending = restore;
     return () => {
         if (!pending) return;

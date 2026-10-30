@@ -17,7 +17,11 @@ test("query selection is noindex across served HTML, Markdown twins and content 
             expect(response.status).toBe(200);
             expect(response.headers.get("x-robots-tag")).toBe("noindex, follow");
             const body = await response.text();
-            expect(body).toContain("https://actuatorlist.com/compare");
+            expect(body).toContain(
+                path.startsWith("/compare.md") || "accept" in headers
+                    ? "canonical: https://actuatorlist.com/compare\n"
+                    : '<link rel="canonical" href="https://actuatorlist.com/compare">',
+            );
         }
     }
     for (const [path, headers] of [

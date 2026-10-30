@@ -79,14 +79,14 @@ function pairPage(pair: ComparisonPair): Page {
         )
         .join("\n\n");
     const visual = () =>
-        `<div class="comparison-document"><h1>${esc(title)}</h1><p>${esc(description)}</p>${compareContent(rows)}<section><h2>${heading}</h2><p>${esc(limitations)}</p><ul>${differences.map((line) => `<li>${esc(line)}</li>`).join("")}</ul></section><section><h2>Catalog source links</h2>${sourceLinks.map(({ row, links }) => `<h3>${esc(row.name)}</h3><p>${links.length ? links.map((link) => `<a href="${esc(link.url)}">${esc(link.label)}</a>`).join(" · ") : "Source link unknown: not documented."}</p>`).join("")}</section>${markdownToHtml(related)}<p><a href="/compare">Browse actuator comparisons</a> · <a href="/actuators">Choose other catalog models</a></p></div>`;
+        `<div class="comparison-document"><h1>${esc(title)}</h1><p>${esc(description)}</p>${compareContent(rows)}<section><h2>${heading}</h2><p>${esc(limitations)}</p><ul>${differences.map((line) => `<li>${esc(line)}</li>`).join("")}</ul></section><section><h2>Catalog source links</h2>${sourceLinks.map(({ row, links }) => `<h3>${esc(row.name)}</h3><p>${links.length ? links.map((link) => `<a href="${esc(link.url)}">${esc(link.label)}</a>`).join(" · ") : "Source link unknown: not documented."}</p>`).join("")}</section>${markdownToHtml(related || "[Browse actuator comparisons](/compare).")}<p><a href="/actuators">Choose other catalog models</a></p></div>`;
     return {
         path: pair.path,
         kind: "static",
         title,
         description,
         body: () =>
-            `${compareBody(`?compare=${pair.ids.join(",")}`).replace("# Compare actuators", `# ${title}`)}\n\n${arithmeticMd}\n\n## Catalog source links\n\n${sourcesMd}\n\n${related}\n\n[Browse actuator comparisons](/compare) · [Choose other catalog models](/actuators)`,
+            `${compareBody(`?compare=${pair.ids.join(",")}`).replace("# Compare actuators", `# ${title}`)}\n\n${arithmeticMd}\n\n## Catalog source links\n\n${sourcesMd}\n\n${related || "[Browse actuator comparisons](/compare)."}\n\n[Choose other catalog models](/actuators)`,
         visual,
         jsonLd: () => [
             webPage("WebPage", pair.path, title),

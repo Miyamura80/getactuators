@@ -10,7 +10,7 @@ export function ComparisonHub({ records = ACTUATORS }: { records?: typeof ACTUAT
     const groups = snapshot.groups;
     return <section className="comparison-hub" aria-label="Actuator comparison directory">
         <p>Browse exact catalog models by drive type, or <a href="/actuators">pick 2–4 models in the gallery</a>. Match voltage, packaging and duty requirements before shortlisting.</p>
-        <h2>Source-scoped engineering comparison</h2>
+        {snapshot.authored.length > 0 && <h2>Source-scoped engineering comparison</h2>}
         {snapshot.authored.map(pair => <article className="comparison-feature" key={pair.path}>
             <h3><a href={pair.path}>{pair.title}</a></h3>
             <div className="comparison-feature-photos">{pair.ids.map(id => {

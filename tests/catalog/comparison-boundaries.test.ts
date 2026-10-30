@@ -154,8 +154,12 @@ test("malformed authored pair identities fail closed on every directory surface"
             expect(() => comparisonDirectory(records)).toThrow(
                 "Invalid authored comparison IDs",
             );
-            expect(() => authoredComparisonDirectory(records)).toThrow();
-            expect(() => comparisonSnapshot(records)).toThrow();
+            expect(() => authoredComparisonDirectory(records)).toThrow(
+                "Invalid authored comparison IDs",
+            );
+            expect(() => comparisonSnapshot(records)).toThrow(
+                "Invalid authored comparison IDs",
+            );
         } finally {
             AUTHORED_COMPARISONS.pop();
         }
@@ -184,8 +188,12 @@ test("conflicting duplicate authored metadata fails closed regardless of input o
             expect(() => comparisonDirectory(records)).toThrow(
                 "Conflicting authored comparison identity",
             );
-            expect(() => authoredComparisonDirectory(records)).toThrow();
-            expect(() => comparisonSnapshot(records)).toThrow();
+            expect(() => authoredComparisonDirectory(records)).toThrow(
+                "Conflicting authored comparison identity",
+            );
+            expect(() => comparisonSnapshot(records)).toThrow(
+                "Conflicting authored comparison identity",
+            );
         } finally {
             AUTHORED_COMPARISONS.splice(-entries.length);
         }
