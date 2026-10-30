@@ -2,6 +2,7 @@ import { ACTUATORS, type Actuator, CATEGORIES, type Robot } from "@/catalog";
 import { evidenceFor, fieldCaveat } from "@/catalog/evidence";
 import { resolveJoints, robotsUsingActuator } from "@/catalog/query";
 import { absoluteUrl } from "../site";
+import { catalogComparisonLinks } from "./comparison-links";
 import { engineeringEvidenceSection } from "./engineering-evidence";
 import { bullets, humanize, mdLink, mdTable, mdText, num, usd } from "./md";
 import {
@@ -153,6 +154,8 @@ export function actuatorBody(a: Actuator): string {
             )}`,
         );
     }
+    const comparisons = catalogComparisonLinks([a.id]);
+    if (comparisons) sections.push(comparisons);
     sections.push(
         `## Machine-readable\n\n${bullets([
             `JSON: ${absoluteUrl(`/api/v1/actuators/${encodeURIComponent(a.id)}`)}`,
@@ -226,6 +229,9 @@ export function robotSection(r: Robot, level = 2): string {
         r.kind === "humanoid"
             ? `Height: ${num(r.height_m, "m", 2)}`
             : `Reach: ${num(r.reach_mm, "mm", 0)}`,
+        ...(r.kind === "humanoid" && r.reach_mm != null
+            ? [`Arm reach: ${num(r.reach_mm, "mm", 0)}`]
+            : []),
         `Weight: ${num(r.weight_kg, "kg", 2)}`,
         `Price: ${usd(r.price_usd)}${r.price_max_usd ? ` to ${usd(r.price_max_usd)}` : ""}`,
         ...researchFacts(r),

@@ -1,12 +1,12 @@
 import { ACTUATORS, type Actuator, CATEGORIES, ROBOTS } from "@/catalog";
 import { isRankable } from "@/catalog/evidence";
 import { listBrands, queryActuators } from "@/catalog/query";
-import { REPO_URL, absoluteUrl } from "../site";
+import { LICENSE_SPLIT, REPO_URL, absoluteUrl } from "../site";
 import { actuatorLabel, actuatorPath, actuatorTable, robotSection } from "./catalog-md";
 import { PATHS } from "./links";
 import { bullets, dofText, mdLink, mdText, num, usd } from "./md";
 
-// Markdown bodies for the SPA pages (/, /all, /actuators, /robots). The same
+// Markdown bodies for the SPA pages (/, /actuators, /robots). The same
 // text is rendered into the HTML shell as prerendered content, so crawlers
 // without JavaScript and agents reading markdown see identical facts.
 
@@ -67,7 +67,7 @@ export function faqItems(): FaqItem[] {
         },
         {
             q: "How do I add or correct an actuator?",
-            a: `Open an issue or a pull request on GitHub at ${REPO_URL}. The dataset lives in the repository and is published under the MIT License.`,
+            a: `Open an issue or a pull request on GitHub at ${REPO_URL}. The dataset lives in the repository. ${LICENSE_SPLIT}`,
         },
     ];
 }
@@ -95,8 +95,7 @@ export function homeBody(): string {
         `actuatorlist is an independent, open catalog of the actuators that move robots: quasi-direct-drive motors, integrated joints, smart servos, harmonic and cycloidal reducers, and frameless motor kits. It holds ${catalogStats()}. Robot builders use it to shortlist actuators for quadruped legs, humanoid joints and robot arms by the numbers that decide a build: peak torque, weight, torque density and price.`,
         `## Browse the catalog\n\n${bullets([
             `${mdLink("Leaderboard", absoluteUrl("/"))}: torque density rankings and a torque versus cost scatter.`,
-            `${mdLink("All actuators", absoluteUrl("/all"))}: every entry in one sortable table.`,
-            `${mdLink("Actuator gallery", absoluteUrl("/actuators"))}: photos and spec cards by category.`,
+            `${mdLink("Actuators", absoluteUrl("/actuators"))}: every entry as a photo gallery or one sortable table.`,
             `${mdLink("Robots", absoluteUrl("/robots"))}: which motors sit in each joint of real robots.`,
             `${mdLink("For AI agents", absoluteUrl(PATHS.agentsPage))}: REST API, MCP server and markdown views.`,
         ])}`,
@@ -118,31 +117,14 @@ export function homeBody(): string {
     ].join("\n\n");
 }
 
-export function allBody(): string {
+export function actuatorsBody(): string {
     const list = [...ACTUATORS].sort((a, b) => a.name.localeCompare(b.name));
     return [
-        "# All robot actuators",
-        `Every actuator in the actuatorlist catalog (${ACTUATORS.length} entries), alphabetical. Unknown values read n/a; price reads quote only when no public USD price exists. Follow a name for the full spec sheet.`,
+        "# Robot actuators",
+        `Every actuator in the actuatorlist catalog (${ACTUATORS.length} entries). On the site the same list switches between a photo gallery grouped by type or application and a sortable spec table.`,
+        `## Categories\n\n${categorySection()}`,
+        "## All actuators\n\nAlphabetical. Unknown values read n/a; price reads quote only when no public USD price exists. Follow a name for the full spec sheet.",
         actuatorTable(list),
-    ].join("\n\n");
-}
-
-export function galleryBody(): string {
-    const sections = CATEGORIES.map((c) => {
-        const list = ACTUATORS.filter((a) => a.category === c.slug).sort(
-            (a, b) => (b.peak_torque_nm ?? -1) - (a.peak_torque_nm ?? -1),
-        );
-        return `## ${c.label}\n\n${c.description}\n\n${bullets(
-            list.map(
-                (a) =>
-                    `${mdLink(actuatorLabel(a), absoluteUrl(actuatorPath(a.id)))}: ${num(a.peak_torque_nm, "Nm")} peak, ${num(a.weight_g, "g", 0)}`,
-            ),
-        )}`;
-    });
-    return [
-        "# Actuator gallery by category",
-        `The ${ACTUATORS.length} actuators in the catalog grouped by drive type, heaviest hitters first.`,
-        ...sections,
     ].join("\n\n");
 }
 

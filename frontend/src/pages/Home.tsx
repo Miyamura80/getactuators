@@ -88,7 +88,7 @@ export function Home({ menuOpen = false }: { menuOpen?: boolean }) {
 
             <RobotShowcase />
 
-            <Link to="/all" className="all-cta">
+            <Link to="/actuators?view=list" className="all-cta">
                 <span className="all-cta-kicker">Full dataset</span>
                 <span className="all-cta-title">Browse all {ACTUATORS.length} actuators</span>
                 <span className="all-cta-go" aria-hidden="true">→</span>
@@ -101,7 +101,7 @@ export function Home({ menuOpen = false }: { menuOpen?: boolean }) {
 function CatCard({ cat, count }: { cat: Cat; count: number }) {
     return (
         <Link
-            to={`/all?use=${cat.useCase}`}
+            to={`/actuators?view=list&use=${cat.useCase}`}
             className={`cat-card${cat.feature ? " cat-card-lg" : ""}`}
             aria-label={`${cat.label}: ${count} actuators`}
         >

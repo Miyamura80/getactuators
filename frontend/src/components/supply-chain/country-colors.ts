@@ -11,6 +11,8 @@ export const COUNTRY_COLOR: Partial<Record<ShareKey, string>> = {
     AU: "#ffd43b",
     MM: "#a9e34b",
     TH: "#38d9a9",
+    CD: "#e599f7",
+    ID: "#66d9e8",
 };
 export const COUNTRY_FALLBACK = "#8b95a1";
 export const OTHER_COLOR = "#6b6b6b";

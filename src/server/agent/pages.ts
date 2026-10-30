@@ -2,6 +2,7 @@ import { ACTUATORS, getActuator } from "@/catalog";
 import { compareBody } from "./compare";
 
 import { INVESTORS_PATH } from "@/investors";
+import { CONTRIBUTORS, CONTRIBUTORS_PATH } from "@/people";
 import { STARTUPS_PATH } from "@/startups";
 import {
     actuatorBody,
@@ -9,7 +10,9 @@ import {
     actuatorSummary,
     categoryLabel,
 } from "./catalog-md";
+import { contributorsBody, personNode } from "./contributors";
 import { EDITORIAL_PAGES } from "./editorial";
+import { GENERATED_COMPARISON_PAGES } from "./generated-comparisons";
 import { HUMANOID_GUIDE } from "./humanoid-guide";
 import { HUMANOIDS_PAGE } from "./humanoids";
 import { investorsBody } from "./investors";
@@ -18,17 +21,18 @@ import { PATHS } from "./links";
 import { agentsBody } from "./manifests";
 import { mdDocument } from "./md";
 import {
-    allBody,
+    actuatorsBody,
     faqItems,
     faqSection,
-    galleryBody,
     homeBody,
     robotsBody,
     topBy,
 } from "./pages-md";
 import { actuatorSeoTitle } from "./seo-titles";
 import { startupsBody } from "./startups";
+import { METALS_PAGE } from "./supply-chain/metals";
 import { HIDDEN_PAGES } from "./supply-chain/pages";
+import { POLICY_PAGE } from "./supply-chain/policy";
 import { TOOL_PAGES } from "./tools";
 import { aboutBody, contactBody, privacyBody } from "./trust";
 
@@ -87,6 +91,7 @@ const STATIC_PAGES: Page[] = [
         ],
     },
     ...EDITORIAL_PAGES,
+    ...GENERATED_COMPARISON_PAGES,
     HUMANOID_GUIDE,
     ...TOOL_PAGES,
     {
@@ -108,18 +113,11 @@ const STATIC_PAGES: Page[] = [
         ],
     },
     sub(
-        "/all",
-        "spa",
-        "All robot actuators",
-        `Every actuator in the catalog (${ACTUATORS.length}) in one table: peak torque, weight, torque density and price.`,
-        allBody,
-    ),
-    sub(
         "/actuators",
         "spa",
-        "Actuator gallery by category",
-        "Robot actuators grouped by drive type: QDD, integrated joints, smart servos, harmonic, cycloidal and frameless kits.",
-        galleryBody,
+        "All robot actuators",
+        `Every actuator in the catalog (${ACTUATORS.length}) as a photo gallery or one sortable table: peak torque, weight, torque density and price.`,
+        actuatorsBody,
     ),
     sub(
         "/robots",
@@ -149,6 +147,8 @@ const STATIC_PAGES: Page[] = [
         image: PATHS.ogInvestors,
     },
     HUMANOIDS_PAGE,
+    METALS_PAGE,
+    POLICY_PAGE,
     sub(
         PATHS.agentsPage,
         "spa",
@@ -165,6 +165,22 @@ const STATIC_PAGES: Page[] = [
         aboutBody,
         "AboutPage",
     ),
+    {
+        ...sub(
+            CONTRIBUTORS_PATH,
+            "spa",
+            "Contributors",
+            "The people who build actuatorlist: the maintainer and each contributor, with their affiliations and profile links.",
+            contributorsBody,
+            "AboutPage",
+        ),
+        jsonLd: () => [
+            ld.webPage("AboutPage", CONTRIBUTORS_PATH, "Contributors"),
+            ld.website(),
+            ...CONTRIBUTORS.map(personNode),
+            ld.breadcrumbs([HOME, { name: "Contributors", path: CONTRIBUTORS_PATH }]),
+        ],
+    },
     sub(
         "/contact",
         "static",

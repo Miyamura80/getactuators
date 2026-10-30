@@ -22,7 +22,7 @@ test("only the gallery serves the built React markup in its initial root", async
                 `
             import { renderSpaPage } from './src/server/agent/html/render.ts';
             import { findPage } from './src/server/agent/pages.ts';
-            console.log(JSON.stringify(await Promise.all(['/actuators', '/', '/all', '/actuators/cubemars-ak80-9'].map(path => renderSpaPage(findPage(path))))));
+            console.log(JSON.stringify(await Promise.all(['/actuators', '/', '/robots', '/actuators/cubemars-ak80-9'].map(path => renderSpaPage(findPage(path))))));
         `,
             ],
             {

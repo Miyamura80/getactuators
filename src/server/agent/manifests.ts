@@ -1,4 +1,11 @@
-import { REPO_URL, absoluteUrl } from "../site";
+import {
+    CODE_LICENSE,
+    DATA_LICENSE,
+    LICENSE_EXCLUDES,
+    LICENSE_SPLIT,
+    REPO_URL,
+    absoluteUrl,
+} from "../site";
 import { MCP_TOOLS, PATHS, RATE_LIMIT_PER_MINUTE, REST_ENDPOINTS } from "./links";
 import { bullets, mdTable } from "./md";
 import { catalogStats } from "./pages-md";
@@ -106,7 +113,7 @@ export function pricingBody(): string {
             `The MCP servers: the catalog server at ${u(PATHS.mcp)} and the docs server at ${u(PATHS.mcpDocs)}, for Claude, ChatGPT, Cursor and other MCP clients.`,
             `Markdown surfaces: a markdown twin of every page, ${u(PATHS.llms)}, ${u(PATHS.llmsFull)} and this document.`,
             "Read-only access to everything above, anonymously.",
-            "Commercial use, as permitted by the MIT License.",
+            `Commercial use, as permitted by the ${CODE_LICENSE.name} (code) and ${DATA_LICENSE.name} (data).`,
         ])}`,
         `## Limits\n\n${mdTable(
             ["Limit", "Value"],
@@ -123,7 +130,7 @@ export function pricingBody(): string {
                 ["Uptime SLA", "none (best effort)"],
             ],
         )}`,
-        `## License\n\nThe code and dataset are published under the MIT License in ${REPO_URL}. You can copy, cache or redistribute the data; keep the license notice and cite actuatorlist as the source.`,
+        `## License\n\n${LICENSE_SPLIT} Both are in ${REPO_URL}; the data license is ${DATA_LICENSE.url}. You can copy, cache, adapt or redistribute the data, including commercially, if you credit "${DATA_LICENSE.credit}" and link the license. ${LICENSE_EXCLUDES} Third-party figures keep their original source citations.`,
         "## Costs you might still see\n\nActuator prices in the catalog are list prices from public manufacturer or retailer pages, in USD. actuatorlist does not sell hardware and takes no commission. Entries without a public price read quote only.",
         `## Questions\n\nOpen an issue at ${REPO_URL}/issues. Agent guide: ${u(PATHS.agentsMd)}. Authentication details: ${u(PATHS.authMd)}.`,
     ].join("\n\n");

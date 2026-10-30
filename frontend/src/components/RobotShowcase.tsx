@@ -111,7 +111,10 @@ function RobotCard({ robot, active }: { robot: Robot; active: boolean }) {
                     {robot.kind === "humanoid" ? (
                         <div>
                             <dt>Height</dt>
-                            <dd>{robot.height_m == null ? "–" : `${num(robot.height_m, 2)} m`}</dd>
+                            <dd>
+                                {robot.height_m == null ? "–" : `${num(robot.height_m, 2)} m`}
+                                {robot.reach_mm != null && <small className="robot-stat-note">{num(robot.reach_mm)} mm arm</small>}
+                            </dd>
                         </div>
                     ) : (
                         <div>

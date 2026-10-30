@@ -1,8 +1,26 @@
 import { COMPANIES } from "./companies";
 import { insideCountry } from "./countries";
 import { LAB_MINING_HHI, LAB_STAGE_SHARES } from "./lab-fixtures";
+import { LAB_TESLA_MARGIN, labNdStep } from "./lab-kit";
+import { humanoidLicenceErrors, licenceErrors } from "./licence";
 import { SUPPLY_LINKS } from "./links";
 import { SEGMENT_MARKETS } from "./market-share";
+import {
+    BORON_FRACTION,
+    GBD_DY,
+    MAGNET_GRADES,
+    METALS,
+    METAL_EVENTS,
+    NDPR_PRICE_FLOOR,
+    ND_IN_NDPR,
+    PRICE_CHAIN,
+    PRICE_DRIVERS,
+    PRICE_SERIES,
+    RESERVES,
+    STAGE_SHARES,
+    TB_FRACTION,
+    TOTAL_RE_FRACTION,
+} from "./metals";
 import {
     DOMINANCE_MARKETS,
     EVS_PER_YEAR,
@@ -11,6 +29,7 @@ import {
     NDFEB_PER_EV,
     NDFEB_PER_HUMANOID,
 } from "./perspective";
+import { POLICY_MEASURES, policyErrors } from "./policy";
 import {
     companySchema,
     siteSchema,
@@ -19,7 +38,7 @@ import {
 } from "./schemas";
 import { SITES } from "./sites";
 import { type Sourced, isSourced } from "./sourced";
-import { SOURCES, getSource } from "./sources";
+import { FACTS_ALLOWLIST, SOURCES, getSource } from "./sources";
 
 // Integrity checks over every supply-chain dataset, shared by the registry
 // tests and scripts/citation-audit.ts. `errors` fail CI; `warnings` do not.
@@ -36,6 +55,7 @@ const DATASETS: Record<string, unknown> = {
     links: SUPPLY_LINKS,
     "lab-stage-shares": LAB_STAGE_SHARES,
     "lab-values": [LAB_MINING_HHI],
+    "lab-kit-values": [LAB_TESLA_MARGIN, labNdStep()],
     "market-share": SEGMENT_MARKETS,
     "perspective-units": [
         NDFEB_PER_HUMANOID,
@@ -45,6 +65,28 @@ const DATASETS: Record<string, unknown> = {
         EVS_PER_YEAR,
     ],
     "perspective-dominance": DOMINANCE_MARKETS,
+    "metals-grades": [
+        MAGNET_GRADES,
+        GBD_DY,
+        TOTAL_RE_FRACTION,
+        BORON_FRACTION,
+        TB_FRACTION,
+        ND_IN_NDPR,
+    ],
+    "metals-stage-shares": STAGE_SHARES,
+    "metals-reserves": RESERVES,
+    "metals-prices": [PRICE_SERIES, NDPR_PRICE_FLOOR],
+    policy: POLICY_MEASURES,
+};
+
+// Records that cite sources without a number of their own.
+const CITING_RECORDS: Record<string, readonly { sources: readonly string[] }[]> = {
+    "metals-elements": METALS,
+    "metals-events": METAL_EVENTS,
+    "metals-drivers": PRICE_DRIVERS,
+    "metals-price-chain": PRICE_CHAIN,
+    "policy-measures": POLICY_MEASURES,
+    "policy-status": POLICY_MEASURES.flatMap((m) => m.statusHistory),
 };
 
 // Numbers that need no citation of their own: coordinates (the site carries
@@ -168,6 +210,11 @@ function citations(): [string, readonly string[]][] {
     for (const [name, data] of Object.entries(DATASETS))
         for (const { path, s } of sourcedValues(data))
             out.push([`${name}${path}`, s.sources]);
+    for (const [name, records] of Object.entries(CITING_RECORDS))
+        records.forEach((r, i) => out.push([`${name}[${i}]`, r.sources]));
+    for (const [metal, stages] of Object.entries(STAGE_SHARES))
+        for (const [stage, e] of Object.entries(stages))
+            if (e.kind === "gap") out.push([`stage gap ${metal}/${stage}`, e.sources]);
     return out;
 }
 
@@ -198,6 +245,7 @@ export function auditRegistry(
         ...schemaErrors("links", supplyLinkSchema, SUPPLY_LINKS),
         ...duplicateIds(),
         ...referenceErrors(),
+        ...policyErrors(today),
     ];
     const used = new Set<string>();
     for (const [where, ids] of citations()) {
@@ -207,6 +255,16 @@ export function auditRegistry(
             if (!getSource(id)) errors.push(`${where}: unknown source "${id}"`);
         }
     }
+    errors.push(
+        ...licenceErrors({
+            name: "supply-chain",
+            file: "src/supply-chain/sources.ts",
+            sources: SOURCES,
+            citations: citations(),
+            allowlist: FACTS_ALLOWLIST,
+        }),
+        ...humanoidLicenceErrors(),
+    );
     const values = sourcedValueIssues(today);
     const orphans = SOURCES.filter((s) => !used.has(s.id)).map(
         (s) => `orphan source "${s.id}"`,

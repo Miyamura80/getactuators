@@ -17,7 +17,24 @@ import {
     getHumanoidById,
     listHumanoids,
 } from "./humanoids";
+import {
+    MetalListSchema,
+    MetalPriceParams,
+    MetalPricesSchema,
+    MetalSupplyParams,
+    MetalSupplySchema,
+    getMetalHandler,
+    getMetalPricesHandler,
+    listMetalsHandler,
+} from "./metals";
 import { ActuatorListParams, CompareQueryParams, RobotListParams } from "./params";
+import {
+    PolicyListParams,
+    PolicyListSchema,
+    PolicyMeasureSchema,
+    getPolicyHandler,
+    listPolicyHandler,
+} from "./policy";
 import {
     ActuatorDetailSchema,
     ActuatorListSchema,
@@ -221,6 +238,85 @@ export const OPERATIONS: Operation[] = [
         errors: [400],
         example: "/api/v1/sites?company=jl-mag",
         handler: listSitesHandler,
+    },
+    {
+        operationId: "list_metals",
+        method: "GET",
+        path: "/api/v1/metals",
+        summary: "List magnet metals",
+        description:
+            "The six metals in an actuator's permanent magnet (Nd, Pr, Dy, Tb for NdFeB; Sm, Co for SmCo) with their role and the leading country at each stage: mining, separation, metal and alloy, magnets.",
+        response: MetalListSchema,
+        errors: [],
+        example: "/api/v1/metals",
+        handler: listMetalsHandler,
+    },
+    {
+        operationId: "get_metal",
+        method: "GET",
+        path: "/api/v1/metals/:element",
+        summary: "Who supplies one magnet metal",
+        description:
+            "Country shares of each stage (or one with `stage`), USGS mine production, reserves and years of supply by country, and the latest cited price of every series for the element. Stages no public source splits by country are marked `gap`.",
+        pathParam: {
+            name: "element",
+            description: "Element id: nd, pr, dy, tb, sm or co.",
+            example: "dy",
+        },
+        query: MetalSupplyParams,
+        response: MetalSupplySchema,
+        errors: [400, 404],
+        example: "/api/v1/metals/dy?stage=separation",
+        handler: getMetalHandler,
+    },
+    {
+        operationId: "get_metal_prices",
+        method: "GET",
+        path: "/api/v1/metal-prices/:series",
+        summary: "Price history of a magnet metal",
+        description:
+            "Cited price points for one series in US$/kg (USGS annual averages and year-end ranges, monthly SMM readings in 2026) with the events that touched the element. `from` and `to` take YYYY-MM.",
+        pathParam: {
+            name: "series",
+            description:
+                "Series id, e.g. ndpr-oxide, dy-oxide, tb-metal-cn, tb-metal-fob, co-metal.",
+            example: "dy-oxide",
+        },
+        query: MetalPriceParams,
+        response: MetalPricesSchema,
+        errors: [400, 404],
+        example: "/api/v1/metal-prices/dy-oxide?from=2020-01",
+        handler: getMetalPricesHandler,
+    },
+    {
+        operationId: "list_policy_measures",
+        method: "GET",
+        path: "/api/v1/policy",
+        summary: "List policy measures on the actuator chain",
+        description:
+            "Export controls, tariffs, subsidies and standards that touch the actuator supply chain (mining to robot) in China, the US, the EU, Japan, Korea, Australia and international standards bodies, oldest first. Each measure has its status history with a primary source per change. Filter by jurisdiction, type, stage or status.",
+        query: PolicyListParams,
+        response: PolicyListSchema,
+        errors: [400],
+        example: "/api/v1/policy?jurisdiction=CN&type=export-control",
+        handler: listPolicyHandler,
+    },
+    {
+        operationId: "get_policy_measure",
+        method: "GET",
+        path: "/api/v1/policy/:id",
+        summary: "Get one policy measure",
+        description:
+            "One measure with its issuer, dates, status history, affected stages, HS codes, companies, award size and sources.",
+        pathParam: {
+            name: "id",
+            description: "Measure id, e.g. cn-mofcom-2025-18.",
+            example: "cn-mofcom-2025-18",
+        },
+        response: PolicyMeasureSchema,
+        errors: [404],
+        example: "/api/v1/policy/cn-mofcom-2025-18",
+        handler: getPolicyHandler,
     },
     {
         operationId: "list_humanoids",

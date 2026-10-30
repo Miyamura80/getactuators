@@ -1,9 +1,10 @@
 // Dependency-neutral navigation shared by runtime HTML and the browser build.
+import { GITHUB_MARK_SVG, REPO_URL, isRepoHref } from "./repo-link";
+
 export const PUBLIC_LINKS = [
     ["/", "Leaderboard"],
     ["/robots", "Robot types"],
-    ["/all", "All actuators"],
-    ["/actuators", "Gallery"],
+    ["/actuators", "Actuators"],
     ["/compare", "Compare"],
     ["/guides", "Guides"],
     ["/agents", "Agents"],
@@ -18,6 +19,7 @@ export const SUPPLY_CHAIN_GROUPS = [
         label: "Chain",
         links: [
             ["/metals", "Metals"],
+            ["/policy", "Policy"],
             ["/bom", "Bill of materials"],
             ["/manufacturing", "Manufacturing"],
             ["/alts", "Alternatives"],
@@ -34,7 +36,10 @@ export const SUPPLY_CHAIN_GROUPS = [
     },
 ] as const;
 
-export const SUPPLY_CHAIN_PAGES_LIVE: ReadonlySet<string> = new Set<string>([]);
+export const SUPPLY_CHAIN_PAGES_LIVE: ReadonlySet<string> = new Set<string>([
+    "/metals",
+    "/policy",
+]);
 
 export interface SupplyChainMenuLink {
     href: string;
@@ -61,7 +66,7 @@ const liveSupplyChain = supplyChainMenu().flatMap((g) =>
 );
 
 export const FOOTER_GROUPS = [
-    { label: "Catalog", links: PUBLIC_LINKS.slice(0, 5) },
+    { label: "Catalog", links: PUBLIC_LINKS.slice(0, 4) },
     {
         label: "Resources",
         links: [
@@ -84,9 +89,10 @@ export const FOOTER_GROUPS = [
         label: "Project",
         links: [
             ["/about", "About"],
+            ["/contributors", "Contributors"],
             ["/contact", "Contact"],
             ["/privacy", "Privacy"],
-            ["https://github.com/Miyamura80/getactuators", "GitHub"],
+            [REPO_URL, "GitHub"],
         ],
     },
     ...(liveSupplyChain.length > 0
@@ -106,5 +112,5 @@ export function publicHeader(path: string): string {
 }
 
 export function publicFooter(): string {
-    return `<footer class="site-footer"><nav aria-label="Footer">${FOOTER_GROUPS.map((group) => `<section><h2>${group.label}</h2>${group.links.map(([href, label]) => `<a href="${href}">${label}</a>`).join("")}</section>`).join("")}</nav></footer>`;
+    return `<footer class="site-footer"><nav aria-label="Footer">${FOOTER_GROUPS.map((group) => `<section><h2>${group.label}</h2>${group.links.map(([href, label]) => `<a href="${href}">${isRepoHref(href) ? GITHUB_MARK_SVG : ""}${label}</a>`).join("")}</section>`).join("")}</nav></footer>`;
 }

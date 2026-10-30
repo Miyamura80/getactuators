@@ -81,10 +81,30 @@ const ROBOT_MAKERS: Row[] = [
     ["agility", "Agility Robotics", "agilityrobotics.com", ["Agility"]],
     ["agilex", "AgileX Robotics", "agilex.ai", ["AgileX"]],
     ["therobotstudio", "TheRobotStudio", "therobotstudio.com"],
+    ["hello-robot", "Hello Robot", "hello-robot.com"],
+    ["franka", "Franka Robotics", "franka.de", ["Franka"]],
     // Domain from its own product page (yor.manmaruai.co.jp) in robots.json.
     ["manmaru", "ManmaruAI", "manmaruai.co.jp", ["Manmaru"]],
     // The Asimov 1 bill of materials, not a company: always a monogram.
     ["asimov-bom", "Asimov BOM", null],
+];
+
+// Humanoid makers on /humanoids (src/humanoids) not listed elsewhere. Domains
+// are each robot's product_url or the maker's own page in its sources. Kepler's
+// sources are press coverage only, so it stays a monogram.
+const HUMANOID_MAKERS: Row[] = [
+    ["figure", "Figure AI", "figure.ai", ["Figure"]],
+    ["apptronik", "Apptronik", "apptronik.com"],
+    ["sanctuary", "Sanctuary AI", "sanctuary.ai", ["Sanctuary"]],
+    ["kscale", "K-Scale Labs", "kscale.dev", ["K-Scale"]],
+    ["xpeng", "XPeng", "xpeng.com", ["XPENG Robotics"]],
+    [
+        "berkeley-hybrid-robotics",
+        "UC Berkeley Hybrid Robotics",
+        "berkeley-humanoid.org",
+        ["Berkeley Humanoid"],
+    ],
+    ["kepler", "Kepler", null, ["Kepler Robotics"]],
 ];
 
 // Supply-chain registry companies (src/supply-chain/companies) and the
@@ -213,9 +233,14 @@ const fromRow = ([id, name, domain, aliases]: Row): BrandEntry => {
 
 export const BRANDS: BrandEntry[] = [
     ...STARTUP_ENTRIES,
-    ...[...MAKERS, ...ROBOT_MAKERS, ...SUPPLY_CHAIN, ...PORTFOLIO, ...INVESTORS].map(
-        fromRow,
-    ),
+    ...[
+        ...MAKERS,
+        ...ROBOT_MAKERS,
+        ...HUMANOID_MAKERS,
+        ...SUPPLY_CHAIN,
+        ...PORTFOLIO,
+        ...INVESTORS,
+    ].map(fromRow),
 ];
 
 // Lowercase, drop a parenthetical ("Robotis (Dynamixel)"), collapse punctuation.

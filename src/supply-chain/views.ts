@@ -10,7 +10,7 @@ import { STAGES } from "./stages";
 // Wire shapes of the registry for the REST API and the MCP tools: snake_case,
 // nulls for unknowns, and every number carrying its sources inline.
 
-const sourceRefOut = z.object({
+export const sourceRefOut = z.object({
     id: z.string(),
     publisher: z.string(),
     title: z.string(),
@@ -19,7 +19,7 @@ const sourceRefOut = z.object({
     accessed: z.string(),
 });
 
-const sourcedOut = z
+export const sourcedOut = z
     .object({
         value: z.number(),
         unit: z.string().nullable(),
@@ -91,7 +91,7 @@ export const companyDetailOut = z.object({
     sources: z.array(sourceRefOut).describe("Citations for profile facts."),
 });
 
-function refs(ids: readonly string[]) {
+export function refs(ids: readonly string[]) {
     return ids.flatMap((id) => {
         const s = getSource(id);
         return s
@@ -109,7 +109,9 @@ function refs(ids: readonly string[]) {
     });
 }
 
-function sourced(s: Sourced<number> | undefined): z.input<typeof sourcedOut> | null {
+export function sourced(
+    s: Sourced<number> | undefined,
+): z.input<typeof sourcedOut> | null {
     if (!s) return null;
     return {
         value: s.value,

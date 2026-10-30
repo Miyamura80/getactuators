@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 interface Props {
-    // Absolute path (with leading "/") to the item, e.g. "/all?sel=abc" or
+    // Absolute path (with leading "/") to the item, e.g. "/actuators?sel=abc" or
     // "/robots#i2rt-yam". Resolved against the current origin when copied.
     path: string;
     label: string;

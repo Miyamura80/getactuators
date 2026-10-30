@@ -1,4 +1,16 @@
 import { SEGMENTS } from "@/supply-chain/companies";
+import { METAL_IDS, getMetal } from "@/supply-chain/metals/elements";
+import { getSeries } from "@/supply-chain/metals/prices";
+import { METAL_STAGES } from "@/supply-chain/metals/stage-shares";
+import {
+    PRICE_SERIES_IDS,
+    metalPricesOut,
+    metalPricesView,
+    metalSupplyOut,
+    metalSupplyView,
+} from "@/supply-chain/metals/views";
+import { MEASURE_STATUSES, MEASURE_TYPES, findMeasures } from "@/supply-chain/policy";
+import { measureListOut, measureListView } from "@/supply-chain/policy/views";
 import { findCompanies, findSites, getCompany } from "@/supply-chain/registry";
 import { SITE_KINDS } from "@/supply-chain/sites";
 import { STAGES } from "@/supply-chain/stages";
@@ -102,4 +114,79 @@ const listSites = defineTool({
     },
 });
 
-export const supplyChainTools = [listCompanies, getCompanyTool, listSites];
+const getMetalSupply = defineTool({
+    name: "get_metal_supply",
+    title: "Get magnet metal supply",
+    description:
+        "Who controls a magnet metal (nd, pr, dy, tb, sm, co) at each stage from mine to magnet: country shares with the top country and HHI, USGS mine production, reserves and years of supply by country, and the latest cited price per series. Pass stage to get one stage only. Stages with no public country split are marked gap.",
+    input: z.object({
+        element: z.enum(METAL_IDS).describe("Element id: nd, pr, dy, tb, sm or co."),
+        stage: z
+            .enum(METAL_STAGES)
+            .optional()
+            .describe("mining, separation, metal-alloy or magnet."),
+    }),
+    output: metalSupplyOut,
+    run: ({ element, stage }) => {
+        const metal = getMetal(element);
+        if (!metal) throw new ToolInputError(`No metal "${element}".`);
+        return metalSupplyView(metal, stage);
+    },
+});
+
+const month = z
+    .string()
+    .regex(/^\d{4}-(0[1-9]|1[0-2])$/)
+    .optional();
+
+const getMetalPrices = defineTool({
+    name: "get_metal_prices",
+    title: "Get magnet metal prices",
+    description:
+        "Cited price history in US$/kg for one series (USGS annual averages and year-end ranges back to 2011, monthly SMM readings in 2026, China domestic and FOB China export) with the events that moved it. Filter with from and to (YYYY-MM).",
+    input: z.object({
+        series: z.enum(PRICE_SERIES_IDS).describe("Price series id."),
+        from: month.describe("First month, YYYY-MM."),
+        to: month.describe("Last month, YYYY-MM."),
+    }),
+    output: metalPricesOut,
+    run: ({ series, from, to }) => {
+        const s = getSeries(series);
+        if (!s) throw new ToolInputError(`No price series "${series}".`);
+        return metalPricesView(s, from, to);
+    },
+});
+
+const listPolicyMeasures = defineTool({
+    name: "list_policy_measures",
+    title: "List policy measures",
+    description:
+        "Government and standards-body measures that touch the actuator chain: export controls (China's rare earth and magnet controls), tariffs (US Section 301 and 232, China's retaliation), subsidies and programmes (DoD awards, JOGMEC, CRMA, robot plans) and standards (ISO 10218, ISO 13482, IEC). Each has a status history with a primary source per change. Filter by jurisdiction (CN, US, EU, JP, KR, AU, INTL), type, stage or status.",
+    input: z.object({
+        jurisdiction: z
+            .string()
+            .regex(/^[A-Za-z]{2,5}$/)
+            .optional()
+            .describe("ISO 3166 alpha-2 code, EU, INTL or OTHER."),
+        type: z
+            .enum(MEASURE_TYPES)
+            .optional()
+            .describe("export-control, tariff, subsidy or standard."),
+        stage,
+        status: z
+            .enum(MEASURE_STATUSES)
+            .optional()
+            .describe("draft, announced, in-force, suspended or expired."),
+    }),
+    output: measureListOut,
+    run: (filter) => measureListView(findMeasures(filter)),
+});
+
+export const supplyChainTools = [
+    listCompanies,
+    getCompanyTool,
+    listSites,
+    getMetalSupply,
+    getMetalPrices,
+    listPolicyMeasures,
+];

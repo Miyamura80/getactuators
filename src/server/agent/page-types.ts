@@ -9,6 +9,9 @@ export interface Page {
     ogType?: "website" | "product" | "article";
     image?: string;
     body: () => string;
+    // SPA pages: static HTML (e.g. a server-rendered map) placed after the
+    // fallback's H1, so the page has its picture before the bundle loads.
+    prerender?: () => string;
     // SPA pages: the Markdown heading from which the body stays visible after
     // React mounts (rendered below #root). Product pages use "## Specifications".
     persistentFrom?: string;

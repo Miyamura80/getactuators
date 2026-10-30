@@ -28,7 +28,7 @@ jobs:
           set +e  # Don't exit on error
           
           # Protected branches that should never be deleted
-          PROTECTED_BRANCHES=("main" "saas" "cli-tool")
+          PROTECTED_BRANCHES=("main")
           
           # AI assistant branch prefixes to check for old closed/draft PRs
           AI_PREFIXES=("cursor/" "claude/" "jules/")

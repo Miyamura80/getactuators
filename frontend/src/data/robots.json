@@ -16,7 +16,7 @@
             "weight_g": 300,
             "torque_density_nm_per_kg": 23.3,
             "product_url": "https://damiao.enactic.ai/en/products/hardware/dm-j4310-2ec-v1.1/",
-            "actuator_id": null
+            "actuator_id": "damiao-dm-j4310-2ec"
         },
         "dm-j4340": {
             "id": "dm-j4340",
@@ -29,7 +29,7 @@
             "weight_g": 362,
             "torque_density_nm_per_kg": 74.6,
             "product_url": "https://robotopian.com/products/damiao-dm-j4340-2ec-servo-motor",
-            "actuator_id": null
+            "actuator_id": "damiao-dm-j4340-2ec"
         },
         "dm-j4340p": {
             "id": "dm-j4340p",
@@ -39,10 +39,10 @@
             "peak_torque_nm": 27,
             "rated_speed_rpm": 36,
             "gear_ratio": "40:1",
-            "weight_g": null,
-            "torque_density_nm_per_kg": null,
-            "product_url": null,
-            "actuator_id": null
+            "weight_g": 381,
+            "torque_density_nm_per_kg": 70.9,
+            "product_url": "https://www.seeedstudio.com/DM4340P-Actuator-p-6663.html",
+            "actuator_id": "damiao-dm-j4340p-2ec"
         },
         "dm-j6248": {
             "id": "dm-j6248",
@@ -55,6 +55,58 @@
             "weight_g": 628,
             "torque_density_nm_per_kg": 154.5,
             "product_url": "https://aifitlab.com/products/damiao-dm-j6248p-2ec-motor",
+            "actuator_id": "damiao-dm-j6248p-2ec"
+        },
+        "i2rt-gf62x48-10": {
+            "id": "i2rt-gf62x48-10",
+            "name": "GF62X48-10",
+            "brand": "i2RT Robotics",
+            "rated_torque_nm": 30,
+            "peak_torque_nm": 95,
+            "rated_speed_rpm": 38,
+            "gear_ratio": "48:1",
+            "weight_g": 767,
+            "torque_density_nm_per_kg": 123.9,
+            "product_url": "https://i2rt.com/products/gf62x48-10",
+            "actuator_id": null
+        },
+        "i2rt-gf43x40-16": {
+            "id": "i2rt-gf43x40-16",
+            "name": "GF43X40-16",
+            "brand": "i2RT Robotics",
+            "rated_torque_nm": 14,
+            "peak_torque_nm": 28,
+            "rated_speed_rpm": 44,
+            "gear_ratio": "40:1",
+            "weight_g": 464.5,
+            "torque_density_nm_per_kg": 60.3,
+            "product_url": "https://i2rt.com/products/gf43x40-16",
+            "actuator_id": null
+        },
+        "i2rt-gf43x40-10": {
+            "id": "i2rt-gf43x40-10",
+            "name": "GF43X40-10",
+            "brand": "i2RT Robotics",
+            "rated_torque_nm": 8.9,
+            "peak_torque_nm": 23.5,
+            "rated_speed_rpm": 43,
+            "gear_ratio": "40:1",
+            "weight_g": 409,
+            "torque_density_nm_per_kg": 57.5,
+            "product_url": "https://i2rt.com/products/gf43x10-10-copy",
+            "actuator_id": null
+        },
+        "i2rt-gf43x10-10": {
+            "id": "i2rt-gf43x10-10",
+            "name": "GF43X10-10",
+            "brand": "i2RT Robotics",
+            "rated_torque_nm": 2.2,
+            "peak_torque_nm": 7,
+            "rated_speed_rpm": 172,
+            "gear_ratio": "10:1",
+            "weight_g": 300,
+            "torque_density_nm_per_kg": 23.3,
+            "product_url": "https://i2rt.com/products/gf43x10-10",
             "actuator_id": null
         },
         "asimov-ec-a6416": {
@@ -68,7 +120,7 @@
             "weight_g": null,
             "torque_density_nm_per_kg": null,
             "product_url": null,
-            "actuator_id": null
+            "actuator_id": "encos-ec-a6416-p2-25"
         },
         "asimov-ec-a5013": {
             "id": "asimov-ec-a5013",
@@ -81,7 +133,7 @@
             "weight_g": null,
             "torque_density_nm_per_kg": null,
             "product_url": null,
-            "actuator_id": null
+            "actuator_id": "encos-ec-a5013-h17-100"
         },
         "asimov-ec-a3814": {
             "id": "asimov-ec-a3814",
@@ -94,7 +146,7 @@
             "weight_g": null,
             "torque_density_nm_per_kg": null,
             "product_url": null,
-            "actuator_id": null
+            "actuator_id": "encos-ec-a3814-h14-107"
         },
         "asimov-ec-a4315": {
             "id": "asimov-ec-a4315",
@@ -107,7 +159,7 @@
             "weight_g": null,
             "torque_density_nm_per_kg": null,
             "product_url": null,
-            "actuator_id": null
+            "actuator_id": "encos-ec-a4315-p2-36"
         },
         "asimov-ec-a4310": {
             "id": "asimov-ec-a4310",
@@ -120,7 +172,7 @@
             "weight_g": null,
             "torque_density_nm_per_kg": null,
             "product_url": null,
-            "actuator_id": null
+            "actuator_id": "encos-ec-a4310-p2-36"
         },
         "pollen-orbita-2d": {
             "id": "pollen-orbita-2d",
@@ -172,7 +224,7 @@
             "weight_g": 18,
             "torque_density_nm_per_kg": 11.9,
             "product_url": "https://emanual.robotis.com/docs/en/dxl/x/xl330-m077/",
-            "actuator_id": null
+            "actuator_id": "dynamixel-xl330-m077-t"
         },
         "dynamixel-xc330-m288": {
             "id": "dynamixel-xc330-m288",
@@ -512,6 +564,58 @@
             "product_url": "https://www.fftai.com/grx/gr3",
             "actuator_id": null
         },
+        "1x-neo-body": {
+            "id": "1x-neo-body",
+            "name": "NEO body tendon drive",
+            "brand": "1X Technologies",
+            "rated_torque_nm": null,
+            "peak_torque_nm": null,
+            "rated_speed_rpm": null,
+            "gear_ratio": null,
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": "https://www.1x.tech/neo",
+            "actuator_id": null
+        },
+        "1x-neo-wrist": {
+            "id": "1x-neo-wrist",
+            "name": "NEO wrist tendon drive",
+            "brand": "1X Technologies",
+            "rated_torque_nm": null,
+            "peak_torque_nm": 17.75,
+            "rated_speed_rpm": null,
+            "gear_ratio": "5:1 to 15:1",
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": "https://www.1x.tech/discover/neos-hands",
+            "actuator_id": null
+        },
+        "1x-neo-hand": {
+            "id": "1x-neo-hand",
+            "name": "NEO hand tendon drive",
+            "brand": "1X Technologies",
+            "rated_torque_nm": null,
+            "peak_torque_nm": null,
+            "rated_speed_rpm": null,
+            "gear_ratio": "5:1 to 15:1",
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": "https://www.1x.tech/discover/neos-hands",
+            "actuator_id": null
+        },
+        "agility-digit-5-knee": {
+            "id": "agility-digit-5-knee",
+            "name": "Digit 5 knee cycloidal actuator",
+            "brand": "Agility Robotics",
+            "rated_torque_nm": null,
+            "peak_torque_nm": null,
+            "rated_speed_rpm": null,
+            "gear_ratio": null,
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": "https://www.agilityrobotics.com/solutions/digit-5",
+            "actuator_id": null
+        },
         "agilex-piper-joint": {
             "id": "agilex-piper-joint",
             "name": "PiPER joint module",
@@ -536,6 +640,97 @@
             "weight_g": null,
             "torque_density_nm_per_kg": null,
             "product_url": "https://www.seeedstudio.com/STS3215-19kg-cm-7-4V-Serial-Servo-p-6338.html",
+            "actuator_id": "feetech-sts3215-c001"
+        },
+        "hello-stretch-stepper": {
+            "id": "hello-stretch-stepper",
+            "name": "Stretch closed-loop stepper",
+            "brand": "Hello Robot",
+            "rated_torque_nm": null,
+            "peak_torque_nm": null,
+            "rated_speed_rpm": null,
+            "gear_ratio": null,
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": "https://docs-arch.hello-robot.com/0.3/hardware/hardware_guide_stretch_3/",
+            "actuator_id": null
+        },
+        "dynamixel-xl430-w250": {
+            "id": "dynamixel-xl430-w250",
+            "name": "XL430-W250-T",
+            "brand": "Robotis (Dynamixel)",
+            "rated_torque_nm": null,
+            "peak_torque_nm": 1.5,
+            "rated_speed_rpm": 61,
+            "gear_ratio": "258.5:1",
+            "weight_g": 57.2,
+            "torque_density_nm_per_kg": 26.2,
+            "product_url": "https://emanual.robotis.com/docs/en/dxl/x/xl430-w250/",
+            "actuator_id": "dynamixel-xl430-w250-t"
+        },
+        "dynamixel-xc430-w240": {
+            "id": "dynamixel-xc430-w240",
+            "name": "XC430-W240-T",
+            "brand": "Robotis (Dynamixel)",
+            "rated_torque_nm": null,
+            "peak_torque_nm": 1.9,
+            "rated_speed_rpm": 70,
+            "gear_ratio": "245.22:1",
+            "weight_g": 65,
+            "torque_density_nm_per_kg": 29.2,
+            "product_url": "https://emanual.robotis.com/docs/en/dxl/x/xc430-w240/",
+            "actuator_id": "dynamixel-xc430-w240-t"
+        },
+        "dynamixel-xm540-w270": {
+            "id": "dynamixel-xm540-w270",
+            "name": "XM540-W270-T",
+            "brand": "Robotis (Dynamixel)",
+            "rated_torque_nm": null,
+            "peak_torque_nm": 10.6,
+            "rated_speed_rpm": 30,
+            "gear_ratio": "272.5:1",
+            "weight_g": 165,
+            "torque_density_nm_per_kg": 64.2,
+            "product_url": "https://emanual.robotis.com/docs/en/dxl/x/xm540-w270/",
+            "actuator_id": "dynamixel-xm540-w270-t"
+        },
+        "dynamixel-xm430-w350": {
+            "id": "dynamixel-xm430-w350",
+            "name": "XM430-W350-T",
+            "brand": "Robotis (Dynamixel)",
+            "rated_torque_nm": null,
+            "peak_torque_nm": 4.1,
+            "rated_speed_rpm": 46,
+            "gear_ratio": "353.5:1",
+            "weight_g": 82,
+            "torque_density_nm_per_kg": 50,
+            "product_url": "https://emanual.robotis.com/docs/en/dxl/x/xm430-w350/",
+            "actuator_id": "dynamixel-xm430-w350-t"
+        },
+        "franka-fr3-a1-a4": {
+            "id": "franka-fr3-a1-a4",
+            "name": "FR3 joint drive A1-A4",
+            "brand": "Franka Robotics",
+            "rated_torque_nm": null,
+            "peak_torque_nm": 87,
+            "rated_speed_rpm": null,
+            "gear_ratio": null,
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": "https://franka.de/franka-research-3",
+            "actuator_id": null
+        },
+        "franka-fr3-a5-a7": {
+            "id": "franka-fr3-a5-a7",
+            "name": "FR3 joint drive A5-A7",
+            "brand": "Franka Robotics",
+            "rated_torque_nm": null,
+            "peak_torque_nm": 12,
+            "rated_speed_rpm": null,
+            "gear_ratio": null,
+            "weight_g": null,
+            "torque_density_nm_per_kg": null,
+            "product_url": "https://franka.de/franka-research-3",
             "actuator_id": null
         }
     },
@@ -550,6 +745,7 @@
             "country_flag": "🇸🇬",
             "dof": 25,
             "payload_kg": 5,
+            "payload_basis": "per_arm",
             "reach_mm": null,
             "height_m": 1.2,
             "weight_kg": 35,
@@ -589,7 +785,8 @@
             "country_flag": "🇨🇳",
             "dof": 23,
             "payload_kg": 2,
-            "reach_mm": null,
+            "payload_basis": "per_arm",
+            "reach_mm": 450,
             "height_m": 1.32,
             "weight_kg": 35,
             "price_usd": 13500,
@@ -628,7 +825,8 @@
             "country_flag": "🇨🇳",
             "dof": 31,
             "payload_kg": 7,
-            "reach_mm": null,
+            "payload_basis": "per_arm",
+            "reach_mm": 690,
             "height_m": 1.82,
             "weight_kg": 70,
             "price_usd": 29900,
@@ -681,11 +879,43 @@
             "availability": "preorder",
             "lead_time": "$200 deposit, US deliveries 2026",
             "summary": "Home humanoid with tendon-driven actuation, a soft lattice-polymer body and 22-DOF hands. Weighs 30 kg and carries 25 kg.",
-            "joints": [],
+            "joints": [
+                {
+                    "role": "Legs",
+                    "motor": "1x-neo-body",
+                    "count": 12
+                },
+                {
+                    "role": "Spine",
+                    "motor": "1x-neo-body",
+                    "count": 2
+                },
+                {
+                    "role": "Neck",
+                    "motor": "1x-neo-body",
+                    "count": 3
+                },
+                {
+                    "role": "Shoulder + elbow",
+                    "motor": "1x-neo-body",
+                    "count": 8
+                },
+                {
+                    "role": "Wrist",
+                    "motor": "1x-neo-wrist",
+                    "count": 6
+                },
+                {
+                    "role": "Hands (fingers + palm)",
+                    "motor": "1x-neo-hand",
+                    "count": 44
+                }
+            ],
             "sources": [
                 "https://www.1x.tech/neo",
                 "https://github.com/kingjulio8238/humanoid-atlas",
-                "https://www.1x.tech/order"
+                "https://www.1x.tech/order",
+                "https://www.1x.tech/discover/neos-hands"
             ]
         },
         {
@@ -697,7 +927,7 @@
             "country_flag": "🇨🇳",
             "dof": 23,
             "payload_kg": null,
-            "reach_mm": null,
+            "reach_mm": 450,
             "height_m": 1.18,
             "weight_kg": 30,
             "price_usd": 29800,
@@ -784,6 +1014,7 @@
             "country_flag": "🇫🇷",
             "dof": 17,
             "payload_kg": 3,
+            "payload_basis": "per_arm",
             "reach_mm": null,
             "height_m": 1.66,
             "weight_kg": 50,
@@ -861,6 +1092,7 @@
             "country_flag": "🇯🇵",
             "dof": 14,
             "payload_kg": 1.5,
+            "payload_basis": "per_arm",
             "reach_mm": 767,
             "height_m": 0.84,
             "weight_kg": null,
@@ -897,7 +1129,8 @@
             "country_flag": "🇨🇳",
             "dof": 26,
             "payload_kg": 2,
-            "reach_mm": null,
+            "payload_basis": "per_arm",
+            "reach_mm": 420,
             "height_m": 1.23,
             "weight_kg": 29,
             "price_usd": 5900,
@@ -939,6 +1172,7 @@
             "country_flag": "🇨🇳",
             "dof": 55,
             "payload_kg": 3,
+            "payload_basis": "per_arm",
             "reach_mm": null,
             "height_m": 1.65,
             "weight_kg": 71,
@@ -991,7 +1225,13 @@
             "availability": "quote_only",
             "lead_time": "Early access expected H1 2027; general availability expected by end of 2027 (US, Canada, then EU and UK)",
             "summary": "Digit 5 is Agility Robotics' fifth generation bipedal humanoid, unveiled September 15, 2026, for warehouse and manufacturing work alongside people without safety fencing. It stands 1.81 m, weighs 129 kg, lifts up to 22.7 kg (50 lb) repeatedly and reaches up to 2.2 m, with forward-facing legs driven by proprietary cycloidal actuators. A 90 minute battery recharges in 9 minutes, and the robot is sold by quote or as Robots-as-a-Service, with early access in H1 2027.",
-            "joints": [],
+            "joints": [
+                {
+                    "role": "Knee (rest of joint map unpublished)",
+                    "motor": "agility-digit-5-knee",
+                    "count": 2
+                }
+            ],
             "sources": [
                 "https://www.agilityrobotics.com/solutions/digit-5",
                 "https://www.agilityrobotics.com/solution",
@@ -1001,7 +1241,8 @@
                 "https://www.linkedin.com/posts/davidepearce_agility-robotics-unveiled-digit-5-yesterday-activity-7505865416586604544-S4Sp",
                 "https://robozaps.com/products/digit",
                 "https://humanoid.guide/product/digit/",
-                "https://www.humanoid-robots.io/robot/digit-by-agility-robotics"
+                "https://www.humanoid-robots.io/robot/digit-by-agility-robotics",
+                "https://spectrum.ieee.org/agility-robotics-digit-5-redesign"
             ]
         },
         {
@@ -1013,6 +1254,7 @@
             "country_flag": "🇨🇳",
             "dof": 6,
             "payload_kg": 2,
+            "payload_basis": "per_arm",
             "reach_mm": 750,
             "weight_kg": 5.02,
             "price_usd": 2999,
@@ -1047,6 +1289,7 @@
             "country_flag": "🇨🇳",
             "dof": 6,
             "payload_kg": 3,
+            "payload_basis": "per_arm",
             "reach_mm": 750,
             "weight_kg": 5.06,
             "price_usd": 3499,
@@ -1081,6 +1324,7 @@
             "country_flag": "🇨🇳",
             "dof": 6,
             "payload_kg": 4,
+            "payload_basis": "per_arm",
             "reach_mm": 750,
             "weight_kg": 5.3,
             "price_usd": 4299,
@@ -1115,6 +1359,7 @@
             "country_flag": "🇨🇳",
             "dof": 6,
             "payload_kg": 4,
+            "payload_basis": "per_arm",
             "reach_mm": 1100,
             "weight_kg": 6.4,
             "price_usd": 4999,
@@ -1150,6 +1395,7 @@
             "country_flag": "🇨🇳",
             "dof": 7,
             "payload_kg": 4,
+            "payload_basis": "per_arm",
             "reach_mm": 803,
             "weight_kg": 6.64,
             "price_usd": 4999,
@@ -1163,11 +1409,35 @@
             "actuator_sourcing": "in_house",
             "availability": "shipping",
             "lead_time": "About 30 days",
-            "summary": "7-DOF member of the YAM family with an added redundant joint for richer wrist orientation. Unlike the rest of the family it runs on i2RT's own GF-series actuators (GF62X48 at the shoulder) rather than Damiao motors; i2RT has not published a joint-by-joint map.",
-            "joints": [],
+            "summary": "7-DOF member of the YAM family with an added redundant joint for richer wrist orientation. Unlike the rest of the family it runs on i2RT's own GF-series actuators rather than Damiao motors: GF62X48-10 at J1-J2, GF43X40-16 at J3-J4, GF43X40-10 at J5 and GF43X10-10 at J6-J7 and the gripper.",
+            "joints": [
+                {
+                    "role": "Shoulder (J1-J2)",
+                    "motor": "i2rt-gf62x48-10",
+                    "count": 2
+                },
+                {
+                    "role": "Upper arm (J3-J4)",
+                    "motor": "i2rt-gf43x40-16",
+                    "count": 2
+                },
+                {
+                    "role": "Forearm (J5)",
+                    "motor": "i2rt-gf43x40-10",
+                    "count": 1
+                },
+                {
+                    "role": "Wrist (J6-J7)",
+                    "motor": "i2rt-gf43x10-10",
+                    "count": 2
+                }
+            ],
             "sources": [
                 "https://i2rt.com/products/yam-7dof",
-                "https://i2rt.com/products/gf62x48-10"
+                "https://i2rt.com/products/gf62x48-10",
+                "https://i2rt.com/products/gf43x40-16",
+                "https://i2rt.com/products/gf43x10-10-copy",
+                "https://i2rt.com/products/gf43x10-10"
             ]
         },
         {
@@ -1215,6 +1485,7 @@
             "country_flag": "🇨🇳",
             "dof": 6,
             "payload_kg": 1.5,
+            "payload_basis": "per_arm",
             "reach_mm": 626,
             "height_m": null,
             "weight_kg": 4.2,
@@ -1275,6 +1546,91 @@
                 "https://www.seeedstudio.com/SO-101-Assembled-Kit-Pro-p-6691.html",
                 "https://www.seeedstudio.com/STS3215-19kg-cm-7-4V-Serial-Servo-p-6338.html",
                 "https://www.seeedstudio.com/Feetech-ST-3215-C044-Heavy-Duty-Servo-7-4V-1-191-Gear-Reduction-p-6460.html"
+            ]
+        },
+        {
+            "id": "hello-robot-stretch-3",
+            "image_url": "/robot-images/hello-robot-stretch-3.webp",
+            "image_crop": [0, 0.035, 0.913, 0.913],
+            "image_fit": "cover",
+            "name": "Stretch 3",
+            "brand": "Hello Robot",
+            "kind": "robot_arm",
+            "country": "United States",
+            "country_flag": "🇺🇸",
+            "dof": 7,
+            "payload_kg": 2,
+            "payload_basis": "per_arm",
+            "reach_mm": 520,
+            "height_m": 1.41,
+            "weight_kg": 24.5,
+            "price_usd": 24950,
+            "price_max_usd": null,
+            "product_url": "https://hello-stretch3.com/stretch-3-product",
+            "power": "battery",
+            "runtime_h": 5,
+            "runtime_note": "2 to 5 h per charge: 5 h at light CPU load, 2 h at high CPU load",
+            "openness": { "cad": false, "urdf": true, "sdk": true, "bom": false },
+            "actuator_sourcing": "off_the_shelf",
+            "availability": "discontinued",
+            "lead_time": "Replaced by Stretch 4",
+            "summary": "Lightweight mobile manipulator: a 24.5 kg, 33 x 34 cm differential-drive base carries a 1.41 m mast with a lift, a telescoping arm reaching 0.52 m and a yaw-pitch-roll wrist, 7 manipulation DOF plus a compliant gripper and a pan-tilt head camera. Base wheels, lift and arm run on closed-loop steppers whose model Hello Robot does not name; wrist, gripper and head use Dynamixel servos. Listed at $24,950 until Stretch 4 took over in 2026.",
+            "joints": [
+                { "role": "Base drive wheels", "motor": "hello-stretch-stepper", "count": 2 },
+                { "role": "Lift + telescoping arm", "motor": "hello-stretch-stepper", "count": 2 },
+                { "role": "Wrist yaw + head tilt", "motor": "dynamixel-xc430-w240", "count": 2 },
+                { "role": "Wrist pitch", "motor": "dynamixel-xm540-w270", "count": 1 },
+                { "role": "Wrist roll", "motor": "dynamixel-xm430-w350", "count": 1 },
+                { "role": "Gripper + head pan", "motor": "dynamixel-xl430-w250", "count": 2 }
+            ],
+            "sources": [
+                "https://hello-stretch3.com/stretch-3-product",
+                "https://hello-stretch3.com/purchase",
+                "https://docs-arch.hello-robot.com/0.3/hardware/hardware_guide_stretch_3/",
+                "https://docs-arch.hello-robot.com/0.3/hardware/images/Stretch_3_Datasheet_2.2024.png",
+                "https://hello-robot.com/product/",
+                "https://hello-robot.com/purchase/",
+                "https://github.com/hello-robot/stretch_urdf",
+                "https://github.com/hello-robot/stretch_body",
+                "https://emanual.robotis.com/docs/en/dxl/x/xc430-w240/"
+            ]
+        },
+        {
+            "id": "franka-research-3",
+            "image_url": "/robot-images/franka-research-3.webp",
+            "image_fit": "cover",
+            "name": "Franka Research 3",
+            "brand": "Franka Robotics",
+            "kind": "robot_arm",
+            "country": "Germany",
+            "country_flag": "🇩🇪",
+            "dof": 7,
+            "payload_kg": 3,
+            "payload_basis": "per_arm",
+            "reach_mm": 855,
+            "height_m": null,
+            "weight_kg": 18.3,
+            "price_usd": 29218.06,
+            "price_max_usd": null,
+            "product_url": "https://franka.de/franka-research-3",
+            "power": "mains",
+            "runtime_h": null,
+            "runtime_note": "Tethered, mains powered",
+            "openness": { "cad": false, "urdf": true, "sdk": true, "bom": false },
+            "actuator_sourcing": null,
+            "availability": "quote_only",
+            "lead_time": null,
+            "summary": "FR3 is the 7-DOF, force-sensitive research arm from Franka Robotics, with a link-side torque sensor in every joint, 3 kg payload, 855 mm reach and under ±0.1 mm repeatability. The open-source libfranka and Franka Control Interface give 1 kHz joint torque, position and velocity control, with ROS 2 and MATLAB support. Joint torque limits from the datasheet are listed below; Franka does not name its motors. Franka sells on quote; the price is Vention's catalog listing.",
+            "joints": [
+                { "role": "Shoulder + elbow (A1-A4)", "motor": "franka-fr3-a1-a4", "count": 4 },
+                { "role": "Wrist (A5-A7)", "motor": "franka-fr3-a5-a7", "count": 3 }
+            ],
+            "sources": [
+                "https://franka.de/franka-research-3",
+                "https://franka.de/hubfs/Datasheet%20Franka%20Research%203_R02212_2.5_EN_June%202026.pdf",
+                "https://frankarobotics.github.io/docs/",
+                "https://github.com/frankarobotics/franka_description",
+                "https://vention.io/parts/franka-robotics-fr3-4193"
             ]
         }
     ]

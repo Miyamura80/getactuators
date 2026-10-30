@@ -60,7 +60,7 @@ export function makeActuator(overrides: ActuatorOverrides = {}): Actuator {
         price_per_nm: null,
         data_source: "test",
         verified: false,
-        country: null,
+        country: overrides.country ?? null,
         country_flag: null,
         source_url: null,
         source_domain: null,

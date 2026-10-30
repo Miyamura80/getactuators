@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { SEGMENTS } from "./companies";
 import { COUNTRY_CODES, type CountryCode } from "./countries";
+import { SOURCE_REUSE } from "./reuse";
 import { SITE_KINDS, SITE_STATUSES } from "./sites";
 import { CONFIDENCES } from "./sourced";
 import { SOURCE_KINDS } from "./sources";
@@ -48,6 +49,7 @@ export const sourceRefSchema = z.object({
     accessed: z.iso.date(),
     kind: z.enum(SOURCE_KINDS),
     paywalled: z.boolean().optional(),
+    reuse: z.enum(SOURCE_REUSE),
 });
 
 export const companySchema = z.object({

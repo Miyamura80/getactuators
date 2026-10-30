@@ -1,8 +1,8 @@
 # Supply-chain atlas: data and page recipe
 
-The planned supply-chain pages (`/metals`, `/bom`, `/manufacturing`, `/alts`,
-`/japan`, `/china`, `/korea`, `/us`; none is live yet, only the hidden
-`/lab/supply-chain`) will share one cited registry and one set of components.
+The supply-chain pages (`/metals` is live; `/bom`, `/manufacturing`, `/alts`,
+`/japan`, `/china`, `/korea`, `/us` are planned; `/lab/supply-chain` is the
+hidden kit page) share one cited registry and one set of components.
 Pages hold content; numbers live in the registry and are referenced by id.
 
 ```
@@ -88,6 +88,62 @@ them in this order:
 through `leaderOf` in `src/supply-chain/dominance.ts`. They use no derived
 units.
 
+## Map kit
+
+`frontend/src/components/maps/`, d3-geo + d3-zoom over the TopoJSON in
+`frontend/public/geo/` (Natural Earth; see its README). Map data comes from
+`src/supply-chain/map.ts`: `sitePins()`, `supplyArcs()` (current links only,
+anchored by `companyAnchor`), `arcsTouching(arcs, code)`, `NamedCluster`.
+
+```
+ <WorldMap values max toggle>          <CountryMap code="JP" sites={jpPins}>
+   <Arcs arcs />                          <Arcs arcs={arcsTouching(arcs, "JP")} />
+   <ClusterZoom labels="groups" ... />    <ClusterZoom pins={jpPins} clusters ... />
+ </WorldMap>                            </CountryMap>
+ <MapDrawer open title onClose>  useMapSelection() -> ?company= ?site= ?cluster=
+```
+
+| Component | Shows |
+|-----------|-------|
+| `<WorldMap>` | Pacific-centred choropleth (one cyan ramp), graticule, readout, slot for a stage toggle |
+| `<CountryMap code sites>` | admin-1 outlines for JP, CN, KR or US, fitted to bounds, with a bright coastline, a scale bar and faint orientation cities (`REFERENCE_CITIES`: capital plus largest metros; `cities={false}` hides them). Given `sites`, regions shade by how many sites they hold (dim cyan ramp, hidden table "sites per region") and a key under the map lists the segments present with counts |
+| `<Pins>` | buttons drawn as the segment's object tile (`<SegmentTile>`: a `SEGMENT_COLOR` tile with a `SEGMENT_PICTO` object knocked out: orange pickaxe REE, violet horseshoe magnet magnets/motors, ochre gear gears/screws/bearings, pink robot face OEM); a hollow dashed tile when `precision !== "site"`; company name beside each; hover or focus shows a monogram card with the site |
+| `<Arcs>` | great-circle arcs; an arc leaving the map ends at the edge with a country chip (a link once that page is live) |
+| `<ClusterZoom>` | groups pins closer than 28 px (then merges any group markers that would overlap), zooms to a group or a named cluster; a group marker is one button holding the tiles of the segments present in chain order, each with its site count above one (`<SegmentMix>`: a row for two segments, a 2 x 2 block for three or four; accessible name like "Baotou: 1 rare earth site, 2 magnet and motor sites. List them"), plus a callout naming what its members share (named cluster, else company, else region); lists named clusters under the map with the same tiles. `labels="groups"` keeps only the callouts (the world map) |
+| `<MapDrawer>` | the selection panel (bottom sheet on phones) |
+
+Segment tiles reuse the /policy object tile (`frontend/src/components/glyphs/ObjectTile.tsx`);
+pictogram paths, `segmentMix` and `mixPhrase` live in `src/supply-chain/map.ts`, and
+grouping plus group-marker size in `src/supply-chain/map-groups.ts`, so the
+browser and the server-rendered SVG draw the same markers.
+
+On-map text is placed in one pass per map (`labels.ts`): overlays hand their
+candidates to the frame through `useMapLabels`, higher priority places first
+(group callouts, then exact sites, then city-centre pins, then cities), each
+tries right, left, above and below its marker, and a label that would cover a
+marker, another label or a HUD corner is dropped rather than drawn on top.
+Each marker registers its real size (`r`, and `ry` when not square: a group's
+tile block), so labels clear the whole block.
+Labels are `aria-hidden`; every marker keeps its full accessible name, and
+they fade while a marker is hovered or focused.
+
+Wheel zoom needs Ctrl/Cmd (the page keeps scrolling); pinch, drag, double
+click and the +/-/fit buttons work as usual. Every layer adds a visually
+hidden table. Pages pass `prerender` on their `Page` entry to put a static SVG
+map (`worldMapSvg` in `src/server/agent/supply-chain/map-svg.ts`) in the HTML
+before hydration, and list the same data as tables in the markdown twin.
+
+## Flow kit
+
+`frontend/src/components/flows/`, shared by `/bom` and `/manufacturing`.
+
+| Component | Shows |
+|-----------|-------|
+| `<ValueSankey nodes links unit>` | band width = value; hover or focus lights a node's upstream and downstream paths; `onSelectNode`; `valueMax` fixes the scale across charts; top to bottom under 600 px |
+| `<SupplyGraph nodes edges>` | layered company cards (monogram, name, flag, stage, badges); hover a card to read what flows on its edges |
+| `<NodeBadge kind>` | `idiot-index` (`9.1x`), `margin` (`38%`), `concentration` (flag, meter, top share); a `Sourced` value keeps its confidence style and footnote |
+| `<ProcessStepChip stepId>` | link to `/manufacturing#step=<id>` |
+
 ## The kit page
 
 Every kit component renders with fixtures on the hidden `/lab/supply-chain`
@@ -125,6 +181,20 @@ open it before scrolling to the entry.
 |---------|------|
 | MCP | `list_companies(country?, stage?, segment?)`, `get_company(id)`, `list_sites(country?, stage?, company?, kind?)` |
 | REST | `GET /api/v1/companies`, `GET /api/v1/companies/{id}`, `GET /api/v1/sites` |
+| MCP (metals) | `get_metal_supply(element, stage?)`, `get_metal_prices(series, from?, to?)` |
+| REST (metals) | `GET /api/v1/metals`, `GET /api/v1/metals/{element}`, `GET /api/v1/metal-prices/{series}` |
+| MCP (policy) | `list_policy_measures(jurisdiction?, type?, stage?, status?)` |
+| REST (policy) | `GET /api/v1/policy`, `GET /api/v1/policy/{id}`, Atom feed `/policy/feed.xml` |
+
+Commodity prices for any page come from `priceAt(seriesId, "YYYY-MM")` in
+`src/supply-chain/metals/prices.ts`: the last reading in that month, else the
+year's annual average, else the last earlier point with `carried: true`.
+
+Government measures (export controls, tariffs, subsidies, standards) live once
+in `src/supply-chain/policy/`: `/policy` draws them, `/metals` pins the ones
+with a `metals` link on its price chart, and the country pages (#79) are to
+read their strip from `measuresForCountry(code)`. Each measure needs a government or
+standards-body source and a dated, sourced `statusHistory`, oldest first.
 
 Every number in a response carries `as_of`, `confidence`, `note` and the full
 source references.
