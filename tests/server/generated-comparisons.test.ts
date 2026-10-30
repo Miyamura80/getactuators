@@ -5,7 +5,7 @@ function model(id: string) {
     if (!record) throw new Error(`Missing test model: ${id}`);
     return record;
 }
-import { COMPARE_SPECS, revisionNote } from "@/catalog/compare";
+import { COMPARE_SPECS, COMPARISON_PHOTO_NOTE, revisionNote } from "@/catalog/compare";
 import {
     type ComparisonPair,
     buildComparisonRegistry,
@@ -296,5 +296,26 @@ test("checked-in client comparison captures match current HTTP output", async ()
                 html,
             )?.[1];
         expect(root).toBe(capture.root);
+    }
+});
+
+test("a comparison states each caveat once, not once per model", async () => {
+    const page = allPages().find(
+        (p) =>
+            p.path.startsWith("/comparisons/") && !p.path.includes("xiaomi-cybergear"),
+    );
+    if (!page) throw new Error("No generated comparison page");
+    const html = await (await get(page.path)).text();
+    const main = html.slice(html.indexOf("<main"));
+    expect(main.split(Bun.escapeHTML(COMPARISON_PHOTO_NOTE))).toHaveLength(2);
+    const ids = page.path.replace("/comparisons/", "").split("-vs-");
+    for (const id of ids) {
+        const note = Bun.escapeHTML(
+            revisionNote(
+                getActuator(id) as NonNullable<ReturnType<typeof getActuator>>,
+            ),
+        );
+        expect(main.split(note).length - 1).toBeLessThanOrEqual(1);
+        expect(main).toContain(note);
     }
 });

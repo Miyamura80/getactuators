@@ -36,6 +36,18 @@ const eligible = (a: ComparisonRecord) =>
     hasMotorBoundary(a) &&
     FIELDS.filter((field) => positive(a[field])).length >= 3 &&
     (positive(a.peak_torque_nm) || positive(a.rated_torque_nm));
+// Peers must share every mechanical field and sit within this torque ratio,
+// so a page never sets a 150 N·m joint against a 10 N·m one.
+const MAX_TORQUE_RATIO = 3;
+function torqueRatio(a: ComparisonRecord, b: ComparisonRecord): number {
+    const field =
+        positive(a.peak_torque_nm) && positive(b.peak_torque_nm)
+            ? "peak_torque_nm"
+            : "rated_torque_nm";
+    const x = a[field] as number;
+    const y = b[field] as number;
+    return Math.max(x, y) / Math.min(x, y);
+}
 const order = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
 function distance(a: ComparisonRecord, b: ComparisonRecord): number {
     const fields = shared(a, b);
@@ -76,7 +88,8 @@ export function buildComparisonRegistry(
                 (b) =>
                     b.id !== a.id &&
                     b.category === a.category &&
-                    shared(a, b).length >= 3,
+                    shared(a, b).length === FIELDS.length &&
+                    torqueRatio(a, b) <= MAX_TORQUE_RATIO,
             )
             .sort((b, c) => distance(a, b) - distance(a, c) || order(b.id, c.id))
             .slice(0, cap);
@@ -174,7 +187,7 @@ export function canonicalComparisonPath(
 }
 
 export const COMPARISON_METHOD =
-    "Each exact-model record needs at least three positive finite mechanical fields (peak torque, rated torque, maximum speed, mass), including torque. Pairs share at least three fields and the same drive category. Each eligible model proposes up to three nearest peers by mean relative difference across shared fields; ties use sorted IDs. Proposals are deduplicated, so incoming links can exceed three. This is a discoverability heuristic, not engineering compatibility or measured performance. Controller, bare-reducer, family/series and sparse records are excluded; zeros and nulls do not establish similarity. An authored evidence dossier takes precedence. Arbitrary gallery selections remain available but are not generated SEO pages.";
+    "Each exact-model record needs at least three positive finite mechanical fields (peak torque, rated torque, maximum speed, mass), including torque. Pairs share all four fields and the same drive category, and their torque differs by at most 3×. Each eligible model proposes up to three nearest peers by mean relative difference across shared fields; ties use sorted IDs. Proposals are deduplicated, so incoming links can exceed three. This is a discoverability heuristic, not engineering compatibility or measured performance. Controller, bare-reducer, family/series and sparse records are excluded; zeros and nulls do not establish similarity. An authored evidence dossier takes precedence. Arbitrary gallery selections remain available but are not generated SEO pages.";
 
 export function comparisonTitle(
     pair: ComparisonPair,

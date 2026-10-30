@@ -6,7 +6,7 @@ import { ActuatorThumb } from "../components/ActuatorThumb";
 import { EngineeringEvidencePanel } from "../components/EngineeringEvidencePanel";
 import { CompanyLogo } from "../components/CompanyLogo";
 import { compareEvent, useCompareSelection } from "../lib/compare-selection";
-import { COMPARE_SPECS, revisionNote } from "../../../src/catalog/compare";
+import { COMPARE_SPECS, comparisonCaveats } from "../../../src/catalog/compare";
 
 export function Compare({ menuOpen = false }: { menuOpen?: boolean }) {
     const selection = useCompareSelection();
@@ -30,7 +30,7 @@ export function Compare({ menuOpen = false }: { menuOpen?: boolean }) {
         <main>
             <h1>Compare actuators</h1>
             <p>Share this URL. Unknown means not documented, not zero. No winner is implied.</p>
-            <a href={`/actuators${window.location.search}`}>Change picks in the gallery</a>
+            {selection.rows.length > 0 && <a href={`/actuators${window.location.search}`}>Change picks in the gallery</a>}
             {selection.rows.length === 0 && <ComparisonHub />}
             {selection.rows.length < 2 && <p ref={status} role="status">Pick 2–4 actuators in the gallery. A missing or invalid selection is not compared.</p>}
             <div className="compare-products">
@@ -38,7 +38,6 @@ export function Compare({ menuOpen = false }: { menuOpen?: boolean }) {
                     <a href={`/actuators/${a.id}`}><div className="compare-photo"><ActuatorThumb actuator={a} /></div><h2>{a.name}</h2></a>
                     <p className="compare-brand with-logo"><CompanyLogo name={a.brand} size={20} />{a.brand}</p>
                     {!a.image_url && <p>Photo unavailable: schematic only</p>}
-                    <p>{revisionNote(a)}</p>
                     <a href={`/actuators/${a.id}`}>Catalog and sources</a>
                     <button ref={selection.rows.length === 1 ? remainingRemove : undefined} type="button" aria-label={`Remove ${a.name}`} onClick={() => remove(a.id)}>Remove</button>
                     <EngineeringEvidencePanel id={a.id} compact />
@@ -51,6 +50,7 @@ export function Compare({ menuOpen = false }: { menuOpen?: boolean }) {
                     <tbody>{COMPARE_SPECS.map(spec => <tr key={spec.label}><th scope="row">{spec.label}</th>{selection.rows.map(a => <td key={a.id}>{spec.display(a)}</td>)}</tr>)}</tbody>
                 </table>
             </div>}
+            {selection.rows.length > 0 && <div className="compare-caveats">{comparisonCaveats(selection.rows).map(note => <p key={note}>{note}</p>)}</div>}
             <p>Sensor bits are not loaded accuracy. CAD geometry is not a calibrated simulation model. Thermal duty and efficiency require matched operating conditions.</p>
         </main>
         <PublicFooter />

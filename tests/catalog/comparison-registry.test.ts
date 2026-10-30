@@ -87,8 +87,8 @@ test("bounded nearest-peer lifecycle deliberately permits displacement on catalo
         .filter((pair) => !after.some((candidate) => candidate.path === pair.path))
         .map((pair) => pair.path);
     expect(retired).toEqual([
-        "/comparisons/myactuator-rmd-x10-s2-v3-vs-steadywin-gim6010-36",
-        "/comparisons/myactuator-rmd-x8-120-vs-robstride-03",
+        "/comparisons/damiao-dm-j6248p-2ec-vs-robstride-04",
+        "/comparisons/encos-ec-a4315-p2-36-vs-myactuator-rmd-x8-120",
     ]);
     expect(buildComparisonRegistry([...records].reverse())).toEqual(after);
     expect(after.length).toBeLessThanOrEqual(records.length * 3);
@@ -111,4 +111,31 @@ test("eligibility is pairwise and growth remains bounded with deterministic ties
     expect(buildComparisonRegistry(records, 1).length).toBeLessThanOrEqual(
         records.length,
     );
+});
+
+test("pairs share every mechanical field and stay within a 3x torque ratio", () => {
+    for (const pair of buildComparisonRegistry(ACTUATORS)) {
+        const [a, b] = pair.ids.map(model);
+        if (!a || !b) throw new Error(`Missing pair model: ${pair.path}`);
+        for (const field of [
+            "peak_torque_nm",
+            "rated_torque_nm",
+            "max_speed_rpm",
+            "weight_g",
+        ] as const) {
+            expect(a[field]).toBeGreaterThan(0);
+            expect(b[field]).toBeGreaterThan(0);
+        }
+        const [x, y] = [a.peak_torque_nm as number, b.peak_torque_nm as number];
+        expect(Math.max(x, y) / Math.min(x, y)).toBeLessThanOrEqual(3);
+    }
+    const base = model("cubemars-ak60-6");
+    const strong = {
+        ...base,
+        id: "strong",
+        peak_torque_nm: (base.peak_torque_nm ?? 0) * 4,
+    };
+    const unrated = { ...base, id: "unrated", rated_torque_nm: null };
+    expect(buildComparisonRegistry([base, strong])).toEqual([]);
+    expect(buildComparisonRegistry([base, unrated])).toEqual([]);
 });

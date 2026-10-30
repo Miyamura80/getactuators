@@ -7,6 +7,30 @@
     margin: 0 auto;
     min-width: 0;
 }
+.compare-page:has(.comparison-hub) > main > p,
+.comparison-hub > p {
+    max-width: 80ch;
+    margin: 0 0 12px;
+    color: #9ba4a6;
+}
+.comparison-hub > h2,
+.comparison-hub section > h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 32px 0 12px;
+}
+.compare-caveats {
+    border-top: 1px solid #383838;
+    margin: 16px 0;
+    padding-top: 12px;
+}
+.compare-caveats p {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #9ba4a6;
+    max-width: 90ch;
+    margin: 0 0 8px;
+}
 .comparison-hub nav {
     display: flex;
     flex-wrap: wrap;
