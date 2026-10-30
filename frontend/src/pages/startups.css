@@ -1,7 +1,10 @@
 /* /startups: treemaps of funding and reported output. Same drafting-sheet
    rules as tools.css; tiles are flat fills, undisclosed ones hatched. */
 
-.su-toggle { margin: 20px 0 12px auto; max-width: 360px; }
+/* Eye icon sits beside the options; a floated legend joins the flex row. */
+.su-toggle { display: flex; align-items: center; gap: 10px; margin: 20px 0 12px auto; max-width: 386px; }
+.su-toggle legend { float: left; margin: 0; }
+.su-toggle .calc-solve-opts { flex: 1; }
 .su-toggle label { min-height: 30px; font-size: 12px; }
 .su-eye { display: block; }
 .su-maps { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; }
