@@ -26,6 +26,7 @@ test("direct one-ID startup shows recovery and a remaining card without the dire
         await act(async () => { root = mountApp(container); });
         expect(container.querySelector(".comparison-hub") === null).toBe(true);
         expect(container.querySelectorAll("button[aria-label^='Remove']")).toHaveLength(1);
+        expect(container.querySelector("button[aria-label^='Remove']")?.getAttribute("aria-label")).toContain("AK80-9");
         expect(container.querySelector("[role=status]") !== null).toBe(true);
     } finally {
         await act(async () => root?.unmount());

@@ -97,6 +97,8 @@ async function expectCatalogPage(
 // Captured from the clean main baseline before implementation.
 test("the full catalog has distinct reviewed metadata", async () => {
     const registered = allPages();
+    // Pinned so a generator that silently emits nothing still fails here.
+    expect(GENERATED_COMPARISON_PAGES).toHaveLength(28);
     expect(registered).toHaveLength(89 + GENERATED_COMPARISON_PAGES.length);
     // Pages added after the baseline capture have their own tests.
     const added = new Set([

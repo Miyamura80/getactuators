@@ -86,7 +86,10 @@ function pairPage(pair: ComparisonPair): Page {
         title,
         description,
         body: () =>
-            `${compareBody(`?compare=${pair.ids.join(",")}`).replace("# Compare actuators", `# ${title}`)}\n\n${arithmeticMd}\n\n## Catalog source links\n\n${sourcesMd}\n\n${related || "[Browse actuator comparisons](/compare)."}\n\n[Choose other catalog models](/actuators)`,
+            `${compareBody(`?compare=${pair.ids.join(",")}`).replace(
+                /^# Compare actuators\n\n[^\n]*/,
+                `# ${title}\n\n${description} Unknown means not documented, not zero.`,
+            )}\n\n${arithmeticMd}\n\n## Catalog source links\n\n${sourcesMd}\n\n${related || "[Browse actuator comparisons](/compare)."}\n\n[Choose other catalog models](/actuators)`,
         visual,
         jsonLd: () => [
             webPage("WebPage", pair.path, title),

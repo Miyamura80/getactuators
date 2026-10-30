@@ -43,5 +43,5 @@ function compareRecovery(rows: Actuator[]): string {
 }
 export function compareVisual(search: string): string {
     const rows = comparisonRows(search);
-    return `<div class="compare-page">${publicHeader("/compare")}<main><h1>Compare actuators</h1><p>Share this URL. Unknown means not documented, not zero. No winner is implied.</p>${rows.length === 0 ? comparisonHub("html") : rows.length === 1 ? compareRecovery(rows) : compareContent(rows)}<p>Sensor bits are not loaded accuracy. CAD geometry is not a calibrated simulation model. Thermal duty and efficiency require matched operating conditions.</p></main>${publicFooter()}</div>`;
+    return `<div class="compare-page">${publicHeader("/compare")}<main><h1>Compare actuators</h1><p>Share this URL. Unknown means not documented, not zero. No winner is implied.</p>${rows.length === 0 ? `${comparisonHub("html")}<p role="status">Pick 2–4 actuators in the <a href="/actuators">gallery</a>. A missing or invalid selection is not compared.</p>` : rows.length === 1 ? compareRecovery(rows) : compareContent(rows)}<p>Sensor bits are not loaded accuracy. CAD geometry is not a calibrated simulation model. Thermal duty and efficiency require matched operating conditions.</p></main>${publicFooter()}</div>`;
 }

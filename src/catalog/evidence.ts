@@ -11,7 +11,8 @@ interface MotorBoundaryRecord {
     integrated_driver?: boolean | null;
 }
 export function hasMotorBoundary(a: MotorBoundaryRecord): boolean {
-    if (/\b(series|family|controller|driver)\b/i.test(a.name)) return false;
+    if (/\b(series|family|families|controllers?|drivers?)\b/i.test(a.name))
+        return false;
     const electrical =
         [a.peak_current_a, a.power_w, a.kt_nm_per_a].some(
             (value) => typeof value === "number" && Number.isFinite(value) && value > 0,
@@ -20,7 +21,7 @@ export function hasMotorBoundary(a: MotorBoundaryRecord): boolean {
             ? Number.isFinite(a.voltage_v) && a.voltage_v > 0
             : typeof a.voltage_v === "string" && /[1-9]/.test(a.voltage_v));
     if (
-        /\b(reducer|gearbox|gearhead)\b/i.test(a.name) &&
+        /\b(reducers?|gearbox(?:es)?|gearheads?)\b/i.test(a.name) &&
         a.integrated_driver !== true &&
         (!electrical || !/\b(motor|actuator|joint)\b/i.test(a.name))
     )

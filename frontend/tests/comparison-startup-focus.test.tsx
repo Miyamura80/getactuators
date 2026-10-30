@@ -21,7 +21,8 @@ for (const mode of ["initial-hash", "focused-fragment", "focused-control", "unre
             expect(target === oldTarget).toBe(false);
             expect(document.activeElement === target).toBe(mode === "initial-hash" || mode === "focused-fragment");
             // Startup restoration is one-shot, not a hash/selection render effect.
-            container.querySelector<HTMLElement>(".site-brand")!.focus();
+            // Blur to body: a re-run restorer would then focus the target and fail.
+            (document.activeElement as HTMLElement | null)?.blur();
             await act(async () => { fireEvent(window, new PopStateEvent("popstate")); });
             expect(document.activeElement === target).toBe(false);
         } finally {
