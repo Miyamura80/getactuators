@@ -56,6 +56,7 @@ function headMeta(page: Page, noindex = page.noindex ?? false): HeadMeta {
         image: page.image,
         jsonLd: graph(page.jsonLd()),
         noindex,
+        canonicalWhenNoindex: noindex && !page.noindex,
     };
 }
 
@@ -73,8 +74,9 @@ export async function renderSpaPage(
     page: Page,
     visual?: string,
     search = "",
+    noindex = page.noindex ?? false,
 ): Promise<string> {
-    const meta = headMeta(page);
+    const meta = headMeta(page, noindex);
     const body = page.body();
     const marker =
         page.persistentFrom ??

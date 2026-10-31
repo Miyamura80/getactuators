@@ -12,6 +12,7 @@ import {
 } from "./catalog-md";
 import { contributorsBody, personNode } from "./contributors";
 import { EDITORIAL_PAGES } from "./editorial";
+import { GENERATED_COMPARISON_PAGES } from "./generated-comparisons";
 import { HUMANOID_GUIDE } from "./humanoid-guide";
 import { HUMANOIDS_PAGE } from "./humanoids";
 import { investorsBody } from "./investors";
@@ -90,6 +91,7 @@ const STATIC_PAGES: Page[] = [
         ],
     },
     ...EDITORIAL_PAGES,
+    ...GENERATED_COMPARISON_PAGES,
     HUMANOID_GUIDE,
     ...TOOL_PAGES,
     {
