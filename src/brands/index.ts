@@ -192,16 +192,18 @@ const INVESTORS: Row[] = [
     ["8vc", "8VC", "8vc.com"],
     ["ivp", "IVP", "ivp.com"],
     ["greycroft", "Greycroft", "greycroft.com"],
+    // 燈 (Akari Inc.), Aster's largest shareholder since Sep 2026; domain unverified.
+    ["akari", "Akari", null],
 ];
 
 const host = (url: string): string => new URL(url).hostname.replace(/^www\./, "");
 
-// /startups rows carry their own site and a self-hosted logo.
+// /startups rows carry their own site and, usually, a self-hosted logo.
 const STARTUP_ENTRIES: BrandEntry[] = STARTUPS.map((s) => ({
     id: s.id,
     name: s.name,
     domain: host(s.url),
-    logo: s.logo,
+    ...(s.logo ? { logo: s.logo } : {}),
 }));
 
 // Official marks served from frontend/public/logos/brands, each with the page
@@ -256,7 +258,8 @@ const INDEX = new Map<string, BrandEntry>();
 for (const b of BRANDS) {
     for (const key of [b.id, b.name, ...(b.aliases ?? [])]) {
         const k = normalizeBrand(key);
-        if (!INDEX.has(k)) INDEX.set(k, b);
+        // Non-Latin spellings normalise to "", which would match any blank name.
+        if (k && !INDEX.has(k)) INDEX.set(k, b);
     }
 }
 
