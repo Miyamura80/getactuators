@@ -193,7 +193,7 @@ const INVESTORS: Row[] = [
     ["ivp", "IVP", "ivp.com"],
     ["greycroft", "Greycroft", "greycroft.com"],
     // 燈 (Akari Inc.), Aster's largest shareholder since Sep 2026; domain unverified.
-    ["akari", "Akari", null, ["燈"]],
+    ["akari", "Akari", null],
 ];
 
 const host = (url: string): string => new URL(url).hostname.replace(/^www\./, "");
@@ -258,7 +258,8 @@ const INDEX = new Map<string, BrandEntry>();
 for (const b of BRANDS) {
     for (const key of [b.id, b.name, ...(b.aliases ?? [])]) {
         const k = normalizeBrand(key);
-        if (!INDEX.has(k)) INDEX.set(k, b);
+        // Non-Latin spellings normalise to "", which would match any blank name.
+        if (k && !INDEX.has(k)) INDEX.set(k, b);
     }
 }
 

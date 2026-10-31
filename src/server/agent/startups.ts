@@ -11,7 +11,9 @@ export function startupsBody(): string {
         s.round ?? "Undisclosed",
         s.leadInvestor ?? "Undisclosed",
         formatMetric("unitsPerMonth", s.unitsPerMonth),
-        mdLink(s.source.label, s.source.url),
+        [s.source, ...(s.moreSources ?? [])]
+            .map((src) => mdLink(src.label, src.url))
+            .join(", "),
     ]);
     const notes = STARTUPS.map((s) => `- **${s.name}:** ${s.volumeNote}`).join("\n");
     return `# Actuator startups

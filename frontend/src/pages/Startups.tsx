@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { PublicHeader } from "../components/PublicHeader";
 import { PublicFooter } from "../components/PublicFooter";
 import { CompanyLogo } from "../components/CompanyLogo";
+import { countryFlag } from "../../../src/country-flag";
 import {
-    countryFlag,
     countryLabel,
     formatMetric,
     STARTUP_METRICS,
@@ -299,9 +299,14 @@ export function Startups({ menuOpen = false }: { menuOpen?: boolean }) {
                                         Website
                                     </a>
                                     {" · "}
-                                    <a href={s.source.url} rel="noopener" target="_blank">
-                                        {s.source.label}
-                                    </a>
+                                    {[s.source, ...(s.moreSources ?? [])].map((src, i) => (
+                                        <span key={src.url}>
+                                            {i > 0 && " · "}
+                                            <a href={src.url} rel="noopener" target="_blank">
+                                                {src.label}
+                                            </a>
+                                        </span>
+                                    ))}
                                 </dd>
                             </dl>
                         </details>
