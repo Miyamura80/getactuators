@@ -197,7 +197,7 @@ function Treemap({
 }
 
 export function Startups({ menuOpen = false }: { menuOpen?: boolean }) {
-    const [view, setView] = useState<View>("raisedUsd");
+    const [view, setView] = useState<View>("both");
     const [focus, setFocus] = useState<string | null>(null);
     useEffect(() => {
         const prev = document.title;
