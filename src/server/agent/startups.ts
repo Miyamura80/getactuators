@@ -1,13 +1,23 @@
-import { STARTUPS, countryLabel, formatMetric } from "@/startups";
+import {
+    STARTUPS,
+    STARTUP_DRIVES,
+    STARTUP_SEGMENTS,
+    countryLabel,
+    formatMetric,
+} from "@/startups";
 import { mdLink, mdTable } from "./md";
 
 // Markdown twin of /startups: the same figures the treemaps size by.
 export function startupsBody(): string {
     const rows = STARTUPS.map((s) => [
-        mdLink(s.name, s.url),
+        s.url ? mdLink(s.name, s.url) : s.name,
         s.hq,
         countryLabel(s.country),
-        formatMetric("raisedUsd", s.raisedUsd),
+        STARTUP_SEGMENTS[s.segment].label,
+        s.drives
+            ? `${s.drives.types.map((d) => STARTUP_DRIVES[d]).join(", ")} (${mdLink(s.drives.source.label, s.drives.source.url)})`
+            : "Not sourced",
+        formatMetric("raisedUsd", s.raisedUsd, s.raisedIsFloor),
         s.round ?? "Undisclosed",
         s.leadInvestor ?? "Undisclosed",
         formatMetric("unitsPerMonth", s.unitsPerMonth),
@@ -18,9 +28,15 @@ export function startupsBody(): string {
     const notes = STARTUPS.map((s) => `- **${s.name}:** ${s.volumeNote}`).join("\n");
     return `# Actuator startups
 
-Venture-backed companies building robot actuators and motors, sized by disclosed funding and by company-reported production.
+Funded companies building robot actuators and motors, sized by disclosed money raised (equity rounds and grants) and by company-reported production. A + after a figure means some rounds are undisclosed, so the sum is a floor.
 
-${mdTable(["Company", "HQ", "Country", "Raised", "Round", "Lead", "Reported output", "Source"], rows)}
+${mdTable(["Company", "HQ", "Country", "Segment", "Drive", "Raised", "Round", "Lead", "Reported output", "Source"], rows)}
+
+## Segments
+
+${Object.values(STARTUP_SEGMENTS)
+    .map((g) => `- **${g.label}:** ${g.blurb}.`)
+    .join("\n")}
 
 ## Production notes
 
