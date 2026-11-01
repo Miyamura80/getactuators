@@ -7,6 +7,7 @@ import { countryFlag } from "../../../src/country-flag";
 import {
     countryLabel,
     formatMetric,
+    STARTUP_DRIVES,
     STARTUP_METRICS,
     STARTUP_SEGMENTS,
     STARTUPS,
@@ -275,7 +276,7 @@ function Treemap({
                             onFocus={() => setFocus(t.s.id)}
                             onBlur={() => setFocus(null)}
                         >
-                            <title>{`${t.s.name}: ${valueText}`}</title>
+                            <title>{`${t.s.name}: ${valueText}${t.s.drives ? ` · ${t.s.drives.types.map((d) => STARTUP_DRIVES[d]).join(", ")}` : ""}`}</title>
                             <rect
                                 x={t.x + 1}
                                 y={t.y + 1}
@@ -413,6 +414,21 @@ export function Startups({ menuOpen = false }: { menuOpen?: boolean }) {
                                 <dd>{s.hq}</dd>
                                 <dt>Segment</dt>
                                 <dd>{STARTUP_SEGMENTS[s.segment].label}</dd>
+                                {s.drives && (
+                                    <>
+                                        <dt>Drive</dt>
+                                        <dd>
+                                            {s.drives.types.map((d) => (
+                                                <span key={d} className="su-drive">
+                                                    {STARTUP_DRIVES[d]}
+                                                </span>
+                                            ))}
+                                            <a className="su-drive-src" href={s.drives.source.url} rel="noopener" target="_blank">
+                                                {s.drives.source.label}
+                                            </a>
+                                        </dd>
+                                    </>
+                                )}
                                 <dt>Country</dt>
                                 <dd>{countryLabel(s.country)}</dd>
                                 <dt>Round</dt>

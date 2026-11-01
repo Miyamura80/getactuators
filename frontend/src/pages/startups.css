@@ -110,3 +110,6 @@
 }
 /* Tile marks sit on a white plate so any logo reads on any fill. */
 .su-tile-logo { border-radius: 6px; background: #fff; border: 0; }
+/* Drive-type tags in the expanded row, followed by their source. */
+.su-drive { display: inline-block; margin: 0 6px 4px 0; padding: 1px 8px; border: 1px solid var(--line); border-radius: 999px; font: 500 12px var(--mono); }
+.su-drive-src { margin-left: 4px; font-size: 12px; color: var(--muted) !important; }

@@ -33,6 +33,26 @@ export const STARTUP_SEGMENTS: Record<
     },
 };
 
+// How the actuators transmit torque or force. A company may sell several.
+export type StartupDrive =
+    | "qdd"
+    | "planetary"
+    | "harmonic"
+    | "cycloidal"
+    | "roller-screw"
+    | "linear-servo"
+    | "direct-drive";
+
+export const STARTUP_DRIVES: Record<StartupDrive, string> = {
+    qdd: "QDD",
+    planetary: "Planetary",
+    harmonic: "Harmonic",
+    cycloidal: "Cycloidal",
+    "roller-screw": "Roller screw",
+    "linear-servo": "Linear servo",
+    "direct-drive": "Direct drive",
+};
+
 export interface Startup {
     id: string;
     name: string;
@@ -59,6 +79,9 @@ export interface Startup {
     source: StartupSource;
     // Further sources for claims the primary one does not cover.
     moreSources?: StartupSource[];
+    // Drive types of its products, with the page that shows them. Omitted when
+    // no source names the mechanism.
+    drives?: { types: StartupDrive[]; source: StartupSource };
 }
 
 interface StartupSource {
@@ -95,6 +118,13 @@ export const STARTUPS: Startup[] = [
                 url: "https://www.rccaijing.com/news-7340293827615978793.html",
             },
         ],
+        drives: {
+            types: ["planetary", "harmonic", "cycloidal"],
+            source: {
+                label: "Gasgoo, Jan 2026",
+                url: "https://autonews.gasgoo.com/articles/news/ces-2026-encos-showcases-three-core-products-enabling-mass-production-of-humanoid-robots-2008894532819447809",
+            },
+        },
     },
     {
         id: "quanzhibo",
@@ -129,6 +159,10 @@ export const STARTUPS: Startup[] = [
                 url: "https://www.mrjjxw.com/articles/2026-07-03/4451861.html",
             },
         ],
+        drives: {
+            types: ["planetary", "harmonic", "cycloidal"],
+            source: { label: "36Kr", url: "https://www.36kr.com/p/3879589408977155" },
+        },
     },
     {
         id: "zeroerr",
@@ -155,6 +189,13 @@ export const STARTUPS: Startup[] = [
                 url: "https://news.pedaily.cn/202603/561304.shtml",
             },
         ],
+        drives: {
+            types: ["harmonic"],
+            source: {
+                label: "A3, eRob T-type",
+                url: "https://www.automate.org/products/zeroerr-global-limited/erob-rotary-actuator-t-type",
+            },
+        },
     },
     {
         id: "inspire-robots",
@@ -181,6 +222,13 @@ export const STARTUPS: Startup[] = [
                 url: "https://news.pedaily.cn/202409/540834.shtml",
             },
         ],
+        drives: {
+            types: ["linear-servo"],
+            source: {
+                label: "Inspire selection guide",
+                url: "https://cdn.robotshop.com/rbm/62a1587c-c4cd-47cc-b64f-c077e2ad3775/7/7660deb4-9a9f-4227-a29b-38f4f2100034/ad0450f8_inspire-robots-products-selection-guide-v14-.pdf",
+            },
+        },
     },
     {
         id: "nousbot",
@@ -207,6 +255,10 @@ export const STARTUPS: Startup[] = [
                 url: "https://news.pedaily.cn/202608/567646.shtml",
             },
         ],
+        drives: {
+            types: ["roller-screw"],
+            source: { label: "36Kr", url: "https://eu.36kr.com/zh/p/3713617026199688" },
+        },
     },
     {
         id: "juxie",
@@ -232,6 +284,13 @@ export const STARTUPS: Startup[] = [
                 url: "https://www.chinastarmarket.cn/detail/2501356",
             },
         ],
+        drives: {
+            types: ["harmonic"],
+            source: {
+                label: "Juxie brochure, Jul 2025",
+                url: "https://www.worldrobotconference.com/profile/robot/download/2025/07/11/%E5%B7%A8%E8%9F%B9%E6%99%BA%E8%83%BD%E9%A9%B1%E5%8A%A8%E7%A7%91%E6%8A%80%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8%E4%BA%BA%E5%BD%A2%E6%9C%BA%E5%99%A8%E4%BA%BA%E7%BB%84%E4%BB%B6%E4%BA%A7%E5%93%81%E6%89%8B%E5%86%8C_20250711105728A058.pdf",
+            },
+        },
     },
     {
         id: "aster",
@@ -336,6 +395,13 @@ export const STARTUPS: Startup[] = [
                 url: "https://www.bonsystems.com/media-center/press-release/secured-investment/",
             },
         ],
+        drives: {
+            types: ["cycloidal"],
+            source: {
+                label: "Venture Square, 2025",
+                url: "https://www.venturesquare.net/970748/",
+            },
+        },
     },
     {
         id: "metismotion",
@@ -390,6 +456,13 @@ export const STARTUPS: Startup[] = [
         moreSources: [
             { label: "IT Home, Sep 2024", url: "https://www.ithome.com/0/795/915.htm" },
         ],
+        drives: {
+            types: ["qdd"],
+            source: {
+                label: "RobStride 02 listing",
+                url: "https://pakronics.com.au/products/robstride-02-qdd-17n-m-integrated-actuator-module-dual-encoders-ss100064875",
+            },
+        },
     },
     {
         id: "artimus-robotics",
@@ -461,6 +534,13 @@ export const STARTUPS: Startup[] = [
                 url: "https://www.gov.pl/web/ncbr/bridge-alfa-by-younick-mint-sp-z-oo-sp-k",
             },
         ],
+        drives: {
+            types: ["qdd", "harmonic", "direct-drive"],
+            source: {
+                label: "MAB actuators",
+                url: "https://www.mabrobotics.pl/ma-actuators",
+            },
+        },
     },
     {
         id: "myactuator",
@@ -478,6 +558,13 @@ export const STARTUPS: Startup[] = [
         volumeNote:
             "No volume disclosed. Makes integrated joint motors used widely in humanoid and legged robots.",
         source: { label: "myactuator.com", url: "https://www.myactuator.com/" },
+        drives: {
+            types: ["qdd", "planetary"],
+            source: {
+                label: "RMD-X8 listing",
+                url: "https://www.robotshop.com/products/myactuator-myactuator-rmd-x8-v3-can-bus-reduction-ratio-16-helical-gear-w-new-driver-mc-x-500-o",
+            },
+        },
     },
     {
         id: "caldera",
