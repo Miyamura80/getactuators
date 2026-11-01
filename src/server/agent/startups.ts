@@ -1,4 +1,4 @@
-import { STARTUPS, countryLabel, formatMetric } from "@/startups";
+import { STARTUPS, STARTUP_SEGMENTS, countryLabel, formatMetric } from "@/startups";
 import { mdLink, mdTable } from "./md";
 
 // Markdown twin of /startups: the same figures the treemaps size by.
@@ -7,6 +7,7 @@ export function startupsBody(): string {
         s.url ? mdLink(s.name, s.url) : s.name,
         s.hq,
         countryLabel(s.country),
+        STARTUP_SEGMENTS[s.segment].label,
         formatMetric("raisedUsd", s.raisedUsd, s.raisedIsFloor),
         s.round ?? "Undisclosed",
         s.leadInvestor ?? "Undisclosed",
@@ -20,7 +21,13 @@ export function startupsBody(): string {
 
 Funded companies building robot actuators and motors, sized by disclosed money raised (equity rounds and grants) and by company-reported production. A + after a figure means some rounds are undisclosed, so the sum is a floor.
 
-${mdTable(["Company", "HQ", "Country", "Raised", "Round", "Lead", "Reported output", "Source"], rows)}
+${mdTable(["Company", "HQ", "Country", "Segment", "Raised", "Round", "Lead", "Reported output", "Source"], rows)}
+
+## Segments
+
+${Object.values(STARTUP_SEGMENTS)
+    .map((g) => `- **${g.label}:** ${g.blurb}.`)
+    .join("\n")}
 
 ## Production notes
 

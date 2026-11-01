@@ -6,9 +6,37 @@ import { countryFlag, countryName } from "./country-flag";
 
 export const STARTUPS_PATH = "/startups";
 
+// Which part of the drive train the company sells, from bare motor up to a
+// ready-to-mount joint. Stable per company, unlike stage or market.
+export type StartupSegment = "joint" | "linear" | "reducer" | "motor" | "soft";
+
+export const STARTUP_SEGMENTS: Record<
+    StartupSegment,
+    { label: string; blurb: string }
+> = {
+    joint: {
+        label: "Joint modules",
+        blurb: "Motor, gearbox, encoder and driver in one rotary joint",
+    },
+    linear: {
+        label: "Linear and screw",
+        blurb: "Roller screws and linear actuators for hands and limbs",
+    },
+    reducer: {
+        label: "Reducers",
+        blurb: "Gearboxes other companies build into their joints",
+    },
+    motor: { label: "Motors", blurb: "Motor cores for drones and robots" },
+    soft: {
+        label: "Soft actuators",
+        blurb: "Artificial muscles with no motor or gearbox",
+    },
+};
+
 export interface Startup {
     id: string;
     name: string;
+    segment: StartupSegment;
     // Omitted when we could not verify the company's own domain.
     url?: string;
     // Served from frontend/public; a self-hosted copy, no third-party requests.
@@ -46,6 +74,7 @@ export const STARTUPS: Startup[] = [
     {
         id: "encos",
         name: "Encos",
+        segment: "joint",
         hq: "Nanjing, Jiangsu",
         country: "CN",
         // ≥¥100M cumulative by Jun 2025 (~¥7.18/$) plus a >¥300M Series B (Sep 2026, ¥6.72/$).
@@ -70,6 +99,7 @@ export const STARTUPS: Startup[] = [
     {
         id: "quanzhibo",
         name: "Quanzhibo",
+        segment: "joint",
         hq: "Wuxi, Jiangsu",
         country: "CN",
         // Four rounds of at least ¥100M each (A Sep 2025, A+ Nov 2025, A++ Apr 2026, B Sep 2026)
@@ -103,6 +133,7 @@ export const STARTUPS: Startup[] = [
     {
         id: "zeroerr",
         name: "ZeroErr",
+        segment: "joint",
         url: "https://www.zeroerr.cn/",
         hq: "Shenzhen, Guangdong",
         country: "CN",
@@ -128,6 +159,7 @@ export const STARTUPS: Startup[] = [
     {
         id: "inspire-robots",
         name: "Inspire Robots",
+        segment: "linear",
         hq: "Beijing",
         country: "CN",
         // B2 >¥100M (Sep 2024, ~¥7.02/$) plus C1 and C2 ≥¥100M combined (Feb 2026, ¥6.87/$).
@@ -153,6 +185,7 @@ export const STARTUPS: Startup[] = [
     {
         id: "nousbot",
         name: "Nousbot",
+        segment: "linear",
         hq: "Shenzhen, Guangdong",
         country: "CN",
         // Series A >¥100M (Mar 2026, ~¥6.9/$) plus an A+ of just under ¥100M, counted as ¥90M
@@ -178,6 +211,7 @@ export const STARTUPS: Startup[] = [
     {
         id: "juxie",
         name: "Juxie",
+        segment: "joint",
         hq: "Wuxi, Jiangsu",
         country: "CN",
         // Series A+ >¥100M (Oct 2026, ~¥6.72/$). Earlier rounds are not counted.
@@ -202,6 +236,7 @@ export const STARTUPS: Startup[] = [
     {
         id: "aster",
         name: "Aster",
+        segment: "motor",
         url: "https://www.ast-aster.biz/",
         hq: "Yokote, Akita",
         country: "JP",
@@ -236,6 +271,7 @@ export const STARTUPS: Startup[] = [
     {
         id: "atlas-motion",
         name: "Atlas Motion",
+        segment: "motor",
         url: "https://atlasmotion.com/",
         logo: "/logos/startups/atlas-motion.jpg",
         hq: "Long Beach, CA",
@@ -259,6 +295,7 @@ export const STARTUPS: Startup[] = [
     {
         id: "westmag",
         name: "Westmag",
+        segment: "motor",
         url: "https://www.westmag.com/",
         logo: "/logos/startups/westmag.png",
         hq: "South San Francisco, CA",
@@ -277,6 +314,7 @@ export const STARTUPS: Startup[] = [
     {
         id: "bonsystems",
         name: "Bonsystems",
+        segment: "reducer",
         url: "https://www.bonsystems.com/",
         hq: "Changwon",
         country: "KR",
@@ -302,6 +340,7 @@ export const STARTUPS: Startup[] = [
     {
         id: "metismotion",
         name: "MetisMotion",
+        segment: "linear",
         url: "https://www.metismotion.com/",
         hq: "Munich",
         country: "DE",
@@ -332,6 +371,7 @@ export const STARTUPS: Startup[] = [
     {
         id: "robstride",
         name: "RobStride",
+        segment: "joint",
         url: "https://www.robstride.com/",
         hq: "Beijing",
         country: "CN",
@@ -354,6 +394,7 @@ export const STARTUPS: Startup[] = [
     {
         id: "artimus-robotics",
         name: "Artimus Robotics",
+        segment: "soft",
         url: "https://www.artimusrobotics.com/",
         hq: "Boulder, CO",
         country: "US",
@@ -376,6 +417,7 @@ export const STARTUPS: Startup[] = [
     {
         id: "index-robotics",
         name: "Index Robotics",
+        segment: "joint",
         url: "https://index-robotics.com/",
         hq: "Gyeonggi",
         country: "KR",
@@ -397,6 +439,7 @@ export const STARTUPS: Startup[] = [
     {
         id: "mab-robotics",
         name: "MAB Robotics",
+        segment: "joint",
         url: "https://www.mabrobotics.pl/",
         hq: "Poznań",
         country: "PL",
@@ -422,6 +465,7 @@ export const STARTUPS: Startup[] = [
     {
         id: "myactuator",
         name: "MyActuator",
+        segment: "joint",
         url: "https://www.myactuator.com/",
         hq: "Kunshan, Jiangsu",
         country: "CN",
@@ -438,6 +482,7 @@ export const STARTUPS: Startup[] = [
     {
         id: "caldera",
         name: "Caldera",
+        segment: "motor",
         url: "https://calderaindustries.ai/",
         logo: "/logos/startups/caldera.svg",
         hq: "United States",

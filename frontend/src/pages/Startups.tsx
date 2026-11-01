@@ -7,10 +7,12 @@ import {
     countryLabel,
     formatMetric,
     STARTUP_METRICS,
+    STARTUP_SEGMENTS,
     STARTUPS,
     STARTUPS_PATH,
     type Startup,
     type StartupMetric,
+    type StartupSegment,
 } from "../../../src/startups";
 import "./tools.css";
 import "./startups.css";
@@ -27,9 +29,71 @@ const PALETTE = [
     "#ffe08a", "#f5a8e0", "#a8d8ff", "#c8e88f", "#ffb59e", "#b0c4ff",
     "#9fe8b8", "#e8c8a0", "#c9b3ff", "#f0d0ff",
 ];
-const COLORS: Record<string, string> = Object.fromEntries(
-    STARTUPS.map((s, i) => [s.id, s.id === "atlas-motion" ? "var(--cyan)" : (PALETTE[i % PALETTE.length] as string)]),
+const pick = (i: number): string => PALETTE[i % PALETTE.length] as string;
+const COMPANY_COLORS: Record<string, string> = Object.fromEntries(
+    STARTUPS.map((s, i) => [s.id, s.id === "atlas-motion" ? "var(--cyan)" : pick(i)]),
 );
+const SEGMENT_COLORS: Record<StartupSegment, string> = {
+    joint: "#8fb4ff",
+    linear: "#b9f2a1",
+    reducer: "#ffe08a",
+    motor: "var(--cyan)",
+    soft: "#f5a8e0",
+};
+const COUNTRY_COLORS: Record<string, string> = Object.fromEntries(
+    [...new Set(STARTUPS.map((s) => s.country))].map((c, i) => [c, pick(i)]),
+);
+
+// How tiles are coloured and clustered: one colour per company, or nested
+// treemaps per segment or per country.
+type Group = "company" | "segment" | "country";
+const GROUPS: { id: Group; label: string }[] = [
+    { id: "company", label: "Company" },
+    { id: "segment", label: "Segment" },
+    { id: "country", label: "Country" },
+];
+
+function groupKey(s: Startup, group: Group): string {
+    if (group === "segment") return s.segment;
+    if (group === "country") return s.country;
+    return s.id;
+}
+
+function groupColor(key: string, group: Group): string {
+    if (group === "segment") return SEGMENT_COLORS[key as StartupSegment];
+    if (group === "country") return COUNTRY_COLORS[key] ?? pick(0);
+    return COMPANY_COLORS[key] ?? pick(0);
+}
+
+function groupLabel(key: string, group: Group): string {
+    if (group === "segment") return STARTUP_SEGMENTS[key as StartupSegment].label;
+    if (group === "country") return countryLabel(key);
+    return key;
+}
+
+interface GroupSummary {
+    key: string;
+    members: Startup[];
+    raised: number;
+    floor: boolean;
+}
+
+// Groups ordered by money raised, members keeping their list order.
+function summarise(group: Group): GroupSummary[] {
+    const map = new Map<string, Startup[]>();
+    for (const s of STARTUPS) {
+        const k = groupKey(s, group);
+        map.set(k, [...(map.get(k) ?? []), s]);
+    }
+    return [...map.entries()]
+        .map(([key, members]) => ({
+            key,
+            members,
+            raised: members.reduce((t, s) => t + (s.raisedUsd ?? 0), 0),
+            floor: members.some((s) => s.raisedIsFloor || s.raisedUsd === null),
+        }))
+        .sort((a, b) => b.raised - a.raised);
+}
 
 type View = StartupMetric | "both";
 const VIEWS: { id: View; label: string }[] = [
@@ -53,23 +117,36 @@ interface Item {
     area: number;
 }
 
+interface Rect {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+}
+
 // Squarified treemap (Bruls, Huizing, van Wijk): lay rows along the short side,
 // adding items while the worst aspect ratio in the row keeps improving.
-function squarify(items: Item[], x: number, y: number, w: number, h: number): Tile[] {
-    const out: Tile[] = [];
+function squarify<T extends { area: number }>(
+    items: T[],
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+): (T & Rect)[] {
+    const out: (T & Rect)[] = [];
     let rest = [...items].sort((a, b) => b.area - a.area);
     while (rest.length) {
         const side = Math.min(w, h);
-        const worst = (row: Item[]) => {
+        const worst = (row: T[]) => {
             const sum = row.reduce((t, r) => t + r.area, 0);
             const max = Math.max(...row.map((r) => r.area));
             const min = Math.min(...row.map((r) => r.area));
             return Math.max((side * side * max) / (sum * sum), (sum * sum) / (side * side * min));
         };
-        let row = [rest[0] as Item];
+        let row = [rest[0] as T];
         let i = 1;
-        while (i < rest.length && worst([...row, rest[i] as Item]) <= worst(row)) {
-            row = [...row, rest[i] as Item];
+        while (i < rest.length && worst([...row, rest[i] as T]) <= worst(row)) {
+            row = [...row, rest[i] as T];
             i++;
         }
         rest = rest.slice(i);
@@ -80,8 +157,8 @@ function squarify(items: Item[], x: number, y: number, w: number, h: number): Ti
             const len = r.area / thick;
             out.push(
                 w >= h
-                    ? { s: r.s, value: r.value, x, y: y + offset, w: thick, h: len }
-                    : { s: r.s, value: r.value, x: x + offset, y, w: len, h: thick },
+                    ? { ...r, x, y: y + offset, w: thick, h: len }
+                    : { ...r, x: x + offset, y, w: len, h: thick },
             );
             offset += len;
         }
@@ -96,17 +173,44 @@ function squarify(items: Item[], x: number, y: number, w: number, h: number): Ti
     return out;
 }
 
-function layout(metric: StartupMetric, W: number, H: number): Tile[] {
+// Gap between nested group treemaps, in viewBox units.
+const GROUP_GAP = 4;
+
+function layout(metric: StartupMetric, W: number, H: number, group: Group): Tile[] {
     const known = STARTUPS.map((s) => s[metric]).filter((v): v is number => v !== null);
     const stub = known.length ? Math.min(...known) * UNDISCLOSED_SHARE : 1;
-    const items = STARTUPS.map((s) => ({ s, value: s[metric], area: s[metric] ?? stub }));
-    const scale = (W * H) / items.reduce((t, i) => t + i.area, 0);
+    const item = (s: Startup): Item => ({ s, value: s[metric], area: s[metric] ?? stub });
+    const fill = (items: Item[], r: Rect): Tile[] => {
+        const scale = (r.w * r.h) / items.reduce((t, i) => t + i.area, 0);
+        return squarify(
+            items.map((i) => ({ ...i, area: i.area * scale })),
+            r.x,
+            r.y,
+            r.w,
+            r.h,
+        );
+    };
+    if (group === "company") return fill(STARTUPS.map(item), { x: 0, y: 0, w: W, h: H });
+    // Two levels: groups share the canvas by their total, then each group's
+    // members share its rectangle, inset so the black gap reads as a border.
+    const groups = summarise(group).map((g) => {
+        const items = g.members.map(item);
+        return { items, area: items.reduce((t, i) => t + i.area, 0) };
+    });
+    const total = groups.reduce((t, g) => t + g.area, 0);
     return squarify(
-        items.map((i) => ({ ...i, area: i.area * scale })),
+        groups.map((g) => ({ ...g, area: (g.area * W * H) / total })),
         0,
         0,
         W,
         H,
+    ).flatMap((g) =>
+        fill(g.items, {
+            x: g.x + GROUP_GAP / 2,
+            y: g.y + GROUP_GAP / 2,
+            w: Math.max(1, g.w - GROUP_GAP),
+            h: Math.max(1, g.h - GROUP_GAP),
+        }),
     );
 }
 
@@ -120,16 +224,18 @@ function fit(text: string, room: number, charPx: number): string {
 function Treemap({
     metric,
     both,
+    group,
     focus,
     setFocus,
 }: {
     metric: StartupMetric;
     both: boolean;
+    group: Group;
     focus: string | null;
     setFocus: (id: string | null) => void;
 }) {
     const { W, H } = SIZE[both ? "both" : "single"];
-    const tiles = layout(metric, W, H);
+    const tiles = layout(metric, W, H, group);
     const label = STARTUP_METRICS[metric].label;
     return (
         <figure className="su-map">
@@ -143,11 +249,12 @@ function Treemap({
                 {tiles.map((t) => {
                     const known = t.value !== null;
                     const dim = focus !== null && focus !== t.s.id;
-                    const roomy = known && t.w > 200 && t.h > 100;
                     const clip = `su-clip-${metric}-${t.s.id}`;
                     const logo = t.s.logo !== undefined && t.w > 120 && t.h > 70;
                     const textX = t.x + (logo ? 56 : 16);
                     const valueText = formatMetric(metric, t.value, metric === "raisedUsd" && t.s.raisedIsFloor);
+                    // Big figures only where the whole value fits at that size.
+                    const roomy = known && t.h > 100 && valueText.length * 23 <= t.w - 24;
                     // Tiles too small for a label rely on the hover title and the list below.
                     const name = t.h >= 46 ? fit(t.s.name, t.x + t.w - textX - 8, 14) : "";
                     const value = t.h >= 72 ? fit(valueText, t.w - 24, roomy ? 23 : 12) : "";
@@ -167,7 +274,7 @@ function Treemap({
                                 y={t.y + 1}
                                 width={Math.max(0, t.w - 2)}
                                 height={Math.max(0, t.h - 2)}
-                                fill={known ? COLORS[t.s.id] : `url(#su-hatch-${metric})`}
+                                fill={known ? groupColor(groupKey(t.s, group), group) : `url(#su-hatch-${metric})`}
                                 fillOpacity={known ? 0.9 : 1}
                                 stroke={known ? "none" : "var(--line-strong)"}
                                 strokeDasharray={known ? undefined : "4 4"}
@@ -212,6 +319,7 @@ function Treemap({
 
 export function Startups({ menuOpen = false }: { menuOpen?: boolean }) {
     const [view, setView] = useState<View>("both");
+    const [group, setGroup] = useState<Group>("company");
     const [focus, setFocus] = useState<string | null>(null);
     useEffect(() => {
         const prev = document.title;
@@ -221,6 +329,8 @@ export function Startups({ menuOpen = false }: { menuOpen?: boolean }) {
         };
     }, []);
     const metrics: StartupMetric[] = view === "both" ? ["raisedUsd", "unitsPerMonth"] : [view];
+    const summary = group === "company" ? [] : summarise(group);
+    const rows = group === "company" ? STARTUPS : summary.flatMap((g) => g.members);
 
     return (
         <div className="tool-page">
@@ -236,26 +346,58 @@ export function Startups({ menuOpen = false }: { menuOpen?: boolean }) {
                     </p>
                 </header>
 
-                <fieldset className="calc-solve su-toggle" aria-label="View">
-                    <div className="calc-solve-opts">
-                        {VIEWS.map((v) => (
-                            <label key={v.id} className={view === v.id ? "on" : ""}>
-                                <input
-                                    type="radio"
-                                    name="su-view"
-                                    value={v.id}
-                                    checked={view === v.id}
-                                    onChange={() => setView(v.id)}
-                                />
-                                {v.label}
-                            </label>
+                <div className="su-controls">
+                    <fieldset className="calc-solve su-toggle" aria-label="Group by">
+                        <div className="calc-solve-opts">
+                            {GROUPS.map((v) => (
+                                <label key={v.id} className={group === v.id ? "on" : ""}>
+                                    <input
+                                        type="radio"
+                                        name="su-group"
+                                        value={v.id}
+                                        checked={group === v.id}
+                                        onChange={() => setGroup(v.id)}
+                                    />
+                                    {v.label}
+                                </label>
+                            ))}
+                        </div>
+                    </fieldset>
+                    <fieldset className="calc-solve su-toggle" aria-label="View">
+                        <div className="calc-solve-opts">
+                            {VIEWS.map((v) => (
+                                <label key={v.id} className={view === v.id ? "on" : ""}>
+                                    <input
+                                        type="radio"
+                                        name="su-view"
+                                        value={v.id}
+                                        checked={view === v.id}
+                                        onChange={() => setView(v.id)}
+                                    />
+                                    {v.label}
+                                </label>
+                            ))}
+                        </div>
+                    </fieldset>
+                </div>
+
+                {group !== "company" && (
+                    <ul className="su-legend" aria-label={`${group === "segment" ? "Segments" : "Countries"}, by money raised`}>
+                        {summary.map((g) => (
+                            <li key={g.key} title={group === "segment" ? STARTUP_SEGMENTS[g.key as StartupSegment].blurb : undefined}>
+                                <i className="su-swatch" style={{ background: groupColor(g.key, group) }} />
+                                <span className="su-legend-name">{groupLabel(g.key, group)}</span>
+                                <span className="su-fig">
+                                    {formatMetric("raisedUsd", g.raised || null, g.floor)} · {g.members.length}
+                                </span>
+                            </li>
                         ))}
-                    </div>
-                </fieldset>
+                    </ul>
+                )}
 
                 <div className={`su-maps${view === "both" ? " both" : ""}`}>
                     {metrics.map((m) => (
-                        <Treemap key={m} metric={m} both={view === "both"} focus={focus} setFocus={setFocus} />
+                        <Treemap key={m} metric={m} both={view === "both"} group={group} focus={focus} setFocus={setFocus} />
                     ))}
                 </div>
 
@@ -266,7 +408,7 @@ export function Startups({ menuOpen = false }: { menuOpen?: boolean }) {
                         <span>Output</span>
                         <span />
                     </div>
-                    {STARTUPS.map((s) => (
+                    {rows.map((s) => (
                         <details
                             key={s.id}
                             className={`su-row${focus === s.id ? " on" : ""}`}
@@ -275,7 +417,7 @@ export function Startups({ menuOpen = false }: { menuOpen?: boolean }) {
                         >
                             <summary>
                                 <span className="su-co">
-                                    <i className="su-swatch" style={{ background: COLORS[s.id] }} />
+                                    <i className="su-swatch" style={{ background: groupColor(groupKey(s, group), group) }} />
                                     <CompanyLogo name={s.id} size={22} className="su-logo" />
                                     {s.name}
                                     <span className="su-flag" role="img" aria-label={countryLabel(s.country)} title={countryLabel(s.country)}>
@@ -291,6 +433,8 @@ export function Startups({ menuOpen = false }: { menuOpen?: boolean }) {
                             <dl className="su-detail">
                                 <dt>HQ</dt>
                                 <dd>{s.hq}</dd>
+                                <dt>Segment</dt>
+                                <dd>{STARTUP_SEGMENTS[s.segment].label}</dd>
                                 <dt>Country</dt>
                                 <dd>{countryLabel(s.country)}</dd>
                                 <dt>Round</dt>
