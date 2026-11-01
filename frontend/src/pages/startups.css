@@ -1,8 +1,6 @@
 /* /startups: treemaps of funding and reported output. Same drafting-sheet
    rules as tools.css; tiles are flat fills, undisclosed ones hatched. */
 
-.su-toggle { max-width: 360px; }
-.su-toggle label { min-height: 30px; font-size: 12px; }
 .su-maps { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; }
 .su-maps.both { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .su-map { margin: 0; border: 1px solid var(--line); padding: 12px; min-width: 0; }
@@ -74,7 +72,6 @@
 @media (max-width: 860px) {
     .tool-main:has(.su-maps) { padding: 0 16px 24px; }
     .su-maps.both { grid-template-columns: minmax(0, 1fr); }
-    .su-toggle label { min-height: 44px; }
     .su-head,
     .su-row summary { grid-template-columns: minmax(0, 1fr) auto auto 14px; gap: 10px; padding: 10px 8px; font-size: 14px; }
     .su-head { display: none; }
@@ -83,14 +80,30 @@
 }
 
 /* View and grouping toggles share one row at the top right of the maps. */
-.su-controls { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 12px; margin: 20px 0 12px; }
-.su-controls .su-toggle { margin: 0; }
-.su-legend { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 0 0 12px; padding: 0; list-style: none; font-size: 13px; }
+.su-controls { display: flex; align-items: center; gap: 16px; min-height: 28px; margin: 20px 0 12px; }
+.su-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0; padding: 0; list-style: none; font-size: 13px; }
+/* Two quiet on/off pills; pressing the lit one returns to per-company colour. */
+.su-pills { display: flex; gap: 6px; margin-left: auto; }
+.su-pill {
+    padding: 4px 10px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: none;
+    color: var(--muted);
+    font: 500 12px var(--sans);
+    cursor: pointer;
+}
+.su-pill:hover { color: var(--text); }
+.su-pill[aria-pressed="true"] { border-color: var(--cyan); color: var(--text); }
+.su-pill:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
 .su-legend li { display: inline-flex; align-items: center; }
 .su-legend .su-swatch { margin-right: 8px; }
 .su-legend-name { margin-right: 8px; font-weight: 600; }
 .su-legend .su-fig { font-size: 12px; color: var(--muted); }
 @media (max-width: 860px) {
-    .su-controls .su-toggle { flex: 1 1 100%; max-width: none; }
+    .su-controls { flex-wrap: wrap; }
+    .su-pills { order: -1; margin-left: 0; }
+    .su-pill { min-height: 36px; padding: 0 14px; }
 }
-.su-controls .su-toggle label { padding: 0 14px; white-space: nowrap; }
+/* Tile marks sit on a white plate so any logo reads on any fill. */
+.su-tile-logo { border-radius: 6px; background: #fff; border: 0; }

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { PublicHeader } from "../components/PublicHeader";
 import { PublicFooter } from "../components/PublicFooter";
 import { CompanyLogo } from "../components/CompanyLogo";
+import { resolveBrand } from "../../../src/brands";
 import { countryFlag } from "../../../src/country-flag";
 import {
     countryLabel,
@@ -18,6 +19,13 @@ import "./tools.css";
 import "./startups.css";
 
 const TITLE = "Actuator startups";
+// Tiles show a mark only when a real logo can load: self-hosted, or a known
+// domain with the logo provider's key set. Initials would just repeat the name.
+const HAS_LOGO_KEY = Boolean(import.meta.env.VITE_LOGO_DEV_TOKEN);
+const hasLogo = (id: string): boolean => {
+    const b = resolveBrand(id);
+    return Boolean(b?.logo || (b?.domain && HAS_LOGO_KEY));
+};
 // Canvas per view: one wide map, or two squarer ones side by side.
 const SIZE = { single: { W: 1000, H: 440 }, both: { W: 640, H: 440 } };
 // An undisclosed figure still gets a tile so the company stays on the map,
@@ -47,8 +55,8 @@ const COUNTRY_COLORS: Record<string, string> = Object.fromEntries(
 // How tiles are coloured and clustered: one colour per company, or nested
 // treemaps per segment or per country.
 type Group = "company" | "segment" | "country";
-const GROUPS: { id: Group; label: string }[] = [
-    { id: "company", label: "Company" },
+// "company" is the resting state, so only the two groupings get a pill.
+const PILLS: { id: Exclude<Group, "company">; label: string }[] = [
     { id: "segment", label: "Segment" },
     { id: "country", label: "Country" },
 ];
@@ -94,13 +102,6 @@ function summarise(group: Group): GroupSummary[] {
         }))
         .sort((a, b) => b.raised - a.raised);
 }
-
-type View = StartupMetric | "both";
-const VIEWS: { id: View; label: string }[] = [
-    { id: "raisedUsd", label: "Money raised" },
-    { id: "unitsPerMonth", label: "Actuators made" },
-    { id: "both", label: "Side by side" },
-];
 
 interface Tile {
     s: Startup;
@@ -250,7 +251,7 @@ function Treemap({
                     const known = t.value !== null;
                     const dim = focus !== null && focus !== t.s.id;
                     const clip = `su-clip-${metric}-${t.s.id}`;
-                    const logo = t.s.logo !== undefined && t.w > 120 && t.h > 70;
+                    const logo = hasLogo(t.s.id) && t.w > 120 && t.h > 70;
                     const textX = t.x + (logo ? 56 : 16);
                     const valueText = formatMetric(metric, t.value, metric === "raisedUsd" && t.s.raisedIsFloor);
                     // Big figures only where the whole value fits at that size.
@@ -283,20 +284,9 @@ function Treemap({
                                 <rect x={t.x} y={t.y} width={t.w} height={t.h} />
                             </clipPath>
                             {logo && (
-                                <>
-                                    <clipPath id={`${clip}-logo`}>
-                                        <rect x={t.x + 14} y={t.y + 12} width={30} height={30} rx={6} />
-                                    </clipPath>
-                                    <rect x={t.x + 14} y={t.y + 12} width={30} height={30} rx={6} fill="#fff" />
-                                    <image
-                                        href={t.s.logo}
-                                        x={t.x + 14}
-                                        y={t.y + 12}
-                                        width={30}
-                                        height={30}
-                                        clipPath={`url(#${clip}-logo)`}
-                                    />
-                                </>
+                                <foreignObject x={t.x + 14} y={t.y + 12} width={30} height={30}>
+                                    <CompanyLogo name={t.s.id} size={30} className="su-tile-logo" />
+                                </foreignObject>
                             )}
                             <text clipPath={`url(#${clip})`} x={textX} y={t.y + 36} className={`su-name${known ? "" : " muted"}`}>
                                 {name}
@@ -318,7 +308,6 @@ function Treemap({
 }
 
 export function Startups({ menuOpen = false }: { menuOpen?: boolean }) {
-    const [view, setView] = useState<View>("both");
     const [group, setGroup] = useState<Group>("company");
     const [focus, setFocus] = useState<string | null>(null);
     useEffect(() => {
@@ -328,7 +317,7 @@ export function Startups({ menuOpen = false }: { menuOpen?: boolean }) {
             document.title = prev;
         };
     }, []);
-    const metrics: StartupMetric[] = view === "both" ? ["raisedUsd", "unitsPerMonth"] : [view];
+    const metrics: StartupMetric[] = ["raisedUsd", "unitsPerMonth"];
     const summary = group === "company" ? [] : summarise(group);
     const rows = group === "company" ? STARTUPS : summary.flatMap((g) => g.members);
 
@@ -346,58 +335,38 @@ export function Startups({ menuOpen = false }: { menuOpen?: boolean }) {
                     </p>
                 </header>
 
+                {/* Colour is per company until a pill is pressed; the legend exists only
+                    while one is, so the default view carries no key at all. */}
                 <div className="su-controls">
-                    <fieldset className="calc-solve su-toggle" aria-label="Group by">
-                        <div className="calc-solve-opts">
-                            {GROUPS.map((v) => (
-                                <label key={v.id} className={group === v.id ? "on" : ""}>
-                                    <input
-                                        type="radio"
-                                        name="su-group"
-                                        value={v.id}
-                                        checked={group === v.id}
-                                        onChange={() => setGroup(v.id)}
-                                    />
-                                    {v.label}
-                                </label>
+                    {group !== "company" && (
+                        <ul className="su-legend" aria-label={`${group === "segment" ? "Segments" : "Countries"}, by money raised`}>
+                            {summary.map((g) => (
+                                <li key={g.key} title={group === "segment" ? STARTUP_SEGMENTS[g.key as StartupSegment].blurb : undefined}>
+                                    <i className="su-swatch" style={{ background: groupColor(g.key, group) }} />
+                                    <span className="su-legend-name">{groupLabel(g.key, group)}</span>
+                                    <span className="su-fig">{formatMetric("raisedUsd", g.raised || null, g.floor)}</span>
+                                </li>
                             ))}
-                        </div>
-                    </fieldset>
-                    <fieldset className="calc-solve su-toggle" aria-label="View">
-                        <div className="calc-solve-opts">
-                            {VIEWS.map((v) => (
-                                <label key={v.id} className={view === v.id ? "on" : ""}>
-                                    <input
-                                        type="radio"
-                                        name="su-view"
-                                        value={v.id}
-                                        checked={view === v.id}
-                                        onChange={() => setView(v.id)}
-                                    />
-                                    {v.label}
-                                </label>
-                            ))}
-                        </div>
-                    </fieldset>
+                        </ul>
+                    )}
+                    <div className="su-pills" role="group" aria-label="Colour by">
+                        {PILLS.map((p) => (
+                            <button
+                                key={p.id}
+                                type="button"
+                                className="su-pill"
+                                aria-pressed={group === p.id}
+                                onClick={() => setGroup(group === p.id ? "company" : p.id)}
+                            >
+                                {p.label}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
-                {group !== "company" && (
-                    <ul className="su-legend" aria-label={`${group === "segment" ? "Segments" : "Countries"}, by money raised`}>
-                        {summary.map((g) => (
-                            <li key={g.key} title={group === "segment" ? STARTUP_SEGMENTS[g.key as StartupSegment].blurb : undefined}>
-                                <i className="su-swatch" style={{ background: groupColor(g.key, group) }} />
-                                <span className="su-legend-name">{groupLabel(g.key, group)}</span>
-                                <span className="su-fig">
-                                    {formatMetric("raisedUsd", g.raised || null, g.floor)} · {g.members.length}
-                                </span>
-                            </li>
-                        ))}
-                    </ul>
-                )}
-
-                <div className={`su-maps${view === "both" ? " both" : ""}`}>
+                <div className="su-maps both">
                     {metrics.map((m) => (
-                        <Treemap key={m} metric={m} both={view === "both"} group={group} focus={focus} setFocus={setFocus} />
+                        <Treemap key={m} metric={m} both group={group} focus={focus} setFocus={setFocus} />
                     ))}
                 </div>
 
