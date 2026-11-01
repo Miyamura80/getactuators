@@ -15,7 +15,7 @@ export function startupsBody(): string {
         countryLabel(s.country),
         STARTUP_SEGMENTS[s.segment].label,
         s.drives
-            ? s.drives.types.map((d) => STARTUP_DRIVES[d]).join(", ")
+            ? `${s.drives.types.map((d) => STARTUP_DRIVES[d]).join(", ")} (${mdLink(s.drives.source.label, s.drives.source.url)})`
             : "Not sourced",
         formatMetric("raisedUsd", s.raisedUsd, s.raisedIsFloor),
         s.round ?? "Undisclosed",

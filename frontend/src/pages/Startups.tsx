@@ -276,7 +276,7 @@ function Treemap({
                             onFocus={() => setFocus(t.s.id)}
                             onBlur={() => setFocus(null)}
                         >
-                            <title>{`${t.s.name}: ${valueText}${t.s.drives ? ` · ${t.s.drives.types.map((d) => STARTUP_DRIVES[d]).join(", ")}` : ""}`}</title>
+                            <title>{`${t.s.name}: ${valueText} · ${STARTUP_SEGMENTS[t.s.segment].label}${t.s.drives ? ` · ${t.s.drives.types.map((d) => STARTUP_DRIVES[d]).join(", ")}` : ""}`}</title>
                             <rect
                                 x={t.x + 1}
                                 y={t.y + 1}

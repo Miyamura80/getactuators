@@ -195,10 +195,10 @@ const INVESTORS: Row[] = [
     // 燈 (Akari Inc.), Aster's largest shareholder since Sep 2026; domain unverified.
     ["akari", "Akari", null],
     // Lead investors of the robot-actuator startups added Nov 2026; domains unverified.
-    ["addor-capital", "Addor Capital", null, ["毅达资本"]],
+    ["addor-capital", "Addor Capital", null],
     ["beijing-ai-fund", "Beijing AI Industry Investment Fund", null],
     ["huatai-zijin", "Huatai Zijin", null],
-    ["cowin-capital", "Cowin Capital", null, ["同创伟业"]],
+    ["cowin-capital", "Cowin Capital", null],
     ["shunwei", "Shunwei Capital", null],
     ["htgf", "HTGF", null, ["High-Tech Gründerfonds"]],
     ["aria", "ARIA", null, ["Advanced Research and Invention Agency"]],
