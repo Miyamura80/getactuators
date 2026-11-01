@@ -98,6 +98,7 @@ export const STARTUPS: Startup[] = [
         id: "encos",
         name: "Encos",
         segment: "joint",
+        url: "https://www.encos.cn/",
         hq: "Nanjing, Jiangsu",
         country: "CN",
         // ≥¥100M cumulative by Jun 2025 (~¥7.18/$) plus a >¥300M Series B (Sep 2026, ¥6.72/$).
@@ -130,6 +131,8 @@ export const STARTUPS: Startup[] = [
         id: "quanzhibo",
         name: "Quanzhibo",
         segment: "joint",
+        // HTTP only: https://www.motorevo.cn/ returns 502 (Nov 2026).
+        url: "http://www.motorevo.cn/",
         hq: "Wuxi, Jiangsu",
         country: "CN",
         // Four rounds of at least ¥100M each (A Sep 2025, A+ Nov 2025, A++ Apr 2026, B Sep 2026)
@@ -201,6 +204,7 @@ export const STARTUPS: Startup[] = [
         id: "inspire-robots",
         name: "Inspire Robots",
         segment: "linear",
+        url: "https://www.inspire-robots.com/",
         hq: "Beijing",
         country: "CN",
         // B2 >¥100M (Sep 2024, ~¥7.02/$) plus C1 and C2 ≥¥100M combined (Feb 2026, ¥6.87/$).
@@ -264,6 +268,7 @@ export const STARTUPS: Startup[] = [
         id: "juxie",
         name: "Juxie",
         segment: "joint",
+        url: "https://www.juxiedrive.com/",
         hq: "Wuxi, Jiangsu",
         country: "CN",
         // Series A+ >¥100M (Oct 2026, ~¥6.72/$). Earlier rounds are not counted.
