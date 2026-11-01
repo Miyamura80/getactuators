@@ -85,6 +85,9 @@
 /* Two quiet on/off pills; pressing the lit one returns to per-company colour. */
 .su-pills { display: flex; gap: 6px; margin-left: auto; }
 .su-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     padding: 4px 10px;
     border: 1px solid var(--line);
     border-radius: 999px;

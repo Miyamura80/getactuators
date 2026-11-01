@@ -56,9 +56,15 @@ const COUNTRY_COLORS: Record<string, string> = Object.fromEntries(
 // treemaps per segment or per country.
 type Group = "company" | "segment" | "country";
 // "company" is the resting state, so only the two groupings get a pill.
-const PILLS: { id: Exclude<Group, "company">; label: string }[] = [
-    { id: "segment", label: "Segment" },
-    { id: "country", label: "Country" },
+const PILLS: { id: Exclude<Group, "company">; label: string; icon: string }[] = [
+    // Stacked layers: what part of the drive train the company sells.
+    { id: "segment", label: "Segment", icon: "M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5M3 17l9 5 9-5" },
+    // Globe: where the company is from.
+    {
+        id: "country",
+        label: "Country",
+        icon: "M12 3a9 9 0 100 18 9 9 0 000-18zM3 12h18M12 3c2.5 2.5 3.8 5.5 3.8 9s-1.3 6.5-3.8 9M12 3C9.5 5.5 8.2 8.5 8.2 12s1.3 6.5 3.8 9",
+    },
 ];
 
 function groupKey(s: Startup, group: Group): string {
@@ -358,6 +364,9 @@ export function Startups({ menuOpen = false }: { menuOpen?: boolean }) {
                                 aria-pressed={group === p.id}
                                 onClick={() => setGroup(group === p.id ? "company" : p.id)}
                             >
+                                <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d={p.icon} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+                                </svg>
                                 {p.label}
                             </button>
                         ))}
