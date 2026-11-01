@@ -1,6 +1,6 @@
 # Build the Vite frontend and serve it (plus the agent-facing routes in
 # src/server/) with Bun. Deployed on Railway.
-FROM oven/bun:1.4.3@sha256:ec06c3b6cea04192ae6770c434f668ca41d343ad19fa6472216c7b48be39c598 AS build
+FROM oven/bun:1.4.4@sha256:1d22548f177f4ff38e0c15baa3c2c46c6c2060ba2d1bc573bb4720b407548f1d AS build
 WORKDIR /app
 COPY frontend/package.json frontend/bun.lock ./frontend/
 RUN cd frontend && bun install --frozen-lockfile
@@ -25,7 +25,7 @@ ARG VITE_LOGO_DEV_TOKEN=""
 ENV VITE_LOGO_DEV_TOKEN=$VITE_LOGO_DEV_TOKEN
 RUN cd frontend && bun run build
 
-FROM oven/bun:1.4.3@sha256:ec06c3b6cea04192ae6770c434f668ca41d343ad19fa6472216c7b48be39c598 AS runtime
+FROM oven/bun:1.4.4@sha256:1d22548f177f4ff38e0c15baa3c2c46c6c2060ba2d1bc573bb4720b407548f1d AS runtime
 # ca-certificates: listed explicitly so each build pulls the post-eMudhra trust store
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
