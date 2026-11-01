@@ -103,11 +103,6 @@
         "source": "https://www.dyna.co/icon.svg"
     },
     {
-        "id": "encos",
-        "logo": "/logos/startups/encos.jpg",
-        "source": "Logo.dev logo for encos.cn (Nov 2026)"
-    },
-    {
         "id": "feetech",
         "logo": "/logos/brands/feetech.png",
         "tile": "light",
