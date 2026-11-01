@@ -20,6 +20,7 @@ export interface Startup {
     // Total disclosed funding in USD.
     raisedUsd: number | null;
     // True when some rounds or grants are undisclosed, so the sum is a floor.
+    // Each amount is converted at roughly its own date's exchange rate.
     raisedIsFloor?: boolean;
     round: string | null;
     leadInvestor: string | null;
@@ -43,24 +44,52 @@ export function countryLabel(code: string): string {
 
 export const STARTUPS: Startup[] = [
     {
+        id: "encos",
+        name: "Encos",
+        hq: "Nanjing, Jiangsu",
+        country: "CN",
+        // ≥¥100M cumulative by Jun 2025 (~¥7.18/$) plus a >¥300M Series B (Sep 2026, ¥6.72/$).
+        raisedUsd: 58_600_000,
+        raisedIsFloor: true,
+        round: "Series B, >¥300M (Sep 2026)",
+        leadInvestor: null,
+        unitsPerMonth: null,
+        volumeNote:
+            "No volume disclosed. Makes integrated joint modules for humanoid robots.",
+        source: {
+            label: "Pedaily, Sep 2026",
+            url: "https://news.pedaily.cn/202609/569015.shtml",
+        },
+        moreSources: [
+            {
+                label: "Rongcai, Jun 2025",
+                url: "https://www.rccaijing.com/news-7340293827615978793.html",
+            },
+        ],
+    },
+    {
         id: "quanzhibo",
         name: "Quanzhibo",
         hq: "Wuxi, Jiangsu",
         country: "CN",
-        // At least ¥410M across the rounds with an amount, at ~¥7.1/$. Several rounds
-        // (angel, Pre-A+, A+++) are undisclosed, so this is a floor.
-        raisedUsd: 57_700_000,
+        // Four rounds of at least ¥100M each (A Sep 2025, A+ Nov 2025, A++ Apr 2026, B Sep 2026)
+        // at their round-date rates (¥7.12 to ¥6.71/$). The A+++ and early rounds are undisclosed.
+        raisedUsd: 57_400_000,
         raisedIsFloor: true,
-        round: "Series B, several hundred million ¥ (Sep 2026); eight rounds since 2023",
+        round: "Series B, several hundred million ¥ (Sep 2026)",
         leadInvestor: "Addor Capital",
         unitsPerMonth: null,
         volumeNote:
-            "No monthly rate disclosed. Press reported over 100,000 joint modules shipped in 2025 and plans for million-unit annual capacity.",
+            "No monthly rate from the company. An investor put 2025 shipments above 100,000 joint modules and June 2026 alone above 60,000; reported annual capacity is 1 million units.",
         source: {
             label: "Beijing News, Sep 2026",
             url: "https://www.bjnews.com.cn/detail/1788600417129849.html",
         },
         moreSources: [
+            {
+                label: "Beijing Daily, Apr 2026",
+                url: "https://xinwen.bjd.com.cn/content/s69e752b6e4b0687a289461f5.html",
+            },
             {
                 label: "Pedaily, Nov 2025",
                 url: "https://news.pedaily.cn/202511/556972.shtml",
@@ -72,30 +101,27 @@ export const STARTUPS: Startup[] = [
         ],
     },
     {
-        id: "encos",
-        name: "Encos",
-        hq: "Nanjing, Jiangsu",
+        id: "zeroerr",
+        name: "ZeroErr",
+        url: "https://www.zeroerr.cn/",
+        hq: "Shenzhen, Guangdong",
         country: "CN",
-        // At least ¥400M (>¥100M over three rounds to Jun 2025, >¥300M Series B) at ~¥7.1/$.
-        raisedUsd: 56_300_000,
+        // C ≥¥100M (Apr 2024, ¥7.24/$), C+ ≥¥10M (Mar 2026, ¥6.87/$), C++ ≥¥100M (Jul 2026,
+        // ~¥6.75/$). Five earlier rounds are undisclosed.
+        raisedUsd: 30_100_000,
         raisedIsFloor: true,
-        round: "Series B, >¥300M (Sep 2026)",
-        leadInvestor: null,
+        round: "Series C++, several hundred million ¥ (Jul 2026)",
+        leadInvestor: "Cowin Capital",
         unitsPerMonth: null,
-        volumeNote:
-            "No monthly rate disclosed. Reported over 100,000 joint modules shipped in 2025.",
+        volumeNote: "No volume disclosed. Makes eRob integrated joint modules.",
         source: {
-            label: "Pedaily, Sep 2026",
-            url: "https://news.pedaily.cn/202609/569015.shtml",
+            label: "IT Home, Jul 2026",
+            url: "https://www.ithome.com/0/975/925.htm",
         },
         moreSources: [
             {
-                label: "Rongcai, Jun 2025",
-                url: "https://www.rccaijing.com/news-7340293827615978793.html",
-            },
-            {
-                label: "36Kr",
-                url: "https://pitchhub.36kr.com/project/3418032699880969",
+                label: "Pedaily, Mar 2026",
+                url: "https://news.pedaily.cn/202603/561304.shtml",
             },
         ],
     },
@@ -104,14 +130,15 @@ export const STARTUPS: Startup[] = [
         name: "Inspire Robots",
         hq: "Beijing",
         country: "CN",
-        // At least ¥300M (B2 >¥100M, B3 ~¥100M, C1+C2 >¥100M) at ~¥7.1/$; Series A and B undisclosed.
-        raisedUsd: 42_300_000,
+        // B2 >¥100M (Sep 2024, ~¥7.02/$) plus C1 and C2 ≥¥100M combined (Feb 2026, ¥6.87/$).
+        // Series A, B and B3 are not counted.
+        raisedUsd: 28_800_000,
         raisedIsFloor: true,
         round: "Series C1 and C2, several hundred million ¥ (Feb 2026)",
         leadInvestor: "Beijing AI Industry Investment Fund",
         unitsPerMonth: null,
         volumeNote:
-            "No monthly rate disclosed. Makes micro linear servo actuators and dexterous hands; over 10,000 hands shipped in 2025, targeting 30,000 to 50,000 in 2026.",
+            "No volume disclosed. Makes micro linear servo actuators and dexterous hands.",
         source: {
             label: "Pedaily, Feb 2026",
             url: "https://news.pedaily.cn/202602/561144.shtml",
@@ -121,61 +148,6 @@ export const STARTUPS: Startup[] = [
                 label: "Pedaily, Sep 2024",
                 url: "https://news.pedaily.cn/202409/540834.shtml",
             },
-            { label: "36Kr Japan", url: "https://36kr.jp/487971/" },
-        ],
-    },
-    {
-        id: "juxie",
-        name: "Juxie",
-        hq: "Wuxi, Jiangsu",
-        country: "CN",
-        // About ¥210M (≥¥10M in 2024, ~¥100M Series A, >¥100M Series A+) at ~¥7.1/$.
-        raisedUsd: 29_600_000,
-        raisedIsFloor: true,
-        round: "Series A+, >¥100M (Oct 2026)",
-        leadInvestor: "Huatai Zijin",
-        unitsPerMonth: null,
-        volumeNote:
-            "No monthly rate disclosed. Targets annual capacity of 200,000 joint module sets in 2026 and 1 million in 2027. Johnson Electric holds a minority stake.",
-        source: {
-            label: "10jqka, Oct 2026",
-            url: "https://news.10jqka.com.cn/20261010/c680548800.shtml",
-        },
-        moreSources: [
-            {
-                label: "36Kr, Oct 2026",
-                url: "https://eu.36kr.com/zh/p/4022280284786818",
-            },
-        ],
-    },
-    {
-        id: "zeroerr",
-        name: "ZeroErr",
-        url: "https://www.zeroerr.cn/",
-        hq: "Shenzhen, Guangdong",
-        country: "CN",
-        // At least ¥210M (C ≥¥100M, C+ ≥¥10M, C++ ≥¥100M) at ~¥7.1/$; five earlier rounds
-        // and the Sep 2026 C+++ are undisclosed.
-        raisedUsd: 29_600_000,
-        raisedIsFloor: true,
-        round: "Series C+++ (Sep 2026), amount undisclosed",
-        leadInvestor: "Xichen Capital",
-        unitsPerMonth: null,
-        volumeNote:
-            "No monthly rate disclosed. Makes eRob integrated joint modules and reports over 2,000 customers.",
-        source: {
-            label: "IT Home, Jul 2026",
-            url: "https://www.ithome.com/0/975/925.htm",
-        },
-        moreSources: [
-            {
-                label: "Rongcai, Sep 2026",
-                url: "https://m.rccaijing.com/news-7505525707033474646.html",
-            },
-            {
-                label: "Pedaily, Mar 2026",
-                url: "https://news.pedaily.cn/202603/561304.shtml",
-            },
         ],
     },
     {
@@ -183,45 +155,47 @@ export const STARTUPS: Startup[] = [
         name: "Nousbot",
         hq: "Shenzhen, Guangdong",
         country: "CN",
-        // About ¥200M (Series A >¥100M, A+ ~¥100M) at ~¥7.1/$; angel rounds undisclosed.
-        raisedUsd: 28_200_000,
+        // Series A >¥100M (Mar 2026, ~¥6.9/$) plus an A+ of just under ¥100M, counted as ¥90M
+        // (Aug 2026, ~¥6.8/$). Angel rounds are undisclosed.
+        raisedUsd: 27_700_000,
         raisedIsFloor: true,
-        round: "Series A+, ~¥100M (Aug 2026)",
+        round: "Series A+, just under ¥100M (Aug 2026)",
         leadInvestor: "Shunwei Capital",
         unitsPerMonth: null,
         volumeNote:
-            "No monthly rate disclosed. Makes micro planetary roller screws for humanoid joints and hands; its Suzhou plant runs at about 3 million screws a year, targeting 10 million by end of 2026.",
+            "No volume disclosed. Makes micro planetary roller screws for humanoid joints and hands; expanding toward 10 million screws a year by end of 2026.",
         source: {
             label: "Pedaily, Mar 2026",
             url: "https://news.pedaily.cn/202603/561493.shtml",
         },
         moreSources: [
-            { label: "36Kr Japan, Aug 2026", url: "https://36kr.jp/?p=501261" },
+            {
+                label: "Pedaily, Aug 2026",
+                url: "https://news.pedaily.cn/202608/567646.shtml",
+            },
         ],
     },
     {
-        id: "bonsystems",
-        name: "Bonsystems",
-        url: "https://www.bonsystems.com/",
-        hq: "Changwon",
-        country: "KR",
-        // KRW 20.0B (5.0B May 2025, 0.5B Dec 2025, 14.5B Jun 2026) at ~KRW 1,400/$. KONEX-listed
-        // since Sep 2025; earlier rounds are unverified.
-        raisedUsd: 14_300_000,
+        id: "juxie",
+        name: "Juxie",
+        hq: "Wuxi, Jiangsu",
+        country: "CN",
+        // Series A+ >¥100M (Oct 2026, ~¥6.72/$). Earlier rounds are not counted.
+        raisedUsd: 14_900_000,
         raisedIsFloor: true,
-        round: "KRW 14.5B RCPS (Jun 2026)",
-        leadInvestor: "NH Investment & Securities",
+        round: "Series A+, >¥100M (Oct 2026)",
+        leadInvestor: "Huatai Zijin",
         unitsPerMonth: null,
         volumeNote:
-            "No volume disclosed. Makes compact cycloidal reducers and joint actuators; the Jun 2026 round funds mass-production equipment.",
+            "No volume disclosed. Plans annual capacity of 200,000 joint module sets in 2026, 1 million in 2027 and 2 million in 2028. Johnson Electric holds a minority stake.",
         source: {
-            label: "Bonsystems, Jun 2026",
-            url: "https://www.bonsystems.com/media-center/press-release/secured-investment/",
+            label: "10jqka, Oct 2026",
+            url: "https://news.10jqka.com.cn/20261010/c680548800.shtml",
         },
         moreSources: [
             {
-                label: "Wowtale, Jun 2025",
-                url: "https://en.wowtale.net/2025/06/01/231226/",
+                label: "STAR Market Daily, Oct 2026",
+                url: "https://www.chinastarmarket.cn/detail/2501356",
             },
         ],
     },
@@ -267,7 +241,7 @@ export const STARTUPS: Startup[] = [
         hq: "Long Beach, CA",
         country: "US",
         raisedUsd: 11_500_000,
-        round: "Seed / Series A (Aug 2026)",
+        round: "Series A (Aug 2026)",
         leadInvestor: "Greycroft",
         unitsPerMonth: 10_000,
         volumeNote: "About 10,000 motors a month, aiming past 40,000 by December 2026.",
@@ -275,6 +249,12 @@ export const STARTUPS: Startup[] = [
             label: "FinSMEs, Aug 2026",
             url: "https://www.finsmes.com/2026/08/atlas-motion-raises-11-5m-in-funding.html",
         },
+        moreSources: [
+            {
+                label: "Forbes, Aug 2026",
+                url: "https://www.forbes.com/sites/johnkoetsier/2026/08/06/defense-startup-ai-turns-2-months-of-engineering-into-20-minutes/",
+            },
+        ],
     },
     {
         id: "westmag",
@@ -295,23 +275,29 @@ export const STARTUPS: Startup[] = [
         },
     },
     {
-        id: "myactuator",
-        name: "MyActuator",
-        url: "https://www.myactuator.com/",
-        hq: "Suzhou, Jiangsu",
-        country: "CN",
-        // At least ¥50M (Pre-A and A, Jun 2026) at ~¥7.1/$; the angel round is undisclosed.
-        raisedUsd: 7_000_000,
+        id: "bonsystems",
+        name: "Bonsystems",
+        url: "https://www.bonsystems.com/",
+        hq: "Changwon",
+        country: "KR",
+        // KRW 14.5B RCPS (Jun 2026, ~KRW 1,400/$). Earlier 2025 rounds are reported but unverified.
+        raisedUsd: 10_400_000,
         raisedIsFloor: true,
-        round: "Pre-A and A, >¥50M (Jun 2026)",
+        round: "KRW 14.5B RCPS (Jun 2026)",
         leadInvestor: null,
         unitsPerMonth: null,
         volumeNote:
-            "No monthly rate disclosed. A planned Dongguan base is sized for 100,000 joint modules a year.",
+            "No volume disclosed. Makes compact cycloidal reducers and joint actuators; the Jun 2026 round funds mass-production equipment.",
         source: {
-            label: "China.com, Jun 2026",
-            url: "https://m.tech.china.com/articles/20260608/202606081888489.html",
+            label: "Newsis, Jun 2026",
+            url: "https://www.newsis.com/view/NISX20260611_0003665144",
         },
+        moreSources: [
+            {
+                label: "Bonsystems",
+                url: "https://www.bonsystems.com/media-center/press-release/secured-investment/",
+            },
+        ],
     },
     {
         id: "metismotion",
@@ -319,49 +305,27 @@ export const STARTUPS: Startup[] = [
         url: "https://www.metismotion.com/",
         hq: "Munich",
         country: "DE",
-        // €5.5M equity (€1M 2018, €1.5M 2021, €3M 2022) at ~$1.15/€. An EIC Accelerator
-        // grant (Feb 2025) is undisclosed, so this is a floor.
-        raisedUsd: 6_300_000,
+        // Equity >€1M (2018), €1.5M (2021), €3M (2022) plus a €2,467,297 EIC grant (May 2025),
+        // each at its own year's rate (~$1.13 to $1.21/€).
+        raisedUsd: 9_100_000,
         raisedIsFloor: true,
-        round: "€3M (Jan 2022); EIC Accelerator grant (Feb 2025)",
+        round: "EIC grant, €2.47M (May 2025)",
         leadInvestor: "HTGF",
         unitsPerMonth: null,
         volumeNote:
             "No volume disclosed. Makes naXture compact high-force linear actuators for automation and robotics.",
         source: {
-            label: "munich startup, Jan 2022",
-            url: "https://www.munich-startup.de/en/79351",
+            label: "CORDIS",
+            url: "https://cordis.europa.eu/project/id/101218714",
         },
         moreSources: [
             {
-                label: "HTGF, Dec 2018",
-                url: "https://www.htgf.de/en/tech-start-up-metismotion-receives-more-than-one-million-euro-in-first-investment-round/",
+                label: "HTGF, Jan 2022",
+                url: "https://www.htgf.de/en/htgf-financing-metismotion-2/",
             },
-        ],
-    },
-    {
-        id: "artimus-robotics",
-        name: "Artimus Robotics",
-        url: "https://www.artimusrobotics.com/",
-        hq: "Boulder, CO",
-        country: "US",
-        // Army STTR Phase II (up to $1.1M, 2022) plus ARIA £1.5M (~$2.0M, Feb 2025). The 2020
-        // seed and earlier SBIR awards are not itemised, so this is a floor.
-        raisedUsd: 3_100_000,
-        raisedIsFloor: true,
-        round: "ARIA £1.5M grant (Feb 2025)",
-        leadInvestor: "ARIA",
-        unitsPerMonth: null,
-        volumeNote:
-            "No volume disclosed. Makes HASEL electrohydraulic soft actuators; BizWest put grants and contracts above $3.5M by 2022.",
-        source: {
-            label: "Techleap, Feb 2025",
-            url: "https://finder.techleap.nl/news/feed/artimus-robotics-wins-1-5m-aria-funding",
-        },
-        moreSources: [
             {
-                label: "HigherGov",
-                url: "https://www.highergov.com/contract/W911NF22C0024/",
+                label: "HTGF, May 2021",
+                url: "https://www.htgf.de/en/htgf-financing-metismotion/",
             },
         ],
     },
@@ -388,8 +352,31 @@ export const STARTUPS: Startup[] = [
         ],
     },
     {
+        id: "artimus-robotics",
+        name: "Artimus Robotics",
+        url: "https://www.artimusrobotics.com/",
+        hq: "Boulder, CO",
+        country: "US",
+        // Army STTR Phase II $1.15M (2022) plus £115,961 paid by ARIA (Jul 2025, ~$1.33/£). The 2020
+        // seed and other SBIR awards are undisclosed or unconfirmed.
+        raisedUsd: 1_300_000,
+        raisedIsFloor: true,
+        round: "Army STTR Phase II, $1.15M (Jun 2022)",
+        leadInvestor: "ARIA",
+        unitsPerMonth: null,
+        volumeNote: "No volume disclosed. Makes HASEL electrohydraulic soft actuators.",
+        source: { label: "SBIR.gov", url: "https://www.sbir.gov/awards/198231" },
+        moreSources: [
+            {
+                label: "ARIA, FY25/26 Q2",
+                url: "https://aria.org.uk/media/0usfmzui/aria-end-of-q2-fy25-26.pdf",
+            },
+        ],
+    },
+    {
         id: "index-robotics",
         name: "Index Robotics",
+        url: "https://index-robotics.com/",
         hq: "Gyeonggi",
         country: "KR",
         // KRW 1.5B seed at ~KRW 1,400/$.
@@ -397,11 +384,15 @@ export const STARTUPS: Startup[] = [
         round: "Seed, KRW 1.5B (Feb 2026)",
         leadInvestor: "Futureplay",
         unitsPerMonth: null,
-        volumeNote: "No volume disclosed. Makes IA Series humanoid joint actuators.",
+        volumeNote:
+            "No volume disclosed. Makes IA Series humanoid joint actuators and an upper-body humanoid built on them.",
         source: {
             label: "Wowtale, Feb 2026",
             url: "https://en.wowtale.net/2026/02/20/233542/",
         },
+        moreSources: [
+            { label: "Futureplay", url: "https://futureplay.co/our-companies/2079" },
+        ],
     },
     {
         id: "mab-robotics",
@@ -409,18 +400,40 @@ export const STARTUPS: Startup[] = [
         url: "https://www.mabrobotics.pl/",
         hq: "Poznań",
         country: "PL",
-        // PLN 1.0M NCBR BRIdge Alfa via YouNick Mint (Sep 2020) at ~$0.27/PLN; other grants undisclosed.
-        raisedUsd: 270_000,
+        // PLN 1M from YouNick Mint under NCBR BRIdge Alfa (2020, ~$0.26/PLN).
+        raisedUsd: 260_000,
         raisedIsFloor: true,
-        round: "PLN 1.0M (Sep 2020)",
+        round: "PLN 1M (2020)",
         leadInvestor: "YouNick Mint",
         unitsPerMonth: null,
         volumeNote:
             "No volume disclosed. Makes high-torque actuators and motor controllers for legged robots.",
         source: {
-            label: "NCBR",
-            url: "https://www.gov.pl/web/ncbr/bridge-alfa-by-younick-mint-sp-z-oo-sp-k",
+            label: "MamStartup, 2022",
+            url: "https://mamstartup.pl/roboty-kroczace-moga-zapobiegac-awariom-w-infrastrukturze-podziemnej-miast-oraz-poprawic-bezpieczenstwo-w-kopalniach-jakub-bartoszek-mab-robotics/",
         },
+        moreSources: [
+            {
+                label: "NCBR",
+                url: "https://www.gov.pl/web/ncbr/bridge-alfa-by-younick-mint-sp-z-oo-sp-k",
+            },
+        ],
+    },
+    {
+        id: "myactuator",
+        name: "MyActuator",
+        url: "https://www.myactuator.com/",
+        hq: "Kunshan, Jiangsu",
+        country: "CN",
+        // A Pre-A and A of over ¥50M was reported in Jun 2026, but the article is gone and no
+        // second source confirms it.
+        raisedUsd: null,
+        round: "Pre-A and A reported (Jun 2026), amount unconfirmed",
+        leadInvestor: null,
+        unitsPerMonth: null,
+        volumeNote:
+            "No volume disclosed. Makes integrated joint motors used widely in humanoid and legged robots.",
+        source: { label: "myactuator.com", url: "https://www.myactuator.com/" },
     },
     {
         id: "caldera",
