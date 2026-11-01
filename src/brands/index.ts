@@ -194,17 +194,34 @@ const INVESTORS: Row[] = [
     ["greycroft", "Greycroft", "greycroft.com"],
     // 燈 (Akari Inc.), Aster's largest shareholder since Sep 2026; domain unverified.
     ["akari", "Akari", null],
+    // Lead investors of the robot-actuator startups added Nov 2026; domains unverified.
+    ["addor-capital", "Addor Capital", null, ["毅达资本"]],
+    ["beijing-ai-fund", "Beijing AI Industry Investment Fund", null],
+    ["huatai-zijin", "Huatai Zijin", null],
+    ["xichen-capital", "Xichen Capital", null],
+    ["shunwei", "Shunwei Capital", null],
+    ["nh-investment", "NH Investment & Securities", null],
+    ["htgf", "HTGF", null, ["High-Tech Gründerfonds"]],
+    ["aria", "ARIA", null, ["Advanced Research and Invention Agency"]],
+    ["hongshan", "HongShan", null, ["HongShan Seed"]],
+    ["futureplay", "Futureplay", null],
+    ["younick-mint", "YouNick Mint", null],
 ];
 
 const host = (url: string): string => new URL(url).hostname.replace(/^www\./, "");
 
-// /startups rows carry their own site and, usually, a self-hosted logo.
-const STARTUP_ENTRIES: BrandEntry[] = STARTUPS.map((s) => ({
-    id: s.id,
-    name: s.name,
-    domain: host(s.url),
-    ...(s.logo ? { logo: s.logo } : {}),
-}));
+// /startups rows carry their own site and, usually, a self-hosted logo. A
+// startup the catalog already lists as a maker (RobStride, MyActuator) keeps
+// that entry, so ids stay unique.
+const MAKER_IDS = new Set(MAKERS.map(([id]) => id));
+const STARTUP_ENTRIES: BrandEntry[] = STARTUPS.filter((s) => !MAKER_IDS.has(s.id)).map(
+    (s) => ({
+        id: s.id,
+        name: s.name,
+        domain: s.url ? host(s.url) : null,
+        ...(s.logo ? { logo: s.logo } : {}),
+    }),
+);
 
 // Official marks served from frontend/public/logos/brands, each with the page
 // it came from (company site, its GitHub org, Wikimedia or simple-icons). They

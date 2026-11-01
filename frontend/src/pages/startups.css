@@ -56,7 +56,8 @@
 .su-row[open] .su-chev { transform: rotate(180deg); }
 .su-swatch { display: inline-block; width: 10px; height: 10px; margin-right: 10px; }
 .su-flag { margin-left: 8px; font-weight: 400; }
-.su-logo { display: inline-block; width: 22px; height: 22px; margin-right: 10px; border-radius: 5px; vertical-align: -6px; background: #fff; }
+.su-logo { display: inline-flex; width: 22px; height: 22px; margin-right: 10px; border-radius: 5px; vertical-align: -6px; background: #fff; }
+.su-logo.company-logo-mono { background: var(--panel-2); font-size: 10px; vertical-align: middle; }
 .su-detail {
     display: grid;
     grid-template-columns: 90px minmax(0, 1fr);

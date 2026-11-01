@@ -21,12 +21,15 @@ const SIZE = { single: { W: 1000, H: 440 }, both: { W: 640, H: 440 } };
 // An undisclosed figure still gets a tile so the company stays on the map,
 // at this share of the smallest disclosed value (or of the canvas when none is).
 const UNDISCLOSED_SHARE = 0.25;
-const COLORS: Record<string, string> = {
-    "atlas-motion": "var(--cyan)",
-    westmag: "#8fb4ff",
-    caldera: "#ffc48a",
-    aster: "#b9f2a1",
-};
+// One pale fill per startup, assigned in list order so neighbours differ.
+const PALETTE = [
+    "#ffb3c7", "#8fb4ff", "#ffc48a", "#b9f2a1", "#d4b8ff", "#8de0d6",
+    "#ffe08a", "#f5a8e0", "#a8d8ff", "#c8e88f", "#ffb59e", "#b0c4ff",
+    "#9fe8b8", "#e8c8a0", "#c9b3ff", "#f0d0ff",
+];
+const COLORS: Record<string, string> = Object.fromEntries(
+    STARTUPS.map((s, i) => [s.id, s.id === "atlas-motion" ? "var(--cyan)" : (PALETTE[i % PALETTE.length] as string)]),
+);
 
 type View = StartupMetric | "both";
 const VIEWS: { id: View; label: string }[] = [
@@ -107,6 +110,13 @@ function layout(metric: StartupMetric, W: number, H: number): Tile[] {
     );
 }
 
+// Shorten a label to the characters that fit `room` px at `charPx` per glyph.
+function fit(text: string, room: number, charPx: number): string {
+    const max = Math.floor(room / charPx);
+    if (text.length <= max) return text;
+    return max < 4 ? "" : `${text.slice(0, max - 1)}…`;
+}
+
 function Treemap({
     metric,
     both,
@@ -137,6 +147,10 @@ function Treemap({
                     const clip = `su-clip-${metric}-${t.s.id}`;
                     const logo = t.s.logo !== undefined && t.w > 120 && t.h > 70;
                     const textX = t.x + (logo ? 56 : 16);
+                    const valueText = formatMetric(metric, t.value, metric === "raisedUsd" && t.s.raisedIsFloor);
+                    // Tiles too small for a label rely on the hover title and the list below.
+                    const name = t.h >= 46 ? fit(t.s.name, t.x + t.w - textX - 8, 14) : "";
+                    const value = t.h >= 72 ? fit(valueText, t.w - 24, roomy ? 23 : 12) : "";
                     return (
                         <g
                             key={t.s.id}
@@ -147,7 +161,7 @@ function Treemap({
                             onFocus={() => setFocus(t.s.id)}
                             onBlur={() => setFocus(null)}
                         >
-                            <title>{`${t.s.name}: ${formatMetric(metric, t.value)}`}</title>
+                            <title>{`${t.s.name}: ${valueText}`}</title>
                             <rect
                                 x={t.x + 1}
                                 y={t.y + 1}
@@ -178,7 +192,7 @@ function Treemap({
                                 </>
                             )}
                             <text clipPath={`url(#${clip})`} x={textX} y={t.y + 36} className={`su-name${known ? "" : " muted"}`}>
-                                {t.s.name}
+                                {name}
                             </text>
                             <text
                                 clipPath={`url(#${clip})`}
@@ -186,7 +200,7 @@ function Treemap({
                                 y={t.y + (roomy ? 80 : 62)}
                                 className={`su-value${known ? "" : " muted"}${roomy ? " big" : ""}`}
                             >
-                                {formatMetric(metric, t.value)}
+                                {value}
                             </text>
                         </g>
                     );
@@ -216,8 +230,9 @@ export function Startups({ menuOpen = false }: { menuOpen?: boolean }) {
                     <p className="tool-kicker">Startups</p>
                     <h1>Actuator startups</h1>
                     <p className="tool-lede">
-                        New companies building robot actuators and motors, sized by money raised or
-                        by the production they report. Hatched tiles have not disclosed the figure.
+                        New companies building robot actuators and motors, sized by money raised
+                        (grants included) or by the production they report. A + marks a floor where
+                        some rounds are undisclosed; hatched tiles have not disclosed the figure.
                     </p>
                 </header>
 
@@ -267,7 +282,7 @@ export function Startups({ menuOpen = false }: { menuOpen?: boolean }) {
                                         {countryFlag(s.country)}
                                     </span>
                                 </span>
-                                <span className="su-fig">{formatMetric("raisedUsd", s.raisedUsd)}</span>
+                                <span className="su-fig">{formatMetric("raisedUsd", s.raisedUsd, s.raisedIsFloor)}</span>
                                 <span className="su-fig">{formatMetric("unitsPerMonth", s.unitsPerMonth)}</span>
                                 <svg className="su-chev" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
                                     <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2" />
@@ -295,10 +310,14 @@ export function Startups({ menuOpen = false }: { menuOpen?: boolean }) {
                                 <dd>{s.volumeNote}</dd>
                                 <dt>Links</dt>
                                 <dd>
-                                    <a href={s.url} rel="noopener" target="_blank">
-                                        Website
-                                    </a>
-                                    {" · "}
+                                    {s.url && (
+                                        <>
+                                            <a href={s.url} rel="noopener" target="_blank">
+                                                Website
+                                            </a>
+                                            {" · "}
+                                        </>
+                                    )}
                                     {[s.source, ...(s.moreSources ?? [])].map((src, i) => (
                                         <span key={src.url}>
                                             {i > 0 && " · "}
