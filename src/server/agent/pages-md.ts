@@ -94,7 +94,7 @@ export function homeBody(): string {
         "# actuatorlist: compare robot actuators by torque, weight and price",
         `actuatorlist is an independent, open catalog of the actuators that move robots: quasi-direct-drive motors, integrated joints, smart servos, harmonic and cycloidal reducers, and frameless motor kits. It holds ${catalogStats()}. Robot builders use it to shortlist actuators for quadruped legs, humanoid joints and robot arms by the numbers that decide a build: peak torque, weight, torque density and price.`,
         `## Browse the catalog\n\n${bullets([
-            `${mdLink("Leaderboard", absoluteUrl("/"))}: torque density rankings and a torque versus cost scatter.`,
+            `${mdLink("Leaderboard", absoluteUrl("/"))}: torque density rankings, a torque versus cost scatter, and a compliance versus precision chart (reduction ratio against price, marked by backdrivability).`,
             `${mdLink("Actuators", absoluteUrl("/actuators"))}: every entry as a photo gallery or one sortable table.`,
             `${mdLink("Robots", absoluteUrl("/robots"))}: which motors sit in each joint of real robots.`,
             `${mdLink("For AI agents", absoluteUrl(PATHS.agentsPage))}: REST API, MCP server and markdown views.`,

@@ -2714,3 +2714,76 @@ foreignObject > .company-logo {
 .cmdk-sub .company-logo {
     margin-right: 6px;
 }
+
+/* ---- Compliance vs precision ------------------------------------------ */
+.tradeoff-chips {
+    margin: 0 0 12px;
+}
+.tradeoff-keys {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    margin: -4px 0 12px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--muted);
+}
+.tradeoff-keys span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.tradeoff-keys .td-yes,
+.tradeoff-keys .td-unknown {
+    fill: var(--muted);
+}
+.tradeoff-keys .td-no {
+    stroke: var(--muted);
+}
+.td-band {
+    fill: var(--cyan);
+    opacity: 0.025;
+}
+.td-band-middle {
+    opacity: 0.05;
+}
+.td-band-label {
+    fill: var(--muted);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.04em;
+}
+.td-yes {
+    opacity: 0.9;
+}
+.td-no {
+    fill: var(--black);
+    stroke-width: 2;
+}
+.td-unknown {
+    opacity: 0.9;
+}
+.td-pt {
+    transition: opacity 0.15s;
+}
+.td-off {
+    opacity: 0.12;
+}
+.td-off .dot-label {
+    display: none;
+}
+.td-pt:focus-visible {
+    outline: none;
+}
+.td-pt:focus-visible circle,
+.td-pt:focus-visible rect {
+    stroke: #ffffff;
+    stroke-width: 2;
+}
+.tradeoff .dot-label,
+.td-band-label {
+    paint-order: stroke;
+    stroke: var(--black);
+    stroke-width: 3px;
+    stroke-linejoin: round;
+}

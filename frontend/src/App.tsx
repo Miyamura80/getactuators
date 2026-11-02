@@ -10,6 +10,7 @@ import { HighlightCards } from "./components/HighlightCards";
 import { BarChart } from "./components/BarChart";
 import type { BarItem } from "./components/BarChart";
 import { Scatter } from "./components/Scatter";
+import { TradeoffChart } from "./components/TradeoffChart";
 import { Legend } from "./components/Legend";
 import { colorForBrand, legendFor } from "./lib/brands";
 import { DetailPanel } from "./components/DetailPanel";
@@ -20,6 +21,7 @@ const NAV: NavItem[] = [
     { id: "highlights", label: "Highlights" },
     { id: "rankings", label: "Torque density" },
     { id: "scatter", label: "Torque vs Cost" },
+    { id: "tradeoff", label: "Compliance vs Precision" },
 ];
 
 export default function App({ menuOpen = false }: { menuOpen?: boolean }) {
@@ -119,6 +121,21 @@ export default function App({ menuOpen = false }: { menuOpen?: boolean }) {
                     <div className="chart-scroll">
                         <Scatter actuators={ACTUATORS} onSelect={openById} />
                     </div>
+                </section>
+
+                <section id="tradeoff" className="block">
+                    <h2 className="block-title">
+                        <BrandGlyph className="block-tag" />
+                        Compliance vs Precision
+                    </h2>
+                    <p className="block-sub">
+                        No actuator wins both. A low reduction ratio keeps the joint
+                        backdrivable and lets the motor feel contact; a high one buys
+                        stiffness and repeatable positioning. Priced actuators with a
+                        published ratio, colored by type. The cheapest in each band is
+                        labelled, with backlash in arcmin where published.
+                    </p>
+                    <TradeoffChart actuators={ACTUATORS} onSelect={openById} />
                 </section>
 
                 <Link to="/actuators?view=list" className="all-cta">
