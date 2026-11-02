@@ -18,6 +18,8 @@ test("/contributors serves HTML with an AboutPage and one Person per contributor
     expect(people.map((n) => n.name)).toEqual(CONTRIBUTORS.map((p) => p.name));
     for (const p of people) {
         expect((p.affiliation as Node)["@type"]).toBe("Organization");
+        const school = CONTRIBUTORS.find((c) => c.name === p.name)?.school;
+        if (school) expect((p.alumniOf as Node).name).toBe(school);
         expect(String(p["@id"])).toStartWith("https://actuatorlist.com/contributors#");
     }
 });
@@ -31,7 +33,7 @@ test("the site WebSite node credits every contributor", async () => {
     expect(ids).toContain("https://actuatorlist.com/contributors#eito-miyamura");
 });
 
-test("/contributors.md matches the page: name, role, affiliation and links, no commit counts", async () => {
+test("/contributors.md matches the page: name, role, affiliation, school and links, no commit counts", async () => {
     const md = await (await get("/contributors.md")).text();
     expect(await (await getMarkdown("/contributors")).text()).toBe(md);
     expect(md).toContain("# Contributors");
@@ -41,7 +43,7 @@ test("/contributors.md matches the page: name, role, affiliation and links, no c
             .map((l) => `[${LINK_LABEL[l.kind]}](${l.url})`)
             .join(", ");
         expect(md).toContain(
-            `**${p.name}**, ${p.role}, [${org.name}](${org.url}). ${links}`,
+            `**${p.name}**, ${p.role}, [${org.name}](${org.url})${p.school ? `, ${p.school}` : ""}. ${links}`,
         );
     }
     expect(md).not.toContain("commit");

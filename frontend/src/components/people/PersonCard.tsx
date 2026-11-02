@@ -34,6 +34,15 @@ function LinkIcon({ kind }: { kind: LinkKind }) {
     );
 }
 
+function SchoolIcon() {
+    return (
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+            <path d="M2 9.5 12 5l10 4.5-10 4.5L2 9.5z" />
+            <path d="M6 11.5V16c1.7 1.5 3.7 2.2 6 2.2s4.3-.7 6-2.2v-4.5" />
+        </svg>
+    );
+}
+
 function Headshot({ person }: { person: Person }) {
     return (
         <div className="pc-face">
@@ -61,6 +70,12 @@ export function PersonCard({ person }: { person: Person }) {
                 {core && <p className="pc-role">{person.role}</p>}
                 {!core && <OrgLogo org={orgOf(person)} />}
                 {!core && person.role !== "Contributor" && <p className="pc-role pc-role-member">{person.role}</p>}
+                {person.school && (
+                    <p className="pc-school">
+                        <SchoolIcon />
+                        {person.school}
+                    </p>
+                )}
                 {person.links.length > 0 && (
                     <div className="pc-links">
                         {person.links.map((l) => (

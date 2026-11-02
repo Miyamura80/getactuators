@@ -13,7 +13,8 @@ import { bullets, mdLink } from "./md";
 function line(p: Person): string {
     const org = orgOf(p);
     const links = p.links.map((l) => mdLink(LINK_LABEL[l.kind], l.url)).join(", ");
-    return `**${p.name}**, ${p.role}, ${mdLink(org.name, org.url)}.${links ? ` ${links}` : ""}`;
+    const school = p.school ? `, ${p.school}` : "";
+    return `**${p.name}**, ${p.role}, ${mdLink(org.name, org.url)}${school}.${links ? ` ${links}` : ""}`;
 }
 
 function section(heading: string, kind: Person["contributor"]): string {
@@ -42,6 +43,9 @@ export function personNode(p: Person): Record<string, unknown> {
         name: p.name,
         jobTitle: p.role,
         affiliation: { "@type": "Organization", name: org.name, url: org.url },
+        ...(p.school
+            ? { alumniOf: { "@type": "CollegeOrUniversity", name: p.school } }
+            : {}),
         ...(p.headshot ? { image: absoluteUrl(p.headshot.path) } : {}),
         ...(p.links.length ? { sameAs: p.links.map((l) => l.url) } : {}),
     };

@@ -39,6 +39,8 @@ export interface Person {
     name: string;
     role: string;
     orgId: OrgId;
+    // The most prominent university on their record, shown on the card.
+    school?: string;
     headshot?: ImageAsset;
     links: { kind: LinkKind; url: string }[];
     // "core" draws the large card; "member" a contributor card.
@@ -52,6 +54,7 @@ const PEOPLE_RECORDS: Person[] = [
         name: "Eito Miyamura",
         role: "Creator and maintainer",
         orgId: "actuatorlist",
+        school: "University of Oxford",
         links: [
             { kind: "github", url: "https://github.com/Miyamura80" },
             { kind: "web", url: "https://eito.me/" },
@@ -63,6 +66,7 @@ const PEOPLE_RECORDS: Person[] = [
         name: "Soumil Sahjpall",
         role: "Contributor",
         orgId: "ducky-drones",
+        school: "Imperial College London",
         // Soumil's GitHub handle is unknown; add a github link once known.
         links: [
             { kind: "linkedin", url: "https://www.linkedin.com/in/soumil-sahjpall/" },
@@ -74,6 +78,7 @@ const PEOPLE_RECORDS: Person[] = [
         name: "Cornelia Weinzierl",
         role: "Contributor",
         orgId: "tau-robotics",
+        school: "Stanford University",
         links: [
             { kind: "github", url: "https://github.com/CorneliaMelon" },
             {
@@ -88,6 +93,7 @@ const PEOPLE_RECORDS: Person[] = [
         name: "Shota Yoshikai",
         role: "Contributor",
         orgId: "manmaru-ai",
+        school: "Tokyo Denki University",
         links: [{ kind: "linkedin", url: "https://jp.linkedin.com/in/shota-yoshikai" }],
         contributor: "member",
     },
@@ -98,6 +104,7 @@ const PEOPLE_RECORDS: Person[] = [
         // QDD vs harmonic) and on OEM-built "in-house" actuators.
         role: "Co-founder of Enactic, creator of OpenArm",
         orgId: "enactic",
+        school: "Stanford University",
         links: [{ kind: "linkedin", url: "https://jp.linkedin.com/in/hiroyams" }],
         contributor: "member",
     },
