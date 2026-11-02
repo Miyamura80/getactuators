@@ -96,7 +96,7 @@ const PEOPLE_RECORDS: Person[] = [
         name: "Hiro Yamamoto",
         // Feedback on the actuator trade-offs (compliance vs repeatability,
         // QDD vs harmonic) and on OEM-built "in-house" actuators.
-        role: "Contributor",
+        role: "Co-founder of Enactic, creator of OpenArm",
         orgId: "enactic",
         links: [{ kind: "linkedin", url: "https://jp.linkedin.com/in/hiroyams" }],
         contributor: "member",

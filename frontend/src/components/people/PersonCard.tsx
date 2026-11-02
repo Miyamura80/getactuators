@@ -49,7 +49,8 @@ function Headshot({ person }: { person: Person }) {
 }
 
 // One person: headshot, name and links. The core card (person.contributor
-// "core") is larger and adds the role; every other card adds the affiliation.
+// "core") is larger and adds the role; every other card adds the affiliation,
+// plus the role when it says more than "Contributor".
 export function PersonCard({ person }: { person: Person }) {
     const core = person.contributor === "core";
     return (
@@ -59,6 +60,7 @@ export function PersonCard({ person }: { person: Person }) {
                 <h3 className="pc-name">{person.name}</h3>
                 {core && <p className="pc-role">{person.role}</p>}
                 {!core && <OrgLogo org={orgOf(person)} />}
+                {!core && person.role !== "Contributor" && <p className="pc-role pc-role-member">{person.role}</p>}
                 {person.links.length > 0 && (
                     <div className="pc-links">
                         {person.links.map((l) => (

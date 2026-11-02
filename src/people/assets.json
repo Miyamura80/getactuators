@@ -27,6 +27,12 @@
             "licence": "consent",
             "credit": "LinkedIn profile photo, used with consent",
             "retrieved": "2026-10-26"
+        },
+        "hiro-yamamoto": {
+            "path": "/people/hiro-yamamoto.webp",
+            "sourceUrl": "https://www.linkedin.com/in/hiroyams",
+            "licence": "consent",
+            "retrieved": "2026-11-02"
         }
     },
     "orgs": {
