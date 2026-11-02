@@ -29,6 +29,7 @@ const ORG_RECORDS = {
         url: "https://manmaruai.co.jp/",
         brandId: "manmaru",
     },
+    enactic: { name: "Enactic", url: "https://enactic.ai/" },
 } as const satisfies Record<string, Omit<Org, "id" | "logo">>;
 
 export type OrgId = keyof typeof ORG_RECORDS;
@@ -88,6 +89,16 @@ const PEOPLE_RECORDS: Person[] = [
         role: "Contributor",
         orgId: "manmaru-ai",
         links: [{ kind: "linkedin", url: "https://jp.linkedin.com/in/shota-yoshikai" }],
+        contributor: "member",
+    },
+    {
+        id: "hiro-yamamoto",
+        name: "Hiro Yamamoto",
+        // Feedback on the actuator trade-offs (compliance vs repeatability,
+        // QDD vs harmonic) and on OEM-built "in-house" actuators.
+        role: "Contributor",
+        orgId: "enactic",
+        links: [{ kind: "linkedin", url: "https://jp.linkedin.com/in/hiroyams" }],
         contributor: "member",
     },
 ];
