@@ -1,4 +1,4 @@
-import { LINK_LABEL, orgOf, type LinkKind, type Person } from "../../../../src/people";
+import { LINK_LABEL, orgOf, schoolOf, type LinkKind, type Person } from "../../../../src/people";
 import { OrgLogo } from "./OrgLogo";
 
 function initials(name: string): string {
@@ -34,12 +34,14 @@ function LinkIcon({ kind }: { kind: LinkKind }) {
     );
 }
 
-function SchoolIcon() {
+// The university as its icon only; the name is the tooltip and alt text.
+function SchoolMark({ person }: { person: Person }) {
+    const school = schoolOf(person);
+    if (!school?.icon) return null;
     return (
-        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-            <path d="M2 9.5 12 5l10 4.5-10 4.5L2 9.5z" />
-            <path d="M6 11.5V16c1.7 1.5 3.7 2.2 6 2.2s4.3-.7 6-2.2v-4.5" />
-        </svg>
+        <a className="pc-school" href={school.url} target="_blank" rel="noopener" title={school.name}>
+            <img src={school.icon.path} alt={school.name} width={20} height={20} loading="lazy" decoding="async" />
+        </a>
     );
 }
 
@@ -68,14 +70,15 @@ export function PersonCard({ person }: { person: Person }) {
             <div className="pc-body">
                 <h3 className="pc-name">{person.name}</h3>
                 {core && <p className="pc-role">{person.role}</p>}
-                {!core && <OrgLogo org={orgOf(person)} />}
-                {!core && person.role !== "Contributor" && <p className="pc-role pc-role-member">{person.role}</p>}
-                {person.school && (
-                    <p className="pc-school">
-                        <SchoolIcon />
-                        {person.school}
-                    </p>
+                {core ? (
+                    <SchoolMark person={person} />
+                ) : (
+                    <div className="pc-affil">
+                        <OrgLogo org={orgOf(person)} />
+                        <SchoolMark person={person} />
+                    </div>
                 )}
+                {!core && person.role !== "Contributor" && <p className="pc-role pc-role-member">{person.role}</p>}
                 {person.links.length > 0 && (
                     <div className="pc-links">
                         {person.links.map((l) => (

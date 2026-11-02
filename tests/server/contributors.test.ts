@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { CONTRIBUTORS, LINK_LABEL, orgOf } from "@/people";
+import { CONTRIBUTORS, LINK_LABEL, orgOf, schoolOf } from "@/people";
 import { get, getMarkdown } from "./agent-helpers";
 
 type Node = Record<string, unknown>;
@@ -18,8 +18,9 @@ test("/contributors serves HTML with an AboutPage and one Person per contributor
     expect(people.map((n) => n.name)).toEqual(CONTRIBUTORS.map((p) => p.name));
     for (const p of people) {
         expect((p.affiliation as Node)["@type"]).toBe("Organization");
-        const school = CONTRIBUTORS.find((c) => c.name === p.name)?.school;
-        if (school) expect((p.alumniOf as Node).name).toBe(school);
+        const person = CONTRIBUTORS.find((c) => c.name === p.name);
+        const school = person ? schoolOf(person) : null;
+        if (school) expect((p.alumniOf as Node).name).toBe(school.name);
         expect(String(p["@id"])).toStartWith("https://actuatorlist.com/contributors#");
     }
 });
@@ -39,11 +40,12 @@ test("/contributors.md matches the page: name, role, affiliation, school and lin
     expect(md).toContain("# Contributors");
     for (const p of CONTRIBUTORS) {
         const org = orgOf(p);
+        const school = schoolOf(p);
         const links = p.links
             .map((l) => `[${LINK_LABEL[l.kind]}](${l.url})`)
             .join(", ");
         expect(md).toContain(
-            `**${p.name}**, ${p.role}, [${org.name}](${org.url})${p.school ? `, ${p.school}` : ""}. ${links}`,
+            `**${p.name}**, ${p.role}, [${org.name}](${org.url})${school ? `, [${school.name}](${school.url})` : ""}. ${links}`,
         );
     }
     expect(md).not.toContain("commit");

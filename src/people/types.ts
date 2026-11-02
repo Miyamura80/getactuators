@@ -16,13 +16,23 @@ export interface ImageAsset {
     retrieved: string;
 }
 
-// src/people/assets.json: image records keyed by person id and org id.
+// src/people/assets.json: image records keyed by person, org and school id.
 export interface AssetFile {
     people: Record<string, ImageAsset>;
     orgs: Record<string, ImageAsset>;
+    schools: Record<string, ImageAsset>;
 }
 
 export type LinkKind = "github" | "web" | "x" | "linkedin" | "scholar";
+
+// A university, drawn on a card as its icon (frontend/public/schools/<id>.webp)
+// with the name as the tooltip and alt text.
+export interface School {
+    id: string;
+    name: string;
+    url: string;
+    icon?: ImageAsset;
+}
 
 export interface Org {
     id: string;

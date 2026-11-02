@@ -2,6 +2,7 @@
 //
 //   bun scripts/people-assets.ts headshot <personId> <url|file> --licence consent [--credit "..."] [--source-url <url>]
 //   bun scripts/people-assets.ts logo <orgId> <url|file> --licence press-kit [--credit "..."] [--source-url <url>]
+//   bun scripts/people-assets.ts school <schoolId> <url|file> --licence press-kit [--credit "..."] [--source-url <url>]
 //
 // headshot: crops to a 512px square around the most salient region (sharp's
 // attention strategy, which centres on the face in a portrait) and writes
@@ -77,6 +78,11 @@ export async function logo(
     return { data, ext: "webp" };
 }
 
+// University icons are square tiles drawn in colour, so fill the square.
+export async function schoolIcon(bytes: Buffer): Promise<Buffer> {
+    return webp(sharp(bytes).resize(128, 128, { fit: "cover" }));
+}
+
 // Where each kind lands, which assets.json table it fills, and how it is encoded.
 const KINDS = {
     headshot: {
@@ -84,6 +90,13 @@ const KINDS = {
         encode: async (bytes: Buffer) => ({ data: await headshot(bytes), ext: "webp" }),
     },
     logo: { dir: "orgs", encode: logo },
+    school: {
+        dir: "schools",
+        encode: async (bytes: Buffer) => ({
+            data: await schoolIcon(bytes),
+            ext: "webp",
+        }),
+    },
 } as const satisfies Record<
     string,
     {
@@ -121,9 +134,10 @@ async function asset(kind: keyof typeof KINDS, args: string[]) {
 
 if (import.meta.main) {
     const [command, ...args] = process.argv.slice(2);
-    if (command === "headshot" || command === "logo") await asset(command, args);
+    if (command === "headshot" || command === "logo" || command === "school")
+        await asset(command, args);
     else {
-        console.error("Commands: headshot, logo");
+        console.error("Commands: headshot, logo, school");
         process.exit(1);
     }
 }

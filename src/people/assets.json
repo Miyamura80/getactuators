@@ -42,5 +42,35 @@
             "licence": "own",
             "retrieved": "2026-10-25"
         }
+    },
+    "schools": {
+        "oxford": {
+            "path": "/schools/oxford.webp",
+            "sourceUrl": "https://www.ox.ac.uk/",
+            "licence": "press-kit",
+            "credit": "Logo via logo.dev, shown for identification only",
+            "retrieved": "2026-11-02"
+        },
+        "imperial": {
+            "path": "/schools/imperial.webp",
+            "sourceUrl": "https://www.imperial.ac.uk/",
+            "licence": "press-kit",
+            "credit": "Logo via logo.dev, shown for identification only",
+            "retrieved": "2026-11-02"
+        },
+        "stanford": {
+            "path": "/schools/stanford.webp",
+            "sourceUrl": "https://www.stanford.edu/",
+            "licence": "press-kit",
+            "credit": "Logo via logo.dev, shown for identification only",
+            "retrieved": "2026-11-02"
+        },
+        "tokyo-denki": {
+            "path": "/schools/tokyo-denki.webp",
+            "sourceUrl": "https://www.dendai.ac.jp/",
+            "licence": "press-kit",
+            "credit": "Logo via logo.dev, shown for identification only",
+            "retrieved": "2026-11-02"
+        }
     }
 }

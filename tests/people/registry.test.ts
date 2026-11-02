@@ -2,10 +2,10 @@ import { describe, expect, test } from "bun:test";
 import { existsSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { resolveBrand } from "@/brands";
-import { LICENCES, ORGS, PEOPLE } from "@/people";
+import { LICENCES, ORGS, PEOPLE, SCHOOLS } from "@/people";
 import type { ImageAsset } from "@/people";
 import sharp from "sharp";
-import { MAX_BYTES, headshot, logo } from "../../scripts/people-assets";
+import { MAX_BYTES, headshot, logo, schoolIcon } from "../../scripts/people-assets";
 
 const PUBLIC = "frontend/public";
 
@@ -15,6 +15,9 @@ const assets: [string, ImageAsset][] = [
     ),
     ...Object.values(ORGS).flatMap((o) =>
         o.logo ? [[o.id, o.logo] as [string, ImageAsset]] : [],
+    ),
+    ...Object.values(SCHOOLS).flatMap((s) =>
+        s.icon ? [[s.id, s.icon] as [string, ImageAsset]] : [],
     ),
 ];
 
@@ -46,12 +49,21 @@ describe("people registry", () => {
         }
     });
 
-    test("every image in public/people and public/orgs has a record", () => {
+    test("every image in public/people, public/orgs and public/schools has a record", () => {
         const recorded = new Set(assets.map(([, a]) => a.path));
-        for (const dir of ["people", "orgs"]) {
+        for (const dir of ["people", "orgs", "schools"]) {
             for (const f of readdirSync(join(PUBLIC, dir)))
                 expect(recorded.has(`/${dir}/${f}`)).toBe(true);
         }
+    });
+
+    test("every school a person names has an icon", () => {
+        for (const p of PEOPLE)
+            if (p.schoolId)
+                expect({ id: p.id, icon: Boolean(SCHOOLS[p.schoolId].icon) }).toEqual({
+                    id: p.id,
+                    icon: true,
+                });
     });
 
     test("every org brandId resolves in the brand registry", () => {
@@ -84,5 +96,15 @@ describe("people asset pipeline", () => {
         expect([raster.ext, meta.width, meta.height]).toEqual(["webp", 256, 256]);
         const svg = Buffer.from('<svg xmlns="http://www.w3.org/2000/svg"/>');
         expect((await logo(svg, true)).ext).toBe("svg");
+    });
+
+    test("school icons become 128px square WebP", async () => {
+        const src = await sharp({
+            create: { width: 300, height: 200, channels: 3, background: "#203060" },
+        })
+            .png()
+            .toBuffer();
+        const meta = await sharp(await schoolIcon(src)).metadata();
+        expect([meta.format, meta.width, meta.height]).toEqual(["webp", 128, 128]);
     });
 });
