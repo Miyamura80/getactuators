@@ -76,8 +76,8 @@ const PEOPLE_RECORDS: Person[] = [
         role: "Contributor",
         orgId: "ducky-drones",
         schoolId: "imperial",
-        // Soumil's GitHub handle is unknown; add a github link once known.
         links: [
+            { kind: "github", url: "https://github.com/bonusducks777" },
             { kind: "linkedin", url: "https://www.linkedin.com/in/soumil-sahjpall/" },
         ],
         contributor: "member",
@@ -103,7 +103,10 @@ const PEOPLE_RECORDS: Person[] = [
         role: "Contributor",
         orgId: "manmaru-ai",
         schoolId: "tokyo-denki",
-        links: [{ kind: "linkedin", url: "https://jp.linkedin.com/in/shota-yoshikai" }],
+        links: [
+            { kind: "github", url: "https://github.com/tinjyuu" },
+            { kind: "linkedin", url: "https://jp.linkedin.com/in/shota-yoshikai" },
+        ],
         contributor: "member",
     },
     {
@@ -114,7 +117,10 @@ const PEOPLE_RECORDS: Person[] = [
         role: "Co-founder of Enactic, creator of OpenArm",
         orgId: "enactic",
         schoolId: "stanford",
-        links: [{ kind: "linkedin", url: "https://jp.linkedin.com/in/hiroyams" }],
+        links: [
+            { kind: "github", url: "https://github.com/hiroyams" },
+            { kind: "linkedin", url: "https://jp.linkedin.com/in/hiroyams" },
+        ],
         contributor: "member",
     },
 ];
