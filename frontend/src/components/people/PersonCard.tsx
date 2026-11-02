@@ -68,16 +68,12 @@ export function PersonCard({ person }: { person: Person }) {
         <article className={`pc${core ? " pc-core" : ""}`} aria-label={person.name}>
             <Headshot person={person} />
             <div className="pc-body">
-                <h3 className="pc-name">{person.name}</h3>
-                {core && <p className="pc-role">{person.role}</p>}
-                {core ? (
+                <div className="pc-head">
+                    <h3 className="pc-name">{person.name}</h3>
                     <SchoolMark person={person} />
-                ) : (
-                    <div className="pc-affil">
-                        <OrgLogo org={orgOf(person)} />
-                        <SchoolMark person={person} />
-                    </div>
-                )}
+                </div>
+                {core && <p className="pc-role">{person.role}</p>}
+                {!core && <OrgLogo org={orgOf(person)} />}
                 {!core && person.role !== "Contributor" && <p className="pc-role pc-role-member">{person.role}</p>}
                 {person.links.length > 0 && (
                     <div className="pc-links">
