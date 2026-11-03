@@ -85,8 +85,8 @@ describe("map data", () => {
         expect(tesla?.to.country).toBe("US");
         expect(tesla?.confidence).toBe("estimated");
         expect(companyAnchor("tesla")?.kind).toBe("hq");
-        // Nabtesco has no headquarters site: its first plant anchors it.
-        expect(companyAnchor("nabtesco")?.id).toBe("nabtesco-tsu");
+        // Leaderdrive has no headquarters site: its first plant anchors it.
+        expect(companyAnchor("leaderdrive")?.id).toBe("leaderdrive-suzhou");
         expect(arcsTouching(arcs, "KR").map((a) => a.id)).toEqual([
             "hyundai-mobis--boston-dynamics",
         ]);

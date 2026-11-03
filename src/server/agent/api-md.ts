@@ -1,3 +1,4 @@
+import { findCountry } from "@/api/countries";
 import {
     actuatorPage,
     brandCounts,
@@ -11,10 +12,12 @@ import {
 import type { ApiContext } from "@/api/http";
 import type { Page } from "@/api/pagination";
 import { API_OPERATIONS, apiIndexData } from "@/api/surface";
+import { countryListView } from "@/supply-chain/country-pages/views";
 import { absoluteUrl } from "../site";
 import { actuatorBody, actuatorTable, robotSection } from "./catalog-md";
 import { PATHS } from "./links";
 import { bullets, mdLink, mdTable, mdText, num, usd } from "./md";
+import { countryBody } from "./supply-chain/country";
 
 // Markdown twins of the REST API's GET endpoints (/api.md, /api/v1/*.md, or
 // Accept: text/markdown). Each renderer reads the same data function as the
@@ -172,6 +175,23 @@ function namedCounts(
     ].join("\n\n");
 }
 
+function listCountries(): string {
+    const list = countryListView();
+    const rows = list.results.map((c) => [
+        mdLink(c.name, absoluteUrl(apiMarkdownPath(`/api/v1/countries/${c.code}`))),
+        `\`${c.code}\``,
+        mdLink(c.url, absoluteUrl(`${c.url}.md`)),
+        String(c.coverage.companies),
+        String(c.coverage.sites),
+        `${c.coverage.links} (${c.coverage.supply_links} supply)`,
+    ]);
+    return [
+        "# Country pages",
+        `Live country pages of the actuator supply-chain atlas, as of ${mdText(list.as_of)}. Use a code or slug with /api/v1/countries/{code}.`,
+        mdTable(["Country", "Code", "Page", "Companies", "Sites", "Links"], rows),
+    ].join("\n\n");
+}
+
 const RENDERERS: Record<string, Renderer> = {
     get_api_index: apiIndex,
     list_actuators: listActuators,
@@ -182,6 +202,8 @@ const RENDERERS: Record<string, Renderer> = {
     list_categories: listCategories,
     list_brands: () => namedCounts("Actuator brands", "brand", brandCounts()),
     list_use_cases: () => namedCounts("Use-case tags", "use_case", useCaseCounts()),
+    list_countries: listCountries,
+    get_country: (ctx) => countryBody(findCountry(ctx)),
 };
 
 export function hasApiMarkdown(operationId: string): boolean {

@@ -1,4 +1,5 @@
 import { ACTUATORS, type Actuator, CATEGORIES, ROBOTS } from "@/catalog";
+import { LIVE_COUNTRY_PAGES } from "@/supply-chain/country-pages";
 import {
     CODE_LICENSE,
     DATA_LICENSE,
@@ -16,6 +17,14 @@ import { catalogStats } from "./pages-md";
 // llms.txt (https://llmstxt.org) and its long-form and per-section siblings.
 
 const u = absoluteUrl;
+
+// One line per live country page (/japan, ...), each ending in a newline.
+function countryLinks(): string {
+    return LIVE_COUNTRY_PAGES.map(
+        (p) =>
+            `${link(`${p.name}: actuator supply chain`, `${p.path}.md`, `map of rare earth, magnet and motor, gear and bearing, and robot companies with plants, supply links and stage shares; MCP get_country("${p.code}"), REST /api/v1/countries/${p.code}`)}\n`,
+    ).join("");
+}
 
 function link(label: string, path: string, note: string): string {
     return `- ${mdLink(label, u(path))}: ${note}`;
@@ -83,7 +92,7 @@ ${link("Robot arm torque calculator", "/tools/robot-arm-torque-calculator.md", "
 
 ${link("Magnet metals", "/metals.md", "Nd, Pr, Dy, Tb, Sm and Co: country share at each stage from mine to magnet, USGS reserves and years of supply, cited price history and the events behind it; same data from the MCP tools get_metal_supply and get_metal_prices")}
 ${link("Actuator chain policy", "/policy.md", "export controls, tariffs, subsidies and standards from mine to robot with status history and primary sources; MCP list_policy_measures, REST /api/v1/policy, Atom feed /policy/feed.xml")}
-
+${countryLinks()}
 ## About
 
 ${link("About", "/about.md", "who runs the catalog and how data is verified")}

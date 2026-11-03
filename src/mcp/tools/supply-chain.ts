@@ -1,4 +1,6 @@
 import { SEGMENTS } from "@/supply-chain/companies";
+import { LIVE_COUNTRY_PAGES, getCountryPage } from "@/supply-chain/country-pages";
+import { countryOut, countryView } from "@/supply-chain/country-pages/views";
 import { METAL_IDS, getMetal } from "@/supply-chain/metals/elements";
 import { getSeries } from "@/supply-chain/metals/prices";
 import { METAL_STAGES } from "@/supply-chain/metals/stage-shares";
@@ -182,6 +184,29 @@ const listPolicyMeasures = defineTool({
     run: (filter) => measureListView(findMeasures(filter)),
 });
 
+const getCountry = defineTool({
+    name: "get_country",
+    title: "Get a country's actuator supply chain",
+    description:
+        "Everything on a country page of the supply-chain atlas (Japan today): the country's share of each stage with the world leader, named industrial clusters, its policy measures, every company headquartered there or with a site there (revenue and gross margin with sources), the sites in the country and the current supply links touching them, including links abroad.",
+    input: z.object({
+        code: z
+            .string()
+            .min(2)
+            .max(10)
+            .describe("ISO 3166 alpha-2 code or page slug, e.g. JP or japan."),
+    }),
+    output: countryOut,
+    run: ({ code }) => {
+        const page = getCountryPage(code);
+        if (!page)
+            throw new ToolInputError(
+                `No live country page "${code}". Live: ${LIVE_COUNTRY_PAGES.map((p) => p.code).join(", ")}.`,
+            );
+        return countryView(page);
+    },
+});
+
 export const supplyChainTools = [
     listCompanies,
     getCompanyTool,
@@ -189,4 +214,5 @@ export const supplyChainTools = [
     getMetalSupply,
     getMetalPrices,
     listPolicyMeasures,
+    getCountry,
 ];
