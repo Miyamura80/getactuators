@@ -1,5 +1,6 @@
 // Dependency-neutral navigation shared by runtime HTML and the browser build.
 import { GITHUB_MARK_SVG, REPO_URL, isRepoHref } from "./repo-link";
+import { LIVE_COUNTRY_PATHS } from "./supply-chain/country-pages";
 
 export const PUBLIC_LINKS = [
     ["/", "Leaderboard"],
@@ -39,6 +40,8 @@ export const SUPPLY_CHAIN_GROUPS = [
 export const SUPPLY_CHAIN_PAGES_LIVE: ReadonlySet<string> = new Set<string>([
     "/metals",
     "/policy",
+    // Country pages go live when their dataset passes the coverage gate.
+    ...LIVE_COUNTRY_PATHS,
 ]);
 
 export interface SupplyChainMenuLink {

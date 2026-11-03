@@ -1,3 +1,4 @@
+import { JAPAN_SOURCES } from "./country-pages/japan-sources";
 import { POLICY_SOURCES } from "./policy/sources";
 import type { ReuseAllowlist, SourceReuse } from "./reuse";
 import type { SourceId } from "./sourced";
@@ -606,6 +607,7 @@ export const SOURCES: SourceRef[] = [
         "facts",
     ),
     ...POLICY_SOURCES,
+    ...JAPAN_SOURCES,
 ];
 
 // Facts sources allowed to back more than FACTS_MAX_RECORDS records (see

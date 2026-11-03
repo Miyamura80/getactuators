@@ -185,6 +185,8 @@ open it before scrolling to the entry.
 | REST (metals) | `GET /api/v1/metals`, `GET /api/v1/metals/{element}`, `GET /api/v1/metal-prices/{series}` |
 | MCP (policy) | `list_policy_measures(jurisdiction?, type?, stage?, status?)` |
 | REST (policy) | `GET /api/v1/policy`, `GET /api/v1/policy/{id}`, Atom feed `/policy/feed.xml` |
+| MCP (countries) | `get_country(code)` |
+| REST (countries) | `GET /api/v1/countries`, `GET /api/v1/countries/{code}` |
 
 Commodity prices for any page come from `priceAt(seriesId, "YYYY-MM")` in
 `src/supply-chain/metals/prices.ts`: the last reading in that month, else the
@@ -198,3 +200,66 @@ standards-body source and a dated, sourced `statusHistory`, oldest first.
 
 Every number in a response carries `as_of`, `confidence`, `note` and the full
 source references.
+
+## Adding a country
+
+Country pages (`/japan` is live; `/china`, `/korea` and `/us` are planned)
+share one template, so a new country is data only:
+
+```
+ /<country>  (CountryPage.tsx + countryBody(), both generic)
+     |
+     +-- src/supply-chain/country-pages/<country>.ts  lede, stage shares, clusters
+     +-- companies registry  (hqCountry == code, or a site in code)
+     +-- sites registry      (site.country == code, any owner)
+     +-- supply links        (current links touching those companies)
+     +-- policies            (measuresForCountry(code) from /policy)
+     +-- world shares        (STAGE_SHARES.nd for the concentration badge)
+```
+
+1. **Content.** Copy `src/supply-chain/country-pages/japan.ts` to
+   `<country>.ts` and register it in `CONTENT` in
+   `src/supply-chain/country-pages/index.ts`. Write a one-sentence `lede`,
+   one `stages` entry per stage you can source (a `share` as a
+   `Sourced<number>` fraction of world output, or a `gap` with its sources
+   when no source splits the stage by country) and the named `clusters`
+   (`[minLat, minLon, maxLat, maxLon]`, each with a one-line `blurb`; the
+   tests require each box inside the country and holding at least two
+   sites).
+2. **Companies.** Add a `companies/<country>.ts` list, typed from
+   `companies/types.ts`, and spread it at the end of `COMPANIES`. Revenue is
+   the latest fiscal year in USD with the conversion rate in `note`
+   (`yenRevenue` in `companies/japan.ts` is the pattern); gross margin is
+   gross profit over net sales from the same year. Add a brand row in
+   `src/brands/index.ts` for every new company name.
+3. **Sites.** Add `sites/<country>.ts` (headquarters, `hq()`) and plants
+   (`plant()` from `sites/types.ts`) and spread them at the end of `SITES`.
+   Set `precision` honestly: `site` for the gate, `city` for the city
+   centre, `region` when only the prefecture, province or state is public.
+   A plant owned from abroad goes in the host country's file and shows on
+   that map with an owner chip.
+4. **Links.** Append supply links (seller first) with sources; the
+   partner abroad needs a company and a site so the arc has an anchor.
+5. **Sources.** Put the country's sources in
+   `country-pages/<country>-sources.ts` and spread them at the end of
+   `SOURCES`; every one needs a `reuse` value.
+6. **Gate.** The page goes live (route, header menu, footer, sitemap,
+   llms.txt, `/api/v1/countries`, `get_country`, and arc chips on other
+   maps turning into links) once `coverage(code)` reaches
+   `COVERAGE_TARGET`: 40 companies, 80 sites and 30 current links. Until
+   then nothing is routed, so the data can merge in steps.
+7. **Check.** `make citation_audit`, `bun test tests/supply-chain` and
+   `bun test tests/server/country.test.ts`; update the page count in
+   `tests/server/short-titles-golden.ts` and the live-page list in
+   `frontend/tests/supply-chain-kit.test.tsx`, and recapture the mount
+   fixtures (`bun frontend/tests/capture-seo-pages.ts`,
+   `bun frontend/tests/capture-comparisons.ts`) since the header menu
+   changes.
+
+Shared components the template uses, reusable on any map page:
+`<CompanyDrawer>` (company card in a `MapDrawer`: HQ, plants, products,
+role, revenue, gross margin, ownership, supply links),
+`<SiteDetail>` (what a plant makes, capacity, year opened, status, pin
+precision, source) and `<CompanyTable>` (sortable, row click selects), all
+in `frontend/src/components/supply-chain/`. URL state is `?segment=`,
+`?company=`, `?site=` and `?cluster=`.

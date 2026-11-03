@@ -56,10 +56,14 @@ test("?site= selects a pin, and picking another pin rewrites the query", () => {
 
 test("?company= opens the drawer with the company's sites", () => {
     window.history.replaceState({}, "", "/lab/supply-chain?company=jl-mag");
-    const c = render(<LabMaps topologies={{ world: WORLD, JP }} />).container;
+    const c = render(<FootnotesProvider><LabMaps topologies={{ world: WORLD, JP }} /></FootnotesProvider>).container;
     const drawer = c.querySelector(".mk-drawer");
     expect(drawer?.querySelector("h3")?.textContent).toBe("JL MAG Rare-Earth");
-    expect(drawer?.querySelectorAll(".sc-lab-sites li").length).toBeGreaterThanOrEqual(3);
+    // The shared company card: its sites, then a site expands in place.
+    expect(drawer?.querySelectorAll(".sc-sites li").length).toBeGreaterThanOrEqual(3);
+    act(() => { fireEvent.click(drawer?.querySelector(".sc-sites li button") as Element); });
+    expect(readSelection(window.location.search).site).not.toBeNull();
+    expect(c.querySelector(".mk-drawer .sc-site")).not.toBeNull();
     act(() => { fireEvent.click(drawer?.querySelector(".mk-drawer-close") as Element); });
     expect(window.location.search).toBe("");
     expect(c.querySelector(".mk-drawer")).toBeNull();
@@ -135,7 +139,7 @@ test("every map carries a hidden table equivalent", () => {
 });
 
 test("country map fits admin-1 outlines and arcs leaving it end in a country chip", () => {
-    const arcs = arcsTouching(supplyArcs(), "JP");
+    const arcs = arcsTouching(supplyArcs(), "JP").filter((a) => a.id === "nabtesco--fanuc" || a.id === "nabtesco--yaskawa");
     const c = render(<CountryMap code="JP" topology={JP}><Arcs arcs={arcs} hrefFor={(code) => `/${code.toLowerCase()}`} /></CountryMap>).container;
     expect(c.querySelectorAll(".mk-land").length).toBe(47);
     // Nabtesco to FANUC and Yaskawa are domestic: no chips, two arcs.
@@ -166,7 +170,7 @@ test("pins pair segment colour with a pictogram; hover card carries the monogram
 });
 
 test("country map: site density shading, coastline, scale bar, cities and placed labels", () => {
-    const here = PINS.filter((p) => p.country === "JP");
+    const here = PINS.filter((p) => p.country === "JP" && p.segment !== "ree-mining-refining");
     const c = render(<CountryMap code="JP" sites={here} topology={JP}>
         <ClusterZoom pins={here} clusters={LAB_CLUSTERS} />
     </CountryMap>).container;

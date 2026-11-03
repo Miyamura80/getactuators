@@ -17,6 +17,8 @@ describe("REST /api/v1/companies and /api/v1/sites", () => {
             "harmonic-drive-systems",
             "nabtesco",
             "nidec",
+            "sumitomo-heavy",
+            "tsubakimoto-chain",
         ]);
         const all = CompanyListSchema.parse(
             await (await get("/api/v1/companies?limit=100")).json(),
@@ -82,11 +84,13 @@ describe("MCP supply-chain tools", () => {
         const out = (
             await callTool("list_companies", { country: "JP", stage: "gearing" })
         ).structuredContent as { total: number; results: { id: string }[] };
-        expect(out.total).toBe(3);
+        expect(out.total).toBe(5);
         expect(out.results.map((c) => c.id)).toEqual([
             "harmonic-drive-systems",
             "nabtesco",
             "nidec",
+            "sumitomo-heavy",
+            "tsubakimoto-chain",
         ]);
     });
 
@@ -111,6 +115,7 @@ describe("MCP supply-chain tools", () => {
             results: { id: string; precision: string }[];
         };
         expect(out.results.map((s) => [s.id, s.precision])).toEqual([
+            ["lynas-mt-weld", "region"],
             ["mp-mountain-pass", "site"],
         ]);
     });

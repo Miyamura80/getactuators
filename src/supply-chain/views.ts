@@ -70,7 +70,7 @@ export const siteOut = z.object({
     sources: z.array(sourceRefOut),
 });
 
-const linkOut = z.object({
+export const linkOut = z.object({
     from: z.string(),
     to: z.string(),
     what: z.string(),
@@ -167,7 +167,7 @@ export function siteView(s: Site): z.input<typeof siteOut> {
     };
 }
 
-function linkView(l: SupplyLink): z.input<typeof linkOut> {
+export function linkView(l: SupplyLink): z.input<typeof linkOut> {
     return {
         from: l.from,
         to: l.to,

@@ -1,0 +1,50 @@
+/* CompanyDrawer, SiteDetail and CompanyTable, shared by the country pages
+   and the map kit page. */
+.sc-company { display: grid; gap: 10px; }
+.sc-company h4 { display: flex; justify-content: space-between; margin: 4px 0 0; font: 600 10px/1.2 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.sc-company-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0; font-size: 12px; color: var(--muted); }
+.sc-company-head a { color: var(--cyan-dim); }
+.sc-owner-chip { margin-left: 6px; padding: 1px 5px; border: 1px solid var(--cyan-dim); color: var(--cyan); }
+.sc-facts { display: grid; gap: 6px; margin: 0; }
+.sc-facts div { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 8px; align-items: baseline; }
+.sc-facts dt { font: 500 10px/1.4 var(--mono); letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.sc-facts dd { margin: 0; font-size: 12px; line-height: 1.45; }
+.sc-sites, .sc-links { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.sc-sites li { border-left: 1px solid var(--line-strong); }
+.sc-sites li.is-on { border-left-color: var(--cyan); }
+.sc-sites li > button { display: grid; gap: 2px; width: 100%; padding: 2px 0 2px 8px; border: 0; background: none; color: var(--text); font: inherit; font-size: 13px; text-align: left; cursor: pointer; }
+.sc-sites li > button:hover span, .sc-sites li > button:focus-visible span { color: var(--cyan); }
+.sc-sites li > button:focus-visible { outline: 1px solid var(--cyan); }
+.sc-sites small { font: 500 10px/1.3 var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.sc-site { padding: 6px 0 4px 8px; }
+.sc-site-kind { margin: 0 0 6px; font: 600 10px var(--mono); color: var(--cyan-dim); text-transform: uppercase; letter-spacing: 0.06em; }
+.sc-site-src { margin: 6px 0 0; font: 500 10px var(--mono); color: var(--muted); text-transform: uppercase; }
+.sc-site-status.is-announced, .sc-site-status.is-construction { color: var(--cyan); }
+.sc-site-status.is-closed { color: var(--muted); text-decoration: line-through; }
+.sc-link { display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: 0 6px; font-size: 12px; line-height: 1.4; }
+.sc-link-dir { color: var(--cyan-dim); font-family: var(--mono); }
+.sc-link-what { grid-column: 2; color: var(--muted); }
+.sc-link.is-estimated .sc-link-what { font-style: italic; }
+.sc-partner { display: inline-flex; align-items: center; gap: 4px; padding: 0; border: 0; background: none; color: var(--text); font: inherit; font-weight: 600; text-align: left; cursor: pointer; text-decoration: none; }
+a.sc-partner { color: var(--cyan-dim); }
+button.sc-partner:hover, button.sc-partner:focus-visible, a.sc-partner:hover { color: var(--cyan); outline: none; }
+.sc-partner small { font-weight: 400; color: var(--muted); }
+.sc-company-bom { margin: 0; font-size: 12px; }
+
+.sc-ctable-wrap { margin-top: 24px; overflow-x: auto; }
+.sc-ctable { width: 100%; border-collapse: collapse; font-size: 13px; }
+.sc-ctable caption { padding: 0 0 8px; text-align: left; font: 600 11px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.sc-ctable th, .sc-ctable td { padding: 6px 10px 6px 0; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+.sc-ctable thead th button { padding: 0; border: 0; background: none; color: var(--muted); font: 600 10px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; }
+.sc-ctable thead th[aria-sort="ascending"] button::after { content: " \2191"; color: var(--cyan); }
+.sc-ctable thead th[aria-sort="descending"] button::after { content: " \2193"; color: var(--cyan); }
+.sc-ctable tbody th button { padding: 0; border: 0; background: none; color: var(--text); font: inherit; font-weight: 600; text-align: left; cursor: pointer; }
+.sc-ctable tbody th button:hover, .sc-ctable tbody th button:focus-visible { color: var(--cyan); outline: none; }
+.sc-ctable tr.is-on th button { color: var(--cyan); }
+.sc-ctable-seg { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
+.sc-ctable .sc-num { font-family: var(--mono); }
+.sc-dash { color: var(--muted); }
+@media (max-width: 600px) {
+    .sc-ctable-seg { font-size: 0; gap: 0; }
+    .sc-ctable th, .sc-ctable td { padding-right: 8px; }
+}

@@ -384,6 +384,7 @@ span.mk-chip { border-style: dashed; color: var(--muted); }
     .mk-drawer {
         position: fixed;
         top: auto;
+        bottom: 0;
         left: 0;
         width: auto;
         max-height: 60vh;
