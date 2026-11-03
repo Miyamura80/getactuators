@@ -15,3 +15,4 @@ Utility scripts for the actuatorlist project.
 - **check_folder_sizes.sh**, **check_large_files.sh** - Folder file-count and file line-count limits
 - **check_docker_smoke.py** - Smokes a locally running production container
 - **check_hero_layout.py** - Optional real-Chromium hero layout regression
+- **sdk-signals/** - Seeding pipeline for `/sdk` (`make sdk_signals`): collects Reddit, Hacker News, ROS Discourse, maker forum and GitHub posts, matches brands, applies the committed post labels in `labels.json` (read by a reviewer, no model API; `--export` lists unlabelled posts), gates on the 150-post check set and writes `src/sdk/data/`

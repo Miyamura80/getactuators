@@ -181,10 +181,20 @@ citation_audit: check_bun ## Fail if any sourced number is uncited or breaks its
 	@bun run scripts/citation-audit.ts
 	@echo "$(GREEN)✅ Citation audit completed.$(RESET)"
 
+validate_benchmarks: check_bun ## Validate data/benchmarks runs (schema, protocol, plausibility, licences)
+	@echo "$(YELLOW)🔍 Validating benchmark runs...$(RESET)"
+	@bun run scripts/validate-benchmarks.ts
+	@echo "$(GREEN)✅ Benchmark validation completed.$(RESET)"
+
 validate_data: check_bun ## Validate actuator + robot datasets (report only, non-blocking)
 	@echo "$(YELLOW)🔍 Validating datasets...$(RESET)"
 	@bun run scripts/validate_actuators.ts
 	@echo "$(GREEN)✅ Dataset validation completed.$(RESET)"
 
-ci: lint deadcode typecheck tech_debt duplicate_code import_lint lint_links check_ai_writing citation_audit sync-agent-config-check lint_immutable_refs ## Run all CI checks
+sdk_signals: check_bun ## Re-run the /sdk seeding pipeline (collect, objective checks, committed labels, score)
+	@echo "$(YELLOW)🔍 Seeding /sdk scores...$(RESET)"
+	@bun run scripts/sdk-signals/run.ts
+	@echo "$(GREEN)✅ SDK signals written to src/sdk/data/.$(RESET)"
+
+ci: lint deadcode typecheck tech_debt duplicate_code import_lint lint_links check_ai_writing citation_audit sync-agent-config-check lint_immutable_refs validate_benchmarks ## Run all CI checks
 	@echo "$(GREEN)✅ CI checks completed.$(RESET)"

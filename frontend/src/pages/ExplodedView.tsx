@@ -1,5 +1,6 @@
 import { PublicHeader } from "../components/PublicHeader";
 import { EngineeringEvidencePanel } from "../components/EngineeringEvidencePanel";
+import { MeasuredPanel } from "../components/benchmarks/MeasuredPanel";
 import { evidenceFor, fieldCaveat, isReducerFamily } from "../../../src/catalog/evidence";
 import { useEffect, useRef } from "react";
 import { ACTUATORS } from "../lib/data";
@@ -7,6 +8,7 @@ import { num, price } from "../lib/format";
 import { Link } from "../lib/router";
 import { CompanyLogo } from "../components/CompanyLogo";
 import { CountryFlag } from "../components/CountryFlag";
+import { SdkBadge } from "./sdk/SdkBadge";
 
 interface Props {
     id: string;
@@ -100,6 +102,7 @@ export function ExplodedView({ id, menuOpen = false }: Props) {
                         </p>
                         <h1>{actuator.name}</h1>
                         <p className="xp-evidence">{evidenceFor(actuator).label}</p>
+                        <SdkBadge actuatorId={actuator.id} />
                         <p className="xp-hint">{"Conceptual silhouette: not CAD or model-specific internals."} {reducerFamily ? "Generic reducer illustration. No motor included." : "Scroll to separate the illustrative panels."}</p>
                         <a className="xp-specs-jump" href="#catalog-content">
                             Jump to specifications
@@ -153,6 +156,7 @@ export function ExplodedView({ id, menuOpen = false }: Props) {
                 </div>
             </div>
             <EngineeringEvidencePanel id={id} />
+            <MeasuredPanel id={id} />
         </div>
     );
 }

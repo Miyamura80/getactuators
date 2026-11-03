@@ -1,4 +1,7 @@
+import { SDK_SOURCES } from "../sdk/sources";
+import { JAPAN_SOURCES } from "./country-pages/japan-sources";
 import { POLICY_SOURCES } from "./policy/sources";
+import { PROCESS_SOURCES } from "./processes/sources";
 import type { ReuseAllowlist, SourceReuse } from "./reuse";
 import type { SourceId } from "./sourced";
 
@@ -23,7 +26,9 @@ export interface SourceRef {
     title: string;
     publisher: string;
     url: string;
-    accessed: string;
+    // ISO date we opened the document. Absent when the figure was taken
+    // from search results and the page itself was never opened.
+    accessed?: string;
     kind: (typeof SOURCE_KINDS)[number];
     // Only public excerpts of a paywalled source may be cited.
     paywalled?: boolean;
@@ -165,14 +170,6 @@ export const SOURCES: SourceRef[] = [
         "facts",
     ),
     // Gears, screws and bearings
-    src(
-        "filingreader-hds-fy2025",
-        "FilingReader",
-        "Harmonic Drive Systems FY25 profit drops amid sluggish sales",
-        "https://filingreader.com/news-wire/tokyo/2025-05-22/harmonic-drive-systems-fy25-profit-drops-amid-sluggish-sales",
-        "press",
-        "facts",
-    ),
     src(
         "jaxa-hds-hotaka",
         "JAXA",
@@ -606,6 +603,9 @@ export const SOURCES: SourceRef[] = [
         "facts",
     ),
     ...POLICY_SOURCES,
+    ...PROCESS_SOURCES,
+    ...JAPAN_SOURCES,
+    ...SDK_SOURCES,
 ];
 
 // Facts sources allowed to back more than FACTS_MAX_RECORDS records (see

@@ -1,5 +1,17 @@
 import type { z } from "zod";
 import {
+    BenchmarkListParams,
+    BenchmarkListSchema,
+    actuatorBenchmarksHandler,
+    listBenchmarksHandler,
+} from "./benchmarks";
+import {
+    CountryListSchema,
+    CountrySchema,
+    getCountryHandler,
+    listCountriesHandler,
+} from "./countries";
+import {
     compareActuatorsGet,
     compareActuatorsPost,
     getActuatorById,
@@ -43,6 +55,13 @@ import {
     listPolicyHandler,
 } from "./policy";
 import {
+    ProcessChainListSchema,
+    ProcessChainSchema,
+    ProcessParams,
+    getProcessHandler,
+    listProcessesHandler,
+} from "./processes";
+import {
     ActuatorDetailSchema,
     ActuatorListSchema,
     CategoryListSchema,
@@ -52,6 +71,13 @@ import {
     RobotDetailSchema,
     RobotListSchema,
 } from "./schemas";
+import {
+    SdkBrandSchema,
+    SdkListParams,
+    SdkListSchema,
+    getSdkHandler,
+    listSdkHandler,
+} from "./sdk";
 import {
     CompanyDetailSchema,
     CompanyListParams,
@@ -326,6 +352,36 @@ export const OPERATIONS: Operation[] = [
         handler: getPolicyHandler,
     },
     {
+        operationId: "list_processes",
+        method: "GET",
+        path: "/api/v1/processes",
+        summary: "List manufacturing process chains",
+        description:
+            "The process graphs on /manufacturing (the NdFeB magnet chain, ore to rotor segment) with their step counts.",
+        response: ProcessChainListSchema,
+        errors: [],
+        example: "/api/v1/processes",
+        handler: listProcessesHandler,
+    },
+    {
+        operationId: "get_process",
+        method: "GET",
+        path: "/api/v1/processes/:chain",
+        summary: "Get a manufacturing process chain",
+        description:
+            "Every step of one chain in order, grouped by stage: inputs and outputs, cited key numbers (temperature, particle size, yield, energy), the companies that run it, the stage's country shares and concentration tier, upstream and downstream steps, /bom node and /metals element links, and sources. Pass `step` for one step and its edges.",
+        pathParam: {
+            name: "chain",
+            description: "Chain id, e.g. magnet.",
+            example: "magnet",
+        },
+        query: ProcessParams,
+        response: ProcessChainSchema,
+        errors: [400, 404],
+        example: "/api/v1/processes/magnet?step=jet-milling",
+        handler: getProcessHandler,
+    },
+    {
         operationId: "list_humanoids",
         method: "GET",
         path: "/api/v1/humanoids",
@@ -383,5 +439,96 @@ export const OPERATIONS: Operation[] = [
         errors: [404],
         example: "/api/v1/open-robots/yor",
         handler: getOpenRobotHandler,
+    },
+    {
+        operationId: "list_benchmarks",
+        method: "GET",
+        path: "/api/v1/benchmarks",
+        summary: "List measured actuator runs",
+        description:
+            "Measured performance from /benchmarks: torque-speed curves, thermal derating, backlash, friction and control figures from published tests (papers, vendor test reports, blogs) and community runs submitted by pull request. Each run carries its rig, data method (raw, tabulated, digitised or reported), uncertainty per metric, source and the gap to the datasheet. Filter by actuator_id or origin.",
+        query: BenchmarkListParams,
+        response: BenchmarkListSchema,
+        errors: [400],
+        example: "/api/v1/benchmarks?actuator_id=robstride-02",
+        handler: listBenchmarksHandler,
+    },
+    {
+        operationId: "get_actuator_benchmarks",
+        method: "GET",
+        path: "/api/v1/actuators/:id/benchmarks",
+        summary: "Measured runs for one actuator",
+        description:
+            "Every measured run on file for one catalog actuator, newest first, with measured against datasheet ratios. 404 when the actuator is unknown or has no runs yet.",
+        pathParam: {
+            name: "id",
+            description: "Catalog actuator id.",
+            example: "xiaomi-cybergear",
+        },
+        response: BenchmarkListSchema,
+        errors: [404],
+        example: "/api/v1/actuators/xiaomi-cybergear/benchmarks",
+        handler: actuatorBenchmarksHandler,
+    },
+    {
+        operationId: "list_countries",
+        method: "GET",
+        path: "/api/v1/countries",
+        summary: "List live country pages",
+        description:
+            "Country pages of the supply-chain atlas (/japan, ...) that pass the coverage gate, with how many companies, sites and supply links each holds.",
+        response: CountryListSchema,
+        errors: [],
+        example: "/api/v1/countries",
+        handler: listCountriesHandler,
+    },
+    {
+        operationId: "get_country",
+        method: "GET",
+        path: "/api/v1/countries/:code",
+        summary: "One country's actuator supply chain",
+        description:
+            "Everything on a country page: the country's share of each stage (with the world leader), named industrial clusters with their sites, its policy measures, every company headquartered there or with a site there, the sites in the country and the current supply links touching those companies, all with citations.",
+        pathParam: {
+            name: "code",
+            description: "ISO 3166 alpha-2 code or page slug, e.g. JP or japan.",
+            example: "JP",
+        },
+        response: CountrySchema,
+        errors: [404],
+        example: "/api/v1/countries/JP",
+        handler: getCountryHandler,
+    },
+    {
+        operationId: "list_sdk_scores",
+        method: "GET",
+        path: "/api/v1/sdk",
+        summary: "List actuator SDK scores by brand",
+        description:
+            "Every actuator brand with software to score, ranked by SDK quality: seven dimension scores (protocol openness, bindings, ROS 2 and sim, docs, firmware and tooling, support, comms reliability), capability matrix, cited objective checks, top pain points and the newest community evidence. Choose a reader preset to re-weight the overall score.",
+        query: SdkListParams,
+        response: SdkListSchema,
+        errors: [400],
+        example: "/api/v1/sdk?preset=ros2",
+        handler: listSdkHandler,
+    },
+    {
+        operationId: "get_sdk_score",
+        method: "GET",
+        path: "/api/v1/sdk/:brand",
+        summary: "Get one brand's SDK score",
+        description:
+            "One brand's SDK score with every check and every evidence item (claim summary, link, forum, date). Accepts an SDK brand id or a catalog actuator id.",
+        pathParam: {
+            name: "brand",
+            description:
+                "SDK brand id (e.g. odrive) or catalog actuator id (e.g. odrive-s1).",
+            example: "odrive",
+        },
+        query: SdkListParams,
+        response: SdkBrandSchema,
+        errors: [400, 404],
+        example: "/api/v1/sdk/odrive",
+        handler: getSdkHandler,
     },
 ];

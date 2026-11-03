@@ -1,4 +1,4 @@
-import { StrictMode, useLayoutEffect } from "react";
+import { StrictMode, Suspense, lazy, useLayoutEffect } from "react";
 import { createRoot, hydrateRoot, type Root as ReactRoot } from "react-dom/client";
 import App from "./App.tsx";
 import { usePath } from "./lib/router";
@@ -30,6 +30,39 @@ import { Policy } from "./pages/supply-chain/policy/Policy";
 import { POLICY_PATH } from "../../src/supply-chain/policy";
 import { OpenSource } from "./pages/open-source/OpenSource";
 import { OPEN_SOURCE_PATH } from "../../src/open-source";
+import { Benchmarks } from "./pages/benchmarks/Benchmarks";
+import { BENCHMARKS_PATH } from "../../src/benchmarks";
+import { MANUFACTURING_PATH } from "../../src/supply-chain/processes/path";
+import { PublicHeader } from "./components/PublicHeader";
+
+// The process map carries its 3D vignette specs, so it loads in its own chunk.
+const Manufacturing = lazy(() =>
+    import("./pages/supply-chain/manufacturing/Manufacturing").then((m) => ({ default: m.Manufacturing })),
+);
+
+// While the chunk loads, keep the site header and the page frame on screen.
+function ManufacturingLoading({ menuOpen }: { menuOpen: boolean }) {
+    return <div className="tool-page mf-page">
+        <PublicHeader path={MANUFACTURING_PATH} initialOpen={menuOpen} />
+        <main className="tool-main" aria-busy="true" />
+    </div>;
+}
+import { CountryPage } from "./pages/supply-chain/country/CountryPage";
+import { LIVE_COUNTRY_PAGES } from "../../src/supply-chain/country-pages";
+import { SDK_PATH } from "../../src/sdk";
+
+// /sdk carries its evidence dataset (several hundred KB), so it loads in its
+// own chunk too.
+const Sdk = lazy(() => import("./pages/sdk/Sdk").then((m) => ({ default: m.Sdk })));
+
+function SdkLoading({ menuOpen }: { menuOpen: boolean }) {
+    return <div className="tool-page sdk-page">
+        <PublicHeader path={SDK_PATH} initialOpen={menuOpen} />
+        <main className="tool-main" aria-busy="true">
+            <p role="status">Loading SDK scores</p>
+        </main>
+    </div>;
+}
 
 function Page({ menuOpen }: { menuOpen: boolean }) {
     const path = usePath();
@@ -48,6 +81,11 @@ function Page({ menuOpen }: { menuOpen: boolean }) {
     if (path === METALS_PATH) return <Metals menuOpen={menuOpen} />;
     if (path === POLICY_PATH) return <Policy menuOpen={menuOpen} />;
     if (path === OPEN_SOURCE_PATH) return <OpenSource menuOpen={menuOpen} />;
+    if (path === BENCHMARKS_PATH) return <Benchmarks menuOpen={menuOpen} />;
+    if (path === MANUFACTURING_PATH) return <Suspense fallback={<ManufacturingLoading menuOpen={menuOpen} />}><Manufacturing menuOpen={menuOpen} /></Suspense>;
+    const country = LIVE_COUNTRY_PAGES.find((p) => p.path === path);
+    if (country) return <CountryPage page={country} menuOpen={menuOpen} />;
+    if (path === SDK_PATH) return <Suspense fallback={<SdkLoading menuOpen={menuOpen} />}><Sdk menuOpen={menuOpen} /></Suspense>;
     if (path.startsWith("/actuators/")) {
         const raw = path.slice("/actuators/".length);
         let id = raw;

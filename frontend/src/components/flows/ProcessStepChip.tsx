@@ -2,7 +2,7 @@
 // that makes it. Step ids are the contract between the two pages
 // (src/supply-chain/processes/ owns them); the label defaults to the id.
 
-export const MANUFACTURING_PATH = "/manufacturing";
+import { MANUFACTURING_PATH } from "../../../../src/supply-chain/processes/path";
 
 export function stepHref(stepId: string): string {
     return `${MANUFACTURING_PATH}#step=${encodeURIComponent(stepId)}`;

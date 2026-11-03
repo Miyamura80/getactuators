@@ -1,5 +1,6 @@
 import { ACTUATORS, CATEGORIES } from "@/catalog";
 import { listBrands, queryActuators, robotsUsingActuator } from "@/catalog/query";
+import { sdkLookupOut, sdkLookupView } from "@/sdk/views";
 import { z } from "zod";
 import {
     actuatorIdSchema,
@@ -85,11 +86,12 @@ const getActuatorTool = defineTool({
     name: "get_actuator",
     title: "Get actuator specs",
     description:
-        "Return every documented spec for one actuator by id: torque, speed, mass, gear ratio, backlash, voltage, current, Kt, bus, control modes, encoder, price, source links and verification status, plus the robots in the catalog that use it.",
+        "Return every documented spec for one actuator by id: torque, speed, mass, gear ratio, backlash, voltage, current, Kt, bus, control modes, encoder, price, source links and verification status, plus the robots in the catalog that use it and its brand's SDK score (sdk).",
     input: z.object({ id: actuatorIdSchema }),
     output: z.object({
         actuator: actuatorSchema,
         robots_using: z.array(robotRefSchema),
+        sdk: sdkLookupOut,
     }),
     run: ({ id }) => {
         const a = requireActuator(id);
@@ -100,6 +102,7 @@ const getActuatorTool = defineTool({
                 name: r.name,
                 brand: r.brand,
             })),
+            sdk: sdkLookupView(a.id),
         };
     },
 });

@@ -1,0 +1,120 @@
+{
+    "actuatorId": "robstride-04",
+    "runId": "robstride-manual-2026-07",
+    "date": "2026-07",
+    "origin": "published",
+    "sourceKind": "vendor",
+    "source": {
+        "url": "https://github.com/RobStride/Product_Information/blob/main/Product%20Literature/CAN2.0/RS04/RS04User%20Manual260713.pdf",
+        "title": "RobStride RS04 user manual (260713)"
+    },
+    "dataMethod": "digitised",
+    "methodNote": "T-N points read off the manual's chart (about 2 N·m reading error). Overload times are the manual's table at 50 rpm on a 345 x 345 mm aluminium plate (GB/T 30549-2014), 145 °C winding limit. Thermal torques are the table's whole-N·m figures and the manual states no measurement uncertainty, so the ±0.5 N·m is that rounding only. windingRiseC is the rise from 25 °C ambient to the winding limit, entered only for points that reached it.",
+    "rig": {
+        "torqueSensor": "not stated",
+        "accuracyPct": null,
+        "encoder": "actuator's own dual 14-bit magnetic encoders",
+        "ambientC": 25,
+        "busV": 48,
+        "controller": "built-in RobStride driver"
+    },
+    "torqueSpeed": [
+        {
+            "rpm": 95,
+            "torqueNm": 120
+        },
+        {
+            "rpm": 110,
+            "torqueNm": 109
+        },
+        {
+            "rpm": 130,
+            "torqueNm": 96
+        },
+        {
+            "rpm": 150,
+            "torqueNm": 79
+        },
+        {
+            "rpm": 155,
+            "torqueNm": 70
+        },
+        {
+            "rpm": 170,
+            "torqueNm": 53
+        },
+        {
+            "rpm": 180,
+            "torqueNm": 47
+        },
+        {
+            "rpm": 186,
+            "torqueNm": 38
+        },
+        {
+            "rpm": 190,
+            "torqueNm": 10
+        }
+    ],
+    "thermal": [
+        {
+            "torqueNm": 120,
+            "tToLimitS": 3,
+            "windingRiseC": 120
+        },
+        {
+            "torqueNm": 115,
+            "tToLimitS": 9,
+            "windingRiseC": 120
+        },
+        {
+            "torqueNm": 110,
+            "tToLimitS": 10,
+            "windingRiseC": 120
+        },
+        {
+            "torqueNm": 105,
+            "tToLimitS": 13,
+            "windingRiseC": 120
+        },
+        {
+            "torqueNm": 100,
+            "tToLimitS": 15,
+            "windingRiseC": 120
+        },
+        {
+            "torqueNm": 90,
+            "tToLimitS": 24,
+            "windingRiseC": 120
+        },
+        {
+            "torqueNm": 80,
+            "tToLimitS": 38,
+            "windingRiseC": 120
+        },
+        {
+            "torqueNm": 70,
+            "tToLimitS": 61,
+            "windingRiseC": 120
+        },
+        {
+            "torqueNm": 60,
+            "tToLimitS": 108,
+            "windingRiseC": 120
+        },
+        {
+            "torqueNm": 50,
+            "tToLimitS": 324,
+            "windingRiseC": 120
+        },
+        {
+            "torqueNm": 40,
+            "tToLimitS": null
+        }
+    ],
+    "uncertainty": {
+        "torqueSpeed": 2,
+        "thermal": 0.5
+    },
+    "note": "Vendor test data on the largest heat sink in the RobStride manuals. Its stall table rates 28.5 N·m continuous with the rotor locked."
+}

@@ -1,4 +1,4 @@
-import { BoxGeometry, CylinderGeometry, Matrix4, Shape, Vector2, Vector3 } from "three";
+import { BoxGeometry, CylinderGeometry, Shape, Vector2, Vector3 } from "three";
 import type {
     BoltProps,
     CylinderProps,
@@ -11,6 +11,7 @@ import type {
 import {
     type Piece,
     TAU,
+    alternatingPoles,
     aroundZ,
     circleLine,
     circlePath,
@@ -197,22 +198,12 @@ export function magnetRingPart(p: MagnetRingProps): Piece[] {
     const outerSide = (p.backIronSide ?? "outer") === "outer";
     const mOuter = outerSide ? p.outer - back : p.outer;
     const mInner = outerSide ? p.inner : p.inner + back;
-    const pitch = TAU / p.poles;
-    const half = (pitch * 0.86) / 2;
+    const half = ((TAU / p.poles) * 0.86) / 2;
     const seg = new Shape();
     seg.absarc(0, 0, mOuter, -half, half, false);
     seg.absarc(0, 0, mInner, half, -half, true);
     const geometry = extrude(seg, p.length * 0.96, 6);
-    const even = Array.from({ length: Math.ceil(p.poles / 2) }, (_, i) =>
-        new Matrix4().makeRotationZ(2 * i * pitch),
-    );
-    const odd = Array.from({ length: Math.floor(p.poles / 2) }, (_, i) =>
-        new Matrix4().makeRotationZ((2 * i + 1) * pitch),
-    );
-    const pieces: Piece[] = [
-        { geometry, matrices: even, edges: 30 },
-        { geometry, matrices: odd, tone: "alt", edges: 30 },
-    ];
+    const pieces = alternatingPoles(geometry, p.poles);
     if (back > 0) {
         const ring = outerSide
             ? ringGeometry(p.outer, p.outer - back, p.length)

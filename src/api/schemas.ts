@@ -1,3 +1,4 @@
+import { sdkLookupOut } from "@/sdk/views";
 import { z } from "zod";
 
 // Response contracts for /api/v1. These zod schemas are the single source of
@@ -90,6 +91,7 @@ export const ActuatorDetailSchema = named(
         robots_using: z
             .array(RobotRefSchema)
             .describe("Robots in the catalog whose joints use this actuator."),
+        sdk: sdkLookupOut,
     }),
 );
 

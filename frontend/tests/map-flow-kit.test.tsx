@@ -56,10 +56,14 @@ test("?site= selects a pin, and picking another pin rewrites the query", () => {
 
 test("?company= opens the drawer with the company's sites", () => {
     window.history.replaceState({}, "", "/lab/supply-chain?company=jl-mag");
-    const c = render(<LabMaps topologies={{ world: WORLD, JP }} />).container;
+    const c = render(<FootnotesProvider><LabMaps topologies={{ world: WORLD, JP }} /></FootnotesProvider>).container;
     const drawer = c.querySelector(".mk-drawer");
     expect(drawer?.querySelector("h3")?.textContent).toBe("JL MAG Rare-Earth");
-    expect(drawer?.querySelectorAll(".sc-lab-sites li").length).toBeGreaterThanOrEqual(3);
+    // The shared company card: its sites, then a site expands in place.
+    expect(drawer?.querySelectorAll(".sc-sites li").length).toBeGreaterThanOrEqual(3);
+    act(() => { fireEvent.click(drawer?.querySelector(".sc-sites li button") as Element); });
+    expect(readSelection(window.location.search).site).not.toBeNull();
+    expect(c.querySelector(".mk-drawer .sc-site")).not.toBeNull();
     act(() => { fireEvent.click(drawer?.querySelector(".mk-drawer-close") as Element); });
     expect(window.location.search).toBe("");
     expect(c.querySelector(".mk-drawer")).toBeNull();
@@ -135,13 +139,36 @@ test("every map carries a hidden table equivalent", () => {
 });
 
 test("country map fits admin-1 outlines and arcs leaving it end in a country chip", () => {
-    const arcs = arcsTouching(supplyArcs(), "JP");
+    const arcs = arcsTouching(supplyArcs(), "JP").filter((a) => a.id === "nabtesco--fanuc" || a.id === "nabtesco--yaskawa");
     const c = render(<CountryMap code="JP" topology={JP}><Arcs arcs={arcs} hrefFor={(code) => `/${code.toLowerCase()}`} /></CountryMap>).container;
     expect(c.querySelectorAll(".mk-land").length).toBe(47);
     // Nabtesco to FANUC and Yaskawa are domestic: no chips, two arcs.
     expect(c.querySelectorAll(".mk-chip")).toHaveLength(0);
     const leaving = render(<CountryMap code="JP" topology={JP}><Arcs arcs={supplyArcs().filter((a) => a.id === "hyundai-mobis--boston-dynamics")} hrefFor={(code) => `/${code.toLowerCase()}`} /></CountryMap>).container;
     expect(leaving.querySelectorAll(".mk-chip").length).toBeGreaterThan(0);
+});
+
+test("partnership arcs run both ways: no arrowhead and an A ↔ B tooltip", () => {
+    const arcs = supplyArcs().filter((a) => a.id === "fanuc--mujin" || a.id === "nabtesco--fanuc");
+    const c = render(<CountryMap code="JP" topology={JP}><Arcs arcs={arcs} /></CountryMap>).container;
+    const line = (kind: string) => c.querySelector(`.mk-arc-kind-${kind} .mk-arc-line`) as Element;
+    expect(line("supply").getAttribute("marker-end")).toMatch(/^url\(#/);
+    expect(line("partnership").getAttribute("marker-end")).toBeNull();
+    act(() => { fireEvent.pointerEnter(c.querySelector(".mk-arc-kind-partnership") as Element); });
+    const tip = c.querySelector(".mk-arc-tip") as Element;
+    expect(tip.firstChild?.textContent).toBe("FANUC ↔ Mujin");
+});
+
+test("arc chips word the relation by link kind", () => {
+    const chip = (id: string) => {
+        const c = render(<CountryMap code="JP" topology={JP}><Arcs arcs={supplyArcs().filter((a) => a.id === id)} /></CountryMap>).container;
+        return c.querySelector(".mk-chip") as Element;
+    };
+    const partner = chip("toyota-motor--boston-dynamics");
+    expect(partner.getAttribute("aria-label")).toStartWith("Partners with United States: Toyota Motor and Boston Dynamics");
+    expect(partner.querySelector(".mk-chip-dir")?.getAttribute("class")).toContain("is-both");
+    expect(chip("jare--lynas").getAttribute("aria-label")).toStartWith("Invests in Australia");
+    expect(chip("hyundai-mobis--boston-dynamics").getAttribute("aria-label")).toStartWith("Supplies to United States");
 });
 
 test("arc geometry: clip at the frame and drop floating runs", () => {
@@ -179,7 +206,7 @@ test("country map: site density shading, coastline, scale bar, cities and placed
     expect(c.querySelector(".mk-scale")?.getAttribute("aria-label")).toMatch(/^Scale: bar is [\d,]+ km$/);
     // The key lists only the segments on this map, with counts.
     const key = [...c.querySelectorAll(".mk-keyrow .mk-key li")].map((li) => li.textContent);
-    expect(key.some((t) => t?.startsWith("Rare earths"))).toBe(false);
+    expect(key).toContain(`Rare earths${here.filter((p) => p.segment === "ree-mining-refining").length}`);
     expect(key).toContain(`Gears & bearings${here.filter((p) => p.segment === "gears-screws-bearings").length}`);
     // Labels are decorative and never overlap.
     const layer = c.querySelector(".mk-labels");

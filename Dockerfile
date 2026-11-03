@@ -22,6 +22,11 @@ COPY src/brands ./src/brands
 COPY src/supply-chain ./src/supply-chain
 # Open-source robot directory (/open-source).
 COPY src/open-source ./src/open-source
+# Measured benchmark runs (/benchmarks, Measured panel, /compare overlay).
+COPY src/benchmarks ./src/benchmarks
+COPY data/benchmarks ./data/benchmarks
+# The /sdk scores, checks and evidence (page, badge and shared sources).
+COPY src/sdk ./src/sdk
 # Logo.dev publishable key (public), baked into the bundle; unset draws monograms.
 ARG VITE_LOGO_DEV_TOKEN=""
 ENV VITE_LOGO_DEV_TOKEN=$VITE_LOGO_DEV_TOKEN
@@ -36,6 +41,7 @@ RUN bun install --frozen-lockfile --production --ignore-scripts
 COPY --from=build /app/frontend/dist ./frontend/dist
 COPY frontend/src/data ./frontend/src/data
 COPY src ./src
+COPY data/benchmarks ./data/benchmarks
 # Served as-is by src/server/routes: the agent skill and the og:images.
 COPY skills ./skills
 COPY media/og-image.png media/og-startups.png media/og-investors.png ./media/

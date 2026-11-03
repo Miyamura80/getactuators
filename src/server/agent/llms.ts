@@ -1,4 +1,5 @@
 import { ACTUATORS, type Actuator, CATEGORIES, ROBOTS } from "@/catalog";
+import { LIVE_COUNTRY_PAGES } from "@/supply-chain/country-pages";
 import {
     CODE_LICENSE,
     DATA_LICENSE,
@@ -16,6 +17,14 @@ import { catalogStats } from "./pages-md";
 // llms.txt (https://llmstxt.org) and its long-form and per-section siblings.
 
 const u = absoluteUrl;
+
+// One line per live country page (/japan, ...), each ending in a newline.
+function countryLinks(): string {
+    return LIVE_COUNTRY_PAGES.map(
+        (p) =>
+            `${link(`${p.name}: actuator supply chain`, `${p.path}.md`, `map of rare earth, magnet and motor, gear and bearing, and robot companies with plants, supply links and stage shares; MCP get_country("${p.code}"), REST /api/v1/countries/${p.code}`)}\n`,
+    ).join("");
+}
 
 function link(label: string, path: string, note: string): string {
     return `- ${mdLink(label, u(path))}: ${note}`;
@@ -79,12 +88,16 @@ ${link("Humanoid robot actuators", "/guides/humanoid-robot-actuators.md", "stati
 ${link("Robot actuator selection guide", "/guides/robot-actuator-selection.md", "efficiency, thermal duty, precision and sim2real checks")}
 ${link("Motor torque calculator", "/tools/motor-torque-calculator.md", "torque, power and speed relation, units and worked examples")}
 ${link("Robot arm torque calculator", "/tools/robot-arm-torque-calculator.md", "static holding torque per joint; same model from the MCP tool arm_holding_torque and, on the page, WebMCP tools calculate_arm_holding_torque, set_arm_model and select_arm_joint")}
+${link("Measured actuator benchmarks", "/benchmarks.md", "measured runs (vendor test reports, papers, blogs, digitised plots, and dyno or bench runs) against datasheet claims: torque-speed curves, thermal derating, backlash and friction per run with rig, data method, uncertainty and source; MCP get_benchmarks, REST /api/v1/benchmarks")}
+${link("Best actuator SDKs", "/sdk.md", "SDK scores per brand on seven dimensions (protocol, bindings, ROS 2 and sim, docs, firmware, support, comms) from objective checks and developer posts, with evidence links; MCP get_sdk_score, REST /api/v1/sdk")}
 
 ## Supply chain (markdown)
 
 ${link("Magnet metals", "/metals.md", "Nd, Pr, Dy, Tb, Sm and Co: country share at each stage from mine to magnet, USGS reserves and years of supply, cited price history and the events behind it; same data from the MCP tools get_metal_supply and get_metal_prices")}
 ${link("Actuator chain policy", "/policy.md", "export controls, tariffs, subsidies and standards from mine to robot with status history and primary sources; MCP list_policy_measures, REST /api/v1/policy, Atom feed /policy/feed.xml")}
+${link("How an actuator magnet is made", "/manufacturing.md", "every step from rare earth ore to a magnetised NdFeB rotor segment with cited temperatures, particle sizes and yields, who runs it and the country concentration; MCP get_process, REST /api/v1/processes/magnet")}
 
+${countryLinks()}
 ## About
 
 ${link("About", "/about.md", "who runs the catalog and how data is verified")}

@@ -1,0 +1,26 @@
+{
+    "actuatorId": "feetech-sts3250",
+    "runId": "robonine-servo-test",
+    "date": "2026-11",
+    "origin": "published",
+    "sourceKind": "blog",
+    "source": {
+        "url": "https://robonine.com/feetech-sts3250-smart-actuator-evaluation-of-accuracy-torque-and-backlash/",
+        "title": "Robonine: Feetech STS3250 smart actuator, evaluation of accuracy, torque and backlash"
+    },
+    "dataMethod": "reported",
+    "methodNote": "Torque read on a lever: the peak held for a split second, and the highest load held before overload protection cut in. The post gives no lever length, scale accuracy or repeat count: ±0.5 N·m is our estimate, about 10% of the peak.",
+    "rig": {
+        "torqueSensor": "scale under a lever",
+        "accuracyPct": null,
+        "encoder": "servo's own 12-bit magnetic encoder",
+        "ambientC": null,
+        "busV": 12,
+        "controller": "built-in Feetech controller"
+    },
+    "peakTorqueNm": 4.71,
+    "uncertainty": {
+        "peakTorqueNm": 0.5
+    },
+    "note": "48 kg·cm peak against a 50 kg·cm rating; 25 kg·cm (2.45 N·m) was the most it held before protection cut in."
+}
