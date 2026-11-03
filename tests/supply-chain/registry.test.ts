@@ -115,7 +115,9 @@ describe("accessors", () => {
                 .sort(),
         ).toEqual(["CN", "JP", "JP"]);
         expect(findSites({ kind: "mine" }).map((s) => s.id)).toEqual([
+            "baotou-steel-bayan-obo",
             "lynas-mt-weld",
+            "maoniuping-mine",
             "mp-mountain-pass",
         ]);
     });

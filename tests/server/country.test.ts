@@ -47,7 +47,7 @@ describe("/japan page and twin", () => {
     });
 
     test("countries without a dataset past the gate are not routed", async () => {
-        for (const path of ["/china", "/korea", "/us"])
+        for (const path of ["/korea", "/us"])
             expect((await get(path)).status).toBe(404);
     });
 
@@ -87,12 +87,64 @@ describe("/japan page and twin", () => {
     });
 });
 
+describe("/china page and twin", () => {
+    test("is routed, linked site-wide, in the sitemap and in llms.txt", async () => {
+        const res = await get("/china");
+        expect(res.status).toBe(200);
+        const html = await res.text();
+        expect(html).toContain("<title>China: actuator supply chain");
+        expect(ldNodes(html)).toContain('"name":"JL MAG Rare-Earth"');
+        expect(html).toContain('<a href="/china"');
+        expect(await (await get("/sitemap.xml")).text()).toContain("/china");
+        const llms = await (await get("/llms.txt")).text();
+        expect(llms).toContain("/china.md");
+        expect(llms).toContain('get_country("CN")');
+    });
+
+    test("markdown twin lists every company and site, with sources", async () => {
+        const md = await (await get("/china.md")).text();
+        for (const h of [
+            "## Share of each stage",
+            "## Policies",
+            "## Clusters",
+            "## Sources",
+        ])
+            expect(md).toContain(h);
+        for (const c of countryCompanies("CN")) expect(md).toContain(`\`${c.id}\``);
+        expect(md).toContain("**Baotou rare earth hub**");
+        expect(md).not.toContain(String.fromCharCode(0x2014));
+    });
+
+    test("REST and MCP return China's filtered registry", async () => {
+        const res = await get("/api/v1/countries/china");
+        expect(res.status).toBe(200);
+        const body = CountrySchema.parse(await res.json());
+        expect(body.code).toBe("CN");
+        expect(body.sites.map((s) => s.id)).toEqual(
+            countrySites("CN").map((s) => s.id),
+        );
+        expect(body.links.length).toBe(countryLinks("CN").length);
+        const baotou = body.clusters.find((c) => c.id === "baotou-ree");
+        expect(baotou?.site_ids).toContain("baotou-steel-bayan-obo");
+        const out = CountrySchema.parse(
+            (await callTool("get_country", { code: "CN" })).structuredContent,
+        );
+        expect(out.name).toBe("China");
+        expect(
+            out.links.some(
+                (l) =>
+                    l.from === "baotou-steel" && l.to === "china-northern-rare-earth",
+            ),
+        ).toBe(true);
+    });
+});
+
 describe("REST /api/v1/countries", () => {
     test("lists live countries with coverage", async () => {
         const res = await get("/api/v1/countries");
         expect(res.status).toBe(200);
         const body = CountryListSchema.parse(await res.json());
-        expect(body.results.map((r) => r.code)).toEqual(["JP"]);
+        expect(body.results.map((r) => r.code)).toEqual(["JP", "CN"]);
         const cov = body.results[0]?.coverage;
         expect(cov?.companies).toBeGreaterThanOrEqual(COVERAGE_TARGET.companies);
         expect(cov?.sites).toBeGreaterThanOrEqual(COVERAGE_TARGET.sites);
@@ -127,9 +179,9 @@ describe("REST /api/v1/countries", () => {
     });
 
     test("404s for a country that is not live, and is in the OpenAPI document", async () => {
-        const res = await get("/api/v1/countries/CN");
+        const res = await get("/api/v1/countries/KR");
         expect(res.status).toBe(404);
-        expect((await get("/api/v1/countries/CN.md")).status).toBe(404);
+        expect((await get("/api/v1/countries/KR.md")).status).toBe(404);
         expect(res.headers.get("content-type")).toContain("application/problem+json");
         const openapi = await (await get("/openapi.json")).json();
         expect(Object.keys(openapi.paths)).toContain("/api/v1/countries/{code}");

@@ -25,6 +25,8 @@ import { FootnotesProvider } from "../src/components/supply-chain/footnotes";
 import { LabMaps } from "../src/pages/supply-chain/lab/LabMaps";
 import { SEGMENT_COLOR, SEGMENT_PICTO, arcsTouching, mixPhrase, segmentMix, sitePins, supplyArcs } from "../../src/supply-chain/map";
 import { mixSize } from "../../src/supply-chain/map-groups";
+import { CHINA_SITES } from "../../src/supply-chain/sites/china";
+import { CHINA_PLANTS } from "../../src/supply-chain/sites/china-plants";
 const geo = (f: string) => JSON.parse(readFileSync(new URL(`../public/geo/${f}`, import.meta.url), "utf8")) as MapTopology;
 const WORLD = geo("world-110m.json");
 const JP = geo("jp-admin1.json");
@@ -87,7 +89,10 @@ test("pins are keyboard-focusable buttons named by site, segment and precision",
 });
 
 test("group markers show what they hold: segment tiles in chain order with counts", () => {
-    const here = PINS.filter((p) => p.country === "CN");
+    // The seed sites only: the /china dataset is dense enough that no city
+    // group survives at country zoom.
+    const china = new Set([...CHINA_SITES, ...CHINA_PLANTS].map((x) => x.id));
+    const here = PINS.filter((p) => p.country === "CN" && !china.has(p.id));
     const c = render(<CountryMap code="CN" sites={here} topology={CN}>
         <ClusterZoom pins={here} clusters={LAB_CLUSTERS} />
     </CountryMap>).container;

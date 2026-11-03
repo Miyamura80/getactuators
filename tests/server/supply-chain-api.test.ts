@@ -115,7 +115,9 @@ describe("MCP supply-chain tools", () => {
             results: { id: string; precision: string }[];
         };
         expect(out.results.map((s) => [s.id, s.precision])).toEqual([
+            ["baotou-steel-bayan-obo", "city"],
             ["lynas-mt-weld", "region"],
+            ["maoniuping-mine", "city"],
             ["mp-mountain-pass", "site"],
         ]);
     });
