@@ -36,6 +36,13 @@ import {
     listPolicyHandler,
 } from "./policy";
 import {
+    ProcessChainListSchema,
+    ProcessChainSchema,
+    ProcessParams,
+    getProcessHandler,
+    listProcessesHandler,
+} from "./processes";
+import {
     ActuatorDetailSchema,
     ActuatorListSchema,
     CategoryListSchema,
@@ -317,6 +324,36 @@ export const OPERATIONS: Operation[] = [
         errors: [404],
         example: "/api/v1/policy/cn-mofcom-2025-18",
         handler: getPolicyHandler,
+    },
+    {
+        operationId: "list_processes",
+        method: "GET",
+        path: "/api/v1/processes",
+        summary: "List manufacturing process chains",
+        description:
+            "The process graphs on /manufacturing (the NdFeB magnet chain, ore to rotor segment) with their step counts.",
+        response: ProcessChainListSchema,
+        errors: [],
+        example: "/api/v1/processes",
+        handler: listProcessesHandler,
+    },
+    {
+        operationId: "get_process",
+        method: "GET",
+        path: "/api/v1/processes/:chain",
+        summary: "Get a manufacturing process chain",
+        description:
+            "Every step of one chain in order, grouped by stage: inputs and outputs, cited key numbers (temperature, particle size, yield, energy), the companies that run it, the stage's country shares and concentration tier, upstream and downstream steps, /bom node and /metals element links, and sources. Pass `step` for one step and its edges.",
+        pathParam: {
+            name: "chain",
+            description: "Chain id, e.g. magnet.",
+            example: "magnet",
+        },
+        query: ProcessParams,
+        response: ProcessChainSchema,
+        errors: [400, 404],
+        example: "/api/v1/processes/magnet?step=jet-milling",
+        handler: getProcessHandler,
     },
     {
         operationId: "list_humanoids",

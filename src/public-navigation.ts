@@ -39,6 +39,7 @@ export const SUPPLY_CHAIN_GROUPS = [
 export const SUPPLY_CHAIN_PAGES_LIVE: ReadonlySet<string> = new Set<string>([
     "/metals",
     "/policy",
+    "/manufacturing",
 ]);
 
 export interface SupplyChainMenuLink {

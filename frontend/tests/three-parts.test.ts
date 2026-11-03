@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { Box3, InstancedMesh, Mesh, MeshBasicMaterial } from "three";
 import { DEMO_SCENES, MAGNET_PRESS_LOOP } from "../../src/supply-chain/scenes/demos";
+import { MAGNET_LOOPS, MAGNET_ROTOR } from "../../src/supply-chain/scenes/magnet-loops";
 import { partExtent, pitchRadius } from "../../src/supply-chain/scenes/motion";
 import { PART_KINDS, type PartShape } from "../../src/supply-chain/scenes/spec";
 import { buildPart, planetaryPose } from "../src/three/parts";
@@ -13,6 +14,10 @@ import { cycloidPoints } from "../src/three/parts/drives";
 const shapes: PartShape[] = [
     ...DEMO_SCENES.flatMap((s) => s.parts),
     ...MAGNET_PRESS_LOOP.actors,
+    ...MAGNET_LOOPS.flatMap((l) => l.actors),
+    ...MAGNET_ROTOR.parts,
+    { component: "block", props: { width: 40, height: 16, depth: 24, slices: 7 } },
+    { component: "arc-segment", props: { outer: 26, inner: 20, angle: 0.55, length: 16 } },
     { component: "spur-gear", props: { teeth: 18, module: 1, width: 5, bore: 3 } },
     { component: "spur-gear", props: { teeth: 48, module: 1, width: 5, internal: true } },
     {

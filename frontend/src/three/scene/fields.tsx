@@ -134,7 +134,7 @@ function rng(seed: number) {
 const tmpM = new Matrix4();
 const tmpQ = new Quaternion();
 const tmpP = new Vector3();
-const ONE = new Vector3(1, 1, 1);
+const tmpS = new Vector3(1, 1, 1);
 
 export function Particles({ spec }: { spec: ParticlesSpec }) {
     const phase = useContext(PhaseContext);
@@ -172,16 +172,19 @@ export function Particles({ spec }: { spec: ParticlesSpec }) {
         const t = state.clock.elapsedTime;
         seeds.forEach((p, i) => {
             tmpP.set(p.u.x * spec.size[0], p.u.y * spec.size[1], p.u.z * spec.size[2]);
-            // Compaction acts along the field axis only.
+            // Aligning powder: scale compacts along the field axis only.
+            // Swirling or falling particles: scale is their size (milling).
+            const compact = spec.mode === "align";
             const along = tmpP.dot(axis);
-            tmpP.addScaledVector(axis, along * (s.scale - 1));
+            if (compact) tmpP.addScaledVector(axis, along * (s.scale - 1));
+            tmpS.setScalar(compact ? 1 : s.scale);
             if (spec.mode === "swirl") tmpP.applyAxisAngle(axis, t * p.speed * s.value * 2);
             if (spec.mode === "fall") {
                 const fall = (((p.u.y + 0.5 - t * 0.3 * p.speed * s.value) % 1) + 1) % 1 - 0.5;
                 tmpP.addScaledVector(axis, (fall - p.u.y) * spec.size[1]);
             }
             tmpQ.copy(p.q).slerp(aligned, spec.mode === "align" ? s.value : 0);
-            tmpM.compose(tmpP.add(center), tmpQ, ONE);
+            tmpM.compose(tmpP.add(center), tmpQ, tmpS);
             mesh.setMatrixAt(i, tmpM);
         });
         mesh.instanceMatrix.needsUpdate = true;

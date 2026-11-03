@@ -64,6 +64,11 @@ const SAMPLE_SHAPES: PartShape[] = [
     { component: "pcb", props: { shape: "rect", width: 40, height: 30 } },
     { component: "housing", props: { profile: "cup", outer: 50, length: 30, wall: 3 } },
     { component: "bolt", props: { diameter: 3, length: 12, count: 8, circle: 40 } },
+    { component: "block", props: { width: 40, height: 16, depth: 24, slices: 3 } },
+    {
+        component: "arc-segment",
+        props: { outer: 26, inner: 20, angle: 0.55, length: 16, count: 10 },
+    },
 ];
 
 const part = (over: Partial<PartSpec> = {}): PartSpec =>

@@ -10,6 +10,7 @@ import {
 } from "./drives";
 import { ballScrewPart, bearingPart, rollerScrewPart } from "./screws";
 import { encoderPart, pcbPart } from "./boards";
+import { arcSegmentPart, blockPart } from "./blocks";
 import type { Piece } from "./geometry";
 
 export type { Piece } from "./geometry";
@@ -55,5 +56,9 @@ export function buildPart(shape: PartShape): Piece[] {
             return housingPart(shape.props);
         case "bolt":
             return boltPart(shape.props);
+        case "block":
+            return blockPart(shape.props);
+        case "arc-segment":
+            return arcSegmentPart(shape.props);
     }
 }

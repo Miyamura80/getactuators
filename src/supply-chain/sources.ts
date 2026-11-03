@@ -1,4 +1,5 @@
 import { POLICY_SOURCES } from "./policy/sources";
+import { PROCESS_SOURCES } from "./processes/sources";
 import type { ReuseAllowlist, SourceReuse } from "./reuse";
 import type { SourceId } from "./sourced";
 
@@ -606,6 +607,7 @@ export const SOURCES: SourceRef[] = [
         "facts",
     ),
     ...POLICY_SOURCES,
+    ...PROCESS_SOURCES,
 ];
 
 // Facts sources allowed to back more than FACTS_MAX_RECORDS records (see

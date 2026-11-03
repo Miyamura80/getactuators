@@ -1,7 +1,7 @@
 # Supply-chain atlas: data and page recipe
 
-The supply-chain pages (`/metals` is live; `/bom`, `/manufacturing`, `/alts`,
-`/japan`, `/china`, `/korea`, `/us` are planned; `/lab/supply-chain` is the
+The supply-chain pages (`/metals`, `/policy` and `/manufacturing` are live;
+`/bom`, `/alts`, `/japan`, `/china`, `/korea`, `/us` are planned; `/lab/supply-chain` is the
 hidden kit page) share one cited registry and one set of components.
 Pages hold content; numbers live in the registry and are referenced by id.
 
@@ -143,6 +143,33 @@ before hydration, and list the same data as tables in the markdown twin.
 | `<SupplyGraph nodes edges>` | layered company cards (monogram, name, flag, stage, badges); hover a card to read what flows on its edges |
 | `<NodeBadge kind>` | `idiot-index` (`9.1x`), `margin` (`38%`), `concentration` (flag, meter, top share); a `Sourced` value keeps its confidence style and footnote |
 | `<ProcessStepChip stepId>` | link to `/manufacturing#step=<id>` |
+| `<StageShareBar shares label>` | one stage's country shares as a single stacked bar, top flags under it |
+| `<ConcentrationBadge shares>` | tier word (monopolized 80%+, concentrated 50-80%, distributed) with the top flag and share (`concentrationTier` in `src/supply-chain/concentration-tier.ts`) |
+| `<CompanyDrawer companyId onClose>` | company panel in `MapDrawer`: stages, products, revenue, links |
+| `process-icons.tsx` | line pictograms per process step (`ProcessIcon`) |
+
+`frontend/src/lib/supply-chain-selection.ts` keeps one selection per page in
+the URL hash (`#step=` on /manufacturing, `#node=` on /bom):
+`useSupplyChainSelection(key, isKnown)`.
+
+## Process chains (/manufacturing)
+
+```
+ src/supply-chain/processes/
+ +-- types.ts     ProcessChain: clusters, steps (label <= 4 words, caption <= 12),
+ |                edges (main | branch | loop), product scene
+ +-- magnet.ts    the NdFeB chain, ore to rotor segment; step ids are the /bom contract
+ +-- layout.ts    grid -> map boxes, cluster frames, edge curves, zoom detail
+ +-- index.ts     PROCESS_CHAINS, getChain, isProcessStepId, processErrors
+ +-- views.ts     REST / MCP wire shape (server only)
+ src/supply-chain/scenes/magnet-loops.ts   the ProcessLoop vignettes + rotor explode
+```
+
+A new chain (#83) is a new file with the same schema appended to
+`PROCESS_CHAINS`; the switcher, map, twin, REST and MCP pick it up. Country
+shares on steps are keys into the /metals stage shares (`PROCESS_SHARES`), so
+they are cited once. Posters: `bun frontend/scripts/capture-posters.ts <base>
+[ids]` captures every animated step from `/manufacturing#step=<id>`.
 
 ## The kit page
 
@@ -185,6 +212,8 @@ open it before scrolling to the entry.
 | REST (metals) | `GET /api/v1/metals`, `GET /api/v1/metals/{element}`, `GET /api/v1/metal-prices/{series}` |
 | MCP (policy) | `list_policy_measures(jurisdiction?, type?, stage?, status?)` |
 | REST (policy) | `GET /api/v1/policy`, `GET /api/v1/policy/{id}`, Atom feed `/policy/feed.xml` |
+| MCP (processes) | `get_process(chain?, step?)` |
+| REST (processes) | `GET /api/v1/processes`, `GET /api/v1/processes/{chain}?step=` |
 
 Commodity prices for any page come from `priceAt(seriesId, "YYYY-MM")` in
 `src/supply-chain/metals/prices.ts`: the last reading in that month, else the
