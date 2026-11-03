@@ -84,15 +84,21 @@ export function Arcs({ arcs, hrefFor = liveCountryPage, selectedId, table = "Sup
     return <>
         {svgLayer ? createPortal(svg, svgLayer) : null}
         {activeArc && mid ? <span className="mk-arc-tip" style={pct(mid, width, height)} aria-hidden="true">
-            {activeArc.arc.from.label} {activeArc.arc.kind === "partnership" ? "↔" : "→"} {activeArc.arc.to.label}<i>{activeArc.arc.kind === "supply" ? "" : `${KIND_LABEL[activeArc.arc.kind]}: `}{activeArc.arc.label}</i>
+            {`${activeArc.arc.from.label} ${activeArc.arc.kind === "partnership" ? "↔" : "→"} ${activeArc.arc.to.label}`}<i>{activeArc.arc.kind === "supply" ? "" : `${KIND_LABEL[activeArc.arc.kind]}: `}{activeArc.arc.label}</i>
         </span> : null}
         {[...chips.values()].map((c) => {
             const href = hrefFor(c.country);
             const name = countryName(c.country);
             const what = c.arcs.map((a) => `${a.from.label} ${a.kind === "partnership" ? "and" : "to"} ${a.to.label}, ${a.label}`).join("; ");
-            const label = `${c.dir === "out" ? "Supplies to" : "Supplied from"} ${name}: ${what}${href ? `. Open ${name}` : ""}`;
+            // Wording and icon follow the link kind: partnerships run both ways.
+            const both = c.arcs.every((a) => a.kind === "partnership");
+            const invest = c.arcs.every((a) => a.kind === "investment");
+            const relation = both ? "Partners with"
+                : invest ? (c.dir === "out" ? "Invests in" : "Invested in from")
+                    : c.dir === "out" ? "Supplies to" : "Supplied from";
+            const label = `${relation} ${name}: ${what}${href ? `. Open ${name}` : ""}`;
             const body = <>
-                <svg viewBox="0 0 10 10" aria-hidden="true" className={`mk-chip-dir is-${c.dir}`}><path d="M2 5h6M5 2l3 3-3 3" /></svg>
+                <svg viewBox="0 0 10 10" aria-hidden="true" className={`mk-chip-dir is-${both ? "both" : c.dir}`}><path d={both ? "M2 5h6M4 3 2 5l2 2M6 3l2 2-2 2" : "M2 5h6M5 2l3 3-3 3"} /></svg>
                 <Flag code={c.country} decorative />
                 <span>{c.country}</span>
                 {c.arcs.length > 1 ? <b>{c.arcs.length}</b> : null}

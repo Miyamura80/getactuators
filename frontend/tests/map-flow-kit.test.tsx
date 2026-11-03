@@ -155,7 +155,20 @@ test("partnership arcs run both ways: no arrowhead and an A ↔ B tooltip", () =
     expect(line("supply").getAttribute("marker-end")).toMatch(/^url\(#/);
     expect(line("partnership").getAttribute("marker-end")).toBeNull();
     act(() => { fireEvent.pointerEnter(c.querySelector(".mk-arc-kind-partnership") as Element); });
-    expect(c.querySelector(".mk-arc-tip")?.textContent).toContain("↔");
+    const tip = c.querySelector(".mk-arc-tip") as Element;
+    expect(tip.firstChild?.textContent).toBe("FANUC ↔ Mujin");
+});
+
+test("arc chips word the relation by link kind", () => {
+    const chip = (id: string) => {
+        const c = render(<CountryMap code="JP" topology={JP}><Arcs arcs={supplyArcs().filter((a) => a.id === id)} /></CountryMap>).container;
+        return c.querySelector(".mk-chip") as Element;
+    };
+    const partner = chip("toyota-motor--boston-dynamics");
+    expect(partner.getAttribute("aria-label")).toStartWith("Partners with United States: Toyota Motor and Boston Dynamics");
+    expect(partner.querySelector(".mk-chip-dir")?.getAttribute("class")).toContain("is-both");
+    expect(chip("jare--lynas").getAttribute("aria-label")).toStartWith("Invests in Australia");
+    expect(chip("hyundai-mobis--boston-dynamics").getAttribute("aria-label")).toStartWith("Supplies to United States");
 });
 
 test("arc geometry: clip at the frame and drop floating runs", () => {
