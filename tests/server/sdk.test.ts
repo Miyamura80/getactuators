@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { ActuatorDetailSchema } from "@/api/schemas";
 import { SdkBrandSchema, SdkListSchema } from "@/api/sdk";
 import { SCORED_BRANDS, sdkLeaderboard } from "@/sdk";
-import { SDK_EVIDENCE } from "@/sdk/evidence";
+import { SDK_EVIDENCE, evidenceFor } from "@/sdk/evidence";
 import { get, getMarkdown } from "./agent-helpers";
 import { callTool } from "./mcp-helpers";
 
@@ -47,8 +47,11 @@ describe("/sdk page and twin", () => {
             expect(rows).toHaveLength(board.length);
             for (const s of board) expect(md).toContain(`(\`${s.brand.id}\`)`);
             expect(md).toContain("ROS 2 shop");
-            const first = SDK_EVIDENCE[0];
-            if (first) expect(md).toContain("https://");
+            // Each brand section links its five newest evidence posts.
+            for (const s of board)
+                for (const e of evidenceFor(s.brand.id).slice(0, 5))
+                    expect(md).toContain(e.url);
+            expect(md).toContain("one-off seed");
             expect(md).not.toContain(EM_DASH);
         }
     });
@@ -58,6 +61,12 @@ describe("REST /api/v1/sdk", () => {
     test("lists every scored brand, re-ranks by preset", async () => {
         const all = SdkListSchema.parse(await (await get("/api/v1/sdk")).json());
         expect(all.total).toBe(SCORED_BRANDS.length);
+        expect(all.results.map((r) => r.id).sort()).toEqual(
+            SCORED_BRANDS.map((b) => b.id).sort(),
+        );
+        expect(all.method.agreement.every((a) => Number.isInteger(a.gold_items))).toBe(
+            true,
+        );
         expect(all.results.map((r) => r.rank)).toEqual(
             all.results.map((_, i) => i + 1),
         );
@@ -69,6 +78,11 @@ describe("REST /api/v1/sdk", () => {
         );
         expect(ros.preset).toBe("ros2");
         expect(ros.weights.ros).toBe(0.35);
+        const expected = sdkLeaderboard("ros2");
+        expect(ros.results.map((r) => [r.id, r.overall])).toEqual(
+            expected.map((s) => [s.brand.id, s.score.overall]),
+        );
+        expect(ros.results.map((r) => r.id)).not.toEqual(all.results.map((r) => r.id));
         expect((await get("/api/v1/sdk?preset=nope")).status).toBe(400);
     });
 
@@ -78,6 +92,8 @@ describe("REST /api/v1/sdk", () => {
         );
         expect(odrive.id).toBe("odrive");
         expect(odrive.capabilities.ros2).toBe("official");
+        expect(odrive.capabilities.open_firmware).toBe("official");
+        expect(odrive.capabilities.documented_protocol).toBe("official");
         expect(odrive.checks.every((c) => c.sources.length > 0)).toBe(true);
         expect(odrive.evidence.length).toBe(
             SDK_EVIDENCE.filter((e) => e.brand === "odrive").length,
@@ -87,7 +103,29 @@ describe("REST /api/v1/sdk", () => {
         );
         expect(viaActuator.id).toBe("odrive");
         expect((await get("/api/v1/sdk/nabtesco")).status).toBe(404);
-        expect((await get("/api/v1/sdk/nope")).status).toBe(404);
+        const bare = await get("/api/v1/sdk/maxon-ec-frameless-90-flat-260w");
+        expect(bare.status).toBe(404);
+        expect(await bare.text()).toContain("No SDK score for");
+        const nope = await get("/api/v1/sdk/nope");
+        expect(nope.status).toBe(404);
+        expect(await nope.text()).toContain("No SDK brand or catalog actuator");
+    });
+
+    test("markdown twins of both endpoints", async () => {
+        for (const res of [
+            await get("/api/v1/sdk.md"),
+            await getMarkdown("/api/v1/sdk"),
+        ]) {
+            expect(res.status).toBe(200);
+            const md = await res.text();
+            expect(md).toStartWith("# Actuator SDK scores (balanced preset)");
+            for (const b of SCORED_BRANDS) expect(md).toContain(`\`${b.id}\``);
+            expect(md).toContain("/api/v1/sdk");
+        }
+        const one = await (await get("/api/v1/sdk/odrive.md")).text();
+        expect(one).toStartWith("# ODrive");
+        expect(one).toContain("## Checks");
+        expect((await get("/api/v1/sdk/nope.md")).status).toBe(404);
     });
 
     test("actuator detail carries the brand's SDK score; reducers get null", async () => {
@@ -123,6 +161,17 @@ describe("MCP get_sdk_score", () => {
             await callTool("get_sdk_score", { actuator_id: "dynamixel-xm430-w350-t" })
         ).structuredContent as { brand: unknown };
         expect(SdkBrandSchema.parse(one.brand).id).toBe("robotis");
+    });
+
+    test("rejects both selectors together and empty strings", async () => {
+        for (const args of [
+            { brand: "odrive", actuator_id: "robstride-02" },
+            { brand: "" },
+            { actuator_id: "" },
+        ]) {
+            const res = await callTool("get_sdk_score", args);
+            expect(res.isError, JSON.stringify(args)).toBe(true);
+        }
     });
 
     test("get_actuator includes sdk", async () => {

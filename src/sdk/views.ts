@@ -41,6 +41,9 @@ const dimensionOut = z.object({
 
 const capabilityState = z.enum(["official", "community", "none"]);
 
+// Capability keys on the wire: openFirmware -> open_firmware.
+const wireKey = (c: string) => c.replace(/[A-Z]/g, (m) => `_${m.toLowerCase()}`);
+
 const checkOut = z.object({
     dimension: z.enum(SDK_DIMENSIONS),
     label: z.string(),
@@ -80,10 +83,9 @@ export const sdkBrandOut = z.object({
     price_per_nm_median: z.number().nullable(),
     dimensions: z.array(dimensionOut),
     capabilities: z.object(
-        Object.fromEntries(CAPABILITIES.map((c) => [c, capabilityState])) as Record<
-            (typeof CAPABILITIES)[number],
-            typeof capabilityState
-        >,
+        Object.fromEntries(
+            CAPABILITIES.map((c) => [wireKey(c), capabilityState]),
+        ) as Record<string, typeof capabilityState>,
     ),
     checks: z.array(checkOut),
     pain_points: z.array(painOut),
@@ -108,6 +110,11 @@ export const sdkListOut = z.object({
                 dimension: z.enum(SDK_DIMENSIONS),
                 agreement: z.number(),
                 overlap: z.number(),
+                gold_items: z
+                    .number()
+                    .describe(
+                        "Gold-set claims on this dimension; agreement on 0 claims only measures agreeing that nothing was said.",
+                    ),
             }),
         ),
     }),
@@ -152,7 +159,9 @@ export function sdkBrandView(
             const v = s.score.dimensions[d];
             return v ? [{ dimension: d, label: DIMENSION_LABEL[d], ...v }] : [];
         }),
-        capabilities: s.capabilities,
+        capabilities: Object.fromEntries(
+            CAPABILITIES.map((c) => [wireKey(c), s.capabilities[c]]),
+        ),
         checks: checksFor(id).map((c) => ({
             dimension: c.dimension,
             label: c.label,
@@ -215,6 +224,7 @@ export function sdkListView(
                 dimension: a.dimension,
                 agreement: a.agreement,
                 overlap: a.overlap,
+                gold_items: a.goldItems,
             })),
         },
         total: rows.length,

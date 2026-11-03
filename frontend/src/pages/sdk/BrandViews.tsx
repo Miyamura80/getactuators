@@ -12,11 +12,12 @@ const W = 640;
 const H = 150;
 const MID = 80;
 
-// 5. Sentiment timeline: positive posts per month above the line, negative
-// below, for the focused brand. Empty months are left as gaps.
+// 5. Sentiment timeline: positive claims per month above the line, negative
+// below, for the focused brand. A post can carry claims on several dimensions,
+// so these count claims, not posts. Empty months are left as gaps.
 export function SdkTimeline({ brand }: { brand: BrandSummary }) {
     const months = timelineFor(brand.brand.id);
-    if (!months.length) return <p className="sdk-muted">No dated posts for {brand.brand.name} yet.</p>;
+    if (!months.length) return <p className="sdk-muted">No dated claims for {brand.brand.name} yet.</p>;
     const first = months[0]?.month ?? "";
     const last = months.at(-1)?.month ?? "";
     const idx = (m: string) => {
@@ -29,12 +30,12 @@ export function SdkTimeline({ brand }: { brand: BrandSummary }) {
     const max = Math.max(1, ...months.map((m) => Math.max(m.positive, m.negative)));
     const h = (n: number) => (n / max) * (MID - 12);
     return <figure className="sdk-timeline">
-        <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Monthly positive and negative posts about ${brand.brand.name}, ${first} to ${last}`}>
+        <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Monthly positive and negative claims about ${brand.brand.name}, ${first} to ${last}`}>
             <line className="sdk-grid" x1={10} x2={W - 10} y1={MID} y2={MID} />
             {months.map((m) => {
                 const x = 10 + (idx(m.month) / span) * (W - 20);
                 return <g key={m.month} data-month={m.month}>
-                    <title>{`${m.month}: ${m.positive} positive, ${m.negative} negative`}</title>
+                    <title>{`${m.month}: ${m.positive} positive, ${m.negative} negative claims`}</title>
                     {m.positive ? <rect className="sdk-pos" x={x} width={bw} y={MID - h(m.positive)} height={h(m.positive)} /> : null}
                     {m.negative ? <rect className="sdk-neg" x={x} width={bw} y={MID} height={h(m.negative)} /> : null}
                 </g>;
@@ -76,11 +77,11 @@ export function SdkCapabilities({ rows }: { rows: BrandSummary[] }) {
                     <th scope="row">{s.brand.name}</th>
                     {CAPABILITIES.map((c) => {
                         const st = s.capabilities[c];
-                        return <td key={c} className={`sdk-cap-${st}`} aria-label={`${CAPABILITY_LABEL[c]}: ${st}`}>{MARK[st]}</td>;
+                        return <td key={c} className={`sdk-cap-${st}`} aria-label={`${CAPABILITY_LABEL[c]}: ${st === "none" ? "none found" : st}`}>{MARK[st]}</td>;
                     })}
                 </tr>)}
             </tbody>
         </table>
-        <p className="sdk-legend"><span>● maker</span><span>○ community only</span></p>
+        <p className="sdk-legend"><span>● maker</span><span>○ community only</span><span>blank: none found</span></p>
     </div>;
 }

@@ -31,7 +31,11 @@ export function writeState(preset: SdkPreset, focus: Focus): void {
     const h = new URLSearchParams();
     if (focus.brand) h.set("brand", focus.brand);
     if (focus.brand && focus.dim) h.set("dim", focus.dim);
-    const hash = h.toString();
+    // With no focus, leave a non-SDK fragment (footnote #sc-source-*, a section
+    // anchor) in place; only an SDK fragment is cleared.
+    const current = window.location.hash.replace(/^#/, "");
+    const ours = /^(brand|dim)=/.test(current);
+    const hash = focus.brand || ours ? h.toString() : current;
     const url = `${window.location.pathname}${search ? `?${search}` : ""}${hash ? `#${hash}` : ""}`;
     window.history.replaceState(window.history.state, "", url);
 }

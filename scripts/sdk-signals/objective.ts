@@ -2,7 +2,16 @@ import { join } from "node:path";
 import { SDK_BRANDS } from "@/sdk/brands";
 import type { RepoStats } from "@/sdk/score";
 import { SDK_SOURCES } from "@/sdk/sources";
-import { CACHE, DATA, USER_AGENT, getJson, readJson, sleep, writeJson } from "./common";
+import {
+    CACHE,
+    DATA,
+    REQUEST_TIMEOUT_MS,
+    USER_AGENT,
+    getJson,
+    readJson,
+    sleep,
+    writeJson,
+} from "./common";
 
 // Objective checks that can be read off the web rather than judged:
 //   - every repository in the SDK registry: does it exist, licence, language,
@@ -56,12 +65,15 @@ async function closeHours(repo: string): Promise<number | null> {
     return m === null ? null : Math.round(m * 10) / 10;
 }
 
-async function repoStats(repo: string, official: boolean): Promise<RepoStats> {
+// Stats for one repository, or null when the search itself failed (rate
+// limit, outage): only a successful search with no hit records exists: false.
+async function repoStats(repo: string, official: boolean): Promise<RepoStats | null> {
     const q = encodeURIComponent(`repo:${repo}`);
     const res = await getJson<{ items: RepoHit[] }>(
         `${API}/search/repositories?q=${q}`,
         headers(),
     );
+    if (!res) return null;
     const hit = res?.items.find(
         (r) => r.full_name.toLowerCase() === repo.toLowerCase(),
     );
@@ -95,22 +107,42 @@ async function repoStats(repo: string, official: boolean): Promise<RepoStats> {
 
 async function status(url: string): Promise<number> {
     try {
-        const res = await fetch(url, { headers: { "user-agent": USER_AGENT } });
+        const res = await fetch(url, {
+            headers: { "user-agent": USER_AGENT },
+            signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+        });
         return res.status;
     } catch {
         return 0;
     }
 }
 
+// Fresh stats for one repository, or its cached record when the search fails;
+// with neither, the run stops rather than record a live repository as missing.
+async function statsOrCached(
+    repo: string,
+    official: boolean,
+    kept: RepoStats | undefined,
+): Promise<RepoStats> {
+    const stats = await repoStats(repo, official);
+    if (stats) return stats;
+    if (!kept)
+        throw new Error(
+            `GitHub search failed for ${repo} and nothing is cached; set GITHUB_TOKEN or retry later`,
+        );
+    console.warn(`  search failed for ${repo}; keeping the cached record`);
+    return kept;
+}
+
 export async function objectiveChecks(refresh = false): Promise<void> {
-    const cache = refresh ? {} : readJson<Record<string, RepoStats>>(repoCache, {});
-    for (const b of SDK_BRANDS)
-        for (const r of b.repos) {
-            if (cache[r.repo]) continue;
-            console.log(`  repo ${r.repo}`);
-            cache[r.repo] = await repoStats(r.repo, r.official);
-            writeJson(repoCache, cache);
-        }
+    const prior = readJson<Record<string, RepoStats>>(repoCache, {});
+    const cache: Record<string, RepoStats> = refresh ? {} : { ...prior };
+    for (const r of SDK_BRANDS.flatMap((b) => b.repos)) {
+        if (cache[r.repo]) continue;
+        console.log(`  repo ${r.repo}`);
+        cache[r.repo] = await statsOrCached(r.repo, r.official, prior[r.repo]);
+        writeJson(repoCache, { ...prior, ...cache });
+    }
     const repos = SDK_BRANDS.flatMap((b) => b.repos.map((r) => cache[r.repo]))
         .filter((r): r is RepoStats => r !== undefined)
         .sort((a, b) => a.repo.localeCompare(b.repo));

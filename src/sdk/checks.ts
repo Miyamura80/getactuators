@@ -156,9 +156,19 @@ export const SDK_CHECKS: Record<string, SdkCheck[]> = {
             "sdk-robstride-python",
         ],
         ["bindings", "Official Python sample SDK", 1, "sdk-robstride-python"],
-        ["bindings", "C++ and Rust libraries (community)", 0.5, "sdk-robstride-seeed"],
+        [
+            "bindings",
+            "C++ and Rust libraries (community)",
+            0.5,
+            "sdk-robstride-control",
+        ],
         ["ros", "ROS 2 driver package (community)", 0.5, "sdk-robstride-ros-index"],
-        ["docs", "Reseller wiki with full API reference", 0.5, "sdk-robstride-seeed"],
+        [
+            "docs",
+            "Community library READMEs with an API reference",
+            0.5,
+            "sdk-robstride-control",
+        ],
         ["firmware", "Firmware source published", 0, "sdk-robstride-python"],
     ),
     steadywin: rows(
@@ -238,6 +248,12 @@ export const SDK_CHECKS: Record<string, SdkCheck[]> = {
             "sdk-pypi-pydamiao",
         ],
         ["ros", "ros2_control for an arm built on the motors", 0.5, "sdk-openarm-ros2"],
+        [
+            "ros",
+            "URDF of an arm built on the motors (community)",
+            0.5,
+            "sdk-openarm-ros2",
+        ],
         ["docs", "English docs from the maker", 0, "sdk-damiao-python"],
         ["firmware", "Firmware source published", 0, "sdk-damiao-python"],
     ),
@@ -438,7 +454,6 @@ export const SDK_CAPABILITIES: Record<string, Caps> = {
     vesc: {
         ros2: "community",
         python: "community",
-        cpp: "official",
         openFirmware: "official",
         documentedProtocol: "official",
     },

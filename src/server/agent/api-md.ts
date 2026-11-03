@@ -12,7 +12,9 @@ import {
 } from "@/api/handlers";
 import type { ApiContext } from "@/api/http";
 import type { Page } from "@/api/pagination";
+import { sdkBrand, sdkList } from "@/api/sdk";
 import { API_OPERATIONS, apiIndexData } from "@/api/surface";
+import { DIMENSION_SHORT } from "@/sdk";
 import { countryListView } from "@/supply-chain/country-pages/views";
 import { absoluteUrl } from "../site";
 import { actuatorBody, actuatorTable, robotSection } from "./catalog-md";
@@ -232,6 +234,68 @@ function listCountries(): string {
     ].join("\n\n");
 }
 
+const pct = (x: number) => `${Math.round(x * 100)}%`;
+
+function sdkScores(ctx: ApiContext): string {
+    const list = sdkList(ctx);
+    const rows = list.results.map((r) => [
+        String(r.rank),
+        mdLink(r.name, absoluteUrl(apiMarkdownPath(`/api/v1/sdk/${r.id}`))),
+        `\`${r.id}\``,
+        String(Math.round(r.overall)),
+        ...r.dimensions.map(
+            (d) => `${DIMENSION_SHORT[d.dimension]} ${Math.round(d.score)}`,
+        ),
+    ]);
+    const agreement = list.method.agreement
+        .map((a) =>
+            a.gold_items === 0
+                ? `${DIMENSION_SHORT[a.dimension]} n/a (0 gold claims)`
+                : `${DIMENSION_SHORT[a.dimension]} ${pct(a.agreement)} (${a.gold_items} gold claims)`,
+        )
+        .join(", ");
+    return [
+        `# Actuator SDK scores (${list.preset} preset)`,
+        `${list.total} brands, as of ${list.as_of}. Method, checks and evidence: ${absoluteUrl("/sdk.md")}. Label agreement with ${list.method.gold_items} gold posts: ${agreement}.`,
+        mdTable(
+            ["#", "Brand", "Id", "Overall", "Dimensions"],
+            rows.map((r) => [...r.slice(0, 4), r.slice(4).join(", ")]),
+        ),
+        list.unscored.length
+            ? `Not scored: ${list.unscored.map((u) => `${mdText(u.name)} (\`${u.id}\`)`).join(", ")}.`
+            : "",
+    ].join("\n\n");
+}
+
+function sdkBrandBody(ctx: ApiContext): string {
+    const b = sdkBrand(ctx);
+    const dims = b.dimensions.map((d) => [
+        d.label,
+        String(Math.round(d.score)),
+        d.objective === null ? "n/a" : `${Math.round(d.objective)}%`,
+        `${d.positive} / ${d.negative}`,
+    ]);
+    const checks = b.checks.map(
+        (c) =>
+            `${DIMENSION_SHORT[c.dimension]}: ${c.value === 1 ? "yes" : c.value === 0.5 ? "partly" : "no"}, ${mdText(c.label)} (${c.sources.map((s) => mdLink(s.title, s.url)).join(", ")})`,
+    );
+    const evidence = b.evidence
+        .slice(0, 20)
+        .map(
+            (e) =>
+                `${e.date}, ${mdText(e.venue)}, ${DIMENSION_SHORT[e.dimension]}, ${e.polarity}: ${mdText(e.claim)} ${e.url}`,
+        );
+    return [
+        `# ${mdText(b.name)} SDK score: ${Math.round(b.overall)}`,
+        `Rank ${b.rank}, ${b.confidence} confidence, ${b.evidence_count} evidence items. Page: ${b.url}.`,
+        mdTable(["Dimension", "Score", "Checks", "Posts + / -"], dims),
+        checks.length ? `## Checks\n\n${bullets(checks)}` : "",
+        evidence.length
+            ? `## Newest evidence (${evidence.length} of ${b.evidence.length})\n\n${bullets(evidence)}`
+            : "",
+    ].join("\n\n");
+}
+
 const RENDERERS: Record<string, Renderer> = {
     get_api_index: apiIndex,
     list_actuators: listActuators,
@@ -251,6 +315,8 @@ const RENDERERS: Record<string, Renderer> = {
         ),
     list_countries: listCountries,
     get_country: (ctx) => countryBody(findCountry(ctx)),
+    list_sdk_scores: sdkScores,
+    get_sdk_score: sdkBrandBody,
 };
 
 export function hasApiMarkdown(operationId: string): boolean {

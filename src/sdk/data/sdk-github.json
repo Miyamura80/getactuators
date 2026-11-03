@@ -222,15 +222,15 @@
             "medianCloseHours": null
         },
         {
-            "repo": "Seeed-Projects/RobStride_Control",
+            "repo": "tianrking/RobStride_Control",
             "official": false,
-            "exists": false,
-            "pushedAt": null,
-            "stars": null,
-            "license": null,
-            "language": null,
+            "exists": true,
+            "pushedAt": "2025-11-18",
+            "stars": 12,
+            "license": "MIT",
+            "language": "C++",
             "archived": false,
-            "medianCloseHours": null
+            "medianCloseHours": 90.9
         },
         {
             "repo": "unitreerobotics/unitree_actuator_sdk",

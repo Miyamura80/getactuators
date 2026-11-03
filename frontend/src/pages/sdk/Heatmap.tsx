@@ -5,7 +5,12 @@ import {
     SDK_DIMENSIONS,
     type SdkDimension,
 } from "../../../../src/sdk";
+import { EVIDENCE_PANEL_ID } from "./Evidence";
 import { scoreText } from "./state";
+
+// Below this score the cell shade is dark enough that white text reads better
+// than black; 57 keeps both sides at 4.5:1 or more (WCAG AA).
+export const LIGHT_TEXT_BELOW = 57;
 
 // 2. Heatmap: brands down, dimensions across, cell shade = score. Every cell
 // is a button that opens the checks and posts behind it.
@@ -29,10 +34,11 @@ export function SdkHeatmap({ rows, open, onOpen }: {
                         const v = s.score.dimensions[d];
                         const active = open.brand === s.brand.id && open.dim === d;
                         return <td key={d}>
-                            <button type="button" className={`sdk-cell${active ? " is-open" : ""}${v ? (v.score < 45 ? " is-low" : "") : " is-empty"}`}
+                            <button type="button" className={`sdk-cell${active ? " is-open" : ""}${v ? (v.score < LIGHT_TEXT_BELOW ? " is-low" : "") : " is-empty"}`}
                                 style={v ? { ["--s" as string]: String(v.score / 100) } : undefined}
                                 aria-label={`${s.brand.name}, ${DIMENSION_LABEL[d]}: ${scoreText(v?.score)}`}
                                 aria-expanded={active}
+                                aria-controls={active ? EVIDENCE_PANEL_ID : undefined}
                                 onClick={() => onOpen(s.brand.id, d)}>
                                 {scoreText(v?.score)}
                             </button>

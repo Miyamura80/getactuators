@@ -176,10 +176,10 @@ export const SDK_SOURCES: SdkSource[] = [
         "https://github.com/RobStride/Python_Sample",
     ),
     ref(
-        "sdk-robstride-seeed",
-        "Seeed Studio",
-        "RobStride_Control (Python, C++, Rust, Arduino)",
-        "https://github.com/Seeed-Projects/RobStride_Control",
+        "sdk-robstride-control",
+        "tianrking",
+        "RobStride_Control (Python, C++, Rust, Arduino; community)",
+        "https://github.com/tianrking/RobStride_Control",
     ),
     ref(
         "sdk-robstride-ros-index",

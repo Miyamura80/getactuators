@@ -86,7 +86,7 @@
     cursor: pointer;
 }
 .sdk-cell.is-empty { background: transparent; color: var(--muted); border-color: var(--line); }
-.sdk-cell.is-low { color: var(--text); }
+.sdk-cell.is-low { color: #fff; } /* see LIGHT_TEXT_BELOW in Heatmap.tsx */
 .sdk-cell.is-open { border-color: var(--text); outline: 2px solid var(--cyan); outline-offset: -3px; }
 .sdk-caps td { text-align: center; padding: 6px; border-top: 1px solid var(--line); font-size: 14px; }
 .sdk-cap-official { color: var(--cyan); }

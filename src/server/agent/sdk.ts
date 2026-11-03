@@ -15,7 +15,7 @@ import {
     checksFor,
     sdkLeaderboard,
 } from "@/sdk";
-import { SDK_EVIDENCE, evidenceFor, painPoints } from "@/sdk/evidence";
+import { SDK_EVIDENCE, evidenceFor, painPoints, redditSeedNote } from "@/sdk/evidence";
 import { HALF_LIFE_MONTHS, ISSUE_WEIGHT } from "@/sdk/score";
 import { DATA_LICENSE, SITE_URL, absoluteUrl } from "../site";
 import * as ld from "./jsonld";
@@ -98,7 +98,7 @@ function brandSection(fn: ReturnType<typeof footnotes>): (id: string) => string 
             .join("\n");
         return `### ${s.rank}. ${mdText(s.brand.name)}: ${Math.round(s.score.overall)}
 
-Ships: ${caps || "nothing public found"}.${pains ? ` Recurring complaints: ${pains}.` : ""} Catalog actuators: ${s.actuatorIds.map((a) => `\`${a}\``).join(", ")}.
+Ships: ${caps || "nothing public found"}.${pains ? ` Recurring complaints: ${pains}.` : ""} Catalog actuators: ${s.actuatorIds.length ? s.actuatorIds.map((a) => `\`${a}\``).join(", ") : "none with a drive of this brand"}.
 
 ${dims}
 
@@ -111,7 +111,11 @@ export function sdkBody(): string {
     const board = sdkLeaderboard();
     const gold = SDK_METHOD.gold;
     const agreement = gold.agreement
-        .map((a) => `${DIMENSION_SHORT[a.dimension]} ${Math.round(a.agreement * 100)}%`)
+        .map((a) =>
+            a.goldItems === 0
+                ? `${DIMENSION_SHORT[a.dimension]} n/a (no gold claims)`
+                : `${DIMENSION_SHORT[a.dimension]} ${Math.round(a.agreement * 100)}% (${a.goldItems} gold claims)`,
+        )
         .join(", ");
     const brands = board.map((s) => brandSection(fn)(s.brand.id)).join("\n\n");
     const unscored = UNSCORED_BRANDS.map(
@@ -134,8 +138,8 @@ ${presetTable()}
 ## Method
 
 - **Objective checks** (60% of a dimension when present): is the protocol published, which official or community libraries exist, ROS 2 drivers and URDF / MJCF models, docs, open firmware and config tools, plus the maker's repository activity and median time to close issues. Each check cites its source.
-- **Community signal** (up to 40%, growing with the number of posts): developer posts on Reddit, Hacker News and GitHub issues that name a brand are matched by alias, then each post was read once by ${mdText(SDK_METHOD.labelledBy)}, who labelled the claim's dimension and polarity and wrote a one-line summary in our words; the labels are committed and no model API runs. A post's weight halves every ${HALF_LIFE_MONTHS} months, and a GitHub issue counts ${ISSUE_WEIGHT} of a discussion post because trackers collect bug reports. A small pull toward 50 keeps a dimension resting on one check off 0 and 100. No quotes or usernames are stored.
-- **Label check**: ${gold.items} posts were labelled separately (${mdText(gold.labelledBy)}); agreement with the committed labels per dimension: ${agreement}. Scores are only written when every dimension reaches 80%.
+- **Community signal** (up to 40%, growing with the number of posts): developer posts on Reddit, Hacker News and GitHub issues that name a brand are matched by alias, then each post was read once by ${mdText(SDK_METHOD.labelledBy)}, who labelled the claim's dimension and polarity and wrote a one-line summary in our words; the labels are committed and no model API runs. A post's weight halves every ${HALF_LIFE_MONTHS} months, and a GitHub issue counts ${ISSUE_WEIGHT} of a discussion post because trackers collect bug reports. A small pull toward 50 keeps a dimension resting on one check off 0 and 100. No quotes or usernames are stored. ${redditSeedNote()}
+- **Label check**: ${gold.items} posts were labelled separately (${mdText(gold.labelledBy)}); agreement with the committed labels per dimension: ${agreement}. Most gold posts make no claim, so agreement mostly counts both raters finding nothing; the gold claim counts show how much it rests on. Scores are only written when every dimension reaches 80%.
 - **Confidence**: high at 40 or more evidence items, medium at 15, else low.
 
 ## Brands
@@ -171,7 +175,7 @@ export const SDK_PAGE: Page = {
             license: DATA_LICENSE.url,
             dateModified: SDK_AS_OF,
             measurementTechnique:
-                "Objective checks of vendor docs and repositories blended with LLM-labelled developer posts (Reddit, Hacker News, GitHub issues), validated against a hand-labelled gold set.",
+                "Objective checks of vendor docs and repositories blended with developer posts (Reddit, Hacker News, GitHub issues) whose claims a reviewer labelled by hand (no model API), checked against a separately labelled gold set.",
             variableMeasured: SDK_DIMENSIONS.map((d) => DIMENSION_LABEL[d]),
             distribution: [
                 {

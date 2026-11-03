@@ -1,4 +1,4 @@
-import { SDK_PRESETS, getSdkBrand, resolveSdkBrand } from "@/sdk";
+import { SDK_PRESETS, noSdkScoreReason, resolveSdkBrand } from "@/sdk";
 import { sdkBrandOut, sdkBrandView, sdkListOut, sdkListView } from "@/sdk/views";
 import { z } from "zod";
 import { type ApiContext, json } from "./http";
@@ -26,21 +26,26 @@ export const SdkListParams = z.object({
         ),
 });
 
-export function listSdkHandler({ url }: ApiContext): Response {
+// Data behind each endpoint, shared with its markdown twin (api-md.ts).
+export function sdkList({ url }: ApiContext) {
     const { preset } = parseQuery(SdkListParams, url);
-    return json(sdkListView(preset));
+    return sdkListView(preset);
 }
 
-export function getSdkHandler({ params, url }: ApiContext): Response {
+export function sdkBrand({ params, url }: ApiContext) {
     const key = params.brand ?? "";
     const { preset } = parseQuery(SdkListParams, url);
     const s = resolveSdkBrand(key, preset);
     if (!s)
         throw new ApiError("not_found", {
-            detail: getSdkBrand(key)
-                ? `"${key}" makes reducers or bare motors: no SDK to score.`
-                : `No SDK brand or actuator "${key}".`,
+            detail:
+                noSdkScoreReason(key) === "unscored"
+                    ? `No SDK score for "${key}": a reducer or bare motor has no software of its own.`
+                    : `No SDK brand or catalog actuator "${key}".`,
             hint: "List scored brands with GET /api/v1/sdk.",
         });
-    return json(sdkBrandView(s));
+    return sdkBrandView(s);
 }
+
+export const listSdkHandler = (ctx: ApiContext): Response => json(sdkList(ctx));
+export const getSdkHandler = (ctx: ApiContext): Response => json(sdkBrand(ctx));

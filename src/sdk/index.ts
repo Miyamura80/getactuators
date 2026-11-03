@@ -77,8 +77,21 @@ function median(xs: number[]): number | null {
     return s.length % 2 ? (s[m] ?? null) : ((s[m - 1] ?? 0) + (s[m] ?? 0)) / 2;
 }
 
+// A bare motor or reducer: no drive of its own and no communication
+// interface, so the brand's SDK does not apply to it (a maxon frameless motor
+// needs a separately bought EPOS or any other controller).
+export function isBareHardware(a: {
+    integrated_driver: boolean | null;
+    comm: string[] | null;
+}) {
+    return a.integrated_driver !== true && (a.comm ?? []).length === 0;
+}
+
+// The brand's catalog actuators that its SDK actually drives.
 export function actuatorsOfBrand(b: SdkBrand) {
-    return ACTUATORS.filter((a) => b.catalogBrands.includes(a.brand));
+    return ACTUATORS.filter(
+        (a) => b.catalogBrands.includes(a.brand) && !isBareHardware(a),
+    );
 }
 
 function capabilitiesOf(id: string): BrandSummary["capabilities"] {
@@ -161,10 +174,19 @@ function lookupFor(b: SdkBrand | undefined): SdkLookup | null {
     };
 }
 
-// SDK score for a catalog actuator id, null for reducers and bare motors.
+// SDK score for a catalog actuator id, null for reducers and bare motors
+// (including a bare motor from a brand whose drives are scored).
 export function sdkScoreForActuator(actuatorId: string): SdkLookup | null {
     const a = ACTUATORS.find((x) => x.id === actuatorId);
-    return a ? lookupFor(sdkBrandForCatalogBrand(a.brand)) : null;
+    return a && !isBareHardware(a) ? lookupFor(sdkBrandForCatalogBrand(a.brand)) : null;
+}
+
+// Why a key has no SDK score: a brand or catalog actuator with nothing to
+// score (reducer, bare motor), or a key that names neither.
+export function noSdkScoreReason(key: string): "unscored" | "unknown" {
+    return getSdkBrand(key) || ACTUATORS.some((a) => a.id === key)
+        ? "unscored"
+        : "unknown";
 }
 
 // SDK score for an SDK brand id ("odrive") or a catalog brand string

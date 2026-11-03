@@ -14,6 +14,8 @@ export const LABELS_PATH = join(ROOT, "scripts", "sdk-signals", "labels.json");
 export const LABELLED_BY =
     "Claude Code (one-off review session, 2026-11-03), reading each matched post against the labelling guide; no model API in the pipeline";
 export const GUIDE_VERSION = "v1";
+// Longest claim the guide allows ("one plain sentence under 160 characters").
+export const MAX_CLAIM = 160;
 
 export const THEMES: Record<SdkDimension, readonly string[]> = {
     protocol: ["undocumented-protocol", "documented-protocol", "protocol-changes"],
@@ -76,7 +78,7 @@ Dimensions:
 
 Themes per dimension: ${JSON.stringify(THEMES)}
 
-For each claim write "claim": one plain sentence under 160 characters in your
+For each claim write "claim": one plain sentence under ${MAX_CLAIM} characters in your
 own words. Never quote the post, never name the author, no em dashes.
 Give a post an empty list when it makes no such claim.`;
 
@@ -91,18 +93,19 @@ function valid(l: Label, brands: string[]): boolean {
         (SDK_DIMENSIONS as readonly string[]).includes(l.dimension) &&
         (l.polarity === "positive" || l.polarity === "negative") &&
         typeof l.claim === "string" &&
-        l.claim.length > 0
+        l.claim.length > 0 &&
+        l.claim.length <= MAX_CLAIM
     );
 }
 
-// Committed labels for every job. Posts without an entry count as unread and
-// contribute nothing; their count is printed so a refresh knows what to read.
+// Committed labels for every job. A matched post without an entry has not been
+// read, so the build stops rather than score without it.
 export function labelsFor(jobs: Job[]): Map<string, Label[]> {
     const labels = readJson<Record<string, Label[]>>(LABELS_PATH, {});
     const missing = jobs.filter((j) => !(j.post.key in labels));
     if (missing.length)
-        console.warn(
-            `  ${missing.length} matched posts have no labels yet (run with --export)`,
+        throw new Error(
+            `${missing.length} matched posts have no committed labels (first: ${missing[0]?.post.key}); run --steps=build --export, label ${CACHE}/to-label.json into ${LABELS_PATH}, then build again`,
         );
     return new Map(
         jobs.map((j) => [

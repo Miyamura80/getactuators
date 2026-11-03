@@ -47,8 +47,18 @@ function ManufacturingLoading({ menuOpen }: { menuOpen: boolean }) {
 }
 import { CountryPage } from "./pages/supply-chain/country/CountryPage";
 import { LIVE_COUNTRY_PAGES } from "../../src/supply-chain/country-pages";
-import { Sdk } from "./pages/sdk/Sdk";
 import { SDK_PATH } from "../../src/sdk";
+
+// /sdk carries its evidence dataset (several hundred KB), so it loads in its
+// own chunk too.
+const Sdk = lazy(() => import("./pages/sdk/Sdk").then((m) => ({ default: m.Sdk })));
+
+function SdkLoading({ menuOpen }: { menuOpen: boolean }) {
+    return <div className="tool-page sdk-page">
+        <PublicHeader path={SDK_PATH} initialOpen={menuOpen} />
+        <main className="tool-main" aria-busy="true" />
+    </div>;
+}
 
 function Page({ menuOpen }: { menuOpen: boolean }) {
     const path = usePath();
@@ -70,7 +80,7 @@ function Page({ menuOpen }: { menuOpen: boolean }) {
     if (path === MANUFACTURING_PATH) return <Suspense fallback={<ManufacturingLoading menuOpen={menuOpen} />}><Manufacturing menuOpen={menuOpen} /></Suspense>;
     const country = LIVE_COUNTRY_PAGES.find((p) => p.path === path);
     if (country) return <CountryPage page={country} menuOpen={menuOpen} />;
-    if (path === SDK_PATH) return <Sdk menuOpen={menuOpen} />;
+    if (path === SDK_PATH) return <Suspense fallback={<SdkLoading menuOpen={menuOpen} />}><Sdk menuOpen={menuOpen} /></Suspense>;
     if (path.startsWith("/actuators/")) {
         const raw = path.slice("/actuators/".length);
         let id = raw;

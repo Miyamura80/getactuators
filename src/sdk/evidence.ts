@@ -1,5 +1,10 @@
 import evidenceJson from "./data/sdk-evidence.json";
-import type { SdkDimension, SdkEvidence } from "./types";
+import {
+    REDDIT_SEED_DATE,
+    REDDIT_SUBREDDITS,
+    type SdkDimension,
+    type SdkEvidence,
+} from "./types";
 
 // Community evidence behind /sdk: one paraphrased claim per post, brand and
 // dimension, newest first within a brand. Kept apart from ./index so pages
@@ -14,6 +19,23 @@ export function evidenceFor(brand: string, dimension?: SdkDimension): SdkEvidenc
         (e) =>
             e.brand === brand && (dimension === undefined || e.dimension === dimension),
     );
+}
+
+const SUBREDDITS = new Set(REDDIT_SUBREDDITS.map((s) => `r/${s.toLowerCase()}`));
+
+// A Reddit claim the free collector cannot find again: a comment (its
+// permalink has a sixth path segment) or a post outside REDDIT_SUBREDDITS.
+export function redditSeedOnly(e: SdkEvidence): boolean {
+    if (e.forum !== "reddit") return false;
+    const comment = new URL(e.url).pathname.split("/").filter(Boolean).length >= 6;
+    return comment || !SUBREDDITS.has(e.venue.toLowerCase());
+}
+
+// One sentence on where the Reddit evidence came from, for the page and twin.
+export function redditSeedNote(): string {
+    const reddit = SDK_EVIDENCE.filter((e) => e.forum === "reddit");
+    const seed = reddit.filter(redditSeedOnly).length;
+    return `The Reddit posts are a one-off seed collected on ${REDDIT_SEED_DATE} that also searched comments and subreddits beyond the ${REDDIT_SUBREDDITS.length} the free collector covers (${REDDIT_SUBREDDITS.map((s) => `r/${s}`).join(", ")}, posts only); ${seed} of the ${reddit.length} Reddit claims come from those extra venues or comments, and a fresh collection will not find them again.`;
 }
 
 export interface PainPoint {

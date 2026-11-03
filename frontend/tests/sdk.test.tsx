@@ -22,7 +22,8 @@ test("renders all seven views with one row per scored brand", () => {
     expect(c.querySelectorAll(".sdk-cell")).toHaveLength(SCORED_BRANDS.length * SDK_DIMENSIONS.length);
     expect(c.querySelectorAll(".sdk-radar-shape")).toHaveLength(3);
     expect(c.querySelector(".sdk-scatter")).not.toBeNull();
-    expect(c.querySelector(".sdk-timeline, .sdk-muted")).not.toBeNull();
+    const focusSection = c.querySelector("#sdk-focus-h")?.closest("section");
+    expect(focusSection?.querySelector(".sdk-timeline")).not.toBeNull();
     expect(c.querySelectorAll(".sdk-caps tbody tr")).toHaveLength(SCORED_BRANDS.length);
     expect(c.querySelector(".sdk-method")).not.toBeNull();
     expect(c.querySelectorAll(".sdk-cta")).toHaveLength(1);
@@ -39,6 +40,8 @@ test("a heatmap cell drills down to cited checks and linked posts, and lands in 
     });
     const panel = c.querySelector(".sdk-panel");
     expect(panel?.getAttribute("data-brand")).toBe(top.brand.id);
+    const cell = view.getByRole("button", { name: new RegExp(`^${top.brand.name}, Docs and examples`) });
+    expect(cell.getAttribute("aria-controls")).toBe(panel?.id ?? "missing");
     expect(panel?.querySelectorAll(".sdk-check").length).toBeGreaterThan(0);
     expect(panel?.querySelectorAll(".sc-ref a").length).toBeGreaterThan(0);
     expect(panel?.querySelectorAll(".sdk-ev a[href^='https://']")).toHaveLength(evidenceFor(top.brand.id, "docs").length);
@@ -68,11 +71,43 @@ test("compare mode holds at most four brands", () => {
     expect(c.querySelectorAll(".sdk-radar-shape")).toHaveLength(0);
 });
 
+test("a compared brand keeps its colour when another is removed", () => {
+    setURL("/sdk");
+    const view = render(<Sdk />);
+    const c = view.container;
+    const stroke = (id: string) => c.querySelector<SVGElement>(`.sdk-radar-shape[data-brand="${id}"]`)?.style.stroke;
+    const [first, second, third] = sdkLeaderboard().map((s) => s.brand);
+    if (!first || !second || !third) throw new Error("need three brands");
+    const before = stroke(third.id);
+    act(() => { fireEvent.click(view.getByRole("button", { name: `Remove ${first.name}` })); });
+    expect(stroke(third.id)).toBe(before);
+    expect(stroke(second.id)).not.toBe(before);
+});
+
+test("a footnote fragment survives the page's URL sync", () => {
+    setURL("/sdk#sc-source-sdk-odrive-docs");
+    render(<Sdk />);
+    expect(window.location.hash).toBe("#sc-source-sdk-odrive-docs");
+});
+
+test("plotted brands respond to Space as well as Enter", () => {
+    setURL("/sdk");
+    const view = render(<Sdk />);
+    const dot = view.container.querySelector<SVGGElement>(".sdk-scatter .sdk-dot");
+    const id = dot?.getAttribute("data-brand");
+    if (!dot || !id) throw new Error("no dot");
+    expect(view.container.querySelector(".sdk-scatter svg")?.getAttribute("role")).toBe("group");
+    act(() => { fireEvent.keyDown(dot, { key: " " }); });
+    expect(window.location.hash).toBe(`#brand=${id}`);
+});
+
 test("SDK badge links an actuator to its brand and hides for reducers", () => {
     const badge = render(<SdkBadge actuatorId="odrive-s1" />).container.querySelector("a.sdk-badge");
     expect(badge?.getAttribute("href")).toBe("/sdk#brand=odrive");
     cleanup();
     expect(render(<SdkBadge actuatorId="nabtesco-rv-42n" />).container.innerHTML).toBe("");
+    cleanup();
+    expect(render(<SdkBadge actuatorId="maxon-ec-frameless-90-flat-260w" />).container.innerHTML).toBe("");
 });
 
 test("frontier keeps brands nobody beats on both price and score", () => {

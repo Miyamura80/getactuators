@@ -1,5 +1,5 @@
 import { type BrandSummary, DIMENSION_SHORT, SDK_DIMENSIONS } from "../../../../src/sdk";
-import { SLOT_COLORS } from "./state";
+import { MISSING_SCORE } from "../../../../src/sdk/score";
 
 const R = 110;
 const C = 150;
@@ -15,8 +15,11 @@ const path = (vals: number[]) =>
 
 // 3. Radar per brand with compare mode: up to four brands over the seven
 // dimensions, picked in the leaderboard or the tray (the /compare pattern).
-export function SdkRadar({ brands, remove, clear }: {
+// A dimension with no data sits at the neutral score the overall uses. Each
+// brand keeps its colour while others are added or removed (colorOf).
+export function SdkRadar({ brands, colorOf, remove, clear }: {
     brands: BrandSummary[];
+    colorOf: (id: string) => string;
     remove: (id: string) => void;
     clear: () => void;
 }) {
@@ -31,20 +34,21 @@ export function SdkRadar({ brands, remove, clear }: {
                     <text x={lx} y={ly} textAnchor={Math.abs(lx - C) < 8 ? "middle" : lx > C ? "start" : "end"} dominantBaseline="middle">{DIMENSION_SHORT[d]}</text>
                 </g>;
             })}
-            {brands.map((b, k) => <polygon key={b.brand.id} className="sdk-radar-shape" data-brand={b.brand.id}
-                style={{ stroke: SLOT_COLORS[k], fill: SLOT_COLORS[k] }}
-                points={path(SDK_DIMENSIONS.map((d) => (b.score.dimensions[d]?.score ?? 0) / 100))} />)}
+            {brands.map((b) => <polygon key={b.brand.id} className="sdk-radar-shape" data-brand={b.brand.id}
+                style={{ stroke: colorOf(b.brand.id), fill: colorOf(b.brand.id) }}
+                points={path(SDK_DIMENSIONS.map((d) => (b.score.dimensions[d]?.score ?? MISSING_SCORE) / 100))} />)}
         </svg>
         <section className="pick-tray sdk-tray" aria-label="Brands in compare">
             <span aria-live="polite">{brands.length}/4 selected</span>
             <ul>
-                {brands.map((b, k) => <li key={b.brand.id}>
-                    <span className="sdk-swatch" style={{ background: SLOT_COLORS[k] }} />
+                {brands.map((b) => <li key={b.brand.id}>
+                    <span className="sdk-swatch" style={{ background: colorOf(b.brand.id) }} />
                     <span>{b.brand.name}</span>
                     <button type="button" aria-label={`Remove ${b.brand.name}`} onClick={() => remove(b.brand.id)}>×</button>
                 </li>)}
             </ul>
             <button type="button" onClick={clear} disabled={!brands.length}>Clear</button>
+            <p className="sdk-muted">A dimension with no data plots at {MISSING_SCORE}, as in the overall.</p>
         </section>
     </div>;
 }

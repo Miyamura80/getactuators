@@ -122,6 +122,19 @@ export type CapabilityState = "official" | "community" | "none";
 export const FORUMS = ["reddit", "hn", "ros-discourse", "forum", "github"] as const;
 export type Forum = (typeof FORUMS)[number];
 
+// Subreddits the free Reddit collector searches (posts only). The committed
+// Reddit evidence also holds a one-off seed from REDDIT_SEED_DATE that reached
+// further subreddits and comments; see scripts/sdk-signals/collect.ts.
+export const REDDIT_SUBREDDITS = [
+    "robotics",
+    "ROS",
+    "diyrobotics",
+    "robotdogs",
+    "AskRobotics",
+    "embedded",
+] as const;
+export const REDDIT_SEED_DATE = "2026-11-03";
+
 export const FORUM_LABEL: Record<Forum, string> = {
     reddit: "Reddit",
     hn: "Hacker News",

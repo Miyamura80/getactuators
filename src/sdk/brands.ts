@@ -93,10 +93,7 @@ export const SDK_BRANDS: readonly SdkBrand[] = [
         ["RobStride"],
         ["robstride"],
         ["robstride"],
-        [
-            official("RobStride/Python_Sample"),
-            community("Seeed-Projects/RobStride_Control"),
-        ],
+        [official("RobStride/Python_Sample"), community("tianrking/RobStride_Control")],
     ),
     brand(
         "steadywin",

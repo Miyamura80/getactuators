@@ -4,6 +4,7 @@ import { SDK_BRANDS } from "./brands";
 import { SDK_CHECKS } from "./checks";
 import { SDK_EVIDENCE } from "./evidence";
 import { SDK_SOURCES } from "./sources";
+import type { SdkEvidence } from "./types";
 
 // Integrity rules for /sdk, run by the citation audit (make citation_audit):
 // every catalog brand maps to one SDK brand, every check cites a known
@@ -12,6 +13,25 @@ import { SDK_SOURCES } from "./sources";
 
 const MAX_CLAIM = 220;
 const EM_DASH = String.fromCharCode(0x2014);
+
+// An https URL with a host, e.g. not "https://" or "https:/x".
+export function isHttpsUrl(s: string): boolean {
+    try {
+        const u = new URL(s);
+        return (
+            u.protocol === "https:" && u.hostname.length > 0 && s.startsWith("https://")
+        );
+    } catch {
+        return false;
+    }
+}
+
+// A real calendar date in YYYY-MM-DD form (rejects 0000-00-00, 2026-02-30).
+export function isIsoDate(s: string): boolean {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+    const d = new Date(`${s}T00:00:00Z`);
+    return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === s;
+}
 
 function brandErrors(): string[] {
     const errors: string[] = [];
@@ -43,15 +63,23 @@ function evidenceErrors(today: string): string[] {
         if (ids.has(e.id)) errors.push(`${where}: duplicate id`);
         ids.add(e.id);
         if (!scored.has(e.brand)) errors.push(`${where}: unknown brand "${e.brand}"`);
-        if (!/^https:\/\//.test(e.url)) errors.push(`${where}: url must be https`);
-        if (e.claim.length > MAX_CLAIM || e.claim.includes(EM_DASH))
-            errors.push(
-                `${where}: claim must be under ${MAX_CLAIM} characters, no em dash`,
-            );
-        if (/\/u(ser)?\/[^/]+/.test(e.url) || /\bu\/[A-Za-z0-9_-]+/.test(e.claim))
-            errors.push(`${where}: no usernames in committed data`);
-        if (e.date > today) errors.push(`${where}: date ${e.date} is in the future`);
+        errors.push(...itemErrors(e, where, today));
     }
+    return errors;
+}
+
+// Link, claim and date rules for one evidence item.
+function itemErrors(e: SdkEvidence, where: string, today: string): string[] {
+    const errors: string[] = [];
+    if (!isHttpsUrl(e.url)) errors.push(`${where}: url must be an https URL`);
+    if (e.claim.length > MAX_CLAIM || e.claim.includes(EM_DASH))
+        errors.push(
+            `${where}: claim must be under ${MAX_CLAIM} characters, no em dash`,
+        );
+    if (/\/u(ser)?\/[^/]+/.test(e.url) || /\bu\/[A-Za-z0-9_-]+/.test(e.claim))
+        errors.push(`${where}: no usernames in committed data`);
+    if (!isIsoDate(e.date)) errors.push(`${where}: date ${e.date} is not a date`);
+    else if (e.date > today) errors.push(`${where}: date ${e.date} is in the future`);
     return errors;
 }
 

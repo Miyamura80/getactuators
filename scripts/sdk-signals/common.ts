@@ -40,6 +40,19 @@ export const rawPath = (forum: Forum) => join(CACHE, "raw", `${forum}.json`);
 
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+// A stalled source fails after this long instead of hanging the run.
+export const REQUEST_TIMEOUT_MS = 30_000;
+
+// Retry-After as milliseconds: delta-seconds or an HTTP date; 0 when absent
+// or unparseable.
+export function retryAfterMs(value: string | null, now = Date.now()): number {
+    if (!value) return 0;
+    const seconds = Number(value);
+    if (Number.isFinite(seconds)) return Math.max(0, seconds * 1000);
+    const at = Date.parse(value);
+    return Number.isNaN(at) ? 0 : Math.max(0, at - now);
+}
+
 // GET a JSON document, retrying on 429 / 5xx with backoff. Returns null on a
 // hard failure so one blocked source does not stop the run.
 export async function getJson<T>(
@@ -55,10 +68,11 @@ export async function getJson<T>(
                     accept: "application/json",
                     ...headers,
                 },
+                signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
             });
             if (res.ok) return (await res.json()) as T;
             if (res.status === 429 || res.status >= 500) {
-                const wait = Number(res.headers.get("retry-after") ?? 0) * 1000;
+                const wait = retryAfterMs(res.headers.get("retry-after"));
                 await sleep(Math.max(wait, 2000 * 2 ** attempt));
                 continue;
             }

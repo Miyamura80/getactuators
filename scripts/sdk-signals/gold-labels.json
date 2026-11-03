@@ -210,22 +210,8 @@
             "labels": []
         },
         {
-            "key": "github:Miyamura80/getactuators#87",
-            "brands": [
-                "robotis",
-                "cubemars",
-                "myactuator",
-                "robstride",
-                "steadywin",
-                "feetech",
-                "mjbots",
-                "odrive",
-                "damiao",
-                "unitree",
-                "xiaomi",
-                "maxon",
-                "innfos"
-            ],
+            "key": "reddit:t3_1vgymvk",
+            "brands": ["cubemars", "robstride", "steadywin", "xiaomi"],
             "labels": []
         },
         {

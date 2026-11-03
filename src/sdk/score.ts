@@ -46,8 +46,10 @@ const COMMUNITY_WEIGHT = 0.4;
 const PRIOR = 3;
 // A small neutral pull so a dimension resting on one check never reads 0 or 100.
 const NEUTRAL_WEIGHT = 0.15;
-// What a dimension with no checks and no posts counts as in the overall.
-const MISSING = 50;
+// What a dimension with no checks and no posts counts as in the overall (and
+// where the /sdk radar draws it).
+export const MISSING_SCORE = 50;
+const MISSING = MISSING_SCORE;
 
 function monthsBetween(from: string, to: string): number {
     return Math.max(0, (Date.parse(to) - Date.parse(from)) / (30.44 * 24 * 3.6e6));

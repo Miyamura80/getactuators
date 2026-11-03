@@ -1,16 +1,27 @@
+import type { KeyboardEvent } from "react";
 import type { BrandSummary } from "../../../../src/sdk";
+import { paretoFront } from "../../lib/pareto";
 
 const W = 640;
 const H = 300;
 const PAD = { l: 44, r: 16, t: 14, b: 36 };
 
-// Brands on the "best developer experience for the money" frontier: no other
-// brand is both cheaper per N.m and better scored.
+// Brands on the "best developer experience for the money" frontier (the shared
+// price-scatter rule): no other brand is both cheaper per N.m and better
+// scored. Ids left to right.
 export function frontier(rows: { id: string; x: number; y: number }[]): string[] {
+    const on = paretoFront(rows, (r) => r.x, (r) => r.y);
     return rows
-        .filter((a) => !rows.some((b) => b !== a && b.x <= a.x && b.y >= a.y && (b.x < a.x || b.y > a.y)))
+        .filter((_, i) => on[i])
         .sort((a, b) => a.x - b.x)
         .map((r) => r.id);
+}
+
+// Enter or Space activates a plotted brand, like a native button.
+function activate(e: KeyboardEvent, go: () => void) {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    e.preventDefault();
+    go();
 }
 
 // 4. SDK score against median catalog price per N.m (log scale).
@@ -25,7 +36,7 @@ export function SdkValueScatter({ rows, focus }: { rows: BrandSummary[]; focus: 
     const line = front.map((id) => pts.find((p) => p.id === id)).filter((p) => p !== undefined);
     const ticks = [1, 2, 5, 10, 20, 50, 100, 200].filter((t) => Math.log10(t) >= lo && Math.log10(t) <= hi);
     return <figure className="sdk-scatter">
-        <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="SDK score against price per newton-metre">
+        <svg viewBox={`0 0 ${W} ${H}`} role="group" aria-label="SDK score against price per newton-metre">
             {[0, 25, 50, 75, 100].map((y) => <g key={y}>
                 <line className="sdk-grid" x1={PAD.l} x2={W - PAD.r} y1={sy(y)} y2={sy(y)} />
                 <text className="sdk-tick" x={PAD.l - 6} y={sy(y)} textAnchor="end" dominantBaseline="middle">{y}</text>
@@ -35,7 +46,7 @@ export function SdkValueScatter({ rows, focus }: { rows: BrandSummary[]; focus: 
             <polyline className="sdk-frontier" points={line.map((p) => `${sx(p.x).toFixed(1)},${sy(p.y).toFixed(1)}`).join(" ")} />
             {pts.map((p) => <g key={p.id} className={`sdk-dot${front.includes(p.id) ? " is-front" : ""}`} data-brand={p.id}
                 role="button" tabIndex={0} aria-label={`${p.name}: score ${Math.round(p.y)}, $${p.x.toFixed(1)} per N.m`}
-                onClick={() => focus(p.id)} onKeyDown={(e) => { if (e.key === "Enter") focus(p.id); }}>
+                onClick={() => focus(p.id)} onKeyDown={(e) => activate(e, () => focus(p.id))}>
                 <circle cx={sx(p.x)} cy={sy(p.y)} r={5} />
                 <title>{`${p.name}: ${Math.round(p.y)}, US$${p.x.toFixed(1)} per N.m`}</title>
                 {front.includes(p.id) ? <text x={sx(p.x) > W - 140 ? sx(p.x) - 8 : sx(p.x) + 8} y={sy(p.y)}

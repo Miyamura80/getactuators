@@ -16,8 +16,24 @@ import { objectiveChecks } from "./objective";
 const args = process.argv.slice(2);
 const flag = (name: string) =>
     args.find((a) => a.startsWith(`--${name}=`))?.split("=")[1];
-const steps = (flag("steps") ?? "collect,objective,build").split(",");
-const forums = (flag("forums")?.split(",") ?? FORUMS) as Forum[];
+const STEPS = ["collect", "objective", "build"];
+
+// A comma-separated flag whose every value must be one of `allowed`; a typo
+// stops the run instead of silently doing nothing.
+function list(name: string, allowed: readonly string[]): string[] {
+    const raw = flag(name);
+    if (raw === undefined) return [...allowed];
+    const values = raw.split(",").filter(Boolean);
+    const bad = values.filter((v) => !allowed.includes(v));
+    if (values.length === 0 || bad.length)
+        throw new Error(
+            `--${name}: ${bad.length ? `unknown ${bad.join(", ")}` : "empty"}; expected some of ${allowed.join(",")}`,
+        );
+    return values;
+}
+
+const steps = list("steps", STEPS);
+const forums = list("forums", FORUMS) as Forum[];
 
 if (steps.includes("collect")) await collect(forums);
 if (steps.includes("objective")) {

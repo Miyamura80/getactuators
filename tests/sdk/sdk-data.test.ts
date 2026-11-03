@@ -14,11 +14,11 @@ import {
     sdkScoreForBrand,
     sdkScoreLookup,
 } from "@/sdk";
-import { sdkErrors } from "@/sdk/audit";
+import { isHttpsUrl, isIsoDate, sdkErrors } from "@/sdk/audit";
 import { SDK_CAPABILITIES, SDK_CHECKS } from "@/sdk/checks";
 import scoresJson from "@/sdk/data/sdk-scores.json";
 import { SDK_EVIDENCE, painPoints } from "@/sdk/evidence";
-import { recencyWeight, scoreBrand } from "@/sdk/score";
+import { recencyWeight, scoreBrand, weightedOverall } from "@/sdk/score";
 import type { BrandScore } from "@/sdk/types";
 
 // The /sdk dataset: committed pipeline output must cover the catalog, pass
@@ -114,11 +114,19 @@ describe("committed dataset", () => {
         }
     });
 
-    test("label agreement reaches 80% on every dimension over 150 gold posts", () => {
+    // The build gate: verdict agreement of at least 80% on every dimension over
+    // 150 gold posts. It does not require gold claims on every dimension (ROS
+    // has none in this gold set), so the claim counts are published next to
+    // each figure and a dimension with none shows as n/a.
+    test("build gate: label agreement reaches 80% on every dimension over 150 gold posts", () => {
         expect(SDK_METHOD.gold.items).toBeGreaterThanOrEqual(150);
-        expect(SDK_METHOD.gold.agreement).toHaveLength(SDK_DIMENSIONS.length);
-        for (const a of SDK_METHOD.gold.agreement)
+        expect(SDK_METHOD.gold.agreement.map((a) => a.dimension)).toEqual([
+            ...SDK_DIMENSIONS,
+        ]);
+        for (const a of SDK_METHOD.gold.agreement) {
             expect(a.agreement, a.dimension).toBeGreaterThanOrEqual(0.8);
+            expect(Number.isInteger(a.goldItems), a.dimension).toBe(true);
+        }
     });
 
     test("evidence stores paraphrases and links only", () => {
@@ -143,15 +151,26 @@ describe("committed dataset", () => {
 });
 
 describe("lookups", () => {
-    test("presets re-rank but keep every brand", () => {
+    test("presets re-weight scores and re-rank, keeping every brand", () => {
         const base = sdkLeaderboard();
+        const baseScore = new Map(base.map((r) => [r.brand.id, r.score.overall]));
         for (const p of SDK_PRESETS) {
             const rows = sdkLeaderboard(p);
             expect(rows.map((r) => r.brand.id).sort()).toEqual(
                 base.map((r) => r.brand.id).sort(),
             );
             expect(rows.map((r) => r.rank)).toEqual(rows.map((_, i) => i + 1));
+            for (const r of rows)
+                expect(r.score.overall).toBe(weightedOverall(r.score.dimensions, p));
+            if (p !== "balanced")
+                expect(
+                    rows.some((r) => r.score.overall !== baseScore.get(r.brand.id)),
+                    p,
+                ).toBe(true);
         }
+        expect(sdkLeaderboard("ros2").map((r) => r.brand.id)).not.toEqual(
+            base.map((r) => r.brand.id),
+        );
     });
 
     test("actuator and brand lookups agree; reducers have none", () => {
@@ -160,6 +179,10 @@ describe("lookups", () => {
         expect(sdkScoreForBrand("ODrive Robotics")).toEqual(s);
         expect(sdkScoreForBrand("odrive")).toEqual(s);
         expect(sdkScoreForActuator("nabtesco-rv-42n")).toBeNull();
+        // A bare frameless motor from a scored brand: its SDK does not apply.
+        expect(sdkScoreForActuator("maxon-ec-frameless-90-flat-260w")).toBeNull();
+        expect(sdkScoreForActuator("cubemars-ri60-kv120")).toBeNull();
+        expect(sdkScoreForActuator("odrive-v36")?.brandId).toBe("odrive");
         const all = sdkScoreLookup();
         expect(all["dynamixel-xm430-w350-t"]?.brandId).toBe("robotis");
         expect(all["leaderdrive-lhs"]).toBeUndefined();
@@ -170,9 +193,21 @@ describe("lookups", () => {
             for (const p of painPoints(b.id))
                 expect(
                     p.examples.every(
-                        (e) => e.polarity === "negative" && e.theme === p.theme,
+                        (e) =>
+                            e.polarity === "negative" &&
+                            e.theme === p.theme &&
+                            e.dimension === p.dimension,
                     ),
                 ).toBe(true);
+    });
+
+    test("evidence URLs and dates are parsed, not pattern-matched", () => {
+        expect(isHttpsUrl("https://news.ycombinator.com/item?id=1")).toBe(true);
+        for (const bad of ["https://", "https:/x", "http://a.com", "https//a.com"])
+            expect(isHttpsUrl(bad), bad).toBe(false);
+        expect(isIsoDate("2026-11-03")).toBe(true);
+        for (const bad of ["0000-00-00", "2026-02-30", "2026-1-03", "2026-11-03T00"])
+            expect(isIsoDate(bad), bad).toBe(false);
     });
 
     test("recency halves a claim's weight every 24 months", () => {

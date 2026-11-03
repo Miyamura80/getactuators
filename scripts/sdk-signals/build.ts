@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { SCORED_BRANDS } from "@/sdk/brands";
 import { type RepoStats, repoChecks, scoreBrand } from "@/sdk/score";
@@ -17,6 +18,7 @@ import {
     MIN_AGREEMENT,
     evaluate,
     goldSample,
+    r2,
 } from "./gold";
 import {
     GUIDE_VERSION,
@@ -55,13 +57,19 @@ export function matchedPosts(): { post: RawPost; brands: string[] }[] {
 const tidy = (s: string) =>
     s.replaceAll(EM_DASH, ", ").replace(/\s+/g, " ").trim().slice(0, 220);
 
+// One evidence item per (post, brand, dimension). When a post carries several
+// labels for the same pair, the polarity follows the gold evaluator's rule
+// (a complaint wins) and the claim comes from the first label of that polarity.
 function toEvidence(post: RawPost, labels: Label[]): SdkEvidence[] {
-    const seen = new Set<string>();
-    const out: SdkEvidence[] = [];
+    const pick = new Map<string, Label>();
     for (const l of labels) {
         const k = `${l.brand}|${l.dimension}`;
-        if (seen.has(k)) continue;
-        seen.add(k);
+        const prev = pick.get(k);
+        if (!prev || (prev.polarity === "positive" && l.polarity === "negative"))
+            pick.set(k, l);
+    }
+    const out: SdkEvidence[] = [];
+    for (const [k, l] of pick) {
         const theme = THEMES[l.dimension].includes(l.theme) ? l.theme : "other";
         out.push({
             id: createHash("sha1")
@@ -99,15 +107,30 @@ function timeline(evidence: readonly SdkEvidence[]): Record<string, MonthCount[]
     return out;
 }
 
-function gate(agreement: ClassifierAgreement[], goldItems: number): void {
-    if (goldItems < GOLD_SIZE)
+// Refuse to write scores from an empty or partial cache: every gold post must
+// still be among the matched posts, or the agreement would be measured on
+// posts the build no longer reads.
+function gate(
+    agreement: ClassifierAgreement[],
+    gold: GoldFile,
+    matched: readonly { post: RawPost }[],
+): void {
+    if (matched.length === 0)
+        throw new Error("no cached post mentions a scored brand; run --steps=collect");
+    if (gold.items.length < GOLD_SIZE)
         throw new Error(
-            `gold set has ${goldItems} labelled posts, needs ${GOLD_SIZE}; run with --gold-sample and label ${GOLD_PATH}`,
+            `gold set has ${gold.items.length} labelled posts, needs ${GOLD_SIZE}; run with --gold-sample and label ${GOLD_PATH}`,
+        );
+    const keys = new Set(matched.map((m) => m.post.key));
+    const absent = gold.items.filter((i) => !keys.has(i.key)).map((i) => i.key);
+    if (absent.length)
+        throw new Error(
+            `${absent.length} gold posts are not among the matched posts in the cache (${absent.slice(0, 5).join(", ")}); restore the raw cache or relabel the gold set`,
         );
     const low = agreement.filter((a) => a.agreement < MIN_AGREEMENT);
     for (const a of agreement)
         console.log(
-            `  ${a.dimension}: agreement ${a.agreement}, overlap ${a.overlap}, gold ${a.goldItems}`,
+            `  ${a.dimension}: agreement ${r2(a.agreement)}, overlap ${r2(a.overlap)}, gold ${a.goldItems}`,
         );
     if (low.length)
         throw new Error(
@@ -124,18 +147,21 @@ export async function build(
     if (opts.export) return exportUnlabelled(matched);
     const labels = labelsFor(matched);
     const agreement = evaluate(labels);
-    gate(
-        agreement,
-        readJson<GoldFile>(GOLD_PATH, { labelledBy: "", items: [] }).items.length,
-    );
-    const asOf = new Date().toISOString().slice(0, 10);
+    const gold = readJson<GoldFile>(GOLD_PATH, { labelledBy: "", items: [] });
+    gate(agreement, gold, matched);
+    // The objective snapshot is required, and its date is the dataset's as-of
+    // date, so a build-only rerun reproduces the same scores.
+    const githubPath = join(DATA, "sdk-github.json");
+    if (!existsSync(githubPath))
+        throw new Error(`${githubPath} is missing; run --steps=objective first`);
+    const github = readJson<{ asOf: string; repos: RepoStats[] }>(githubPath, {
+        asOf: "",
+        repos: [],
+    });
+    const asOf = github.asOf;
     const evidence = matched
         .flatMap(({ post }) => toEvidence(post, labels.get(post.key) ?? []))
         .sort((a, b) => a.brand.localeCompare(b.brand) || b.date.localeCompare(a.date));
-    const github = readJson<{ asOf: string; repos: RepoStats[] }>(
-        join(DATA, "sdk-github.json"),
-        { asOf, repos: [] },
-    );
     const sourceFor = (repo: string) =>
         SDK_SOURCES.find(
             (s) => s.url.toLowerCase() === `https://github.com/${repo}`.toLowerCase(),
@@ -152,7 +178,6 @@ export async function build(
             asOf,
         ),
     );
-    const gold = readJson<GoldFile>(GOLD_PATH, { labelledBy: "", items: [] });
     writeJson(join(DATA, "sdk-evidence.json"), { asOf, items: evidence });
     writeJson(join(DATA, "sdk-scores.json"), {
         asOf,
@@ -164,7 +189,15 @@ export async function build(
                 0,
             ),
             postsMatched: matched.length,
-            gold: { items: gold.items.length, labelledBy: gold.labelledBy, agreement },
+            gold: {
+                items: gold.items.length,
+                labelledBy: gold.labelledBy,
+                agreement: agreement.map((a) => ({
+                    ...a,
+                    agreement: r2(a.agreement),
+                    overlap: r2(a.overlap),
+                })),
+            },
         },
         brands,
         timeline: timeline(evidence),

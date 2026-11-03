@@ -262,7 +262,7 @@ export function auditRegistry(
         ...policyErrors(today),
         ...processErrors(),
         ...unopenedSourceErrors(),
-        ...sdkErrors(),
+        ...sdkErrors(today),
     ];
     const used = new Set<string>();
     for (const [where, ids] of citations()) {

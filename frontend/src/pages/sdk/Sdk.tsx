@@ -17,13 +17,13 @@ import {
     UNSCORED_BRANDS,
     sdkLeaderboard,
 } from "../../../../src/sdk";
-import { SDK_EVIDENCE } from "../../../../src/sdk/evidence";
+import { SDK_EVIDENCE, redditSeedNote } from "../../../../src/sdk/evidence";
 import { SdkCapabilities, SdkPainPoints, SdkTimeline } from "./BrandViews";
-import { EvidencePanel } from "./Evidence";
+import { EVIDENCE_PANEL_ID, EvidencePanel } from "./Evidence";
 import { SdkHeatmap } from "./Heatmap";
 import { SdkLeaderboard } from "./Leaderboard";
 import { SdkRadar } from "./Radar";
-import { type Focus, readFocus, readPreset, writeState } from "./state";
+import { type Focus, SLOT_COLORS, readFocus, readPreset, writeState } from "./state";
 import { SdkValueScatter } from "./ValueScatter";
 import "../tools.css";
 import "../../components/supply-chain/supply-chain.css";
@@ -42,7 +42,10 @@ export function Sdk({ menuOpen = false }: { menuOpen?: boolean }) {
     const [preset, setPreset] = useState<SdkPreset>(() => readPreset());
     const [focus, setFocus] = useState<Focus>(() => readFocus());
     const rows = useMemo(() => sdkLeaderboard(preset), [preset]);
-    const [compare, setCompare] = useState<string[]>(() => rows.slice(0, 3).map((r) => r.brand.id));
+    // Four compare slots; a brand keeps its slot (and colour) until removed.
+    const [slots, setSlots] = useState<(string | null)[]>(() =>
+        SLOT_COLORS.map((_, i) => (i < 3 ? (rows[i]?.brand.id ?? null) : null)));
+    const compare = slots.filter((id): id is string => id !== null);
     const focused = rows.find((r) => r.brand.id === focus.brand) ?? rows[0];
 
     useEffect(() => {
@@ -56,12 +59,21 @@ export function Sdk({ menuOpen = false }: { menuOpen?: boolean }) {
         };
     }, []);
     useEffect(() => writeState(preset, focus), [preset, focus]);
+    // Bring the focused brand's row, or the open cell's evidence, into view
+    // (deep links, badges and hash changes as well as clicks).
     useEffect(() => {
-        if (focus.brand && !focus.dim) document.getElementById(`sdk-brand-${focus.brand}`)?.scrollIntoView?.({ block: "center" });
+        if (!focus.brand) return;
+        if (focus.dim) document.getElementById(EVIDENCE_PANEL_ID)?.scrollIntoView?.({ block: "nearest" });
+        else document.getElementById(`sdk-brand-${focus.brand}`)?.scrollIntoView?.({ block: "center" });
     }, [focus.brand, focus.dim]);
 
     const toggleCompare = (id: string) =>
-        setCompare((c) => (c.includes(id) ? c.filter((x) => x !== id) : c.length < 4 ? [...c, id] : c));
+        setSlots((s) => {
+            if (s.includes(id)) return s.map((x) => (x === id ? null : x));
+            const free = s.indexOf(null);
+            return free < 0 ? s : s.map((x, i) => (i === free ? id : x));
+        });
+    const colorOf = (id: string) => SLOT_COLORS[Math.max(0, slots.indexOf(id))] ?? SLOT_COLORS[0];
     const openCell = (brand: string, dim: SdkDimension) =>
         setFocus((f) => (f.brand === brand && f.dim === dim ? { brand, dim: null } : { brand, dim }));
     const compared = compare.map((id) => rows.find((r) => r.brand.id === id)).filter((r) => r !== undefined);
@@ -98,7 +110,7 @@ export function Sdk({ menuOpen = false }: { menuOpen?: boolean }) {
                 </Section>
 
                 <Section id="sdk-compare" title="Compare profiles">
-                    <SdkRadar brands={compared} remove={toggleCompare} clear={() => setCompare([])} />
+                    <SdkRadar brands={compared} colorOf={colorOf} remove={toggleCompare} clear={() => setSlots(SLOT_COLORS.map(() => null))} />
                 </Section>
 
                 <Section id="sdk-value" title="SDK quality for the money">
@@ -122,10 +134,12 @@ export function Sdk({ menuOpen = false }: { menuOpen?: boolean }) {
 
                 <details className="sdk-method">
                     <summary>Method and label agreement</summary>
-                    <p>Each dimension blends objective checks (60%, cited) with developer posts (up to 40%, growing with the number of posts, halving in weight every 24 months; a GitHub issue counts 0.35 of a discussion post since trackers collect bug reports), plus a small pull toward 50 so one check cannot pin a score to 0 or 100. A dimension with no data counts as 50 in the overall. Each post was read once ({SDK_METHOD.labelledBy}) and its claims labelled by dimension and polarity and summarised in our words; the labels are committed, no model API runs, and no quotes or usernames are kept. {SDK_METHOD.postsMatched} of {SDK_METHOD.postsScanned} scanned posts named a brand.</p>
-                    <p>Check set: {SDK_METHOD.gold.items} posts labelled separately ({SDK_METHOD.gold.labelledBy}). Agreement per dimension:</p>
+                    <p>Each dimension blends objective checks (60%, cited) with developer posts (up to 40%, growing with the number of posts, halving in weight every 24 months; a GitHub issue counts 0.35 of a discussion post since trackers collect bug reports), plus a small pull toward 50 so one check cannot pin a score to 0 or 100. A dimension with no data counts as 50 in the overall. Each post was read once ({SDK_METHOD.labelledBy}) and its claims labelled by dimension and polarity and summarised in our words; the labels are committed, no model API runs, and no quotes or usernames are kept. {SDK_METHOD.postsMatched} of {SDK_METHOD.postsScanned} scanned posts named a brand. {redditSeedNote()}</p>
+                    <p>Check set: {SDK_METHOD.gold.items} posts labelled separately ({SDK_METHOD.gold.labelledBy}). Agreement per dimension, with the number of gold claims it rests on; most gold posts make no claim, so a dimension with no gold claims is not measured:</p>
                     <ul className="sdk-agree">
-                        {agreement.map((a) => <li key={a.dimension}><span>{DIMENSION_SHORT[a.dimension]}</span><b>{Math.round(a.agreement * 100)}%</b><small>claim overlap {Math.round(a.overlap * 100)}%</small></li>)}
+                        {agreement.map((a) => <li key={a.dimension}><span>{DIMENSION_SHORT[a.dimension]}</span>{a.goldItems === 0
+                            ? <><b>n/a</b><small>0 gold claims</small></>
+                            : <><b>{Math.round(a.agreement * 100)}%</b><small>{a.goldItems} gold claim{a.goldItems === 1 ? "" : "s"}, overlap {Math.round(a.overlap * 100)}%</small></>}</li>)}
                     </ul>
                     <p>Not scored: {UNSCORED_BRANDS.map((b) => b.name).join(", ")} (reducers or bare motors with no software of their own).</p>
                 </details>

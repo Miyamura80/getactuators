@@ -1,6 +1,14 @@
 import { SCORED_BRANDS } from "@/sdk/brands";
-import type { Forum } from "@/sdk/types";
-import { type RawPost, getJson, isoDate, mergeRaw, plain, sleep } from "./common";
+import { type Forum, REDDIT_SUBREDDITS } from "@/sdk/types";
+import {
+    REQUEST_TIMEOUT_MS,
+    type RawPost,
+    getJson,
+    isoDate,
+    mergeRaw,
+    plain,
+    sleep,
+} from "./common";
 
 // Collectors, one per forum. Each searches every scored brand's search terms,
 // keeps URL, date, venue, score and the post text (cache only), and merges
@@ -147,6 +155,8 @@ async function fetchMany<T>(host: string, urls: string[]): Promise<Map<string, T
     return out;
 }
 
+// Search results carry only a blurb, so each hit's full post is fetched from
+// /posts/<id>.json; the blurb is kept only when that fetch fails.
 async function collectDiscourse(forum: "ros-discourse" | "forum"): Promise<RawPost[]> {
     const out: RawPost[] = [];
     for (const { host, venue } of DISCOURSE[forum]) {
@@ -157,6 +167,11 @@ async function collectDiscourse(forum: "ros-discourse" | "forum"): Promise<RawPo
             ]),
         );
         const pages = await fetchMany<DiscourseSearch>(host, [...byUrl.keys()]);
+        const postUrl = (id: number) => `https://${host}/posts/${id}.json`;
+        const ids = new Set(
+            [...pages.values()].flatMap((r) => (r.posts ?? []).map((p) => p.id)),
+        );
+        const full = await fetchMany<{ cooked?: string }>(host, [...ids].map(postUrl));
         for (const [url, res] of pages) {
             const topics = new Map((res.topics ?? []).map((t) => [t.id, t]));
             for (const p of res.posts ?? []) {
@@ -169,7 +184,7 @@ async function collectDiscourse(forum: "ros-discourse" | "forum"): Promise<RawPo
                     date: isoDate(p.created_at),
                     score: p.like_count ?? null,
                     title: plain(t?.title ?? "", 200),
-                    text: plain(p.blurb),
+                    text: plain(full.get(postUrl(p.id))?.cooked ?? p.blurb),
                     query: byUrl.get(url) ?? "",
                 });
             }
@@ -181,30 +196,40 @@ async function collectDiscourse(forum: "ros-discourse" | "forum"): Promise<RawPo
 
 // Reddit: the official API when REDDIT_CLIENT_ID / REDDIT_CLIENT_SECRET are
 // set (free); skipped otherwise. No paid scraper.
-export const SUBREDDITS = [
-    "robotics",
-    "ROS",
-    "diyrobotics",
-    "robotdogs",
-    "AskRobotics",
-    "embedded",
-];
+//
+// The committed Reddit evidence is NOT reproducible with this collector. It
+// comes from a one-off seed collected on 2026-11-03 by a scraper since removed
+// from the repo, which searched more subreddits than REDDIT_SUBREDDITS (r/PLC,
+// r/Cubemars, r/unitree, r/esp32 and others) and also returned comments
+// (t1_ keys). The official search below covers posts in those subreddits only;
+// Reddit's API has no comment search. Those seed posts and their labels stay
+// valid while the raw cache holds them; a fresh cache drops them from the
+// scores. redditSeedNote() in src/sdk/evidence.ts states this on /sdk and its
+// markdown twin.
 
+// An app token, or null when credentials are unset or the auth request fails
+// (DNS, TLS, refused), so Reddit is skipped like any unavailable source.
 async function redditToken(): Promise<string | null> {
     const id = process.env.REDDIT_CLIENT_ID;
     const secret = process.env.REDDIT_CLIENT_SECRET;
     if (!id || !secret) return null;
-    const res = await fetch("https://www.reddit.com/api/v1/access_token", {
-        method: "POST",
-        headers: {
-            authorization: `Basic ${btoa(`${id}:${secret}`)}`,
-            "content-type": "application/x-www-form-urlencoded",
-        },
-        body: "grant_type=client_credentials",
-    });
-    return res.ok
-        ? ((await res.json()) as { access_token: string }).access_token
-        : null;
+    try {
+        const res = await fetch("https://www.reddit.com/api/v1/access_token", {
+            method: "POST",
+            headers: {
+                authorization: `Basic ${btoa(`${id}:${secret}`)}`,
+                "content-type": "application/x-www-form-urlencoded",
+            },
+            body: "grant_type=client_credentials",
+            signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+        });
+        return res.ok
+            ? ((await res.json()) as { access_token: string }).access_token
+            : null;
+    } catch (e) {
+        console.warn(`  reddit auth failed: ${(e as Error).message}`);
+        return null;
+    }
 }
 
 interface RedditListing {
@@ -226,7 +251,7 @@ interface RedditListing {
 async function collectRedditApi(token: string): Promise<RawPost[]> {
     const out: RawPost[] = [];
     for (const q of terms())
-        for (const sub of SUBREDDITS) {
+        for (const sub of REDDIT_SUBREDDITS) {
             const url = `https://oauth.reddit.com/r/${sub}/search?q=${encodeURIComponent(q)}&restrict_sr=1&limit=50`;
             const res = await getJson<RedditListing>(url, {
                 authorization: `Bearer ${token}`,
@@ -251,7 +276,7 @@ async function collectRedditApi(token: string): Promise<RawPost[]> {
 async function collectReddit(): Promise<RawPost[]> {
     const token = await redditToken();
     if (token) return collectRedditApi(token);
-    console.warn("  reddit: set REDDIT_CLIENT_ID/SECRET; skipped");
+    console.warn("  reddit: no token (set REDDIT_CLIENT_ID/SECRET); skipped");
     return [];
 }
 

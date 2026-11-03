@@ -11,8 +11,10 @@ import type { Label } from "./labels";
 // for a fixed sample of posts (by key; the text stays in the cache). For each
 // dimension, agreement = share of (post, brand) pairs where the label's
 // verdict (positive, negative or no claim) matches the check-set one; overlap is
-// the stricter share of claims both raters made among claims either made.
-// Scores are committed only when every dimension reaches MIN_AGREEMENT.
+// the stricter share of (post, brand) pairs where both raters made a claim with
+// the same polarity, among pairs where either made a claim. Scores are
+// committed only when every dimension reaches MIN_AGREEMENT, compared before
+// rounding.
 
 export const GOLD_PATH = join(ROOT, "scripts", "sdk-signals", "gold-labels.json");
 export const GOLD_SIZE = 150;
@@ -51,7 +53,7 @@ export function goldSample(posts: { post: RawPost; brands: string[] }[]): void {
             key: p.key,
             brands: brandsOf.get(p.key),
             title: p.title,
-            text: p.text.slice(0, 700),
+            text: p.text,
         })),
     );
     console.log(`  wrote ${picked.size} posts to label in ${CACHE}/gold-sample.json`);
@@ -69,7 +71,7 @@ function verdicts(labels: readonly GoldLabel[], dimension: SdkDimension) {
     return out;
 }
 
-const r2 = (x: number) => Math.round(x * 100) / 100;
+export const r2 = (x: number) => Math.round(x * 100) / 100;
 
 // Every (gold verdict, committed-label verdict) pair on one dimension.
 function pairs(
@@ -88,6 +90,7 @@ function pairs(
     });
 }
 
+// Unrounded agreement and overlap per dimension; round with r2 for display.
 export function evaluate(labels: Map<string, Label[]>): ClassifierAgreement[] {
     const gold = readJson<GoldFile>(GOLD_PATH, { labelledBy: "", items: [] });
     return SDK_DIMENSIONS.map((dimension) => {
@@ -97,8 +100,8 @@ export function evaluate(labels: Map<string, Label[]>): ClassifierAgreement[] {
         const both = ps.filter(([g, c]) => g !== "none" && g === c).length;
         return {
             dimension,
-            agreement: ps.length === 0 ? 0 : r2(same / ps.length),
-            overlap: either === 0 ? 1 : r2(both / either),
+            agreement: ps.length === 0 ? 0 : same / ps.length,
+            overlap: either === 0 ? 1 : both / either,
             goldItems: ps.filter(([g]) => g !== "none").length,
         };
     });

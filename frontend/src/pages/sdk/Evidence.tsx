@@ -13,6 +13,9 @@ import { scoreText } from "./state";
 
 const VALUE_LABEL = { 1: "Yes", 0.5: "Partly", 0: "No" } as const;
 
+// The open cell's panel; the heatmap button points at it with aria-controls.
+export const EVIDENCE_PANEL_ID = "sdk-evidence-panel";
+
 export function EvidenceItem({ e }: { e: SdkEvidence }) {
     return <li className={`sdk-ev sdk-ev-${e.polarity}`}>
         <span className="sdk-ev-pol" aria-label={e.polarity}>{e.polarity === "positive" ? "+" : "−"}</span>
@@ -35,7 +38,7 @@ export function EvidencePanel({ brand, dim, onClose }: {
     const v = s.score.dimensions[dim];
     const checks = checksFor(brand).filter((c) => c.dimension === dim);
     const posts = evidenceFor(brand, dim);
-    return <section className="sdk-panel" data-brand={brand} data-dim={dim} aria-label={`${s.brand.name}: ${DIMENSION_LABEL[dim]}`}>
+    return <section id={EVIDENCE_PANEL_ID} className="sdk-panel" data-brand={brand} data-dim={dim} aria-label={`${s.brand.name}: ${DIMENSION_LABEL[dim]}`}>
         <header>
             <h3>{s.brand.name} · {DIMENSION_LABEL[dim]} <b>{scoreText(v?.score)}</b></h3>
             <button type="button" className="sdk-close" aria-label="Close evidence" onClick={onClose}>×</button>
