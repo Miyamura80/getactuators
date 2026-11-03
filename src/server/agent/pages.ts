@@ -20,6 +20,7 @@ import * as ld from "./jsonld";
 import { PATHS } from "./links";
 import { agentsBody } from "./manifests";
 import { mdDocument } from "./md";
+import { OPEN_SOURCE_PAGE } from "./open-source/page";
 import {
     actuatorsBody,
     faqItems,
@@ -147,6 +148,7 @@ const STATIC_PAGES: Page[] = [
         image: PATHS.ogInvestors,
     },
     HUMANOIDS_PAGE,
+    OPEN_SOURCE_PAGE,
     METALS_PAGE,
     POLICY_PAGE,
     sub(

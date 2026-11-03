@@ -28,6 +28,8 @@ import { Metals } from "./pages/supply-chain/metals/Metals";
 import { METALS_PATH } from "../../src/supply-chain/metals";
 import { Policy } from "./pages/supply-chain/policy/Policy";
 import { POLICY_PATH } from "../../src/supply-chain/policy";
+import { OpenSource } from "./pages/open-source/OpenSource";
+import { OPEN_SOURCE_PATH } from "../../src/open-source";
 
 function Page({ menuOpen }: { menuOpen: boolean }) {
     const path = usePath();
@@ -45,6 +47,7 @@ function Page({ menuOpen }: { menuOpen: boolean }) {
     if (path === CONTRIBUTORS_PATH) return <Contributors menuOpen={menuOpen} />;
     if (path === METALS_PATH) return <Metals menuOpen={menuOpen} />;
     if (path === POLICY_PATH) return <Policy menuOpen={menuOpen} />;
+    if (path === OPEN_SOURCE_PATH) return <OpenSource menuOpen={menuOpen} />;
     if (path.startsWith("/actuators/")) {
         const raw = path.slice("/actuators/".length);
         let id = raw;

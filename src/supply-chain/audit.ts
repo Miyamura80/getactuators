@@ -1,3 +1,4 @@
+import { openSourceLicenceErrors } from "../open-source/licence";
 import { COMPANIES } from "./companies";
 import { insideCountry } from "./countries";
 import { LAB_MINING_HHI, LAB_STAGE_SHARES } from "./lab-fixtures";
@@ -264,6 +265,7 @@ export function auditRegistry(
             allowlist: FACTS_ALLOWLIST,
         }),
         ...humanoidLicenceErrors(),
+        ...openSourceLicenceErrors(),
     );
     const values = sourcedValueIssues(today);
     const orphans = SOURCES.filter((s) => !used.has(s.id)).map(

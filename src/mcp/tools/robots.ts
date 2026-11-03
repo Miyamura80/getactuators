@@ -1,5 +1,7 @@
+import { OpenRobotListSchema, openRobotList } from "@/api/open-robots";
 import { ROBOTS, ROBOT_CREDIT } from "@/catalog";
 import { resolveJoints, robotsUsingActuator } from "@/catalog/query";
+import { ROBOT_TYPES } from "@/open-source";
 import { z } from "zod";
 import {
     actuatorIdSchema,
@@ -117,4 +119,27 @@ const findRobots = defineTool({
     },
 });
 
-export const robotTools = [listRobots, getRobot, findRobots, getHumanoidJoints];
+// The /open-source directory as an MCP tool; same wire shape as
+// GET /api/v1/open-robots.
+const listOpenRobots = defineTool({
+    name: "list_open_robots",
+    title: "List open-source robots",
+    description:
+        "Open-source robots you can build (YOR, SO-101, LeKiwi, OpenArm, Berkeley Humanoid Lite, ToddlerBot, Solo-12 and more): licences (SPDX), openness score over eight dimensions (mechanical CAD, electronics, firmware, software, BOM, assembly guide, sim model, licence) with a link per published artefact, BOM or kit cost (USD), GitHub stars and last commit, the robot it was derived from, and each joint group's actuator with its catalog id when listed. Filter by type.",
+    input: z.object({
+        type: z
+            .enum(ROBOT_TYPES)
+            .optional()
+            .describe("mobile-manipulator, arm, humanoid or legged. Omit for all."),
+    }),
+    output: OpenRobotListSchema,
+    run: ({ type }) => openRobotList(type),
+});
+
+export const robotTools = [
+    listRobots,
+    getRobot,
+    findRobots,
+    getHumanoidJoints,
+    listOpenRobots,
+];
