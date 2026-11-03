@@ -1,0 +1,872 @@
+{
+    "labelledBy": "one reviewer reading each post in full before seeing the classifier output (agent-assisted; maintainer spot check pending)",
+    "items": [
+        {
+            "key": "reddit:t3_1xe51en",
+            "brands": ["robotis"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_19rjsdc6qqrhc",
+            "brands": ["odrive"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_19ruxv4tzkkgw",
+            "brands": ["feetech"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_pd3uy8w",
+            "brands": ["robotis", "feetech", "waveshare"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t3_1v7sw1t",
+            "brands": ["cubemars"],
+            "labels": [
+                {
+                    "brand": "cubemars",
+                    "dimension": "support",
+                    "polarity": "positive"
+                }
+            ]
+        },
+        {
+            "key": "reddit:t1_pa58jl3",
+            "brands": ["myactuator"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_pgnwf8j",
+            "brands": ["robstride"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_19rqzrl8xbopx",
+            "brands": ["xiaomi"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_p3ixj5w",
+            "brands": ["xiaomi", "innfos", "lkmtech"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_p3jl5ch",
+            "brands": ["robstride", "damiao"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t3_1x9yacs",
+            "brands": ["steadywin"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_p9lr58k",
+            "brands": ["hiwonder"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_19rh1tiqq47z8",
+            "brands": ["mjbots"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_19rgsjz4uj6dc",
+            "brands": ["vesc"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t3_1xlzi8c",
+            "brands": ["unitree"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t3_1t8w9y9",
+            "brands": ["odrive", "maxon"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t3_1qo0xw6",
+            "brands": ["trinamic"],
+            "labels": []
+        },
+        {
+            "key": "hn:49471493",
+            "brands": ["robotis"],
+            "labels": []
+        },
+        {
+            "key": "hn:49792586",
+            "brands": ["feetech"],
+            "labels": []
+        },
+        {
+            "key": "hn:50192861",
+            "brands": ["unitree"],
+            "labels": []
+        },
+        {
+            "key": "hn:49993797",
+            "brands": ["hiwonder"],
+            "labels": []
+        },
+        {
+            "key": "hn:43585461",
+            "brands": ["maxon"],
+            "labels": []
+        },
+        {
+            "key": "hn:49531987",
+            "brands": ["cubemars", "myactuator"],
+            "labels": []
+        },
+        {
+            "key": "hn:44024728",
+            "brands": ["robstride"],
+            "labels": []
+        },
+        {
+            "key": "hn:39654449",
+            "brands": ["steadywin"],
+            "labels": []
+        },
+        {
+            "key": "hn:50157318",
+            "brands": ["mjbots"],
+            "labels": [
+                {
+                    "brand": "mjbots",
+                    "dimension": "support",
+                    "polarity": "positive"
+                }
+            ]
+        },
+        {
+            "key": "hn:50298302",
+            "brands": ["waveshare"],
+            "labels": []
+        },
+        {
+            "key": "hn:48073128",
+            "brands": ["odrive"],
+            "labels": []
+        },
+        {
+            "key": "hn:40719584",
+            "brands": ["xiaomi"],
+            "labels": []
+        },
+        {
+            "key": "hn:49939050",
+            "brands": ["vesc"],
+            "labels": []
+        },
+        {
+            "key": "hn:48387507",
+            "brands": ["trinamic"],
+            "labels": []
+        },
+        {
+            "key": "hn:32830187",
+            "brands": ["harmonic-drive"],
+            "labels": []
+        },
+        {
+            "key": "github:alexchunlin/alex-3d-skills#39",
+            "brands": ["robotis", "feetech", "hiwonder"],
+            "labels": []
+        },
+        {
+            "key": "github:C-O-R-A/.github#248",
+            "brands": ["odrive"],
+            "labels": []
+        },
+        {
+            "key": "github:WATonomous/pioneer_humanoid#478",
+            "brands": ["cubemars"],
+            "labels": []
+        },
+        {
+            "key": "github:vedderb/bldc#974",
+            "brands": ["vesc"],
+            "labels": [
+                {
+                    "brand": "vesc",
+                    "dimension": "firmware",
+                    "polarity": "negative"
+                }
+            ]
+        },
+        {
+            "key": "github:Valpatel/gyropup#45",
+            "brands": ["myactuator"],
+            "labels": []
+        },
+        {
+            "key": "github:RobStride/Product_Information#4",
+            "brands": ["robstride"],
+            "labels": []
+        },
+        {
+            "key": "github:Miyamura80/getactuators#87",
+            "brands": [
+                "robotis",
+                "cubemars",
+                "myactuator",
+                "robstride",
+                "steadywin",
+                "feetech",
+                "mjbots",
+                "odrive",
+                "damiao",
+                "unitree",
+                "xiaomi",
+                "maxon",
+                "innfos"
+            ],
+            "labels": []
+        },
+        {
+            "key": "github:embedded-pro/e-foc#497",
+            "brands": ["mjbots"],
+            "labels": []
+        },
+        {
+            "key": "github:phamstered/rebotarm-debug-desk#186",
+            "brands": ["damiao"],
+            "labels": []
+        },
+        {
+            "key": "github:unitreerobotics/xr_teleoperate#337",
+            "brands": ["unitree"],
+            "labels": []
+        },
+        {
+            "key": "github:devicie/Komac-anthelion#11",
+            "brands": ["maxon"],
+            "labels": []
+        },
+        {
+            "key": "github:davidhnguyen2000/draft#1",
+            "brands": ["damiao", "encos"],
+            "labels": []
+        },
+        {
+            "key": "github:WCKDai/polykrom#271",
+            "brands": ["waveshare"],
+            "labels": []
+        },
+        {
+            "key": "github:MarkusKeller8200/markussxch-tagstudio#339",
+            "brands": ["trinamic"],
+            "labels": []
+        },
+        {
+            "key": "github:TerosTechnology/vscode-terosHDL#426",
+            "brands": ["harmonic-drive"],
+            "labels": []
+        },
+        {
+            "key": "github:XDU-IRobot/librm#57",
+            "brands": ["lkmtech"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t3_1x5u34u",
+            "brands": ["robotis"],
+            "labels": [
+                {
+                    "brand": "robotis",
+                    "dimension": "reliability",
+                    "polarity": "positive"
+                }
+            ]
+        },
+        {
+            "key": "reddit:t1_phitwkx",
+            "brands": ["mjbots", "odrive"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_19rv44jrxl290",
+            "brands": ["feetech"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_ogkxbu9",
+            "brands": ["waveshare"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_ouerfzz",
+            "brands": ["cubemars"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_ojrhkli",
+            "brands": ["myactuator"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_pgowm8s",
+            "brands": ["robstride"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_19rhlkw7xr1l0",
+            "brands": ["xiaomi"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_nyrklr9",
+            "brands": [
+                "cubemars",
+                "myactuator",
+                "robstride",
+                "steadywin",
+                "damiao",
+                "innfos"
+            ],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_oo9ge2w",
+            "brands": ["robstride", "damiao"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_phpfilb",
+            "brands": ["steadywin"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t3_1wei870",
+            "brands": ["hiwonder"],
+            "labels": [
+                {
+                    "brand": "hiwonder",
+                    "dimension": "bindings",
+                    "polarity": "positive"
+                }
+            ]
+        },
+        {
+            "key": "reddit:t3_1xb8ynw",
+            "brands": ["mjbots"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_19rgt73oa7lz6",
+            "brands": ["vesc"],
+            "labels": [
+                {
+                    "brand": "vesc",
+                    "dimension": "firmware",
+                    "polarity": "positive"
+                }
+            ]
+        },
+        {
+            "key": "reddit:t3_1xlv1hd",
+            "brands": ["unitree"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_n4f7itn",
+            "brands": ["maxon"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t3_1k73768",
+            "brands": ["trinamic"],
+            "labels": []
+        },
+        {
+            "key": "hn:49470385",
+            "brands": ["robotis"],
+            "labels": []
+        },
+        {
+            "key": "hn:49739045",
+            "brands": ["feetech"],
+            "labels": []
+        },
+        {
+            "key": "hn:50194191",
+            "brands": ["unitree"],
+            "labels": []
+        },
+        {
+            "key": "hn:48597341",
+            "brands": ["hiwonder"],
+            "labels": []
+        },
+        {
+            "key": "hn:42702893",
+            "brands": ["robotis", "maxon"],
+            "labels": [
+                {
+                    "brand": "robotis",
+                    "dimension": "protocol",
+                    "polarity": "positive"
+                }
+            ]
+        },
+        {
+            "key": "hn:40342790",
+            "brands": ["cubemars"],
+            "labels": []
+        },
+        {
+            "key": "hn:40077916",
+            "brands": ["myactuator"],
+            "labels": []
+        },
+        {
+            "key": "hn:44024407",
+            "brands": ["robstride"],
+            "labels": []
+        },
+        {
+            "key": "hn:36343791",
+            "brands": ["steadywin"],
+            "labels": []
+        },
+        {
+            "key": "hn:47021076",
+            "brands": ["feetech", "mjbots"],
+            "labels": []
+        },
+        {
+            "key": "hn:44243360",
+            "brands": ["waveshare"],
+            "labels": []
+        },
+        {
+            "key": "hn:47126195",
+            "brands": ["odrive"],
+            "labels": []
+        },
+        {
+            "key": "hn:49853568",
+            "brands": ["vesc"],
+            "labels": [
+                {
+                    "brand": "vesc",
+                    "dimension": "docs",
+                    "polarity": "positive"
+                }
+            ]
+        },
+        {
+            "key": "hn:46285864",
+            "brands": ["trinamic"],
+            "labels": []
+        },
+        {
+            "key": "github:WCKDai/polykrom#284",
+            "brands": ["robotis", "cubemars"],
+            "labels": []
+        },
+        {
+            "key": "github:JensvanEsch/dr-os#13",
+            "brands": ["feetech"],
+            "labels": []
+        },
+        {
+            "key": "github:RoboDurden/Hoverboard-Firmware-Hack-Gen2.x#171",
+            "brands": ["odrive"],
+            "labels": [
+                {
+                    "brand": "odrive",
+                    "dimension": "protocol",
+                    "polarity": "positive"
+                }
+            ]
+        },
+        {
+            "key": "github:WATonomous/pioneer_humanoid#482",
+            "brands": ["cubemars"],
+            "labels": []
+        },
+        {
+            "key": "github:vedderb/bldc#968",
+            "brands": ["vesc"],
+            "labels": []
+        },
+        {
+            "key": "github:rioharper/armature#171",
+            "brands": ["myactuator"],
+            "labels": []
+        },
+        {
+            "key": "github:benholland1024/pluggybot#405",
+            "brands": ["steadywin"],
+            "labels": []
+        },
+        {
+            "key": "github:embedded-pro/e-foc#495",
+            "brands": ["mjbots"],
+            "labels": []
+        },
+        {
+            "key": "github:robocurve/inspect-robots#592",
+            "brands": ["damiao"],
+            "labels": []
+        },
+        {
+            "key": "github:ershui2500/UniRoboGui#1",
+            "brands": ["unitree"],
+            "labels": []
+        },
+        {
+            "key": "github:JonTofant/TwoWheeledRobot_Embedded#1",
+            "brands": ["xiaomi"],
+            "labels": []
+        },
+        {
+            "key": "github:ynput/ayon-zbrush#43",
+            "brands": ["maxon"],
+            "labels": []
+        },
+        {
+            "key": "github:Rayckey/ActuatorController_ROS#2",
+            "brands": ["innfos"],
+            "labels": [
+                {
+                    "brand": "innfos",
+                    "dimension": "docs",
+                    "polarity": "negative"
+                }
+            ]
+        },
+        {
+            "key": "github:NUbots/NUware#36",
+            "brands": ["encos"],
+            "labels": []
+        },
+        {
+            "key": "github:ArendJan/mirte_set_serial_servos#1",
+            "brands": ["hiwonder"],
+            "labels": [
+                {
+                    "brand": "hiwonder",
+                    "dimension": "protocol",
+                    "polarity": "negative"
+                }
+            ]
+        },
+        {
+            "key": "github:MattRobotics/robot-dog#52",
+            "brands": ["waveshare"],
+            "labels": []
+        },
+        {
+            "key": "github:timusus/Shuttle2#1077",
+            "brands": ["trinamic"],
+            "labels": []
+        },
+        {
+            "key": "github:SCNU-PIONEER/PinyCore#248",
+            "brands": ["lkmtech"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_pgrw8bg",
+            "brands": ["robotis"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_phal20e",
+            "brands": ["odrive"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_19rv4mpz98jvn",
+            "brands": ["feetech"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t3_1smc38v",
+            "brands": ["waveshare"],
+            "labels": [
+                {
+                    "brand": "waveshare",
+                    "dimension": "docs",
+                    "polarity": "negative"
+                }
+            ]
+        },
+        {
+            "key": "reddit:t3_1uhxep1",
+            "brands": ["cubemars"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t3_1st82mb",
+            "brands": ["myactuator"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_pgrba1n",
+            "brands": ["robstride"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_pdydnly",
+            "brands": ["xiaomi"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_fbgy1dj",
+            "brands": ["innfos"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_od0m0u3",
+            "brands": ["damiao"],
+            "labels": [
+                {
+                    "brand": "damiao",
+                    "dimension": "docs",
+                    "polarity": "negative"
+                }
+            ]
+        },
+        {
+            "key": "reddit:t1_phhurlm",
+            "brands": ["steadywin"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_p695uju",
+            "brands": ["hiwonder"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_19rgfolfd6ww1",
+            "brands": ["vesc"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t3_1xbi26k",
+            "brands": ["unitree"],
+            "labels": [
+                {
+                    "brand": "unitree",
+                    "dimension": "protocol",
+                    "polarity": "negative"
+                }
+            ]
+        },
+        {
+            "key": "reddit:t1_kzn0b1j",
+            "brands": ["maxon"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_l7reewj",
+            "brands": ["trinamic"],
+            "labels": []
+        },
+        {
+            "key": "hn:49468213",
+            "brands": ["robotis", "feetech"],
+            "labels": []
+        },
+        {
+            "key": "hn:50178454",
+            "brands": ["unitree"],
+            "labels": []
+        },
+        {
+            "key": "hn:47790347",
+            "brands": ["feetech", "hiwonder"],
+            "labels": [
+                {
+                    "brand": "feetech",
+                    "dimension": "reliability",
+                    "polarity": "positive"
+                }
+            ]
+        },
+        {
+            "key": "hn:42000740",
+            "brands": ["maxon"],
+            "labels": []
+        },
+        {
+            "key": "hn:39914513",
+            "brands": ["myactuator"],
+            "labels": []
+        },
+        {
+            "key": "hn:9637553",
+            "brands": ["steadywin"],
+            "labels": []
+        },
+        {
+            "key": "hn:45780851",
+            "brands": ["mjbots"],
+            "labels": []
+        },
+        {
+            "key": "hn:44242873",
+            "brands": ["waveshare"],
+            "labels": []
+        },
+        {
+            "key": "hn:46630104",
+            "brands": ["odrive"],
+            "labels": []
+        },
+        {
+            "key": "hn:48963145",
+            "brands": ["vesc"],
+            "labels": []
+        },
+        {
+            "key": "hn:45112876",
+            "brands": ["trinamic"],
+            "labels": []
+        },
+        {
+            "key": "github:MasashiToda1/embodied-industry-db#440",
+            "brands": ["robotis"],
+            "labels": []
+        },
+        {
+            "key": "github:tsuyoshi-otake/electro-parts#52",
+            "brands": ["feetech"],
+            "labels": []
+        },
+        {
+            "key": "github:embedded-pro/e-foc#479",
+            "brands": ["mjbots", "odrive", "maxon"],
+            "labels": []
+        },
+        {
+            "key": "github:WATonomous/pioneer_humanoid#449",
+            "brands": ["cubemars"],
+            "labels": []
+        },
+        {
+            "key": "github:Electrium-Mobility/Bakfiets-F26#38",
+            "brands": ["vesc"],
+            "labels": []
+        },
+        {
+            "key": "github:rioharper/armature#173",
+            "brands": ["myactuator"],
+            "labels": []
+        },
+        {
+            "key": "github:robocurve/inspect-robots#582",
+            "brands": ["robstride"],
+            "labels": []
+        },
+        {
+            "key": "github:benholland1024/pluggybot#377",
+            "brands": ["steadywin"],
+            "labels": []
+        },
+        {
+            "key": "github:embedded-pro/e-foc#492",
+            "brands": ["mjbots"],
+            "labels": []
+        },
+        {
+            "key": "github:wbc-mjlab/wbc-g1-deploy#12",
+            "brands": ["unitree"],
+            "labels": []
+        },
+        {
+            "key": "github:DanielKalicki/Xiaomi_CyberGear_Arduino#7",
+            "brands": ["xiaomi"],
+            "labels": [
+                {
+                    "brand": "xiaomi",
+                    "dimension": "bindings",
+                    "polarity": "negative"
+                }
+            ]
+        },
+        {
+            "key": "github:BootBlock/Deguffer#424",
+            "brands": ["maxon"],
+            "labels": []
+        },
+        {
+            "key": "github:mintasca/innfos-gluon-controller-raspi#2",
+            "brands": ["innfos"],
+            "labels": []
+        },
+        {
+            "key": "github:NUbots/NUware#33",
+            "brands": ["encos"],
+            "labels": []
+        },
+        {
+            "key": "github:ResQ-Vision/project#26",
+            "brands": ["hiwonder"],
+            "labels": []
+        },
+        {
+            "key": "github:MattRobotics/robot-dog#48",
+            "brands": ["waveshare"],
+            "labels": []
+        },
+        {
+            "key": "github:timusus/Shuttle2#1065",
+            "brands": ["trinamic"],
+            "labels": []
+        },
+        {
+            "key": "github:SCNU-PIONEER/PinyCore#82",
+            "brands": ["lkmtech"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_pgrwwir",
+            "brands": ["robotis"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_pbcvyl6",
+            "brands": ["steadywin", "odrive"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_19rtqcrvc8mg3",
+            "brands": ["feetech"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t3_1sb393d",
+            "brands": ["waveshare"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_oubmdow",
+            "brands": ["cubemars"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_ohrizwp",
+            "brands": ["myactuator"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t3_1woalx4",
+            "brands": ["robstride"],
+            "labels": []
+        },
+        {
+            "key": "reddit:t1_pa8pnwu",
+            "brands": ["xiaomi"],
+            "labels": []
+        }
+    ]
+}

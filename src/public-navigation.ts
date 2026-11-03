@@ -88,6 +88,7 @@ export const FOOTER_GROUPS = [
             ["/docs/api", "API documentation"],
             ["/llms.txt", "llms.txt"],
             ["/benchmarks", "Measured benchmarks"],
+            ["/sdk", "Best actuator SDKs"],
         ],
     },
     {

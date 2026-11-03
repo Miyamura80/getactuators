@@ -1,3 +1,5 @@
+import { sdkErrors } from "../sdk/audit";
+import { SDK_CHECKS } from "../sdk/checks";
 import { COMPANIES } from "./companies";
 import { insideCountry } from "./countries";
 import { countryStageRecords } from "./country-pages";
@@ -98,6 +100,7 @@ const CITING_RECORDS: Record<string, readonly { sources: readonly string[] }[]> 
     "policy-status": POLICY_MEASURES.flatMap((m) => m.statusHistory),
     "process-steps": PROCESS_CHAINS.flatMap((c) => c.steps),
     "country-stage-gaps": countryStageRecords().flatMap((s) => (s.gap ? [s.gap] : [])),
+    "sdk-checks": Object.values(SDK_CHECKS).flat(),
 };
 
 // Numbers that need no citation of their own: coordinates (the site carries
@@ -259,6 +262,7 @@ export function auditRegistry(
         ...policyErrors(today),
         ...processErrors(),
         ...unopenedSourceErrors(),
+        ...sdkErrors(),
     ];
     const used = new Set<string>();
     for (const [where, ids] of citations()) {

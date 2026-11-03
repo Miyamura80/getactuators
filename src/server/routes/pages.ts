@@ -145,6 +145,7 @@ const PAGE_PATHS = [
     "/benchmarks",
     "/manufacturing",
     ...LIVE_COUNTRY_PATHS,
+    "/sdk",
 ];
 
 // Standalone agent documents open with their H1 (no frontmatter). /agents.md

@@ -65,6 +65,13 @@ import {
     RobotListSchema,
 } from "./schemas";
 import {
+    SdkBrandSchema,
+    SdkListParams,
+    SdkListSchema,
+    getSdkHandler,
+    listSdkHandler,
+} from "./sdk";
+import {
     CompanyDetailSchema,
     CompanyListParams,
     CompanyListSchema,
@@ -454,5 +461,37 @@ export const OPERATIONS: Operation[] = [
         errors: [404],
         example: "/api/v1/countries/JP",
         handler: getCountryHandler,
+    },
+    {
+        operationId: "list_sdk_scores",
+        method: "GET",
+        path: "/api/v1/sdk",
+        summary: "List actuator SDK scores by brand",
+        description:
+            "Every actuator brand with software to score, ranked by SDK quality: seven dimension scores (protocol openness, bindings, ROS 2 and sim, docs, firmware and tooling, support, comms reliability), capability matrix, cited objective checks, top pain points and the newest community evidence. Choose a reader preset to re-weight the overall score.",
+        query: SdkListParams,
+        response: SdkListSchema,
+        errors: [400],
+        example: "/api/v1/sdk?preset=ros2",
+        handler: listSdkHandler,
+    },
+    {
+        operationId: "get_sdk_score",
+        method: "GET",
+        path: "/api/v1/sdk/:brand",
+        summary: "Get one brand's SDK score",
+        description:
+            "One brand's SDK score with every check and every evidence item (claim summary, link, forum, date). Accepts an SDK brand id or a catalog actuator id.",
+        pathParam: {
+            name: "brand",
+            description:
+                "SDK brand id (e.g. odrive) or catalog actuator id (e.g. odrive-s1).",
+            example: "odrive",
+        },
+        query: SdkListParams,
+        response: SdkBrandSchema,
+        errors: [400, 404],
+        example: "/api/v1/sdk/odrive",
+        handler: getSdkHandler,
     },
 ];
