@@ -1,4 +1,8 @@
-import { LIVE_COUNTRY_PAGES, getCountryPage } from "@/supply-chain/country-pages";
+import {
+    type CountryPage,
+    LIVE_COUNTRY_PAGES,
+    getCountryPage,
+} from "@/supply-chain/country-pages";
 import {
     countryListOut,
     countryListView,
@@ -25,7 +29,8 @@ export function listCountriesHandler(): Response {
     return json(countryListView());
 }
 
-export function getCountryHandler({ params }: ApiContext): Response {
+// The live country page named by `:code` (code or slug, any case), or a 404.
+export function findCountry({ params }: ApiContext): CountryPage {
     const code = params.code ?? "";
     const page = getCountryPage(code);
     if (!page)
@@ -33,5 +38,9 @@ export function getCountryHandler({ params }: ApiContext): Response {
             detail: `No live country page "${code}". Live: ${LIVE_COUNTRY_PAGES.map((p) => p.code).join(", ")}.`,
             hint: "List live countries with GET /api/v1/countries.",
         });
-    return json(countryView(page));
+    return page;
+}
+
+export function getCountryHandler(ctx: ApiContext): Response {
+    return json(countryView(findCountry(ctx)));
 }

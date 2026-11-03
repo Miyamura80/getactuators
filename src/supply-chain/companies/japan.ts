@@ -1,10 +1,11 @@
+import { JAPAN_SOURCES } from "../country-pages/japan-sources";
 import type { SourceId, Sourced } from "../sourced";
 import type { Company } from "./types";
 
 // Japanese companies along the actuator chain for /japan, plus the foreign
 // partners their supply links reach (Lynas, Caremag, Noveon, IREL). Revenue
-// is the latest fiscal year converted from yen; gross margin is gross profit
-// over net sales from the same year.
+// is the latest fiscal year converted from yen; gross margin is computed here
+// as gross profit over net sales from the same year, so it is "modeled".
 
 // Yen to dollars for fiscal years spanning 2025 and early 2026.
 const JPY_PER_USD = 150;
@@ -29,7 +30,11 @@ export function yenRevenue(
     };
 }
 
-// Gross profit over net sales, both in millions of yen.
+const publisher = (id: SourceId) =>
+    JAPAN_SOURCES.find((s) => s.id === id)?.publisher ?? id;
+
+// Gross profit over net sales, both in millions of yen. The ratio is computed
+// here from a financial summary, not reported, so it is "modeled".
 export function grossMargin(
     grossProfit: number,
     sales: number,
@@ -42,8 +47,8 @@ export function grossMargin(
         unit: "fraction",
         sources,
         asOf,
-        confidence: "reported",
-        note: `Gross profit JPY ${grossProfit.toLocaleString("en-US")} m over net sales JPY ${sales.toLocaleString("en-US")} m (${period}).`,
+        confidence: "modeled",
+        note: `Computed as gross profit JPY ${grossProfit.toLocaleString("en-US")} m over net sales JPY ${sales.toLocaleString("en-US")} m (${period}), both from the ${sources.map(publisher).join(" and ")} financial ${sources.length > 1 ? "summaries" : "summary"}.`,
     };
 }
 

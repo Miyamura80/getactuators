@@ -256,6 +256,10 @@ function countryPageEntry(p: CountryPage): Page {
     return {
         path: p.path,
         kind: "spa",
+        // The map and company table mount in #root; the stage shares,
+        // policies and full data tables stay visible below it.
+        persistentFrom: "\n\n## Share of each stage",
+        persistentLabel: "Stage shares, policies and data tables",
         title: title(p),
         description: `${p.lede} A map of ${countryCompanies(p.code).length} companies' headquarters and plants across rare earths, magnets and motors, gears and bearings, and robot makers, with supply links and sources.`,
         body: () => countryBody(p),

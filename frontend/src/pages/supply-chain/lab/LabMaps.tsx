@@ -40,8 +40,9 @@ export function LabMaps({ topologies }: { topologies?: Partial<Record<string, Ma
         siteId={site?.id ?? null}
         country={here === "world" ? undefined : here}
         onClose={close}
-        onSelectSite={(id) => sel.select({ site: id, company: company.id })}
+        onSelectSite={(id) => sel.select({ site: id === site?.id ? null : id, company: company.id })}
         onSelectCompany={(id) => sel.select({ company: id, site: null })}
+        onMap={(id) => pins.some((p) => p.companyId === id && (here === "world" || p.country === here))}
     /> : null);
     const pick = (here: Origin) => (p: { id: string; companyId?: string }) => {
         setOrigin(here);

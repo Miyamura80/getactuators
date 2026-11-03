@@ -167,14 +167,6 @@ export const SOURCES: SourceRef[] = [
     ),
     // Gears, screws and bearings
     src(
-        "filingreader-hds-fy2025",
-        "FilingReader",
-        "Harmonic Drive Systems FY25 profit drops amid sluggish sales",
-        "https://filingreader.com/news-wire/tokyo/2025-05-22/harmonic-drive-systems-fy25-profit-drops-amid-sluggish-sales",
-        "press",
-        "facts",
-    ),
-    src(
         "jaxa-hds-hotaka",
         "JAXA",
         "Harmonic Drive Systems: producing high-precision products",

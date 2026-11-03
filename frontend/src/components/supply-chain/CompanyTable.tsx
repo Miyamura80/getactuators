@@ -28,14 +28,15 @@ export interface CompanyTableProps {
     caption: string;
 }
 
-function sortValue(c: Company, key: Key, sites: number): string | number {
+// null is an unknown value; it sorts last in both directions.
+function sortValue(c: Company, key: Key, sites: number): string | number | null {
     switch (key) {
         case "name": return c.name.toLowerCase();
         case "segment": return SEGMENTS.indexOf(c.segment);
         case "hq": return c.hqCountry;
         case "sites": return sites;
-        case "revenue": return c.revenue?.value ?? -1;
-        case "margin": return c.grossMargin?.value ?? -1;
+        case "revenue": return c.revenue?.value ?? null;
+        case "margin": return c.grossMargin?.value ?? null;
     }
 }
 
@@ -47,6 +48,10 @@ export function CompanyTable({ companies, sitesOf, sitesLabel = "Sites", selecte
     const rows = [...companies].sort((a, b) => {
         const x = sortValue(a, sort.key, sitesOf(a.id));
         const y = sortValue(b, sort.key, sitesOf(b.id));
+        if (x === null || y === null) {
+            if (x !== y) return x === null ? 1 : -1;
+            return a.name.localeCompare(b.name);
+        }
         const d = x < y ? -1 : x > y ? 1 : a.name.localeCompare(b.name);
         return sort.desc ? -d : d;
     });

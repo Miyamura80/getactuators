@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { CountryListSchema, CountrySchema } from "@/api/countries";
 import {
+    COVERAGE_TARGET,
     countryCompanies,
     countryLinks,
     countrySites,
@@ -30,6 +31,11 @@ describe("/japan page and twin", () => {
         expect(llms).toContain("/japan.md");
         expect(llms).toContain('get_country("JP")');
         expect(html).toContain('<a href="/japan"');
+        // Policies and the data tables survive React mounting into #root.
+        const persistent = html.slice(html.indexOf('id="catalog-content"'));
+        expect(html).toContain('id="catalog-content"');
+        expect(persistent).toContain("Share of each stage");
+        expect(persistent).toContain("jp-espa-hds-reducers-2023");
     });
 
     test("countries without a dataset past the gate are not routed", async () => {
@@ -79,7 +85,11 @@ describe("REST /api/v1/countries", () => {
         expect(res.status).toBe(200);
         const body = CountryListSchema.parse(await res.json());
         expect(body.results.map((r) => r.code)).toEqual(["JP"]);
-        expect(body.results[0]?.coverage.companies).toBeGreaterThanOrEqual(40);
+        const cov = body.results[0]?.coverage;
+        expect(cov?.companies).toBeGreaterThanOrEqual(COVERAGE_TARGET.companies);
+        expect(cov?.sites).toBeGreaterThanOrEqual(COVERAGE_TARGET.sites);
+        expect(cov?.links).toBeGreaterThanOrEqual(COVERAGE_TARGET.links);
+        expect(cov?.supplyLinks).toBeGreaterThanOrEqual(COVERAGE_TARGET.supplyLinks);
     });
 
     test("returns one country by code or slug, with the full filtered registry", async () => {
@@ -88,9 +98,15 @@ describe("REST /api/v1/countries", () => {
             expect(res.status).toBe(200);
             const body = CountrySchema.parse(await res.json());
             expect(body.code).toBe("JP");
-            expect(body.companies).toHaveLength(countryCompanies("JP").length);
-            expect(body.sites).toHaveLength(countrySites("JP").length);
-            expect(body.links).toHaveLength(countryLinks("JP").length);
+            expect(body.companies.map((c) => c.id)).toEqual(
+                countryCompanies("JP").map((c) => c.id),
+            );
+            expect(body.sites.map((s) => s.id)).toEqual(
+                countrySites("JP").map((s) => s.id),
+            );
+            expect(body.links.map((l) => [l.from, l.to, l.what])).toEqual(
+                countryLinks("JP").map((l) => [l.from, l.to, l.what]),
+            );
             const magnets = body.stage_shares.find((s) => s.stage === "magnet");
             expect(magnets?.share?.confidence).toBe("estimated");
             expect(magnets?.world_leader?.country).toBe("CN");
@@ -105,6 +121,7 @@ describe("REST /api/v1/countries", () => {
     test("404s for a country that is not live, and is in the OpenAPI document", async () => {
         const res = await get("/api/v1/countries/CN");
         expect(res.status).toBe(404);
+        expect((await get("/api/v1/countries/CN.md")).status).toBe(404);
         expect(res.headers.get("content-type")).toContain("application/problem+json");
         const openapi = await (await get("/openapi.json")).json();
         expect(Object.keys(openapi.paths)).toContain("/api/v1/countries/{code}");

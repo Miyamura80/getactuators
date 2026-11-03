@@ -9,7 +9,7 @@ import {
     countrySites,
 } from "../../../../../src/supply-chain/country-pages";
 import { SEGMENT_SHORT, sitePins, supplyArcs } from "../../../../../src/supply-chain/map";
-import { getCompany } from "../../../../../src/supply-chain/registry";
+import { getCompany, sitesOf } from "../../../../../src/supply-chain/registry";
 import { Arcs } from "../../../components/maps/Arcs";
 import { ClusterZoom } from "../../../components/maps/ClusterZoom";
 import { CountryMap } from "../../../components/maps/CountryMap";
@@ -60,14 +60,22 @@ export function CountryPage({ page, menuOpen = false, topology }: {
     const pins = segment ? data.pins.filter((p) => p.segment === segment) : data.pins;
     const companies = segment ? data.companies.filter((c) => c.segment === segment) : data.companies;
     const siteCount = (id: string) => data.sites.filter((s) => s.companyId === id).length;
-    const site = data.sites.find((s) => s.id === state.site) ?? null;
-    const companyId = site?.companyId ?? (state.company && getCompany(state.company) ? state.company : null);
+    const inCountry = (id: string | null) => id !== null && data.companies.some((c) => c.id === id);
+    // Only this country's companies open a drawer; their sites may be abroad
+    // (the drawer lists every site of the company).
+    const company = inCountry(state.company) ? state.company : null;
+    const site = state.site
+        ? (data.sites.find((s) => s.id === state.site)
+            ?? (company ? sitesOf(company).find((s) => s.id === state.site) : undefined)
+            ?? null)
+        : null;
+    const companyId = site?.companyId ?? company;
     const arcs = companyId
         ? data.arcs.filter((a) => a.from.id === companyId || a.to.id === companyId)
         : segment
             ? data.arcs.filter((a) => [a.from.id, a.to.id].some((id) => getCompany(id)?.segment === segment))
             : data.arcs;
-    const selectedPin = site?.id ?? pins.find((p) => p.companyId === companyId)?.id ?? null;
+    const selectedPin = pins.find((p) => p.id === site?.id)?.id ?? pins.find((p) => p.companyId === companyId)?.id ?? null;
     const onMap = (id: string) => data.sites.some((s) => s.companyId === id);
     const cluster = page.clusters.find((c) => c.id === state.cluster) ?? null;
     const members = cluster ? [...new Set(clusterSites(cluster, data.sites).map((s) => s.companyId))] : [];
@@ -87,7 +95,7 @@ export function CountryPage({ page, menuOpen = false, topology }: {
                 <div className="cp-filter" role="radiogroup" aria-label="Segment">
                     <button type="button" role="radio" aria-checked={!segment} onClick={() => state.set({ segment: null })}>All <b>{data.companies.length}</b></button>
                     {SEGMENTS.map((s) => <button key={s} type="button" role="radio" aria-checked={segment === s} title={SEGMENT_LABEL[s]}
-                        onClick={() => state.set({ segment: s })}>
+                        onClick={() => state.set({ segment: s, company: null, site: null })}>
                         <SegmentTile segment={s} size={14} />{SEGMENT_SHORT[s]} <b>{data.companies.filter((c) => c.segment === s).length}</b>
                     </button>)}
                 </div>

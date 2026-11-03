@@ -1,8 +1,8 @@
 # Supply-chain atlas: data and page recipe
 
-The supply-chain pages (`/metals` is live; `/bom`, `/manufacturing`, `/alts`,
-`/japan`, `/china`, `/korea`, `/us` are planned; `/lab/supply-chain` is the
-hidden kit page) share one cited registry and one set of components.
+The supply-chain pages (`/metals` and `/japan` are live; `/bom`,
+`/manufacturing`, `/alts`, `/china`, `/korea`, `/us` are planned;
+`/lab/supply-chain` is the hidden kit page) share one cited registry and one set of components.
 Pages hold content; numbers live in the registry and are referenced by id.
 
 ```
@@ -230,7 +230,13 @@ share one template, so a new country is data only:
    `companies/types.ts`, and spread it at the end of `COMPANIES`. Revenue is
    the latest fiscal year in USD with the conversion rate in `note`
    (`yenRevenue` in `companies/japan.ts` is the pattern); gross margin is
-   gross profit over net sales from the same year. Add a brand row in
+   gross profit over net sales from the same fiscal year as the revenue
+   (the tests check the two `asOf` values match), computed here and so
+   marked `modeled`, with the inputs and their source in `note`
+   (`grossMargin` is the pattern). When a source gives only one year, cite
+   a second source for the other figure rather than mixing years. A
+   `stages` share must be the country's share; a single company's market
+   share goes in a `gap` with that context. Add a brand row in
    `src/brands/index.ts` for every new company name.
 3. **Sites.** Add `sites/<country>.ts` (headquarters, `hq()`) and plants
    (`plant()` from `sites/types.ts`) and spread them at the end of `SITES`.

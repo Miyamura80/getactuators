@@ -4,6 +4,7 @@ import { afterEach, expect, test } from "bun:test";
 import { act, cleanup, fireEvent, render, within } from "@testing-library/react";
 import { countryCompanies, getCountryPage, type CountryPage as Page } from "../../src/supply-chain/country-pages";
 import type { MapTopology } from "../src/components/maps/geo";
+import { CompanyDrawer } from "../src/components/supply-chain/CompanyDrawer";
 import { CompanyTable } from "../src/components/supply-chain/CompanyTable";
 import { FootnotesProvider } from "../src/components/supply-chain/footnotes";
 import { CountryPage } from "../src/pages/supply-chain/country/CountryPage";
@@ -77,8 +78,13 @@ test("a foreign-owned company gets an owner chip; partners abroad stay inert unt
     const owner = mount().container.querySelector(".mk-drawer .sc-owner-chip");
     expect(owner).toBeNull();
     cleanup();
+    // A company abroad (Caremag, France) gets an owner chip on a map of Japan;
+    // the country page itself only opens cards for its own companies.
+    const card = render(<FootnotesProvider><CompanyDrawer companyId="caremag" country="JP" onClose={() => {}} /></FootnotesProvider>);
+    expect(card.container.querySelector(".mk-drawer .sc-owner-chip")?.textContent).toBe("Owner: France");
+    cleanup();
     setURL("/japan?company=caremag");
-    expect(mount().container.querySelector(".mk-drawer .sc-owner-chip")?.textContent).toBe("Owner: France");
+    expect(mount().container.querySelector(".mk-drawer")).toBeNull();
 });
 
 test("?segment= filters pins and table rows and is set by the filter", () => {
@@ -92,10 +98,36 @@ test("?segment= filters pins and table rows and is set by the filter", () => {
     expect(view.container.querySelectorAll(".sc-ctable tbody tr")).toHaveLength(gears);
     // Back: the browser restores the unfiltered view.
     act(() => {
-        window.history.back();
+        setURL("/japan");
         window.dispatchEvent(new PopStateEvent("popstate"));
     });
     expect(readCountryState(window.location.search).segment).toBeNull();
+    expect(radio.getAttribute("aria-checked")).toBe("false");
+    expect(view.container.querySelectorAll(".sc-ctable tbody tr")).toHaveLength(COMPANIES.length);
+});
+
+test("changing segment clears the company and site selection", () => {
+    setURL("/japan?company=harmonic-drive-systems&site=hds-ariake");
+    const view = mount();
+    expect(view.container.querySelector(".mk-drawer")).not.toBeNull();
+    const radio = view.getAllByRole("radio").find((r) => r.textContent?.startsWith("Magnets")) as HTMLElement;
+    act(() => { fireEvent.click(radio); });
+    expect(readCountryState(window.location.search)).toEqual({ segment: "magnets-motors", company: null, site: null, cluster: null });
+    expect(view.container.querySelector(".mk-drawer")).toBeNull();
+});
+
+test("a site abroad picked in the drawer opens its detail; ?company= outside the country is ignored", () => {
+    setURL("/japan?company=harmonic-drive-systems");
+    const c = mount().container;
+    const drawer = c.querySelector(".mk-drawer") as HTMLElement;
+    act(() => { fireEvent.click(within(drawer).getByText("Harmonic Drive LLC, Beverly")); });
+    expect(readCountryState(window.location.search).site).toBe("hd-llc-beverly");
+    expect(c.querySelector(".mk-drawer h3")?.textContent).toBe("Harmonic Drive Systems");
+    expect(c.querySelector('.mk-drawer .sc-site[data-site="hd-llc-beverly"]')).not.toBeNull();
+    cleanup();
+    expect(COMPANIES.some((x) => x.id === "lynas")).toBe(false);
+    setURL("/japan?company=lynas");
+    expect(mount().container.querySelector(".mk-drawer")).toBeNull();
 });
 
 test("?cluster= opens the cluster panel listing its members", () => {
@@ -121,6 +153,20 @@ test("company table sorts by a column and selects a company", () => {
     expect(first.textContent).toBe(top?.name);
     act(() => { fireEvent.click(first); });
     expect(picked).toBe(top?.id);
+});
+
+test("company table sorts unknown revenue last in both directions", () => {
+    const view = render(<FootnotesProvider><CompanyTable companies={COMPANIES} sitesOf={() => 1} caption="All" /></FootnotesProvider>);
+    const header = view.getByRole("button", { name: "Revenue" });
+    const unknown = COMPANIES.filter((c) => !c.revenue).length;
+    expect(unknown).toBeGreaterThan(0);
+    const lastNames = () => [...view.container.querySelectorAll(".sc-ctable tbody th button")].slice(-unknown).map((b) => b.textContent);
+    const missing = new Set(COMPANIES.filter((c) => !c.revenue).map((c) => c.name));
+    for (const dir of ["descending", "ascending"]) {
+        act(() => { fireEvent.click(header); });
+        expect(header.closest("th")?.getAttribute("aria-sort")).toBe(dir);
+        expect(lastNames().every((n) => missing.has(n ?? ""))).toBe(true);
+    }
 });
 
 test("url state round-trips and keeps other params", () => {

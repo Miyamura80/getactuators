@@ -25,7 +25,8 @@
 .sc-link-dir { color: var(--cyan-dim); font-family: var(--mono); }
 .sc-link-what { grid-column: 2; color: var(--muted); }
 .sc-link.is-estimated .sc-link-what { font-style: italic; }
-.sc-partner { display: inline-flex; align-items: center; gap: 4px; padding: 0; border: 0; background: none; color: var(--text); font: inherit; font-weight: 600; text-align: left; cursor: pointer; text-decoration: none; }
+.sc-partner { display: inline-flex; align-items: center; gap: 4px; padding: 0; border: 0; background: none; color: var(--text); font: inherit; font-weight: 600; text-align: left; text-decoration: none; }
+button.sc-partner, a.sc-partner { cursor: pointer; }
 a.sc-partner { color: var(--cyan-dim); }
 button.sc-partner:hover, button.sc-partner:focus-visible, a.sc-partner:hover { color: var(--cyan); outline: none; }
 .sc-partner small { font-weight: 400; color: var(--muted); }

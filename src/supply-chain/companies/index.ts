@@ -123,15 +123,7 @@ export const COMPANIES: Company[] = [
         stages: ["gearing", "actuator"],
         segment: "gears-screws-bearings",
         ownership: { kind: "listed", ticker: "TYO: 6324" },
-        revenue: {
-            value: 365e6,
-            unit: "USD",
-            range: [355e6, 375e6],
-            sources: ["filingreader-hds-fy2025"],
-            asOf: "2025-03",
-            confidence: "estimated",
-            note: "Converted from JPY 55,645 m net sales (year to March 2025) at roughly 148 to 157 JPY per USD.",
-        },
+        revenue: yenRevenue(59557, "year to March 2026", "2026-03", ["envalith-hds"]),
         grossMargin: grossMargin(18133, 59557, "year to March 2026", "2026-03", [
             "envalith-hds",
         ]),

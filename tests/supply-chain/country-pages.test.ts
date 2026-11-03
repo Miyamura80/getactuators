@@ -64,7 +64,22 @@ describe("coverage gate", () => {
     test("pages resolve by slug or code, any case", () => {
         expect(getCountryPage("japan")?.code).toBe("JP");
         expect(getCountryPage("jp")?.path).toBe("/japan");
+        expect(getCountryPage("JAPAN")?.code).toBe("JP");
+        expect(getCountryPage("Japan")?.code).toBe("JP");
+        expect(getCountryPage("JP")?.path).toBe("/japan");
+        expect(getCountryPage("jP")?.path).toBe("/japan");
         expect(getCountryPage("china")).toBeUndefined();
+    });
+});
+
+describe("company financials", () => {
+    test("computed gross margins are modeled and say how; revenue and margin share a year", () => {
+        for (const c of countryCompanies("JP")) {
+            if (!c.grossMargin) continue;
+            expect(c.grossMargin.confidence).toBe("modeled");
+            expect(c.grossMargin.note).toMatch(/^Computed as gross profit/);
+            if (c.revenue) expect(c.revenue.asOf).toBe(c.grossMargin.asOf);
+        }
     });
 });
 
@@ -128,7 +143,11 @@ describe("page content", () => {
                 expect(
                     (s.share?.sources ?? s.gap?.sources ?? []).length,
                 ).toBeGreaterThan(0);
-                if (s.share) expect(s.share.value).toBeLessThanOrEqual(1);
+                if (s.share) {
+                    expect(s.share.unit).toBe("fraction");
+                    expect(s.share.value).toBeGreaterThanOrEqual(0);
+                    expect(s.share.value).toBeLessThanOrEqual(1);
+                }
             }
         });
     }

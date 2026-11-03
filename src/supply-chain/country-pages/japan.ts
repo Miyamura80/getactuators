@@ -43,13 +43,9 @@ export const JAPAN_PAGE: CountryContent = {
         {
             stage: "gearing",
             of: "world robot reducer market",
-            share: {
-                value: 0.58,
-                unit: "fraction",
+            gap: {
+                text: "Nabtesco alone held an estimated 58% of the world robot reducer market in 2019, and Harmonic Drive Systems and other Japanese makers add more; that is a company share, and no source gives Japan's combined share.",
                 sources: ["researchandmarkets-reducers-2020"],
-                asOf: "2019",
-                confidence: "estimated",
-                note: "Nabtesco alone; Harmonic Drive Systems and other Japanese makers add more, so this is a floor.",
             },
         },
         {

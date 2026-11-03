@@ -170,7 +170,7 @@ test("pins pair segment colour with a pictogram; hover card carries the monogram
 });
 
 test("country map: site density shading, coastline, scale bar, cities and placed labels", () => {
-    const here = PINS.filter((p) => p.country === "JP" && p.segment !== "ree-mining-refining");
+    const here = PINS.filter((p) => p.country === "JP");
     const c = render(<CountryMap code="JP" sites={here} topology={JP}>
         <ClusterZoom pins={here} clusters={LAB_CLUSTERS} />
     </CountryMap>).container;
@@ -183,7 +183,7 @@ test("country map: site density shading, coastline, scale bar, cities and placed
     expect(c.querySelector(".mk-scale")?.getAttribute("aria-label")).toMatch(/^Scale: bar is [\d,]+ km$/);
     // The key lists only the segments on this map, with counts.
     const key = [...c.querySelectorAll(".mk-keyrow .mk-key li")].map((li) => li.textContent);
-    expect(key.some((t) => t?.startsWith("Rare earths"))).toBe(false);
+    expect(key).toContain(`Rare earths${here.filter((p) => p.segment === "ree-mining-refining").length}`);
     expect(key).toContain(`Gears & bearings${here.filter((p) => p.segment === "gears-screws-bearings").length}`);
     // Labels are decorative and never overlap.
     const layer = c.querySelector(".mk-labels");
