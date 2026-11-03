@@ -63,3 +63,18 @@ test("clicking an actuator bar filters the robots to its users, and type chips f
     const legged = OPEN_ROBOTS.filter((r) => r.type === "legged").length;
     expect(view.container.querySelectorAll(".os-card")).toHaveLength(legged);
 });
+
+test("an unknown actuator in the URL is ignored instead of emptying the directory", () => {
+    setUrl("http://localhost:1/open-source?actuator=no-such-motor");
+    const view = render(<OpenSource />);
+    expect(view.container.querySelectorAll(".os-card")).toHaveLength(OPEN_ROBOTS.length);
+    expect(view.queryByLabelText("Clear actuator filter")).toBeNull();
+});
+
+test("the catalog robot link targets the matching card, and linked matrix cells name their status", () => {
+    setUrl("http://localhost:1/open-source");
+    const view = render(<OpenSource />);
+    expect(view.container.querySelector('a[href="/robots#manmaru-yor"]')).not.toBeNull();
+    expect(view.getByLabelText("OpenArm: Mechanical CAD, Published")).toBeTruthy();
+    expect(view.container.querySelector(".os-matrix")?.getAttribute("aria-labelledby")).toBe("os-matrix");
+});

@@ -39,7 +39,9 @@ const opennessCell = z.object({
     licence: z
         .string()
         .nullable()
-        .describe("SPDX id (or LicenseRef-*) for this artefact."),
+        .describe(
+            "SPDX licence expression for this artefact. On the licence dimension it joins the robot's licences with AND, since each covers part of the project.",
+        ),
     note: z.string().nullable(),
 });
 
@@ -66,7 +68,21 @@ export const OpenRobotSchema = named(
         last_commit: z.string().nullable().describe("YYYY-MM-DD of the latest commit."),
         dof: z.number().nullable(),
         payload_kg: z.number().nullable(),
-        cost_usd: z.number().nullable(),
+        cost_usd: z
+            .number()
+            .nullable()
+            .describe("Point value; see cost_range_usd when the source gives a range."),
+        cost_range_usd: z
+            .object({
+                low: z
+                    .number()
+                    .nullable()
+                    .describe("Null when only a ceiling is stated."),
+                high: z.number(),
+            })
+            .nullable()
+            .describe("Published range, e.g. $8,000 to $9,000 or under $400."),
+        cost_note: z.string().nullable(),
         cost_basis: z
             .enum(["bom", "kit"])
             .nullable()
@@ -127,7 +143,7 @@ export function serializeOpenRobot(r: OpenRobot): z.infer<typeof OpenRobotSchema
                     url: link?.url ?? null,
                     licence:
                         link?.licence ??
-                        (d === "licence" ? r.licence.join(", ") || null : null),
+                        (d === "licence" ? r.licence.join(" AND ") || null : null),
                     note: link?.note ?? null,
                 },
             ];
@@ -149,6 +165,10 @@ export function serializeOpenRobot(r: OpenRobot): z.infer<typeof OpenRobotSchema
         dof: r.dof,
         payload_kg: r.payloadKg?.value ?? null,
         cost_usd: r.bomCostUsd?.value ?? null,
+        cost_range_usd: r.bomCostUsd?.range
+            ? { low: r.bomCostUsd.range[0], high: r.bomCostUsd.range[1] }
+            : null,
+        cost_note: r.bomCostUsd?.note ?? null,
         cost_basis: r.bomCostUsd?.basis ?? null,
         licence: r.licence,
         openness_score: Math.round(opennessScore(r).score * 1000) / 1000,
@@ -180,12 +200,13 @@ export function openRobotList(
     };
 }
 
-export function listOpenRobotsHandler({ url }: ApiContext): Response {
+// The robots a list request selects; shared with the markdown twin.
+export function openRobotQuery({ url }: ApiContext): OpenRobot[] {
     const { type } = parseQuery(OpenRobotListParams, url);
-    return json(openRobotList(type));
+    return openRobotsOfType(type);
 }
 
-export function getOpenRobotHandler({ params }: ApiContext): Response {
+export function findOpenRobot({ params }: ApiContext): OpenRobot {
     const id = params.id ?? "";
     const r = getOpenRobot(id);
     if (!r)
@@ -193,5 +214,14 @@ export function getOpenRobotHandler({ params }: ApiContext): Response {
             detail: `No open robot "${id}".`,
             hint: "List valid ids with GET /api/v1/open-robots.",
         });
-    return json(serializeOpenRobot(r));
+    return r;
+}
+
+export function listOpenRobotsHandler(ctx: ApiContext): Response {
+    const { type } = parseQuery(OpenRobotListParams, ctx.url);
+    return json(openRobotList(type));
+}
+
+export function getOpenRobotHandler(ctx: ApiContext): Response {
+    return json(serializeOpenRobot(findOpenRobot(ctx)));
 }

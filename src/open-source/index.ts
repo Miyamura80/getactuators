@@ -4,6 +4,7 @@ import stats from "./repo-stats.json";
 import {
     OPENNESS_DIMENSIONS,
     type OpenRobot,
+    type OpenRobotCost,
     type OpenRobotType,
     type OpennessDimension,
     type OpennessStatus,
@@ -70,11 +71,15 @@ export function opennessScore(r: OpenRobot): OpennessScore {
 }
 
 // Inclusion rule: the mechanical design, or the full BOM plus build
-// instructions, is public under a stated licence.
+// instructions, is public with a licence stated for those files. A licence
+// that covers only the code does not count; such records need an
+// inclusionNote saying why they are listed.
 export function passesInclusion(r: OpenRobot): boolean {
-    const design = r.openness.cad !== undefined;
-    const kit = r.openness.bom?.status === "full" && r.openness.assembly !== undefined;
-    return (design || kit) && r.licence.length > 0;
+    const { cad, bom, assembly } = r.openness;
+    const design = Boolean(cad?.licence);
+    const kit =
+        bom?.status === "full" && Boolean(bom.licence) && assembly !== undefined;
+    return design || kit;
 }
 
 const REPOS = stats.repos as Record<string, RepoStat>;
@@ -132,13 +137,21 @@ export interface BrandUsage {
     brand: string;
     joints: number;
     robots: string[];
+    // True when at least one of the brand's actuators is in the catalog.
+    catalog: boolean;
 }
 
 export function brandUsage(robots: readonly OpenRobot[] = OPEN_ROBOTS): BrandUsage[] {
     const rows = new Map<string, BrandUsage>();
     for (const u of actuatorUsage(robots)) {
-        const row = rows.get(u.brand) ?? { brand: u.brand, joints: 0, robots: [] };
+        const row = rows.get(u.brand) ?? {
+            brand: u.brand,
+            joints: 0,
+            robots: [],
+            catalog: false,
+        };
         row.joints += u.joints;
+        if (u.actuatorId) row.catalog = true;
         for (const id of u.robots) if (!row.robots.includes(id)) row.robots.push(id);
         rows.set(u.brand, row);
     }
@@ -170,4 +183,13 @@ export function lineageSize(n: FamilyNode): number {
 
 export function formatUsd(v: number): string {
     return `$${v.toLocaleString("en-US", { maximumFractionDigits: v < 1000 ? 2 : 0 })}`;
+}
+
+// "$8,000 to $9,000" for a range, "under $400" for an upper bound only.
+export function formatCost(c: OpenRobotCost): string {
+    if (!c.range) return formatUsd(c.value);
+    const [low, high] = c.range;
+    return low === null
+        ? `under ${formatUsd(high)}`
+        : `${formatUsd(low)} to ${formatUsd(high)}`;
 }

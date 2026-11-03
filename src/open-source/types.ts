@@ -65,6 +65,12 @@ export interface OpenRobotJoint {
     note?: string;
 }
 
+// A cost whose range may be open below: [null, 400] reads "under US$400".
+export type OpenRobotCost = Omit<Sourced<number>, "range"> & {
+    basis: "bom" | "kit";
+    range?: readonly [low: number | null, high: number];
+};
+
 export interface OpenRobot {
     id: string;
     name: string;
@@ -86,7 +92,7 @@ export interface OpenRobot {
     dofNote?: string;
     payloadKg?: Sourced<number>;
     // Parts cost to build one (bom) or the cheapest kit price (kit).
-    bomCostUsd?: Sourced<number> & { basis: "bom" | "kit" };
+    bomCostUsd?: OpenRobotCost;
     // SPDX ids; LicenseRef-* for terms with no SPDX id.
     licence: string[];
     openness: Partial<Record<ArtefactDimension, OpennessLink>>;

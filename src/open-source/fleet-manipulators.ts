@@ -93,6 +93,8 @@ export const MANIPULATORS: OpenRobot[] = [
             },
         ],
         jointsNote: "PiPER grippers not itemised",
+        inclusionNote:
+            "Listed as the root of the YOR family: CAD, the full BOM and the build guide are public on the project site, but the MIT licence is stated for the code and MuJoCo model, not for those hardware files.",
         sources: ["yor-paper", "yor-repo", "yor-site", "yor-korben"],
     },
     {
@@ -109,6 +111,8 @@ export const MANIPULATORS: OpenRobot[] = [
         homepage: "https://yor.manmaruai.co.jp/en",
         image: "/robot-images/manmaru-yor.webp",
         dof: 14,
+        dofNote:
+            "2 x 7 arm actuators (6 joints and the gripper per arm); the YOR base and lift are not counted, unlike YOR's 16",
         payloadKg: fig(1.5, "kg per arm", ["manmaru-site"]),
         bomCostUsd: cost(
             6300,
@@ -563,9 +567,8 @@ export const MANIPULATORS: OpenRobot[] = [
                 count: 4,
                 name: "DM-J8009P-2EC",
                 brand: "Damiao",
-                actuatorId: "damiao-dm-j8009-2ec",
                 sources: ["openarm-motors"],
-                note: "8009P variant; the catalog lists the near-identical DM-J8009",
+                note: "Unlisted crossed-roller-bearing variant; the catalog lists only the DM-J8009-2EC",
             },
             {
                 role: "J3 (both arms)",

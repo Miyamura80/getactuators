@@ -378,13 +378,10 @@ export function sourceOf(id: string): Source {
             reuse: "open",
         };
     }
-    return (
-        (SOURCES as Record<string, Source>)[id] ?? {
-            title: id,
-            url: id,
-            reuse: "facts",
-        }
-    );
+    const known = Object.hasOwn(SOURCES, id)
+        ? (SOURCES as Record<string, Source>)[id]
+        : undefined;
+    return known ?? { title: id, url: id, reuse: "facts" };
 }
 
 // Facts sources allowed to back more than FACTS_MAX_RECORDS records.

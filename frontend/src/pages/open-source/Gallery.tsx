@@ -2,7 +2,7 @@ import {
     type OpenRobot,
     type OpenRobotType,
     ROBOT_TYPE_LABEL,
-    formatUsd,
+    formatCost,
     isNonCommercial,
     opennessScore,
     repoStat,
@@ -58,7 +58,7 @@ function Card({ robot, active }: { robot: OpenRobot; active: boolean }) {
                 </div>
                 <div>
                     <dt>{robot.bomCostUsd?.basis === "kit" ? "Kit" : "BOM"}</dt>
-                    <dd>{robot.bomCostUsd ? formatUsd(robot.bomCostUsd.value) : "n/a"}</dd>
+                    <dd>{robot.bomCostUsd ? formatCost(robot.bomCostUsd) : "n/a"}</dd>
                 </div>
                 <div>
                     <dt>Stars</dt>
@@ -97,7 +97,7 @@ function Card({ robot, active }: { robot: OpenRobot; active: boolean }) {
                             Repository
                         </a>
                     )}
-                    {robot.robotId && <a href="/robots">Catalog robot</a>}
+                    {robot.robotId && <a href={`/robots#${encodeURIComponent(robot.robotId)}`}>Catalog robot</a>}
                 </p>
             </details>
         </li>

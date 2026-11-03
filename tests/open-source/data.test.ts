@@ -16,8 +16,8 @@ import { openSourceLicenceErrors } from "@/open-source/licence";
 import { SOURCES } from "@/open-source/sources";
 
 describe("open robot registry", () => {
-    test("lists at least 20 robots, including YOR and Manmaru AI's YOR build", () => {
-        expect(OPEN_ROBOTS.length).toBeGreaterThanOrEqual(20);
+    test("lists 24 robots, including YOR and Manmaru AI's YOR build", () => {
+        expect(OPEN_ROBOTS).toHaveLength(24);
         expect(getOpenRobot("yor")?.maintainers).toContain("NYU");
         const manmaru = getOpenRobot("manmaru-yor");
         expect(manmaru?.derivedFrom).toBe("yor");
@@ -31,7 +31,7 @@ describe("open robot registry", () => {
         for (const r of OPEN_ROBOTS)
             expect({
                 id: r.id,
-                ok: passesInclusion(r) || Boolean(r.inclusionNote),
+                ok: passesInclusion(r) || Boolean(r.inclusionNote?.trim()),
             }).toEqual({
                 id: r.id,
                 ok: true,
@@ -59,11 +59,34 @@ describe("open robot registry", () => {
         }
     });
 
-    test("every source id resolves and the licence audit is clean", () => {
-        for (const r of OPEN_ROBOTS)
+    test("every robot, joint and figure cites a source, every id resolves and the licence audit is clean", () => {
+        for (const r of OPEN_ROBOTS) {
+            expect({ id: r.id, sources: r.sources.length > 0 }).toEqual({
+                id: r.id,
+                sources: true,
+            });
+            for (const j of r.joints)
+                expect({
+                    id: r.id,
+                    role: j.role,
+                    sources: j.sources.length > 0,
+                }).toEqual({
+                    id: r.id,
+                    role: j.role,
+                    sources: true,
+                });
             for (const id of [...r.sources, ...r.joints.flatMap((j) => j.sources)])
                 expect(Object.keys(SOURCES)).toContain(id);
+        }
         expect(openSourceLicenceErrors()).toEqual([]);
+    });
+
+    test("the inclusion rule needs a licence on the qualifying files, not just the code", () => {
+        const yor = getOpenRobot("yor");
+        expect(yor && passesInclusion(yor)).toBe(false);
+        expect(yor?.inclusionNote).toContain("code");
+        const lekiwi = getOpenRobot("lekiwi");
+        expect(lekiwi && passesInclusion(lekiwi)).toBe(true);
     });
 
     test("derivedFrom points at a listed robot, and lineages include YOR and SO-100", () => {
@@ -74,13 +97,21 @@ describe("open robot registry", () => {
         expect(roots).toContain("so-100");
     });
 
-    test("every robot with a repo has a committed stars snapshot", () => {
-        for (const r of OPEN_ROBOTS)
-            if (r.repo)
-                expect({ id: r.id, stars: typeof repoStat(r)?.stars }).toEqual({
-                    id: r.id,
-                    stars: "number",
-                });
+    test("every robot with a repo has a committed stars and last-commit snapshot", () => {
+        for (const r of OPEN_ROBOTS) {
+            if (!r.repo) continue;
+            const stat = repoStat(r);
+            expect({ id: r.id, stat: stat !== null }).toEqual({ id: r.id, stat: true });
+            expect({ id: r.id, stars: typeof stat?.stars }).toEqual({
+                id: r.id,
+                stars: "number",
+            });
+            const last = stat?.lastCommit;
+            expect({
+                id: r.id,
+                lastCommit: last === null || /^\d{4}-\d{2}-\d{2}$/.test(last ?? ""),
+            }).toEqual({ id: r.id, lastCommit: true });
+        }
     });
 });
 

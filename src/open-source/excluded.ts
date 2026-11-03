@@ -1,8 +1,8 @@
 import type { ExcludedRobot } from "./types";
 
 // Seed candidates checked against the inclusion rule (mechanical design, or
-// full BOM plus build instructions, public under a stated licence) that do
-// not pass it yet. Open-SDK-only robots belong on /sdk.
+// full BOM plus build instructions, public with a licence stated for those
+// files) that do not pass it yet. Open-SDK-only robots belong on /sdk.
 
 export const EXCLUDED_ROBOTS: readonly ExcludedRobot[] = [
     {

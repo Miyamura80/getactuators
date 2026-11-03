@@ -23,18 +23,37 @@ export function openSourceCitations(): Citation[] {
     return [...robots, ...excluded];
 }
 
+// Every joint group and every sourced figure must cite its own source, so a
+// robot-level source cannot hide an unsourced value. The reuse audit below
+// still counts one record per robot.
+function missingCitations(): string[] {
+    return [...MANIPULATORS, ...BODIES].flatMap((r) => [
+        ...(r.sources.length === 0 ? [`open robot ${r.id}: no sources`] : []),
+        ...r.joints
+            .filter((j) => j.sources.length === 0)
+            .map((j) => `open robot ${r.id}, joint "${j.role}": no sources`),
+        ...(r.bomCostUsd && r.bomCostUsd.sources.length === 0
+            ? [`open robot ${r.id}, cost: no sources`]
+            : []),
+        ...(r.payloadKg && r.payloadKg.sources.length === 0
+            ? [`open robot ${r.id}, payload: no sources`]
+            : []),
+    ]);
+}
+
 export function openSourceLicenceErrors(): string[] {
     const citations = openSourceCitations();
     const unknown = citations.flatMap(([where, ids]) => [
         ...(ids.length === 0 ? [`${where}: no sources`] : []),
         ...ids
-            .filter((id) => !(id in SOURCES))
+            .filter((id) => !Object.hasOwn(SOURCES, id))
             .map(
                 (id) =>
                     `${where}: unknown source "${id}"; add it to src/open-source/sources.ts`,
             ),
     ]);
     return [
+        ...missingCitations(),
         ...unknown,
         ...licenceErrors({
             name: "open-source",

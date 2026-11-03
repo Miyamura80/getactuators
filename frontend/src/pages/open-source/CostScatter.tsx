@@ -23,7 +23,8 @@ export function CostScatter({ robots, active, onSelect }: { robots: OpenRobot[];
     const xs = pts.map((p) => Math.log10(p.cost));
     const x0 = Math.floor(Math.min(2, ...xs));
     const x1 = Math.ceil(Math.max(3, ...xs));
-    const yMax = Math.max(1, ...pts.map((p) => p.v)) * 1.1;
+    // Round the top of the axis up to a whole number so its label is exact.
+    const yMax = Math.ceil(Math.max(1, ...pts.map((p) => p.v)) * 1.1);
     const maxStars = Math.max(1, ...pts.map((p) => p.stars));
     const sx = (c: number) => PAD.l + ((Math.log10(c) - x0) / (x1 - x0)) * (W - PAD.l - PAD.r);
     const sy = (v: number) => H - PAD.b - (v / yMax) * (H - PAD.t - PAD.b);
@@ -40,7 +41,7 @@ export function CostScatter({ robots, active, onSelect }: { robots: OpenRobot[];
                     Payload
                 </button>
             </div>
-            <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Cost against ${y === "dof" ? "degrees of freedom" : "payload"}`}>
+            <svg viewBox={`0 0 ${W} ${H}`} role="group" aria-label={`Cost against ${y === "dof" ? "degrees of freedom" : "payload"}`}>
                 {ticks.map((t) => (
                     <g key={t}>
                         <line x1={sx(t)} x2={sx(t)} y1={PAD.t} y2={H - PAD.b} className="os-grid" />
@@ -51,7 +52,7 @@ export function CostScatter({ robots, active, onSelect }: { robots: OpenRobot[];
                 ))}
                 <line x1={PAD.l} x2={W - PAD.r} y1={H - PAD.b} y2={H - PAD.b} className="os-axis-line" />
                 <text x={PAD.l - 8} y={PAD.t + 4} textAnchor="end" className="os-axis">
-                    {Math.round(yMax)}
+                    {yMax}
                 </text>
                 <text x={PAD.l - 8} y={H - PAD.b} textAnchor="end" className="os-axis">
                     0

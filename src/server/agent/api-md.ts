@@ -9,12 +9,14 @@ import {
     useCaseCounts,
 } from "@/api/handlers";
 import type { ApiContext } from "@/api/http";
+import { findOpenRobot, openRobotQuery } from "@/api/open-robots";
 import type { Page } from "@/api/pagination";
 import { API_OPERATIONS, apiIndexData } from "@/api/surface";
 import { absoluteUrl } from "../site";
 import { actuatorBody, actuatorTable, robotSection } from "./catalog-md";
 import { PATHS } from "./links";
 import { bullets, mdLink, mdTable, mdText, num, usd } from "./md";
+import { OPEN_ROBOT_COLUMNS, openRobotRow, openRobotSection } from "./open-source/page";
 
 // Markdown twins of the REST API's GET endpoints (/api.md, /api/v1/*.md, or
 // Accept: text/markdown). Each renderer reads the same data function as the
@@ -172,6 +174,35 @@ function namedCounts(
     ].join("\n\n");
 }
 
+function listOpenRobots(ctx: ApiContext): string {
+    const robots = openRobotQuery(ctx);
+    return [
+        `# Open-source robots${filterSummary(ctx.url)}`,
+        robots.length > 0
+            ? `${robots.length} robots. One robot: /api/v1/open-robots/{id}.md`
+            : "No robots match this query.",
+        robots.length > 0 ? mdTable(OPEN_ROBOT_COLUMNS, robots.map(openRobotRow)) : "",
+    ].join("\n\n");
+}
+
+function getOpenRobot(ctx: ApiContext): string {
+    const r = findOpenRobot(ctx);
+    const joints = r.joints.map((j) => [
+        mdText(j.role),
+        String(j.count),
+        mdText(`${j.brand} ${j.name}`),
+        j.actuatorId
+            ? mdLink(j.actuatorId, absoluteUrl(`/actuators/${j.actuatorId}`))
+            : "unlisted",
+    ]);
+    return [
+        openRobotSection(r).replace(/^### /, "# "),
+        joints.length > 0
+            ? `## Joints\n\n${mdTable(["Role", "Count", "Actuator", "Catalog"], joints)}`
+            : "",
+    ].join("\n\n");
+}
+
 const RENDERERS: Record<string, Renderer> = {
     get_api_index: apiIndex,
     list_actuators: listActuators,
@@ -182,6 +213,8 @@ const RENDERERS: Record<string, Renderer> = {
     list_categories: listCategories,
     list_brands: () => namedCounts("Actuator brands", "brand", brandCounts()),
     list_use_cases: () => namedCounts("Use-case tags", "use_case", useCaseCounts()),
+    list_open_robots: listOpenRobots,
+    get_open_robot: getOpenRobot,
 };
 
 export function hasApiMarkdown(operationId: string): boolean {

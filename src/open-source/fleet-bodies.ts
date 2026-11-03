@@ -201,6 +201,8 @@ export const BODIES: OpenRobot[] = [
                 sources: ["toddlerbot-robotis"],
             },
         ],
+        dofNote:
+            "Project figure; the ROBOTIS bundle below drives 28 axes (each 2XL430 drives two), and the bundle does not say which 2 DOF it leaves out",
         jointsNote:
             "From the ROBOTIS bundle contents; which joint gets which servo is in the project docs",
         sources: ["toddlerbot-repo", "toddlerbot-robotis", "toddlerbot-makerworld"],
@@ -503,7 +505,16 @@ export const BODIES: OpenRobot[] = [
         repo: "apirrone/Open_Duck_Mini",
         homepage: `${GH}/apirrone/Open_Duck_Mini`,
         dof: 14,
-        bomCostUsd: cost(400, "bom", ["duck-repo"], "Stated target: under US$400"),
+        bomCostUsd: {
+            ...cost(
+                400,
+                "bom",
+                ["duck-repo"],
+                "Stated target: under US$400",
+                "estimated",
+            ),
+            range: [null, 400],
+        },
         licence: ["Apache-2.0"],
         openness: {
             cad: {
@@ -715,6 +726,8 @@ export const BODIES: OpenRobot[] = [
                 sources: ["pupper-hackster"],
             },
         ],
+        inclusionNote:
+            "Listed for its full BOM and build guide; the MIT licence is stated for the control code, and the docs restate none for the part files.",
         sources: ["pupper-repo", "pupper-docs", "pupper-hackster"],
     },
     {
@@ -774,6 +787,8 @@ export const BODIES: OpenRobot[] = [
                 sources: ["upkie-repo"],
             },
         ],
+        inclusionNote:
+            "Listed for its Apache-2.0 build instructions and URDF; the printed parts carry no stated CAD licence and the BOM is only named in the instructions.",
         sources: ["upkie-repo", "upkie-description"],
     },
 ];

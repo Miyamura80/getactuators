@@ -25,7 +25,7 @@ export function ScoreRing({ score, size = 40 }: { score: number; size?: number }
     );
 }
 
-const STATUS_LABEL: Record<OpennessStatus, string> = {
+export const STATUS_LABEL: Record<OpennessStatus, string> = {
     full: "Published",
     partial: "Partly published",
     missing: "Not published",

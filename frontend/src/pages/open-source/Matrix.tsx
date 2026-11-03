@@ -5,7 +5,7 @@ import {
     opennessScore,
     opennessStatus,
 } from "../../../../src/open-source";
-import { StatusDot } from "./Score";
+import { STATUS_LABEL, StatusDot } from "./Score";
 
 // Robots x openness dimensions. Every published cell links to the file or
 // folder; the score column is the plain sum of the row, so it is never a
@@ -13,7 +13,7 @@ import { StatusDot } from "./Score";
 export function Matrix({ robots }: { robots: OpenRobot[] }) {
     return (
         <div className="os-matrix-wrap">
-            <table className="os-matrix">
+            <table className="os-matrix" aria-labelledby="os-matrix">
                 <thead>
                     <tr>
                         <th scope="col">Robot</th>
@@ -38,7 +38,7 @@ export function Matrix({ robots }: { robots: OpenRobot[] }) {
                                     return (
                                         <td key={d} title={title}>
                                             {link ? (
-                                                <a href={link.url} target="_blank" rel="noopener" aria-label={`${r.name}: ${OPENNESS_LABEL[d]}`}>
+                                                <a href={link.url} target="_blank" rel="noopener" aria-label={`${r.name}: ${OPENNESS_LABEL[d]}, ${STATUS_LABEL[status]}`}>
                                                     <StatusDot status={status} />
                                                 </a>
                                             ) : (

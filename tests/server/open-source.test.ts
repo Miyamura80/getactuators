@@ -26,6 +26,9 @@ describe("/open-source", () => {
             expect(e.item["@type"]).toEqual(["Product", "CreativeWork"]);
         const yor = list.itemListElement.find((e) => e.item.name === "YOR");
         expect(yor?.item.license).toEqual(["https://spdx.org/licenses/MIT.html"]);
+        const manmaru = list.itemListElement.find((e) => e.item.name === "Manmaru YOR");
+        expect(manmaru).toBeDefined();
+        expect(manmaru?.item.license).toBeUndefined();
     });
 
     test("the .md twin carries the robots table, matrix, usage, family tree and exclusions", async () => {
@@ -67,7 +70,7 @@ describe("REST /api/v1/open-robots", () => {
         const all = OpenRobotListSchema.parse(
             await (await get("/api/v1/open-robots")).json(),
         );
-        expect(all.data).toHaveLength(OPEN_ROBOTS.length);
+        expect(all.data.map((r) => r.id)).toEqual(OPEN_ROBOTS.map((r) => r.id));
         const arms = OpenRobotListSchema.parse(
             await (await get("/api/v1/open-robots?type=arm")).json(),
         );
@@ -88,6 +91,40 @@ describe("REST /api/v1/open-robots", () => {
         expect((await get("/api/v1/open-robots/nope")).status).toBe(404);
     });
 
+    test("joins several licences into one SPDX expression and keeps cost ranges", async () => {
+        const one = async (id: string) =>
+            OpenRobotSchema.parse(
+                await (await get(`/api/v1/open-robots/${id}`)).json(),
+            );
+        const openarm = await one("openarm");
+        expect(openarm.openness.licence.licence).toBe("CERN-OHL-S-2.0 AND Apache-2.0");
+        const poppy = await one("poppy-humanoid");
+        expect(poppy.cost_range_usd).toEqual({ low: 8000, high: 9000 });
+        const duck = await one("open-duck-mini");
+        expect(duck.cost_range_usd).toEqual({ low: null, high: 400 });
+        expect((await one("yor")).cost_range_usd).toBeNull();
+    });
+
+    test("both endpoints have markdown twins", async () => {
+        for (const res of [
+            await get("/api/v1/open-robots.md?type=legged"),
+            await getMarkdown("/api/v1/open-robots?type=legged"),
+        ]) {
+            expect(res.status).toBe(200);
+            const md = await res.text();
+            expect(md).toStartWith("# Open-source robots: type=legged");
+            expect(md).toContain("Solo-12");
+            expect(md).not.toContain("OpenArm");
+        }
+        const one = await get("/api/v1/open-robots/openarm.md");
+        expect(one.status).toBe(200);
+        const md = await one.text();
+        expect(md).toStartWith("# OpenArm");
+        expect(md).toContain("DM-J8009P-2EC");
+        expect((await get("/api/v1/open-robots/nope.md")).status).toBe(404);
+        expect((await get("/api/v1/open-robots.md?type=boat")).status).toBe(400);
+    });
+
     test("is in the OpenAPI document", async () => {
         const doc = (await (await get("/openapi.json")).json()) as {
             paths: Record<string, unknown>;
@@ -106,6 +143,7 @@ describe("MCP list_open_robots", () => {
         const legged = OpenRobotListSchema.parse(
             (await callTool("list_open_robots", { type: "legged" })).structuredContent,
         );
+        expect(legged.data.length).toBeGreaterThan(0);
         expect(legged.data.every((r) => r.type === "legged")).toBe(true);
     });
 });

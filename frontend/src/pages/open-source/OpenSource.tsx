@@ -36,9 +36,21 @@ function readState(): State {
     const type = q.get("type") ?? "";
     return {
         type: isOpenRobotType(type) ? type : null,
-        actuator: q.get("actuator"),
+        actuator: isUsageKey(q.get("actuator")) ? q.get("actuator") : null,
         robot: getOpenRobot(q.get("robot") ?? "")?.id ?? null,
     };
+}
+
+// A known actuator usage key (model or "brand:..."); stale links fall back to
+// no filter instead of an empty directory.
+function isUsageKey(key: string | null): boolean {
+    if (!key) return false;
+    if (key.startsWith("brand:")) return brandUsage().some((u) => `brand:${u.brand}` === key);
+    return actuatorUsage().some((u) => u.key === key);
+}
+
+function scrollToRobot(id: string) {
+    document.getElementById(`robot-${id}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
 function writeState(s: State) {
@@ -68,6 +80,11 @@ function actuatorLabel(key: string): string {
 
 export function OpenSource({ menuOpen = false }: { menuOpen?: boolean }) {
     const [state, setState] = useState<State>(readState);
+    // A ?robot= deep link (from the API or the markdown twin) opens on its card.
+    const [initialRobot] = useState(state.robot);
+    useEffect(() => {
+        if (initialRobot) requestAnimationFrame(() => scrollToRobot(initialRobot));
+    }, [initialRobot]);
     useEffect(() => {
         const prev = document.title;
         document.title = TITLE;
@@ -87,7 +104,7 @@ export function OpenSource({ menuOpen = false }: { menuOpen?: boolean }) {
     }, [state.type, state.actuator]);
     const select = (id: string) => {
         update({ robot: id, type: null, actuator: null });
-        requestAnimationFrame(() => document.getElementById(`robot-${id}`)?.scrollIntoView({ behavior: "smooth", block: "center" }));
+        requestAnimationFrame(() => scrollToRobot(id));
     };
 
     return (

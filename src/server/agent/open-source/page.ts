@@ -14,7 +14,7 @@ import {
     SDK_PATH,
     actuatorUsage,
     familyTree,
-    formatUsd,
+    formatCost,
     opennessScore,
     opennessStatus,
     repoStat,
@@ -42,10 +42,7 @@ const pct = (x: number) => `${Math.round(x * 100)}%`;
 function costText(r: OpenRobot): string {
     const c = r.bomCostUsd;
     if (!c) return "n/a";
-    const value = c.range
-        ? `${formatUsd(c.range[0])} to ${formatUsd(c.range[1])}`
-        : formatUsd(c.value);
-    return `${value} (${c.basis === "kit" ? "kit" : "BOM"})`;
+    return `${formatCost(c)} (${c.basis === "kit" ? "kit" : "BOM"})`;
 }
 
 function actuatorsText(r: OpenRobot): string {
@@ -61,7 +58,18 @@ function actuatorsText(r: OpenRobot): string {
         .join("; ");
 }
 
-function robotRow(r: OpenRobot): string[] {
+export const OPEN_ROBOT_COLUMNS = [
+    "Robot",
+    "Type",
+    "DOF",
+    "Cost",
+    "Licence",
+    "Openness",
+    "Actuators",
+    "Repository",
+];
+
+export function openRobotRow(r: OpenRobot): string[] {
     const stat = repoStat(r);
     const repo = repoUrl(r);
     return [
@@ -103,7 +111,7 @@ function cite(ids: string[]): string {
         .join("; ");
 }
 
-function robotSection(r: OpenRobot): string {
+export function openRobotSection(r: OpenRobot): string {
     const stat = repoStat(r);
     const facts = [
         `- **Type:** ${ROBOT_TYPE_LABEL[r.type]}${r.country ? `, ${countryName(r.country)}` : ""}`,
@@ -121,7 +129,11 @@ function robotSection(r: OpenRobot): string {
               ]
             : []),
         ...(r.derivedFrom ? [`- **Derived from:** ${r.derivedFrom}`] : []),
-        ...(r.robotId ? [`- **Catalog robot:** ${mdLink(r.robotId, "/robots")}`] : []),
+        ...(r.robotId
+            ? [
+                  `- **Catalog robot:** ${mdLink(r.robotId, `/robots#${encodeURIComponent(r.robotId)}`)}`,
+              ]
+            : []),
         `- **Actuators:** ${totalActuators(r)}${r.jointsNote ? ` (${mdText(r.jointsNote)})` : ""}`,
         ...(r.inclusionNote ? [`- **Inclusion:** ${mdText(r.inclusionNote)}`] : []),
         `- **Sources:** ${cite(r.sources)}`,
@@ -154,11 +166,11 @@ export function openSourceBody(): string {
 
 ${OPEN_ROBOTS.length} robots you can build from published designs, the actuators in their joints and how open each one is. As of ${OPEN_SOURCE_AS_OF}; repository stars and last commits as of ${REPO_STATS_AS_OF}. Interactive version: ${absoluteUrl(OPEN_SOURCE_PATH)}. JSON: ${absoluteUrl("/api/v1/open-robots")}.
 
-Inclusion rule: the mechanical design, or the full BOM plus build instructions, is public under a stated licence. Robots with only an open SDK are rated on ${mdLink("SDK ratings", SDK_PATH)} instead.
+Inclusion rule: the mechanical design, or the full BOM plus build instructions, is public with a licence stated for those files; a code-only licence does not count. Records listed without meeting it say why under Inclusion. Robots with only an open SDK are rated on ${mdLink("SDK ratings", SDK_PATH)} instead.
 
 ## Robots
 
-${mdTable(["Robot", "Type", "DOF", "Cost", "Licence", "Openness", "Actuators", "Repository"], OPEN_ROBOTS.map(robotRow))}
+${mdTable(OPEN_ROBOT_COLUMNS, OPEN_ROBOTS.map(openRobotRow))}
 
 ## Openness matrix
 
@@ -180,7 +192,7 @@ ${familyTree()
 
 ## Robot notes
 
-${OPEN_ROBOTS.map(robotSection).join("\n\n")}
+${OPEN_ROBOTS.map(openRobotSection).join("\n\n")}
 
 ## Checked but not listed
 

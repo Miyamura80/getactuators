@@ -6,11 +6,11 @@ const TOP = 12;
 // Which actuators the open-source world builds on: joints per actuator model
 // (or brand). Each bar is a button that filters the robots to its users.
 export function UsageChart({ selected, onSelect }: { selected: string | null; onSelect: (key: string | null) => void }) {
-    const [by, setBy] = useState<"model" | "brand">("model");
+    const [by, setBy] = useState<"model" | "brand">(selected?.startsWith("brand:") ? "brand" : "model");
     const rows =
         by === "model"
             ? actuatorUsage().map((u) => ({ key: u.key, label: u.name, sub: u.brand, joints: u.joints, robots: u.robots.length, catalog: u.actuatorId }))
-            : brandUsage().map((u) => ({ key: `brand:${u.brand}`, label: u.brand, sub: "", joints: u.joints, robots: u.robots.length, catalog: null }));
+            : brandUsage().map((u) => ({ key: `brand:${u.brand}`, label: u.brand, sub: "", joints: u.joints, robots: u.robots.length, catalog: u.catalog }));
     const shown = rows.slice(0, TOP);
     const max = shown[0]?.joints ?? 1;
     return (
@@ -54,7 +54,8 @@ export function UsageChart({ selected, onSelect }: { selected: string | null; on
                 ))}
             </ol>
             <p className="os-note">
-                Filled bars are in the <a href="/actuators">catalog</a>; outlined ones are unlisted. SDK quality per brand:{" "}
+                {by === "model" ? "Filled bars are in the " : "Filled bars are brands with at least one actuator in the "}
+                <a href="/actuators">catalog</a>; outlined ones are unlisted. SDK quality per brand:{" "}
                 <a href={SDK_PATH}>SDK ratings</a>.
             </p>
         </div>
