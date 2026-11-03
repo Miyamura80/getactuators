@@ -1,0 +1,90 @@
+{
+    "asOf": "2026-11-03",
+    "method": "Stars as GitHub shows them (thousands rounded to 0.1k) and the date of the latest commit on the default branch. Refresh with: bun run scripts/open-robot-stats.ts",
+    "repos": {
+        "AlexanderKoch-Koch/low_cost_robot": {
+            "stars": 3400,
+            "lastCommit": "2024-09-21"
+        },
+        "AngelLM/Thor": {
+            "stars": 1600,
+            "lastCommit": "2025-05-09"
+        },
+        "HybridRobotics/Berkeley-Humanoid-Lite": {
+            "stars": 2000,
+            "lastCommit": "2026-03-10"
+        },
+        "PCrnjak/PAROL6-Desktop-robot-arm": {
+            "stars": 3400,
+            "lastCommit": "2026-11-01"
+        },
+        "SIGRobotics-UIUC/LeKiwi": {
+            "stars": 1500,
+            "lastCommit": "2026-08-05"
+        },
+        "TheRobotStudio/SO-ARM100": {
+            "stars": 8000,
+            "lastCommit": "2026-10-06"
+        },
+        "Vector-Wangel/XLeRobot": {
+            "stars": 5700,
+            "lastCommit": "2026-10-06"
+        },
+        "YOR-robot/YOR": {
+            "stars": 112,
+            "lastCommit": "2026-03-09"
+        },
+        "apirrone/Open_Duck_Mini": {
+            "stars": 4600,
+            "lastCommit": "2026-01-31"
+        },
+        "enactic/openarm": {
+            "stars": 3700,
+            "lastCommit": "2026-11-02"
+        },
+        "hilookas/astra_ws": {
+            "stars": 25,
+            "lastCommit": "2026-10-12"
+        },
+        "hshi74/toddlerbot": {
+            "stars": 800,
+            "lastCommit": "2026-04-19"
+        },
+        "kscalelabs/kbot": {
+            "stars": 409,
+            "lastCommit": "2025-11-07"
+        },
+        "kscalelabs/zeroth-bot": {
+            "stars": 47,
+            "lastCommit": "2025-03-19"
+        },
+        "manmaruai/manmaru-yor": {
+            "stars": 2,
+            "lastCommit": "2026-10-06"
+        },
+        "menloresearch/asimov-1": {
+            "stars": 1400,
+            "lastCommit": "2026-10-30"
+        },
+        "open-dynamic-robot-initiative/open_robot_actuator_hardware": {
+            "stars": 1500,
+            "lastCommit": "2022-09-06"
+        },
+        "pollen-robotics/reachy_mini": {
+            "stars": 1600,
+            "lastCommit": "2026-11-02"
+        },
+        "poppy-project/poppy-humanoid": {
+            "stars": 1100,
+            "lastCommit": "2021-12-06"
+        },
+        "stanfordroboticsclub/StanfordQuadruped": {
+            "stars": 1800,
+            "lastCommit": "2024-07-03"
+        },
+        "upkie/upkie": {
+            "stars": 455,
+            "lastCommit": "2026-10-11"
+        }
+    }
+}
