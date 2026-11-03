@@ -1,6 +1,7 @@
 import type { Actuator, Robot } from "@/catalog";
 import { getActuator } from "@/catalog";
 import { resolveJoints, robotsUsingActuator } from "@/catalog/query";
+import { sdkLookupView } from "@/sdk/views";
 import { absoluteUrl } from "@/server/site";
 import type {
     ApiActuator,
@@ -40,6 +41,7 @@ export function serializeActuatorDetail(a: Actuator) {
     return {
         ...serializeActuator(a),
         robots_using: robotsUsingActuator(a.id).map(robotRef),
+        sdk: sdkLookupView(a.id),
     };
 }
 

@@ -191,5 +191,10 @@ validate_data: check_bun ## Validate actuator + robot datasets (report only, non
 	@bun run scripts/validate_actuators.ts
 	@echo "$(GREEN)✅ Dataset validation completed.$(RESET)"
 
+sdk_signals: check_bun ## Re-run the /sdk seeding pipeline (collect, objective checks, committed labels, score)
+	@echo "$(YELLOW)🔍 Seeding /sdk scores...$(RESET)"
+	@bun run scripts/sdk-signals/run.ts
+	@echo "$(GREEN)✅ SDK signals written to src/sdk/data/.$(RESET)"
+
 ci: lint deadcode typecheck tech_debt duplicate_code import_lint lint_links check_ai_writing citation_audit sync-agent-config-check lint_immutable_refs validate_benchmarks ## Run all CI checks
 	@echo "$(GREEN)✅ CI checks completed.$(RESET)"

@@ -1,3 +1,4 @@
+import { SDK_SOURCES } from "../sdk/sources";
 import { JAPAN_SOURCES } from "./country-pages/japan-sources";
 import { POLICY_SOURCES } from "./policy/sources";
 import { PROCESS_SOURCES } from "./processes/sources";
@@ -604,6 +605,7 @@ export const SOURCES: SourceRef[] = [
     ...POLICY_SOURCES,
     ...PROCESS_SOURCES,
     ...JAPAN_SOURCES,
+    ...SDK_SOURCES,
 ];
 
 // Facts sources allowed to back more than FACTS_MAX_RECORDS records (see

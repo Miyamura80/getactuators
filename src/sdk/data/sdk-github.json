@@ -1,0 +1,269 @@
+{
+    "asOf": "2026-11-03",
+    "repos": [
+        {
+            "repo": "2b-t/myactuator_rmd",
+            "official": false,
+            "exists": true,
+            "pushedAt": "2025-03-27",
+            "stars": 56,
+            "license": "MIT",
+            "language": "C++",
+            "archived": false,
+            "medianCloseHours": 20.7
+        },
+        {
+            "repo": "2b-t/myactuator_rmd_ros",
+            "official": false,
+            "exists": true,
+            "pushedAt": "2025-01-10",
+            "stars": 29,
+            "license": "MIT",
+            "language": "C++",
+            "archived": false,
+            "medianCloseHours": null
+        },
+        {
+            "repo": "analogdevicesinc/PyTrinamic",
+            "official": true,
+            "exists": true,
+            "pushedAt": "2026-10-26",
+            "stars": 76,
+            "license": "NOASSERTION",
+            "language": "Python",
+            "archived": false,
+            "medianCloseHours": 2879
+        },
+        {
+            "repo": "blanck/cybergear",
+            "official": false,
+            "exists": true,
+            "pushedAt": "2026-02-17",
+            "stars": 4,
+            "license": "MIT",
+            "language": "Python",
+            "archived": false,
+            "medianCloseHours": null
+        },
+        {
+            "repo": "cmjang/DM_Control_Python",
+            "official": false,
+            "exists": true,
+            "pushedAt": "2024-12-16",
+            "stars": 78,
+            "license": "MIT",
+            "language": "Python",
+            "archived": false,
+            "medianCloseHours": 46.5
+        },
+        {
+            "repo": "cybergear-robotics/cybergear",
+            "official": false,
+            "exists": true,
+            "pushedAt": "2026-10-09",
+            "stars": 4,
+            "license": "MIT",
+            "language": "C",
+            "archived": false,
+            "medianCloseHours": null
+        },
+        {
+            "repo": "enactic/openarm_can",
+            "official": false,
+            "exists": true,
+            "pushedAt": "2026-11-02",
+            "stars": 68,
+            "license": "Apache-2.0",
+            "language": "C++",
+            "archived": false,
+            "medianCloseHours": 164.9
+        },
+        {
+            "repo": "ethanlipson/PyLX-16A",
+            "official": false,
+            "exists": true,
+            "pushedAt": "2025-09-20",
+            "stars": 56,
+            "license": "MIT",
+            "language": "Python",
+            "archived": false,
+            "medianCloseHours": 0
+        },
+        {
+            "repo": "f1tenth/vesc",
+            "official": false,
+            "exists": true,
+            "pushedAt": "2026-09-11",
+            "stars": 82,
+            "license": "BSD-3-Clause",
+            "language": "C++",
+            "archived": false,
+            "medianCloseHours": 933.7
+        },
+        {
+            "repo": "ftservo/FTServo_Python",
+            "official": true,
+            "exists": true,
+            "pushedAt": "2026-10-26",
+            "stars": 36,
+            "license": "MIT",
+            "language": "Python",
+            "archived": false,
+            "medianCloseHours": null
+        },
+        {
+            "repo": "han-xudong/pyLKMotor",
+            "official": false,
+            "exists": true,
+            "pushedAt": "2025-07-02",
+            "stars": 6,
+            "license": "MIT",
+            "language": "Python",
+            "archived": false,
+            "medianCloseHours": null
+        },
+        {
+            "repo": "mintasca/innfos-gluon-controller",
+            "official": true,
+            "exists": true,
+            "pushedAt": "2020-09-15",
+            "stars": 28,
+            "license": null,
+            "language": "C++",
+            "archived": false,
+            "medianCloseHours": null
+        },
+        {
+            "repo": "mjbots/moteus",
+            "official": true,
+            "exists": true,
+            "pushedAt": "2026-10-29",
+            "stars": 1362,
+            "license": "Apache-2.0",
+            "language": "C++",
+            "archived": false,
+            "medianCloseHours": 82.3
+        },
+        {
+            "repo": "neurobionics/TMotorCANControl",
+            "official": false,
+            "exists": true,
+            "pushedAt": "2024-06-29",
+            "stars": 61,
+            "license": null,
+            "language": "Python",
+            "archived": false,
+            "medianCloseHours": 1457.9
+        },
+        {
+            "repo": "NOPLAB/epos",
+            "official": false,
+            "exists": true,
+            "pushedAt": "2026-10-08",
+            "stars": 0,
+            "license": "MIT",
+            "language": "Python",
+            "archived": false,
+            "medianCloseHours": null
+        },
+        {
+            "repo": "odriverobotics/ODrive",
+            "official": true,
+            "exists": true,
+            "pushedAt": "2026-01-20",
+            "stars": 3825,
+            "license": "MIT",
+            "language": "C++",
+            "archived": false,
+            "medianCloseHours": 1015.2
+        },
+        {
+            "repo": "odriverobotics/ros_odrive",
+            "official": true,
+            "exists": true,
+            "pushedAt": "2026-09-29",
+            "stars": 106,
+            "license": "MIT",
+            "language": "C++",
+            "archived": false,
+            "medianCloseHours": 1806.1
+        },
+        {
+            "repo": "ROBOTIS-GIT/dynamixel_hardware_interface",
+            "official": true,
+            "exists": true,
+            "pushedAt": "2026-11-02",
+            "stars": 44,
+            "license": "Apache-2.0",
+            "language": "C++",
+            "archived": false,
+            "medianCloseHours": 456
+        },
+        {
+            "repo": "ROBOTIS-GIT/DynamixelSDK",
+            "official": true,
+            "exists": true,
+            "pushedAt": "2026-10-15",
+            "stars": 618,
+            "license": "Apache-2.0",
+            "language": "C++",
+            "archived": false,
+            "medianCloseHours": 2361.8
+        },
+        {
+            "repo": "RobStride/Python_Sample",
+            "official": true,
+            "exists": true,
+            "pushedAt": "2026-06-04",
+            "stars": 7,
+            "license": "MIT",
+            "language": "Python",
+            "archived": false,
+            "medianCloseHours": null
+        },
+        {
+            "repo": "tianrking/RobStride_Control",
+            "official": false,
+            "exists": true,
+            "pushedAt": "2025-11-18",
+            "stars": 12,
+            "license": "MIT",
+            "language": "C++",
+            "archived": false,
+            "medianCloseHours": 90.9
+        },
+        {
+            "repo": "unitreerobotics/unitree_actuator_sdk",
+            "official": true,
+            "exists": true,
+            "pushedAt": "2025-01-15",
+            "stars": 143,
+            "license": "BSD-3-Clause",
+            "language": "C++",
+            "archived": false,
+            "medianCloseHours": 743.5
+        },
+        {
+            "repo": "vedderb/bldc",
+            "official": true,
+            "exists": true,
+            "pushedAt": "2026-11-01",
+            "stars": 3550,
+            "license": null,
+            "language": "C",
+            "archived": false,
+            "medianCloseHours": 316.7
+        },
+        {
+            "repo": "vedderb/vesc_tool",
+            "official": true,
+            "exists": true,
+            "pushedAt": "2026-10-20",
+            "stars": 1045,
+            "license": "GPL-3.0",
+            "language": "C++",
+            "archived": false,
+            "medianCloseHours": 132.9
+        }
+    ]
+}
