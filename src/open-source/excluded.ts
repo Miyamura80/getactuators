@@ -2,7 +2,7 @@ import type { ExcludedRobot } from "./types";
 
 // Seed candidates checked against the inclusion rule (mechanical design, or
 // full BOM plus build instructions, public with a licence stated for those
-// files) that do not pass it yet. Open-SDK-only robots belong on /sdk.
+// files) that do not pass it yet. An open SDK alone does not qualify.
 
 export const EXCLUDED_ROBOTS: readonly ExcludedRobot[] = [
     {
@@ -32,7 +32,7 @@ export const EXCLUDED_ROBOTS: readonly ExcludedRobot[] = [
     {
         name: "Reachy 2",
         url: "https://pollen-robotics.com/reachy/",
-        reason: "Open SDK and URDF only; CAD and BOM are not public. See /sdk.",
+        reason: "Open SDK and URDF only; CAD and BOM are not public.",
         sources: ["reachy2-robots"],
     },
 ];

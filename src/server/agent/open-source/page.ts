@@ -166,7 +166,7 @@ export function openSourceBody(): string {
 
 ${OPEN_ROBOTS.length} robots you can build from published designs, the actuators in their joints and how open each one is. As of ${OPEN_SOURCE_AS_OF}; repository stars and last commits as of ${REPO_STATS_AS_OF}. Interactive version: ${absoluteUrl(OPEN_SOURCE_PATH)}. JSON: ${absoluteUrl("/api/v1/open-robots")}.
 
-Inclusion rule: the mechanical design, or the full BOM plus build instructions, is public with a licence stated for those files; a code-only licence does not count. Records listed without meeting it say why under Inclusion. Robots with only an open SDK are rated on ${mdLink("SDK ratings", SDK_PATH)} instead.
+Inclusion rule: the mechanical design, or the full BOM plus build instructions, is public with a licence stated for those files; a code-only licence does not count. Records listed without meeting it say why under Inclusion. An open SDK alone does not qualify; actuator SDKs are scored by brand on ${mdLink("SDK ratings", SDK_PATH)}.
 
 ## Robots
 
