@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { SEGMENTS } from "./companies";
 import { COUNTRY_CODES, type CountryCode } from "./countries";
+import { LINK_KINDS } from "./links";
 import { SOURCE_REUSE } from "./reuse";
 import { SITE_KINDS, SITE_STATUSES } from "./sites";
 import { CONFIDENCES } from "./sourced";
@@ -104,4 +105,5 @@ export const supplyLinkSchema = z.object({
     confidence: z.enum(CONFIDENCES),
     note: z.string().min(1).optional(),
     ended: asOfSchema.optional(),
+    kind: z.enum(LINK_KINDS).exclude(["supply"]).optional(),
 });

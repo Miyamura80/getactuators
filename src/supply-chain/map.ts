@@ -1,6 +1,6 @@
 import { SEGMENTS, type Segment } from "./companies";
 import type { CountryCode } from "./countries";
-import type { SupplyLink } from "./links";
+import { type LinkKind, type SupplyLink, linkKind } from "./links";
 import { activeLinks, companyAnchor, getCompany } from "./registry";
 import { SITES, type Site } from "./sites";
 import type { Confidence } from "./sourced";
@@ -192,6 +192,7 @@ export interface MapArc {
     to: MapArcEnd;
     label: string;
     confidence: Confidence;
+    kind: LinkKind;
 }
 
 // A named region to zoom to: [minLat, minLon, maxLat, maxLon], the same order
@@ -251,6 +252,7 @@ export function supplyArcs(links: readonly SupplyLink[] = activeLinks()): MapArc
                 to,
                 label: l.what,
                 confidence: l.confidence,
+                kind: linkKind(l),
             },
         ];
     });

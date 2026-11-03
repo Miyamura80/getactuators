@@ -1,5 +1,11 @@
 import type { z } from "zod";
 import {
+    CountryListSchema,
+    CountrySchema,
+    getCountryHandler,
+    listCountriesHandler,
+} from "./countries";
+import {
     compareActuatorsGet,
     compareActuatorsPost,
     getActuatorById,
@@ -383,5 +389,34 @@ export const OPERATIONS: Operation[] = [
         errors: [404],
         example: "/api/v1/humanoids/unitree-g1",
         handler: getHumanoidById,
+    },
+    {
+        operationId: "list_countries",
+        method: "GET",
+        path: "/api/v1/countries",
+        summary: "List live country pages",
+        description:
+            "Country pages of the supply-chain atlas (/japan, ...) that pass the coverage gate, with how many companies, sites and supply links each holds.",
+        response: CountryListSchema,
+        errors: [],
+        example: "/api/v1/countries",
+        handler: listCountriesHandler,
+    },
+    {
+        operationId: "get_country",
+        method: "GET",
+        path: "/api/v1/countries/:code",
+        summary: "One country's actuator supply chain",
+        description:
+            "Everything on a country page: the country's share of each stage (with the world leader), named industrial clusters with their sites, its policy measures, every company headquartered there or with a site there, the sites in the country and the current supply links touching those companies, all with citations.",
+        pathParam: {
+            name: "code",
+            description: "ISO 3166 alpha-2 code or page slug, e.g. JP or japan.",
+            example: "JP",
+        },
+        response: CountrySchema,
+        errors: [404],
+        example: "/api/v1/countries/JP",
+        handler: getCountryHandler,
     },
 ];

@@ -1,5 +1,6 @@
 import { COMPANIES } from "./companies";
 import { insideCountry } from "./countries";
+import { countryStageRecords } from "./country-pages";
 import { LAB_MINING_HHI, LAB_STAGE_SHARES } from "./lab-fixtures";
 import { LAB_TESLA_MARGIN, labNdStep } from "./lab-kit";
 import { humanoidLicenceErrors, licenceErrors } from "./licence";
@@ -84,6 +85,7 @@ const DATASETS: Record<string, unknown> = {
     processes: PROCESS_CHAINS.flatMap((c) =>
         c.steps.map((s) => ({ id: `${c.id}/${s.id}`, keyNumbers: s.keyNumbers })),
     ),
+    "country-stage-shares": countryStageRecords(),
 };
 
 // Records that cite sources without a number of their own.
@@ -95,6 +97,7 @@ const CITING_RECORDS: Record<string, readonly { sources: readonly string[] }[]> 
     "policy-measures": POLICY_MEASURES,
     "policy-status": POLICY_MEASURES.flatMap((m) => m.statusHistory),
     "process-steps": PROCESS_CHAINS.flatMap((c) => c.steps),
+    "country-stage-gaps": countryStageRecords().flatMap((s) => (s.gap ? [s.gap] : [])),
 };
 
 // Numbers that need no citation of their own: coordinates (the site carries

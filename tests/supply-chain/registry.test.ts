@@ -102,13 +102,20 @@ describe("accessors", () => {
     test("findCompanies and findSites combine filters", () => {
         expect(
             findCompanies({ country: "jp", stage: "gearing" }).map((c) => c.id),
-        ).toEqual(["harmonic-drive-systems", "nabtesco", "nidec"]);
+        ).toEqual([
+            "harmonic-drive-systems",
+            "nabtesco",
+            "nidec",
+            "sumitomo-heavy",
+            "tsubakimoto-chain",
+        ]);
         expect(
             findSites({ company: "nabtesco" })
                 .map((s) => s.country)
                 .sort(),
-        ).toEqual(["CN", "JP"]);
+        ).toEqual(["CN", "JP", "JP"]);
         expect(findSites({ kind: "mine" }).map((s) => s.id)).toEqual([
+            "lynas-mt-weld",
             "mp-mountain-pass",
         ]);
     });

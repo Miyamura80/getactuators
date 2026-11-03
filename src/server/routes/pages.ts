@@ -3,6 +3,7 @@ import {
     canonicalComparisonPath,
     comparisonDirectory,
 } from "@/catalog/comparison-registry";
+import { LIVE_COUNTRY_PATHS } from "@/supply-chain/country-pages";
 import { compareBody, compareVisual } from "../agent/compare";
 import { renderSpaPage, renderStaticPage } from "../agent/html/render";
 import { PATHS } from "../agent/links";
@@ -142,6 +143,7 @@ const PAGE_PATHS = [
     "/metals",
     "/policy",
     "/manufacturing",
+    ...LIVE_COUNTRY_PATHS,
 ];
 
 // Standalone agent documents open with their H1 (no frontmatter). /agents.md
