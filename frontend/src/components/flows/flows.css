@@ -175,3 +175,34 @@
 @media (prefers-reduced-motion: reduce) {
     .fk-link, .fk-node, .fk-label, .fk-wire, .fk-card { transition: none; }
 }
+
+/* Stage share bar: one stacked bar of country shares with the top keys */
+.fk-sharebar { margin: 0; min-width: 0; }
+.fk-sharebar-bar { display: flex; height: 8px; background: var(--line); overflow: hidden; }
+.fk-sharebar-bar i { display: block; height: 100%; }
+.fk-sharebar-bar i + i { box-shadow: inset 1px 0 0 #000; }
+.fk-sharebar figcaption { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin-top: 6px; font: 500 12px/1.2 var(--mono); }
+.fk-sharebar-key { display: inline-flex; align-items: center; gap: 4px; }
+.fk-sharebar-key.is-other i { display: inline-block; width: 8px; height: 8px; background: #6b6b6b; }
+
+/* Concentration tier badge */
+.fk-tier { display: inline-flex; align-items: center; gap: 5px; padding: 2px 6px; border: 1px solid var(--line-strong); font: 600 10px/1.4 var(--mono); letter-spacing: 0.06em; white-space: nowrap; }
+.fk-tier b { font-weight: 700; text-transform: uppercase; }
+.fk-tier .sc-num { font-size: 11px; }
+.fk-tier.is-monopolized { border-color: #ff922b; color: #ffb36b; }
+.fk-tier.is-concentrated { border-color: #ffd43b; color: #ffe27a; }
+.fk-tier.is-distributed { border-color: var(--cyan-dim); color: var(--cyan); }
+.fk-tier.is-compact b { display: none; }
+
+/* Company drawer */
+.fk-company { display: grid; gap: 8px; }
+.fk-company-mono { width: 34px; height: 34px; font-size: 13px; }
+.fk-company p { margin: 0; }
+.fk-company-local, .fk-company-seg { color: var(--muted); }
+.fk-company-stages, .fk-company-products { display: flex; flex-wrap: wrap; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.fk-company-stages li { padding: 1px 6px; border: 1px solid var(--line-strong); font: 500 11px/1.5 var(--mono); }
+.fk-company-products li { color: var(--muted); font-size: 12px; }
+.fk-company-products li + li::before { content: "· "; }
+.fk-company-num { display: flex; gap: 8px; align-items: baseline; }
+.fk-company-num > span:first-child { color: var(--muted); font: 500 11px/1 var(--mono); text-transform: uppercase; }
+.fk-company-links { display: flex; gap: 12px; }

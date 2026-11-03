@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { type Company, SEGMENTS } from "./companies";
-import type { SupplyLink } from "./links";
+import { LINK_KINDS, type SupplyLink, linkKind } from "./links";
 import { linksOf, sitesOf } from "./registry";
 import { SITE_KINDS, SITE_STATUSES, type Site } from "./sites";
 import { CONFIDENCES, type Sourced } from "./sourced";
@@ -16,7 +16,10 @@ export const sourceRefOut = z.object({
     title: z.string(),
     url: z.string(),
     kind: z.string(),
-    accessed: z.string(),
+    accessed: z
+        .string()
+        .nullable()
+        .describe("ISO date we opened the document; null if it was never opened."),
 });
 
 export const sourcedOut = z
@@ -70,7 +73,7 @@ export const siteOut = z.object({
     sources: z.array(sourceRefOut),
 });
 
-const linkOut = z.object({
+export const linkOut = z.object({
     from: z.string(),
     to: z.string(),
     what: z.string(),
@@ -80,6 +83,11 @@ const linkOut = z.object({
         .string()
         .nullable()
         .describe("When the link stopped (YYYY-MM); null while it is active."),
+    kind: z
+        .enum(LINK_KINDS)
+        .describe(
+            "supply: parts or materials; investment: equity or loans; partnership: research or integration.",
+        ),
     sources: z.array(sourceRefOut),
 });
 
@@ -102,7 +110,7 @@ export function refs(ids: readonly string[]) {
                       title: s.title,
                       url: s.url,
                       kind: s.kind,
-                      accessed: s.accessed,
+                      accessed: s.accessed ?? null,
                   },
               ]
             : [];
@@ -167,7 +175,7 @@ export function siteView(s: Site): z.input<typeof siteOut> {
     };
 }
 
-function linkView(l: SupplyLink): z.input<typeof linkOut> {
+export function linkView(l: SupplyLink): z.input<typeof linkOut> {
     return {
         from: l.from,
         to: l.to,
@@ -175,6 +183,7 @@ function linkView(l: SupplyLink): z.input<typeof linkOut> {
         confidence: l.confidence,
         note: l.note ?? null,
         ended: l.ended ?? null,
+        kind: linkKind(l),
         sources: refs(l.sources),
     };
 }

@@ -50,7 +50,7 @@ export const NDFEB_MAGNETS_2024: Sourced<Shares> = {
     note: "Share of sintered permanent magnet output.",
 };
 
-const METAL_ALLOY_2023: Sourced<Shares> = {
+export const METAL_ALLOY_2023: Sourced<Shares> = {
     value: { CN: 0.9, other: 0.1 },
     unit: "fraction",
     sources: ["reuters-goldman-ndpr-2023"],
@@ -59,7 +59,7 @@ const METAL_ALLOY_2023: Sourced<Shares> = {
     note: "Goldman Sachs: China holds over 90% of the downstream metal and magnet segment; 90% is drawn, a floor.",
 };
 
-const HREE_SEPARATION: Sourced<Shares> = {
+export const HREE_SEPARATION: Sourced<Shares> = {
     value: { CN: 0.95, other: 0.05 },
     unit: "fraction",
     sources: ["nus-eai-rare-earths-2025"],

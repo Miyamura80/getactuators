@@ -45,6 +45,9 @@ const TWINS: [string, string][] = [
     ["/api/v1/categories.md", "# Actuator categories"],
     ["/api/v1/brands.md", "# Actuator brands"],
     ["/api/v1/use-cases.md", "# Use-case tags"],
+    ["/api/v1/countries.md", "# Country pages"],
+    ["/api/v1/countries/JP.md", "# Japan"],
+    ["/api/v1/countries/japan.md", "# Japan"],
 ];
 
 describe("API markdown twins (.md)", () => {

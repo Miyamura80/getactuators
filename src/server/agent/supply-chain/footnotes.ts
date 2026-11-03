@@ -44,7 +44,7 @@ export function footnotes(): Footnotes {
                 const s = getSource(id);
                 if (!s) return `[^${i + 1}]: ${id}`;
                 const pay = s.paywalled ? " Paywalled." : "";
-                return `[^${i + 1}]: ${mdText(s.publisher)}, "${mdText(s.title)}". ${s.url} (accessed ${s.accessed}).${pay}`;
+                return `[^${i + 1}]: ${mdText(s.publisher)}, "${mdText(s.title)}". ${s.url} (${s.accessed ? `accessed ${s.accessed}` : "not opened"}).${pay}`;
             });
             return `## Sources\n\n${lines.join("\n")}`;
         },

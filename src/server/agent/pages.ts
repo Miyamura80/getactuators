@@ -31,6 +31,8 @@ import {
 } from "./pages-md";
 import { actuatorSeoTitle } from "./seo-titles";
 import { startupsBody } from "./startups";
+import { COUNTRY_PAGE_ENTRIES } from "./supply-chain/country";
+import { MANUFACTURING_PAGE } from "./supply-chain/manufacturing";
 import { METALS_PAGE } from "./supply-chain/metals";
 import { HIDDEN_PAGES } from "./supply-chain/pages";
 import { POLICY_PAGE } from "./supply-chain/policy";
@@ -151,6 +153,8 @@ const STATIC_PAGES: Page[] = [
     METALS_PAGE,
     POLICY_PAGE,
     BENCHMARKS_PAGE,
+    MANUFACTURING_PAGE,
+    ...COUNTRY_PAGE_ENTRIES,
     sub(
         PATHS.agentsPage,
         "spa",

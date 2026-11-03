@@ -6,6 +6,12 @@ import {
     listBenchmarksHandler,
 } from "./benchmarks";
 import {
+    CountryListSchema,
+    CountrySchema,
+    getCountryHandler,
+    listCountriesHandler,
+} from "./countries";
+import {
     compareActuatorsGet,
     compareActuatorsPost,
     getActuatorById,
@@ -41,6 +47,13 @@ import {
     getPolicyHandler,
     listPolicyHandler,
 } from "./policy";
+import {
+    ProcessChainListSchema,
+    ProcessChainSchema,
+    ProcessParams,
+    getProcessHandler,
+    listProcessesHandler,
+} from "./processes";
 import {
     ActuatorDetailSchema,
     ActuatorListSchema,
@@ -325,6 +338,36 @@ export const OPERATIONS: Operation[] = [
         handler: getPolicyHandler,
     },
     {
+        operationId: "list_processes",
+        method: "GET",
+        path: "/api/v1/processes",
+        summary: "List manufacturing process chains",
+        description:
+            "The process graphs on /manufacturing (the NdFeB magnet chain, ore to rotor segment) with their step counts.",
+        response: ProcessChainListSchema,
+        errors: [],
+        example: "/api/v1/processes",
+        handler: listProcessesHandler,
+    },
+    {
+        operationId: "get_process",
+        method: "GET",
+        path: "/api/v1/processes/:chain",
+        summary: "Get a manufacturing process chain",
+        description:
+            "Every step of one chain in order, grouped by stage: inputs and outputs, cited key numbers (temperature, particle size, yield, energy), the companies that run it, the stage's country shares and concentration tier, upstream and downstream steps, /bom node and /metals element links, and sources. Pass `step` for one step and its edges.",
+        pathParam: {
+            name: "chain",
+            description: "Chain id, e.g. magnet.",
+            example: "magnet",
+        },
+        query: ProcessParams,
+        response: ProcessChainSchema,
+        errors: [400, 404],
+        example: "/api/v1/processes/magnet?step=jet-milling",
+        handler: getProcessHandler,
+    },
+    {
         operationId: "list_humanoids",
         method: "GET",
         path: "/api/v1/humanoids",
@@ -382,5 +425,34 @@ export const OPERATIONS: Operation[] = [
         errors: [404],
         example: "/api/v1/actuators/xiaomi-cybergear/benchmarks",
         handler: actuatorBenchmarksHandler,
+    },
+    {
+        operationId: "list_countries",
+        method: "GET",
+        path: "/api/v1/countries",
+        summary: "List live country pages",
+        description:
+            "Country pages of the supply-chain atlas (/japan, ...) that pass the coverage gate, with how many companies, sites and supply links each holds.",
+        response: CountryListSchema,
+        errors: [],
+        example: "/api/v1/countries",
+        handler: listCountriesHandler,
+    },
+    {
+        operationId: "get_country",
+        method: "GET",
+        path: "/api/v1/countries/:code",
+        summary: "One country's actuator supply chain",
+        description:
+            "Everything on a country page: the country's share of each stage (with the world leader), named industrial clusters with their sites, its policy measures, every company headquartered there or with a site there, the sites in the country and the current supply links touching those companies, all with citations.",
+        pathParam: {
+            name: "code",
+            description: "ISO 3166 alpha-2 code or page slug, e.g. JP or japan.",
+            example: "JP",
+        },
+        response: CountrySchema,
+        errors: [404],
+        example: "/api/v1/countries/JP",
+        handler: getCountryHandler,
     },
 ];

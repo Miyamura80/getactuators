@@ -42,7 +42,7 @@ export function SourcesSection() {
                     {s ? <span>
                         <span className="sc-sources-pub">{s.publisher}</span>
                         <a href={s.url} rel="noopener">{s.title}</a>
-                        <span className="sc-sources-meta">{hostOf(s.url)} · {s.kind} · accessed {s.accessed}{s.paywalled ? " · paywalled" : ""}</span>
+                        <span className="sc-sources-meta">{hostOf(s.url)} · {s.kind} · {s.accessed ? `accessed ${s.accessed}` : "not opened"}{s.paywalled ? " · paywalled" : ""}</span>
                     </span> : <span>{id}</span>}
                 </li>;
             })}
