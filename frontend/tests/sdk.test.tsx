@@ -3,7 +3,7 @@ import { afterEach, expect, test } from "bun:test";
 import { act, cleanup, fireEvent, render, within } from "@testing-library/react";
 import { SCORED_BRANDS, SDK_DIMENSIONS, sdkLeaderboard } from "../../src/sdk";
 import { evidenceFor } from "../../src/sdk/evidence";
-import { SdkBadge } from "../src/components/SdkBadge";
+import { SdkBadge } from "../src/pages/sdk/SdkBadge";
 import { Sdk } from "../src/pages/sdk/Sdk";
 import { frontier } from "../src/pages/sdk/ValueScatter";
 

@@ -8,7 +8,7 @@ import { num, price } from "../lib/format";
 import { Link } from "../lib/router";
 import { CompanyLogo } from "../components/CompanyLogo";
 import { CountryFlag } from "../components/CountryFlag";
-import { SdkBadge } from "../components/SdkBadge";
+import { SdkBadge } from "./sdk/SdkBadge";
 
 interface Props {
     id: string;

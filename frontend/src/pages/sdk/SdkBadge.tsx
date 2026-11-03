@@ -1,5 +1,5 @@
-import { sdkScoreForActuator } from "../../../src/sdk";
-import "../pages/sdk/sdk.css";
+import { sdkScoreForActuator } from "../../../../src/sdk";
+import "./sdk.css";
 
 // Small SDK verdict on an actuator page, linking to the brand on /sdk.
 // Renders nothing for reducers and bare motors (no software to score).
