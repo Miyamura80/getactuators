@@ -233,12 +233,14 @@ function uncertaintyErrors(run: BenchmarkRun): string[] {
     const errors = reported
         .filter((k) => !(k in run.uncertainty))
         .map((k) => `uncertainty.${k} is missing (one per reported metric)`);
-    if (
-        hasEfficiency &&
-        !("efficiency" in run.uncertainty) &&
-        run.origin !== "published"
-    )
-        errors.push("uncertainty.efficiency is missing (efficiency is reported)");
+    if (hasEfficiency && !("efficiency" in run.uncertainty)) {
+        if (run.origin !== "published")
+            errors.push("uncertainty.efficiency is missing (efficiency is reported)");
+        else if (!/not quantified/i.test(run.methodNote ?? ""))
+            errors.push(
+                'efficiency has no uncertainty: give uncertainty.efficiency, or say in methodNote that its error is "not quantified"',
+            );
+    }
     for (const k of Object.keys(run.uncertainty))
         if (k === "efficiency" ? !hasEfficiency : !reported.includes(k))
             errors.push(`uncertainty.${k} does not match a reported metric`);

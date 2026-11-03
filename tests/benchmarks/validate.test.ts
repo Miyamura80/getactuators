@@ -353,6 +353,32 @@ describe("benchmark validator", () => {
         ).join("\n");
         expect(raw).toContain('never "raw"');
         expect(raw).toContain("submitter is for community runs only");
+        // Published efficiency needs an uncertainty or a "not quantified" note.
+        const sourceUrl = BENCHMARK_RUNS.find(
+            (r) => r.actuatorId === "xiaomi-cybergear",
+        )?.source?.url;
+        const withEff = {
+            ...pub,
+            source: { url: sourceUrl, title: "Registered source" },
+            methodNote: "Points read off the maker's chart by eye.",
+            torqueSpeed: [
+                { rpm: 10, torqueNm: 11, efficiency: 0.2 },
+                { rpm: 100, torqueNm: 8, efficiency: 0.6 },
+            ],
+            uncertainty: { peakTorqueNm: 0.5, torqueSpeed: 0.2 },
+        };
+        const noEffNote = "efficiency has no uncertainty";
+        expect(errorsFor(folder(withEff, {}, [])).join("\n")).toContain(noEffNote);
+        const noted = {
+            ...withEff,
+            methodNote: `${withEff.methodNote} The efficiency reading error is not quantified.`,
+        };
+        expect(errorsFor(folder(noted, {}, [])).join("\n")).not.toContain(noEffNote);
+        const given = {
+            ...withEff,
+            uncertainty: { ...withEff.uncertainty, efficiency: 0.02 },
+        };
+        expect(errorsFor(folder(given, {}, [])).join("\n")).not.toContain(noEffNote);
         const empty = { ...pub, peakTorqueNm: undefined, uncertainty: {} };
         expect(errorsFor(folder(empty, {}, [])).join("\n")).toContain(
             "at least one metric",
