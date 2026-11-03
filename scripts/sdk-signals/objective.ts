@@ -52,21 +52,25 @@ function median(xs: number[]): number | null {
     return s.length % 2 ? (s[m] ?? null) : ((s[m - 1] ?? 0) + (s[m] ?? 0)) / 2;
 }
 
-async function closeHours(repo: string): Promise<number | null> {
+// Median close time in hours (null when the repository has no closed issues),
+// or undefined when the issue search itself failed.
+async function closeHours(repo: string): Promise<number | null | undefined> {
     const q = encodeURIComponent(`repo:${repo} is:issue is:closed`);
     const res = await getJson<{ items: ClosedIssue[] }>(
         `${API}/search/issues?q=${q}&sort=created&order=desc&per_page=30`,
         headers(),
     );
-    const hours = (res?.items ?? [])
+    if (!res) return undefined;
+    const hours = res.items
         .filter((i) => i.closed_at)
         .map((i) => (Date.parse(i.closed_at ?? "") - Date.parse(i.created_at)) / 3.6e6);
     const m = median(hours);
     return m === null ? null : Math.round(m * 10) / 10;
 }
 
-// Stats for one repository, or null when the search itself failed (rate
-// limit, outage): only a successful search with no hit records exists: false.
+// Stats for one repository, or null when either search failed (rate limit,
+// outage): only a successful search with no hit records exists: false, and a
+// failed issue lookup never replaces a cached close time with null.
 async function repoStats(repo: string, official: boolean): Promise<RepoStats | null> {
     const q = encodeURIComponent(`repo:${repo}`);
     const res = await getJson<{ items: RepoHit[] }>(
@@ -92,6 +96,7 @@ async function repoStats(repo: string, official: boolean): Promise<RepoStats | n
         };
     const medianCloseHours = await closeHours(repo);
     await sleep(2500);
+    if (medianCloseHours === undefined) return null;
     return {
         repo,
         official,

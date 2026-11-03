@@ -125,6 +125,14 @@ describe("REST /api/v1/sdk", () => {
         const one = await (await get("/api/v1/sdk/odrive.md")).text();
         expect(one).toStartWith("# ODrive");
         expect(one).toContain("## Checks");
+        // Every evidence item, each with its forum.
+        const odriveEvidence = SDK_EVIDENCE.filter((e) => e.brand === "odrive");
+        for (const e of odriveEvidence) expect(one).toContain(e.url);
+        expect(one).toContain(`Evidence (${odriveEvidence.length}, newest first)`);
+        expect(one).toMatch(/\d{4}-\d{2}-\d{2}, (Reddit|Hacker News|GitHub issues) /);
+        // Brand links keep the preset.
+        const ros = await (await get("/api/v1/sdk.md?preset=ros2")).text();
+        expect(ros).toContain("/api/v1/sdk/odrive.md?preset=ros2)");
         expect((await get("/api/v1/sdk/nope.md")).status).toBe(404);
     });
 

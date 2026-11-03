@@ -14,7 +14,7 @@ import type { ApiContext } from "@/api/http";
 import type { Page } from "@/api/pagination";
 import { sdkBrand, sdkList } from "@/api/sdk";
 import { API_OPERATIONS, apiIndexData } from "@/api/surface";
-import { DIMENSION_SHORT } from "@/sdk";
+import { DIMENSION_SHORT, FORUM_LABEL } from "@/sdk";
 import { countryListView } from "@/supply-chain/country-pages/views";
 import { absoluteUrl } from "../site";
 import { actuatorBody, actuatorTable, robotSection } from "./catalog-md";
@@ -240,7 +240,10 @@ function sdkScores(ctx: ApiContext): string {
     const list = sdkList(ctx);
     const rows = list.results.map((r) => [
         String(r.rank),
-        mdLink(r.name, absoluteUrl(apiMarkdownPath(`/api/v1/sdk/${r.id}`))),
+        mdLink(
+            r.name,
+            absoluteUrl(apiMarkdownPath(`/api/v1/sdk/${r.id}`, ctx.url.search)),
+        ),
         `\`${r.id}\``,
         String(Math.round(r.overall)),
         ...r.dimensions.map(
@@ -279,19 +282,17 @@ function sdkBrandBody(ctx: ApiContext): string {
         (c) =>
             `${DIMENSION_SHORT[c.dimension]}: ${c.value === 1 ? "yes" : c.value === 0.5 ? "partly" : "no"}, ${mdText(c.label)} (${c.sources.map((s) => mdLink(s.title, s.url)).join(", ")})`,
     );
-    const evidence = b.evidence
-        .slice(0, 20)
-        .map(
-            (e) =>
-                `${e.date}, ${mdText(e.venue)}, ${DIMENSION_SHORT[e.dimension]}, ${e.polarity}: ${mdText(e.claim)} ${e.url}`,
-        );
+    const evidence = b.evidence.map(
+        (e) =>
+            `${e.date}, ${FORUM_LABEL[e.forum]} ${mdText(e.venue)}, ${DIMENSION_SHORT[e.dimension]}, ${e.polarity}: ${mdText(e.claim)} ${e.url}`,
+    );
     return [
         `# ${mdText(b.name)} SDK score: ${Math.round(b.overall)}`,
         `Rank ${b.rank}, ${b.confidence} confidence, ${b.evidence_count} evidence items. Page: ${b.url}.`,
         mdTable(["Dimension", "Score", "Checks", "Posts + / -"], dims),
         checks.length ? `## Checks\n\n${bullets(checks)}` : "",
         evidence.length
-            ? `## Newest evidence (${evidence.length} of ${b.evidence.length})\n\n${bullets(evidence)}`
+            ? `## Evidence (${evidence.length}, newest first)\n\n${bullets(evidence)}`
             : "",
     ].join("\n\n");
 }

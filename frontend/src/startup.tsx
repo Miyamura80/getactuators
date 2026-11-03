@@ -56,7 +56,9 @@ const Sdk = lazy(() => import("./pages/sdk/Sdk").then((m) => ({ default: m.Sdk }
 function SdkLoading({ menuOpen }: { menuOpen: boolean }) {
     return <div className="tool-page sdk-page">
         <PublicHeader path={SDK_PATH} initialOpen={menuOpen} />
-        <main className="tool-main" aria-busy="true" />
+        <main className="tool-main" aria-busy="true">
+            <p role="status">Loading SDK scores</p>
+        </main>
     </div>;
 }
 

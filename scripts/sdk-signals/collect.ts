@@ -139,7 +139,11 @@ const DISCOURSE: Record<"ros-discourse" | "forum", { host: string; venue: string
         ],
     };
 
-// GET many JSON URLs from one host, pausing for its rate limit; a host this
+// Requests in flight per host; each worker pauses between its requests and
+// getJson backs off on 429, so a refresh stays polite but not serial.
+const HOST_WORKERS = 4;
+
+// GET many JSON URLs from one host with bounded concurrency; a host this
 // network cannot reach is skipped with a warning.
 async function fetchMany<T>(host: string, urls: string[]): Promise<Map<string, T>> {
     const out = new Map<string, T>();
@@ -147,11 +151,15 @@ async function fetchMany<T>(host: string, urls: string[]): Promise<Map<string, T
         console.warn(`  ${host} unreachable from this network; skipped`);
         return out;
     }
-    for (const u of urls) {
-        const r = await getJson<T>(u);
-        if (r) out.set(u, r);
-        await sleep(1500);
-    }
+    const queue = [...urls];
+    const worker = async () => {
+        for (let u = queue.shift(); u !== undefined; u = queue.shift()) {
+            const r = await getJson<T>(u);
+            if (r) out.set(u, r);
+            await sleep(1500);
+        }
+    };
+    await Promise.all(Array.from({ length: HOST_WORKERS }, worker));
     return out;
 }
 

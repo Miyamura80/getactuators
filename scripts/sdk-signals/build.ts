@@ -117,9 +117,14 @@ function gate(
 ): void {
     if (matched.length === 0)
         throw new Error("no cached post mentions a scored brand; run --steps=collect");
-    if (gold.items.length < GOLD_SIZE)
+    const unique = new Set(gold.items.map((i) => i.key));
+    if (unique.size !== gold.items.length)
         throw new Error(
-            `gold set has ${gold.items.length} labelled posts, needs ${GOLD_SIZE}; run with --gold-sample and label ${GOLD_PATH}`,
+            `gold set has ${gold.items.length - unique.size} duplicate post entries; each post may appear once in ${GOLD_PATH}`,
+        );
+    if (unique.size < GOLD_SIZE)
+        throw new Error(
+            `gold set has ${unique.size} labelled posts, needs ${GOLD_SIZE}; run with --gold-sample and label ${GOLD_PATH}`,
         );
     const keys = new Set(matched.map((m) => m.post.key));
     const absent = gold.items.filter((i) => !keys.has(i.key)).map((i) => i.key);
