@@ -2,7 +2,7 @@ import { ACTUATORS, type Actuator, CATEGORIES, type Robot } from "@/catalog";
 import { evidenceFor, fieldCaveat } from "@/catalog/evidence";
 import { resolveJoints, robotsUsingActuator } from "@/catalog/query";
 import { absoluteUrl } from "../site";
-import { measuredSection } from "./benchmarks-md";
+import { measuredSection } from "./benchmarks/markdown";
 import { catalogComparisonLinks } from "./comparison-links";
 import { engineeringEvidenceSection } from "./engineering-evidence";
 import { bullets, humanize, mdLink, mdTable, mdText, num, usd } from "./md";

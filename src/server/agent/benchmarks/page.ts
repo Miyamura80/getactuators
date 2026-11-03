@@ -17,19 +17,11 @@ import {
     peakEfficiency,
 } from "@/benchmarks";
 import { ACTUATORS } from "@/catalog";
-import { DATA_LICENSE, SITE_URL, absoluteUrl } from "../site";
-import {
-    actuatorLink,
-    badge,
-    fmt,
-    nameOf,
-    pct,
-    runLink,
-    sourceCell,
-} from "./benchmarks-md";
-import * as ld from "./jsonld";
-import { mdLink, mdTable } from "./md";
-import type { Page } from "./page-types";
+import { DATA_LICENSE, SITE_URL, absoluteUrl } from "../../site";
+import * as ld from "../jsonld";
+import { mdLink, mdTable } from "../md";
+import type { Page } from "../page-types";
+import { actuatorLink, badge, fmt, nameOf, pct, runLink, sourceCell } from "./markdown";
 
 // Markdown twin of /benchmarks (datasheet against measured, leaderboard,
 // curves, thermal derating and every run) and its Dataset JSON-LD.

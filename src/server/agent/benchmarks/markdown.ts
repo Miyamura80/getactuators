@@ -11,8 +11,8 @@ import {
     runsFor,
 } from "@/benchmarks";
 import { ACTUATORS, type Actuator } from "@/catalog";
-import { absoluteUrl } from "../site";
-import { bullets, mdLink, mdText } from "./md";
+import { absoluteUrl } from "../../site";
+import { bullets, mdLink, mdText } from "../md";
 
 // Markdown pieces for measured runs shared by the /benchmarks twin and the
 // "## Measured" section on actuator pages. No page or JSON-LD imports, so
