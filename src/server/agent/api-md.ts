@@ -183,7 +183,7 @@ function listCountries(): string {
         mdLink(c.url, absoluteUrl(`${c.url}.md`)),
         String(c.coverage.companies),
         String(c.coverage.sites),
-        `${c.coverage.links} (${c.coverage.supplyLinks} supply)`,
+        `${c.coverage.links} (${c.coverage.supply_links} supply)`,
     ]);
     return [
         "# Country pages",

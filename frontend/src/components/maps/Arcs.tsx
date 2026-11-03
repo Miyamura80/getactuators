@@ -31,8 +31,9 @@ interface Chip {
 }
 
 // Great-circle supply arcs, seller to buyer. Estimated links draw dashed;
-// investment and partnership links draw dotted in a muted tone, so only
-// supply reads as a solid flow.
+// investment and partnership links draw dotted in a muted tone (dash-dot
+// when also estimated), so only supply reads as a solid flow. Partnerships
+// run both ways: no arrowhead, and "A ↔ B" in the tooltip.
 const KIND_LABEL = { supply: "Supply", investment: "Investment", partnership: "Partnership" } as const;
 // An arc whose other end is off this map stops at the frame edge with a
 // country chip that links to that country's page.
@@ -74,7 +75,7 @@ export function Arcs({ arcs, hrefFor = liveCountryPage, selectedId, table = "Sup
             return <g key={`${arc.id}-${i}`} className={`mk-arc mk-arc-${arc.confidence} mk-arc-kind-${arc.kind}${arc.id === focus ? " is-active" : ""}`}
                 onPointerEnter={() => setActive(arc.id)} onPointerLeave={() => setActive(null)}>
                 <path className="mk-arc-hit" d={d} />
-                <path className="mk-arc-line" d={d} markerEnd={last ? `url(#${marker})` : undefined} />
+                <path className="mk-arc-line" d={d} markerEnd={last && arc.kind !== "partnership" ? `url(#${marker})` : undefined} />
             </g>;
         }))}
     </g>;
@@ -83,12 +84,12 @@ export function Arcs({ arcs, hrefFor = liveCountryPage, selectedId, table = "Sup
     return <>
         {svgLayer ? createPortal(svg, svgLayer) : null}
         {activeArc && mid ? <span className="mk-arc-tip" style={pct(mid, width, height)} aria-hidden="true">
-            {activeArc.arc.from.label} → {activeArc.arc.to.label}<i>{activeArc.arc.kind === "supply" ? "" : `${KIND_LABEL[activeArc.arc.kind]}: `}{activeArc.arc.label}</i>
+            {activeArc.arc.from.label} {activeArc.arc.kind === "partnership" ? "↔" : "→"} {activeArc.arc.to.label}<i>{activeArc.arc.kind === "supply" ? "" : `${KIND_LABEL[activeArc.arc.kind]}: `}{activeArc.arc.label}</i>
         </span> : null}
         {[...chips.values()].map((c) => {
             const href = hrefFor(c.country);
             const name = countryName(c.country);
-            const what = c.arcs.map((a) => `${a.from.label} to ${a.to.label}, ${a.label}`).join("; ");
+            const what = c.arcs.map((a) => `${a.from.label} ${a.kind === "partnership" ? "and" : "to"} ${a.to.label}, ${a.label}`).join("; ");
             const label = `${c.dir === "out" ? "Supplies to" : "Supplied from"} ${name}: ${what}${href ? `. Open ${name}` : ""}`;
             const body = <>
                 <svg viewBox="0 0 10 10" aria-hidden="true" className={`mk-chip-dir is-${c.dir}`}><path d="M2 5h6M5 2l3 3-3 3" /></svg>

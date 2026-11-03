@@ -31,9 +31,17 @@ describe("/japan page and twin", () => {
         expect(llms).toContain("/japan.md");
         expect(llms).toContain('get_country("JP")');
         expect(html).toContain('<a href="/japan"');
-        // Policies and the data tables survive React mounting into #root.
-        const persistent = html.slice(html.indexOf('id="catalog-content"'));
-        expect(html).toContain('id="catalog-content"');
+        // Stage shares, policies and the data tables sit in a section outside
+        // #root, so React mounting into #root leaves them in place.
+        let total = 0;
+        let insideRoot = 0;
+        new HTMLRewriter()
+            .on("section#catalog-content", { element: () => void total++ })
+            .on("#root section#catalog-content", { element: () => void insideRoot++ })
+            .transform(html);
+        expect(total).toBe(1);
+        expect(insideRoot).toBe(0);
+        const persistent = html.split('id="catalog-content"')[1] ?? "";
         expect(persistent).toContain("Share of each stage");
         expect(persistent).toContain("jp-espa-hds-reducers-2023");
     });
@@ -89,7 +97,7 @@ describe("REST /api/v1/countries", () => {
         expect(cov?.companies).toBeGreaterThanOrEqual(COVERAGE_TARGET.companies);
         expect(cov?.sites).toBeGreaterThanOrEqual(COVERAGE_TARGET.sites);
         expect(cov?.links).toBeGreaterThanOrEqual(COVERAGE_TARGET.links);
-        expect(cov?.supplyLinks).toBeGreaterThanOrEqual(COVERAGE_TARGET.supplyLinks);
+        expect(cov?.supply_links).toBeGreaterThanOrEqual(COVERAGE_TARGET.supplyLinks);
     });
 
     test("returns one country by code or slug, with the full filtered registry", async () => {

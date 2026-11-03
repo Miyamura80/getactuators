@@ -148,6 +148,16 @@ test("country map fits admin-1 outlines and arcs leaving it end in a country chi
     expect(leaving.querySelectorAll(".mk-chip").length).toBeGreaterThan(0);
 });
 
+test("partnership arcs run both ways: no arrowhead and an A ↔ B tooltip", () => {
+    const arcs = supplyArcs().filter((a) => a.id === "fanuc--mujin" || a.id === "nabtesco--fanuc");
+    const c = render(<CountryMap code="JP" topology={JP}><Arcs arcs={arcs} /></CountryMap>).container;
+    const line = (kind: string) => c.querySelector(`.mk-arc-kind-${kind} .mk-arc-line`) as Element;
+    expect(line("supply").getAttribute("marker-end")).toMatch(/^url\(#/);
+    expect(line("partnership").getAttribute("marker-end")).toBeNull();
+    act(() => { fireEvent.pointerEnter(c.querySelector(".mk-arc-kind-partnership") as Element); });
+    expect(c.querySelector(".mk-arc-tip")?.textContent).toContain("↔");
+});
+
 test("arc geometry: clip at the frame and drop floating runs", () => {
     const pts: ([number, number] | null)[] = [[200, 10], [250, 10], [290, 10], [350, 10], null];
     const c = clipArc(pts, 300, 100);

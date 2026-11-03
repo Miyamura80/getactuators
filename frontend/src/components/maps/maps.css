@@ -245,6 +245,8 @@
 .mk-arc-line { fill: none; stroke: var(--cyan-dim); stroke-width: 1.2; opacity: 0.75; transition: opacity 150ms, stroke 150ms; }
 .mk-arc-estimated .mk-arc-line { stroke-dasharray: 4 3; }
 .mk-arc-kind-investment .mk-arc-line, .mk-arc-kind-partnership .mk-arc-line { stroke: var(--muted); stroke-dasharray: 1 3; stroke-linecap: round; }
+/* Estimated and non-supply at once: dash-dot, so both encodings still read. */
+.mk-arc-estimated.mk-arc-kind-investment .mk-arc-line, .mk-arc-estimated.mk-arc-kind-partnership .mk-arc-line { stroke-dasharray: 4 3 1 3; }
 .mk-arc-hit { fill: none; stroke: transparent; stroke-width: 12; pointer-events: stroke; }
 .mk-arrow { fill: var(--cyan-dim); }
 .mk-arcs.has-focus .mk-arc .mk-arc-line { opacity: 0.18; }

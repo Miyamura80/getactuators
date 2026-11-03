@@ -35,10 +35,16 @@ const coverageOut = z.object({
     companies: z.number(),
     sites: z.number(),
     links: z.number().describe("Current links of any kind."),
-    supplyLinks: z
+    supply_links: z
         .number()
         .describe("Current links where parts or materials change hands."),
 });
+
+// Coverage on the wire, in the API's snake_case.
+function coverageView(code: CountryPage["code"]): z.input<typeof coverageOut> {
+    const { supplyLinks, ...rest } = coverage(code);
+    return { ...rest, supply_links: supplyLinks };
+}
 
 const stageOut = z.object({
     stage: z.enum(STAGES),
@@ -118,7 +124,7 @@ export function countryView(p: CountryPage): z.input<typeof countryOut> {
         url: p.path,
         as_of: COUNTRY_AS_OF,
         lede: p.lede,
-        coverage: coverage(p.code),
+        coverage: coverageView(p.code),
         stage_shares: p.stages.map((s) => {
             const world = worldShares(s.stage);
             const top = world ? concentration(world.value)?.top : undefined;
@@ -158,7 +164,7 @@ export function countryListView(): z.input<typeof countryListOut> {
             slug: p.slug,
             name: p.name,
             url: p.path,
-            coverage: coverage(p.code),
+            coverage: coverageView(p.code),
         })),
     };
 }
