@@ -31,12 +31,23 @@ import { POLICY_PATH } from "../../src/supply-chain/policy";
 import { Benchmarks } from "./pages/benchmarks/Benchmarks";
 import { BENCHMARKS_PATH } from "../../src/benchmarks";
 import { MANUFACTURING_PATH } from "../../src/supply-chain/processes/path";
+import { ALTS_PATH } from "../../src/supply-chain/alts/path";
 import { PublicHeader } from "./components/PublicHeader";
 
 // The process map carries its 3D vignette specs, so it loads in its own chunk.
 const Manufacturing = lazy(() =>
     import("./pages/supply-chain/manufacturing/Manufacturing").then((m) => ({ default: m.Manufacturing })),
 );
+
+// /alts carries its 3D scene specs too.
+const Alts = lazy(() => import("./pages/supply-chain/alts/Alts").then((m) => ({ default: m.Alts })));
+
+function AltsLoading({ menuOpen }: { menuOpen: boolean }) {
+    return <div className="tool-page al-page">
+        <PublicHeader path={ALTS_PATH} initialOpen={menuOpen} />
+        <main className="tool-main" aria-busy="true" />
+    </div>;
+}
 
 // While the chunk loads, keep the site header and the page frame on screen.
 function ManufacturingLoading({ menuOpen }: { menuOpen: boolean }) {
@@ -80,6 +91,7 @@ function Page({ menuOpen }: { menuOpen: boolean }) {
     if (path === POLICY_PATH) return <Policy menuOpen={menuOpen} />;
     if (path === BENCHMARKS_PATH) return <Benchmarks menuOpen={menuOpen} />;
     if (path === MANUFACTURING_PATH) return <Suspense fallback={<ManufacturingLoading menuOpen={menuOpen} />}><Manufacturing menuOpen={menuOpen} /></Suspense>;
+    if (path === ALTS_PATH) return <Suspense fallback={<AltsLoading menuOpen={menuOpen} />}><Alts menuOpen={menuOpen} /></Suspense>;
     const country = LIVE_COUNTRY_PAGES.find((p) => p.path === path);
     if (country) return <CountryPage page={country} menuOpen={menuOpen} />;
     if (path === SDK_PATH) return <Suspense fallback={<SdkLoading menuOpen={menuOpen} />}><Sdk menuOpen={menuOpen} /></Suspense>;

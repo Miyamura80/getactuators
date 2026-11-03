@@ -215,6 +215,40 @@ export interface ArcSegmentProps {
     count?: number;
 }
 
+// A rotor lamination core about Z, one per rotor family on /alts:
+//   salient       switched reluctance (or a wound-field rotor): `poles` teeth
+//   flux-barrier  synchronous reluctance: `layers` air slots per pole
+//   cage          induction: `bars` copper bars through the core, end rings
+//   spoke         ferrite spoke rotor: `poles` radial magnet slots, magnets in
+export const ROTOR_CORE_KINDS = ["salient", "flux-barrier", "cage", "spoke"] as const;
+export type RotorCoreKind = (typeof ROTOR_CORE_KINDS)[number];
+
+export interface RotorCoreProps {
+    kind: RotorCoreKind;
+    outer: number;
+    inner: number;
+    length: number;
+    // Salient teeth or magnetic poles.
+    poles: number;
+    // Flux-barrier layers per pole.
+    layers?: number;
+    // Cage bars.
+    bars?: number;
+}
+
+// A helical coil about Z (a spring, a twisted fibre, a cable wrap) of
+// `turns` turns at `pitch`, centred on the origin. With `strands`, that many
+// helices at even phases; `crossed` adds the same set wound the other way (a
+// braided sleeve).
+export interface CoilProps {
+    radius: number;
+    wire: number;
+    pitch: number;
+    turns: number;
+    strands?: number;
+    crossed?: boolean;
+}
+
 export interface PartPropsByKind {
     cylinder: CylinderProps;
     ring: RingProps;
@@ -236,6 +270,8 @@ export interface PartPropsByKind {
     bolt: BoltProps;
     block: BlockProps;
     "arc-segment": ArcSegmentProps;
+    "rotor-core": RotorCoreProps;
+    coil: CoilProps;
 }
 
 export type PartKind = keyof PartPropsByKind;
@@ -261,6 +297,8 @@ export const PART_KINDS = [
     "bolt",
     "block",
     "arc-segment",
+    "rotor-core",
+    "coil",
 ] as const satisfies readonly PartKind[];
 
 // A part's shape: which procedural component, with which parameters.

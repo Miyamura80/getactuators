@@ -138,6 +138,7 @@ function tagFor(path: string): string {
         path.includes("/metal") ||
         path.includes("/policy") ||
         path.includes("/processes") ||
+        path.includes("/alts") ||
         path.includes("/countries")
     )
         return "supply-chain";
@@ -233,7 +234,7 @@ export function buildOpenApi(operations: readonly Operation[]): Json {
             {
                 name: "supply-chain",
                 description:
-                    "Companies, sites, magnet metals (supply, reserves, prices), policy measures, manufacturing process steps and country pages along the actuator supply chain, with citations.",
+                    "Companies, sites, magnet metals (supply, reserves, prices), policy measures, manufacturing process steps, alternative actuator technologies and country pages along the actuator supply chain, with citations.",
             },
         ],
         externalDocs: { description: "Developer guide", url: absoluteUrl("/docs/api") },

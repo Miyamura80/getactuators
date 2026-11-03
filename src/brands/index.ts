@@ -183,6 +183,20 @@ const SUPPLY_CHAIN: Row[] = [
     ["techman-robot", "Techman Robot", "tm-robot.com"],
     ["kuka", "KUKA", "kuka.com"],
     ["abb", "ABB Robotics", "abb.com", ["ABB"]],
+    // /alts (#78): makers of the alternative actuator technologies.
+    ["renault-group", "Renault Group", "renaultgroup.com", ["Renault"]],
+    ["bmw-group", "BMW Group", "bmwgroup.com", ["BMW"]],
+    ["turntide", "Turntide Technologies", "turntide.com", ["Turntide"]],
+    ["niron-magnetics", "Niron Magnetics", "nironmagnetics.com", ["Niron"]],
+    [
+        "cambridge-mechatronics",
+        "Cambridge Mechatronics",
+        "cambridgemechatronics.com",
+        ["CML"],
+    ],
+    ["festo", "Festo", "festo.com"],
+    ["barrett-technology", "Barrett Technology", "barrett.com", ["Barrett"]],
+    ["magnomatics", "Magnomatics", "magnomatics.com"],
 ];
 
 // Companies behind the /investors deals (src/investors.ts COMPANIES).

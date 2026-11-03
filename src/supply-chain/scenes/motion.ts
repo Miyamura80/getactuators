@@ -119,6 +119,8 @@ const EXTENT: { [K in PartKind]: (p: PartPropsByKind[K]) => Extent } = {
     bolt: (p) => ({ r: (p.circle ?? 0) + p.diameter, h: p.length / 2 }),
     block: (p) => ({ r: Math.hypot(p.width, p.height) / 2, h: p.depth / 2 }),
     "arc-segment": (p) => ({ r: p.outer, h: p.length / 2 }),
+    "rotor-core": (p) => ({ r: p.outer, h: p.length / 2 }),
+    coil: (p) => ({ r: p.radius + p.wire, h: (p.turns * p.pitch) / 2 + p.wire }),
 };
 
 export function partExtent(shape: PartShape): Extent {

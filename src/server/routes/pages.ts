@@ -144,6 +144,7 @@ const PAGE_PATHS = [
     "/policy",
     "/benchmarks",
     "/manufacturing",
+    "/alts",
     ...LIVE_COUNTRY_PATHS,
     "/sdk",
 ];

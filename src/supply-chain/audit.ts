@@ -1,5 +1,12 @@
 import { sdkErrors } from "../sdk/audit";
 import { SDK_CHECKS } from "../sdk/checks";
+import {
+    ALT_TECHS,
+    DEPLOYMENTS,
+    MARKET_SLICES,
+    altErrors,
+    altTechRecords,
+} from "./alts";
 import { COMPANIES } from "./companies";
 import { insideCountry } from "./countries";
 import { countryStageRecords } from "./country-pages";
@@ -88,6 +95,8 @@ const DATASETS: Record<string, unknown> = {
         c.steps.map((s) => ({ id: `${c.id}/${s.id}`, keyNumbers: s.keyNumbers })),
     ),
     "country-stage-shares": countryStageRecords(),
+    "alts-techs": altTechRecords(),
+    "alts-market": MARKET_SLICES,
 };
 
 // Records that cite sources without a number of their own.
@@ -101,6 +110,8 @@ const CITING_RECORDS: Record<string, readonly { sources: readonly string[] }[]> 
     "process-steps": PROCESS_CHAINS.flatMap((c) => c.steps),
     "country-stage-gaps": countryStageRecords().flatMap((s) => (s.gap ? [s.gap] : [])),
     "sdk-checks": Object.values(SDK_CHECKS).flat(),
+    "alts-principles": ALT_TECHS,
+    "alts-deployments": DEPLOYMENTS,
 };
 
 // Numbers that need no citation of their own: coordinates (the site carries
@@ -263,6 +274,7 @@ export function auditRegistry(
         ...processErrors(),
         ...unopenedSourceErrors(),
         ...sdkErrors(today),
+        ...altErrors(),
     ];
     const used = new Set<string>();
     for (const [where, ids] of citations()) {
