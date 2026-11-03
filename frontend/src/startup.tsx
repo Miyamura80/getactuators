@@ -29,11 +29,20 @@ import { METALS_PATH } from "../../src/supply-chain/metals";
 import { Policy } from "./pages/supply-chain/policy/Policy";
 import { POLICY_PATH } from "../../src/supply-chain/policy";
 import { MANUFACTURING_PATH } from "../../src/supply-chain/processes/path";
+import { PublicHeader } from "./components/PublicHeader";
 
 // The process map carries its 3D vignette specs, so it loads in its own chunk.
 const Manufacturing = lazy(() =>
     import("./pages/supply-chain/manufacturing/Manufacturing").then((m) => ({ default: m.Manufacturing })),
 );
+
+// While the chunk loads, keep the site header and the page frame on screen.
+function ManufacturingLoading({ menuOpen }: { menuOpen: boolean }) {
+    return <div className="tool-page mf-page">
+        <PublicHeader path={MANUFACTURING_PATH} initialOpen={menuOpen} />
+        <main className="tool-main" aria-busy="true" />
+    </div>;
+}
 
 function Page({ menuOpen }: { menuOpen: boolean }) {
     const path = usePath();
@@ -51,7 +60,7 @@ function Page({ menuOpen }: { menuOpen: boolean }) {
     if (path === CONTRIBUTORS_PATH) return <Contributors menuOpen={menuOpen} />;
     if (path === METALS_PATH) return <Metals menuOpen={menuOpen} />;
     if (path === POLICY_PATH) return <Policy menuOpen={menuOpen} />;
-    if (path === MANUFACTURING_PATH) return <Suspense fallback={null}><Manufacturing menuOpen={menuOpen} /></Suspense>;
+    if (path === MANUFACTURING_PATH) return <Suspense fallback={<ManufacturingLoading menuOpen={menuOpen} />}><Manufacturing menuOpen={menuOpen} /></Suspense>;
     if (path.startsWith("/actuators/")) {
         const raw = path.slice("/actuators/".length);
         let id = raw;

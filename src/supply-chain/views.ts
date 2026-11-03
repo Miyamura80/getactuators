@@ -16,7 +16,10 @@ export const sourceRefOut = z.object({
     title: z.string(),
     url: z.string(),
     kind: z.string(),
-    accessed: z.string(),
+    accessed: z
+        .string()
+        .nullable()
+        .describe("ISO date we opened the document; null if it was never opened."),
 });
 
 export const sourcedOut = z
@@ -102,7 +105,7 @@ export function refs(ids: readonly string[]) {
                       title: s.title,
                       url: s.url,
                       kind: s.kind,
-                      accessed: s.accessed,
+                      accessed: s.accessed ?? null,
                   },
               ]
             : [];

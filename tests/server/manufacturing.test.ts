@@ -44,16 +44,17 @@ describe("/manufacturing page and twin", () => {
             expect(res.status).toBe(200);
             const md = await res.text();
             for (const h of [
-                "## Mining",
-                "## Separation",
-                "## Metal & alloy",
-                "## Magnet",
-                "## Product",
+                "## How an NdFeB magnet is made (`magnet`)",
+                "### Mining",
+                "### Separation",
+                "### Metal & alloy",
+                "### Magnet",
+                "### Product",
                 "## Sources",
             ])
-                expect(md).toContain(h);
+                expect(md).toMatch(new RegExp(`^${h.replace(/[()]/g, "\\$&")}$`, "m"));
             const headings = [
-                ...md.matchAll(/^### \d+\. .+ \(`([a-z0-9-]+)`\)$/gm),
+                ...md.matchAll(/^#### \d+\. .+ \(`([a-z0-9-]+)`\)$/gm),
             ].map((m) => m[1]);
             expect(headings).toEqual(orderedSteps(MAGNET_CHAIN).map((s) => s.id));
             expect(md).toContain("Key numbers: Particle size 2-5 µm[^");
@@ -104,6 +105,9 @@ describe("REST /api/v1/processes", () => {
             await (await get("/api/v1/processes/magnet?step=machining")).json(),
         );
         expect(one.steps.map((s) => s.id)).toEqual(["machining"]);
+        expect(one.clusters.map((c) => [c.id, c.step_ids])).toEqual([
+            ["magnet", ["machining"]],
+        ]);
         expect(
             one.edges.every((e) => e.from === "machining" || e.to === "machining"),
         ).toBe(true);
@@ -111,7 +115,9 @@ describe("REST /api/v1/processes", () => {
             one.edges.some((e) => e.kind === "loop" && e.to === "scrap-recycling"),
         ).toBe(true);
         expect((await get("/api/v1/processes/motor")).status).toBe(404);
-        expect((await get("/api/v1/processes/magnet?step=welding")).status).toBe(404);
+        const missing = await get("/api/v1/processes/magnet?step=welding");
+        expect(missing.status).toBe(404);
+        expect(await missing.text()).toContain("jet-milling");
         expect((await get("/api/v1/processes/magnet?step=Bad_Id")).status).toBe(400);
     });
 });

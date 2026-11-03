@@ -31,8 +31,9 @@ import { getSource } from "@/supply-chain/sources";
 
 describe("magnet process chain", () => {
     test("has every step of the issue's graph, ore to rotor", () => {
-        expect(MAGNET_STEP_IDS).toEqual(
-            expect.arrayContaining([
+        // Exactly these 20 steps: no extras, no duplicates.
+        expect([...MAGNET_STEP_IDS].sort()).toEqual(
+            [
                 "open-pit-mining",
                 "ionic-clay-leaching",
                 "beneficiation",
@@ -53,7 +54,7 @@ describe("magnet process chain", () => {
                 "magnetising",
                 "inspection",
                 "scrap-recycling",
-            ]),
+            ].sort(),
         );
         expect(MAGNET_CHAIN.clusters.map((c) => c.id)).toEqual([
             "mining",
@@ -87,6 +88,25 @@ describe("magnet process chain", () => {
         );
     });
 
+    test("the audit flags a company id missing from the registry", () => {
+        const step = MAGNET_CHAIN.steps[0];
+        if (!step) throw new Error("no steps");
+        const bad = {
+            ...MAGNET_CHAIN,
+            steps: [{ ...step, companyIds: ["no-such-company"] }],
+            edges: [],
+        };
+        expect(processErrors([bad])).toEqual([
+            `process magnet/${step.id}: unknown company "no-such-company"`,
+        ]);
+    });
+
+    test("documents never opened carry no accessed date", () => {
+        for (const id of ["uspto-us11569012-hd", "radialmagnet-n35sh-block"])
+            expect(getSource(id)?.accessed).toBeUndefined();
+        expect(getSource("tuda-loewe-gbd-2016")?.accessed).toBe("2026-11-03");
+    });
+
     test("step ids are the /bom contract: unique, and the kit's chips resolve", () => {
         expect(PROCESS_STEP_IDS.size).toBe(
             PROCESS_CHAINS.flatMap((c) => c.steps).length,
@@ -98,10 +118,13 @@ describe("magnet process chain", () => {
     });
 
     test("branches and the scrap loop are wired", () => {
+        // Main-line neighbours first, so Next stays on the main line.
         expect(neighbours(MAGNET_CHAIN, "solvent-extraction").next).toEqual([
-            "heavy-separation",
             "precipitation",
+            "heavy-separation",
         ]);
+        expect(neighbours(MAGNET_CHAIN, "sintering").next[0]).toBe("machining");
+        expect(neighbours(MAGNET_CHAIN, "machining").next[0]).toBe("coating");
         expect(neighbours(MAGNET_CHAIN, "grain-boundary-diffusion").prev).toEqual([
             "calciothermic-reduction",
             "sintering",

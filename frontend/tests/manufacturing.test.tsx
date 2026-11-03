@@ -42,7 +42,10 @@ test("opens on the stage overview: four clusters with their concentration", () =
     expect(c.querySelectorAll(".mf-cluster")).toHaveLength(4);
     expect(c.querySelector(".mf-cluster-big")?.textContent).toContain("MINING");
     expect(c.textContent).toContain("MONOPOLIZED");
-    expect(c.querySelector(".mf-minimap")).not.toBeNull();
+    // Keyboard users reach the minimap and every stage as buttons.
+    expect(view.getByRole("button", { name: /^Minimap/ }).classList.contains("mf-minimap")).toBe(true);
+    const stage = view.getByRole("button", { name: /^Mining: zoom in to its \d+ steps$/ });
+    expect(stage.getAttribute("tabindex")).toBe("0");
     for (const name of ["Fit map", "Zoom in", "Zoom out"]) expect(view.getByRole("button", { name })).toBeTruthy();
     expect(view.getByRole("radio", { name: "Magnet" }).getAttribute("aria-checked")).toBe("true");
     expect(c.querySelector(".mf-card")).toBeNull();
@@ -86,6 +89,13 @@ test("card navigation, keyboard moves and Escape keep the hash in step", () => {
     expect(window.location.hash).toBe("");
 });
 
+test("Next follows the main line past a side branch", () => {
+    setURL("/manufacturing#step=sintering");
+    const c = render(<Manufacturing />).container;
+    const buttons = [...c.querySelectorAll(".mf-card-nav button")];
+    expect(buttons.at(-1)?.textContent).toBe("Machining and slicing");
+});
+
 test("a company in the card opens the company drawer", () => {
     setURL("/manufacturing#step=electrolysis");
     const view = render(<Manufacturing />);
@@ -109,6 +119,8 @@ test("phones get stage cards; tapping a step opens a full-screen card", () => {
     const c = view.container;
     expect(c.querySelector(".mf-map")).toBeNull();
     expect(c.querySelectorAll(".mf-cluster-card")).toHaveLength(4);
+    // Headline numbers keep their footnote on phones.
+    expect(c.querySelector(".mf-step-num .sc-ref a")).not.toBeNull();
     act(() => { fireEvent.click(c.querySelector('[data-step="sintering"]') as Element); });
     expect(c.querySelector(".mf-card.is-sheet")?.getAttribute("data-step")).toBe("sintering");
     expect(window.location.hash).toBe("#step=sintering");

@@ -1,6 +1,8 @@
 // Documents behind /manufacturing: process reviews, theses, patents and
 // open papers, read on the day the magnet chain was built. Each backs one or
-// two key numbers on a step; none is a table copied whole.
+// two key numbers on a step; none is a table copied whole. The fetches of
+// four documents were blocked, so their figures were taken from search
+// results: those carry no `accessed` date (see UNOPENED).
 
 // Structural copy of SourceRef: importing the type from ../sources would make
 // an import cycle, since ../sources spreads this list into SOURCES.
@@ -13,12 +15,22 @@ interface ProcessSource {
     title: string;
     publisher: string;
     url: string;
-    accessed: string;
+    accessed?: string;
     kind: Kind;
     reuse: Reuse;
 }
 
 const ACCESSED = "2026-11-03";
+
+// Never opened: the strip-cast flake thickness, hydrogen decrepitation
+// figures, green density and coating thickness were confirmed from search
+// results only. Open each and add its `accessed` date when checked.
+const UNOPENED: ReadonlySet<string> = new Set([
+    "uspto-us11270840-magnet",
+    "uspto-us11569012-hd",
+    "cnipa-cn1702785a-pressing",
+    "radialmagnet-n35sh-block",
+]);
 
 function src(
     id: string,
@@ -28,7 +40,8 @@ function src(
     kind: Kind,
     reuse: Reuse,
 ): ProcessSource {
-    return { id, publisher, title, url, kind, reuse, accessed: ACCESSED };
+    const s: ProcessSource = { id, publisher, title, url, kind, reuse };
+    return UNOPENED.has(id) ? s : { ...s, accessed: ACCESSED };
 }
 
 // Reuse: CC BY papers (MDPI, Nature Communications) and US national

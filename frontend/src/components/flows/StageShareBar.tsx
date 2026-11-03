@@ -21,18 +21,20 @@ export function StageShareBar({ shares, label, top = 3, cite = true }: {
     const value = cited ? cited.value : (shares as Shares);
     const { countries, other } = normalizeShares(value);
     const est = cited?.confidence === "estimated" ? "~" : "";
-    const summary = [...countries.map((c) => `${countryName(c.country)} ${percent(c.share)}`), ...(other > 0.005 ? [`other ${percent(other)}`] : [])].join(", ");
+    // A remainder under half a percent is neither drawn nor named.
+    const showOther = other > 0.005;
+    const summary = [...countries.map((c) => `${countryName(c.country)} ${percent(c.share)}`), ...(showOther ? [`other ${percent(other)}`] : [])].join(", ");
     return <figure className="fk-sharebar">
         <div className="fk-sharebar-bar" role="img" aria-label={`${label}: ${summary}`}>
             {countries.map((c) => <i key={c.country} style={{ width: `${c.share * 100}%`, background: COUNTRY_COLOR[c.country] ?? COUNTRY_FALLBACK }} />)}
-            {other > 0 ? <i style={{ width: `${other * 100}%`, background: OTHER_COLOR }} /> : null}
+            {showOther ? <i style={{ width: `${other * 100}%`, background: OTHER_COLOR }} /> : null}
         </div>
         <figcaption>
             {countries.slice(0, top).map((c) => <span key={c.country} className="fk-sharebar-key">
                 <Flag code={c.country} decorative />
                 <span className="sc-num">{est}{percent(c.share)}</span>
             </span>)}
-            {other > 0.005 ? <span className="fk-sharebar-key is-other"><i aria-hidden="true" /><span className="sc-num">{percent(other)}</span></span> : null}
+            {showOther ? <span className="fk-sharebar-key is-other"><i aria-hidden="true" /><span className="sc-num">{percent(other)}</span></span> : null}
             {cite && cited ? <FootnoteRef sources={cited.sources} asOf={cited.asOf} confidence={cited.confidence} note={cited.note} /> : null}
         </figcaption>
     </figure>;

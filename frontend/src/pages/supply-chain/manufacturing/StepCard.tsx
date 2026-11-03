@@ -10,7 +10,7 @@ import {
 } from "../../../../../src/supply-chain/processes";
 import { PRODUCT_ID } from "../../../../../src/supply-chain/processes/layout";
 import { getCompany } from "../../../../../src/supply-chain/registry";
-import { STAGE_LABEL } from "../../../../../src/supply-chain/stages";
+import { STAGE_LABEL, type Stage } from "../../../../../src/supply-chain/stages";
 import { ConcentrationBadge } from "../../../components/flows/ConcentrationBadge";
 import { ProcessIconSvg, StageIconSvg } from "../../../components/flows/process-icons";
 import { StageShareBar } from "../../../components/flows/StageShareBar";
@@ -36,15 +36,15 @@ function BomLink({ id }: { id: string }) {
         : <span className="mf-chip is-soon" title="Bill of materials page coming soon">BOM · {text}</span>;
 }
 
-function WhoDoesIt({ step, onCompany }: { step: ProcessStep; onCompany: (id: string) => void }) {
-    const companies = step.companyIds.flatMap((id) => {
+function WhoDoesIt({ step, stage, onCompany }: { step: ProcessStep; stage: Stage | undefined; onCompany: (id: string) => void }) {
+    const companies = useMemo(() => step.companyIds.flatMap((id) => {
         const c = getCompany(id);
         return c ? [c] : [];
-    });
+    }), [step.companyIds]);
     const nodes = useMemo(() => [
-        ...companies.map((c) => ({ id: c.id, name: c.name, country: c.hqCountry, stage: step.cluster === "magnet" ? "magnet" as const : undefined })),
+        ...companies.map((c) => ({ id: c.id, name: c.name, country: c.hqCountry, stage })),
         { id: step.id, name: step.label },
-    ], [companies, step]);
+    ], [companies, step, stage]);
     const edges = useMemo(() => companies.map((c) => ({ from: c.id, to: step.id, label: step.outputs[0] })), [companies, step]);
     if (companies.length === 0) return null;
     return <section className="mf-card-sec" aria-label="Who does it">
@@ -103,8 +103,9 @@ export function StepCard({ chain, stepId, onClose, onStep, onCompany, mode }: St
     const cluster = chain.clusters.find((c) => c.id === step.cluster);
     const shares = sharesOf(step.shares);
     const { prev, next } = neighbours(chain, step.id);
+    // neighbours() lists main-line steps first; the last step leads to the product.
     const prevId = prev[0];
-    const nextId = next[0] ?? (chain.edges.some((e) => e.from === step.id) ? undefined : PRODUCT_ID);
+    const nextId = next[0] ?? PRODUCT_ID;
     const label = (id: string | undefined) => (id === PRODUCT_ID ? "Rotor segment" : chain.steps.find((s) => s.id === id)?.label);
     return <aside ref={ref} tabIndex={-1} className={`mf-card is-${mode}`} aria-label={step.label} data-step={step.id}>
         <header className="mf-card-head">
@@ -120,7 +121,7 @@ export function StepCard({ chain, stepId, onClose, onStep, onCompany, mode }: St
             {step.keyNumbers.map((k) => <div key={k.label}><dt>{k.label}</dt><dd><SourcedValue value={k.value} /></dd></div>)}
         </dl> : null}
         <p className="mf-io"><span>{step.inputs.join(" + ")}</span><Arrow dir="next" /><span>{step.outputs.join(" + ")}</span></p>
-        <WhoDoesIt step={step} onCompany={onCompany} />
+        <WhoDoesIt step={step} stage={cluster?.stage} onCompany={onCompany} />
         {shares ? <section className="mf-card-sec" aria-label="Where">
             <h4>Where <ConcentrationBadge shares={shares} /></h4>
             <StageShareBar shares={shares} label={`${cluster?.label ?? "Stage"} output by country`} />

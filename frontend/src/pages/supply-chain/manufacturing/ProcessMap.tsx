@@ -14,6 +14,7 @@ import {
 import {
     type Box,
     type ChainLayout,
+    type ClusterFrame,
     PRODUCT_ID,
     type ZoomTransform,
     chainLayout,
@@ -180,6 +181,15 @@ export function ProcessMap({ chain, focusId, onFocus, height = 600 }: ProcessMap
         apply({ k, x: viewW / 2 - x * k, y: height / 2 - y * k });
     };
 
+    // Zoom from the stage overview into one stage's steps. From the
+    // keyboard, focus moves to the stage's first step once steps show.
+    const pendingFocus = useRef<string | null>(null);
+    const openCluster = (c: ClusterFrame, fromKey = false) => {
+        if (fromKey) pendingFocus.current = chain.steps.find((s) => s.cluster === c.id)?.id ?? null;
+        const k = Math.max(1, fitK * 1.4);
+        apply({ k, x: viewW / 2 - (c.x + c.w / 2) * k, y: height / 2 - (c.y + c.h / 2) * k });
+    };
+
     const lit = useMemo(() => {
         const id = hover ?? focusId;
         if (!id) return null;
@@ -219,6 +229,11 @@ export function ProcessMap({ chain, focusId, onFocus, height = 600 }: ProcessMap
         return out;
     }, [layout]);
     const showSteps = detail === "steps";
+    useEffect(() => {
+        if (!showSteps || !pendingFocus.current) return;
+        nodeRefs.current.get(pendingFocus.current)?.focus();
+        pendingFocus.current = null;
+    }, [showSteps]);
 
     const node = (id: string, label: string, icon: string[], box: Box, extra?: { animated?: boolean; branch?: string }) => {
         const dim = lit !== null && !lit.has(id);
@@ -259,10 +274,13 @@ export function ProcessMap({ chain, focusId, onFocus, height = 600 }: ProcessMap
                             {cl ? <StageGlyph stage={cl.stage} x={14} y={9} size={18} /> : null}
                             <text className="mf-cluster-label" x={cl ? 38 : 14} y="22">{cl?.label.toUpperCase()}</text>
                             {tier ? <text className="mf-cluster-tier" x={c.w - 14} y="22" textAnchor="end">{tier.text}</text> : null}
-                        </> : <g className="mf-cluster-big" onClick={() => {
-                            const k = Math.max(1, fitK * 1.4);
-                            apply({ k, x: viewW / 2 - (c.x + c.w / 2) * k, y: height / 2 - (c.y + c.h / 2) * k });
-                        }}>
+                        </> : <g className="mf-cluster-big" role="button" tabIndex={0}
+                            aria-label={`${cl?.label ?? c.id}: zoom in to its ${chain.steps.filter((s) => s.cluster === c.id).length} steps`}
+                            onClick={() => openCluster(c)}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openCluster(c, true); }
+                            }}>
+                            <rect className="mf-cluster-hit" width={c.w} height={c.h} />
                             {cl ? (() => {
                                 const title = cl.label.toUpperCase();
                                 const t = bigTitleLayout(title, c.w);

@@ -1,8 +1,8 @@
 import { type ProcessChain, sharesOf, stepsIn } from "../../../../../src/supply-chain/processes";
 import { PRODUCT_ID } from "../../../../../src/supply-chain/processes/layout";
-import { sourcedText } from "../../../../../src/supply-chain/format";
 import { ConcentrationBadge } from "../../../components/flows/ConcentrationBadge";
 import { ProcessIconSvg, StageIconSvg } from "../../../components/flows/process-icons";
+import { SourcedValue } from "../../../components/supply-chain/SourcedValue";
 
 // Phones: the zoom levels become a vertical scroll of stage cards, each
 // listing its steps; tapping a step opens its full-screen card.
@@ -24,12 +24,14 @@ export function ClusterCards({ chain, focusId, onFocus }: {
                 <ul>
                     {stepsIn(chain, c.id).map((s) => {
                         const k = s.keyNumbers[0];
+                        // The cited number sits beside the button: its footnote
+                        // link cannot nest inside it.
                         return <li key={s.id}>
                             <button type="button" aria-pressed={focusId === s.id} data-step={s.id} className={s.branch ? `is-${s.branch}` : undefined} onClick={() => onFocus(s.id)}>
                                 <ProcessIconSvg icon={s.icon} className="mf-step-icon" />
                                 <span className="mf-step-label">{s.label}</span>
-                                {k ? <span className="mf-step-num">{sourcedText(k.value)}</span> : null}
                             </button>
+                            {k ? <span className="mf-step-num"><SourcedValue value={k.value} /></span> : null}
                         </li>;
                     })}
                     {i === chain.clusters.length - 1 ? <li>

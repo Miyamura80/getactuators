@@ -159,6 +159,8 @@ the URL hash (`#step=` on /manufacturing, `#node=` on /bom):
  +-- types.ts     ProcessChain: clusters, steps (label <= 4 words, caption <= 12),
  |                edges (main | branch | loop), product scene
  +-- magnet.ts    the NdFeB chain, ore to rotor segment; step ids are the /bom contract
+ +-- sources.ts   the documents behind the chain's key numbers (spread into SOURCES)
+ +-- path.ts      MANUFACTURING_PATH, the /manufacturing route
  +-- layout.ts    grid -> map boxes, cluster frames, edge curves, zoom detail
  +-- index.ts     PROCESS_CHAINS, getChain, isProcessStepId, processErrors
  +-- views.ts     REST / MCP wire shape (server only)

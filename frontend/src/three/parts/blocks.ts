@@ -1,6 +1,6 @@
-import { BoxGeometry, Matrix4, Shape, Vector3 } from "three";
+import { BoxGeometry, Shape, Vector3 } from "three";
 import type { ArcSegmentProps, BlockProps } from "../../../../src/supply-chain/scenes/spec";
-import { type Piece, extrude, polylines } from "./geometry";
+import { type Piece, alternatingPoles, extrude, polylines } from "./geometry";
 
 // Prismatic parts shared by /manufacturing vignettes and /bom explodes:
 // sintered blocks, tanks and trucks (block) and arc magnet segments.
@@ -41,11 +41,5 @@ export function arcSegmentPart(p: ArcSegmentProps): Piece[] {
     const geometry = extrude(sectorShape(p.outer, p.inner, p.angle), p.length, 24);
     const count = Math.max(1, Math.round(p.count ?? 1));
     if (count === 1) return [{ geometry, edges: 30 }];
-    // Alternate poles share one geometry; odd copies use the lighter tone.
-    const at = (k: number) => new Matrix4().makeRotationZ((k * Math.PI * 2) / count);
-    const even = Array.from({ length: Math.ceil(count / 2) }, (_, i) => at(i * 2));
-    const odd = Array.from({ length: Math.floor(count / 2) }, (_, i) => at(i * 2 + 1));
-    const pieces: Piece[] = [{ geometry, matrices: even, edges: 30 }];
-    if (odd.length > 0) pieces.push({ geometry: geometry.clone(), matrices: odd, tone: "alt", edges: 30 });
-    return pieces;
+    return alternatingPoles(geometry, count);
 }

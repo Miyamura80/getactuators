@@ -19,7 +19,9 @@
 .mf-cluster-label { fill: var(--muted); font: 700 13px/1 var(--mono); letter-spacing: 0.12em; }
 .mf-cluster-tier { fill: #ffb36b; font: 600 11px/1 var(--mono); letter-spacing: 0.06em; }
 .mf-cluster.is-concentrated .mf-cluster-tier, .mf-cluster.is-concentrated .mf-cluster-tier-big { fill: #ffe27a; }
-.mf-cluster-big { cursor: zoom-in; }
+.mf-cluster-big { cursor: zoom-in; outline: none; }
+.mf-cluster-big:focus-visible .mf-cluster-hit { stroke: var(--cyan); stroke-width: 2; }
+.mf-cluster-hit { fill: transparent; stroke: none; vector-effect: non-scaling-stroke; }
 .mf-cluster-big text { fill: var(--text); font: 700 40px/1 var(--mono); letter-spacing: 0.06em; }
 .mf-cluster-big .mf-cluster-tier-big { fill: #ffb36b; font-size: 25px; letter-spacing: 0.02em; }
 .mf-cluster-big .mf-cluster-count { fill: var(--muted); font-size: 22px; font-weight: 500; }
@@ -57,7 +59,9 @@
 .mf-controls button:disabled { opacity: 0.35; cursor: default; }
 .mf-controls svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.4; }
 .mf-level { position: absolute; top: 12px; left: 52px; margin: 0; padding: 3px 6px; background: rgba(0, 0, 0, 0.7); color: var(--muted); font: 600 10px/1.2 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; pointer-events: none; }
-.mf-minimap { position: absolute; right: 10px; bottom: 10px; background: rgba(0, 0, 0, 0.85); border: 1px solid var(--line-strong); cursor: pointer; z-index: 2; }
+.mf-minimap { position: absolute; right: 10px; bottom: 10px; display: block; padding: 0; background: rgba(0, 0, 0, 0.85); border: 1px solid var(--line-strong); cursor: pointer; z-index: 2; }
+.mf-minimap:focus-visible { border-color: var(--cyan); outline: none; }
+.mf-minimap svg { display: block; }
 .mf-map.has-card .mf-minimap { right: 410px; }
 .mf-mini-cluster { fill: none; stroke: var(--line-strong); stroke-width: 0.6; }
 .mf-mini-node { fill: #3a4242; }
@@ -68,6 +72,8 @@
 .mf-card { display: flex; flex-direction: column; gap: 12px; padding: 14px 16px 16px; background: var(--panel); outline: none; overflow: auto; font-size: 13px; }
 .mf-card.is-panel { position: absolute; top: 0; right: 0; bottom: 0; width: 400px; border-left: 1px solid var(--line-strong); z-index: 5; animation: mf-in 160ms ease-out; }
 .mf-card.is-sheet { position: fixed; inset: 0; z-index: 50; animation: mf-up 180ms ease-out; }
+/* The company drawer opens from a step card, so it sits above the phone sheet. */
+.mf-page .mk-drawer { z-index: 60; }
 .mf-card-head { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; align-items: start; }
 .mf-card-kicker { display: flex; align-items: center; font: 600 10px/1.2 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 .mf-card-head h3 { grid-column: 1; margin: 0; font-size: 18px; line-height: 1.2; }
@@ -106,12 +112,13 @@ a.mf-chip:hover, a.mf-chip:focus-visible { border-color: var(--cyan); color: var
 .mf-cluster-n { display: grid; place-items: center; width: 22px; height: 22px; border: 1px solid var(--line-strong); color: var(--muted); font: 600 11px/1 var(--mono); }
 .mf-cluster-card ul { margin: 0; padding: 0; list-style: none; }
 .mf-cluster-card li + li { border-top: 1px solid var(--line); }
-.mf-cluster-card li button { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; align-items: center; gap: 10px; width: 100%; min-height: 48px; padding: 8px 12px; border: 0; background: none; color: var(--text); text-align: left; cursor: pointer; }
+.mf-cluster-card li { display: flex; align-items: center; }
+.mf-cluster-card li button { flex: 1; min-width: 0; display: grid; grid-template-columns: 28px minmax(0, 1fr); align-items: center; gap: 10px; width: 100%; min-height: 48px; padding: 8px 12px; border: 0; background: none; color: var(--text); text-align: left; cursor: pointer; }
 .mf-cluster-card li button[aria-pressed="true"] { background: #0f3634; }
 .mf-cluster-card li button.is-heavy .mf-step-label::after, .mf-cluster-card li button.is-optional .mf-step-label::after { content: " ·"; color: var(--muted); }
 .mf-step-icon { width: 24px; height: 24px; color: var(--cyan); }
 .mf-step-label { font: 600 13px/1.25 var(--mono); }
-.mf-step-num { color: var(--muted); font: 500 11px/1.2 var(--mono); white-space: nowrap; }
+.mf-step-num { padding-right: 12px; color: var(--muted); font: 500 11px/1.2 var(--mono); white-space: nowrap; }
 
 .mf-foot { margin: 14px 0 0; color: var(--muted); font: 500 12px/1.4 var(--mono); }
 

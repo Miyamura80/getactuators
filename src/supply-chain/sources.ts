@@ -24,7 +24,9 @@ export interface SourceRef {
     title: string;
     publisher: string;
     url: string;
-    accessed: string;
+    // ISO date we opened the document. Absent when the figure was taken
+    // from search results and the page itself was never opened.
+    accessed?: string;
     kind: (typeof SOURCE_KINDS)[number];
     // Only public excerpts of a paywalled source may be cited.
     paywalled?: boolean;

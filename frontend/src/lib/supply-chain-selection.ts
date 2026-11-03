@@ -3,7 +3,9 @@ import { useCallback, useEffect, useState } from "react";
 // One selection shared across a supply-chain page's views (map, 3D, graph),
 // mirrored to the URL hash so it deep links: /manufacturing#step=jet-milling,
 // /bom/optimus-linear#node=rotor-magnet. Footnote jumps (#sc-source-3) leave
-// the selection alone.
+// the selection alone in the page, but the footnote anchor replaces the hash,
+// so the URL drops #step= until the next selection. Accepted: a reload after
+// reading a footnote shows the map unselected.
 
 export type SelectionKey = "step" | "node";
 

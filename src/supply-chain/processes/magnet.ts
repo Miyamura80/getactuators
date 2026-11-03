@@ -315,7 +315,7 @@ const STEPS: ProcessStep[] = [
         outputs: ["Coarse powder"],
         keyNumbers: [
             range("H2 pressure", 0.1, 0.25, "MPa", ["uspto-us11569012-hd"], "2023"),
-            num("Degassing", 300, "°C", ["uspto-us11569012-hd"], "2023"),
+            range("Degassing", 300, 400, "°C", ["uspto-us11569012-hd"], "2023"),
         ],
         companyIds: ["jl-mag", "shin-etsu-chemical"],
         shares: "ndfeb-magnets",

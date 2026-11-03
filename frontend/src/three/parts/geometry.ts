@@ -169,6 +169,18 @@ export function helixLine(r: number, lead: number, z0: number, z1: number, phase
     return pts;
 }
 
+// `count` magnet poles of one geometry spun evenly about Z: even poles in the
+// body tone, odd poles in the lighter one. Both pieces share the geometry.
+export function alternatingPoles(geometry: BufferGeometry, count: number, edges = 30): Piece[] {
+    const pitch = TAU / count;
+    const at = (k: number) => new Matrix4().makeRotationZ(k * pitch);
+    const even = Array.from({ length: Math.ceil(count / 2) }, (_, i) => at(2 * i));
+    const odd = Array.from({ length: Math.floor(count / 2) }, (_, i) => at(2 * i + 1));
+    const pieces: Piece[] = [{ geometry, matrices: even, edges }];
+    if (odd.length > 0) pieces.push({ geometry, matrices: odd, tone: "alt", edges });
+    return pieces;
+}
+
 // Matrices for `count` copies spun evenly about Z at radius r (copy local +X
 // points outward), optionally with a fixed extra transform first.
 export function aroundZ(count: number, r: number, z = 0, pre?: Matrix4, offset = 0): Matrix4[] {

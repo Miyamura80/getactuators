@@ -6,15 +6,24 @@ import {
     REE_MINING_2025,
     REE_SEPARATION_2024,
 } from "../metals/stage-shares";
+import { getCompany } from "../registry";
 import type { Sourced } from "../sourced";
 import { MAGNET_CHAIN } from "./magnet";
-import type { ProcessChain, ProcessStep, ShareRef } from "./types";
+import type {
+    EdgeKind,
+    ProcessChain,
+    ProcessEdge,
+    ProcessStep,
+    ShareRef,
+} from "./types";
 
 // /manufacturing: how the parts of an actuator are made, one process graph
 // per chain. Data only; zod wire shapes live in ./views (server side).
 
 export { MANUFACTURING_PATH } from "./path";
 export const MANUFACTURING_AS_OF = "November 2026";
+// ISO date the process data last changed (Dataset dateModified).
+export const MANUFACTURING_UPDATED = "2026-11-03";
 
 export * from "./types";
 export { MAGNET_CHAIN, MAGNET_STEP_IDS } from "./magnet";
@@ -65,14 +74,22 @@ export function stepsIn(chain: ProcessChain, clusterId: string): ProcessStep[] {
     return chain.steps.filter((s) => s.cluster === clusterId);
 }
 
-// Steps directly upstream and downstream of a step, for keyboard moves.
+const EDGE_RANK: Record<EdgeKind, number> = { main: 0, branch: 1, loop: 2 };
+
+const byKind = (a: ProcessEdge, b: ProcessEdge): number =>
+    EDGE_RANK[a.kind] - EDGE_RANK[b.kind];
+
+// Steps directly upstream and downstream of a step, for keyboard moves and
+// the card's Prev / Next. Main-line neighbours come first, then branches,
+// then the recycling loop.
 export function neighbours(
     chain: ProcessChain,
     id: string,
 ): { prev: string[]; next: string[] } {
+    const edges = [...chain.edges].sort(byKind);
     return {
-        prev: chain.edges.filter((e) => e.to === id).map((e) => e.from),
-        next: chain.edges.filter((e) => e.from === id).map((e) => e.to),
+        prev: edges.filter((e) => e.to === id).map((e) => e.from),
+        next: edges.filter((e) => e.from === id).map((e) => e.to),
     };
 }
 
@@ -88,7 +105,7 @@ export const wordCount = (s: string): number =>
     s.trim().split(/\s+/).filter(Boolean).length;
 
 // Integrity rules: short text, edges between known steps, unique ids, known
-// clusters. The citation audit reports these.
+// clusters and registry companies. The citation audit reports these.
 function stepErrors(chain: ProcessChain, s: ProcessStep): string[] {
     const where = `process ${chain.id}/${s.id}`;
     const rules: [boolean, string][] = [
@@ -106,6 +123,9 @@ function stepErrors(chain: ProcessChain, s: ProcessStep): string[] {
             `caption is over ${MAX_CAPTION_WORDS} words`,
         ],
         [s.sources.length === 0, "no sources"],
+        ...s.companyIds
+            .filter((id) => !getCompany(id))
+            .map((id): [boolean, string] => [true, `unknown company "${id}"`]),
     ];
     return rules.filter(([bad]) => bad).map(([, msg]) => `${where}: ${msg}`);
 }

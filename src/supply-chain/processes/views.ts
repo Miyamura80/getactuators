@@ -54,7 +54,11 @@ const companyRefOut = z.object({
 
 export const processStepOut = z.object({
     id: z.string().describe("Stable step id; /bom nodes reference it."),
-    url: z.string().describe("Deep link: /manufacturing#step={id}."),
+    url: z
+        .string()
+        .describe(
+            "Deep link: /manufacturing#step={id}, or /manufacturing?chain={chain}#step={id} for a chain other than the first.",
+        ),
     cluster: z.string(),
     stage: z.enum(STAGES),
     label: z.string(),

@@ -31,7 +31,7 @@ export const ProcessParams = z.object({
     step: stepId
         .optional()
         .describe(
-            "One step id (e.g. jet-milling): return only that step and its edges.",
+            "One step id (e.g. jet-milling): return only that step, its cluster and the edges that touch it.",
         ),
 });
 
@@ -39,21 +39,30 @@ export const PROCESS_CHAIN_IDS = PROCESS_CHAINS.map((c) => c.id);
 
 type ProcessView = ReturnType<typeof processChainView>;
 
-// A chain, or one step of it with the edges that touch it.
+// A chain, or one step of it: that step, its cluster (listing only that
+// step) and the edges that touch it.
 export function processResult(
     chainId: string,
     step?: string,
 ): { view: ProcessView } | { error: string } {
     const chain = getChain(chainId);
-    if (!chain) return { error: `No process chain "${chainId}".` };
+    if (!chain)
+        return {
+            error: `No process chain "${chainId}". Chains: ${PROCESS_CHAIN_IDS.join(", ")}.`,
+        };
     const view = processChainView(chain);
     if (!step) return { view };
     const steps = view.steps.filter((s) => s.id === step);
     if (steps.length === 0)
-        return { error: `No step "${step}" in the ${chainId} chain.` };
+        return {
+            error: `No step "${step}" in the ${chainId} chain. Step ids: ${view.steps.map((s) => s.id).join(", ")}.`,
+        };
     return {
         view: {
             ...view,
+            clusters: view.clusters
+                .filter((c) => c.step_ids.includes(step))
+                .map((c) => ({ ...c, step_ids: [step] })),
             steps,
             edges: view.edges.filter((e) => e.from === step || e.to === step),
         },

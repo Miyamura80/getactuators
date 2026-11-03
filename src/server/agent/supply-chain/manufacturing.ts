@@ -5,6 +5,7 @@ import { getMetal } from "@/supply-chain/metals/elements";
 import {
     MANUFACTURING_AS_OF,
     MANUFACTURING_PATH,
+    MANUFACTURING_UPDATED,
     PROCESS_CHAINS,
     type ProcessChain,
     type ProcessStep,
@@ -48,7 +49,7 @@ function stepMd(fn: Footnotes, chain: ProcessChain, s: ProcessStep, n: number): 
         .join("; ");
     const { next } = neighbours(chain, s.id);
     const lines = [
-        `### ${n}. ${mdText(s.label)} (\`${s.id}\`)`,
+        `#### ${n}. ${mdText(s.label)} (\`${s.id}\`)`,
         "",
         `${mdText(s.caption)}${fn.ref(s.sources)}`,
         "",
@@ -69,6 +70,8 @@ function stepMd(fn: Footnotes, chain: ProcessChain, s: ProcessStep, n: number): 
     return lines.join("\n");
 }
 
+// One chain under its own heading, so stages, numbered steps and the
+// product of different chains never read as one list.
 function chainMd(fn: Footnotes, chain: ProcessChain): string {
     let n = 0;
     const clusters = chain.clusters
@@ -76,10 +79,11 @@ function chainMd(fn: Footnotes, chain: ProcessChain): string {
             const steps = stepsIn(chain, c.id)
                 .map((s) => stepMd(fn, chain, s, ++n))
                 .join("\n\n");
-            return `## ${mdText(c.label)}\n\nStage concentration: ${concentrationText(fn, c.shares)}.\n\n${steps}`;
+            return `### ${mdText(c.label)}\n\nStage concentration: ${concentrationText(fn, c.shares)}.\n\n${steps}`;
         })
         .join("\n\n");
-    return `${clusters}\n\n## Product\n\n${mdText(chain.product)}.`;
+    const head = `## ${mdText(chain.title)} (\`${chain.id}\`)\n\n${chain.steps.length} steps. Map: ${absoluteUrl(processChainUrl(chain))}. JSON: ${absoluteUrl(`/api/v1/processes/${chain.id}`)}.`;
+    return `${head}\n\n${clusters}\n\n### Product\n\n${mdText(chain.product)}.`;
 }
 
 export function manufacturingBody(): string {
@@ -136,13 +140,18 @@ export const MANUFACTURING_PAGE: Page = {
             isAccessibleForFree: true,
             license: DATA_LICENSE.url,
             creditText: DATA_LICENSE.credit,
-            dateModified: "2026-11",
+            dateModified: MANUFACTURING_UPDATED,
             distribution: [
                 {
                     "@type": "DataDownload",
                     encodingFormat: "application/json",
-                    contentUrl: absoluteUrl("/api/v1/processes/magnet"),
+                    contentUrl: absoluteUrl("/api/v1/processes"),
                 },
+                ...PROCESS_CHAINS.map((c) => ({
+                    "@type": "DataDownload",
+                    encodingFormat: "application/json",
+                    contentUrl: absoluteUrl(`/api/v1/processes/${c.id}`),
+                })),
                 {
                     "@type": "DataDownload",
                     encodingFormat: "text/markdown",
