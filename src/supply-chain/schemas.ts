@@ -47,7 +47,7 @@ export const sourceRefSchema = z.object({
     title: z.string().min(1),
     publisher: z.string().min(1),
     url: z.url(),
-    accessed: z.iso.date(),
+    accessed: z.iso.date().optional(),
     kind: z.enum(SOURCE_KINDS),
     paywalled: z.boolean().optional(),
     reuse: z.enum(SOURCE_REUSE),

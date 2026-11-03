@@ -195,6 +195,26 @@ export interface BoltProps {
     circle?: number;
 }
 
+// A box centred on the origin: width along X, height along Y, depth along Z.
+// `slices` draws that many cut lines across X (a block sliced into segments).
+export interface BlockProps {
+    width: number;
+    height: number;
+    depth: number;
+    slices?: number;
+}
+
+// An arc magnet segment (a slice of a ring) about Z, centred on +X; with
+// `count`, that many copies spaced evenly around Z (a rotor's magnet ring).
+export interface ArcSegmentProps {
+    outer: number;
+    inner: number;
+    // Angular span of one segment, radians.
+    angle: number;
+    length: number;
+    count?: number;
+}
+
 export interface PartPropsByKind {
     cylinder: CylinderProps;
     ring: RingProps;
@@ -214,6 +234,8 @@ export interface PartPropsByKind {
     pcb: PcbProps;
     housing: HousingProps;
     bolt: BoltProps;
+    block: BlockProps;
+    "arc-segment": ArcSegmentProps;
 }
 
 export type PartKind = keyof PartPropsByKind;
@@ -237,6 +259,8 @@ export const PART_KINDS = [
     "pcb",
     "housing",
     "bolt",
+    "block",
+    "arc-segment",
 ] as const satisfies readonly PartKind[];
 
 // A part's shape: which procedural component, with which parameters.

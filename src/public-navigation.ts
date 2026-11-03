@@ -40,6 +40,7 @@ export const SUPPLY_CHAIN_GROUPS = [
 export const SUPPLY_CHAIN_PAGES_LIVE: ReadonlySet<string> = new Set<string>([
     "/metals",
     "/policy",
+    "/manufacturing",
     // Country pages go live when their dataset passes the coverage gate.
     ...LIVE_COUNTRY_PATHS,
 ]);

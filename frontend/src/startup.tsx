@@ -1,4 +1,4 @@
-import { StrictMode, useLayoutEffect } from "react";
+import { StrictMode, Suspense, lazy, useLayoutEffect } from "react";
 import { createRoot, hydrateRoot, type Root as ReactRoot } from "react-dom/client";
 import App from "./App.tsx";
 import { usePath } from "./lib/router";
@@ -28,6 +28,21 @@ import { Metals } from "./pages/supply-chain/metals/Metals";
 import { METALS_PATH } from "../../src/supply-chain/metals";
 import { Policy } from "./pages/supply-chain/policy/Policy";
 import { POLICY_PATH } from "../../src/supply-chain/policy";
+import { MANUFACTURING_PATH } from "../../src/supply-chain/processes/path";
+import { PublicHeader } from "./components/PublicHeader";
+
+// The process map carries its 3D vignette specs, so it loads in its own chunk.
+const Manufacturing = lazy(() =>
+    import("./pages/supply-chain/manufacturing/Manufacturing").then((m) => ({ default: m.Manufacturing })),
+);
+
+// While the chunk loads, keep the site header and the page frame on screen.
+function ManufacturingLoading({ menuOpen }: { menuOpen: boolean }) {
+    return <div className="tool-page mf-page">
+        <PublicHeader path={MANUFACTURING_PATH} initialOpen={menuOpen} />
+        <main className="tool-main" aria-busy="true" />
+    </div>;
+}
 import { CountryPage } from "./pages/supply-chain/country/CountryPage";
 import { LIVE_COUNTRY_PAGES } from "../../src/supply-chain/country-pages";
 
@@ -47,6 +62,7 @@ function Page({ menuOpen }: { menuOpen: boolean }) {
     if (path === CONTRIBUTORS_PATH) return <Contributors menuOpen={menuOpen} />;
     if (path === METALS_PATH) return <Metals menuOpen={menuOpen} />;
     if (path === POLICY_PATH) return <Policy menuOpen={menuOpen} />;
+    if (path === MANUFACTURING_PATH) return <Suspense fallback={<ManufacturingLoading menuOpen={menuOpen} />}><Manufacturing menuOpen={menuOpen} /></Suspense>;
     const country = LIVE_COUNTRY_PAGES.find((p) => p.path === path);
     if (country) return <CountryPage page={country} menuOpen={menuOpen} />;
     if (path.startsWith("/actuators/")) {

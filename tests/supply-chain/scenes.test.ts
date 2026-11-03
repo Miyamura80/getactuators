@@ -64,6 +64,11 @@ const SAMPLE_SHAPES: PartShape[] = [
     { component: "pcb", props: { shape: "rect", width: 40, height: 30 } },
     { component: "housing", props: { profile: "cup", outer: 50, length: 30, wall: 3 } },
     { component: "bolt", props: { diameter: 3, length: 12, count: 8, circle: 40 } },
+    { component: "block", props: { width: 40, height: 16, depth: 24, slices: 3 } },
+    {
+        component: "arc-segment",
+        props: { outer: 26, inner: 20, angle: 0.55, length: 16, count: 10 },
+    },
 ];
 
 const part = (over: Partial<PartSpec> = {}): PartSpec =>
@@ -99,6 +104,18 @@ describe("demo scenes", () => {
                 { ...part({ id: "c" }), component: "sprocket" } as unknown as PartSpec,
                 part({ id: "Not_Kebab" }),
                 part({ id: "nan", explodedOffset: [0, Number.NaN, 0] }),
+                ...[7, 0, -4, 2.5].map((poles, i) =>
+                    part({
+                        id: `bad-ring-${i}`,
+                        component: "magnet-ring",
+                        props: { poles, outer: 20, inner: 15, length: 10 },
+                    }),
+                ),
+                part({
+                    id: "even-ring",
+                    component: "magnet-ring",
+                    props: { poles: 8, outer: 20, inner: 15, length: 10 },
+                }),
             ],
         };
         const problems = sceneProblems(bad).join("\n");
@@ -107,6 +124,11 @@ describe("demo scenes", () => {
         expect(problems).toContain("more than one accent");
         expect(problems).toContain("not kebab-case");
         expect(problems).toContain("not finite");
+        for (const i of [0, 1, 2, 3])
+            expect(problems).toContain(
+                `bad-ring-${i}: magnet ring needs a positive even pole count`,
+            );
+        expect(problems).not.toContain("even-ring");
         expect(
             loopProblems({ ...MAGNET_PRESS_LOOP, duration: 0 }).join("\n"),
         ).toContain("duration");
