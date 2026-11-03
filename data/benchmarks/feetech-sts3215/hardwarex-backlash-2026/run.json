@@ -1,0 +1,26 @@
+{
+    "actuatorId": "feetech-sts3215",
+    "runId": "hardwarex-backlash-2026",
+    "date": "2026",
+    "origin": "published",
+    "sourceKind": "paper",
+    "source": {
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13087586/",
+        "title": "Kotov, HardwareX 26 (2026) e00767: An open-source test stand for backlash measurement in low-cost UART servo motors"
+    },
+    "dataMethod": "reported",
+    "methodNote": "Two STS3215 servos at default settings pull a 100 mm lever both ways; backlash is read on the servo's own output encoder, unloaded and under load. backlashArcmin holds the unloaded figure; the loaded one is in the note, and neither load is the protocol's ±5% of rated torque. ±5.3 arcmin is one count of the 4096-count encoder (0.088°), our reading resolution, not an uncertainty stated by the paper.",
+    "rig": {
+        "torqueSensor": "none (fixed pulling load from two servos)",
+        "accuracyPct": null,
+        "encoder": "servo's own 12-bit magnetic encoder",
+        "ambientC": null,
+        "busV": 12,
+        "controller": "Node.js controller over a USB-TTL adapter"
+    },
+    "backlashArcmin": 37.2,
+    "uncertainty": {
+        "backlashArcmin": 5.3
+    },
+    "note": "Unloaded backlash about 0.62°; loaded about 1.30° (78 arcmin). Coupling two servos brought it to 0.47° to 0.67°."
+}

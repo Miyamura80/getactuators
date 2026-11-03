@@ -87,6 +87,7 @@ export const FOOTER_GROUPS = [
             ["/agents", "For AI agents"],
             ["/docs/api", "API documentation"],
             ["/llms.txt", "llms.txt"],
+            ["/benchmarks", "Measured benchmarks"],
         ],
     },
     {

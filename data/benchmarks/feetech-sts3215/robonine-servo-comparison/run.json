@@ -1,0 +1,29 @@
+{
+    "actuatorId": "feetech-sts3215",
+    "runId": "robonine-servo-comparison",
+    "date": "2026-11",
+    "origin": "published",
+    "sourceKind": "blog",
+    "source": {
+        "url": "https://robonine.com/smart-serial-servo-motor-comparison-robotics/",
+        "title": "Robonine: Practical comparison of smart serial servo motors for robotics"
+    },
+    "dataMethod": "reported",
+    "revision": "12 V, 1:345 (C018)",
+    "methodNote": "Peak torque from a 3.3 kgf reading on a 10 cm lever at full load. Backlash is the post's mean of 8.75 encoder counts, converted by us at about 0.088° per count; the post does not say how many readings the mean uses. The post states no uncertainties: ±5.3 arcmin is one encoder count (reading resolution, not the spread of the readings) and ±0.2 N·m is our estimate for the scale reading.",
+    "rig": {
+        "torqueSensor": "force gauge on a 10 cm lever",
+        "accuracyPct": null,
+        "encoder": "servo's own 12-bit magnetic encoder",
+        "ambientC": null,
+        "busV": 12,
+        "controller": "built-in Feetech controller"
+    },
+    "peakTorqueNm": 3.24,
+    "backlashArcmin": 46.1,
+    "uncertainty": {
+        "peakTorqueNm": 0.2,
+        "backlashArcmin": 5.3
+    },
+    "note": "Largest backlash of the five servos compared, above the 0.5° the datasheet gives."
+}

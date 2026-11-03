@@ -8,6 +8,7 @@ import { CompanyLogo } from "../components/CompanyLogo";
 import { compareEvent, selectedIds, useCompareSelection } from "../lib/compare-selection";
 import { ACTUATORS } from "../lib/data";
 import { COMPARE_SPECS, comparisonCaveats } from "../../../src/catalog/compare";
+import { MeasuredOverlay } from "../components/benchmarks/MeasuredOverlay";
 
 export function Compare({ menuOpen = false }: { menuOpen?: boolean }) {
     const selection = useCompareSelection();
@@ -56,6 +57,7 @@ export function Compare({ menuOpen = false }: { menuOpen?: boolean }) {
                     <tbody>{COMPARE_SPECS.map(spec => <tr key={spec.label}><th scope="row">{spec.label}</th>{rows.map(a => <td key={a.id}>{spec.display(a)}</td>)}</tr>)}</tbody>
                 </table>
             </div>}
+            {rows.length >= 2 && <MeasuredOverlay ids={rows.map(a => a.id)} />}
             {rows.length > 0 && <div className="compare-caveats">{comparisonCaveats(rows).map(note => <p key={note}>{note}</p>)}</div>}
             <p>Sensor bits are not loaded accuracy. CAD geometry is not a calibrated simulation model. Thermal duty and efficiency require matched operating conditions.</p>
         </main>

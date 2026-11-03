@@ -1,0 +1,29 @@
+{
+    "actuatorId": "feetech-sts3215",
+    "runId": "robonine-servo-test",
+    "date": "2026-11",
+    "origin": "published",
+    "sourceKind": "blog",
+    "source": {
+        "url": "https://robonine.com/testing-of-feetech-sts3215-servomotor-backlash-repeatability-and-torque/",
+        "title": "Robonine: Testing of Feetech STS3215 servomotor: backlash, repeatability and torque"
+    },
+    "dataMethod": "reported",
+    "revision": "12 V, 1:345 (C018)",
+    "methodNote": "Static load of about 3.5 kg on a 10 cm lever read on a scale, and repeated cycles to a fixed position read on the lever. The post carries no date, so the run is dated when it was read. The post states no uncertainties: ±0.2 N·m and ±2 arcmin are our estimates, not figures from the post.",
+    "rig": {
+        "torqueSensor": "scale under a 10 cm lever",
+        "accuracyPct": null,
+        "encoder": "servo's own 12-bit magnetic encoder",
+        "ambientC": null,
+        "busV": 12,
+        "controller": "built-in Feetech controller"
+    },
+    "peakTorqueNm": 3.43,
+    "repeatabilityArcmin": 10.2,
+    "uncertainty": {
+        "peakTorqueNm": 0.2,
+        "repeatabilityArcmin": 2
+    },
+    "note": "Stall slightly above the 30 kg·cm rating, but long holds tripped overload protection, which cut output to about a fifth."
+}

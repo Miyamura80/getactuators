@@ -142,6 +142,7 @@ const PAGE_PATHS = [
     "/humanoids",
     "/metals",
     "/policy",
+    "/benchmarks",
     "/manufacturing",
     ...LIVE_COUNTRY_PATHS,
 ];

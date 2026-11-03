@@ -141,6 +141,7 @@ function tagFor(path: string): string {
         path.includes("/countries")
     )
         return "supply-chain";
+    if (path.includes("/benchmarks")) return "actuators";
     if (path.includes("/actuators")) return "actuators";
     if (path.startsWith("/api/v1/")) return "taxonomy";
     return "meta";

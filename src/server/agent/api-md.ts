@@ -1,3 +1,4 @@
+import { actuatorBenchmarks, benchmarkList } from "@/api/benchmarks";
 import { findCountry } from "@/api/countries";
 import {
     actuatorPage,
@@ -175,6 +176,45 @@ function namedCounts(
     ].join("\n\n");
 }
 
+type BenchmarkList = ReturnType<typeof benchmarkList>;
+
+function benchmarkRuns(title: string, list: BenchmarkList): string {
+    const ratio = (
+        v: BenchmarkList["results"][number]["vs_datasheet"]["peak_torque"],
+    ) => (v ? `${num(v.measured, "N·m")} (${v.ratio.toFixed(2)}x)` : "n/a");
+    const rows = list.results.map((r) => [
+        mdLink(`${r.actuator_id}/${r.run_id}`, r.url),
+        r.date,
+        `${r.origin}${r.source_kind ? ` (${r.source_kind})` : ""}${r.other_revision ? ", other revision" : r.not_ranked ? ", not ranked" : ""}`,
+        r.data_method,
+        mdText(r.groups.join(", ")),
+        ratio(r.vs_datasheet.peak_torque),
+        num(r.continuous_torque_nm, "N·m"),
+        r.source
+            ? mdLink(r.source.title, r.source.url)
+            : `@${r.submitter ?? "unknown"}`,
+    ]);
+    return [
+        `# ${title}`,
+        `${list.total} runs on ${list.actuators} actuators, as of ${list.as_of}. Curves, uncertainties and notes are in the JSON; protocol: ${list.protocol_url}.`,
+        rows.length > 0
+            ? mdTable(
+                  [
+                      "Run",
+                      "Date",
+                      "Origin",
+                      "Method",
+                      "Groups",
+                      "Peak vs datasheet",
+                      "Continuous",
+                      "Source",
+                  ],
+                  rows,
+              )
+            : "No runs match this query.",
+    ].join("\n\n");
+}
+
 function listCountries(): string {
     const list = countryListView();
     const rows = list.results.map((c) => [
@@ -202,6 +242,13 @@ const RENDERERS: Record<string, Renderer> = {
     list_categories: listCategories,
     list_brands: () => namedCounts("Actuator brands", "brand", brandCounts()),
     list_use_cases: () => namedCounts("Use-case tags", "use_case", useCaseCounts()),
+    list_benchmarks: (ctx) =>
+        benchmarkRuns(`Measured runs${filterSummary(ctx.url)}`, benchmarkList(ctx)),
+    get_actuator_benchmarks: (ctx) =>
+        benchmarkRuns(
+            `Measured runs: ${mdText(ctx.params.id ?? "")}`,
+            actuatorBenchmarks(ctx),
+        ),
     list_countries: listCountries,
     get_country: (ctx) => countryBody(findCountry(ctx)),
 };

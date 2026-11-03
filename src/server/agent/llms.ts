@@ -87,6 +87,7 @@ ${link("Humanoid robot actuators", "/guides/humanoid-robot-actuators.md", "stati
 ${link("Robot actuator selection guide", "/guides/robot-actuator-selection.md", "efficiency, thermal duty, precision and sim2real checks")}
 ${link("Motor torque calculator", "/tools/motor-torque-calculator.md", "torque, power and speed relation, units and worked examples")}
 ${link("Robot arm torque calculator", "/tools/robot-arm-torque-calculator.md", "static holding torque per joint; same model from the MCP tool arm_holding_torque and, on the page, WebMCP tools calculate_arm_holding_torque, set_arm_model and select_arm_joint")}
+${link("Measured actuator benchmarks", "/benchmarks.md", "measured runs (vendor test reports, papers, blogs, digitised plots, and dyno or bench runs) against datasheet claims: torque-speed curves, thermal derating, backlash and friction per run with rig, data method, uncertainty and source; MCP get_benchmarks, REST /api/v1/benchmarks")}
 
 ## Supply chain (markdown)
 
