@@ -32,7 +32,7 @@ export const PRODUCT_ICON_PATHS = ["M12 12a9 9 0 1 0 0-.1", "M12 12a5 5 0 1 0 0-
 // One pictogram per supply-chain stage, shown beside stage titles. Keyed by
 // Stage so every chain (magnet now, precision in #83) gets one for free.
 export const STAGE_ICON_PATHS: Record<Stage, string[]> = {
-    mining: ["M4 20l9-9", "M6 7.5c4-3.5 9.5-3 13 1", "M11 7l4 4"],
+    mining: ["M8 3Q21 3 21 16Q17.5 7.5 8 3z", "M3.5 20.5L16 8"],
     separation: ["M3 4h18l-7 8.5V18l-4 2.5v-8z"],
     "metal-alloy": ["M2 20l2-5h7l2 5z", "M11 20l2-5h7l2 5z", "M6.5 15l2-5h7l2 5z"],
     magnet: ["M5 4h5v8a2 2 0 0 0 4 0V4h5v8a7 7 0 0 1-14 0z", "M5 8h5M14 8h5"],
