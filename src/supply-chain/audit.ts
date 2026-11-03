@@ -31,6 +31,7 @@ import {
 } from "./perspective";
 import { POLICY_MEASURES, policyErrors } from "./policy";
 import { PROCESS_CHAINS, processErrors } from "./processes";
+import { unopenedSourceErrors } from "./processes/sources";
 import {
     companySchema,
     siteSchema,
@@ -254,6 +255,7 @@ export function auditRegistry(
         ...referenceErrors(),
         ...policyErrors(today),
         ...processErrors(),
+        ...unopenedSourceErrors(),
     ];
     const used = new Set<string>();
     for (const [where, ids] of citations()) {

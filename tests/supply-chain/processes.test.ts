@@ -25,6 +25,7 @@ import {
     edgePath,
     fitTransform,
 } from "@/supply-chain/processes/layout";
+import { UNOPENED, unopenedSourceErrors } from "@/supply-chain/processes/sources";
 import { loopProblems, sceneProblems } from "@/supply-chain/scenes/check";
 import { MAGNET_LOOPS } from "@/supply-chain/scenes/magnet-loops";
 import { getSource } from "@/supply-chain/sources";
@@ -102,8 +103,20 @@ describe("magnet process chain", () => {
     });
 
     test("documents never opened carry no accessed date", () => {
-        for (const id of ["uspto-us11569012-hd", "radialmagnet-n35sh-block"])
+        expect([...UNOPENED].sort()).toEqual(
+            [
+                "uspto-us11270840-magnet",
+                "uspto-us11569012-hd",
+                "cnipa-cn1702785a-pressing",
+                "radialmagnet-n35sh-block",
+            ].sort(),
+        );
+        for (const id of UNOPENED) {
+            expect(getSource(id)).toBeDefined();
             expect(getSource(id)?.accessed).toBeUndefined();
+        }
+        expect(unopenedSourceErrors()).toEqual([]);
+        expect(unopenedSourceErrors([])).toHaveLength(UNOPENED.size);
         expect(getSource("tuda-loewe-gbd-2016")?.accessed).toBe("2026-11-03");
     });
 

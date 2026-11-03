@@ -29,7 +29,8 @@ function idProblems(scope: string, ids: string[]): string[] {
 }
 
 // Problems with a scene that would render wrongly or not at all: unknown part
-// kinds, duplicate or malformed ids, NaN geometry, more than one accent.
+// kinds, duplicate or malformed ids, NaN geometry, more than one accent, an
+// odd-pole magnet ring.
 export function sceneProblems(scene: ExplodeSceneSpec): string[] {
     const out = idProblems(
         scene.id,
@@ -39,6 +40,12 @@ export function sceneProblems(scene: ExplodeSceneSpec): string[] {
         if (!KINDS.has(p.component))
             out.push(`${scene.id}/${p.id}: unknown part "${p.component}"`);
         numbersIn(p, `${scene.id}/${p.id}`, out);
+        // A rotor's poles alternate N/S, so a ring needs an even count.
+        if (
+            p.component === "magnet-ring" &&
+            (p.props as { poles: number }).poles % 2 !== 0
+        )
+            out.push(`${scene.id}/${p.id}: magnet ring needs an even pole count`);
     }
     if (scene.parts.filter((p) => p.accent).length > 1) {
         out.push(`${scene.id}: more than one accent part`);

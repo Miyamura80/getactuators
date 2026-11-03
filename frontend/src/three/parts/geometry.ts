@@ -171,6 +171,10 @@ export function helixLine(r: number, lead: number, z0: number, z1: number, phase
 
 // `count` magnet poles of one geometry spun evenly about Z: even poles in the
 // body tone, odd poles in the lighter one. Both pieces share the geometry.
+// Tones alternate all the way round only for an even count; with an odd
+// count the last and first copies share a tone. Rotor rings always have
+// even poles (sceneProblems flags an odd magnet-ring); an odd count is only
+// for a display row such as a rack of three arc segments.
 export function alternatingPoles(geometry: BufferGeometry, count: number, edges = 30): Piece[] {
     const pitch = TAU / count;
     const at = (k: number) => new Matrix4().makeRotationZ(k * pitch);

@@ -2,7 +2,9 @@ import "./happydom";
 import { afterEach, beforeEach, expect, test } from "bun:test";
 import { act, cleanup, fireEvent, render, within } from "@testing-library/react";
 import { MAGNET_CHAIN } from "../../src/supply-chain/processes";
+import { chainLayout } from "../../src/supply-chain/processes/layout";
 import { Manufacturing } from "../src/pages/supply-chain/manufacturing/Manufacturing";
+import { Minimap } from "../src/pages/supply-chain/manufacturing/Minimap";
 import { isTarget, readChain, writeChain } from "../src/pages/supply-chain/manufacturing/url-state";
 import { readSelection, selectionHash } from "../src/lib/supply-chain-selection";
 import { setWebGLSupport } from "../src/three/support";
@@ -12,9 +14,9 @@ const setURL = (path: string) =>
 
 const realMatchMedia = window.matchMedia;
 
-function narrowScreen(on: boolean) {
+function narrowScreen(on: boolean, reduceMotion = false) {
     window.matchMedia = ((query: string) => ({
-        matches: on && query.includes("max-width"),
+        matches: (on && query.includes("max-width")) || (reduceMotion && query.includes("reduce")),
         media: query,
         addEventListener() {},
         removeEventListener() {},
@@ -87,6 +89,64 @@ test("card navigation, keyboard moves and Escape keep the hash in step", () => {
     act(() => { window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" })); });
     expect(c.querySelector(".mf-card")).toBeNull();
     expect(window.location.hash).toBe("");
+});
+
+test("Enter on a stage zooms in and focuses that stage's first step", () => {
+    // Reduced motion: the zoom applies at once instead of animating.
+    narrowScreen(false, true);
+    setURL("/manufacturing");
+    const view = render(<Manufacturing />);
+    const c = view.container;
+    const stage = view.getByRole("button", { name: /^Separation: zoom in/ });
+    act(() => { fireEvent.keyDown(stage, { key: "Enter" }); });
+    expect(c.querySelector(".mf-map")?.getAttribute("data-detail")).toBe("steps");
+    const first = MAGNET_CHAIN.steps.find((s) => s.cluster === "separation")?.id;
+    expect(document.activeElement?.getAttribute("data-step")).toBe(first ?? "");
+});
+
+const LAYOUT = chainLayout(MAGNET_CHAIN);
+const W = 168;
+const S = W / LAYOUT.width;
+
+function minimap(focusId: string | null) {
+    const calls: [number, number][] = [];
+    const view = render(<Minimap layout={LAYOUT} transform={{ k: 1, x: 0, y: 0 }} viewW={800} viewH={600}
+        onCenter={(x, y) => calls.push([x, y])} focusId={focusId} />);
+    const button = view.getByRole("button", { name: /^Minimap/ });
+    const svg = button.querySelector("svg") as SVGSVGElement;
+    return { calls, button, svg };
+}
+
+test("minimap from the keyboard centres on the focused step, else the chain", () => {
+    const box = LAYOUT.nodes.get("jet-milling");
+    if (!box) throw new Error("no jet-milling box");
+    const focused = minimap("jet-milling");
+    act(() => { fireEvent.click(focused.button, { detail: 0 }); });
+    expect(focused.calls).toEqual([[box.x + box.w / 2, box.y + box.h / 2]]);
+    cleanup();
+    const none = minimap(null);
+    act(() => { fireEvent.click(none.button, { detail: 0 }); });
+    expect(none.calls).toEqual([[LAYOUT.width / 2, LAYOUT.height / 2]]);
+});
+
+test("minimap pointer clicks map through the SVG screen matrix", () => {
+    const { calls, button, svg } = minimap(null);
+    // The SVG's content box starts at (11, 21) on screen: a 1px border
+    // inside a box at (10, 20).
+    const inverse = new DOMMatrix([1, 0, 0, 1, -11, -21]);
+    (svg as unknown as { getScreenCTM: () => unknown }).getScreenCTM = () => ({ inverse: () => inverse });
+    act(() => { fireEvent.click(button, { detail: 1, clientX: 11 + 42, clientY: 21 + 10 }); });
+    expect(calls[0]?.[0]).toBeCloseTo(42 / S);
+    expect(calls[0]?.[1]).toBeCloseTo(10 / S);
+});
+
+test("minimap pointer clicks fall back to the SVG's box without a screen matrix", () => {
+    const { calls, button, svg } = minimap(null);
+    (svg as unknown as { getScreenCTM: () => unknown }).getScreenCTM = () => null;
+    svg.getBoundingClientRect = () => ({ left: 10, top: 20, right: 10 + W, bottom: 120, width: W, height: 100, x: 10, y: 20, toJSON() {} }) as DOMRect;
+    act(() => { fireEvent.click(button, { detail: 1, clientX: 10 + 84, clientY: 20 + 5 }); });
+    expect(calls[0]?.[0]).toBeCloseTo(84 / S);
+    expect(calls[0]?.[1]).toBeCloseTo(5 / S);
 });
 
 test("Next follows the main line past a side branch", () => {

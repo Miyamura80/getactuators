@@ -24,8 +24,9 @@ const ACCESSED = "2026-11-03";
 
 // Never opened: the strip-cast flake thickness, hydrogen decrepitation
 // figures, green density and coating thickness were confirmed from search
-// results only. Open each and add its `accessed` date when checked.
-const UNOPENED: ReadonlySet<string> = new Set([
+// results only. Open each and add its `accessed` date when checked. The
+// audit checks every id here names a source (unopenedSourceErrors).
+export const UNOPENED: ReadonlySet<string> = new Set([
     "uspto-us11270840-magnet",
     "uspto-us11569012-hd",
     "cnipa-cn1702785a-pressing",
@@ -238,3 +239,13 @@ export const PROCESS_SOURCES: ProcessSource[] = [
         "open",
     ),
 ];
+
+// An UNOPENED id that names no source would leave the real document dated.
+export function unopenedSourceErrors(
+    sources: readonly ProcessSource[] = PROCESS_SOURCES,
+): string[] {
+    const ids = new Set(sources.map((s) => s.id));
+    return [...UNOPENED]
+        .filter((id) => !ids.has(id))
+        .map((id) => `process sources: unopened id "${id}" names no source`);
+}

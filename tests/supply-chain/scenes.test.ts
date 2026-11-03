@@ -104,6 +104,11 @@ describe("demo scenes", () => {
                 { ...part({ id: "c" }), component: "sprocket" } as unknown as PartSpec,
                 part({ id: "Not_Kebab" }),
                 part({ id: "nan", explodedOffset: [0, Number.NaN, 0] }),
+                part({
+                    id: "odd-ring",
+                    component: "magnet-ring",
+                    props: { poles: 7, outer: 20, inner: 15, length: 10 },
+                }),
             ],
         };
         const problems = sceneProblems(bad).join("\n");
@@ -112,6 +117,7 @@ describe("demo scenes", () => {
         expect(problems).toContain("more than one accent");
         expect(problems).toContain("not kebab-case");
         expect(problems).toContain("not finite");
+        expect(problems).toContain("odd-ring: magnet ring needs an even pole count");
         expect(
             loopProblems({ ...MAGNET_PRESS_LOOP, duration: 0 }).join("\n"),
         ).toContain("duration");
