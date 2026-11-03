@@ -2,7 +2,7 @@ import { type ProcessChain, sharesOf, stepsIn } from "../../../../../src/supply-
 import { PRODUCT_ID } from "../../../../../src/supply-chain/processes/layout";
 import { sourcedText } from "../../../../../src/supply-chain/format";
 import { ConcentrationBadge } from "../../../components/flows/ConcentrationBadge";
-import { ProcessIconSvg } from "../../../components/flows/process-icons";
+import { ProcessIconSvg, StageIconSvg } from "../../../components/flows/process-icons";
 
 // Phones: the zoom levels become a vertical scroll of stage cards, each
 // listing its steps; tapping a step opens its full-screen card.
@@ -17,6 +17,7 @@ export function ClusterCards({ chain, focusId, onFocus }: {
             return <li key={c.id} className="mf-cluster-card">
                 <header>
                     <span className="mf-cluster-n">{i + 1}</span>
+                    <StageIconSvg stage={c.stage} className="mf-stage-svg" />
                     <h2>{c.label}</h2>
                     {shares ? <ConcentrationBadge shares={shares} /> : null}
                 </header>

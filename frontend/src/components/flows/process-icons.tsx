@@ -1,4 +1,5 @@
 import type { ProcessIcon } from "../../../../src/supply-chain/processes/types";
+import type { Stage } from "../../../../src/supply-chain/stages";
 
 // Line pictograms for process steps on a 24-unit grid, drawn with the
 // current stroke colour. Shared by the /manufacturing map, its step cards
@@ -27,6 +28,36 @@ export const PROCESS_ICON_PATHS: Record<ProcessIcon, string[]> = {
 
 // Product state at the end of a chain: a rotor with magnet segments.
 export const PRODUCT_ICON_PATHS = ["M12 12a9 9 0 1 0 0-.1", "M12 12a5 5 0 1 0 0-.1", "M12 3v4M12 17v4M3 12h4M17 12h4"];
+
+// One pictogram per supply-chain stage, shown beside stage titles. Keyed by
+// Stage so every chain (magnet now, precision in #83) gets one for free.
+export const STAGE_ICON_PATHS: Record<Stage, string[]> = {
+    mining: ["M4 20l9-9", "M6 7.5c4-3.5 9.5-3 13 1", "M11 7l4 4"],
+    separation: ["M3 4h18l-7 8.5V18l-4 2.5v-8z"],
+    "metal-alloy": ["M2 20l2-5h7l2 5z", "M11 20l2-5h7l2 5z", "M6.5 15l2-5h7l2 5z"],
+    magnet: ["M5 4h5v8a2 2 0 0 0 4 0V4h5v8a7 7 0 0 1-14 0z", "M5 8h5M14 8h5"],
+    motor: ["M3 7h13v10H3z", "M16 12h5", "M7 7v10M10.5 7v10M13 7v10"],
+    gearing: [
+        "M7 12a5 5 0 1 0 10 0a5 5 0 1 0-10 0",
+        "M10.5 12a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0-3 0",
+        "M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.9 2.9M15.5 15.5l2.9 2.9M5.6 18.4l2.9-2.9M15.5 8.5l2.9-2.9",
+    ],
+    bearing: [
+        "M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0",
+        "M8.5 12a3.5 3.5 0 1 0 7 0a3.5 3.5 0 1 0-7 0",
+        "M10.8 5.8a1.2 1.2 0 1 0 2.4 0a1.2 1.2 0 1 0-2.4 0M10.8 18.2a1.2 1.2 0 1 0 2.4 0a1.2 1.2 0 1 0-2.4 0M4.6 12a1.2 1.2 0 1 0 2.4 0a1.2 1.2 0 1 0-2.4 0M17 12a1.2 1.2 0 1 0 2.4 0a1.2 1.2 0 1 0-2.4 0",
+    ],
+    screw: ["M12 2v20", "M8 5l8 2M8 9l8 2M8 13l8 2M8 17l8 2"],
+    electronics: ["M7 7h10v10H7z", "M10 3v4M14 3v4M10 17v4M14 17v4M3 10h4M3 14h4M17 10h4M17 14h4"],
+    actuator: ["M4 12a8 8 0 1 0 16 0a8 8 0 1 0-16 0", "M9 12a3 3 0 1 0 6 0a3 3 0 1 0-6 0", "M12 4v5"],
+    robot: ["M6 8h12v10H6z", "M12 4v4", "M9.5 12h.1M14.5 12h.1", "M10 15h4", "M4 12v3M20 12v3"],
+};
+
+export function StageIconSvg({ stage, className }: { stage: Stage; className?: string }) {
+    return <svg className={className} viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+        {STAGE_ICON_PATHS[stage].map((d) => <path key={d} d={d} />)}
+    </svg>;
+}
 
 export function ProcessIconSvg({ icon, className }: { icon: ProcessIcon | "product"; className?: string }) {
     const paths = icon === "product" ? PRODUCT_ICON_PATHS : PROCESS_ICON_PATHS[icon];

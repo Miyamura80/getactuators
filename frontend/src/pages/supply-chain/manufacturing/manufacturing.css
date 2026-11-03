@@ -23,6 +23,10 @@
 .mf-cluster-big text { fill: var(--text); font: 700 40px/1 var(--mono); letter-spacing: 0.06em; }
 .mf-cluster-big .mf-cluster-tier-big { fill: #ffb36b; font-size: 25px; letter-spacing: 0.02em; }
 .mf-cluster-big .mf-cluster-count { fill: var(--muted); font-size: 22px; font-weight: 500; }
+.mf-stage-icon path { fill: none; stroke: var(--cyan); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.mf-cluster-big .mf-stage-icon path { stroke-width: 2.5; }
+.mf-stage-svg { width: 20px; height: 20px; flex: none; color: var(--cyan); }
+.mf-stage-svg.is-kicker { width: 13px; height: 13px; margin-right: 5px; }
 .mf-cluster-edge { fill: none; stroke: var(--cyan-dim); stroke-width: 3; vector-effect: non-scaling-stroke; }
 
 /* Steps */
@@ -65,7 +69,7 @@
 .mf-card.is-panel { position: absolute; top: 0; right: 0; bottom: 0; width: 400px; border-left: 1px solid var(--line-strong); z-index: 5; animation: mf-in 160ms ease-out; }
 .mf-card.is-sheet { position: fixed; inset: 0; z-index: 50; animation: mf-up 180ms ease-out; }
 .mf-card-head { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; align-items: start; }
-.mf-card-kicker { font: 600 10px/1.2 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.mf-card-kicker { display: flex; align-items: center; font: 600 10px/1.2 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 .mf-card-head h3 { grid-column: 1; margin: 0; font-size: 18px; line-height: 1.2; }
 .mf-card-close { grid-column: 2; grid-row: 1 / span 2; display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 1px solid var(--line); background: none; color: var(--text); cursor: pointer; }
 .mf-card-close:hover, .mf-card-close:focus-visible { color: var(--cyan); border-color: var(--cyan); outline: none; }

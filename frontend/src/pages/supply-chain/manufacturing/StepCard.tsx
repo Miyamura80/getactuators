@@ -12,7 +12,7 @@ import { PRODUCT_ID } from "../../../../../src/supply-chain/processes/layout";
 import { getCompany } from "../../../../../src/supply-chain/registry";
 import { STAGE_LABEL } from "../../../../../src/supply-chain/stages";
 import { ConcentrationBadge } from "../../../components/flows/ConcentrationBadge";
-import { ProcessIconSvg } from "../../../components/flows/process-icons";
+import { ProcessIconSvg, StageIconSvg } from "../../../components/flows/process-icons";
 import { StageShareBar } from "../../../components/flows/StageShareBar";
 import { SupplyGraph } from "../../../components/flows/SupplyGraph";
 import { Flag } from "../../../components/Flag";
@@ -108,7 +108,7 @@ export function StepCard({ chain, stepId, onClose, onStep, onCompany, mode }: St
     const label = (id: string | undefined) => (id === PRODUCT_ID ? "Rotor segment" : chain.steps.find((s) => s.id === id)?.label);
     return <aside ref={ref} tabIndex={-1} className={`mf-card is-${mode}`} aria-label={step.label} data-step={step.id}>
         <header className="mf-card-head">
-            <span className="mf-card-kicker">{cluster ? STAGE_LABEL[cluster.stage] : ""} · {index + 1}/{ordered.length}</span>
+            <span className="mf-card-kicker">{cluster ? <><StageIconSvg stage={cluster.stage} className="mf-stage-svg is-kicker" />{STAGE_LABEL[cluster.stage]}</> : ""} · {index + 1}/{ordered.length}</span>
             <h3>{step.label}</h3>
             <button type="button" className="mf-card-close" aria-label="Close" title="Close" onClick={onClose}><CloseIcon /></button>
         </header>

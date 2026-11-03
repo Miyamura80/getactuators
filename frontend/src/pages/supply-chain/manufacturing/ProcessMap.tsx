@@ -21,7 +21,34 @@ import {
     edgePath,
     fitTransform,
 } from "../../../../../src/supply-chain/processes/layout";
-import { PRODUCT_ICON_PATHS, PROCESS_ICON_PATHS } from "../../../components/flows/process-icons";
+import { PRODUCT_ICON_PATHS, PROCESS_ICON_PATHS, STAGE_ICON_PATHS } from "../../../components/flows/process-icons";
+import type { Stage } from "../../../../../src/supply-chain/stages";
+
+// Stage pictogram drawn inside the map's SVG at (x, y), `size` px square.
+function StageGlyph({ stage, x, y, size }: { stage: Stage; x: number; y: number; size: number }) {
+    return <g className="mf-stage-icon" transform={`translate(${x},${y}) scale(${size / 24})`}>
+        {STAGE_ICON_PATHS[stage].map((d) => <path key={d} d={d} />)}
+    </g>;
+}
+
+// Monospace advance (0.6em) plus the title's letter-spacing, used to centre
+// icon + title as one unit without measuring the DOM.
+const BIG_TITLE_PX = 40;
+const ADVANCE_EM = 0.6 + 0.06;
+const BIG_ICON_GAP = 16;
+const BIG_PAD = 24;
+
+// Icon and title laid out as one centred row inside a cluster box of width
+// `boxW`. Long titles shrink the font (and the icon with it) to stay inside.
+function bigTitleLayout(text: string, boxW: number) {
+    const ideal = text.length * BIG_TITLE_PX * ADVANCE_EM + BIG_TITLE_PX * 1.1 + BIG_ICON_GAP;
+    const scale = Math.min(1, (boxW - 2 * BIG_PAD) / ideal);
+    const font = BIG_TITLE_PX * scale;
+    const icon = font * 1.1;
+    const gap = BIG_ICON_GAP * scale;
+    const left = boxW / 2 - (icon + gap + text.length * font * ADVANCE_EM) / 2;
+    return { font, icon, iconX: left, textX: left + icon + gap };
+}
 import { useReducedMotion } from "../../../three";
 import { Minimap } from "./Minimap";
 
@@ -229,13 +256,22 @@ export function ProcessMap({ chain, focusId, onFocus, height = 600 }: ProcessMap
                     return <g key={c.id} className={`mf-cluster${tier ? ` is-${tier.tier}` : ""}`} transform={`translate(${c.x},${c.y})`}>
                         <rect width={c.w} height={c.h} />
                         {showSteps ? <>
-                            <text className="mf-cluster-label" x="14" y="22">{cl?.label.toUpperCase()}</text>
+                            {cl ? <StageGlyph stage={cl.stage} x={14} y={9} size={18} /> : null}
+                            <text className="mf-cluster-label" x={cl ? 38 : 14} y="22">{cl?.label.toUpperCase()}</text>
                             {tier ? <text className="mf-cluster-tier" x={c.w - 14} y="22" textAnchor="end">{tier.text}</text> : null}
                         </> : <g className="mf-cluster-big" onClick={() => {
                             const k = Math.max(1, fitK * 1.4);
                             apply({ k, x: viewW / 2 - (c.x + c.w / 2) * k, y: height / 2 - (c.y + c.h / 2) * k });
                         }}>
-                            <text x={c.w / 2} y={c.h / 2 - 10} textAnchor="middle">{cl?.label.toUpperCase()}</text>
+                            {cl ? (() => {
+                                const title = cl.label.toUpperCase();
+                                const t = bigTitleLayout(title, c.w);
+                                const baseline = c.h / 2 - 10;
+                                return <>
+                                    <StageGlyph stage={cl.stage} x={t.iconX} y={baseline - t.font * 0.86} size={t.icon} />
+                                    <text x={t.textX} y={baseline} textAnchor="start" style={{ fontSize: t.font }}>{title}</text>
+                                </>;
+                            })() : null}
                             {tier ? <text className="mf-cluster-tier-big" x={c.w / 2} y={c.h / 2 + 30} textAnchor="middle">{tier.text}</text> : null}
                             <text className="mf-cluster-count" x={c.w / 2} y={c.h / 2 + 66} textAnchor="middle">{chain.steps.filter((s) => s.cluster === c.id).length} steps</text>
                         </g>}
