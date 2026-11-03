@@ -4,6 +4,12 @@ import type { Confidence, SourceId } from "./sourced";
 // Who sells what to whom. Used by country arcs and BOM graphs. A link marked
 // "estimated" rests on press reports the buyer has not confirmed. A link with
 // `ended` is historical: kept for the record, never drawn as a current flow.
+// `kind` says what flows: parts or materials (supply, the default), money
+// (investment: equity or loans) or neither (partnership: joint research or a
+// product integration). Only supply links count as supply on the maps.
+
+export const LINK_KINDS = ["supply", "investment", "partnership"] as const;
+export type LinkKind = (typeof LINK_KINDS)[number];
 
 export interface SupplyLink {
     from: string;
@@ -14,7 +20,11 @@ export interface SupplyLink {
     note?: string;
     // YYYY-MM the relationship stopped; absent while it is active.
     ended?: string;
+    // Absent means supply.
+    kind?: Exclude<LinkKind, "supply">;
 }
+
+export const linkKind = (l: SupplyLink): LinkKind => l.kind ?? "supply";
 
 export const SUPPLY_LINKS: SupplyLink[] = [
     {

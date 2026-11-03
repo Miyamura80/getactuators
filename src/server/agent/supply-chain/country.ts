@@ -12,6 +12,7 @@ import {
     worldShares,
 } from "@/supply-chain/country-pages";
 import { percent } from "@/supply-chain/format";
+import { linkKind } from "@/supply-chain/links";
 import {
     MEASURE_STATUS_LABEL,
     MEASURE_TYPE_LABEL,
@@ -137,12 +138,13 @@ function linkTable(p: CountryPage, fn: Footnotes): string {
         return [
             `${mdText(from?.name ?? l.from)} (${from?.hqCountry ?? "?"})`,
             `${mdText(to?.name ?? l.to)} (${to?.hqCountry ?? "?"})`,
+            linkKind(l),
             `${mdText(l.what)}${l.note ? `. ${mdText(l.note)}` : ""}`,
             l.confidence,
             fn.ref(l.sources),
         ];
     });
-    return mdTable(["From", "To", "What", "Confidence", "Source"], rows);
+    return mdTable(["From", "To", "Kind", "What", "Confidence", "Source"], rows);
 }
 
 export function countryBody(p: CountryPage): string {
@@ -152,7 +154,7 @@ export function countryBody(p: CountryPage): string {
     const links = countryLinks(p.code);
     return `# ${title(p)}
 
-${mdText(p.lede)} ${companies.length} companies, ${sites.length} sites and ${links.length} current supply links, as of ${COUNTRY_AS_OF}. Interactive map: ${absoluteUrl(p.path)}. JSON: ${absoluteUrl(`/api/v1/countries/${p.code}`)}. MCP: get_country("${p.code}").
+${mdText(p.lede)} ${companies.length} companies, ${sites.length} sites and ${links.length} current links (${links.filter((l) => linkKind(l) === "supply").length} supply, the rest investment or partnership), as of ${COUNTRY_AS_OF}. Interactive map: ${absoluteUrl(p.path)}. JSON: ${absoluteUrl(`/api/v1/countries/${p.code}`)}. MCP: get_country("${p.code}").
 
 Companies are those headquartered in ${p.name} or with a site there; a foreign owner keeps its own country in the HQ column. Revenue is the latest fiscal year converted from local currency (estimate, "~"); gross margin is gross profit over net sales.
 
@@ -180,9 +182,9 @@ Pins marked "city" are the city centre, "region" the prefecture; "site" is the p
 
 ${siteTable(p, fn)}
 
-## Supply links
+## Links
 
-Seller first. Links to companies abroad continue on those countries' pages once they are live.
+Seller (or investor) first. Kind: supply means parts or materials change hands; investment means equity or loans; partnership means joint research or a product integration. Links to companies abroad continue on those countries' pages once they are live.
 
 ${linkTable(p, fn)}
 

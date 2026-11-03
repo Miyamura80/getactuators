@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { countryName } from "../../../../src/country-flag";
 import { SUPPLY_CHAIN_PAGES_LIVE } from "../../../../src/public-navigation";
 import { SEGMENT_LABEL } from "../../../../src/supply-chain/companies";
-import type { SupplyLink } from "../../../../src/supply-chain/links";
+import { type LinkKind, type SupplyLink, linkKind } from "../../../../src/supply-chain/links";
 import { SUPPLY_CHAIN_AS_OF, getCompany, linksOf, sitesOf } from "../../../../src/supply-chain/registry";
 import { STAGE_LABEL } from "../../../../src/supply-chain/stages";
 import { CompanyLogo } from "../CompanyLogo";
@@ -45,10 +45,19 @@ function Partner({ id, onSelect, onMap }: { id: string; onSelect?: (id: string) 
     return <span className="sc-partner">{flag}{name}{c ? <small> ({countryName(c.hqCountry)})</small> : null}</span>;
 }
 
+// What the arrow means, read from this company's side.
+const DIR_LABEL: Record<LinkKind, { to: string; from: string }> = {
+    supply: { to: "Supplies", from: "Buys from" },
+    investment: { to: "Invests in", from: "Funded by" },
+    partnership: { to: "Partners with", from: "Partners with" },
+};
+
 function LinkRow({ link, dir, ...p }: { link: SupplyLink; dir: "to" | "from"; onSelect?: (id: string) => void; onMap?: (id: string) => boolean }) {
     const other = dir === "to" ? link.to : link.from;
-    return <li className={`sc-link is-${link.confidence}`}>
-        <span className="sc-link-dir" aria-label={dir === "to" ? "Supplies" : "Buys from"}>{dir === "to" ? "→" : "←"}</span>
+    const kind = linkKind(link);
+    const label = DIR_LABEL[kind][dir];
+    return <li className={`sc-link is-${link.confidence} is-${kind}`}>
+        <span className="sc-link-dir" role="img" aria-label={label} title={label}>{kind === "partnership" ? "↔" : dir === "to" ? "→" : "←"}</span>
         <Partner id={other} {...p} />
         <span className="sc-link-what">{link.what}<FootnoteRef sources={link.sources} asOf={SUPPLY_CHAIN_AS_OF} confidence={link.confidence} note={link.note} /></span>
     </li>;

@@ -47,13 +47,12 @@ describe("/japan page and twin", () => {
                 "## Clusters",
                 "## Companies",
                 "## Sites",
-                "## Supply links",
+                "## Links",
                 "## Sources",
             ])
                 expect(md).toContain(h);
             for (const c of countryCompanies("JP")) expect(md).toContain(`\`${c.id}\``);
-            const siteRows =
-                md.split("\n## Sites")[1]?.split("\n## Supply links")[0] ?? "";
+            const siteRows = md.split("\n## Sites")[1]?.split("\n## Links")[0] ?? "";
             expect(
                 siteRows
                     .split("\n")

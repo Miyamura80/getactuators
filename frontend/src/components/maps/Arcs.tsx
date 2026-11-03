@@ -30,7 +30,10 @@ interface Chip {
     arcs: MapArc[];
 }
 
-// Great-circle supply arcs, seller to buyer. Estimated links draw dashed.
+// Great-circle supply arcs, seller to buyer. Estimated links draw dashed;
+// investment and partnership links draw dotted in a muted tone, so only
+// supply reads as a solid flow.
+const KIND_LABEL = { supply: "Supply", investment: "Investment", partnership: "Partnership" } as const;
 // An arc whose other end is off this map stops at the frame edge with a
 // country chip that links to that country's page.
 export function Arcs({ arcs, hrefFor = liveCountryPage, selectedId, table = "Supply links" }: ArcsProps) {
@@ -68,7 +71,7 @@ export function Arcs({ arcs, hrefFor = liveCountryPage, selectedId, table = "Sup
         {drawn.map(({ arc, clip }) => clip.runs.map((run, i) => {
             const last = i === clip.runs.length - 1 && clip.toVisible;
             const d = polyline(run);
-            return <g key={`${arc.id}-${i}`} className={`mk-arc mk-arc-${arc.confidence}${arc.id === focus ? " is-active" : ""}`}
+            return <g key={`${arc.id}-${i}`} className={`mk-arc mk-arc-${arc.confidence} mk-arc-kind-${arc.kind}${arc.id === focus ? " is-active" : ""}`}
                 onPointerEnter={() => setActive(arc.id)} onPointerLeave={() => setActive(null)}>
                 <path className="mk-arc-hit" d={d} />
                 <path className="mk-arc-line" d={d} markerEnd={last ? `url(#${marker})` : undefined} />
@@ -80,7 +83,7 @@ export function Arcs({ arcs, hrefFor = liveCountryPage, selectedId, table = "Sup
     return <>
         {svgLayer ? createPortal(svg, svgLayer) : null}
         {activeArc && mid ? <span className="mk-arc-tip" style={pct(mid, width, height)} aria-hidden="true">
-            {activeArc.arc.from.label} → {activeArc.arc.to.label}<i>{activeArc.arc.label}</i>
+            {activeArc.arc.from.label} → {activeArc.arc.to.label}<i>{activeArc.arc.kind === "supply" ? "" : `${KIND_LABEL[activeArc.arc.kind]}: `}{activeArc.arc.label}</i>
         </span> : null}
         {[...chips.values()].map((c) => {
             const href = hrefFor(c.country);
@@ -101,8 +104,8 @@ export function Arcs({ arcs, hrefFor = liveCountryPage, selectedId, table = "Sup
         })}
         {table ? <OverlayTable
             caption={table}
-            head={["From", "To", "What", "Confidence"]}
-            rows={arcs.map((a) => [`${a.from.label} (${a.from.country})`, `${a.to.label} (${a.to.country})`, a.label, a.confidence])}
+            head={["From", "To", "Kind", "What", "Confidence"]}
+            rows={arcs.map((a) => [`${a.from.label} (${a.from.country})`, `${a.to.label} (${a.to.country})`, KIND_LABEL[a.kind], a.label, a.confidence])}
         /> : null}
     </>;
 }

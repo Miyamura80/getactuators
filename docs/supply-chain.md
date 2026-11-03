@@ -246,7 +246,10 @@ share one template, so a new country is data only:
 6. **Gate.** The page goes live (route, header menu, footer, sitemap,
    llms.txt, `/api/v1/countries`, `get_country`, and arc chips on other
    maps turning into links) once `coverage(code)` reaches
-   `COVERAGE_TARGET`: 40 companies, 80 sites and 30 current links. Until
+   `COVERAGE_TARGET`: 40 companies, 80 sites and 30 current links, of which at
+   least 15 are supply (parts or materials). Tag a money link
+   `kind: "investment"` and a research or integration tie
+   `kind: "partnership"`; untagged links are supply. Until
    then nothing is routed, so the data can merge in steps.
 7. **Check.** `make citation_audit`, `bun test tests/supply-chain` and
    `bun test tests/server/country.test.ts`; update the page count in

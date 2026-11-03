@@ -34,7 +34,10 @@ import {
 const coverageOut = z.object({
     companies: z.number(),
     sites: z.number(),
-    links: z.number(),
+    links: z.number().describe("Current links of any kind."),
+    supplyLinks: z
+        .number()
+        .describe("Current links where parts or materials change hands."),
 });
 
 const stageOut = z.object({
@@ -88,7 +91,9 @@ export const countryOut = z.object({
     sites: z.array(siteOut).describe("Sites in the country, any owner."),
     links: z
         .array(linkOut)
-        .describe("Current supply links with at least one end among `companies`."),
+        .describe(
+            "Current links (supply, investment or partnership) with at least one end among `companies`.",
+        ),
 });
 
 export const countryListOut = z.object({

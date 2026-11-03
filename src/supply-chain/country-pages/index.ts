@@ -1,6 +1,6 @@
 import { COMPANIES, type Company } from "../companies";
 import type { Shares } from "../concentration";
-import type { SupplyLink } from "../links";
+import { type SupplyLink, linkKind } from "../links";
 import type { Admin1Country, NamedCluster } from "../map";
 import { METAL_STAGES, type MetalStage, STAGE_SHARES } from "../metals/stage-shares";
 import { activeLinks } from "../registry";
@@ -32,8 +32,16 @@ const CONTENT: Partial<Record<CountrySlug, CountryContent>> = {
     japan: JAPAN_PAGE,
 };
 
-// A country page ships once its dataset reaches these counts.
-export const COVERAGE_TARGET = { companies: 40, sites: 80, links: 30 } as const;
+// A country page ships once its dataset reaches these counts. `links` counts
+// every current link (supply, investment, partnership); `supplyLinks` only
+// those where parts or materials change hands, so a country cannot reach the
+// gate on ties alone.
+export const COVERAGE_TARGET = {
+    companies: 40,
+    sites: 80,
+    links: 30,
+    supplyLinks: 15,
+} as const;
 
 export const COUNTRY_AS_OF = "November 2026";
 
@@ -51,7 +59,7 @@ export function countrySites(code: Admin1Country): Site[] {
     return SITES.filter((s) => s.country === code);
 }
 
-// Current supply links with at least one end among the country's companies.
+// Current links (any kind) with at least one end among the country's companies.
 export function countryLinks(code: Admin1Country): SupplyLink[] {
     const ids = new Set(countryCompanies(code).map((c) => c.id));
     return activeLinks().filter((l) => ids.has(l.from) || ids.has(l.to));
@@ -61,6 +69,7 @@ export interface Coverage {
     companies: number;
     sites: number;
     links: number;
+    supplyLinks: number;
 }
 
 export function coverage(code: Admin1Country): Coverage {
@@ -68,6 +77,7 @@ export function coverage(code: Admin1Country): Coverage {
         companies: countryCompanies(code).length,
         sites: countrySites(code).length,
         links: countryLinks(code).length,
+        supplyLinks: countryLinks(code).filter((l) => linkKind(l) === "supply").length,
     };
 }
 
@@ -75,7 +85,8 @@ export function passesGate(c: Coverage, target: Coverage = COVERAGE_TARGET): boo
     return (
         c.companies >= target.companies &&
         c.sites >= target.sites &&
-        c.links >= target.links
+        c.links >= target.links &&
+        c.supplyLinks >= target.supplyLinks
     );
 }
 

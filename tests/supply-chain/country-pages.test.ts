@@ -16,6 +16,7 @@ import {
     passesGate,
     worldShares,
 } from "@/supply-chain/country-pages";
+import { linkKind } from "@/supply-chain/links";
 import { getCompany } from "@/supply-chain/registry";
 
 describe("coverage gate", () => {
@@ -34,12 +35,30 @@ describe("coverage gate", () => {
         ]);
     });
 
-    test("the gate needs all three counts", () => {
-        const at = { companies: 40, sites: 80, links: 30 };
+    test("the gate needs every count, including enough supply links", () => {
+        const at = { companies: 40, sites: 80, links: 30, supplyLinks: 15 };
         expect(passesGate(at)).toBe(true);
         expect(passesGate({ ...at, links: 29 })).toBe(false);
+        expect(passesGate({ ...at, supplyLinks: 14 })).toBe(false);
         expect(passesGate({ ...at, sites: 79 })).toBe(false);
         expect(passesGate({ ...at, companies: 39 })).toBe(false);
+    });
+
+    test("Japan's links are tagged by kind and supply alone clears the floor", () => {
+        const kinds = countryLinks("JP").map(linkKind);
+        const count = (k: string) => kinds.filter((x) => x === k).length;
+        expect({
+            supply: count("supply"),
+            investment: count("investment"),
+            partnership: count("partnership"),
+        }).toEqual({
+            supply: 19,
+            investment: 5,
+            partnership: 6,
+        });
+        expect(coverage("JP").supplyLinks).toBeGreaterThanOrEqual(
+            COVERAGE_TARGET.supplyLinks,
+        );
     });
 
     test("pages resolve by slug or code, any case", () => {

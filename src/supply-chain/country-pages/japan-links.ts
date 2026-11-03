@@ -12,6 +12,7 @@ interface JapanLink {
     sources: string[];
     confidence: Confidence;
     note?: string;
+    kind?: "investment" | "partnership";
 }
 
 const LYNAS_2026 = ["miningweekly-lynas-japan-2026", "smm-lynas-jare-2026"];
@@ -32,6 +33,7 @@ const mujinArm = (from: string, sources: string[]): JapanLink => ({
     from,
     to: "mujin",
     what: "Robot arms driven by MujinController in Mujin systems",
+    kind: "partnership",
     sources,
     confidence: "reported",
 });
@@ -59,6 +61,7 @@ export const JAPAN_LINKS: JapanLink[] = [
         from: "jare",
         to: "lynas",
         what: "Equity and loans",
+        kind: "investment",
         sources: LYNAS_2023,
         confidence: "reported",
         note: "About A$200 million added in 2023 for heavy rare earth supply.",
@@ -67,6 +70,7 @@ export const JAPAN_LINKS: JapanLink[] = [
         from: "jogmec",
         to: "jare",
         what: "Equity and loans (co-owner with Sojitz)",
+        kind: "investment",
         sources: LYNAS_2023,
         confidence: "reported",
     },
@@ -74,6 +78,7 @@ export const JAPAN_LINKS: JapanLink[] = [
         from: "sojitz",
         to: "jare",
         what: "Equity and loans (co-owner with JOGMEC)",
+        kind: "investment",
         sources: LYNAS_2023,
         confidence: "reported",
     },
@@ -100,6 +105,7 @@ export const JAPAN_LINKS: JapanLink[] = [
         from: "jogmec",
         to: "caremag",
         what: "Equity through Japan France Rare Earths",
+        kind: "investment",
         sources: ["meti-caremag-2025", "argus-caremag-2025"],
         confidence: "reported",
     },
@@ -107,6 +113,7 @@ export const JAPAN_LINKS: JapanLink[] = [
         from: "iwatani",
         to: "caremag",
         what: "Equity through Japan France Rare Earths",
+        kind: "investment",
         sources: ["argus-caremag-2025"],
         confidence: "reported",
     },
@@ -180,6 +187,7 @@ export const JAPAN_LINKS: JapanLink[] = [
         from: "toyota-motor",
         to: "boston-dynamics",
         what: "Large behaviour models for Atlas (Toyota Research Institute)",
+        kind: "partnership",
         sources: ["toyota-tri-atlas-2025"],
         confidence: "reported",
         note: "A joint research partnership since October 2024, not a parts supply.",
