@@ -35,7 +35,7 @@
 
 ## Benchmark submissions
 
-Measured an actuator on a dyno or bench? Add the run so it shows on [/benchmarks](https://actuatorlist.com/benchmarks) next to the datasheet, badged **community**.
+Measured an actuator on a dyno or bench? Add the run so it shows on the `/benchmarks` page (actuatorlist.com/benchmarks) next to the datasheet, badged **community**.
 
 1.  Measure to the [test protocol](docs/benchmarks/protocol.md): rig requirements, procedures, minimum samples and how to report uncertainty. The torque-speed and thermal groups are required; backlash, stiffness, friction, ripple, bandwidth, latency and repeatability are optional.
 2.  Add one folder `data/benchmarks/<actuator-id>/<run-id>/`, where `<actuator-id>` is the catalog id from the actuator's URL (`/actuators/<actuator-id>`). Put in it:

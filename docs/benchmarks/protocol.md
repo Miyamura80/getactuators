@@ -1,6 +1,6 @@
 # Actuator benchmark test protocol
 
-How to measure an actuator so the run can sit on [/benchmarks](https://actuatorlist.com/benchmarks) next to its datasheet. Lab and community runs must follow it in full; `scripts/validate-benchmarks.ts` (run by `make ci`) checks every rule marked **checked**. Published runs (papers, vendor reports, blogs) are taken as their source reports them, with the method and uncertainty recorded.
+How to measure an actuator so the run can sit on the `/benchmarks` page (actuatorlist.com/benchmarks) next to its datasheet. Lab and community runs must follow it in full; `scripts/validate-benchmarks.ts` (run by `make ci`) checks every rule marked **checked**. Published runs (papers, vendor reports, blogs) are taken as their source reports them, with the method and uncertainty recorded.
 
 ## What a run reports
 
