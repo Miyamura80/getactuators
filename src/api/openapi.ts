@@ -144,6 +144,7 @@ function tagFor(path: string): string {
     if (path.includes("/benchmarks")) return "actuators";
     if (path.includes("/actuators")) return "actuators";
     if (path.includes("/sdk")) return "actuators";
+    if (path.includes("/people")) return "people";
     if (path.startsWith("/api/v1/")) return "taxonomy";
     return "meta";
 }
@@ -230,6 +231,11 @@ export function buildOpenApi(operations: readonly Operation[]): Json {
                 description: "Categories, brands and use cases for filters.",
             },
             { name: "meta", description: "Discovery: index and this document." },
+            {
+                name: "people",
+                description:
+                    "Leading people in actuators and rare-earth magnet supply, with affiliations, key works and sources.",
+            },
             {
                 name: "supply-chain",
                 description:

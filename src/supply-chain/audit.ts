@@ -1,3 +1,4 @@
+import { DIRECTORY_RECORDS } from "../people/directory";
 import { sdkErrors } from "../sdk/audit";
 import { SDK_CHECKS } from "../sdk/checks";
 import { COMPANIES } from "./companies";
@@ -101,6 +102,7 @@ const CITING_RECORDS: Record<string, readonly { sources: readonly string[] }[]> 
     "process-steps": PROCESS_CHAINS.flatMap((c) => c.steps),
     "country-stage-gaps": countryStageRecords().flatMap((s) => (s.gap ? [s.gap] : [])),
     "sdk-checks": Object.values(SDK_CHECKS).flat(),
+    "people-directory": DIRECTORY_RECORDS,
 };
 
 // Numbers that need no citation of their own: coordinates (the site carries

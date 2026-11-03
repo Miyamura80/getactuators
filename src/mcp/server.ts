@@ -7,6 +7,7 @@ import { actuatorTools } from "./tools/actuators";
 import { benchmarkTools } from "./tools/benchmarks";
 import { compareTools } from "./tools/compare";
 import { engineeringTools } from "./tools/engineering";
+import { peopleTools } from "./tools/people";
 import { processTools } from "./tools/processes";
 import { robotTools } from "./tools/robots";
 import { sdkTools } from "./tools/sdk";
@@ -34,6 +35,7 @@ export const CATALOG_TOOLS: readonly ToolDef[] = [
     ...benchmarkTools,
     ...processTools,
     ...sdkTools,
+    ...peopleTools,
 ];
 
 export const INSTRUCTIONS = `actuatorlist is an open, read-only catalog of robot actuators and the robots that use them. No account or key is needed and no tool changes anything.
@@ -53,6 +55,7 @@ Which tool to use:
 - Sizing a robot arm: arm_holding_torque takes link lengths, masses, actuator masses and payload and returns static holding torque per joint, catalog actuators per joint and a calculator_url the user can open.
 - Measured performance (dyno and bench tests, not datasheet claims): get_benchmarks gives torque-speed curves, thermal derating, backlash and friction per run with its rig, data method, uncertainty, source and the measured over datasheet ratio. Say whether a figure was digitised from a plot or is vendor data.
 - Which actuator brand has the best SDK (drivers, ROS 2, docs, firmware, support), with linked developer posts: get_sdk_score. get_actuator also returns the brand's SDK score as sdk.
+- Who matters in actuators and rare-earth magnet supply (researchers, founders, magnet and rare earth executives, analysts, policy leads) with affiliation, key works and sources: list_people, optionally by domain.
 Bulk snapshots are also exposed as resources (catalog://actuators, catalog://robots, catalog://categories, actuator://{id}, robot://{id}). Website: ${SITE_URL}.`;
 
 export function createCatalogServer(): McpServer {

@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { LINK_LABEL, orgOf, type LinkKind, type Person } from "../../../../src/people";
 import { OrgLogo } from "./OrgLogo";
 
@@ -50,15 +51,17 @@ function Headshot({ person }: { person: Person }) {
 
 // One person: headshot, name and links. The core card (person.contributor
 // "core") is larger and adds the role; every other card adds the affiliation.
-export function PersonCard({ person }: { person: Person }) {
+// `children` (the /people role, why and key works) sits under the affiliation.
+export function PersonCard({ person, children }: { person: Person; children?: ReactNode }) {
     const core = person.contributor === "core";
     return (
-        <article className={`pc${core ? " pc-core" : ""}`} aria-label={person.name}>
+        <article id={person.id} className={`pc${core ? " pc-core" : ""}`} aria-label={person.name}>
             <Headshot person={person} />
             <div className="pc-body">
                 <h3 className="pc-name">{person.name}</h3>
                 {core && <p className="pc-role">{person.role}</p>}
                 {!core && <OrgLogo org={orgOf(person)} />}
+                {children}
                 {person.links.length > 0 && (
                     <div className="pc-links">
                         {person.links.map((l) => (
