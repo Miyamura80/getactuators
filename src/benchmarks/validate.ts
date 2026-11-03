@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { type Citation, licenceErrors } from "../supply-chain/licence";
-import { PLAUSIBLE_PEAK_RATIO, measuredPeak, reportedMetrics } from "./index";
+import { PLAUSIBLE_PEAK_RATIO, highestTorque, reportedMetrics } from "./measures";
 import {
     BENCHMARK_FACTS_ALLOWLIST,
     BENCHMARK_SOURCES,
@@ -17,7 +17,8 @@ import {
 // Validation of benchmark submissions, run by scripts/validate-benchmarks.ts
 // in `make ci`: schema and units, folder layout, catalog link, protocol
 // (core measurements and minimum samples for lab and community runs), raw
-// files, plausibility against the datasheet, and source licences. Server and
+// files and their agreement with run.json, plausibility against the
+// datasheet, and source licences. Server and
 // script side only (zod). The protocol is docs/benchmarks/protocol.md.
 
 export const PROTOCOL_DOC = "docs/benchmarks/protocol.md";
@@ -32,6 +33,15 @@ export const RIG_DOC = "rig.md";
 export const TN_CSV_HEADER = ["rpm", "torque_nm", "efficiency"];
 export const THERMAL_CSV_HEADER = ["torque_nm", "t_to_limit_s", "winding_rise_c"];
 const PHOTO = /^rig[-\w]*\.(jpe?g|png|webp)$/;
+// Torque transducer accuracy class a lab or community rig must meet, % FS.
+export const MAX_ACCURACY_PCT = 0.5;
+// rig.md must say something: at least this many non-space characters.
+const MIN_RIG_DOC_CHARS = 40;
+
+// Folder names, which are also the ids in run.json and the import paths in
+// the generated module.
+export const ACTUATOR_ID_RE = /^[a-z0-9][a-z0-9-]*$/;
+export const RUN_ID_RE = /^[a-z0-9][a-z0-9-]{2,63}$/;
 
 const pos = (maxValue: number) => z.number().positive().max(maxValue);
 const nonNeg = (maxValue: number) => z.number().min(0).max(maxValue);
@@ -50,8 +60,8 @@ const rigSchema = z
 
 const runSchema = z
     .object({
-        actuatorId: z.string().regex(/^[a-z0-9][a-z0-9-]*$/),
-        runId: z.string().regex(/^[a-z0-9][a-z0-9-]{2,63}$/),
+        actuatorId: z.string().regex(ACTUATOR_ID_RE),
+        runId: z.string().regex(RUN_ID_RE),
         date: z.string().regex(/^\d{4}(-\d{2}(-\d{2})?)?$/),
         origin: z.enum(BENCHMARK_ORIGINS),
         source: z
@@ -67,6 +77,7 @@ const runSchema = z
         methodNote: z.string().min(10).optional(),
         revision: z.string().min(1).optional(),
         otherRevision: z.boolean().optional(),
+        notRanked: z.string().min(20).optional(),
         rig: rigSchema,
         torqueSpeed: z
             .array(
@@ -74,7 +85,7 @@ const runSchema = z
                     .object({
                         rpm: nonNeg(20000),
                         torqueNm: nonNeg(5000),
-                        efficiency: z.number().positive().max(1).optional(),
+                        efficiency: nonNeg(1).optional(),
                     })
                     .strict(),
             )
@@ -159,7 +170,10 @@ function publishedErrors(run: BenchmarkRun): string[] {
             `source url ${run.source.url} is not in src/benchmarks/sources.ts; add it there with its reuse value`,
         );
     if (!run.sourceKind) errors.push("published runs need sourceKind");
-    if (run.submitter) errors.push("submitter is for community runs only");
+    if (run.dataMethod === "raw")
+        errors.push(
+            'published runs are tabulated, digitised or reported, never "raw"; raw data belongs to lab and community runs',
+        );
     if (reportedMetrics(run).length === 0)
         errors.push("a published run must report at least one metric");
     return errors;
@@ -178,6 +192,10 @@ function protocolErrors(run: BenchmarkRun): string[] {
             `${run.origin} runs must be raw data (dataMethod "raw")`,
         ],
         [run.rig.accuracyPct === null, "rig.accuracyPct is required"],
+        [
+            (run.rig.accuracyPct ?? 0) > MAX_ACCURACY_PCT,
+            `rig.accuracyPct must be ${MAX_ACCURACY_PCT}% of full scale or better`,
+        ],
         [run.rig.ambientC === null, "rig.ambientC is required"],
         [run.rig.busV === null, "rig.busV is required"],
         [
@@ -196,8 +214,13 @@ function protocolErrors(run: BenchmarkRun): string[] {
     return checks.filter(([bad]) => bad).map(([, message]) => message);
 }
 
-const originErrors = (run: BenchmarkRun) =>
-    run.origin === "published" ? publishedErrors(run) : protocolErrors(run);
+function originErrors(run: BenchmarkRun): string[] {
+    const errors =
+        run.origin === "published" ? publishedErrors(run) : protocolErrors(run);
+    if (run.origin !== "community" && run.submitter)
+        errors.push("submitter is for community runs only");
+    return errors;
+}
 
 function uncertaintyErrors(run: BenchmarkRun): string[] {
     const reported = reportedMetrics(run);
@@ -210,23 +233,25 @@ function uncertaintyErrors(run: BenchmarkRun): string[] {
     return errors;
 }
 
-// T-N points by ascending rpm, torque never rising by more than the stated
-// uncertainty (a monotonic envelope).
+// T-N points by ascending rpm, torque never rising more than the stated
+// uncertainty above the lowest torque seen at a lower speed (a monotonic
+// envelope; comparing with the running minimum stops small steps adding up).
 function curveErrors(run: BenchmarkRun): string[] {
     const errors: string[] = [];
     const tol = run.uncertainty.torqueSpeed ?? 0;
     const tn = run.torqueSpeed ?? [];
+    let floor = Number.POSITIVE_INFINITY;
     tn.forEach((p, i) => {
         const prev = tn[i - 1];
-        if (!prev) return;
-        if (p.rpm <= prev.rpm)
+        if (prev && p.rpm <= prev.rpm)
             errors.push(
                 `torqueSpeed[${i}]: rpm must rise strictly (${prev.rpm} then ${p.rpm})`,
             );
-        if (p.torqueNm > prev.torqueNm + tol)
+        if (p.torqueNm > floor + tol)
             errors.push(
-                `torqueSpeed[${i}]: torque rises from ${prev.torqueNm} to ${p.torqueNm} N·m with speed; the T-N envelope must not rise`,
+                `torqueSpeed[${i}]: torque rises from ${floor} to ${p.torqueNm} N·m with speed; the T-N envelope must not rise`,
             );
+        floor = Math.min(floor, p.torqueNm);
     });
     const th = run.thermal ?? [];
     th.forEach((p, i) => {
@@ -249,7 +274,7 @@ function curveErrors(run: BenchmarkRun): string[] {
 }
 
 function plausibilityErrors(run: BenchmarkRun, actuator: CatalogEntry): string[] {
-    const peak = measuredPeak(run);
+    const peak = highestTorque(run);
     const sheet = actuator.peak_torque_nm;
     if (peak === undefined || !sheet || run.plausibilityNote) return [];
     const r = peak / sheet;
@@ -261,51 +286,130 @@ function plausibilityErrors(run: BenchmarkRun, actuator: CatalogEntry): string[]
         : [];
 }
 
-// Columns that may be blank: efficiency when not measured, and the time of a
+// Allowed range per raw CSV column (the run.json bounds), and the columns
+// that may be blank: efficiency when not measured, and the time of a
 // continuous (limit not reached) thermal point.
-const OPTIONAL_COLUMNS = new Set(["efficiency", "t_to_limit_s"]);
+// Each entry: [lowest, highest, may be blank, lowest excluded].
+const COLUMN_RANGE: Record<string, [number, number, boolean, boolean]> = {
+    rpm: [0, 20000, false, false],
+    torque_nm: [0, 5000, false, false],
+    efficiency: [0, 1, true, false],
+    t_to_limit_s: [0, 1e6, true, true],
+    winding_rise_c: [0, 250, false, true],
+};
 
-function cellOk(cell: string, column: string): boolean {
+type Row = (number | null)[];
+
+function cellError(cell: string, column: string): string | undefined {
     const c = cell.trim();
-    if (c === "") return OPTIONAL_COLUMNS.has(column);
-    return Number.isFinite(Number(c));
+    const [lo, hi, optional, open] = COLUMN_RANGE[column] ?? [0, 0, false, false];
+    if (c === "") return optional ? undefined : `${column} is blank`;
+    const v = Number(c);
+    if (!Number.isFinite(v)) return "values must be numbers";
+    const low = open ? v <= lo : v < lo;
+    return low || v > hi
+        ? `${column} ${c} must be ${open ? "above" : "at least"} ${lo} and at most ${hi}`
+        : undefined;
 }
 
-function csvErrors(text: string, header: readonly string[], name: string): string[] {
+function parseCsv(
+    text: string,
+    header: readonly string[],
+    name: string,
+): { rows: Row[]; errors: string[] } {
     const lines = text.trim().split(/\r?\n/);
     const head = (lines[0] ?? "").split(",").map((s) => s.trim());
     if (head.join(",") !== header.join(","))
-        return [`${name}: header must be ${header.join(",")}`];
-    if (lines.length < 2) return [`${name}: no data rows`];
+        return { rows: [], errors: [`${name}: header must be ${header.join(",")}`] };
+    if (lines.length < 2) return { rows: [], errors: [`${name}: no data rows`] };
     const errors: string[] = [];
+    const rows: Row[] = [];
     lines.slice(1).forEach((line, i) => {
         const cells = line.split(",");
-        if (cells.length !== header.length)
+        if (cells.length !== header.length) {
             errors.push(`${name} row ${i + 2}: expected ${header.length} columns`);
-        else if (!cells.every((c, j) => cellOk(c, header[j] ?? "")))
-            errors.push(`${name} row ${i + 2}: values must be numbers`);
+            return;
+        }
+        const bad = cells.map((c, j) => cellError(c, header[j] ?? "")).find(Boolean);
+        if (bad) errors.push(`${name} row ${i + 2}: ${bad}`);
+        else rows.push(cells.map((c) => (c.trim() === "" ? null : Number(c))));
     });
-    return errors;
+    return { rows, errors };
+}
+
+const mean = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / xs.length;
+const nums = (rows: Row[], col: number) =>
+    rows.map((r) => r[col]).filter((v): v is number => typeof v === "number");
+
+// Every T-N point in run.json needs CSV rows at its speed (within 0.5 rpm)
+// whose mean torque is within the stated torqueSpeed uncertainty.
+function tnAgreement(run: BenchmarkRun, rows: Row[]): string[] {
+    const tol = run.uncertainty.torqueSpeed ?? 0;
+    return (run.torqueSpeed ?? []).flatMap((p, i) => {
+        const at = rows.filter((r) => Math.abs((r[0] ?? Number.NaN) - p.rpm) <= 0.5);
+        if (at.length === 0)
+            return [`${TN_CSV} has no rows at ${p.rpm} rpm (torqueSpeed[${i}])`];
+        const m = mean(nums(at, 1));
+        return Math.abs(m - p.torqueNm) > tol + 1e-9
+            ? [
+                  `torqueSpeed[${i}]: ${p.torqueNm} N·m disagrees with the ${TN_CSV} mean ${Number(m.toPrecision(4))} N·m at ${p.rpm} rpm (beyond ±${tol})`,
+              ]
+            : [];
+    });
+}
+
+// Every thermal point needs CSV rows at its torque (within the thermal
+// uncertainty); its time and winding rise must lie within those rows' range,
+// and a continuous point (null time) needs blank times.
+function thermalAgreement(run: BenchmarkRun, rows: Row[]): string[] {
+    const tol = run.uncertainty.thermal ?? 0;
+    const within = (v: number, xs: number[]) =>
+        xs.length > 0 && v >= Math.min(...xs) - 1e-9 && v <= Math.max(...xs) + 1e-9;
+    return (run.thermal ?? []).flatMap((p, i) => {
+        const at = rows.filter(
+            (r) => Math.abs((r[0] ?? Number.NaN) - p.torqueNm) <= tol + 1e-9,
+        );
+        if (at.length === 0)
+            return [`${THERMAL_CSV} has no rows at ${p.torqueNm} N·m (thermal[${i}])`];
+        const errors: string[] = [];
+        const times = nums(at, 1);
+        if (p.tToLimitS === null ? times.length > 0 : times.length < at.length)
+            errors.push(
+                `thermal[${i}]: ${THERMAL_CSV} must leave t_to_limit_s blank exactly when run.json has null`,
+            );
+        else if (p.tToLimitS !== null && !within(p.tToLimitS, times))
+            errors.push(
+                `thermal[${i}]: ${p.tToLimitS} s is outside the ${THERMAL_CSV} times at ${p.torqueNm} N·m`,
+            );
+        if (p.windingRiseC !== undefined && !within(p.windingRiseC, nums(at, 2)))
+            errors.push(
+                `thermal[${i}]: winding rise ${p.windingRiseC} °C is outside the ${THERMAL_CSV} readings at ${p.torqueNm} N·m`,
+            );
+        return errors;
+    });
 }
 
 function rawFileErrors(run: BenchmarkRun, folder: RunFolder): string[] {
     if (run.origin === "published") return [];
     const errors: string[] = [];
-    for (const [file, header, points] of [
-        [TN_CSV, TN_CSV_HEADER, run.torqueSpeed?.length ?? 0],
-        [THERMAL_CSV, THERMAL_CSV_HEADER, run.thermal?.length ?? 0],
+    for (const [file, header, agree] of [
+        [TN_CSV, TN_CSV_HEADER, tnAgreement],
+        [THERMAL_CSV, THERMAL_CSV_HEADER, thermalAgreement],
     ] as const) {
         if (!folder.files.includes(file)) {
             errors.push(`missing raw data ${file}`);
             continue;
         }
-        const text = folder.read(file);
-        errors.push(...csvErrors(text, header, file));
-        if (text.trim().split(/\r?\n/).length - 1 < points)
-            errors.push(`${file} has fewer rows than run.json has points`);
+        const parsed = parseCsv(folder.read(file), header, file);
+        errors.push(...parsed.errors);
+        if (parsed.errors.length === 0) errors.push(...agree(run, parsed.rows));
     }
     if (!folder.files.includes(RIG_DOC))
         errors.push(`missing ${RIG_DOC} (rig description)`);
+    else if (folder.read(RIG_DOC).replace(/\s/g, "").length < MIN_RIG_DOC_CHARS)
+        errors.push(
+            `${RIG_DOC} must describe the coupling, load, cooling and controller`,
+        );
     if (!folder.files.some((f) => PHOTO.test(f)))
         errors.push("missing a rig photo (rig.jpg, rig.png or rig.webp)");
     return errors;
@@ -353,10 +457,27 @@ export function benchmarkLicenceErrors(runs: readonly BenchmarkRun[]): string[] 
     });
 }
 
-// The generated import list for src/benchmarks/runs.generated.ts.
+// Folder names that cannot become ids or import paths.
+export function folderNameErrors(
+    folders: readonly { actuatorId: string; runId: string }[],
+): string[] {
+    return folders.flatMap((f) =>
+        ACTUATOR_ID_RE.test(f.actuatorId) && RUN_ID_RE.test(f.runId)
+            ? []
+            : [
+                  `data/benchmarks/${JSON.stringify(f.actuatorId)}/${JSON.stringify(f.runId)}: folder names must be lowercase letters, digits and hyphens`,
+              ],
+    );
+}
+
+// The generated import list for src/benchmarks/runs.generated.ts. Refuses
+// folder names outside the id patterns, and quotes each import specifier
+// with JSON.stringify, so a folder name can never inject code.
 export function runsModule(
     folders: readonly { actuatorId: string; runId: string }[],
 ): string {
+    const bad = folderNameErrors(folders);
+    if (bad.length > 0) throw new Error(bad.join("\n"));
     const sorted = [...folders].sort(
         (a, b) =>
             a.actuatorId.localeCompare(b.actuatorId) || a.runId.localeCompare(b.runId),
@@ -364,7 +485,7 @@ export function runsModule(
     const imports = sorted
         .map(
             (f, i) =>
-                `import r${i} from "../../data/benchmarks/${f.actuatorId}/${f.runId}/run.json";`,
+                `import r${i} from ${JSON.stringify(`../../data/benchmarks/${f.actuatorId}/${f.runId}/run.json`)};`,
         )
         .join("\n");
     return `// Generated by \`bun run scripts/validate-benchmarks.ts --write\` from
@@ -375,4 +496,11 @@ import type { BenchmarkRun } from "./types";
 
 export const RUNS = [${sorted.map((_, i) => `r${i}`).join(", ")}] as unknown as BenchmarkRun[];
 `;
+}
+
+// True when two versions of the generated module say the same thing, ignoring
+// the line breaks and trailing commas that make fmt adds.
+export function sameModule(a: string, b: string): boolean {
+    const norm = (t: string) => t.replace(/\s+/g, "").replace(/,\]/g, "]");
+    return norm(a) === norm(b);
 }

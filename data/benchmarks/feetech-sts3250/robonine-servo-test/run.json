@@ -9,7 +9,7 @@
         "title": "Robonine: Feetech STS3250 smart actuator, evaluation of accuracy, torque and backlash"
     },
     "dataMethod": "reported",
-    "methodNote": "Torque read on a lever: the peak held for a split second, and the highest load held before overload protection cut in.",
+    "methodNote": "Torque read on a lever: the peak held for a split second, and the highest load held before overload protection cut in. The post gives no lever length, scale accuracy or repeat count: ±0.5 N·m is our estimate, about 10% of the peak.",
     "rig": {
         "torqueSensor": "scale under a lever",
         "accuracyPct": null,
@@ -20,7 +20,7 @@
     },
     "peakTorqueNm": 4.71,
     "uncertainty": {
-        "peakTorqueNm": 0.2
+        "peakTorqueNm": 0.5
     },
     "note": "48 kg·cm peak against a 50 kg·cm rating; 25 kg·cm (2.45 N·m) was the most it held before protection cut in."
 }

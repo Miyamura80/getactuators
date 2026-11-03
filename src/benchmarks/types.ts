@@ -14,7 +14,8 @@ export type BenchmarkSourceKind = (typeof SOURCE_KINDS)[number];
 
 // raw: CSVs from the rig sit in the folder. tabulated: copied from a table in
 // the source. digitised: read off a published plot (never raw data).
-// reported: single figures quoted in the source's text.
+// reported: single figures quoted in the source's text (a quoted range is
+// entered as its mid-point with the half-width as uncertainty).
 export const DATA_METHODS = ["raw", "tabulated", "digitised", "reported"] as const;
 export type DataMethod = (typeof DATA_METHODS)[number];
 
@@ -66,6 +67,10 @@ export interface BenchmarkRun {
     // True when the hardware tested is not the catalog entry's revision: the
     // run is shown but left out of datasheet deltas and the leaderboard.
     otherRevision?: boolean;
+    // Why a run on the catalog revision is still kept out of datasheet deltas
+    // and the leaderboard (for example a driver limit, or data the source
+    // appears to have copied from another model). Shown, not ranked.
+    notRanked?: string;
     rig: BenchmarkRig;
     torqueSpeed?: TorqueSpeedPoint[];
     thermal?: ThermalPoint[];

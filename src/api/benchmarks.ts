@@ -25,14 +25,16 @@ export const BenchmarkListParams = z.object({
         .describe("published, lab or community."),
 });
 
-export function listBenchmarksHandler({ url }: ApiContext): Response {
+// Data behind each endpoint, shared with its markdown twin (api-md.ts).
+export function benchmarkList({ url }: ApiContext) {
     const q = parseQuery(BenchmarkListParams, url);
-    return json(
-        benchmarkListView(ACTUATORS, { actuatorId: q.actuator_id, origin: q.origin }),
-    );
+    return benchmarkListView(ACTUATORS, {
+        actuatorId: q.actuator_id,
+        origin: q.origin,
+    });
 }
 
-export function actuatorBenchmarksHandler({ params }: ApiContext): Response {
+export function actuatorBenchmarks({ params }: ApiContext) {
     const id = params.id ?? "";
     if (!ACTUATORS.some((a) => a.id === id))
         throw new ApiError("not_found", {
@@ -44,5 +46,11 @@ export function actuatorBenchmarksHandler({ params }: ApiContext): Response {
             detail: `No measured runs for "${id}" yet.`,
             hint: "List actuators with runs with GET /api/v1/benchmarks; submit one by pull request (see /benchmarks).",
         });
-    return json(benchmarkListView(ACTUATORS, { actuatorId: id }));
+    return benchmarkListView(ACTUATORS, { actuatorId: id });
 }
+
+export const listBenchmarksHandler = (ctx: ApiContext): Response =>
+    json(benchmarkList(ctx));
+
+export const actuatorBenchmarksHandler = (ctx: ApiContext): Response =>
+    json(actuatorBenchmarks(ctx));

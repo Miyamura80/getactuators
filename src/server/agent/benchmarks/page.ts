@@ -19,16 +19,25 @@ import {
 import { ACTUATORS } from "@/catalog";
 import { DATA_LICENSE, SITE_URL, absoluteUrl } from "../../site";
 import * as ld from "../jsonld";
-import { mdLink, mdTable } from "../md";
+import { mdLink, mdTable, mdText } from "../md";
 import type { Page } from "../page-types";
-import { actuatorLink, badge, fmt, nameOf, pct, runLink, sourceCell } from "./markdown";
+import {
+    actuatorLink,
+    badge,
+    fmt,
+    metricLine,
+    nameOf,
+    pct,
+    runLink,
+    sourceCell,
+} from "./markdown";
 
 // Markdown twin of /benchmarks (datasheet against measured, leaderboard,
 // curves, thermal derating and every run) and its Dataset JSON-LD.
 
 const TITLE = "Measured actuator benchmarks";
 const DESCRIPTION =
-    "Dyno and bench measurements of robot actuators next to their datasheet claims: torque-speed curves, thermal derating, backlash and friction from published tests and community runs.";
+    "Measured robot actuator performance next to datasheet claims: torque-speed curves, thermal derating, backlash and friction from vendor test reports, papers and blogs, each with its method and uncertainty.";
 
 function deltaTable(): string {
     const rows = datasheetDeltas(ACTUATORS);
@@ -66,6 +75,8 @@ function leaderboardTable(): string {
     );
 }
 
+const runCell = (r: BenchmarkRun) => `${runLink(r)} (${badge(r)})`;
+
 const tnCell = (r: BenchmarkRun) =>
     (r.torqueSpeed ?? []).map((p) => `${p.rpm} rpm: ${p.torqueNm}`).join("; ");
 const thermalCell = (r: BenchmarkRun) =>
@@ -78,29 +89,61 @@ const thermalCell = (r: BenchmarkRun) =>
 
 function curvesTable(): string {
     return mdTable(
-        ["Actuator", "Bus", "Method", "Points (rpm: N·m)", "Peak efficiency", "Run"],
+        [
+            "Actuator",
+            "Bus",
+            "Method",
+            "Points (rpm: N·m)",
+            "Uncertainty",
+            "Peak efficiency",
+            "Run",
+        ],
         BENCHMARK_RUNS.filter((r) => r.torqueSpeed?.length).map((r) => [
             nameOf(r.actuatorId),
             r.rig.busV === null ? "not stated" : `${r.rig.busV} V`,
             r.dataMethod,
             tnCell(r),
+            `±${r.uncertainty.torqueSpeed} N·m`,
             pct(peakEfficiency(r)),
-            runLink(r),
+            runCell(r),
         ]),
     );
 }
 
 function thermalTable(): string {
     return mdTable(
-        ["Actuator", "Ambient", "Torque: time to limit", "Continuous", "Run"],
+        [
+            "Actuator",
+            "Ambient",
+            "Torque: time to limit",
+            "Uncertainty",
+            "Continuous",
+            "Run",
+        ],
         BENCHMARK_RUNS.filter((r) => r.thermal?.length).map((r) => [
             nameOf(r.actuatorId),
             r.rig.ambientC === null ? "not stated" : `${r.rig.ambientC} °C`,
             thermalCell(r),
+            `±${r.uncertainty.thermal} N·m`,
             fmt(continuousTorque(r), "N·m"),
-            runLink(r),
+            runCell(r),
         ]),
     );
+}
+
+// Per run: its figures with uncertainty, then method, caveats and notes.
+function runNotes(): string {
+    return BENCHMARK_RUNS.map((r) => {
+        const lines = [
+            `Measured: ${mdText(metricLine(r).join("; "))}.`,
+            r.methodNote ? `Method: ${mdText(r.methodNote)}` : "",
+            r.revision ? `Revision: ${mdText(r.revision)}` : "",
+            r.notRanked ? `Not ranked: ${mdText(r.notRanked)}` : "",
+            r.plausibilityNote ? `Flagged: ${mdText(r.plausibilityNote)}` : "",
+            r.note ? `Note: ${mdText(r.note)}` : "",
+        ].filter(Boolean);
+        return `### ${r.actuatorId}/${r.runId}\n\n${lines.join("\n\n")}`;
+    }).join("\n\n");
 }
 
 function runsTable(): string {
@@ -151,6 +194,10 @@ ${thermalTable()}
 ## All runs
 
 ${runsTable()}
+
+## Run notes
+
+${runNotes()}
 
 ## Submit a run
 

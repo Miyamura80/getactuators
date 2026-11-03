@@ -9,8 +9,7 @@
         "title": "Kotov, HardwareX 26 (2026) e00767: An open-source test stand for backlash measurement in low-cost UART servo motors"
     },
     "dataMethod": "reported",
-    "revision": "single servo, default settings",
-    "methodNote": "Two STS3215 servos pull a 100 mm lever both ways; backlash is read on the device's own output encoder, unloaded and under load.",
+    "methodNote": "Two STS3215 servos at default settings pull a 100 mm lever both ways; backlash is read on the servo's own output encoder, unloaded and under load. backlashArcmin holds the unloaded figure; the loaded one is in the note, and neither load is the protocol's ±5% of rated torque. ±5.3 arcmin is one count of the 4096-count encoder (0.088°), our reading resolution, not an uncertainty stated by the paper.",
     "rig": {
         "torqueSensor": "none (fixed pulling load from two servos)",
         "accuracyPct": null,

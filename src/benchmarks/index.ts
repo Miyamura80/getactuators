@@ -4,30 +4,17 @@
 // imports only: the browser bundle reuses this module.
 
 import { REPO_URL } from "../repo-link";
+import { continuousTorque, isRanked, measuredNoLoad, measuredPeak } from "./measures";
 import { RUNS } from "./runs.generated";
-import {
-    type BenchmarkRun,
-    METRICS,
-    METRIC_KEYS,
-    type MetricGroup,
-    type MetricKey,
-    type ThermalPoint,
-} from "./types";
+import type { BenchmarkRun } from "./types";
 
+export * from "./measures";
 export * from "./types";
 
 export const BENCHMARKS_PATH = "/benchmarks";
 export const BENCHMARKS_AS_OF = "2026-11-03";
 export const PROTOCOL_URL = `${REPO_URL}/blob/main/docs/benchmarks/protocol.md`;
 export const SUBMIT_URL = `${REPO_URL}/blob/main/CONTRIBUTING.md#benchmark-submissions`;
-
-// Torque held this long or longer counts as continuous (10 minutes); a
-// thermal point with no limit reached counts too.
-export const CONTINUOUS_S = 600;
-
-// Measured peak torque outside this band of the datasheet peak needs a
-// plausibilityNote (see scripts/validate-benchmarks.ts).
-export const PLAUSIBLE_PEAK_RATIO = [0.3, 1.5] as const;
 
 export const BENCHMARK_RUNS: readonly BenchmarkRun[] = [...RUNS].sort(
     (a, b) =>
@@ -59,59 +46,14 @@ export function getRun(actuatorId: string, runId: string): BenchmarkRun | undefi
     return BENCHMARK_RUNS.find((r) => r.actuatorId === actuatorId && r.runId === runId);
 }
 
-// Runs on the catalog entry's own revision, the only ones ranked or set
-// against its datasheet.
+// Runs on the catalog entry's own revision and not flagged notRanked, the
+// only ones ranked or set against its datasheet.
 export function rankableRuns(actuatorId: string): BenchmarkRun[] {
-    return runsFor(actuatorId).filter((r) => !r.otherRevision);
+    return runsFor(actuatorId).filter(isRanked);
 }
 
 export function benchmarkedIds(): string[] {
     return [...new Set(BENCHMARK_RUNS.map((r) => r.actuatorId))];
-}
-
-// Metrics a run reports, in METRICS order.
-export function reportedMetrics(run: BenchmarkRun): MetricKey[] {
-    return METRIC_KEYS.filter((k) => {
-        const v = run[k];
-        return Array.isArray(v) ? v.length > 0 : typeof v === "number";
-    });
-}
-
-export function groupsCovered(run: BenchmarkRun): MetricGroup[] {
-    return [...new Set(reportedMetrics(run).map((k) => METRICS[k].group))];
-}
-
-const max = (xs: number[]) => (xs.length > 0 ? Math.max(...xs) : undefined);
-
-// Highest torque the run saw: its stated peak, else the top of its curves.
-export function measuredPeak(run: BenchmarkRun): number | undefined {
-    return (
-        run.peakTorqueNm ??
-        max([
-            ...(run.torqueSpeed ?? []).map((p) => p.torqueNm),
-            ...(run.thermal ?? []).map((p) => p.torqueNm),
-        ])
-    );
-}
-
-export function measuredNoLoad(run: BenchmarkRun): number | undefined {
-    return run.noLoadRpm ?? max((run.torqueSpeed ?? []).map((p) => p.rpm));
-}
-
-const isContinuous = (p: ThermalPoint) =>
-    p.tToLimitS === null || p.tToLimitS >= CONTINUOUS_S;
-
-// Highest torque held for CONTINUOUS_S or without reaching the limit.
-export function continuousTorque(run: BenchmarkRun): number | undefined {
-    return max((run.thermal ?? []).filter(isContinuous).map((p) => p.torqueNm));
-}
-
-export function peakEfficiency(run: BenchmarkRun): number | undefined {
-    return max(
-        (run.torqueSpeed ?? []).flatMap((p) =>
-            p.efficiency === undefined ? [] : [p.efficiency],
-        ),
-    );
 }
 
 // Measured over datasheet, or undefined when either side is missing.
@@ -133,10 +75,13 @@ function pair(measured: number | undefined, datasheet: number | null) {
         : { measured, datasheet, ratio: r };
 }
 
+// Empty for a run that is not ranked (other revision or notRanked): its
+// numbers are not set against this catalog entry's datasheet.
 export function datasheetDelta(
     run: BenchmarkRun,
     actuator: DatasheetRow,
 ): DatasheetDelta {
+    if (!isRanked(run)) return { run, actuator };
     return {
         run,
         actuator,
@@ -206,10 +151,13 @@ export function thermalRuns(): BenchmarkRun[] {
     return BENCHMARK_RUNS.filter((r) => (r.thermal?.length ?? 0) > 0);
 }
 
-// The run whose curve stands for an actuator in overlays: the first with a
-// T-N curve (newest first).
+// The run whose curve stands for an actuator in overlays: the newest ranked
+// run with a T-N curve, else the newest unranked one.
 export function curveFor(actuatorId: string): BenchmarkRun | undefined {
-    return runsFor(actuatorId).find((r) => (r.torqueSpeed?.length ?? 0) > 0);
+    const withCurve = runsFor(actuatorId).filter(
+        (r) => (r.torqueSpeed?.length ?? 0) > 0,
+    );
+    return withCurve.find(isRanked) ?? withCurve[0];
 }
 
 export function formatRatio(r: number): string {

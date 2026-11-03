@@ -3,6 +3,7 @@ import { BenchmarkListSchema } from "@/api/benchmarks";
 import { BENCHMARK_RUNS, benchmarkedIds } from "@/benchmarks";
 import { ACTUATORS } from "@/catalog";
 import { actuatorBody } from "@/server/agent/catalog-md";
+import { SITE_URL } from "@/server/site";
 import { get, getMarkdown } from "./agent-helpers";
 import { callTool } from "./mcp-helpers";
 
@@ -49,9 +50,15 @@ describe("/benchmarks page and twin", () => {
             // The biggest shortfall leads the delta table.
             const delta = md.slice(md.indexOf("## Datasheet vs measured"));
             const firstRow = delta.split("\n").find((l) => l.startsWith("| ["));
-            expect(firstRow).toContain("GIM6010-8");
-            expect(firstRow).toContain("-73%");
+            expect(firstRow).toContain("XC430-W150");
+            expect(firstRow).toContain("-54%");
             expect(md).toContain("Published (vendor)");
+            // Unranked runs are badged, and every run's notes are in the twin.
+            expect(md).toContain("Published (blog), not ranked");
+            expect(md).toContain("Published (vendor), other revision");
+            expect(md).toContain("## Run notes");
+            expect(md).toContain("Not ranked: The log puts the 3 N·m stall");
+            expect(md).toContain("Backlash 37.2 arcmin (±5.3)");
             expect(md).not.toContain(EM_DASH);
         }
     });
@@ -77,7 +84,7 @@ describe("REST /api/v1/benchmarks", () => {
             await (await get("/api/v1/benchmarks")).json(),
         );
         expect(all.total).toBe(BENCHMARK_RUNS.length);
-        expect(all.actuators).toBeGreaterThanOrEqual(15);
+        expect(all.actuators).toBe(benchmarkedIds().length);
         expect(all.protocol_url).toContain("docs/benchmarks/protocol.md");
         for (const r of all.results.filter((x) => x.origin === "published")) {
             expect(r.source?.url).toStartWith("https://");
@@ -92,12 +99,19 @@ describe("REST /api/v1/benchmarks", () => {
         expect(run?.vs_datasheet.peak_torque?.ratio).toBe(1);
         expect(run?.thermal.at(-1)?.t_to_limit_s).toBeNull();
         expect(run?.url).toBe(
-            "https://actuatorlist.com/benchmarks#run=robstride-02/robstride-manual-2026-07",
+            `${SITE_URL}/benchmarks#run=robstride-02/robstride-manual-2026-07`,
         );
-        const community = BenchmarkListSchema.parse(
-            await (await get("/api/v1/benchmarks?origin=community")).json(),
-        );
-        expect(community.results.every((r) => r.origin === "community")).toBe(true);
+        for (const origin of ["published", "lab", "community"] as const) {
+            const out = BenchmarkListSchema.parse(
+                await (await get(`/api/v1/benchmarks?origin=${origin}`)).json(),
+            );
+            const expected = BENCHMARK_RUNS.filter((r) => r.origin === origin).length;
+            expect(out.results).toHaveLength(expected);
+            expect(out.results.every((r) => r.origin === origin)).toBe(true);
+        }
+        expect(
+            BENCHMARK_RUNS.filter((r) => r.origin === "published").length,
+        ).toBeGreaterThan(0);
     });
 
     test("per-actuator runs, 404s and bad filters", async () => {
@@ -111,6 +125,16 @@ describe("REST /api/v1/benchmarks", () => {
             404,
         );
         expect((await get("/api/v1/benchmarks?origin=rumour")).status).toBe(400);
+        // Markdown twins of both GET operations, with the same 404.
+        const md = await get("/api/v1/benchmarks.md?actuator_id=robstride-02");
+        expect(md.status).toBe(200);
+        expect(await md.text()).toContain("robstride-02/robstride-manual-2026-07");
+        const one = await get("/api/v1/actuators/xiaomi-cybergear/benchmarks.md");
+        expect(one.status).toBe(200);
+        expect(await one.text()).toContain("# Measured runs: xiaomi-cybergear");
+        expect(
+            (await get("/api/v1/actuators/nabtesco-rv-42n/benchmarks.md")).status,
+        ).toBe(404);
         const spec = (await (await get("/openapi.json")).json()) as {
             paths: Record<string, Record<string, { tags: string[] }>>;
         };
@@ -122,7 +146,7 @@ describe("REST /api/v1/benchmarks", () => {
 describe("MCP get_benchmarks", () => {
     test("returns one actuator's runs and rejects unknown ids", async () => {
         const out = BenchmarkListSchema.parse(
-            (await callTool("get_benchmarks", { actuatorId: "mjbots-qdd100" }))
+            (await callTool("get_benchmarks", { actuator_id: "mjbots-qdd100" }))
                 .structuredContent,
         );
         expect(out.results.map((r) => r.run_id).sort()).toEqual([
@@ -131,8 +155,16 @@ describe("MCP get_benchmarks", () => {
             "mjbots-blog-2020-08",
         ]);
         expect(out.results.filter((r) => r.other_revision)).toHaveLength(2);
-        const bad = await callTool("get_benchmarks", { actuatorId: "nope" });
+        const bad = await callTool("get_benchmarks", { actuator_id: "nope" });
         expect(bad.isError).toBe(true);
+        // A known actuator with runs, filtered to an origin it has none of,
+        // returns an empty list rather than "no measured runs".
+        const none = await callTool("get_benchmarks", {
+            actuator_id: "mjbots-qdd100",
+            origin: "community",
+        });
+        expect(none.isError).toBeFalsy();
+        expect(BenchmarkListSchema.parse(none.structuredContent).total).toBe(0);
         const all = BenchmarkListSchema.parse(
             (await callTool("get_benchmarks")).structuredContent,
         );

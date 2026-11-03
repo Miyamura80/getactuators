@@ -9,7 +9,7 @@
         "title": "Xiaomi CyberGear micromotor instruction manual (English translation)"
     },
     "dataMethod": "digitised",
-    "methodNote": "T-N points read off the manual's chart at 20 rpm steps (about 0.2 N·m reading error). Overload times are the manual's own table, taken at 24 rpm with a 120 °C winding limit.",
+    "methodNote": "T-N points read off the manual's chart (about 0.2 N·m reading error): the start and end of the flat 12 N·m section (40 and 110 rpm), every 20 rpm from 130 to 270 rpm, and the end of the curve at 280 rpm. Overload times are the manual's own table, taken at 24 rpm with a 120 °C winding limit. Its torques are given to 0.5 N·m and the manual states no measurement uncertainty, so the ±0.25 N·m is that rounding only. windingRiseC is the rise from 25 °C ambient to the limit, entered only for points that reached it.",
     "rig": {
         "torqueSensor": "not stated",
         "accuracyPct": null,
@@ -112,13 +112,12 @@
         },
         {
             "torqueNm": 4,
-            "tToLimitS": null,
-            "windingRiseC": 95
+            "tToLimitS": null
         }
     ],
     "uncertainty": {
         "torqueSpeed": 0.2,
-        "thermal": 0.05
+        "thermal": 0.25
     },
     "note": "Vendor test data, not an independent run. The curve is flat at 12 N·m below about 110 rpm, which reads as the driver's torque cap rather than a motor limit."
 }

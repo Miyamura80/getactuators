@@ -18,7 +18,9 @@ import {
     datasheetDeltas,
     formatRatio,
     groupsCovered,
+    isRanked,
     measuredLeaderboard,
+    rankCaveat,
     reportedMetrics,
     runKey,
     thermalRuns,
@@ -94,11 +96,12 @@ function RunCard({ run, open }: { run: BenchmarkRun; open: boolean }) {
             <summary>
                 <OriginBadge run={run} />
                 <b>{nameOf(run.actuatorId)}</b>
-                <span className="bm-mono">{run.runId} · {run.date} · {run.dataMethod}{run.otherRevision ? " · other revision" : ""}</span>
+                <span className="bm-mono">{run.runId} · {run.date} · {run.dataMethod}{rankCaveat(run) ? ` · ${rankCaveat(run)}` : ""}</span>
                 <span className="bm-mono">{groupsCovered(run).map((g) => GROUP_LABEL[g]).join(", ")}</span>
             </summary>
             <div className="bm-run-body">
                 {run.note ? <p>{run.note}</p> : null}
+                {run.notRanked ? <p className="bm-flag">Not ranked: {run.notRanked}</p> : null}
                 {run.plausibilityNote ? <p className="bm-flag">Flagged: {run.plausibilityNote}</p> : null}
                 <dl>
                     {run.methodNote ? <><dt>Method</dt><dd>{run.methodNote}</dd></> : null}
@@ -108,7 +111,7 @@ function RunCard({ run, open }: { run: BenchmarkRun; open: boolean }) {
                     <dt>Conditions</dt>
                     <dd className="bm-mono">{rig.busV === null ? "bus not stated" : `${rig.busV} V`} · {rig.ambientC === null ? "ambient not stated" : `${rig.ambientC} °C`}</dd>
                     {run.torqueSpeed?.length ? <><dt>T-N</dt><dd className="bm-mono">{run.torqueSpeed.length} points ± {run.uncertainty.torqueSpeed} N·m</dd></> : null}
-                    {run.thermal?.length ? <><dt>Thermal</dt><dd className="bm-mono">{run.thermal.map((p) => `${p.torqueNm} N·m ${p.tToLimitS === null ? "continuous" : `${p.tToLimitS} s`}`).join(" · ")}{cont === undefined ? "" : ` (continuous ${num(cont)} N·m)`}</dd></> : null}
+                    {run.thermal?.length ? <><dt>Thermal</dt><dd className="bm-mono">{run.thermal.map((p) => `${p.torqueNm} N·m ${p.tToLimitS === null ? "continuous" : `${p.tToLimitS} s`}`).join(" · ")} ± {run.uncertainty.thermal} N·m{cont === undefined ? "" : ` (continuous ${num(cont)} N·m)`}</dd></> : null}
                     {metricRows(run).map(([label, value]) => <Fragment key={label}><dt>{label}</dt><dd className="bm-mono">{value}</dd></Fragment>)}
                     <dt>Source</dt>
                     <dd>{run.source ? <a href={run.source.url}>{run.source.title}</a> : `@${run.submitter ?? "unknown"}`}</dd>
@@ -122,10 +125,16 @@ function RunCard({ run, open }: { run: BenchmarkRun; open: boolean }) {
 // overlay picks live in ?tn=, an open run in #run=<actuator>/<run>.
 export function Benchmarks({ menuOpen = false }: { menuOpen?: boolean }) {
     const [picks, setPicks] = useState<string[]>(() => {
-        const fromUrl = readPicks(window.location.search).filter((id) => CURVE_IDS.includes(id));
-        return fromUrl.length ? fromUrl.slice(0, MAX_OVERLAY) : DEFAULT_PICKS;
+        const fromUrl = readPicks(window.location.search);
+        return fromUrl === null ? DEFAULT_PICKS : fromUrl.filter((id) => CURVE_IDS.includes(id)).slice(0, MAX_OVERLAY);
     });
-    const [openRun] = useState(() => readOpenRun(window.location.hash));
+    // The open run follows #run=…, including legend links clicked on this page.
+    const [openRun, setOpenRun] = useState(() => readOpenRun(window.location.hash));
+    useEffect(() => {
+        const onHash = () => setOpenRun(readOpenRun(window.location.hash));
+        window.addEventListener("hashchange", onHash);
+        return () => window.removeEventListener("hashchange", onHash);
+    }, []);
     useEffect(() => {
         const prev = document.title;
         document.title = TITLE;
@@ -143,7 +152,7 @@ export function Benchmarks({ menuOpen = false }: { menuOpen?: boolean }) {
         const run = curveFor(id);
         return run ? [{ label: nameOf(id), run }] : [];
     }), [picks]);
-    const thermal = thermalRuns().filter((r) => !r.otherRevision);
+    const thermal = thermalRuns().filter(isRanked);
     const thermalGroups = [thermal.slice(0, MAX_OVERLAY), thermal.slice(MAX_OVERLAY, MAX_OVERLAY * 2)].filter((g) => g.length);
     const community = BENCHMARK_RUNS.filter((r) => r.origin === "community").length;
     return <div className="tool-page bm-page">

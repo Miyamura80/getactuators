@@ -3,7 +3,7 @@
     "runId": "mjbots-blog-2020-08",
     "date": "2020-08-07",
     "origin": "published",
-    "sourceKind": "blog",
+    "sourceKind": "vendor",
     "source": {
         "url": "https://blog.mjbots.com/2020/08/07/up-rating-the-qdd100-beta-thermal-bounds/",
         "title": "mjbots blog: Up-rating the qdd100 beta thermal bounds"
@@ -11,7 +11,7 @@
     "dataMethod": "reported",
     "revision": "original qdd100 beta, not beta 3",
     "otherRevision": true,
-    "methodNote": "Torque held until thermal throttling in a 20 °C lab with no forced airflow. The post gives the 12.5 N·m point as under 5 s; it is entered as 5 s.",
+    "methodNote": "Torque held until thermal throttling in a 20 °C lab with no forced airflow. The post gives the 12.5 N·m point as under 5 s; it is entered as 5 s. The post states no uncertainty: ±0.5 N·m is our estimate, not a figure from mjbots.",
     "rig": {
         "torqueSensor": "not stated",
         "accuracyPct": null,
@@ -47,7 +47,7 @@
         }
     ],
     "uncertainty": {
-        "thermal": 0.1
+        "thermal": 0.5
     },
     "note": "Earlier hardware than the catalog's beta 3, kept because it is the developer's own test with the method written up."
 }

@@ -102,11 +102,13 @@ export function TnChart({ series, title }: { series: Series[]; title: string }) 
 }
 
 const T_MIN = 1;
-const T_MAX = 3600;
+const T_HOUR = 3600;
 // The log axis stops short of the right edge, which holds continuous points.
 const CONT_GAP = 44;
-const lx = (t: number) => (Math.log10(Math.min(Math.max(t, T_MIN), T_MAX)) / Math.log10(T_MAX)) * (IW - CONT_GAP) + PAD.l;
-const timeText = (t: number) => (t >= 60 ? `${t / 60} min` : `${t} s`);
+// Axis end: one hour, or a power of ten hours that holds the longest time.
+const timeMax = (ts: number[]) => T_HOUR * 10 ** Math.max(0, Math.ceil(Math.log10(Math.max(...ts, T_HOUR) / T_HOUR)));
+const logX = (tMax: number) => (t: number) => (Math.log10(Math.min(Math.max(t, T_MIN), tMax)) / Math.log10(tMax)) * (IW - CONT_GAP) + PAD.l;
+const timeText = (t: number) => (t >= T_HOUR ? `${t / T_HOUR} h` : t >= 60 ? `${t / 60} min` : `${t} s`);
 
 // Torque as % of the run's peak against time to the thermal limit (log);
 // points held without reaching the limit sit on the right edge.
@@ -115,10 +117,13 @@ export function ThermalChart({ series, title }: { series: Series[]; title: strin
     if (shown.length === 0) return null;
     const y = (pct: number) => PAD.t + IH - (pct / 100) * IH;
     const end = W - PAD.r - 10;
+    const tMax = timeMax(shown.flatMap((s) => (s.run.thermal ?? []).flatMap((p) => (p.tToLimitS === null ? [] : [p.tToLimitS]))));
+    const lx = logX(tMax);
+    const xTicks = [1, 10, 60, 600, 3600, ...(tMax > T_HOUR ? [tMax] : [])];
     return <figure className="bm-chart bm-thermal">
         <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={title}>
             <title>{title}</title>
-            <Axes xTicks={[1, 10, 60, 600, 3600]} yTicks={ticks(100)} x={lx} y={y} xLabel="Time to thermal limit (log)" yLabel="% of measured peak" xText={timeText} />
+            <Axes xTicks={xTicks} yTicks={ticks(100)} x={lx} y={y} xLabel="Time to thermal limit (log)" yLabel="% of measured peak" xText={timeText} />
             <text x={end} y={H - PAD.b + 16} textAnchor="middle">∞</text>
             {shown.map((s, i) => {
                 const st = SERIES[i] ?? SERIES[0];

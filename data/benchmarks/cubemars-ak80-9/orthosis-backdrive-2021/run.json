@@ -20,9 +20,9 @@
         "busV": null,
         "controller": "AK80-9 built-in driver"
     },
-    "frictionNm": 0.5,
+    "frictionNm": 0.25,
     "uncertainty": {
-        "frictionNm": 0.1
+        "frictionNm": 0.25
     },
-    "note": "Reported as under 0.5 N·m static; the bound is entered. Dynamic backdrive stayed under 2 N·m at 1 to 2 Hz, rising with frequency from inertia."
+    "note": "Reported only as under 0.5 N·m static, so it is entered as 0.25 ± 0.25 N·m to cover 0 to 0.5 N·m. Dynamic backdrive stayed under 2 N·m at 1 to 2 Hz, rising with frequency from inertia."
 }

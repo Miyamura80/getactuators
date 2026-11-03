@@ -11,7 +11,9 @@ import {
     PROTOCOL_DOC,
     type RunFolder,
     benchmarkLicenceErrors,
+    folderNameErrors,
     runsModule,
+    sameModule,
     validateFolder,
 } from "@/benchmarks/validate";
 import { ACTUATORS } from "@/catalog";
@@ -42,13 +44,16 @@ const folders: RunFolder[] = dirs(DATA).flatMap((actuatorId) =>
     }),
 );
 
-if (process.argv.includes("--write")) {
+// Folder names become import paths: refuse to generate from a bad one.
+const errors: string[] = folderNameErrors(folders);
+if (process.argv.includes("--write") && errors.length === 0) {
     writeFileSync(GENERATED, runsModule(folders));
     console.log(`Wrote ${GENERATED} (${folders.length} runs). Run make fmt next.`);
 }
 
-const today = new Date().toISOString().slice(0, 10);
-const errors: string[] = [];
+// Run dates are local calendar dates; a day of slack past UTC keeps a run
+// dated today valid for contributors ahead of UTC.
+const today = new Date(Date.now() + 86_400_000).toISOString().slice(0, 10);
 const runs: BenchmarkRun[] = [];
 for (const f of folders) {
     const { run, errors: found } = validateFolder(f, ACTUATORS, today);
@@ -58,20 +63,12 @@ for (const f of folders) {
 }
 errors.push(...benchmarkLicenceErrors(runs));
 
-// The generated module must import exactly the folders on disk.
-const imported = new Set(
-    [
-        ...readFileSync(GENERATED, "utf8").matchAll(
-            /"\.\.\/\.\.\/data\/benchmarks\/([^/"]+)\/([^/"]+)\/run\.json"/g,
-        ),
-    ].map((m) => `${m[1]}/${m[2]}`),
-);
-const onDisk = new Set(folders.map((f) => `${f.actuatorId}/${f.runId}`));
-const stale = [...onDisk].filter((k) => !imported.has(k));
-const gone = [...imported].filter((k) => !onDisk.has(k));
-if (stale.length > 0 || gone.length > 0)
+// The generated module must be exactly what --write would produce (imports
+// and the RUNS array), up to formatting.
+const current = existsSync(GENERATED) ? readFileSync(GENERATED, "utf8") : "";
+if (folderNameErrors(folders).length === 0 && !sameModule(current, runsModule(folders)))
     errors.push(
-        `src/benchmarks/runs.generated.ts is out of date (missing: ${stale.join(", ") || "none"}; removed: ${gone.join(", ") || "none"}). Run: bun run scripts/validate-benchmarks.ts --write && make fmt`,
+        `src/benchmarks/runs.generated.ts is ${current ? "out of date" : "missing"}. Run: bun run scripts/validate-benchmarks.ts --write && make fmt`,
     );
 
 for (const e of errors) console.log(`error: ${e}`);

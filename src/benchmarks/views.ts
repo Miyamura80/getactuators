@@ -60,6 +60,12 @@ export const benchmarkRunOut = z.object({
     other_revision: z
         .boolean()
         .describe("Tested hardware is not the catalog revision; not ranked."),
+    not_ranked: z
+        .string()
+        .nullable()
+        .describe(
+            "Why a run on the catalog revision is still kept out of datasheet comparisons and the leaderboard; null when it is ranked.",
+        ),
     rig: z.object({
         torque_sensor: z.string(),
         accuracy_pct: z.number().nullable(),
@@ -88,7 +94,12 @@ export const benchmarkRunOut = z.object({
         }),
     ),
     peak_torque_nm: z.number().nullable(),
-    no_load_rpm: z.number().nullable(),
+    no_load_rpm: z
+        .number()
+        .nullable()
+        .describe(
+            "Measured with the load decoupled; null when the run did not measure it.",
+        ),
     continuous_torque_nm: z
         .number()
         .nullable()
@@ -104,11 +115,15 @@ export const benchmarkRunOut = z.object({
     uncertainty: z
         .record(z.string(), z.number())
         .describe("Plus or minus per metric, in the metric's unit."),
-    vs_datasheet: z.object({
-        peak_torque: vsDatasheet,
-        continuous_torque: vsDatasheet,
-        no_load_speed: vsDatasheet,
-    }),
+    vs_datasheet: z
+        .object({
+            peak_torque: vsDatasheet,
+            continuous_torque: vsDatasheet,
+            no_load_speed: vsDatasheet,
+        })
+        .describe(
+            "Null pairs for runs that are not ranked (other revision or not_ranked).",
+        ),
     plausibility_note: z.string().nullable(),
     note: z.string().nullable(),
 });
@@ -165,6 +180,7 @@ export function benchmarkRunView(
         method_note: r.methodNote ?? null,
         revision: r.revision ?? null,
         other_revision: r.otherRevision ?? false,
+        not_ranked: r.notRanked ?? null,
         rig: rigView(r),
         groups: groupsCovered(r),
         torque_speed: (r.torqueSpeed ?? []).map((p) => ({

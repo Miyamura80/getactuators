@@ -9,7 +9,7 @@
         "title": "mjbots: qdd100 beta 3 servo product page"
     },
     "dataMethod": "tabulated",
-    "methodNote": "Torque against time before thermal limiting, measured by mjbots at zero speed, 24 V, 20 °C ambient, no airflow or heat sink. The page gives the first point as under 1 s; it is entered as 1 s.",
+    "methodNote": "Torque against time before thermal limiting, measured by mjbots at zero speed, 24 V, 20 °C ambient, no airflow or heat sink. The page gives the first point as under 1 s; it is entered as 1 s. The page states no uncertainty: ±0.5 N·m on the peak and on the thermal torques is our estimate, not a figure from mjbots.",
     "rig": {
         "torqueSensor": "not stated",
         "accuracyPct": null,
@@ -39,7 +39,7 @@
     ],
     "uncertainty": {
         "peakTorqueNm": 0.5,
-        "thermal": 0.1
+        "thermal": 0.5
     },
     "note": "Vendor measurement on the beta 3 revision. The page carries no date, so the run is dated when it was read."
 }

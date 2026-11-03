@@ -10,7 +10,7 @@
     },
     "dataMethod": "reported",
     "revision": "not stated",
-    "methodNote": "Backlash measured at the knee actuator output on the assembled leg; torque constants on the authors' dynamometer.",
+    "methodNote": "Backlash measured at the knee actuator output on the assembled leg; torque constants on the authors' dynamometer. The paper states no uncertainty for the backlash: ±1 arcmin is our estimate (rounding the quoted 0.15° alone accounts for ±0.3 arcmin).",
     "rig": {
         "torqueSensor": "authors' dynamometer (model not given in the text)",
         "accuracyPct": null,
@@ -23,5 +23,5 @@
     "uncertainty": {
         "backlashArcmin": 1
     },
-    "note": "0.15° backlash, inside the maker's 0.19°. The same paper found the measured torque constants of its AK actuators below the specified values."
+    "note": "0.15° backlash at the knee output. The same paper found the measured torque constants of its AK actuators below the specified values."
 }

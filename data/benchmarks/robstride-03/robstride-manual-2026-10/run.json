@@ -9,7 +9,7 @@
         "title": "RobStride RS03 user manual (261013)"
     },
     "dataMethod": "digitised",
-    "methodNote": "T-N points read off the manual's chart (about 1 N·m reading error). Overload times are the manual's table at 100 rpm on a 215 x 220 mm aluminium plate, 145 °C winding limit.",
+    "methodNote": "T-N points read off the manual's chart (about 1 N·m reading error). Overload times are the manual's table at 100 rpm on a 215 x 220 mm aluminium plate, 145 °C winding limit. Thermal torques are the table's whole-N·m figures and the manual states no measurement uncertainty, so the ±0.5 N·m is that rounding only. windingRiseC is the rise from 25 °C ambient to the winding limit, entered only for points that reached it.",
     "rig": {
         "torqueSensor": "not stated",
         "accuracyPct": null,
@@ -71,13 +71,12 @@
         },
         {
             "torqueNm": 20,
-            "tToLimitS": null,
-            "windingRiseC": 120
+            "tToLimitS": null
         }
     ],
     "uncertainty": {
         "torqueSpeed": 1,
         "thermal": 0.5
     },
-    "note": "Vendor test data. The chart stops near 187 rpm at 10 N·m, short of the 200 rpm no-load speed the same manual states."
+    "note": "Vendor test data. The chart stops near 187 rpm at 10 N·m, short of the 200 rpm no-load speed the same manual states. The last two points drop 10 N·m within 1 rpm; we could not re-check that against the chart, so treat the end of the curve as approximate."
 }

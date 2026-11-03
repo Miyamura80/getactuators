@@ -6,6 +6,7 @@ import {
     formatRatio,
     METRICS,
     type MetricKey,
+    rankCaveat,
     rankableRuns,
     reportedMetrics,
     runsFor,
@@ -25,13 +26,15 @@ export function MeasuredPanel({ id }: { id: string }) {
     const actuator = ACTUATORS.find((a) => a.id === id);
     const runs = runsFor(id);
     if (!actuator || runs.length === 0) return null;
-    const ranked = rankableRuns(id).map((r) => datasheetDelta(r, actuator));
+    const rankable = rankableRuns(id);
+    const ranked = rankable.map((r) => datasheetDelta(r, actuator));
     const peak = ranked.filter((d) => d.peak).sort((a, b) => (b.peak?.ratio ?? 0) - (a.peak?.ratio ?? 0))[0]?.peak;
     const cont = ranked.map((d) => continuousTorque(d.run)).filter((v): v is number => v !== undefined).sort((a, b) => b - a)[0];
     const curve = curveFor(id);
-    // Transmission and control figures, one per metric, first run first.
+    // Transmission and control figures, one per metric, first ranked run
+    // first; runs on other hardware or flagged not ranked stay in the list.
     const extras: [ExtraKey, number, string][] = [];
-    for (const r of runs)
+    for (const r of rankable)
         for (const k of reportedMetrics(r))
             if (EXTRA_KEYS.includes(k as ExtraKey) && !extras.some(([key]) => key === k))
                 extras.push([k as ExtraKey, r[k as ExtraKey] as number, r.runId]);
@@ -51,7 +54,7 @@ export function MeasuredPanel({ id }: { id: string }) {
                     {runs.map((r) => <li key={r.runId}>
                         <OriginBadge run={r} />
                         <a href={runHref(r)}>{r.runId}</a>
-                        <span className="bm-mono">{r.date} · {r.dataMethod}{r.otherRevision ? " · other revision" : ""}</span>
+                        <span className="bm-mono">{r.date} · {r.dataMethod}{rankCaveat(r) ? ` · ${rankCaveat(r)}` : ""}</span>
                     </li>)}
                 </ul>
             </div>

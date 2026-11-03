@@ -9,7 +9,7 @@
         "title": "RobStride RS02 user manual (260713)"
     },
     "dataMethod": "digitised",
-    "methodNote": "T-N points read off the manual's 48 V chart (about 0.3 N·m reading error); the manual also has a 36 V chart. Overload times are the manual's table at 100 rpm on a 260 x 280 mm aluminium plate, 145 °C winding limit.",
+    "methodNote": "T-N points read off the manual's 48 V chart (about 0.3 N·m reading error); the manual also has a 36 V chart. Overload times are the manual's table at 100 rpm on a 260 x 280 mm aluminium plate, 145 °C winding limit. Thermal torques are the table's whole-N·m figures and the manual states no measurement uncertainty, so the ±0.5 N·m is that rounding only. windingRiseC is the rise from 25 °C ambient to the winding limit, entered only for points that reached it.",
     "rig": {
         "torqueSensor": "not stated",
         "accuracyPct": null,
@@ -104,13 +104,12 @@
         },
         {
             "torqueNm": 7,
-            "tToLimitS": null,
-            "windingRiseC": 120
+            "tToLimitS": null
         }
     ],
     "uncertainty": {
         "torqueSpeed": 0.3,
-        "thermal": 0.05
+        "thermal": 0.5
     },
     "note": "Vendor test data on a large heat sink. The manual rates 6 N·m continuous, below the 7 N·m its own overload table holds without limit."
 }

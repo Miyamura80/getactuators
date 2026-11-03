@@ -1,15 +1,17 @@
 // /benchmarks URL state: the T-N overlay picks in ?tn=a,b and the open run in
 // #run=<actuator-id>/<run-id>.
 
-export function readPicks(search: string): string[] {
-    const raw = new URLSearchParams(search).get("tn") ?? "";
+// Null when the URL has no ?tn= (use the default picks); an empty list when
+// the reader cleared every pick (?tn= with no value).
+export function readPicks(search: string): string[] | null {
+    const raw = new URLSearchParams(search).get("tn");
+    if (raw === null) return null;
     return [...new Set(raw.split(",").map((s) => s.trim()).filter((s) => /^[a-z0-9-]+$/.test(s)))];
 }
 
 export function writePicks(search: string, picks: string[]): string {
     const params = new URLSearchParams(search);
-    if (picks.length) params.set("tn", picks.join(","));
-    else params.delete("tn");
+    params.set("tn", picks.join(","));
     const out = params.toString().replace(/%2C/g, ",");
     return out ? `?${out}` : "";
 }

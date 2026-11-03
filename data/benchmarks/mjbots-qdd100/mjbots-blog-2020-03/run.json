@@ -3,7 +3,7 @@
     "runId": "mjbots-blog-2020-03",
     "date": "2020-03-25",
     "origin": "published",
-    "sourceKind": "blog",
+    "sourceKind": "vendor",
     "source": {
         "url": "https://blog.mjbots.com/2020/03/25/ground-truth-torque-testing-for-qdd100/",
         "title": "mjbots blog: Ground truth torque testing for qdd100"
@@ -11,7 +11,7 @@
     "dataMethod": "reported",
     "revision": "original qdd100 beta, not beta 3",
     "otherRevision": true,
-    "methodNote": "A 1 m pole on the output pressed on a digital scale. Peak torque landed between 12.5 and 15 N·m depending on the unit; the lower bound is entered.",
+    "methodNote": "A 1 m pole on the output pressed on a digital scale. Peak torque landed between 12.5 and 15 N·m depending on the unit; the run enters the mid-point, 13.75 N·m, with half that range as its uncertainty.",
     "rig": {
         "torqueSensor": "digital scale under a 1 m lever",
         "accuracyPct": null,
@@ -20,9 +20,9 @@
         "busV": null,
         "controller": "moteus"
     },
-    "peakTorqueNm": 12.5,
+    "peakTorqueNm": 13.75,
     "uncertainty": {
-        "peakTorqueNm": 2.5
+        "peakTorqueNm": 1.25
     },
     "note": "The test also found the torque constant below the value estimated from Kv and falling off at high current."
 }

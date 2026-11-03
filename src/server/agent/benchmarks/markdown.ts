@@ -7,6 +7,7 @@ import {
     datasheetDelta,
     formatRatio,
     measuredPeak,
+    rankCaveat,
     reportedMetrics,
     runsFor,
 } from "@/benchmarks";
@@ -31,16 +32,21 @@ export const actuatorLink = (id: string) =>
     mdLink(nameOf(id), absoluteUrl(`/actuators/${id}`));
 export const sourceCell = (r: BenchmarkRun) =>
     r.source ? mdLink(r.source.title, r.source.url) : `@${r.submitter ?? "unknown"}`;
-export const badge = (r: BenchmarkRun) =>
-    `${ORIGIN_LABEL[r.origin]}${r.sourceKind ? ` (${r.sourceKind})` : ""}${r.otherRevision ? ", other revision" : ""}`;
+export const badge = (r: BenchmarkRun) => {
+    const caveat = rankCaveat(r);
+    return `${ORIGIN_LABEL[r.origin]}${r.sourceKind ? ` (${r.sourceKind})` : ""}${caveat ? `, ${caveat}` : ""}`;
+};
 
-const metricLine = (r: BenchmarkRun) =>
-    reportedMetrics(r)
-        .filter((k) => k !== "torqueSpeed" && k !== "thermal")
-        .map((k) => {
-            const v = r[k] as number;
-            return `${METRICS[k].label} ${fmt(v, METRICS[k].unit)} (±${r.uncertainty[k]})`;
-        });
+// Every reported metric with its uncertainty; the curves give theirs in N·m.
+export const metricLine = (r: BenchmarkRun) =>
+    reportedMetrics(r).map((k) => {
+        const u = `±${r.uncertainty[k]}`;
+        if (k === "torqueSpeed")
+            return `T-N curve with ${r.torqueSpeed?.length} points${r.rig.busV ? ` at ${r.rig.busV} V` : ""} (${u} N·m)`;
+        if (k === "thermal")
+            return `thermal derating with ${r.thermal?.length} points (${u} N·m)`;
+        return `${METRICS[k].label} ${fmt(r[k] as number, METRICS[k].unit)} (${u})`;
+    });
 
 // "## Measured" on an actuator's markdown page, when it has runs.
 export function measuredSection(a: Actuator): string | undefined {
@@ -54,9 +60,6 @@ export function measuredSection(a: Actuator): string | undefined {
                 : undefined,
             continuousTorque(r) !== undefined
                 ? `continuous ${fmt(continuousTorque(r), "N·m")}`
-                : undefined,
-            r.torqueSpeed?.length
-                ? `T-N curve with ${r.torqueSpeed.length} points${r.rig.busV ? ` at ${r.rig.busV} V` : ""}`
                 : undefined,
             ...metricLine(r),
         ].filter(Boolean);

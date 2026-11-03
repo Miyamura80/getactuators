@@ -9,7 +9,7 @@
         "title": "ROBOTIS e-Manual: XL430-W250 performance graph"
     },
     "dataMethod": "digitised",
-    "methodNote": "Speed and efficiency read off the e-Manual's N-T graph (about 0.02 N·m reading error). The graph does not print its voltage; the 11.1 V rating is assumed.",
+    "methodNote": "Speed and efficiency read off the e-Manual's N-T graph (about 0.02 N·m reading error). The graph does not print its voltage; the 11.1 V rating is assumed. The reading error is stated for torque only; our reading errors for speed and efficiency are not quantified.",
     "rig": {
         "torqueSensor": "not stated",
         "accuracyPct": null,
@@ -58,5 +58,5 @@
     "uncertainty": {
         "torqueSpeed": 0.02
     },
-    "note": "The graph ends at 0.84 N·m, a little over half the 1.5 N·m stall figure."
+    "note": "The graph ends at 0.84 N·m, a little over half the 1.5 N·m stall figure. Efficiency near stall reads unreliably: the 0.05 at 3 rpm implies less electrical input than the 10 rpm point at lower torque, which is unlikely. We could not re-check the graph, so treat the lowest-speed efficiency as approximate."
 }
