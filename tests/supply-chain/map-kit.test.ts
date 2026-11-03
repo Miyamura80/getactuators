@@ -87,9 +87,10 @@ describe("map data", () => {
         expect(companyAnchor("tesla")?.kind).toBe("hq");
         // Leaderdrive has no headquarters site: its first plant anchors it.
         expect(companyAnchor("leaderdrive")?.id).toBe("leaderdrive-suzhou");
-        expect(arcsTouching(arcs, "KR").map((a) => a.id)).toEqual([
-            "hyundai-mobis--boston-dynamics",
-        ]);
+        const kr = arcsTouching(arcs, "KR").map((a) => a.id);
+        expect(kr).toContain("hyundai-mobis--boston-dynamics");
+        expect(kr).toContain("arafura--hyundai-motor");
+        expect(kr.length).toBeGreaterThanOrEqual(20);
     });
 
     test("pins carry the short company label and region for on-map callouts", () => {

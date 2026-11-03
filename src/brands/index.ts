@@ -133,7 +133,7 @@ const SUPPLY_CHAIN: Row[] = [
     ["google", "Google", "google.com"],
     ["bing", "Bing", "bing.com"],
     ["apple", "Apple", "apple.com"],
-    ["samsung", "Samsung", "samsung.com"],
+    ["samsung", "Samsung", "samsung.com", ["Samsung Electronics"]],
     ["vivo", "vivo", "vivo.com"],
     ["oppo", "OPPO", "oppo.com"],
     // /japan (#79): Japanese companies and the foreign partners their links
@@ -183,6 +183,38 @@ const SUPPLY_CHAIN: Row[] = [
     ["techman-robot", "Techman Robot", "tm-robot.com"],
     ["kuka", "KUKA", "kuka.com"],
     ["abb", "ABB Robotics", "abb.com", ["ABB"]],
+    // /korea (#81): Korean companies, foreign makers with Korean plants and
+    // the partners their links reach. Domains not confirmed during research
+    // stay null (monogram).
+    ["korea-zinc", "Korea Zinc", "koreazinc.co.kr"],
+    ["posco-international", "POSCO International", "poscointl.com"],
+    ["ls-eco-energy", "LS Eco Energy", "lsecoenergy.com"],
+    ["komir", "KOMIR", "komir.or.kr"],
+    ["asm", "Australian Strategic Materials (ASM)", "asm-au.com", ["ASM"]],
+    ["reelement", "ReElement Technologies", null, ["ReElement"]],
+    ["arafura", "Arafura Rare Earths", "arultd.com", ["Arafura"]],
+    ["star-group", "Star Group Industrial", null, ["Star Group"]],
+    ["lg-innotek", "LG Innotek", "lginnotek.com"],
+    ["samsung-electro-mechanics", "Samsung Electro-Mechanics", "samsungsem.com"],
+    ["higen-rnm", "HIGEN RNM", "higenrnm.com", ["Higen Motor"]],
+    ["snt-motiv", "SNT Motiv", "sntmotiv.com"],
+    ["samhyun", "Samhyun", null],
+    ["spg", "SPG", "spg.co.kr"],
+    ["sbb-tech", "SBB Tech", null],
+    ["woorim-pts", "Woorim PTS", null],
+    ["samick-thk", "Samick THK", "samickthk.co.kr"],
+    ["schaeffler", "Schaeffler", "schaeffler.com"],
+    ["hyundai-motor", "Hyundai Motor", "hyundai.com"],
+    ["doosan-robotics", "Doosan Robotics", "doosanrobotics.com"],
+    ["hd-hyundai-robotics", "HD Hyundai Robotics", "hyundai-robotics.com"],
+    ["lg-electronics", "LG Electronics", "lg.com"],
+    ["naver-labs", "Naver Labs", "naverlabs.com"],
+    ["hanwha-robotics", "Hanwha Robotics", "hanwha.com"],
+    ["neuromeka", "Neuromeka", "neuromeka.com"],
+    ["wonik-robotics", "Wonik Robotics", null],
+    ["angel-robotics", "Angel Robotics", "angel-robotics.com"],
+    ["bear-robotics", "Bear Robotics", "bearrobotics.ai"],
+    ["onexia", "ONExia", null],
 ];
 
 // Companies behind the /investors deals (src/investors.ts COMPANIES).

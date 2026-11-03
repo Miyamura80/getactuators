@@ -115,6 +115,7 @@ describe("accessors", () => {
                 .sort(),
         ).toEqual(["CN", "JP", "JP"]);
         expect(findSites({ kind: "mine" }).map((s) => s.id)).toEqual([
+            "arafura-nolans",
             "lynas-mt-weld",
             "mp-mountain-pass",
         ]);
