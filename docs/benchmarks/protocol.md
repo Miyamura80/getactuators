@@ -21,7 +21,7 @@ Units are fixed by the field names in `src/benchmarks/types.ts`: N·m, rpm, seco
 - **Supply**: a bench supply or battery that holds the stated bus voltage within 2% at peak current. Record the voltage in `rig.busV` (**checked**: required).
 - **Ambient**: 20 to 30 °C, still air, measured within 0.5 m of the actuator. Record it in `rig.ambientC` (**checked**: required). Describe any heat sink or fan in `rig.md`; a run on a heat sink is not comparable to one in free air.
 - **Controller**: the driver and firmware version in `rig.controller` and `rig.firmware`. Use the maker's current and thermal limits unless the run says otherwise.
-- **Photos**: at least one photo of the rig, `rig.jpg`, `rig.png` or `rig.webp` (**checked**), and `rig.md` describing the coupling, load, cooling and controller (**checked**: present with at least 40 characters of text; what it says is reviewed by a maintainer).
+- **Photos**: at least one photo of the rig, `rig.jpg`, `rig.png` or `rig.webp` (**checked**), and `rig.md` describing the coupling, load, cooling and controller (**checked**: present with at least 40 non-whitespace characters; what it says is reviewed by a maintainer).
 
 ## Procedures
 
@@ -59,9 +59,9 @@ Continuous torque on /benchmarks is the highest torque held for 600 s or without
 ## Samples and uncertainty
 
 - Each reported number is the mean of at least 3 repeats.
-- Give the uncertainty of every metric you report, as plus or minus in the metric's own unit, in `uncertainty` keyed by the metric name (**checked**: one per reported metric and no others). For `torqueSpeed` and `thermal` it is in N·m of torque.
+- Give the uncertainty of every metric you report, as plus or minus in the metric's own unit, in `uncertainty` keyed by the metric name (**checked**: one per reported metric and no others). For `torqueSpeed` and `thermal` it is in N·m of torque. Efficiency on the T-N points takes its own key, `efficiency`, as a fraction (**checked**: required for lab and community runs; a published run without it says in `methodNote` that it is not quantified).
 - The uncertainty combines the sensor's accuracy class at the reading and the spread of the repeats (2 standard deviations).
-- The raw readings go in `torque-speed.csv` (`rpm,torque_nm,efficiency`) and `thermal.csv` (`torque_nm,t_to_limit_s,winding_rise_c`), one row per reading, within the same bounds as `run.json` (**checked**). Every `run.json` point needs rows at its speed (within 0.5 rpm) or torque (within the thermal uncertainty): a T-N torque must be within its uncertainty of the rows' mean, and a thermal time and winding rise must lie within the rows' range, with blank times exactly for a continuous point (**checked**).
+- The raw readings go in `torque-speed.csv` (`rpm,torque_nm,efficiency`) and `thermal.csv` (`torque_nm,t_to_limit_s,winding_rise_c`), one row per reading, within the same bounds as `run.json`: speed, T-N torque and efficiency may be zero, thermal torque, time and winding rise must be above zero (**checked**). Every `run.json` point needs rows at its speed (within 0.5 rpm) or torque (within the thermal uncertainty): a T-N torque must be within its uncertainty of the rows' mean, and a thermal time and winding rise must lie within the rows' range, with blank times exactly for a continuous point (**checked**).
 
 ## Plausibility
 

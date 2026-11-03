@@ -84,7 +84,8 @@ export interface BenchmarkRun {
     latencyMs?: number;
     repeatabilityArcmin?: number;
     // Plus or minus, in each metric's own unit (N·m for the torque-speed and
-    // thermal curves), keyed by metric name.
+    // thermal curves), keyed by metric name, plus `efficiency` (a fraction)
+    // when the T-N points carry efficiency.
     uncertainty: Record<string, number>;
     // Why a result outside the plausibility band is still right.
     plausibilityNote?: string;

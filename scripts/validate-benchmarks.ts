@@ -51,9 +51,9 @@ if (process.argv.includes("--write") && errors.length === 0) {
     console.log(`Wrote ${GENERATED} (${folders.length} runs). Run make fmt next.`);
 }
 
-// Run dates are local calendar dates; a day of slack past UTC keeps a run
-// dated today valid for contributors ahead of UTC.
-const today = new Date(Date.now() + 86_400_000).toISOString().slice(0, 10);
+// Run dates are local calendar dates: judge them at the furthest-ahead time
+// zone (UTC+14), so a run dated today passes anywhere and tomorrow does not.
+const today = new Date(Date.now() + 14 * 3_600_000).toISOString().slice(0, 10);
 const runs: BenchmarkRun[] = [];
 for (const f of folders) {
     const { run, errors: found } = validateFolder(f, ACTUATORS, today);

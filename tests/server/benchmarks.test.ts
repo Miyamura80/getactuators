@@ -57,7 +57,7 @@ describe("/benchmarks page and twin", () => {
             expect(md).toContain("Published (blog), not ranked");
             expect(md).toContain("Published (vendor), other revision");
             expect(md).toContain("## Run notes");
-            expect(md).toContain("Not ranked: The log puts the 3 N·m stall");
+            expect(md).toContain("Not ranked: The log suspects the ODrive Micro");
             expect(md).toContain("Backlash 37.2 arcmin (±5.3)");
             expect(md).not.toContain(EM_DASH);
         }
@@ -98,6 +98,16 @@ describe("REST /api/v1/benchmarks", () => {
         expect(run?.continuous_torque_nm).toBe(9);
         expect(run?.vs_datasheet.peak_torque?.ratio).toBe(1);
         expect(run?.thermal.at(-1)?.t_to_limit_s).toBeNull();
+        // not_ranked carries the reason for a flagged run and is null otherwise.
+        expect(run?.not_ranked).toBeNull();
+        const gim = BenchmarkListSchema.parse(
+            await (
+                await get("/api/v1/benchmarks?actuator_id=steadywin-gim6010-8")
+            ).json(),
+        ).results[0];
+        expect(gim?.not_ranked).toContain("ODrive Micro");
+        expect(gim?.other_revision).toBe(false);
+        expect(gim?.vs_datasheet.peak_torque).toBeNull();
         expect(run?.url).toBe(
             `${SITE_URL}/benchmarks#run=robstride-02/robstride-manual-2026-07`,
         );
@@ -155,6 +165,7 @@ describe("MCP get_benchmarks", () => {
             "mjbots-blog-2020-08",
         ]);
         expect(out.results.filter((r) => r.other_revision)).toHaveLength(2);
+        expect(out.results.every((r) => r.not_ranked === null)).toBe(true);
         const bad = await callTool("get_benchmarks", { actuator_id: "nope" });
         expect(bad.isError).toBe(true);
         // A known actuator with runs, filtered to an origin it has none of,

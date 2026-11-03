@@ -34,7 +34,7 @@ test("renders the five sections, one call to action and a row per actuator and r
     expect(c.querySelector('.bm-delta li[data-actuator="steadywin-gim6010-8"]')).toBeNull();
     expect(c.querySelector(".bm-bar.is-short")).not.toBeNull();
     expect(c.querySelectorAll(".bm-badge-published").length).toBeGreaterThan(0);
-    expect([...c.querySelectorAll(".bm-flag")].map((f) => f.textContent).join(" ")).toContain("Not ranked: The log puts the 3 N·m stall down to the ODrive");
+    expect([...c.querySelectorAll(".bm-flag")].map((f) => f.textContent).join(" ")).toContain("Not ranked: The log suspects the ODrive Micro");
 });
 
 test("the T-N overlay holds at most four curves and keeps its picks in the URL", () => {
@@ -76,9 +76,15 @@ test("?tn= and #run= deep links", () => {
 });
 
 test("clearing every overlay pick survives a reload", () => {
-    setURL("/benchmarks?tn=");
+    setURL("/benchmarks");
     const c = render(<Benchmarks />).container;
+    for (const b of [...c.querySelectorAll<HTMLButtonElement>('.bm-picks button[aria-pressed="true"]')]) fireEvent.click(b);
     expect(c.querySelectorAll(".bm-tn .bm-series")).toHaveLength(0);
+    const search = window.location.search;
+    expect(search).toBe("?tn=");
+    cleanup();
+    setURL(`/benchmarks${search}`);
+    expect(render(<Benchmarks />).container.querySelectorAll(".bm-tn .bm-series")).toHaveLength(0);
 });
 
 test("Measured panel shows datasheet deltas and a curve, and nothing without runs", () => {
@@ -102,6 +108,8 @@ test("compare overlay draws curves for picked actuators that have one", () => {
     expect(view.container.querySelector("summary")?.textContent).toBe("Measured T-N overlay (2 of 3 with a curve)");
     expect(view.container.querySelectorAll(".bm-series")).toHaveLength(2);
     expect(view.container.textContent).toContain("Curves come from different rigs and voltages");
+    cleanup();
+    expect(render(<MeasuredOverlay ids={["robstride-02", "nabtesco-rv-42n"]} />).container.textContent).toContain("Only one of these actuators has a measured curve");
     cleanup();
     // Two ROBOTIS graphs at the same assumed 12 V: no claim of different rigs.
     const robotis = render(<MeasuredOverlay ids={["dynamixel-xm430-w350-t", "dynamixel-xm540-w270-t"]} />);

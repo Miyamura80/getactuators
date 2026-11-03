@@ -10,7 +10,6 @@ import {
     BENCHMARK_ORIGINS,
     type BenchmarkRun,
     DATA_METHODS,
-    METRIC_KEYS,
     SOURCE_KINDS,
 } from "./types";
 
@@ -222,13 +221,26 @@ function originErrors(run: BenchmarkRun): string[] {
     return errors;
 }
 
+// One uncertainty per reported metric. Efficiency on the T-N points has its
+// own key, `efficiency` (a fraction): required for lab and community runs,
+// optional for a published run, whose methodNote must then say it is not
+// quantified.
 function uncertaintyErrors(run: BenchmarkRun): string[] {
-    const reported = reportedMetrics(run);
+    const reported: string[] = reportedMetrics(run);
+    const hasEfficiency = Boolean(
+        run.torqueSpeed?.some((p) => p.efficiency !== undefined),
+    );
     const errors = reported
         .filter((k) => !(k in run.uncertainty))
         .map((k) => `uncertainty.${k} is missing (one per reported metric)`);
+    if (
+        hasEfficiency &&
+        !("efficiency" in run.uncertainty) &&
+        run.origin !== "published"
+    )
+        errors.push("uncertainty.efficiency is missing (efficiency is reported)");
     for (const k of Object.keys(run.uncertainty))
-        if (!(METRIC_KEYS as string[]).includes(k) || !reported.includes(k as never))
+        if (k === "efficiency" ? !hasEfficiency : !reported.includes(k))
             errors.push(`uncertainty.${k} does not match a reported metric`);
     return errors;
 }
@@ -297,12 +309,17 @@ const COLUMN_RANGE: Record<string, [number, number, boolean, boolean]> = {
     t_to_limit_s: [0, 1e6, true, true],
     winding_rise_c: [0, 250, false, true],
 };
+// thermal.csv torques, like run.json thermal torques, must be above zero.
+const THERMAL_TORQUE_RANGE: [number, number, boolean, boolean] = [0, 5000, false, true];
 
 type Row = (number | null)[];
 
-function cellError(cell: string, column: string): string | undefined {
+function cellError(cell: string, column: string, file: string): string | undefined {
     const c = cell.trim();
-    const [lo, hi, optional, open] = COLUMN_RANGE[column] ?? [0, 0, false, false];
+    const [lo, hi, optional, open] =
+        file === THERMAL_CSV && column === "torque_nm"
+            ? THERMAL_TORQUE_RANGE
+            : (COLUMN_RANGE[column] ?? [0, 0, false, false]);
     if (c === "") return optional ? undefined : `${column} is blank`;
     const v = Number(c);
     if (!Number.isFinite(v)) return "values must be numbers";
@@ -330,7 +347,9 @@ function parseCsv(
             errors.push(`${name} row ${i + 2}: expected ${header.length} columns`);
             return;
         }
-        const bad = cells.map((c, j) => cellError(c, header[j] ?? "")).find(Boolean);
+        const bad = cells
+            .map((c, j) => cellError(c, header[j] ?? "", name))
+            .find(Boolean);
         if (bad) errors.push(`${name} row ${i + 2}: ${bad}`);
         else rows.push(cells.map((c) => (c.trim() === "" ? null : Number(c))));
     });

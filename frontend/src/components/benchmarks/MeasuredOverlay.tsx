@@ -15,7 +15,7 @@ export function MeasuredOverlay({ ids }: { ids: string[] }) {
     const differ = (key: (s: (typeof series)[number]) => unknown) => new Set(series.map(key)).size > 1;
     const rigs = differ((s) => JSON.stringify({ ...s.run.rig, busV: null }));
     const volts = differ((s) => s.run.rig.busV);
-    const caveat = rigs && volts ? "Curves come from different rigs and voltages" : rigs ? "Curves come from different rigs" : volts ? "Curves are at different bus voltages" : "Curves share a rig description and bus voltage, but not necessarily a test";
+    const caveat = series.length < 2 ? "Only one of these actuators has a measured curve" : rigs && volts ? "Curves come from different rigs and voltages" : rigs ? "Curves come from different rigs" : volts ? "Curves are at different bus voltages" : "Curves share a rig description and bus voltage, but not necessarily a test";
     return <details className="compare-measured">
         <summary>Measured T-N overlay ({series.length} of {ids.length} with a curve)</summary>
         <TnChart series={series} title="Measured torque against speed for the compared actuators" />

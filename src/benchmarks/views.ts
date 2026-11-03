@@ -64,7 +64,7 @@ export const benchmarkRunOut = z.object({
         .string()
         .nullable()
         .describe(
-            "Why a run on the catalog revision is still kept out of datasheet comparisons and the leaderboard; null when it is ranked.",
+            "Why a run on the catalog revision is still kept out of datasheet comparisons and the leaderboard. Null when no such reason is given: the run is ranked unless other_revision is true.",
         ),
     rig: z.object({
         torque_sensor: z.string(),
@@ -93,7 +93,12 @@ export const benchmarkRunOut = z.object({
             winding_rise_c: z.number().nullable(),
         }),
     ),
-    peak_torque_nm: z.number().nullable(),
+    peak_torque_nm: z
+        .number()
+        .nullable()
+        .describe(
+            "Highest torque the run saw: its stated peak, else the top of its T-N or thermal points (a lower bound on the true peak).",
+        ),
     no_load_rpm: z
         .number()
         .nullable()

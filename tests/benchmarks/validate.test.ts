@@ -54,7 +54,12 @@ function communityRun(): Record<string, unknown> {
             { torqueNm: 4, tToLimitS: null, windingRiseC: 61 },
         ],
         backlashArcmin: 18,
-        uncertainty: { torqueSpeed: 0.1, thermal: 0.1, backlashArcmin: 2 },
+        uncertainty: {
+            torqueSpeed: 0.1,
+            efficiency: 0.02,
+            thermal: 0.1,
+            backlashArcmin: 2,
+        },
     };
 }
 
@@ -171,6 +176,11 @@ describe("benchmark validator", () => {
         expect(errorsFor(folder(run, { "rig.md": "rig" })).join("\n")).toContain(
             "rig.md must describe",
         );
+        expect(
+            errorsFor(folder(run, { "thermal.csv": `${THERMAL_CSV}0,10,5\n` })).join(
+                "\n",
+            ),
+        ).toContain("torque_nm 0 must be above 0");
         const coarse = { ...run, rig: { ...(run.rig as object), accuracyPct: 2 } };
         expect(errorsFor(folder(coarse)).join("\n")).toContain(
             "0.5% of full scale or better",
@@ -226,9 +236,9 @@ describe("benchmark validator", () => {
     test("uncertainty per reported metric, and no stray keys", () => {
         const run = communityRun();
         const missing = { ...run, uncertainty: { torqueSpeed: 0.1, thermal: 0.1 } };
-        expect(errorsFor(folder(missing)).join("\n")).toContain(
-            "uncertainty.backlashArcmin is missing",
-        );
+        const missingErrs = errorsFor(folder(missing)).join("\n");
+        expect(missingErrs).toContain("uncertainty.backlashArcmin is missing");
+        expect(missingErrs).toContain("uncertainty.efficiency is missing");
         const stray = {
             ...run,
             uncertainty: { ...(run.uncertainty as object), latencyMs: 1 },
