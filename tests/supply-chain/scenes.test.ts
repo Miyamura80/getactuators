@@ -104,10 +104,17 @@ describe("demo scenes", () => {
                 { ...part({ id: "c" }), component: "sprocket" } as unknown as PartSpec,
                 part({ id: "Not_Kebab" }),
                 part({ id: "nan", explodedOffset: [0, Number.NaN, 0] }),
+                ...[7, 0, -4, 2.5].map((poles, i) =>
+                    part({
+                        id: `bad-ring-${i}`,
+                        component: "magnet-ring",
+                        props: { poles, outer: 20, inner: 15, length: 10 },
+                    }),
+                ),
                 part({
-                    id: "odd-ring",
+                    id: "even-ring",
                     component: "magnet-ring",
-                    props: { poles: 7, outer: 20, inner: 15, length: 10 },
+                    props: { poles: 8, outer: 20, inner: 15, length: 10 },
                 }),
             ],
         };
@@ -117,7 +124,11 @@ describe("demo scenes", () => {
         expect(problems).toContain("more than one accent");
         expect(problems).toContain("not kebab-case");
         expect(problems).toContain("not finite");
-        expect(problems).toContain("odd-ring: magnet ring needs an even pole count");
+        for (const i of [0, 1, 2, 3])
+            expect(problems).toContain(
+                `bad-ring-${i}: magnet ring needs a positive even pole count`,
+            );
+        expect(problems).not.toContain("even-ring");
         expect(
             loopProblems({ ...MAGNET_PRESS_LOOP, duration: 0 }).join("\n"),
         ).toContain("duration");
