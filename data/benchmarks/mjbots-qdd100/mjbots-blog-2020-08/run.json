@@ -1,0 +1,53 @@
+{
+    "actuatorId": "mjbots-qdd100",
+    "runId": "mjbots-blog-2020-08",
+    "date": "2020-08-07",
+    "origin": "published",
+    "sourceKind": "blog",
+    "source": {
+        "url": "https://blog.mjbots.com/2020/08/07/up-rating-the-qdd100-beta-thermal-bounds/",
+        "title": "mjbots blog: Up-rating the qdd100 beta thermal bounds"
+    },
+    "dataMethod": "reported",
+    "revision": "original qdd100 beta, not beta 3",
+    "otherRevision": true,
+    "methodNote": "Torque held until thermal throttling in a 20 °C lab with no forced airflow. The post gives the 12.5 N·m point as under 5 s; it is entered as 5 s.",
+    "rig": {
+        "torqueSensor": "not stated",
+        "accuracyPct": null,
+        "encoder": "moteus on-board magnetic encoder",
+        "ambientC": 20,
+        "busV": null,
+        "controller": "moteus"
+    },
+    "thermal": [
+        {
+            "torqueNm": 12.5,
+            "tToLimitS": 5
+        },
+        {
+            "torqueNm": 10,
+            "tToLimitS": 30
+        },
+        {
+            "torqueNm": 8,
+            "tToLimitS": 120
+        },
+        {
+            "torqueNm": 6,
+            "tToLimitS": 300
+        },
+        {
+            "torqueNm": 4,
+            "tToLimitS": 800
+        },
+        {
+            "torqueNm": 2.5,
+            "tToLimitS": null
+        }
+    ],
+    "uncertainty": {
+        "thermal": 0.1
+    },
+    "note": "Earlier hardware than the catalog's beta 3, kept because it is the developer's own test with the method written up."
+}

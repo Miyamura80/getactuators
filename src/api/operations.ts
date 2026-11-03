@@ -1,5 +1,11 @@
 import type { z } from "zod";
 import {
+    BenchmarkListParams,
+    BenchmarkListSchema,
+    actuatorBenchmarksHandler,
+    listBenchmarksHandler,
+} from "./benchmarks";
+import {
     compareActuatorsGet,
     compareActuatorsPost,
     getActuatorById,
@@ -346,5 +352,35 @@ export const OPERATIONS: Operation[] = [
         errors: [404],
         example: "/api/v1/humanoids/unitree-g1",
         handler: getHumanoidById,
+    },
+    {
+        operationId: "list_benchmarks",
+        method: "GET",
+        path: "/api/v1/benchmarks",
+        summary: "List measured actuator runs",
+        description:
+            "Measured performance from /benchmarks: torque-speed curves, thermal derating, backlash, friction and control figures from published tests (papers, vendor test reports, blogs) and community runs submitted by pull request. Each run carries its rig, data method (raw, tabulated, digitised or reported), uncertainty per metric, source and the gap to the datasheet. Filter by actuator_id or origin.",
+        query: BenchmarkListParams,
+        response: BenchmarkListSchema,
+        errors: [400],
+        example: "/api/v1/benchmarks?actuator_id=robstride-02",
+        handler: listBenchmarksHandler,
+    },
+    {
+        operationId: "get_actuator_benchmarks",
+        method: "GET",
+        path: "/api/v1/actuators/:id/benchmarks",
+        summary: "Measured runs for one actuator",
+        description:
+            "Every measured run on file for one catalog actuator, newest first, with measured against datasheet ratios. 404 when the actuator is unknown or has no runs yet.",
+        pathParam: {
+            name: "id",
+            description: "Catalog actuator id.",
+            example: "xiaomi-cybergear",
+        },
+        response: BenchmarkListSchema,
+        errors: [404],
+        example: "/api/v1/actuators/xiaomi-cybergear/benchmarks",
+        handler: actuatorBenchmarksHandler,
     },
 ];

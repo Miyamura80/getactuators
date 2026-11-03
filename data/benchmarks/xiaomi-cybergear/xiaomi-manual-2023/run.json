@@ -1,0 +1,124 @@
+{
+    "actuatorId": "xiaomi-cybergear",
+    "runId": "xiaomi-manual-2023",
+    "date": "2023",
+    "origin": "published",
+    "sourceKind": "vendor",
+    "source": {
+        "url": "https://github.com/belovictor/cybergear-docs/blob/main/instructionmanual/instructionmanual.md",
+        "title": "Xiaomi CyberGear micromotor instruction manual (English translation)"
+    },
+    "dataMethod": "digitised",
+    "methodNote": "T-N points read off the manual's chart at 20 rpm steps (about 0.2 N·m reading error). Overload times are the manual's own table, taken at 24 rpm with a 120 °C winding limit.",
+    "rig": {
+        "torqueSensor": "not stated",
+        "accuracyPct": null,
+        "encoder": "actuator's own 14-bit encoder",
+        "ambientC": 25,
+        "busV": 24,
+        "controller": "built-in CyberGear FOC driver"
+    },
+    "torqueSpeed": [
+        {
+            "rpm": 40,
+            "torqueNm": 12
+        },
+        {
+            "rpm": 110,
+            "torqueNm": 12
+        },
+        {
+            "rpm": 130,
+            "torqueNm": 11.3
+        },
+        {
+            "rpm": 150,
+            "torqueNm": 10.4
+        },
+        {
+            "rpm": 170,
+            "torqueNm": 9.2
+        },
+        {
+            "rpm": 190,
+            "torqueNm": 7.8
+        },
+        {
+            "rpm": 210,
+            "torqueNm": 6.2
+        },
+        {
+            "rpm": 230,
+            "torqueNm": 4.7
+        },
+        {
+            "rpm": 250,
+            "torqueNm": 3
+        },
+        {
+            "rpm": 270,
+            "torqueNm": 1.4
+        },
+        {
+            "rpm": 280,
+            "torqueNm": 0.65
+        }
+    ],
+    "thermal": [
+        {
+            "torqueNm": 12,
+            "tToLimitS": 28,
+            "windingRiseC": 95
+        },
+        {
+            "torqueNm": 11,
+            "tToLimitS": 45,
+            "windingRiseC": 95
+        },
+        {
+            "torqueNm": 10,
+            "tToLimitS": 60,
+            "windingRiseC": 95
+        },
+        {
+            "torqueNm": 9,
+            "tToLimitS": 90,
+            "windingRiseC": 95
+        },
+        {
+            "torqueNm": 8,
+            "tToLimitS": 160,
+            "windingRiseC": 95
+        },
+        {
+            "torqueNm": 7,
+            "tToLimitS": 320,
+            "windingRiseC": 95
+        },
+        {
+            "torqueNm": 6,
+            "tToLimitS": 700,
+            "windingRiseC": 95
+        },
+        {
+            "torqueNm": 5,
+            "tToLimitS": 1800,
+            "windingRiseC": 95
+        },
+        {
+            "torqueNm": 4.5,
+            "tToLimitS": 2500,
+            "windingRiseC": 95
+        },
+        {
+            "torqueNm": 4,
+            "tToLimitS": null,
+            "windingRiseC": 95
+        }
+    ],
+    "uncertainty": {
+        "torqueSpeed": 0.2,
+        "thermal": 0.05
+    },
+    "note": "Vendor test data, not an independent run. The curve is flat at 12 N·m below about 110 rpm, which reads as the driver's torque cap rather than a motor limit."
+}

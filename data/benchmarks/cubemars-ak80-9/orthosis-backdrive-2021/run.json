@@ -1,0 +1,28 @@
+{
+    "actuatorId": "cubemars-ak80-9",
+    "runId": "orthosis-backdrive-2021",
+    "date": "2021-10",
+    "origin": "published",
+    "sourceKind": "paper",
+    "source": {
+        "url": "https://arxiv.org/abs/2110.01562",
+        "title": "arXiv 2110.01562: Enhancing voluntary motion with modular, backdrivable, powered hip and knee orthoses"
+    },
+    "dataMethod": "reported",
+    "revision": "not stated; predates the V3.0 KV100 in the catalog",
+    "otherRevision": true,
+    "methodNote": "Static backdrive: an analog torque wrench turns the unpowered output until it moves. Dynamic: the output driven by hand at 1 and 2 Hz over 70°.",
+    "rig": {
+        "torqueSensor": "analog torque wrench (Neiko 03727A); rotary load cell bench for the friction model",
+        "accuracyPct": null,
+        "encoder": "actuator's own encoder",
+        "ambientC": null,
+        "busV": null,
+        "controller": "AK80-9 built-in driver"
+    },
+    "frictionNm": 0.5,
+    "uncertainty": {
+        "frictionNm": 0.1
+    },
+    "note": "Reported as under 0.5 N·m static; the bound is entered. Dynamic backdrive stayed under 2 N·m at 1 to 2 Hz, rising with frequency from inertia."
+}

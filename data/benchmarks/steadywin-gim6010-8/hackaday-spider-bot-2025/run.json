@@ -1,0 +1,27 @@
+{
+    "actuatorId": "steadywin-gim6010-8",
+    "runId": "hackaday-spider-bot-2025",
+    "date": "2025-03",
+    "origin": "published",
+    "sourceKind": "blog",
+    "source": {
+        "url": "https://hackaday.io/project/202366-the-unnamed-spider-bot/log/239239-steadywin-gim6010-8-vs-xiaomi-cybergear-micromotor",
+        "title": "Hackaday.io: Steadywin GIM6010-8 vs Xiaomi CyberGear micromotor"
+    },
+    "dataMethod": "reported",
+    "methodNote": "A second-hand stall figure: the log quotes another builder's measurement and gives no rig. The log's own test compares current at a fixed load (2.29 A here, 1.99 A for a CyberGear).",
+    "rig": {
+        "torqueSensor": "not stated",
+        "accuracyPct": null,
+        "encoder": "actuator's own encoder",
+        "ambientC": null,
+        "busV": null,
+        "controller": "ODrive Micro"
+    },
+    "peakTorqueNm": 3,
+    "uncertainty": {
+        "peakTorqueNm": 1
+    },
+    "plausibilityNote": "3 N·m is 0.27x the 11 N·m rating. The log suspects the ODrive Micro's current limit, so this says more about the driver setup than the actuator.",
+    "note": "Weak evidence, kept because it is the only published stall test we found. A run with a stated current limit would replace it."
+}

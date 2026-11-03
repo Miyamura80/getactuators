@@ -1,0 +1,116 @@
+{
+    "actuatorId": "robstride-01",
+    "runId": "robstride-manual-2026-07",
+    "date": "2026-07",
+    "origin": "published",
+    "sourceKind": "vendor",
+    "source": {
+        "url": "https://github.com/RobStride/Product_Information/blob/main/Product%20Literature/CAN2.0/RS01/RS01User%20Manual260713.pdf",
+        "title": "RobStride RS01 user manual (260713)"
+    },
+    "dataMethod": "digitised",
+    "methodNote": "T-N points read off the manual's chart (about 0.3 N·m reading error). Overload times are the manual's table at 100 rpm on a 260 x 280 mm aluminium plate, 135 °C winding limit.",
+    "rig": {
+        "torqueSensor": "not stated",
+        "accuracyPct": null,
+        "encoder": "actuator's own dual 14-bit magnetic encoders",
+        "ambientC": 25,
+        "busV": 48,
+        "controller": "built-in RobStride driver"
+    },
+    "torqueSpeed": [
+        {
+            "rpm": 220,
+            "torqueNm": 17
+        },
+        {
+            "rpm": 250,
+            "torqueNm": 15.4
+        },
+        {
+            "rpm": 275,
+            "torqueNm": 14
+        },
+        {
+            "rpm": 300,
+            "torqueNm": 12
+        },
+        {
+            "rpm": 325,
+            "torqueNm": 10
+        },
+        {
+            "rpm": 350,
+            "torqueNm": 7.8
+        },
+        {
+            "rpm": 375,
+            "torqueNm": 4.6
+        },
+        {
+            "rpm": 400,
+            "torqueNm": 1.4
+        },
+        {
+            "rpm": 407,
+            "torqueNm": 0.5
+        }
+    ],
+    "thermal": [
+        {
+            "torqueNm": 17,
+            "tToLimitS": 10,
+            "windingRiseC": 110
+        },
+        {
+            "torqueNm": 16,
+            "tToLimitS": 14,
+            "windingRiseC": 110
+        },
+        {
+            "torqueNm": 15,
+            "tToLimitS": 18,
+            "windingRiseC": 110
+        },
+        {
+            "torqueNm": 14,
+            "tToLimitS": 29,
+            "windingRiseC": 110
+        },
+        {
+            "torqueNm": 13,
+            "tToLimitS": 42,
+            "windingRiseC": 110
+        },
+        {
+            "torqueNm": 12,
+            "tToLimitS": 71,
+            "windingRiseC": 110
+        },
+        {
+            "torqueNm": 11,
+            "tToLimitS": 165,
+            "windingRiseC": 110
+        },
+        {
+            "torqueNm": 10,
+            "tToLimitS": 250,
+            "windingRiseC": 110
+        },
+        {
+            "torqueNm": 9,
+            "tToLimitS": 838,
+            "windingRiseC": 110
+        },
+        {
+            "torqueNm": 7,
+            "tToLimitS": null,
+            "windingRiseC": 110
+        }
+    ],
+    "uncertainty": {
+        "torqueSpeed": 0.3,
+        "thermal": 0.05
+    },
+    "note": "The RS01 manual's overload table and T-N chart match the RS02 manual entry for entry, while the two manuals give different winding limits (135 and 145 °C). Treat this run as not measured on an RS01 until RobStride says otherwise."
+}

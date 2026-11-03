@@ -1,0 +1,72 @@
+{
+    "actuatorId": "dynamixel-xh540-w270-t",
+    "runId": "robotis-performance-graph",
+    "date": "2026-11",
+    "origin": "published",
+    "sourceKind": "vendor",
+    "source": {
+        "url": "https://emanual.robotis.com/docs/en/dxl/x/xh540-w270/",
+        "title": "ROBOTIS e-Manual: XH540-W270 performance graph"
+    },
+    "dataMethod": "digitised",
+    "methodNote": "Speed and efficiency read off the e-Manual's N-T graph (about 0.1 N·m reading error). The graph does not print its voltage; the 12 V rating is assumed.",
+    "rig": {
+        "torqueSensor": "not stated",
+        "accuracyPct": null,
+        "encoder": "actuator's own contactless absolute encoder",
+        "ambientC": null,
+        "busV": 12,
+        "controller": "built-in DYNAMIXEL controller"
+    },
+    "torqueSpeed": [
+        {
+            "rpm": 4.5,
+            "torqueNm": 8.1,
+            "efficiency": 0.07
+        },
+        {
+            "rpm": 7.7,
+            "torqueNm": 7.2,
+            "efficiency": 0.12
+        },
+        {
+            "rpm": 11.5,
+            "torqueNm": 6.3,
+            "efficiency": 0.2
+        },
+        {
+            "rpm": 16.5,
+            "torqueNm": 5.4,
+            "efficiency": 0.29
+        },
+        {
+            "rpm": 21.5,
+            "torqueNm": 4.5,
+            "efficiency": 0.37
+        },
+        {
+            "rpm": 24.8,
+            "torqueNm": 3.6,
+            "efficiency": 0.43
+        },
+        {
+            "rpm": 28.3,
+            "torqueNm": 2.7,
+            "efficiency": 0.48
+        },
+        {
+            "rpm": 31.4,
+            "torqueNm": 1.8,
+            "efficiency": 0.47
+        },
+        {
+            "rpm": 36.3,
+            "torqueNm": 0.36,
+            "efficiency": 0.26
+        }
+    ],
+    "uncertainty": {
+        "torqueSpeed": 0.1
+    },
+    "note": "Same frame as the XM540-W270 with a different motor; the graph reaches 8.1 N·m against a 9.9 N·m stall figure."
+}

@@ -27,7 +27,7 @@ make lint           # Run Biome linter (check only)
 make deadcode       # Find dead code + unused deps with knip
 make typecheck      # Run TypeScript type checker (tsc --noEmit)
 make lint_links     # Check for broken links in markdown files
-make ci             # Run all CI checks (lint, deadcode, typecheck, tech_debt, duplicate_code, import_lint, lint_links, check_ai_writing, citation_audit, sync-agent-config-check, lint_immutable_refs)
+make ci             # Run all CI checks (lint, deadcode, typecheck, tech_debt, duplicate_code, import_lint, lint_links, check_ai_writing, citation_audit, sync-agent-config-check, lint_immutable_refs, validate_benchmarks)
 
 # Dependencies
 bun install         # Install dependencies
@@ -62,6 +62,7 @@ Rules when adding data:
 - Never copy a source's prose; write notes and summaries in your own words.
 - Never import a whole third-party table or dataset. A `facts` source backing more than 10 records fails the audit unless it is in that registry's allowlist (`FACTS_ALLOWLIST` or `HUMANOID_FACTS_ALLOWLIST`) with a one-line reason; prefer citing a second source.
 - `make citation_audit` (also in `make ci` and a prek hook on `src/supply-chain/` and `src/humanoids/`) enforces these rules; the logic is in `src/supply-chain/licence.ts`.
+- Measured runs under `data/benchmarks/` cite sources from `src/benchmarks/sources.ts` (allowlist `BENCHMARK_FACTS_ALLOWLIST`); `make validate_benchmarks` (in `make ci`) applies the same licence rules plus the test protocol in `docs/benchmarks/protocol.md`.
 
 ## Code Style
 

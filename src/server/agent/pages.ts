@@ -4,6 +4,7 @@ import { compareBody } from "./compare";
 import { INVESTORS_PATH } from "@/investors";
 import { CONTRIBUTORS, CONTRIBUTORS_PATH } from "@/people";
 import { STARTUPS_PATH } from "@/startups";
+import { BENCHMARKS_PAGE } from "./benchmarks";
 import {
     actuatorBody,
     actuatorPath,
@@ -149,6 +150,7 @@ const STATIC_PAGES: Page[] = [
     HUMANOIDS_PAGE,
     METALS_PAGE,
     POLICY_PAGE,
+    BENCHMARKS_PAGE,
     sub(
         PATHS.agentsPage,
         "spa",

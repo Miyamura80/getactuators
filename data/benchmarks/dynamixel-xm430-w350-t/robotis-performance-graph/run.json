@@ -1,0 +1,77 @@
+{
+    "actuatorId": "dynamixel-xm430-w350-t",
+    "runId": "robotis-performance-graph",
+    "date": "2026-11",
+    "origin": "published",
+    "sourceKind": "vendor",
+    "source": {
+        "url": "https://emanual.robotis.com/docs/en/dxl/x/xm430-w350/",
+        "title": "ROBOTIS e-Manual: XM430-W350 performance graph"
+    },
+    "dataMethod": "digitised",
+    "methodNote": "Speed and efficiency read off the e-Manual's N-T graph, measured by ROBOTIS under a gradually increasing load (about 0.05 N·m reading error). The graph does not print its voltage; the 12 V rating is assumed.",
+    "rig": {
+        "torqueSensor": "not stated",
+        "accuracyPct": null,
+        "encoder": "actuator's own contactless absolute encoder",
+        "ambientC": null,
+        "busV": 12,
+        "controller": "built-in DYNAMIXEL controller"
+    },
+    "torqueSpeed": [
+        {
+            "rpm": 5.5,
+            "torqueNm": 2.98,
+            "efficiency": 0.09
+        },
+        {
+            "rpm": 9,
+            "torqueNm": 2.8,
+            "efficiency": 0.15
+        },
+        {
+            "rpm": 16,
+            "torqueNm": 2.45,
+            "efficiency": 0.23
+        },
+        {
+            "rpm": 22.5,
+            "torqueNm": 2.1,
+            "efficiency": 0.31
+        },
+        {
+            "rpm": 28.5,
+            "torqueNm": 1.75,
+            "efficiency": 0.37
+        },
+        {
+            "rpm": 33.5,
+            "torqueNm": 1.4,
+            "efficiency": 0.42
+        },
+        {
+            "rpm": 37.5,
+            "torqueNm": 1.05,
+            "efficiency": 0.45
+        },
+        {
+            "rpm": 42,
+            "torqueNm": 0.7,
+            "efficiency": 0.44
+        },
+        {
+            "rpm": 45.5,
+            "torqueNm": 0.35,
+            "efficiency": 0.33
+        },
+        {
+            "rpm": 48,
+            "torqueNm": 0.05,
+            "efficiency": 0.08
+        }
+    ],
+    "uncertainty": {
+        "torqueSpeed": 0.05
+    },
+    "note": "ROBOTIS says the graph, not the stall rating, is what to expect in use. The graph tops out near 3 N·m against a 4.1 N·m stall rating."
+}
