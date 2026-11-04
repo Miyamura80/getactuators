@@ -1,67 +1,112 @@
-import { useMemo } from "react";
-import { DOMAIN_LABEL, type DirectoryPerson, PEOPLE_DOMAINS, type PeopleDomain } from "../../../../src/people";
-import { type NetNode, peopleNetwork } from "../../../../src/people/views";
+import { useMemo, useState } from "react";
+import { DIRECTORY, DOMAIN_LABEL, ORGS, type OrgId, PEOPLE_DOMAINS, type PeopleDomain } from "../../../../src/people";
+import { countryName } from "../../../../src/country-flag";
+import { type NetNode, orgLogoOnLight, orgLogoUrl, peopleNetwork } from "../../../../src/people/views";
 
-const W = 720;
-const H = 520;
+const W = 960;
+const H = 620;
+const PERSON_R = 11;
 
-// Domain marks: shape and colour both carry the domain, so neither relies
-// on the other.
-export function DomainMark({ domain, x = 0, y = 0, r = 6 }: { domain: PeopleDomain; x?: number; y?: number; r?: number }) {
-    const cls = `pp-mark pp-${domain}`;
-    if (domain === "research") return <circle className={cls} cx={x} cy={y} r={r} />;
-    if (domain === "industry") {
-        const d = r * 1.35;
-        return <path className={cls} d={`M${x} ${y - d}L${x + d} ${y}L${x} ${y + d}L${x - d} ${y}Z`} />;
-    }
-    if (domain === "magnets") return <path className={cls} d={`M${x} ${y - r * 1.15}L${x + r * 1.1} ${y + r * 0.8}H${x - r * 1.1}Z`} />;
-    return <rect className={cls} x={x - r * 0.9} y={y - r * 0.9} width={r * 1.8} height={r * 1.8} />;
+export type Selection = { kind: "person" | "org" | "country"; id: string } | null;
+
+export function initials(name: string): string {
+    return name
+        .replace(/\(.*?\)/g, "")
+        .split(/[\s-]+/)
+        .filter(Boolean)
+        .map((w) => w[0]?.toUpperCase() ?? "")
+        .slice(0, 2)
+        .join("");
 }
+
+const orgOfNode = (n: NetNode) => ORGS[n.id.slice(4) as OrgId];
+const orgRadius = (n: NetNode) => 13 + Math.min(n.degree, 6) * 2.5;
 
 export function DomainLegend() {
     return <ul className="pp-legend" aria-label="Domains">
-        {PEOPLE_DOMAINS.map((d) => <li key={d}>
-            <svg width="14" height="14" viewBox="-7 -7 14 14" aria-hidden="true"><DomainMark domain={d} r={5} /></svg>
-            {DOMAIN_LABEL[d]}
-        </li>)}
-        <li>
-            <svg width="14" height="14" viewBox="-7 -7 14 14" aria-hidden="true"><rect className="pp-org" x={-4} y={-4} width={8} height={8} /></svg>
-            Organisation
-        </li>
+        {PEOPLE_DOMAINS.map((d) => <li key={d}><i className={`pp-dot pp-${d}`} aria-hidden="true" />{DOMAIN_LABEL[d]}</li>)}
     </ul>;
 }
 
+// A logo clipped to a circle on a white disc with a neutral ring, so the
+// opaque JPEG backgrounds read the same on dark and light themes. Without a
+// logo the org's initials stand in.
+function OrgMark({ n, logo, light }: { n: NetNode; logo: string | null; light: boolean }) {
+    const r = orgRadius(n);
+    const clip = `pp-clip-${n.id.slice(4)}`;
+    return <>
+        <circle className={logo && light ? "pp-org-disc" : "pp-org-mono"} cx={n.x} cy={n.y} r={r} />
+        {logo ? <>
+            <clipPath id={clip}><circle cx={n.x} cy={n.y} r={r - 1} /></clipPath>
+            <image href={logo} x={n.x - r * 0.82} y={n.y - r * 0.82} width={r * 1.64} height={r * 1.64} clipPath={`url(#${clip})`} preserveAspectRatio="xMidYMid meet" />
+        </> : <text className="pp-org-initials" x={n.x} y={n.y} dy="0.35em" textAnchor="middle" style={{ fontSize: r * 0.62 }}>{initials(n.label)}</text>}
+        <circle className="pp-org-ring" cx={n.x} cy={n.y} r={r} />
+    </>;
+}
+
 // People linked to their organisations: solid lines for the main
-// affiliation, dashed for earlier or secondary ones. Organisations shared by
-// two or more people are labelled; every node names itself on hover and in
-// its accessible name, and a person node jumps to the card.
-export function PeopleNetwork({ people, selected }: { people: DirectoryPerson[]; selected: string | null }) {
-    const { nodes, edges } = useMemo(() => peopleNetwork(W, H, people), [people]);
+// affiliation, dashed for earlier or secondary ones. Org nodes are their
+// logos; hover or focus shows a larger preview. Selecting a node opens its
+// detail; the domain filter dims everyone else.
+export function PeopleNetwork({ domain, selected, onSelect }: { domain: PeopleDomain | null; selected: Selection; onSelect: (s: Selection) => void }) {
+    const { nodes, edges } = useMemo(() => peopleNetwork(W, H, DIRECTORY), []);
     const at = useMemo(() => new Map(nodes.map((n) => [n.id, n])), [nodes]);
-    const lit = selected ? new Set([selected, ...edges.filter((e) => e.from === selected).map((e) => e.to)]) : null;
-    const dim = (id: string) => (lit && !lit.has(id) ? " is-dim" : "");
-    const org = (n: NetNode) => {
-        const s = 4 + Math.min(n.degree, 6) * 1.5;
-        return <g key={n.id} className={`pp-node${dim(n.id)}`}>
-            <rect className="pp-org" x={n.x - s / 2} y={n.y - s / 2} width={s} height={s}><title>{`${n.label}: ${n.degree} ${n.degree === 1 ? "person" : "people"}`}</title></rect>
-            {n.degree >= 2 ? <text className="pp-org-label" x={n.x} y={n.y - s / 2 - 5} textAnchor="middle">{n.label}</text> : null}
-        </g>;
+    const [hover, setHover] = useState<NetNode | null>(null);
+    const selId = selected?.kind === "person" ? selected.id : selected?.kind === "org" ? `org:${selected.id}` : null;
+    const lit = useMemo(() => {
+        if (!selId) return null;
+        const near = edges.filter((e) => e.from === selId || e.to === selId).flatMap((e) => [e.from, e.to]);
+        return new Set([selId, ...near]);
+    }, [selId, edges]);
+    const inDomain = (n: NetNode) => {
+        if (!domain) return true;
+        if (n.kind === "person") return n.domain === domain;
+        return edges.some((e) => e.to === n.id && at.get(e.from)?.domain === domain);
     };
-    const person = (n: NetNode) => <a key={n.id} href={`#${n.id}`} className={`pp-node${dim(n.id)}${n.id === selected ? " is-on" : ""}`} aria-label={`${n.label}, ${DOMAIN_LABEL[n.domain as PeopleDomain]}`}>
-        <title>{n.label}</title>
-        <DomainMark domain={n.domain as PeopleDomain} x={n.x} y={n.y} />
-    </a>;
+    const dim = (n: NetNode) => !inDomain(n) || (lit !== null && !lit.has(n.id));
+    const open = (n: NetNode) => (e: React.MouseEvent) => {
+        e.preventDefault();
+        onSelect(n.kind === "person" ? { kind: "person", id: n.id } : { kind: "org", id: n.id.slice(4) });
+    };
+    const handlers = (n: NetNode) => ({
+        onClick: open(n),
+        onMouseEnter: () => setHover(n),
+        onMouseLeave: () => setHover(null),
+        onFocus: () => setHover(n),
+        onBlur: () => setHover(null),
+    });
+    const tipOrg = hover?.kind === "org" ? orgOfNode(hover) : null;
+    const tipLogo = tipOrg ? orgLogoUrl(tipOrg) : null;
     return <figure className="pp-net">
         <svg viewBox={`0 0 ${W} ${H}`} role="group" aria-label="Network of people and their organisations">
             {edges.map((e) => {
                 const a = at.get(e.from);
                 const b = at.get(e.to);
                 if (!a || !b) return null;
-                return <line key={`${e.from}-${e.to}`} className={`pp-edge${e.main ? "" : " is-also"}${lit && !(lit.has(e.from) && lit.has(e.to)) ? " is-dim" : ""}`} x1={a.x} y1={a.y} x2={b.x} y2={b.y} />;
+                const off = dim(a) || dim(b);
+                return <line key={`${e.from}-${e.to}`} className={`pp-edge${e.main ? "" : " is-also"}${off ? " is-dim" : ""}`} x1={a.x} y1={a.y} x2={b.x} y2={b.y} />;
             })}
-            {nodes.filter((n) => n.kind === "org").map(org)}
-            {nodes.filter((n) => n.kind === "person").map(person)}
+            {nodes.filter((n) => n.kind === "org").map((n) => {
+                const org = orgOfNode(n);
+                return <a key={n.id} href={`?org=${org.id}`} className={`pp-node pp-orgnode${dim(n) ? " is-dim" : ""}${selId === n.id ? " is-on" : ""}`} aria-label={`${n.label}, ${n.degree} ${n.degree === 1 ? "person" : "people"}`} {...handlers(n)}>
+                    <OrgMark n={n} logo={orgLogoUrl(org)} light={orgLogoOnLight(org)} />
+                </a>;
+            })}
+            {nodes.filter((n) => n.kind === "person").map((n) => <a key={n.id} href={`?p=${n.id}`} className={`pp-node pp-person pp-${n.domain}${dim(n) ? " is-dim" : ""}${selId === n.id ? " is-on" : ""}`} aria-label={`${n.label}, ${DOMAIN_LABEL[n.domain as PeopleDomain]}`} {...handlers(n)}>
+                <circle cx={n.x} cy={n.y} r={PERSON_R} />
+                <text x={n.x} y={n.y} dy="0.35em" textAnchor="middle">{initials(n.label)}</text>
+            </a>)}
         </svg>
-        <figcaption><DomainLegend /></figcaption>
+        {hover ? <div className="pp-tip" style={{ left: `${(hover.x / W) * 100}%`, top: `${(hover.y / H) * 100}%` }} role="tooltip">
+            {tipOrg ? <>
+                {tipLogo ? <img className={tipOrg && orgLogoOnLight(tipOrg) ? "is-light" : ""} src={tipLogo} alt="" width={72} height={72} /> : <span className="pp-tip-mono" aria-hidden="true">{initials(tipOrg.name)}</span>}
+                <b>{tipOrg.name}</b>
+                <span>{tipOrg.country ? countryName(tipOrg.country) : ""}{` · ${hover.degree} ${hover.degree === 1 ? "person" : "people"}`}</span>
+            </> : <>
+                <b>{hover.label}</b>
+                <span>{DOMAIN_LABEL[hover.domain as PeopleDomain]}</span>
+            </>}
+        </div> : null}
+        <figcaption><DomainLegend /><span>Dashed: earlier or secondary affiliation</span></figcaption>
     </figure>;
 }

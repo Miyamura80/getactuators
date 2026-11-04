@@ -294,12 +294,19 @@ const host = (url: string): string => new URL(url).hostname.replace(/^www\./, ""
 // startup the catalog already lists as a maker (RobStride, MyActuator) keeps
 // that entry, so ids stay unique.
 const MAKER_IDS = new Set(MAKERS.map(([id]) => id));
+// A startup without its own logo can still have an official mark under
+// frontend/public/logos/brands (self-hosted.json).
+function startupMark(id: string): { logo?: string } {
+    const own = (selfHosted as { id: string; logo: string }[]).find((r) => r.id === id);
+    return own ? { logo: own.logo } : {};
+}
+
 const STARTUP_ENTRIES: BrandEntry[] = STARTUPS.filter((s) => !MAKER_IDS.has(s.id)).map(
     (s) => ({
         id: s.id,
         name: s.name,
         domain: s.url ? host(s.url) : null,
-        ...(s.logo ? { logo: s.logo } : {}),
+        ...(s.logo ? { logo: s.logo } : startupMark(s.id)),
     }),
 );
 

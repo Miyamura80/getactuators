@@ -19,6 +19,31 @@ export function affiliations(p: DirectoryPerson): Org[] {
     return [...new Set(ids)].map((id) => ORGS[id]);
 }
 
+// The org's logo image: its own record (assets.json), else the brand
+// registry's self-hosted mark. Null means draw a monogram.
+export function orgLogoUrl(org: Org): string | null {
+    return (
+        org.logo?.path ??
+        (org.brandId ? resolveBrand(org.brandId)?.logo : undefined) ??
+        null
+    );
+}
+
+// Whether the logo needs a white disc behind it: opaque JPEGs (white
+// background baked in) and dark marks the brand registry flags for a light
+// tile. Transparent light marks sit on the dark disc instead.
+export function orgLogoOnLight(org: Org): boolean {
+    const url = orgLogoUrl(org);
+    if (!url) return false;
+    if (/\.jpe?g$/.test(url)) return true;
+    return org.brandId ? resolveBrand(org.brandId)?.tile === "light" : false;
+}
+
+// Everyone listed with this org as main or other affiliation.
+export function peopleAt(orgId: string): DirectoryPerson[] {
+    return DIRECTORY.filter((p) => affiliations(p).some((o) => o.id === orgId));
+}
+
 export interface CrossLink {
     href: string;
     label: string;
@@ -185,6 +210,42 @@ function move(
     });
 }
 
+const clamp = (v: number, max: number) => Math.min(max, Math.max(0, v));
+
+// Push nodes i and j apart when closer than `gap`; true when they moved.
+function pushApart(
+    { x, y }: Layout,
+    i: number,
+    j: number,
+    gap: number,
+    w: number,
+    h: number,
+) {
+    const vx = at(x, i) - at(x, j);
+    const vy = at(y, i) - at(y, j);
+    const d = Math.hypot(vx, vy);
+    if (d >= gap) return false;
+    const push = (gap - d) / 2 / Math.max(d, 0.01);
+    const ux = d > 0 ? vx * push : gap / 2;
+    const uy = d > 0 ? vy * push : 0;
+    x[i] = clamp(at(x, i) + ux, w);
+    y[i] = clamp(at(y, i) + uy, h);
+    x[j] = clamp(at(x, j) - ux, w);
+    y[j] = clamp(at(y, j) - uy, h);
+    return true;
+}
+
+// Push apart any two nodes closer than `gap`, so node marks never overlap.
+function separate(pos: Layout, gap: number, width: number, height: number) {
+    for (let pass = 0; pass < 40; pass++) {
+        let moved = false;
+        for (let i = 0; i < pos.x.length; i++)
+            for (let j = i + 1; j < pos.x.length; j++)
+                moved = pushApart(pos, i, j, gap, width, height) || moved;
+        if (!moved) return;
+    }
+}
+
 // People and their orgs on a width x height canvas: a small, deterministic
 // force layout (repulsion between all nodes, springs along affiliations, a
 // pull towards the domain's anchor), then clamped inside the margins.
@@ -246,6 +307,7 @@ export function peopleNetwork(
         move(pos, f, pulls, temp);
         temp *= 0.985;
     }
+    separate(pos, 30, width, height);
     const { x, y } = pos;
     const pad = 24;
     nodes.forEach((node, i) => {
