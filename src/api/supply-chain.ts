@@ -75,13 +75,14 @@ export const SiteListParams = z.object({
     ...page,
 });
 
-export function listCompaniesHandler({ url }: ApiContext): Response {
+// Data functions shared by the JSON handlers and their markdown twins.
+export function companyPage({ url }: ApiContext) {
     const { limit, cursor, ...filters } = parseQuery(CompanyListParams, url);
     const p = paginate(findCompanies(filters), limit, cursor, filters);
-    return json({ ...p, data: p.data.map(companyView) });
+    return { ...p, data: p.data.map(companyView) };
 }
 
-export function getCompanyHandler({ params }: ApiContext): Response {
+export function companyDetail({ params }: ApiContext) {
     const id = params.id ?? "";
     const c = getCompany(id);
     if (!c)
@@ -89,11 +90,17 @@ export function getCompanyHandler({ params }: ApiContext): Response {
             detail: `No company with id "${id}".`,
             hint: "Ids are slugs; list valid ones with GET /api/v1/companies.",
         });
-    return json(companyDetailView(c));
+    return companyDetailView(c);
 }
 
-export function listSitesHandler({ url }: ApiContext): Response {
+export function sitePage({ url }: ApiContext) {
     const { limit, cursor, ...filters } = parseQuery(SiteListParams, url);
     const p = paginate(findSites(filters), limit, cursor, filters);
-    return json({ ...p, data: p.data.map(siteView) });
+    return { ...p, data: p.data.map(siteView) };
 }
+
+export const listCompaniesHandler = (ctx: ApiContext): Response =>
+    json(companyPage(ctx));
+export const getCompanyHandler = (ctx: ApiContext): Response =>
+    json(companyDetail(ctx));
+export const listSitesHandler = (ctx: ApiContext): Response => json(sitePage(ctx));

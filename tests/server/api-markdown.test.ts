@@ -1,7 +1,9 @@
 import { beforeAll, describe, expect, test } from "bun:test";
+import { OPERATIONS } from "@/api/operations";
 import { ProblemSchema } from "@/api/schemas";
 import { API_OPERATIONS } from "@/api/surface";
 import { ACTUATORS, CATEGORIES, ROBOTS } from "@/catalog";
+import { hasApiMarkdown } from "@/server/agent/api-md";
 import { type FetchHandler, createHandler } from "@/server/app";
 import { loadRegistry } from "@/server/registry";
 import { SITE_URL } from "@/server/site";
@@ -48,7 +50,59 @@ const TWINS: [string, string][] = [
     ["/api/v1/countries.md", "# Country pages"],
     ["/api/v1/countries/JP.md", "# Japan"],
     ["/api/v1/countries/japan.md", "# Japan"],
+    ["/api/v1/companies.md?country=JP", "# Supply-chain companies: country=JP"],
+    ["/api/v1/companies/jl-mag.md", "# JL MAG"],
+    ["/api/v1/sites.md?company=jl-mag", "# Supply-chain sites"],
+    ["/api/v1/metals.md", "# Magnet metals"],
+    ["/api/v1/metals/dy.md", "# Dysprosium (Dy)"],
+    ["/api/v1/metal-prices/dy-oxide.md", "# Dy oxide price history"],
+    ["/api/v1/policy.md", "# Policy measures"],
+    ["/api/v1/policy/cn-mofcom-2025-18.md", "# Licences for"],
+    ["/api/v1/processes.md", "# Manufacturing process chains"],
+    ["/api/v1/processes/magnet.md", "# How an NdFeB magnet is made"],
+    ["/api/v1/alts.md", "# Alternative actuator technologies"],
+    ["/api/v1/alts/switched-reluctance.md", "# Switched reluctance motor"],
+    ["/api/v1/humanoids.md", "# Humanoids with actuator totals"],
+    ["/api/v1/humanoids/unitree-g1.md", "# G1 by Unitree Robotics"],
+    ["/api/v1/people.md", "# People in actuators and rare earths"],
+    ["/api/v1/people/masato-sagawa.md", "# Masato Sagawa"],
 ];
+
+// The `.md` twin of an operation's documented example request.
+function twinOf(example: string): string {
+    const [path, query] = example.split("?");
+    return `${path}.md${query ? `?${query}` : ""}`;
+}
+
+const GET_OPERATIONS = OPERATIONS.filter((op) => op.method === "GET");
+
+// Guards against new GET operations shipping without a markdown twin.
+describe("every GET operation has a markdown twin", () => {
+    test("each GET operationId has a renderer", () => {
+        const missing = GET_OPERATIONS.filter((op) => !hasApiMarkdown(op.operationId));
+        expect(missing.map((op) => op.operationId)).toEqual([]);
+    });
+
+    for (const op of GET_OPERATIONS) {
+        test(`${op.operationId}: ${twinOf(op.example)}`, async () => {
+            const text = await expectMarkdown(await call(twinOf(op.example)));
+            expect(text).toContain(
+                `## JSON\n\nThis is the markdown twin of ${SITE_URL}`,
+            );
+            // Every footnote reference has its definition.
+            for (const [, n] of text.matchAll(/\[\^(\d+)\](?!:)/g))
+                expect(text).toContain(`[^${n}]: `);
+        });
+
+        test(`${op.operationId}: Accept: text/markdown on the JSON URL`, async () => {
+            const res = await call(op.example, {
+                headers: { Accept: "text/markdown" },
+            });
+            await expectMarkdown(res);
+            expect(res.headers.get("vary")).toContain("Accept");
+        });
+    }
+});
 
 describe("API markdown twins (.md)", () => {
     for (const [path, heading] of TWINS) {
@@ -117,6 +171,21 @@ describe("API markdown errors", () => {
     test("unknown ids 404 like the JSON endpoint", async () => {
         await expectProblem("/api/v1/actuators/not-a-real-id.md", 404, "not_found");
         await expectProblem("/api/v1/robots/not-a-real-id.md", 404, "not_found");
+        for (const collection of [
+            "companies",
+            "metals",
+            "metal-prices",
+            "policy",
+            "processes",
+            "alts",
+            "humanoids",
+            "people",
+        ])
+            await expectProblem(
+                `/api/v1/${collection}/not-a-real-id.md`,
+                404,
+                "not_found",
+            );
     });
 
     test("unknown .md paths 404", async () => {
@@ -131,6 +200,12 @@ describe("API markdown errors", () => {
             "invalid_parameter",
         );
         await expectProblem("/api/v1/actuators/compare.md", 400, "invalid_parameter");
+        await expectProblem(
+            "/api/v1/companies.md?stage=bogus",
+            400,
+            "invalid_parameter",
+        );
+        await expectProblem("/api/v1/people.md?domain=bogus", 400, "invalid_parameter");
     });
 });
 
