@@ -132,6 +132,7 @@ function operationObject(op: Operation, tag: string): Json {
 
 function tagFor(path: string): string {
     if (path.includes("/robots") || path.includes("/humanoids")) return "robots";
+    if (path.includes("/open-robots")) return "robots";
     if (
         path.includes("/companies") ||
         path.includes("/sites") ||
