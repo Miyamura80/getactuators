@@ -187,6 +187,7 @@ const SUPPLY_CHAIN: Row[] = [
     ["renault-group", "Renault Group", "renaultgroup.com", ["Renault"]],
     ["bmw-group", "BMW Group", "bmwgroup.com", ["BMW"]],
     ["turntide", "Turntide Technologies", "turntide.com", ["Turntide"]],
+    ["conifer", "Conifer", "conifer.io"],
     ["niron-magnetics", "Niron Magnetics", "nironmagnetics.com", ["Niron"]],
     [
         "cambridge-mechatronics",
