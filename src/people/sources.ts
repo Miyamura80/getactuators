@@ -454,9 +454,9 @@ export const PEOPLE_SOURCES: PeopleSource[] = [
     ),
     s(
         "senate-baskaran-testimony",
-        "US Senate HELP Committee",
-        "Testimony of Gracelin Baskaran",
-        "https://www.help.senate.gov/download/baskaran-testimonypdf",
+        "US Government Publishing Office",
+        "Building our critical minerals workforce (Senate HELP subcommittee hearing, June 12, 2024)",
+        "https://www.govinfo.gov/content/pkg/CHRG-118shrg57243/pdf/CHRG-118shrg57243.pdf",
         "government",
     ),
     s(

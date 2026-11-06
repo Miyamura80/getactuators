@@ -35,8 +35,9 @@ export const POLICY: DirectoryRecord[] = [
             "Mining economist whose CSIS work on rare earth processing and export controls is cited by Congress and press.",
         keyWorks: [
             {
-                title: "Senate HELP Committee testimony",
-                url: "https://www.help.senate.gov/download/baskaran-testimonypdf",
+                title: "Senate HELP subcommittee testimony on the critical minerals workforce",
+                url: "https://www.govinfo.gov/content/pkg/CHRG-118shrg57243/pdf/CHRG-118shrg57243.pdf",
+                year: 2024,
                 kind: "report",
             },
         ],
