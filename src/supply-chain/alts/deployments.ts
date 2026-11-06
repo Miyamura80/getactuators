@@ -101,6 +101,7 @@ export const DEPLOYMENTS: Deployment[] = [
         id: "conifer-pune",
         techId: "axial-flux",
         org: "Conifer",
+        companyId: "conifer",
         product: "Ferrite axial-flux in-wheel motors for small vehicles",
         date: "2025",
         status: "pilot",

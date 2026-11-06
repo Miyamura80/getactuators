@@ -65,7 +65,9 @@ export const MAGNET_USE_LABEL: Record<MagnetUse, string> = {
     ferrite: "Ferrite magnets",
     "iron-nitride": "Iron nitride magnets",
     permanent: "Permanent magnets",
-    motor: "Set by its pump motor",
+    // Fluid power (a hydraulic pump or an air compressor): the electric motor
+    // driving it decides the magnet content.
+    motor: "Set by its pump or compressor motor",
     // A transmission without magnets of its own (not a magnetic gear): the
     // motor driving it decides the magnet content.
     "drive-motor": "Depends on its motor",
