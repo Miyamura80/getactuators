@@ -73,7 +73,7 @@ export function listProcessesHandler(): Response {
     return json(processChainListView());
 }
 
-export function getProcessHandler({ params, url }: ApiContext): Response {
+export function processChain({ params, url }: ApiContext): ProcessView {
     const chain = params.chain ?? "";
     const { step } = parseQuery(ProcessParams, url);
     const r = processResult(chain, step);
@@ -82,5 +82,7 @@ export function getProcessHandler({ params, url }: ApiContext): Response {
             detail: r.error,
             hint: "List chains with GET /api/v1/processes; step ids are in each chain's steps.",
         });
-    return json(r.view);
+    return r.view;
 }
+
+export const getProcessHandler = (ctx: ApiContext): Response => json(processChain(ctx));

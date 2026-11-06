@@ -39,17 +39,19 @@ export function altResult(
     return { view: altTechView(t) };
 }
 
-export function listAltsHandler({ url }: ApiContext): Response {
-    const { family } = parseQuery(AltListParams, url);
-    return json(altTechListView(family));
+export function altList({ url }: ApiContext) {
+    return altTechListView(parseQuery(AltListParams, url).family);
 }
 
-export function getAltHandler({ params }: ApiContext): Response {
+export function altTech({ params }: ApiContext) {
     const r = altResult(params.id ?? "");
     if ("error" in r)
         throw new ApiError("not_found", {
             detail: r.error,
             hint: "List technologies with GET /api/v1/alts.",
         });
-    return json(r.view);
+    return r.view;
 }
+
+export const listAltsHandler = (ctx: ApiContext): Response => json(altList(ctx));
+export const getAltHandler = (ctx: ApiContext): Response => json(altTech(ctx));
