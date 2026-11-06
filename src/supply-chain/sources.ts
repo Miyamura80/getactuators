@@ -1,4 +1,5 @@
 import { SDK_SOURCES } from "../sdk/sources";
+import { CHINA_SOURCES } from "./country-pages/china-sources";
 import { JAPAN_SOURCES } from "./country-pages/japan-sources";
 import { POLICY_SOURCES } from "./policy/sources";
 import { PROCESS_SOURCES } from "./processes/sources";
@@ -605,12 +606,15 @@ export const SOURCES: SourceRef[] = [
     ...POLICY_SOURCES,
     ...PROCESS_SOURCES,
     ...JAPAN_SOURCES,
+    ...CHINA_SOURCES,
     ...SDK_SOURCES,
 ];
 
 // Facts sources allowed to back more than FACTS_MAX_RECORDS records (see
 // ./licence.ts), each with why that is not copying the source's table.
 export const FACTS_ALLOWLIST: ReuseAllowlist<SourceId> = {
+    "iea-rare-earths-2025":
+        "Two headline country shares (refining and magnets) reused by each page that shows those stages; no table is copied.",
     "rem-nd-price-2026":
         "One public spot quote per month for Nd metal and NdPr oxide in 2026, read off the live price page; no history table is copied.",
     "rem-tb-price-2026":

@@ -1,3 +1,4 @@
+import { CHINA_LINKS } from "./country-pages/china-links";
 import { JAPAN_LINKS } from "./country-pages/japan-links";
 import type { Confidence, SourceId } from "./sourced";
 
@@ -94,4 +95,5 @@ export const SUPPLY_LINKS: SupplyLink[] = [
         note: "Supplier audits and orders reported by Chinese media; Tesla has not confirmed.",
     },
     ...JAPAN_LINKS,
+    ...CHINA_LINKS,
 ];

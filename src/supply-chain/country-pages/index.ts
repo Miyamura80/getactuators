@@ -6,6 +6,7 @@ import { METAL_STAGES, type MetalStage, STAGE_SHARES } from "../metals/stage-sha
 import { activeLinks } from "../registry";
 import { SITES, type Site } from "../sites";
 import type { Sourced } from "../sourced";
+import { CHINA_PAGE } from "./china";
 import { JAPAN_PAGE } from "./japan";
 import type { CountryContent, CountryStage } from "./types";
 
@@ -30,6 +31,7 @@ export const COUNTRY_OF: Record<CountrySlug, Admin1Country> = {
 // Page content per country; a country without content never goes live.
 const CONTENT: Partial<Record<CountrySlug, CountryContent>> = {
     japan: JAPAN_PAGE,
+    china: CHINA_PAGE,
 };
 
 // A country page ships once its dataset reaches these counts. `links` counts

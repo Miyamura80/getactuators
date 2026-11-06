@@ -53,7 +53,7 @@ test("the lab HTML carries a server-rendered world map before hydration", async 
     expect(svg).toContain(`<path d="${SEGMENT_PICTO["magnets-motors"].line}"/>`);
     // A city-centre pin is a dashed (hollow) tile.
     expect(svg).toMatch(
-        /<title>Shenghe Resources[^<]*<\/title><rect [^>]*stroke-dasharray=/,
+        /<title>IREL \(India\)[^<]*<\/title><rect [^>]*stroke-dasharray=/,
     );
     const tiles = (svg?.match(/<rect x="1" y="1" width="22" height="22" rx="5"/g) ?? [])
         .length;
