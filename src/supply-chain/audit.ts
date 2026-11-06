@@ -1,4 +1,5 @@
 import { openSourceLicenceErrors } from "../open-source/licence";
+import { DIRECTORY_RECORDS } from "../people/records";
 import { sdkErrors } from "../sdk/audit";
 import { SDK_CHECKS } from "../sdk/checks";
 import {
@@ -111,6 +112,7 @@ const CITING_RECORDS: Record<string, readonly { sources: readonly string[] }[]> 
     "process-steps": PROCESS_CHAINS.flatMap((c) => c.steps),
     "country-stage-gaps": countryStageRecords().flatMap((s) => (s.gap ? [s.gap] : [])),
     "sdk-checks": Object.values(SDK_CHECKS).flat(),
+    "people-directory": DIRECTORY_RECORDS,
     "alts-principles": ALT_TECHS,
     "alts-deployments": DEPLOYMENTS,
 };

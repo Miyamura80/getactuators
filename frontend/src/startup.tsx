@@ -23,7 +23,7 @@ import { LAB_PATH } from "../../src/supply-chain/lab-fixtures";
 import { Humanoids } from "./pages/humanoids/Humanoids";
 import { HUMANOIDS_PATH } from "../../src/humanoids";
 import { Contributors } from "./pages/Contributors";
-import { CONTRIBUTORS_PATH } from "../../src/people";
+import { CONTRIBUTORS_PATH, PEOPLE_PATH } from "../../src/people";
 import { Metals } from "./pages/supply-chain/metals/Metals";
 import { METALS_PATH } from "../../src/supply-chain/metals";
 import { Policy } from "./pages/supply-chain/policy/Policy";
@@ -77,6 +77,19 @@ function SdkLoading({ menuOpen }: { menuOpen: boolean }) {
     </div>;
 }
 
+// /people carries the directory, its network layout and the map, so it
+// loads in its own chunk.
+const People = lazy(() => import("./pages/people/People").then((m) => ({ default: m.People })));
+
+function PeopleLoading({ menuOpen }: { menuOpen: boolean }) {
+    return <div className="tool-page pp-page">
+        <PublicHeader path={PEOPLE_PATH} initialOpen={menuOpen} />
+        <main className="tool-main" aria-busy="true">
+            <p role="status">Loading people</p>
+        </main>
+    </div>;
+}
+
 function Page({ menuOpen }: { menuOpen: boolean }) {
     const path = usePath();
     if (path === "/compare") return <Compare menuOpen={menuOpen} />;
@@ -91,6 +104,7 @@ function Page({ menuOpen }: { menuOpen: boolean }) {
     if (path === LAB_PATH) return <SupplyChainLab menuOpen={menuOpen} />;
     if (path === HUMANOIDS_PATH) return <Humanoids menuOpen={menuOpen} />;
     if (path === CONTRIBUTORS_PATH) return <Contributors menuOpen={menuOpen} />;
+    if (path === PEOPLE_PATH) return <Suspense fallback={<PeopleLoading menuOpen={menuOpen} />}><People menuOpen={menuOpen} /></Suspense>;
     if (path === METALS_PATH) return <Metals menuOpen={menuOpen} />;
     if (path === POLICY_PATH) return <Policy menuOpen={menuOpen} />;
     if (path === OPEN_SOURCE_PATH) return <OpenSource menuOpen={menuOpen} />;

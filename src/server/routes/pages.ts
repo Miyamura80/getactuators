@@ -148,6 +148,7 @@ const PAGE_PATHS = [
     "/alts",
     ...LIVE_COUNTRY_PATHS,
     "/sdk",
+    "/people",
 ];
 
 // Standalone agent documents open with their H1 (no frontmatter). /agents.md

@@ -1,5 +1,5 @@
-// Shared people registry: who appears on /contributors (and later /people),
-// with a headshot and the logo of their main affiliation.
+// Shared people registry: who appears on /contributors and /people, with a
+// headshot and the logo of their main affiliation.
 
 export const LICENCES = ["consent", "own", "press-kit"] as const;
 export type Licence = (typeof LICENCES)[number];
@@ -32,4 +32,15 @@ export interface Org {
     // src/brands registry id: without a self-hosted logo, the org is drawn
     // with that brand's CompanyLogo tile.
     brandId?: string;
+    // ISO 3166-1 alpha-2 country of the org's main site (/people map).
+    country?: string;
+    // src/supply-chain/companies id, when the org is in that registry.
+    companyId?: string;
+    // src/humanoids id of the org's humanoid on /humanoids.
+    humanoidId?: string;
+    // Works on rare-earth-free magnets or non-motor actuators (/alts).
+    alts?: boolean;
 }
+
+// A hand-written org record: an Org before its id and logo are merged in.
+export type OrgRecord = Omit<Org, "id" | "logo">;

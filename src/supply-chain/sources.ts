@@ -1,3 +1,4 @@
+import { PEOPLE_SOURCES } from "../people/sources";
 import { SDK_SOURCES } from "../sdk/sources";
 import { ALT_SOURCES } from "./alts/sources";
 import { CHINA_SOURCES } from "./country-pages/china-sources";
@@ -609,6 +610,7 @@ export const SOURCES: SourceRef[] = [
     ...JAPAN_SOURCES,
     ...CHINA_SOURCES,
     ...SDK_SOURCES,
+    ...PEOPLE_SOURCES,
     ...ALT_SOURCES,
 ];
 

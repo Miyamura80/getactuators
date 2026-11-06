@@ -5,10 +5,8 @@ import {
     logoUrl,
     resolveBrand,
 } from "../../../src/brands";
+import { LOGO_TOKEN } from "../lib/logo-token";
 
-// Logo.dev publishable key (pk_...): public by design, baked in at build time.
-// Unset means every logo is a monogram, which is also the no-network fallback.
-const LOGO_TOKEN: string = import.meta.env.VITE_LOGO_DEV_TOKEN ?? "";
 
 interface Props {
     // A registry id ("cubemars") or any dataset spelling ("CubeMars (T-Motor)").

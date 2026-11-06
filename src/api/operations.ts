@@ -55,6 +55,13 @@ import {
 } from "./open-robots";
 import { ActuatorListParams, CompareQueryParams, RobotListParams } from "./params";
 import {
+    PeopleListParams,
+    PeopleListSchema,
+    PersonSchema,
+    getPersonHandler,
+    listPeopleHandler,
+} from "./people";
+import {
     PolicyListParams,
     PolicyListSchema,
     PolicyMeasureSchema,
@@ -567,5 +574,35 @@ export const OPERATIONS: Operation[] = [
         errors: [400, 404],
         example: "/api/v1/sdk/odrive",
         handler: getSdkHandler,
+    },
+    {
+        operationId: "list_people",
+        method: "GET",
+        path: "/api/v1/people",
+        summary: "List leading people in actuators and rare earths",
+        description:
+            "The /people directory: actuator researchers, actuator and robot founders, magnet and rare earth executives, and analysts and policy leads. Each person carries role, affiliations (with supply-chain company ids), why they matter, key works, the inclusion criterion met and sources. Filter by domain.",
+        query: PeopleListParams,
+        response: PeopleListSchema,
+        errors: [400],
+        example: "/api/v1/people?domain=magnets",
+        handler: listPeopleHandler,
+    },
+    {
+        operationId: "get_person",
+        method: "GET",
+        path: "/api/v1/people/:id",
+        summary: "Get one person from the people directory",
+        description:
+            "One person from /people with affiliations, key works, site links (country page, humanoid joint map, catalog) and sources.",
+        pathParam: {
+            name: "id",
+            description: "Person id (slug).",
+            example: "masato-sagawa",
+        },
+        response: PersonSchema,
+        errors: [404],
+        example: "/api/v1/people/masato-sagawa",
+        handler: getPersonHandler,
     },
 ];

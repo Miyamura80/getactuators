@@ -91,6 +91,7 @@ export const FOOTER_GROUPS = [
             ["/llms.txt", "llms.txt"],
             ["/benchmarks", "Measured benchmarks"],
             ["/sdk", "Best actuator SDKs"],
+            ["/people", "Leading people"],
         ],
     },
     {
