@@ -11,6 +11,7 @@
 import { chromium } from "playwright-core";
 import { MANUFACTURING_PATH, PROCESS_CHAINS } from "../../src/supply-chain/processes";
 import { PRODUCT_ID } from "../../src/supply-chain/processes/layout";
+import { ALTS_PATH, ALT_TECHS } from "../../src/supply-chain/alts";
 import { DEMO_SCENES, MAGNET_PRESS_LOOP } from "../../src/supply-chain/scenes/demos";
 
 const [base = "http://localhost:4317", ...only] = process.argv.slice(2);
@@ -21,6 +22,8 @@ interface Target {
     url: string;
     // A tab to open first (the lab page shows one scene at a time).
     tab?: string;
+    // A section to scroll into view first (the scene loads when visible).
+    scroll?: string;
     // Pixel ratio: step cards draw the stage small, so they capture at 2x.
     scale: number;
 }
@@ -39,7 +42,14 @@ const STEPS: Target[] = PROCESS_CHAINS.flatMap((c) => [
         .map((s) => ({ id: s.animation?.id ?? s.id, url: `${base}${MANUFACTURING_PATH}#step=${s.id}`, scale: 2 })),
     ...(c.productScene ? [{ id: c.productScene.id, url: `${base}${MANUFACTURING_PATH}#step=${PRODUCT_ID}`, scale: 2 }] : []),
 ]);
-const TARGETS = [...LAB, ...STEPS].filter((t) => only.length === 0 || only.includes(t.id));
+// /alts?tech=<id> opens that technology's spec card with its scene.
+const ALTS: Target[] = ALT_TECHS.map((t) => ({
+    id: t.scene.spec.id,
+    url: `${base}${ALTS_PATH}?tech=${t.id}`,
+    scroll: ".al-sp-stage .x3-stage",
+    scale: 2,
+}));
+const TARGETS = [...LAB, ...STEPS, ...ALTS].filter((t) => only.length === 0 || only.includes(t.id));
 
 const browser = await chromium.launch({
     executablePath: process.env.CHROME_PATH,
@@ -57,6 +67,7 @@ for (const t of TARGETS) {
     pages.set(t.scale, page);
     await page.goto("about:blank");
     await page.goto(t.url, { waitUntil: "networkidle" });
+    if (t.scroll) await page.locator(t.scroll).scrollIntoViewIfNeeded();
     if (t.tab) {
         const tab = page.locator(t.tab);
         await tab.scrollIntoViewIfNeeded();

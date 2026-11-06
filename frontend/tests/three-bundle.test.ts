@@ -36,15 +36,18 @@ afterAll(() => rmSync(out, { recursive: true, force: true }));
 
 const gz = (code: string) => gzipSync(code).length;
 
-// Chunks that hold the renderer, plus every chunk that imports one of them.
+// Chunks that hold the renderer, plus every chunk that statically imports one
+// of them (the canvases and the part library). Pages that only lazy-load the
+// kit with import("./x.js") are not part of the 3D budget.
 function threeChunks(): string[] {
     const set = new Set([...chunks].filter(([, c]) => c.includes("WebGLRenderer")).map(([f]) => f));
+    const imports = (code: string, dep: string) => code.includes(`from"./${dep}"`) || code.includes(`import"./${dep}"`);
     let grew = true;
     while (grew) {
         grew = false;
         for (const [f, code] of chunks) {
             if (f === entry || set.has(f)) continue;
-            if ([...set].some((dep) => code.includes(`./${dep}`))) {
+            if ([...set].some((dep) => imports(code, dep))) {
                 set.add(f);
                 grew = true;
             }

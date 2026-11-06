@@ -230,7 +230,7 @@ export const DIRECTORY_ORGS = {
         name: "Niron Magnetics",
         url: "https://www.nironmagnetics.com/",
         country: "US",
-        brandId: "niron",
+        brandId: "niron-magnetics",
         alts: true,
     },
     "jl-mag": {

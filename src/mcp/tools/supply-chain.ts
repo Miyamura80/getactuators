@@ -188,7 +188,7 @@ const getCountry = defineTool({
     name: "get_country",
     title: "Get a country's actuator supply chain",
     description:
-        "Everything on a country page of the supply-chain atlas (Japan today): the country's share of each stage with the world leader, named industrial clusters, its policy measures, every company headquartered there or with a site there (revenue and gross margin with sources), the sites in the country and the current supply links touching them, including links abroad.",
+        "Everything on a country page of the supply-chain atlas (Japan and China today): the country's share of each stage with the world leader, named industrial clusters, its policy measures, every company headquartered there or with a site there (revenue and gross margin with sources), the sites in the country and the current supply links touching them, including links abroad.",
     input: z.object({
         code: z
             .string()

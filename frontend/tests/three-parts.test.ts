@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { Box3, InstancedMesh, Mesh, MeshBasicMaterial } from "three";
+import { ALT_SCENES } from "../../src/supply-chain/alts";
 import { DEMO_SCENES, MAGNET_PRESS_LOOP } from "../../src/supply-chain/scenes/demos";
 import { MAGNET_LOOPS, MAGNET_ROTOR } from "../../src/supply-chain/scenes/magnet-loops";
 import { partExtent, pitchRadius } from "../../src/supply-chain/scenes/motion";
@@ -16,6 +17,11 @@ const shapes: PartShape[] = [
     ...MAGNET_PRESS_LOOP.actors,
     ...MAGNET_LOOPS.flatMap((l) => l.actors),
     ...MAGNET_ROTOR.parts,
+    ...ALT_SCENES.flatMap((s) => (s.kind === "loop" ? s.spec.actors : s.spec.parts)),
+    ...(["salient", "flux-barrier", "cage", "spoke"] as const).map(
+        (kind): PartShape => ({ component: "rotor-core", props: { kind, poles: 6, layers: 3, bars: 20, outer: 30, inner: 6, length: 20 } }),
+    ),
+    { component: "coil", props: { radius: 8, wire: 0.5, pitch: 6, turns: 6, strands: 3, crossed: true } },
     { component: "block", props: { width: 40, height: 16, depth: 24, slices: 7 } },
     { component: "arc-segment", props: { outer: 26, inner: 20, angle: 0.55, length: 16 } },
     { component: "spur-gear", props: { teeth: 18, module: 1, width: 5, bore: 3 } },

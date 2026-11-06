@@ -2,6 +2,7 @@ import { logoUrl, resolveBrand } from "../brands";
 import { ACTUATORS } from "../catalog";
 import { HUMANOIDS } from "../humanoids";
 import { SUPPLY_CHAIN_PAGES_LIVE } from "../public-navigation";
+import { ALTS_PATH } from "../supply-chain/alts/path";
 import { getCountryPage } from "../supply-chain/country-pages";
 import { PEOPLE_DOMAINS, type PeopleDomain } from "./directory";
 import { DIRECTORY, type DirectoryPerson, ORGS, type OrgId } from "./index";
@@ -10,8 +11,6 @@ import type { Org } from "./types";
 // Derived views of the /people directory shared by the page, the markdown
 // twin, the REST API and the MCP tool: affiliations, links into the rest of
 // the site, people per country and the people-to-org network.
-
-export const ALTS_PATH = "/alts";
 
 // Main affiliation first, then the others, without repeats.
 export function affiliations(p: DirectoryPerson): Org[] {
