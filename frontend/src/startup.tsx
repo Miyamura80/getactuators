@@ -29,6 +29,8 @@ import { Metals } from "./pages/supply-chain/metals/Metals";
 import { METALS_PATH } from "../../src/supply-chain/metals";
 import { Policy } from "./pages/supply-chain/policy/Policy";
 import { POLICY_PATH } from "../../src/supply-chain/policy";
+import { OpenSource } from "./pages/open-source/OpenSource";
+import { OPEN_SOURCE_PATH } from "../../src/open-source";
 import { Benchmarks } from "./pages/benchmarks/Benchmarks";
 import { BENCHMARKS_PATH } from "../../src/benchmarks";
 import { MANUFACTURING_PATH } from "../../src/supply-chain/processes/path";
@@ -80,6 +82,7 @@ function Page({ menuOpen }: { menuOpen: boolean }) {
     if (path === PEOPLE_PATH) return <People menuOpen={menuOpen} />;
     if (path === METALS_PATH) return <Metals menuOpen={menuOpen} />;
     if (path === POLICY_PATH) return <Policy menuOpen={menuOpen} />;
+    if (path === OPEN_SOURCE_PATH) return <OpenSource menuOpen={menuOpen} />;
     if (path === BENCHMARKS_PATH) return <Benchmarks menuOpen={menuOpen} />;
     if (path === MANUFACTURING_PATH) return <Suspense fallback={<ManufacturingLoading menuOpen={menuOpen} />}><Manufacturing menuOpen={menuOpen} /></Suspense>;
     const country = LIVE_COUNTRY_PAGES.find((p) => p.path === path);
