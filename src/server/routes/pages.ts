@@ -145,6 +145,7 @@ const PAGE_PATHS = [
     "/open-source",
     "/benchmarks",
     "/manufacturing",
+    "/alts",
     ...LIVE_COUNTRY_PATHS,
     "/sdk",
 ];

@@ -86,10 +86,12 @@ const EXTENT: { [K in PartKind]: (p: PartPropsByKind[K]) => Extent } = {
     }),
     "wave-generator": (p) => ({ r: p.major, h: p.width / 2 }),
     "circular-spline": (p) => ({ r: p.outer, h: p.width / 2 }),
-    "cycloid-disc": (p) => ({
-        r: p.radius + (p.pins ? 2 * p.pinRadius : 0),
-        h: p.thickness / 2,
-    }),
+    // With the housing: its ring's outer edge (radius + 2.4 pin radii, as in
+    // pinRing) and pins 1.5 times the disc thickness.
+    "cycloid-disc": (p) =>
+        p.pins || p.pinsOnly
+            ? { r: p.radius + 2.4 * p.pinRadius, h: (p.thickness * 1.5) / 2 }
+            : { r: p.radius, h: p.thickness / 2 },
     "ball-screw": (p) => {
         const nut = p.nutLength ? (p.nutOuter ?? p.diameter * 0.95) * 1.45 : 0;
         return { r: Math.max(p.diameter / 2, nut), h: p.length / 2 };
@@ -119,6 +121,8 @@ const EXTENT: { [K in PartKind]: (p: PartPropsByKind[K]) => Extent } = {
     bolt: (p) => ({ r: (p.circle ?? 0) + p.diameter, h: p.length / 2 }),
     block: (p) => ({ r: Math.hypot(p.width, p.height) / 2, h: p.depth / 2 }),
     "arc-segment": (p) => ({ r: p.outer, h: p.length / 2 }),
+    "rotor-core": (p) => ({ r: p.outer, h: p.length / 2 }),
+    coil: (p) => ({ r: p.radius + p.wire, h: (p.turns * p.pitch) / 2 + p.wire }),
 };
 
 export function partExtent(shape: PartShape): Extent {

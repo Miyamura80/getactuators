@@ -1,5 +1,12 @@
 import type { z } from "zod";
 import {
+    AltListParams,
+    AltTechListSchema,
+    AltTechSchema,
+    getAltHandler,
+    listAltsHandler,
+} from "./alts";
+import {
     BenchmarkListParams,
     BenchmarkListSchema,
     actuatorBenchmarksHandler,
@@ -380,6 +387,36 @@ export const OPERATIONS: Operation[] = [
         errors: [400, 404],
         example: "/api/v1/processes/magnet?step=jet-milling",
         handler: getProcessHandler,
+    },
+    {
+        operationId: "list_alt_technologies",
+        method: "GET",
+        path: "/api/v1/alts",
+        summary: "List alternative actuator technologies",
+        description:
+            "Every technology on /alts (rare-earth-free motors, artificial muscles, hydraulic drives, transmissions) with principle, magnet use, TRL, milestones, companies, cited performance figures, market sizes and deployments. Filter with `family`.",
+        query: AltListParams,
+        response: AltTechListSchema,
+        errors: [400],
+        example: "/api/v1/alts?family=artificial-muscle",
+        handler: listAltsHandler,
+    },
+    {
+        operationId: "get_alt_technology",
+        method: "GET",
+        path: "/api/v1/alts/:id",
+        summary: "Get an alternative actuator technology",
+        description:
+            "One /alts technology: principle, magnet use, TRL with its evidence, dated milestones (announced targets flagged), companies, performance figures, market size and growth, deployments and sources.",
+        pathParam: {
+            name: "id",
+            description: "Technology id, e.g. switched-reluctance.",
+            example: "switched-reluctance",
+        },
+        response: AltTechSchema,
+        errors: [404],
+        example: "/api/v1/alts/switched-reluctance",
+        handler: getAltHandler,
     },
     {
         operationId: "list_humanoids",

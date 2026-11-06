@@ -65,7 +65,11 @@ function scaleFor(unit: string | undefined, max: number): Scale {
 function plain(unit: string | undefined, n: number): string {
     if (unit === "year") return String(Math.round(n));
     if (unit === "HHI") return Math.round(n).toLocaleString("en-US");
-    if (unit === "fraction") return `${Math.round(n * 100)}`;
+    // Below 1% a whole percent would read as zero, so keep one decimal.
+    if (unit === "fraction")
+        return n !== 0 && Math.abs(n) < 0.01
+            ? `${Number((n * 100).toFixed(1))}`
+            : `${Math.round(n * 100)}`;
     return trim(n);
 }
 

@@ -1,3 +1,4 @@
+import { ALT_COMPANIES } from "./alts";
 import { CHINA_COMPANIES, UNITREE_REVENUE } from "./china";
 import { JAPAN_COMPANIES, grossMargin, yenRevenue } from "./japan";
 import type { Company } from "./types";
@@ -296,5 +297,6 @@ export const COMPANIES: Company[] = [
         url: "https://www.tuopu.com/",
     },
     ...JAPAN_COMPANIES,
+    ...ALT_COMPANIES,
     ...CHINA_COMPANIES,
 ];

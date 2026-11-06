@@ -1,7 +1,7 @@
 # Supply-chain atlas: data and page recipe
 
-The supply-chain pages (`/metals`, `/policy`, `/manufacturing`, `/japan` and `/china`
-are live; `/bom`, `/alts`, `/korea`, `/us` are planned; `/lab/supply-chain`
+The supply-chain pages (`/metals`, `/policy`, `/manufacturing`, `/alts`, `/japan`
+and `/china` are live; `/bom`, `/korea`, `/us` are planned; `/lab/supply-chain`
 is the hidden kit page) share one cited registry and one set of components.
 Pages hold content; numbers live in the registry and are referenced by id.
 
@@ -216,6 +216,8 @@ open it before scrolling to the entry.
 | REST (policy) | `GET /api/v1/policy`, `GET /api/v1/policy/{id}`, Atom feed `/policy/feed.xml` |
 | MCP (processes) | `get_process(chain?, step?)` |
 | REST (processes) | `GET /api/v1/processes`, `GET /api/v1/processes/{chain}?step=` |
+| MCP (alts) | `list_alt_technologies(family?)`, `get_alt_technology(id)` |
+| REST (alts) | `GET /api/v1/alts?family=`, `GET /api/v1/alts/{id}` |
 | MCP (countries) | `get_country(code)` |
 | REST (countries) | `GET /api/v1/countries`, `GET /api/v1/countries/{code}` |
 
