@@ -66,7 +66,8 @@ export const MAGNET_USE_LABEL: Record<MagnetUse, string> = {
     "iron-nitride": "Iron nitride magnets",
     permanent: "Permanent magnets",
     motor: "Set by its pump motor",
-    // A transmission has no magnets itself, but the motor driving it may.
+    // A transmission without magnets of its own (not a magnetic gear): the
+    // motor driving it decides the magnet content.
     "drive-motor": "Depends on its motor",
 };
 
