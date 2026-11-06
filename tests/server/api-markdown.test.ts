@@ -83,6 +83,23 @@ describe("every GET operation has a markdown twin", () => {
         expect(missing.map((op) => op.operationId)).toEqual([]);
     });
 
+    test("only real renderers count, not inherited keys", () => {
+        for (const key of ["constructor", "toString", "__proto__", "get_openapi_spec"])
+            expect(hasApiMarkdown(key)).toBe(false);
+    });
+
+    test("list twins cite their sources", async () => {
+        for (const path of ["/api/v1/metals.md", "/api/v1/humanoids.md"]) {
+            const text = await expectMarkdown(await call(path));
+            expect(text).toContain("## Sources\n\n[^1]: ");
+        }
+    });
+
+    test("the index exempts the OpenAPI document from the twin promise", async () => {
+        const text = await expectMarkdown(await call("/api.md"));
+        expect(text).toContain("except the OpenAPI document");
+    });
+
     for (const op of GET_OPERATIONS) {
         test(`${op.operationId}: ${twinOf(op.example)}`, async () => {
             const text = await expectMarkdown(await call(twinOf(op.example)));

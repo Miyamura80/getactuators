@@ -1,9 +1,10 @@
 import type { ApiContext } from "@/api/http";
 import { metalPrices, metalSupply } from "@/api/metals";
 import { processChain } from "@/api/processes";
+import { SUPPLY_CHAIN_PAGES_LIVE } from "@/public-navigation";
 import { metalListView } from "@/supply-chain/metals/views";
 import { processChainListView } from "@/supply-chain/processes/views";
-import { STAGE_LABEL } from "@/supply-chain/stages";
+import { STAGE_LABEL, type Stage } from "@/supply-chain/stages";
 import { absoluteUrl } from "../../site";
 import { toAbsolute } from "../jsonld";
 import { bullets, mdLink, mdTable, mdText } from "../md";
@@ -23,20 +24,26 @@ import {
 const leader = (code: string | null, x: number | null) =>
     code ? `${mdText(code)} ${share(x)}` : "gap";
 
+const stageLabel = (s: string) => STAGE_LABEL[s as Stage] ?? s;
+
 export function listMetals(): string {
     const list = metalListView();
-    const stages = list.data[0]?.stages.map((s) => s.stage) ?? [];
+    const fn = sourceNotes();
+    const stages = list.data[0]?.stages.map((s) => stageLabel(s.stage)) ?? [];
     const rows = list.data.map((m) => [
         idTwin(`${m.name} (${m.symbol})`, "metals", m.id),
         m.magnet,
         m.class,
         mdText(m.role),
         ...m.stages.map((s) => leader(s.top_country, s.top_share)),
+        fn.ref(m.sources),
     ]);
     return [
         "# Magnet metals",
         "The six metals in an actuator's permanent magnet, with the leading country at each stage. One metal: /api/v1/metals/{element}.md.",
-        mdTable(["Metal", "Magnet", "Class", "Role", ...stages], rows),
+        mdTable(["Metal", "Magnet", "Class", "Role", ...stages, "Sources"], rows),
+        "Country shares behind each stage, with their sources, are on each metal's twin.",
+        fn.section(),
     ].join("\n\n");
 }
 
@@ -72,7 +79,7 @@ export function getMetal(ctx: ApiContext): string {
         fn.value(p.latest.price),
     ]);
     return [
-        `# ${mdText(d.metal.name)} (${mdText(d.metal.symbol)}): who supplies it`,
+        `# ${mdText(d.metal.name)} (${mdText(d.metal.symbol)}): who supplies it${filterSummary(ctx.url)}`,
         role,
         bullets([
             `Magnet: ${d.metal.magnet}; class: ${d.metal.class}`,
@@ -141,6 +148,32 @@ export function getProcess(ctx: ApiContext): string {
     const c = processChain(ctx);
     const fn = sourceNotes();
     const byId = new Map(c.steps.map((s) => [s.id, s]));
+    // Upstream and downstream steps, /bom nodes and /metals elements.
+    const stepLink = (id: string) =>
+        mdLink(byId.get(id)?.label ?? id, toAbsolute(`${c.url}#step=${id}`));
+    const bomLive = SUPPLY_CHAIN_PAGES_LIVE.has("/bom");
+    const graph = (s: (typeof c.steps)[number]) =>
+        [
+            s.upstream.length ? `from ${s.upstream.map(stepLink).join(", ")}` : "",
+            s.downstream.length ? `to ${s.downstream.map(stepLink).join(", ")}` : "",
+            s.bom_node_ids.length
+                ? `BOM ${s.bom_node_ids
+                      .map((id) =>
+                          bomLive
+                              ? mdLink(
+                                    id,
+                                    absoluteUrl(`/bom#node=${encodeURIComponent(id)}`),
+                                )
+                              : `\`${id}\``,
+                      )
+                      .join(", ")}`
+                : "",
+            s.element_ids.length
+                ? `metals ${s.element_ids.map((e) => twinLink(e, `metals/${e}`)).join(", ")}`
+                : "",
+        ]
+            .filter(Boolean)
+            .join("; ") || "n/a";
     const clusters = c.clusters.map((cl) => {
         const sh = cl.country_shares;
         const shares = sh
@@ -162,6 +195,7 @@ export function getProcess(ctx: ApiContext): string {
                     s.companies
                         .map((co) => idTwin(co.name, "companies", co.id))
                         .join(", ") || "n/a",
+                    graph(s),
                     fn.ref(s.sources),
                 ],
             ];
@@ -176,6 +210,7 @@ export function getProcess(ctx: ApiContext): string {
                     "Inputs to outputs",
                     "Key numbers",
                     "Companies",
+                    "Links",
                     "Sources",
                 ],
                 rows,

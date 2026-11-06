@@ -77,7 +77,7 @@ function apiIndex(): string {
             `Developer docs: ${index.docs} (markdown: ${absoluteUrl(PATHS.apiDocsMd)})`,
             `OpenAPI 3.1: ${index.openapi}`,
             `MCP server: ${index.mcp}`,
-            "Every GET endpoint has a markdown twin: append .md to the path (query string kept) or send Accept: text/markdown.",
+            "Every GET endpoint except the OpenAPI document (/openapi.json, JSON only) has a markdown twin: append .md to the path (query string kept) or send Accept: text/markdown.",
         ]),
         `## Endpoints\n\n${mdTable(["Method", "Path", "Summary"], rows)}`,
     ].join("\n\n");
@@ -125,7 +125,7 @@ const RENDERERS: Record<string, Renderer> = {
 };
 
 export function hasApiMarkdown(operationId: string): boolean {
-    return operationId in RENDERERS;
+    return Object.hasOwn(RENDERERS, operationId);
 }
 
 // Markdown for one GET operation, given the context of its JSON URL. Throws

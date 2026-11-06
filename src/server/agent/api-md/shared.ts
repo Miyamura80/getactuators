@@ -51,7 +51,7 @@ export const country = (code: string | null | undefined): string =>
         ? "n/a"
         : /^[A-Za-z]{2}$/.test(code)
           ? `${countryName(code)} (${code})`
-          : code;
+          : mdText(code);
 
 export const stageList = (stages: readonly Stage[]): string =>
     stages.map((s) => STAGE_LABEL[s] ?? s).join(", ") || "n/a";

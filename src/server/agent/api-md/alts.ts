@@ -43,6 +43,11 @@ export function listAlts(ctx: ApiContext): string {
     ].join("\n\n");
 }
 
+// A market cell keeps the publisher's caveat (scope, spread, forecast window),
+// as the /alts page twin does.
+const withNote = (text: string, note: string | null | undefined): string =>
+    note ? `${text}: ${mdText(note)}` : text;
+
 export function getAlt(ctx: ApiContext): string {
     const t = altTech(ctx);
     const fn = sourceNotes();
@@ -57,7 +62,7 @@ export function getAlt(ctx: ApiContext): string {
         `Id: \`${t.id}\`; family: ${t.family}`,
         `Magnets: ${t.magnets}`,
         `Technology readiness: ${fn.value(t.trl)}`,
-        ...figures.flatMap(([label, v]) => (v ? [`${label}: ${fn.value(v)}`] : [])),
+        ...figures.map(([label, v]) => `${label}: ${fn.value(v)}`),
         ...t.facts.map((f) => `${mdText(f.label)}: ${fn.value(f.value)}`),
         `Page: ${mdLink("/alts", toAbsolute(t.url))}`,
     ];
@@ -74,8 +79,8 @@ export function getAlt(ctx: ApiContext): string {
     ]);
     const markets = t.markets.map((m) => [
         mdText(m.label),
-        fn.value(m.revenue_usd),
-        fn.value(m.cagr),
+        withNote(fn.value(m.revenue_usd), m.revenue_usd.note),
+        withNote(fn.value(m.cagr), m.cagr.note),
         m.end_market,
     ]);
     const deployments = t.deployments.map((d) => [
