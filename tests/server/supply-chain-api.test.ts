@@ -115,6 +115,7 @@ describe("MCP supply-chain tools", () => {
             results: { id: string; precision: string }[];
         };
         expect(out.results.map((s) => [s.id, s.precision])).toEqual([
+            ["arafura-nolans", "region"],
             ["lynas-mt-weld", "region"],
             ["mp-mountain-pass", "site"],
         ]);

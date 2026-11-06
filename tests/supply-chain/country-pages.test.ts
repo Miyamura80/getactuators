@@ -12,6 +12,7 @@ import {
     countryLinks,
     countrySites,
     coverage,
+    gateOf,
     getCountryPage,
     passesGate,
     worldShares,
@@ -20,8 +21,8 @@ import { linkKind } from "@/supply-chain/links";
 import { getCompany } from "@/supply-chain/registry";
 
 describe("coverage gate", () => {
-    test("Japan passes; the other planned countries wait for their data", () => {
-        expect(LIVE_COUNTRY_PATHS).toEqual(["/japan"]);
+    test("Japan and Korea pass; the other planned countries wait for their data", () => {
+        expect(LIVE_COUNTRY_PATHS).toEqual(["/japan", "/korea"]);
         const jp = coverage("JP");
         expect(jp.companies).toBeGreaterThanOrEqual(COVERAGE_TARGET.companies);
         expect(jp.sites).toBeGreaterThanOrEqual(COVERAGE_TARGET.sites);
@@ -53,12 +54,28 @@ describe("coverage gate", () => {
             partnership: count("partnership"),
         }).toEqual({
             supply: 19,
-            investment: 5,
+            // THK's stake in Samick THK (from /korea) is the sixth.
+            investment: 6,
             partnership: 6,
         });
         expect(coverage("JP").supplyLinks).toBeGreaterThanOrEqual(
             COVERAGE_TARGET.supplyLinks,
         );
+    });
+
+    test("Korea clears the lower gate its issue sets (#81: 30 / 50 / 20)", () => {
+        const page = getCountryPage("korea");
+        expect(page?.code).toBe("KR");
+        const gate = page ? gateOf(page) : COVERAGE_TARGET;
+        expect(gate).toEqual({ companies: 30, sites: 50, links: 20, supplyLinks: 10 });
+        const kr = coverage("KR");
+        expect(passesGate(kr, gate)).toBe(true);
+        expect(kr.companies).toBeGreaterThanOrEqual(30);
+        expect(kr.sites).toBeGreaterThanOrEqual(50);
+        expect(kr.links).toBeGreaterThanOrEqual(20);
+        // Japan has no gate of its own and keeps the shared target.
+        const jp = getCountryPage("japan");
+        expect(jp ? gateOf(jp) : null).toEqual(COVERAGE_TARGET);
     });
 
     test("pages resolve by slug or code, any case", () => {
@@ -69,6 +86,7 @@ describe("coverage gate", () => {
         expect(getCountryPage("JP")?.path).toBe("/japan");
         expect(getCountryPage("jP")?.path).toBe("/japan");
         expect(getCountryPage("china")).toBeUndefined();
+        expect(getCountryPage("kr")?.path).toBe("/korea");
     });
 });
 
@@ -115,6 +133,40 @@ describe("country filter", () => {
                 getCompany(l.to)?.hqCountry !== "JP",
         );
         expect(abroad.length).toBeGreaterThanOrEqual(5);
+    });
+
+    test("Korea spans all four segments, with links abroad that resolve", () => {
+        const companies = countryCompanies("KR");
+        for (const s of SEGMENTS)
+            expect(
+                companies.filter((c) => c.segment === s).length,
+            ).toBeGreaterThanOrEqual(5);
+        const ids = new Set(companies.map((c) => c.id));
+        const links = countryLinks("KR");
+        for (const l of links) {
+            expect(ids.has(l.from) || ids.has(l.to)).toBe(true);
+            expect(getCompany(l.from)).toBeDefined();
+            expect(getCompany(l.to)).toBeDefined();
+        }
+        const abroad = links.filter(
+            (l) =>
+                getCompany(l.from)?.hqCountry !== "KR" ||
+                getCompany(l.to)?.hqCountry !== "KR",
+        );
+        expect(abroad.length).toBeGreaterThanOrEqual(10);
+        // A Korean-owned plant abroad stays off the Korea map.
+        expect(countrySites("KR").some((s) => s.id === "korea-zinc-clarksville")).toBe(
+            false,
+        );
+        expect(countrySites("US").some((s) => s.id === "korea-zinc-clarksville")).toBe(
+            true,
+        );
+        // A foreign maker with a Korean plant is on it.
+        expect(companies.some((c) => c.id === "schaeffler")).toBe(true);
+        for (const s of countrySites("KR")) {
+            expect(["site", "city", "region"]).toContain(s.precision);
+            expect(s.sources.length).toBeGreaterThan(0);
+        }
     });
 
     test("every Japanese site has a precision and a source", () => {

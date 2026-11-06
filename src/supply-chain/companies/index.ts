@@ -1,4 +1,5 @@
 import { JAPAN_COMPANIES, grossMargin, yenRevenue } from "./japan";
+import { KOREA_COMPANIES } from "./korea";
 import type { Company } from "./types";
 
 // Companies along the actuator supply chain, ore to robot. Seed set: enough
@@ -294,4 +295,5 @@ export const COMPANIES: Company[] = [
         url: "https://www.tuopu.com/",
     },
     ...JAPAN_COMPANIES,
+    ...KOREA_COMPANIES,
 ];
