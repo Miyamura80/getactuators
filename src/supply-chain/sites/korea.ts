@@ -242,7 +242,8 @@ export const KOREA_SITES: Site[] = [
         lon: 129.33,
         precision: "city",
         makes: ["Zinc and lead", "Antimony, indium and bismuth"],
-        stages: ["separation"],
+        // A base-metal smelter: no rare earth stage.
+        stages: [],
         sources: ["wiki-korea-zinc"],
     }),
     plant("komir-gunsan", {

@@ -5,6 +5,7 @@ import {
     countryCompanies,
     countryLinks,
     countrySites,
+    coverage,
 } from "@/supply-chain/country-pages";
 import { get, getMarkdown } from "./agent-helpers";
 import { callTool } from "./mcp-helpers";
@@ -114,6 +115,17 @@ describe("/korea page and twin", () => {
         ])
             expect(md).toContain(h);
         for (const c of countryCompanies("KR")) expect(md).toContain(`\`${c.id}\``);
+        const siteRows = md.split("\n## Sites")[1]?.split("\n## Links")[0] ?? "";
+        expect(
+            siteRows
+                .split("\n")
+                .filter(
+                    (l) =>
+                        l.startsWith("| ") &&
+                        !l.startsWith("| Site") &&
+                        !l.startsWith("| ---"),
+                ),
+        ).toHaveLength(countrySites("KR").length);
         expect(md).toContain("/policy#measure=kr-k-humanoid-2025");
         expect(md).toContain("**Changwon machinery cluster**");
         expect(md).not.toContain(String.fromCharCode(0x2014));
@@ -124,6 +136,13 @@ describe("/korea page and twin", () => {
             await (await get("/api/v1/countries/korea")).json(),
         );
         expect(body.code).toBe("KR");
+        // Korea's own gate (issue #81): 30 companies, 50 sites, 20 links, 10 supply.
+        const { supplyLinks, ...counts } = coverage("KR");
+        expect(body.coverage).toEqual({ ...counts, supply_links: supplyLinks });
+        expect(body.coverage.companies).toBeGreaterThanOrEqual(30);
+        expect(body.coverage.sites).toBeGreaterThanOrEqual(50);
+        expect(body.coverage.links).toBeGreaterThanOrEqual(20);
+        expect(body.coverage.supply_links).toBeGreaterThanOrEqual(10);
         expect(body.sites.map((s) => s.id)).toEqual(
             countrySites("KR").map((s) => s.id),
         );

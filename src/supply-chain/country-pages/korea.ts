@@ -27,7 +27,7 @@ export const KOREA_PAGE: CountryContent = {
             stage: "separation",
             of: "world rare earth separation",
             gap: {
-                text: "No separation plant runs in Korea; POSCO International buys separated oxides from ReElement in the US and is building a joint separation and magnet venture there.",
+                text: "POSCO International buys separated oxides from ReElement in the US and is building a joint separation and magnet venture there; no source gives Korea's separation share.",
                 sources: [
                     "metaltechnews-reelement-posco-2025",
                     "nasdaq-reelement-posco-jv-2026",
