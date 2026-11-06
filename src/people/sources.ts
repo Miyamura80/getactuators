@@ -2,9 +2,8 @@
 // built and why they are listed. Spread into the supply-chain SOURCES so the
 // shared citation UI and the licence audit cover them.
 //
-// Almost every page here is a copyrighted page we take single facts from (a
-// title, a founding year, a paper), so reuse is "facts". The exception is a
-// US federal government work (public domain), which is "open". None was opened page by
+// Every page here is a copyrighted page we take single facts from (a title,
+// a founding year, a paper), so reuse is "facts". None was opened page by
 // page: roles and works were confirmed from search results on PEOPLE_AS_OF,
 // so `accessed` is left out (see SourceRef.accessed).
 
@@ -25,7 +24,7 @@ interface PeopleSource {
     publisher: string;
     url: string;
     kind: Kind;
-    reuse: "open" | "facts";
+    reuse: "facts";
 }
 
 function s(
@@ -34,9 +33,8 @@ function s(
     title: string,
     url: string,
     kind: Kind = "press",
-    reuse: PeopleSource["reuse"] = "facts",
 ): PeopleSource {
-    return { id: `people-${id}`, publisher, title, url, kind, reuse };
+    return { id: `people-${id}`, publisher, title, url, kind, reuse: "facts" };
 }
 
 export const PEOPLE_SOURCES: PeopleSource[] = [
@@ -460,8 +458,6 @@ export const PEOPLE_SOURCES: PeopleSource[] = [
         "Building our critical minerals workforce (Senate HELP subcommittee hearing, June 12, 2024)",
         "https://www.govinfo.gov/content/pkg/CHRG-118shrg57243/pdf/CHRG-118shrg57243.pdf",
         "government",
-        // A US federal government work: public domain.
-        "open",
     ),
     s(
         "ameslab-lograsso-2025",

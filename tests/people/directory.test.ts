@@ -40,14 +40,7 @@ describe("/people directory", () => {
                     source: id,
                     found: true,
                 });
-                // Facts from copyrighted pages; only a government work
-                // (public domain) may be open.
-                if (s?.reuse !== "facts")
-                    expect({ id, reuse: s?.reuse, kind: s?.kind }).toEqual({
-                        id,
-                        reuse: "open",
-                        kind: "government",
-                    });
+                expect(s?.reuse).toBe("facts");
             }
         }
     });
