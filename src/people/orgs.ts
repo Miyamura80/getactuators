@@ -96,7 +96,7 @@ export const DIRECTORY_ORGS = {
     },
     "persona-ai": {
         name: "Persona AI",
-        url: "https://techcrunch.com/2024/06/26/personas-founders-are-certain-the-world-can-use-another-humanoid-robot",
+        url: "https://www.personainc.ai/",
         country: "US",
         brandId: "persona-ai",
     },
@@ -144,7 +144,7 @@ export const DIRECTORY_ORGS = {
     },
     "clone-robotics": {
         name: "Clone Robotics",
-        url: "https://www.maginative.com/article/meet-clone-alpha-a-humanoid-robot-built-with-synthetic-organs-and-artificial-muscles/",
+        url: "https://clonerobotics.com/",
         country: "PL",
         brandId: "clone-robotics",
         alts: true,

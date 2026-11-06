@@ -36,8 +36,11 @@
 .pp-dot.pp-policy { background: var(--pp-policy); }
 
 /* Network */
-.pp-net { position: relative; margin: 0; border: 1px solid var(--line); background: var(--panel); }
-.pp-net > svg { display: block; width: 100%; height: auto; }
+.pp-net { margin: 0; border: 1px solid var(--line); background: var(--panel); }
+/* The plot alone is the tooltip's positioning box, so the caption below
+   does not skew its percentage offsets. */
+.pp-net-plot { position: relative; }
+.pp-net-plot > svg { display: block; width: 100%; height: auto; }
 .pp-net figcaption {
     display: flex;
     flex-wrap: wrap;
@@ -75,6 +78,12 @@
 .pp-person:hover circle,
 .pp-person:focus-visible circle,
 .pp-person.is-on circle { stroke-width: 3.5; }
+
+@media (prefers-reduced-motion: reduce) {
+    .pp-node,
+    .pp-org-ring,
+    .pp-person circle { transition: none; }
+}
 
 .pp-tip img.is-light,
 .pp-orgcard-head img.is-light { background: #fff; }

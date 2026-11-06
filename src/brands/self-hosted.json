@@ -20,11 +20,6 @@
         "source": "https://www.accel.com/ (header inline svg #accel-logo-svg)"
     },
     {
-        "id": "agility",
-        "logo": "/logos/brands/agility.jpg",
-        "source": "logo.dev brand logo for agilityrobotics.com"
-    },
-    {
         "id": "allied-motion",
         "logo": "/logos/brands/allied-motion.png",
         "tile": "light",
@@ -34,16 +29,6 @@
         "id": "anybotics",
         "logo": "/logos/brands/anybotics.png",
         "source": "https://www.anybotics.com/favicon.ico"
-    },
-    {
-        "id": "apptronik",
-        "logo": "/logos/brands/apptronik.jpg",
-        "source": "logo.dev brand logo for apptronik.com"
-    },
-    {
-        "id": "artimus-robotics",
-        "logo": "/logos/brands/artimus-robotics.jpg",
-        "source": "logo.dev brand logo for artimusrobotics.com"
     },
     {
         "id": "atar",
@@ -67,11 +52,6 @@
         "source": "https://www.benchmark.com/fonts/benchmark.svg"
     },
     {
-        "id": "benchmark-minerals",
-        "logo": "/logos/brands/benchmark-minerals.jpg",
-        "source": "logo.dev brand logo for benchmarkminerals.com"
-    },
-    {
         "id": "bessemer",
         "logo": "/logos/brands/bessemer.svg",
         "source": "https://www.bvp.com/ (header inline svg)"
@@ -80,11 +60,6 @@
         "id": "booster",
         "logo": "/logos/brands/booster.svg",
         "source": "https://fe-cdn.booster.tech/booster-official-website/release-0.1.9/favicon.svg"
-    },
-    {
-        "id": "boston-dynamics",
-        "logo": "/logos/brands/boston-dynamics.jpg",
-        "source": "logo.dev brand logo for bostondynamics.com"
     },
     {
         "id": "botco",
@@ -97,11 +72,6 @@
         "source": "https://cdn.prod.website-files.com/67e5838983d440c501cc48ba/67fcf0183cfa8b0515215361_brand_logo-white.svg"
     },
     {
-        "id": "clone-robotics",
-        "logo": "/logos/brands/clone-robotics.jpg",
-        "source": "logo.dev brand logo for clonerobotics.com"
-    },
-    {
         "id": "coatue",
         "logo": "/logos/brands/coatue.svg",
         "source": "https://www.coatue.com/ (header inline svg)"
@@ -112,19 +82,9 @@
         "source": "https://www.co.bot/apple-touch-icon.png"
     },
     {
-        "id": "colorado-mines",
-        "logo": "/logos/brands/colorado-mines.jpg",
-        "source": "logo.dev brand logo for mines.edu"
-    },
-    {
         "id": "crv",
         "logo": "/logos/brands/crv.svg",
         "source": "https://www.crv.com/ (header inline svg)"
-    },
-    {
-        "id": "csis",
-        "logo": "/logos/brands/csis.jpg",
-        "source": "logo.dev brand logo for csis.org"
     },
     {
         "id": "cubemars",
@@ -133,29 +93,14 @@
         "source": "https://www.cubemars.com/themes/tmotor/images/logox500.jpg"
     },
     {
-        "id": "daido-steel",
-        "logo": "/logos/brands/daido-steel.jpg",
-        "source": "logo.dev brand logo for daido.co.jp"
-    },
-    {
         "id": "damiao",
         "logo": "/logos/brands/damiao.png",
         "source": "https://www.damiaokeji.com/uploadfile/202606/8e721034bb0a.png"
     },
     {
-        "id": "dlr",
-        "logo": "/logos/brands/dlr.jpg",
-        "source": "logo.dev brand logo for dlr.de"
-    },
-    {
         "id": "dyna",
         "logo": "/logos/brands/dyna.svg",
         "source": "https://www.dyna.co/icon.svg"
-    },
-    {
-        "id": "energy-fuels",
-        "logo": "/logos/brands/energy-fuels.jpg",
-        "source": "logo.dev brand logo for energyfuels.com"
     },
     {
         "id": "feetech",
@@ -174,25 +119,10 @@
         "source": "https://foundersfund.com/apple-touch-icon-152x152.png"
     },
     {
-        "id": "fourier",
-        "logo": "/logos/brands/fourier.jpg",
-        "source": "logo.dev brand logo for fftai.com"
-    },
-    {
-        "id": "franka",
-        "logo": "/logos/brands/franka.jpg",
-        "source": "logo.dev brand logo for franka.de"
-    },
-    {
         "id": "general-catalyst",
         "logo": "/logos/brands/general-catalyst.svg",
         "tile": "light",
         "source": "https://cdn.prod.website-files.com/69df4e62ff62d7b5568fc58b/6ad7690f43c3b51b5518d369_GC_Symbol_Black_RGB.svg"
-    },
-    {
-        "id": "general-motors",
-        "logo": "/logos/brands/general-motors.jpg",
-        "source": "logo.dev brand logo for gm.com"
     },
     {
         "id": "genesis",
@@ -235,11 +165,6 @@
         "source": "https://cdn.prod.website-files.com/696aa403bbe74c1adbd1ed11/6980559ff7cfeb7efbb0d078_icon-webclip.png"
     },
     {
-        "id": "ihmc",
-        "logo": "/logos/brands/ihmc.jpg",
-        "source": "logo.dev brand logo for ihmc.us"
-    },
-    {
         "id": "index",
         "logo": "/logos/brands/index.svg",
         "source": "https://www.indexventures.com/ (header inline svg)"
@@ -254,16 +179,6 @@
         "logo": "/logos/brands/ivp.svg",
         "tile": "light",
         "source": "https://www.ivp.com/ (header inline svg 'IVP Logo')"
-    },
-    {
-        "id": "jl-mag",
-        "logo": "/logos/brands/jl-mag.jpg",
-        "source": "logo.dev brand logo for jlmag.com.cn"
-    },
-    {
-        "id": "kaist",
-        "logo": "/logos/brands/kaist.jpg",
-        "source": "logo.dev brand logo for kaist.ac.kr"
     },
     {
         "id": "khosla",
@@ -300,11 +215,6 @@
         "source": "https://upload.wikimedia.org/wikipedia/commons/8/84/Lux_Capital_logo.png"
     },
     {
-        "id": "lynas",
-        "logo": "/logos/brands/lynas.jpg",
-        "source": "logo.dev brand logo for lynasrareearths.com"
-    },
-    {
         "id": "manmaru",
         "logo": "/logos/brands/manmaru.png",
         "source": "https://www.manmaruai.co.jp/favicon.ico"
@@ -313,11 +223,6 @@
         "id": "maxon",
         "logo": "/logos/brands/maxon.svg",
         "source": "https://upload.wikimedia.org/wikipedia/commons/3/36/Maxon_logo.svg"
-    },
-    {
-        "id": "mbzuai",
-        "logo": "/logos/brands/mbzuai.jpg",
-        "source": "logo.dev brand logo for mbzuai.ac.ae"
     },
     {
         "id": "menlo-research",
@@ -330,11 +235,6 @@
         "source": "https://menlovc.com/wp-content/uploads/2025/02/menlo_logo-2022.png"
     },
     {
-        "id": "meta",
-        "logo": "/logos/brands/meta.jpg",
-        "source": "logo.dev brand logo for meta.com"
-    },
-    {
         "id": "mind",
         "logo": "/logos/brands/mind.svg",
         "source": "https://www.mindrobotics.com/ (inline header SVG)"
@@ -345,25 +245,10 @@
         "source": "https://www.minervahumanoids.com/assets/minerva-icon-v1-180.png"
     },
     {
-        "id": "mit",
-        "logo": "/logos/brands/mit.jpg",
-        "source": "logo.dev brand logo for mit.edu"
-    },
-    {
         "id": "mjbots",
         "logo": "/logos/brands/mjbots.svg",
         "tile": "light",
         "source": "https://mjbots.com/cdn/shop/files/20191008-logo-favicon.svg"
-    },
-    {
-        "id": "mp-materials",
-        "logo": "/logos/brands/mp-materials.jpg",
-        "source": "logo.dev brand logo for mpmaterials.com"
-    },
-    {
-        "id": "mpi-is",
-        "logo": "/logos/brands/mpi-is.jpg",
-        "source": "logo.dev brand logo for mpg.de"
     },
     {
         "id": "myactuator",
@@ -381,19 +266,9 @@
         "source": "https://statamic.nea.com/assets/favicons/nea_favicon_16x16px.svg"
     },
     {
-        "id": "neo-performance",
-        "logo": "/logos/brands/neo-performance.jpg",
-        "source": "logo.dev brand logo for neomaterials.com"
-    },
-    {
         "id": "nidec",
         "logo": "/logos/brands/nidec.svg",
         "source": "https://upload.wikimedia.org/wikipedia/commons/3/32/Nidec_company_logo.svg"
-    },
-    {
-        "id": "niron",
-        "logo": "/logos/brands/niron.jpg",
-        "source": "logo.dev brand logo for nironmagnetics.com"
     },
     {
         "id": "norwest",
@@ -402,30 +277,10 @@
         "source": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Norwest_Venture_Partners_2024_Logo.png"
     },
     {
-        "id": "notre-dame",
-        "logo": "/logos/brands/notre-dame.jpg",
-        "source": "logo.dev brand logo for nd.edu"
-    },
-    {
-        "id": "noveon-magnetics",
-        "logo": "/logos/brands/noveon-magnetics.jpg",
-        "source": "logo.dev brand logo for noveon.co"
-    },
-    {
         "id": "odrive",
         "logo": "/logos/brands/odrive.png",
         "tile": "light",
         "source": "https://avatars.githubusercontent.com/odriverobotics?s=460"
-    },
-    {
-        "id": "oregon-state",
-        "logo": "/logos/brands/oregon-state.jpg",
-        "source": "logo.dev brand logo for oregonstate.edu"
-    },
-    {
-        "id": "persona-ai",
-        "logo": "/logos/brands/persona-ai.jpg",
-        "source": "logo.dev brand logo for personainc.ai"
     },
     {
         "id": "pollen",
@@ -436,16 +291,6 @@
         "id": "proception",
         "logo": "/logos/brands/proception.svg",
         "source": "https://www.proception.ai/proception-icon-P.svg"
-    },
-    {
-        "id": "rai-institute",
-        "logo": "/logos/brands/rai-institute.jpg",
-        "source": "logo.dev brand logo for rai-inst.com"
-    },
-    {
-        "id": "rainbow-robotics",
-        "logo": "/logos/brands/rainbow-robotics.jpg",
-        "source": "logo.dev brand logo for rainbow-robotics.com"
     },
     {
         "id": "redpoint",
@@ -487,11 +332,6 @@
         "id": "salient",
         "logo": "/logos/brands/salient.svg",
         "source": "https://salientmotion.com/ (inline nav brand-icon SVG)"
-    },
-    {
-        "id": "samsung",
-        "logo": "/logos/brands/samsung.jpg",
-        "source": "logo.dev brand logo for samsung.com"
     },
     {
         "id": "sequoia",
@@ -540,11 +380,6 @@
         "source": "https://framerusercontent.com/images/wTRQbw1UlJLLsjPTdU2bulTkj6M.png"
     },
     {
-        "id": "toyota-research-institute",
-        "logo": "/logos/brands/toyota-research-institute.jpg",
-        "source": "logo.dev brand logo for tri.global"
-    },
-    {
         "id": "tq-systems",
         "logo": "/logos/brands/tq-systems.svg",
         "source": "https://www.tq-group.com/fileadmin/html/img/logo.svg"
@@ -554,16 +389,6 @@
         "logo": "/logos/brands/trinamic.svg",
         "tile": "light",
         "source": "https://upload.wikimedia.org/wikipedia/commons/8/86/Analog_Devices_Logo.svg"
-    },
-    {
-        "id": "u-montana",
-        "logo": "/logos/brands/u-montana.jpg",
-        "source": "logo.dev brand logo for umt.edu"
-    },
-    {
-        "id": "ubtech",
-        "logo": "/logos/brands/ubtech.jpg",
-        "source": "logo.dev brand logo for ubtrobot.com"
     },
     {
         "id": "unitree",
@@ -580,16 +405,6 @@
         "id": "usv",
         "logo": "/logos/brands/usv.png",
         "source": "https://www.usv.com/apple-touch-icon.png"
-    },
-    {
-        "id": "ut-dallas",
-        "logo": "/logos/brands/ut-dallas.jpg",
-        "source": "logo.dev brand logo for utdallas.edu"
-    },
-    {
-        "id": "vac",
-        "logo": "/logos/brands/vac.jpg",
-        "source": "logo.dev brand logo for vacuumschmelze.com"
     },
     {
         "id": "vesc",

@@ -1,4 +1,4 @@
-import { resolveBrand } from "../brands";
+import { logoUrl, resolveBrand } from "../brands";
 import { ACTUATORS } from "../catalog";
 import { HUMANOIDS } from "../humanoids";
 import { SUPPLY_CHAIN_PAGES_LIVE } from "../public-navigation";
@@ -19,21 +19,30 @@ export function affiliations(p: DirectoryPerson): Org[] {
     return [...new Set(ids)].map((id) => ORGS[id]);
 }
 
-// The org's logo image: its own record (assets.json), else the brand
-// registry's self-hosted mark. Null means draw a monogram.
-export function orgLogoUrl(org: Org): string | null {
-    return (
-        org.logo?.path ??
-        (org.brandId ? resolveBrand(org.brandId)?.logo : undefined) ??
-        null
+// The org's logo image, resolved like CompanyLogo: its own record
+// (assets.json), else the brand registry's self-hosted mark, else the logo
+// provider for the brand's domain when a token is set (docs/brand-logos.md).
+// Null means draw a monogram; callers also fall back to it when the provider
+// answers 404.
+export function orgLogoUrl(org: Org, size = 64, token = ""): string | null {
+    if (org.logo) return org.logo.path;
+    const brand = org.brandId ? resolveBrand(org.brandId) : undefined;
+    if (!brand) return null;
+    if (brand.logo) return brand.logo;
+    if (!brand.domain) return null;
+    return logoUrl(
+        brand.domain,
+        size,
+        token,
+        brand.tile === "light" ? "light" : "dark",
     );
 }
 
 // Whether the logo needs a white disc behind it: opaque JPEGs (white
 // background baked in) and dark marks the brand registry flags for a light
-// tile. Transparent light marks sit on the dark disc instead.
-export function orgLogoOnLight(org: Org): boolean {
-    const url = orgLogoUrl(org);
+// tile. Transparent light marks and provider logos (requested for a dark
+// background) sit on the dark disc instead.
+export function orgLogoOnLight(org: Org, url: string | null): boolean {
     if (!url) return false;
     if (/\.jpe?g$/.test(url)) return true;
     return org.brandId ? resolveBrand(org.brandId)?.tile === "light" : false;
@@ -210,17 +219,25 @@ function move(
     });
 }
 
-const clamp = (v: number, max: number) => Math.min(max, Math.max(0, v));
+// Drawn radius of a network node: person discs are fixed, org marks grow
+// with the number of people linked to them.
+export const PERSON_RADIUS = 11;
+export function netRadius(n: Pick<NetNode, "kind" | "degree">): number {
+    return n.kind === "person" ? PERSON_RADIUS : 13 + Math.min(n.degree, 6) * 2.5;
+}
+
+// The margin nodes are kept inside, in both the collision pass and the output.
+const NET_PAD = 24;
+
+interface Box {
+    w: number;
+    h: number;
+}
+
+const clamp = (v: number, max: number) => Math.min(max - NET_PAD, Math.max(NET_PAD, v));
 
 // Push nodes i and j apart when closer than `gap`; true when they moved.
-function pushApart(
-    { x, y }: Layout,
-    i: number,
-    j: number,
-    gap: number,
-    w: number,
-    h: number,
-) {
+function pushApart({ x, y }: Layout, i: number, j: number, gap: number, box: Box) {
     const vx = at(x, i) - at(x, j);
     const vy = at(y, i) - at(y, j);
     const d = Math.hypot(vx, vy);
@@ -228,20 +245,27 @@ function pushApart(
     const push = (gap - d) / 2 / Math.max(d, 0.01);
     const ux = d > 0 ? vx * push : gap / 2;
     const uy = d > 0 ? vy * push : 0;
-    x[i] = clamp(at(x, i) + ux, w);
-    y[i] = clamp(at(y, i) + uy, h);
-    x[j] = clamp(at(x, j) - ux, w);
-    y[j] = clamp(at(y, j) - uy, h);
+    x[i] = clamp(at(x, i) + ux, box.w);
+    y[i] = clamp(at(y, i) + uy, box.h);
+    x[j] = clamp(at(x, j) - ux, box.w);
+    y[j] = clamp(at(y, j) - uy, box.h);
     return true;
 }
 
-// Push apart any two nodes closer than `gap`, so node marks never overlap.
-function separate(pos: Layout, gap: number, width: number, height: number) {
-    for (let pass = 0; pass < 40; pass++) {
+// Push apart any two nodes whose marks would touch (sum of their drawn radii
+// plus a small gap), inside the same margins the output uses.
+function separate(pos: Layout, radii: number[], box: Box) {
+    for (let i = 0; i < pos.x.length; i++) {
+        pos.x[i] = clamp(at(pos.x, i), box.w);
+        pos.y[i] = clamp(at(pos.y, i), box.h);
+    }
+    for (let pass = 0; pass < 200; pass++) {
         let moved = false;
         for (let i = 0; i < pos.x.length; i++)
-            for (let j = i + 1; j < pos.x.length; j++)
-                moved = pushApart(pos, i, j, gap, width, height) || moved;
+            for (let j = i + 1; j < pos.x.length; j++) {
+                const gap = at(radii, i) + at(radii, j) + 4;
+                moved = pushApart(pos, i, j, gap, box) || moved;
+            }
         if (!moved) return;
     }
 }
@@ -307,14 +331,11 @@ export function peopleNetwork(
         move(pos, f, pulls, temp);
         temp *= 0.985;
     }
-    separate(pos, 30, width, height);
-    const { x, y } = pos;
-    const pad = 24;
+    const box = { w: width, h: height };
+    separate(pos, nodes.map(netRadius), box);
     nodes.forEach((node, i) => {
-        node.x =
-            Math.round(Math.min(width - pad, Math.max(pad, x[i] as number)) * 10) / 10;
-        node.y =
-            Math.round(Math.min(height - pad, Math.max(pad, y[i] as number)) * 10) / 10;
+        node.x = Math.round(clamp(at(pos.x, i), width) * 10) / 10;
+        node.y = Math.round(clamp(at(pos.y, i), height) * 10) / 10;
     });
     return { nodes, edges };
 }

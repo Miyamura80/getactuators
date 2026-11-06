@@ -130,6 +130,11 @@ test("the full catalog has distinct reviewed metadata", async () => {
     expect(new Set(pages.map((page) => documentTitle(page.title))).size).toBe(
         pages.length,
     );
+    // Titles stay distinct across every registered page, including the ones
+    // added after the baseline.
+    expect(new Set(registered.map((page) => documentTitle(page.title))).size).toBe(
+        registered.length,
+    );
     expect(sha256(JSON.stringify(ACTUATORS))).toBe(baseline.catalogSha256);
     for (const [index, page] of pages.entries()) {
         const original = baseline.pages[index];

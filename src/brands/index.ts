@@ -256,8 +256,8 @@ const INVESTORS: Row[] = [
 
 // Affiliations of the people on /people (src/people/orgs.ts) not listed
 // above, keyed by the org id. Domains are each org's own site as cited in
-// that registry; Persona AI, Clone Robotics and the Association of China Rare
-// Earth Industry have no verified site of their own, so they stay monograms.
+// that registry; the Association of China Rare Earth Industry has no verified
+// site of its own, so it stays a monogram.
 const PEOPLE_ORGS: Row[] = [
     ["mit", "MIT", "mit.edu", ["Massachusetts Institute of Technology"]],
     ["notre-dame", "University of Notre Dame", "nd.edu"],
@@ -272,8 +272,8 @@ const PEOPLE_ORGS: Row[] = [
     ["rai-institute", "RAI Institute", "rai-inst.com"],
     ["toyota-research-institute", "Toyota Research Institute", "tri.global"],
     ["meta", "Meta", "meta.com"],
-    ["persona-ai", "Persona AI", null],
-    ["clone-robotics", "Clone Robotics", null],
+    ["persona-ai", "Persona AI", "personainc.ai"],
+    ["clone-robotics", "Clone Robotics", "clonerobotics.com"],
     ["niron", "Niron Magnetics", "nironmagnetics.com"],
     ["general-motors", "General Motors", "gm.com", ["GM"]],
     ["vac", "VACUUMSCHMELZE (VAC)", "vacuumschmelze.com", ["eVAC Magnetics"]],
@@ -294,19 +294,12 @@ const host = (url: string): string => new URL(url).hostname.replace(/^www\./, ""
 // startup the catalog already lists as a maker (RobStride, MyActuator) keeps
 // that entry, so ids stay unique.
 const MAKER_IDS = new Set(MAKERS.map(([id]) => id));
-// A startup without its own logo can still have an official mark under
-// frontend/public/logos/brands (self-hosted.json).
-function startupMark(id: string): { logo?: string } {
-    const own = (selfHosted as { id: string; logo: string }[]).find((r) => r.id === id);
-    return own ? { logo: own.logo } : {};
-}
-
 const STARTUP_ENTRIES: BrandEntry[] = STARTUPS.filter((s) => !MAKER_IDS.has(s.id)).map(
     (s) => ({
         id: s.id,
         name: s.name,
         domain: s.url ? host(s.url) : null,
-        ...(s.logo ? { logo: s.logo } : startupMark(s.id)),
+        ...(s.logo ? { logo: s.logo } : {}),
     }),
 );
 

@@ -67,18 +67,54 @@ test("?p= and old #id anchors deep-link to a person", () => {
 test("org nodes draw the org logo as an <image>, monogram otherwise; clicking lists its people", () => {
     setUrl("http://localhost:1/people");
     const view = render(<People />);
+    // Unitree has a self-hosted mark; MIT resolves only through the logo
+    // provider, which needs a token the tests do not set.
+    const unitree = view.container.querySelector('.pp-net a[href="?org=unitree"]')!;
+    expect(unitree.querySelector("image")?.getAttribute("href")).toBe(orgLogoUrl(ORGS.unitree)!);
+    fireEvent.mouseEnter(unitree);
+    expect(view.container.querySelector(".pp-tip img")?.getAttribute("src")).toBe(orgLogoUrl(ORGS.unitree)!);
+    fireEvent.mouseLeave(unitree);
     const mit = view.container.querySelector('.pp-net a[href="?org=mit"]')!;
-    expect(mit.querySelector("image")?.getAttribute("href")).toBe(orgLogoUrl(ORGS.mit)!);
-    const iea = view.container.querySelector('.pp-net a[href="?org=iea"]')!;
-    expect(iea.querySelector("image")).toBeNull();
-    expect(iea.querySelector("text")?.textContent).toBe("I");
-    fireEvent.mouseEnter(mit);
-    expect(view.container.querySelector(".pp-tip img")?.getAttribute("src")).toBe(orgLogoUrl(ORGS.mit)!);
+    expect(orgLogoUrl(ORGS.mit)).toBeNull();
+    expect(mit.querySelector("image")).toBeNull();
+    expect(mit.querySelector("text")?.textContent).toBe("M");
     fireEvent.click(mit);
     const chips = [...view.container.querySelectorAll(".pp-panel .pp-chip")];
     expect(chips.length).toBeGreaterThanOrEqual(5);
     fireEvent.click(chips.find((c) => c.textContent?.includes("Hugh Herr"))!);
     expect(view.container.querySelector(".pp-panel")?.getAttribute("aria-label")).toBe("Hugh Herr");
+});
+
+test("a logo that fails to load falls back to the monogram", () => {
+    setUrl("http://localhost:1/people");
+    const view = render(<People />);
+    const unitree = view.container.querySelector('.pp-net a[href="?org=unitree"]')!;
+    fireEvent.error(unitree.querySelector("image")!);
+    expect(unitree.querySelector("image")).toBeNull();
+    expect(unitree.querySelector("text")?.textContent).toBe("UR");
+});
+
+test("org logos come from the provider when a token is set", () => {
+    expect(orgLogoUrl(ORGS.mit, 72, "pk_test1234")).toStartWith("https://img.logo.dev/mit.edu?");
+});
+
+test("modifier clicks keep the link default, so a deep link can open in a new tab", () => {
+    setUrl("http://localhost:1/people");
+    const view = render(<People />);
+    const node = view.container.querySelector('.pp-net a[href="?p=hugh-herr"]')!;
+    fireEvent.click(node, { ctrlKey: true });
+    expect(view.container.querySelector(".pp-panel")).toBeNull();
+});
+
+test("with a domain selected, the country panel counts only that domain", () => {
+    setUrl("http://localhost:1/people?country=US");
+    const view = render(<People />);
+    const all = view.container.querySelectorAll(".pp-panel .pp-chip").length;
+    const magnets = [...view.container.querySelectorAll(".pp-filter button")].find((b) => b.textContent?.includes("REE and magnets"))!;
+    fireEvent.click(magnets);
+    const some = view.container.querySelectorAll(".pp-panel .pp-chip").length;
+    expect(some).toBe(DIRECTORY.filter((p) => p.domain === "magnets" && ORGS[p.orgId].country === "US").length);
+    expect(some).toBeLessThan(all);
 });
 
 test("the domain filter dims people outside it", () => {

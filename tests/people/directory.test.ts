@@ -1,14 +1,15 @@
 import { describe, expect, test } from "bun:test";
 import { resolveBrand } from "@/brands";
-import {
-    CRITERIA,
-    DIRECTORY,
-    PEOPLE_DOMAINS,
-    getDirectoryPerson,
-    orgOf,
-} from "@/people";
+import { CRITERIA, DIRECTORY, PEOPLE_DOMAINS, getDirectoryPerson } from "@/people";
 import { PEOPLE_SOURCES } from "@/people/sources";
-import { crossLinks, orgHubs, peopleByCountry, peopleNetwork } from "@/people/views";
+import {
+    affiliations,
+    crossLinks,
+    netRadius,
+    orgHubs,
+    peopleByCountry,
+    peopleNetwork,
+} from "@/people/views";
 import { getSource } from "@/supply-chain/sources";
 
 const words = (s: string) => s.trim().split(/\s+/).length;
@@ -67,9 +68,10 @@ describe("/people directory", () => {
 
     test("every affiliation has a country and a logo through the brand registry", () => {
         for (const p of DIRECTORY) {
-            const o = orgOf(p);
-            expect(o.country).toMatch(/^[A-Z]{2}$/);
-            expect(resolveBrand(o.brandId ?? "")?.id).toBe(o.brandId as string);
+            for (const o of affiliations(p)) {
+                expect(o.country).toMatch(/^[A-Z]{2}$/);
+                expect(resolveBrand(o.brandId ?? "")?.id).toBe(o.brandId as string);
+            }
         }
     });
 
@@ -84,9 +86,18 @@ describe("/people directory", () => {
         const again = peopleNetwork(720, 520);
         expect(net.nodes).toEqual(again.nodes);
         for (const n of net.nodes) {
-            expect(n.x).toBeGreaterThanOrEqual(0);
-            expect(n.x).toBeLessThanOrEqual(720);
+            expect(n.x).toBeGreaterThanOrEqual(24);
+            expect(n.x).toBeLessThanOrEqual(720 - 24);
+            expect(n.y).toBeGreaterThanOrEqual(24);
+            expect(n.y).toBeLessThanOrEqual(520 - 24);
         }
+        // No two drawn marks overlap, at the page's canvas size either.
+        for (const { nodes } of [net, peopleNetwork(960, 620)])
+            for (const [i, a] of nodes.entries())
+                for (const b of nodes.slice(i + 1))
+                    expect(Math.hypot(a.x - b.x, a.y - b.y)).toBeGreaterThanOrEqual(
+                        netRadius(a) + netRadius(b),
+                    );
         expect(net.edges.filter((e) => e.main)).toHaveLength(DIRECTORY.length);
     });
 });

@@ -1,6 +1,7 @@
 import assets from "./assets.json";
-import { DIRECTORY_RECORDS, type DirectoryRecord } from "./directory";
+import type { DirectoryRecord } from "./directory";
 import { DIRECTORY_ORGS } from "./orgs";
+import { DIRECTORY_RECORDS } from "./records";
 import type { AssetFile, ImageAsset, LinkKind, Org, OrgRecord } from "./types";
 
 export type * from "./types";
@@ -130,4 +131,16 @@ export const DIRECTORY: DirectoryPerson[] = DIRECTORY_RECORDS.map((p) => {
 
 export function getDirectoryPerson(id: string): DirectoryPerson | undefined {
     return DIRECTORY.find((p) => p.id === id);
+}
+
+// Up to two initials for a person or org without an image, shared by the
+// cards and the /people network so one name always gets the same letters.
+export function initials(name: string): string {
+    return name
+        .replace(/\(.*?\)/g, "")
+        .split(/\s+/)
+        .filter(Boolean)
+        .map((w) => w[0]?.toUpperCase() ?? "")
+        .slice(0, 2)
+        .join("");
 }

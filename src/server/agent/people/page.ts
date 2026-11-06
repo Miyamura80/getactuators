@@ -130,7 +130,11 @@ export const PEOPLE_PAGE: Page = {
     description: DESCRIPTION,
     body: peopleBody,
     jsonLd: () => [
-        ld.webPage("CollectionPage", PEOPLE_PATH, PEOPLE_TITLE),
+        // The directory has its own as-of date, not the catalog's.
+        {
+            ...ld.webPage("CollectionPage", PEOPLE_PATH, PEOPLE_TITLE),
+            dateModified: PEOPLE_AS_OF,
+        },
         ld.breadcrumbs([
             { name: "Home", path: "/" },
             { name: "People", path: PEOPLE_PATH },

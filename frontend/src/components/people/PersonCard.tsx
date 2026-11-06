@@ -1,15 +1,6 @@
 import type { ReactNode } from "react";
-import { LINK_LABEL, orgOf, type LinkKind, type Person } from "../../../../src/people";
+import { initials, LINK_LABEL, orgOf, type LinkKind, type Person } from "../../../../src/people";
 import { OrgLogo } from "./OrgLogo";
-
-function initials(name: string): string {
-    return name
-        .split(/\s+/)
-        .filter(Boolean)
-        .map((w) => w[0]?.toUpperCase() ?? "")
-        .slice(0, 2)
-        .join("");
-}
 
 // simple-icons marks (viewBox 0 0 24 24); web and scholar share a globe.
 const BRAND_PATH: Partial<Record<LinkKind, string>> = {

@@ -17,11 +17,12 @@ import {
     PEOPLE_PATH,
     type PeopleDomain,
     getDirectoryPerson,
+    initials,
     orgOf,
 } from "../../../../src/people";
 import { getSource } from "../../../../src/supply-chain/sources";
-import { crossLinks, domainCounts, orgLogoOnLight, orgLogoUrl, peopleAt, peopleByCountry } from "../../../../src/people/views";
-import { PeopleNetwork, type Selection, initials } from "./Network";
+import { crossLinks, domainCounts, orgLogoOnLight, peopleAt, peopleByCountry } from "../../../../src/people/views";
+import { PeopleNetwork, type Selection, useOrgLogos } from "./Network";
 import "../tools.css";
 import "../../components/people/people.css";
 import "./people.css";
@@ -90,10 +91,11 @@ function PersonDetail({ person, onOrg }: { person: DirectoryPerson; onOrg: (id: 
 
 function OrgDetail({ orgId, onPerson }: { orgId: string; onPerson: (id: string) => void }) {
     const org = ORGS[orgId as OrgId];
-    const logo = orgLogoUrl(org);
+    const logos = useOrgLogos();
+    const logo = logos.url(org, 72);
     return <div className="pp-orgcard">
         <div className="pp-orgcard-head">
-            {logo ? <img className={orgLogoOnLight(org) ? "is-light" : ""} src={logo} alt="" width={64} height={64} /> : <span className="pp-tip-mono" aria-hidden="true">{initials(org.name)}</span>}
+            {logo ? <img className={orgLogoOnLight(org, logo) ? "is-light" : ""} src={logo} alt="" width={64} height={64} onError={() => logos.fail(logo)} /> : <span className="pp-tip-mono" aria-hidden="true">{initials(org.name)}</span>}
             <div>
                 <h3>{org.name}</h3>
                 <p>{org.country ? countryName(org.country) : ""} · <a href={org.url} target="_blank" rel="noopener">Website</a></p>
@@ -103,18 +105,27 @@ function OrgDetail({ orgId, onPerson }: { orgId: string; onPerson: (id: string) 
     </div>;
 }
 
-function CountryDetail({ code, onPerson }: { code: string; onPerson: (id: string) => void }) {
-    const people = DIRECTORY.filter((p) => orgOf(p).country === code);
+// Matches the map: with a domain selected, only that domain's people count.
+function CountryDetail({ code, domain, onPerson }: { code: string; domain: PeopleDomain | null; onPerson: (id: string) => void }) {
+    const people = DIRECTORY.filter((p) => orgOf(p).country === code && (!domain || p.domain === domain));
     return <div className="pp-orgcard">
         <h3>{countryName(code)}</h3>
-        <p className="pp-note">{people.length} {people.length === 1 ? "person" : "people"} with a main affiliation here</p>
+        <p className="pp-note">{people.length} {people.length === 1 ? "person" : "people"}{domain ? ` in ${DOMAIN_LABEL[domain]}` : ""} with a main affiliation here</p>
         <div className="pp-chips">{people.map((p) => <PersonChip key={p.id} p={p} onOpen={onPerson} />)}</div>
     </div>;
 }
 
 // The detail view: a side panel on desktop, a bottom sheet on phones.
-function Panel({ selection, onClose, onSelect }: { selection: NonNullable<Selection>; onClose: () => void; onSelect: (s: Selection) => void }) {
+function Panel({ selection, domain, onClose, onSelect }: { selection: NonNullable<Selection>; domain: PeopleDomain | null; onClose: () => void; onSelect: (s: Selection) => void }) {
     const close = useRef<HTMLButtonElement>(null);
+    // Give focus back to whatever opened the panel when it closes. Declared
+    // before the effect below, so it records the opener, not the close button.
+    useEffect(() => {
+        const opener = document.activeElement;
+        return () => {
+            if ((opener instanceof HTMLElement || opener instanceof SVGElement) && opener.isConnected) opener.focus();
+        };
+    }, []);
     useEffect(() => close.current?.focus(), [selection.kind, selection.id]);
     const person = selection.kind === "person" ? getDirectoryPerson(selection.id) : undefined;
     const label = person?.name ?? (selection.kind === "org" ? ORGS[selection.id as OrgId].name : countryName(selection.id));
@@ -124,7 +135,7 @@ function Panel({ selection, onClose, onSelect }: { selection: NonNullable<Select
         </button>
         {person ? <PersonDetail person={person} onOrg={(id) => onSelect({ kind: "org", id })} /> : null}
         {selection.kind === "org" ? <OrgDetail orgId={selection.id} onPerson={(id) => onSelect({ kind: "person", id })} /> : null}
-        {selection.kind === "country" ? <CountryDetail code={selection.id} onPerson={(id) => onSelect({ kind: "person", id })} /> : null}
+        {selection.kind === "country" ? <CountryDetail code={selection.id} domain={domain} onPerson={(id) => onSelect({ kind: "person", id })} /> : null}
     </aside>;
 }
 
@@ -139,6 +150,16 @@ export function People({ menuOpen = false }: { menuOpen?: boolean }) {
         window.history.pushState(window.history.state, "", selectionUrl(s));
     }, []);
 
+    // Escape closes the panel. The history push stays out of the state
+    // updater (which must be pure), so StrictMode adds one entry, not two.
+    useEffect(() => {
+        const onKey = (e: KeyboardEvent) => {
+            if (e.key === "Escape" && selection) select(null);
+        };
+        window.addEventListener("keydown", onKey);
+        return () => window.removeEventListener("keydown", onKey);
+    }, [selection, select]);
+
     useEffect(() => {
         const prev = document.title;
         document.title = TITLE;
@@ -146,20 +167,12 @@ export function People({ menuOpen = false }: { menuOpen?: boolean }) {
         const initial = readSelection();
         if (initial && window.location.hash) window.history.replaceState(window.history.state, "", selectionUrl(initial));
         const onPop = () => setSelection(readSelection());
-        const onKey = (e: KeyboardEvent) => {
-            if (e.key === "Escape") setSelection((s) => {
-                if (s) window.history.pushState(window.history.state, "", selectionUrl(null));
-                return null;
-            });
-        };
         window.addEventListener("popstate", onPop);
         window.addEventListener("hashchange", onPop);
-        window.addEventListener("keydown", onKey);
         return () => {
             document.title = prev;
             window.removeEventListener("popstate", onPop);
             window.removeEventListener("hashchange", onPop);
-            window.removeEventListener("keydown", onKey);
         };
     }, []);
 
@@ -210,7 +223,7 @@ export function People({ menuOpen = false }: { menuOpen?: boolean }) {
                 </div>
             </section>
         </main>
-        {selection ? <Panel selection={selection} onClose={() => select(null)} onSelect={select} /> : null}
+        {selection ? <Panel selection={selection} domain={domain} onClose={() => select(null)} onSelect={select} /> : null}
         <PublicFooter />
     </div>;
 }

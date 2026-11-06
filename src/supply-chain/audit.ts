@@ -1,5 +1,5 @@
 import { openSourceLicenceErrors } from "../open-source/licence";
-import { DIRECTORY_RECORDS } from "../people/directory";
+import { DIRECTORY_RECORDS } from "../people/records";
 import { sdkErrors } from "../sdk/audit";
 import { SDK_CHECKS } from "../sdk/checks";
 import { COMPANIES } from "./companies";
