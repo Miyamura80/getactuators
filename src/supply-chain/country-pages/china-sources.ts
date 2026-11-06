@@ -237,13 +237,6 @@ export const CHINA_SOURCES: ChinaSource[] = [
         "https://technode.global/?p=91891",
     ),
     // Gears, screws and bearings
-    src(
-        "globenewswire-reducers-2020",
-        "GlobeNewswire",
-        "Global and China industrial robot speed reducer industry report, 2020-2026",
-        "https://www.globenewswire.com/news-release/2020/09/25/2099122/0/en/Global-and-China-Industrial-Robot-Speed-Reducer-Industry-Report-2020-2026.html",
-        "industry-report",
-    ),
     profile(
         "ethercat-shuanghuan",
         "EtherCAT Technology Group",

@@ -21,8 +21,8 @@ import { getCompany } from "@/supply-chain/registry";
 
 describe("coverage gate", () => {
     test("Japan and China pass; the other planned countries wait for their data", () => {
-        expect(LIVE_COUNTRY_PATHS).toContain("/japan");
-        expect(LIVE_COUNTRY_PATHS).toContain("/china");
+        // Korea and the US stay unrouted until their data passes the gate.
+        expect(LIVE_COUNTRY_PATHS).toEqual(["/japan", "/china"]);
         for (const code of ["JP", "CN"] as const) {
             const c = coverage(code);
             expect(c.companies).toBeGreaterThanOrEqual(COVERAGE_TARGET.companies);

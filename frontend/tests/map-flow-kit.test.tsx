@@ -27,6 +27,7 @@ import { SEGMENT_COLOR, SEGMENT_PICTO, arcsTouching, mixPhrase, segmentMix, site
 import { mixSize } from "../../src/supply-chain/map-groups";
 import { CHINA_SITES } from "../../src/supply-chain/sites/china";
 import { CHINA_PLANTS } from "../../src/supply-chain/sites/china-plants";
+import { getCountryPage, type CountryPage as CountryPageData } from "../../src/supply-chain/country-pages";
 const geo = (f: string) => JSON.parse(readFileSync(new URL(`../public/geo/${f}`, import.meta.url), "utf8")) as MapTopology;
 const WORLD = geo("world-110m.json");
 const JP = geo("jp-admin1.json");
@@ -89,8 +90,8 @@ test("pins are keyboard-focusable buttons named by site, segment and precision",
 });
 
 test("group markers show what they hold: segment tiles in chain order with counts", () => {
-    // The seed sites only: the /china dataset is dense enough that no city
-    // group survives at country zoom.
+    // The seed sites only: on the full /china set the named regional
+    // clusters absorb the city groups (tested below).
     const china = new Set([...CHINA_SITES, ...CHINA_PLANTS].map((x) => x.id));
     const here = PINS.filter((p) => p.country === "CN" && !china.has(p.id));
     const c = render(<CountryMap code="CN" sites={here} topology={CN}>
@@ -120,6 +121,28 @@ test("group markers show what they hold: segment tiles in chain order with count
     // The cluster index under the map carries the same tiles and name.
     const index = [...c.querySelectorAll(".mk-cluster-index button")];
     expect(index.every((b) => b.querySelector(".mk-mix .ot") && /: \d+ /.test(b.getAttribute("aria-label") ?? ""))).toBe(true);
+});
+
+test("the full /china site set groups into named regional clusters at country zoom", () => {
+    const page = getCountryPage("china") as CountryPageData;
+    const here = PINS.filter((p) => p.country === "CN");
+    const c = render(<CountryMap code="CN" sites={here} topology={CN}>
+        <ClusterZoom pins={here} clusters={page.clusters} />
+    </CountryMap>).container;
+    const groups = [...c.querySelectorAll<HTMLButtonElement>(".mk-cluster")];
+    expect(groups.length).toBeGreaterThan(1);
+    // Every site is drawn once: as a lone pin or inside exactly one group.
+    const grouped = groups.flatMap((g) => (g.getAttribute("data-group") ?? "").split("|"));
+    const lone = [...c.querySelectorAll("[data-pin]")].map((p) => p.getAttribute("data-pin"));
+    expect([...grouped, ...lone].sort()).toEqual(here.map((p) => p.id).sort());
+    for (const g of groups) {
+        expect(g.tagName).toBe("BUTTON");
+        const ids = (g.getAttribute("data-group") ?? "").split("|");
+        expect(g.getAttribute("aria-label")).toContain(mixPhrase(segmentMix(here.filter((p) => ids.includes(p.id)))));
+    }
+    // A named cluster labels its group and zooms rather than listing.
+    const baotou = groups.find((g) => g.getAttribute("aria-label")?.startsWith("Baotou rare earth hub:"));
+    expect(baotou?.getAttribute("aria-label")).toEndWith("Zoom in");
 });
 
 test("group markers never overlap each other or a lone pin", () => {

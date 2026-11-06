@@ -225,7 +225,7 @@ export const CHINA_COMPANIES: Company[] = [
         ownership: { kind: "listed", ticker: "SZSE: 002472" },
         products: ["RV reducers", "Automotive gears"],
         url: "https://www.ethercat.org/cn/members/members_FC320B48279A451F86170BE41E13EBB0.htm",
-        sources: ["globenewswire-reducers-2020", "ethercat-shuanghuan"],
+        sources: ["researchandmarkets-reducers-2020", "ethercat-shuanghuan"],
     }),
     cn("zd-leader", "ZD Leader", "中大力德", GEAR, {
         stages: ["gearing", "motor"],

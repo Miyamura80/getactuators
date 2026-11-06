@@ -27,9 +27,12 @@ const opened = (year: number, sources: SourceId[]): Sourced<number> =>
 
 type P = Parameters<typeof plant>[1];
 
-// A plant in China.
-const cnPlant = (id: string, p: Omit<P, "country">): Site =>
-    plant(id, { country: "CN", ...p });
+// A plant in China. Unlike plant(), no "operating" default: the status is
+// only what the record says (see the note above).
+const cnPlant = (id: string, p: Omit<P, "country">): Site => {
+    const { status: _default, ...site } = plant(id, { country: "CN", ...p });
+    return p.status ? { ...site, status: p.status } : site;
+};
 
 const GOLDEN_DRAGON = ["asianmetal-golden-dragon-baotou-2025"];
 const ZKSH_PLANTS = ["jdamagnet-china-top10-2023"];

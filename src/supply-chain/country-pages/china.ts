@@ -1,8 +1,30 @@
+import type { Shares } from "../concentration";
+import {
+    METAL_ALLOY_2023,
+    NDFEB_MAGNETS_2024,
+    REE_MINING_2025,
+    REE_SEPARATION_2024,
+} from "../metals/stage-shares";
+import type { Sourced } from "../sourced";
 import type { CountryContent } from "./types";
 
 // /china: stage shares and the named clusters the map zooms to. Shares reuse
 // the /metals sources; cluster boxes are plain geography
 // ([minLat, minLon, maxLat, maxLon]).
+
+// China's share of a /metals stage, so the two pages cannot drift apart:
+// CN over the sum of the map (tonnes or fractions), to two places.
+const cnShare = (s: Sourced<Shares>, note: string): Sourced<number> => {
+    const total = Object.values(s.value).reduce((a, b) => a + (b ?? 0), 0);
+    return {
+        value: Math.round(((s.value.CN ?? 0) / total) * 100) / 100,
+        unit: "fraction",
+        sources: s.sources,
+        asOf: s.asOf,
+        confidence: s.confidence,
+        note,
+    };
+};
 
 export const CHINA_PAGE: CountryContent = {
     code: "CN",
@@ -12,57 +34,41 @@ export const CHINA_PAGE: CountryContent = {
         {
             stage: "mining",
             of: "world rare earth mine output",
-            share: {
-                value: 0.69,
-                unit: "fraction",
-                sources: ["usgs-mcs-2026-ree"],
-                asOf: "2025",
-                confidence: "estimated",
-                note: "Computed as 270,000 t of a 390,000 t world total (rare earth oxide).",
-            },
+            share: cnShare(
+                REE_MINING_2025,
+                "Computed as 270,000 t of a 390,000 t world total (rare earth oxide).",
+            ),
         },
         {
             stage: "separation",
             of: "world refined rare earth output",
-            share: {
-                value: 0.91,
-                unit: "fraction",
-                sources: ["iea-rare-earths-2025"],
-                asOf: "2024",
-                confidence: "estimated",
-                note: "IEA estimate of China's share of refined rare earth output.",
-            },
+            share: cnShare(
+                REE_SEPARATION_2024,
+                "IEA estimate of China's share of refined rare earth output.",
+            ),
         },
         {
             stage: "metal-alloy",
             of: "world rare earth metal and alloy output",
-            share: {
-                value: 0.9,
-                unit: "fraction",
-                sources: ["reuters-goldman-ndpr-2023"],
-                asOf: "2023",
-                confidence: "estimated",
-                note: "Goldman Sachs puts China above 90% of metal and magnet output; 90% is a floor.",
-            },
+            share: cnShare(
+                METAL_ALLOY_2023,
+                "Goldman Sachs puts China above 90% of metal and magnet output; 90% is a floor.",
+            ),
         },
         {
             stage: "magnet",
             of: "world sintered permanent magnet output",
-            share: {
-                value: 0.94,
-                unit: "fraction",
-                sources: ["iea-rare-earths-2025"],
-                asOf: "2024",
-                confidence: "estimated",
-                note: "IEA estimate of China's share of sintered permanent magnet output.",
-            },
+            share: cnShare(
+                NDFEB_MAGNETS_2024,
+                "IEA estimate of China's share of sintered permanent magnet output.",
+            ),
         },
         {
             stage: "gearing",
             of: "world robot reducer market",
             gap: {
                 text: "Leaderdrive and Laifual held about 27.5% and 21.4% of China's robot harmonic reducer shipments in 2025; those are shares of the Chinese market, and no source gives China's share of world reducer output.",
-                sources: ["ipox-laifual-2026"],
+                sources: ["gasgoo-laifual-ipo-2026"],
             },
         },
     ],

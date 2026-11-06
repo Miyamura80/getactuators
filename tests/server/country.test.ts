@@ -14,6 +14,15 @@ const ldNodes = (html: string) =>
         .map((m) => JSON.stringify(JSON.parse(m[1] ?? "{}")))
         .join("\n");
 
+// Data rows of the twin's Sites table (header and rule excluded).
+const siteRows = (md: string) =>
+    (md.split("\n## Sites")[1]?.split("\n## Links")[0] ?? "")
+        .split("\n")
+        .filter(
+            (l) =>
+                l.startsWith("| ") && !l.startsWith("| Site") && !l.startsWith("| ---"),
+        );
+
 describe("/japan page and twin", () => {
     test("serves the SPA with Place and ItemList JSON-LD and is linked site-wide", async () => {
         const res = await get("/japan");
@@ -66,17 +75,7 @@ describe("/japan page and twin", () => {
             ])
                 expect(md).toContain(h);
             for (const c of countryCompanies("JP")) expect(md).toContain(`\`${c.id}\``);
-            const siteRows = md.split("\n## Sites")[1]?.split("\n## Links")[0] ?? "";
-            expect(
-                siteRows
-                    .split("\n")
-                    .filter(
-                        (l) =>
-                            l.startsWith("| ") &&
-                            !l.startsWith("| Site") &&
-                            !l.startsWith("| ---"),
-                    ),
-            ).toHaveLength(countrySites("JP").length);
+            expect(siteRows(md)).toHaveLength(countrySites("JP").length);
             expect(md).toContain("/policy#measure=jp-espa-hds-reducers-2023");
             expect(md).toContain("**Nagano precision belt**");
             // Revenue is a converted estimate, with its footnote.
@@ -107,10 +106,14 @@ describe("/china page and twin", () => {
             "## Share of each stage",
             "## Policies",
             "## Clusters",
+            "## Companies",
+            "## Sites",
+            "## Links",
             "## Sources",
         ])
             expect(md).toContain(h);
         for (const c of countryCompanies("CN")) expect(md).toContain(`\`${c.id}\``);
+        expect(siteRows(md)).toHaveLength(countrySites("CN").length);
         expect(md).toContain("**Baotou rare earth hub**");
         expect(md).not.toContain(String.fromCharCode(0x2014));
     });
