@@ -96,14 +96,18 @@ function techDetails(fn: Footnotes): string {
     }).join("\n\n");
 }
 
+// A market cell keeps the publisher's caveat (spread, forecast window).
+const withNote = (text: string, v: Sourced<number>): string =>
+    v.note ? `${text}: ${mdText(v.note)}` : text;
+
 function marketTable(fn: Footnotes): string {
     const rows = [...MARKET_SLICES]
         .sort((a, b) => b.revenueUsd.value - a.revenueUsd.value)
         .map((s) => [
             mdText(s.label),
             s.techIds.map((id) => `\`${id}\``).join(", "),
-            fn.value(s.revenueUsd),
-            fn.value(s.cagr),
+            withNote(fn.value(s.revenueUsd), s.revenueUsd),
+            withNote(fn.value(s.cagr), s.cagr),
             END_MARKET_LABEL[s.endMarket],
         ]);
     return mdTable(
@@ -136,7 +140,7 @@ export function altsBody(): string {
     const deployments = deploymentList(fn);
     return `# ${TITLE}
 
-${ALT_TECHS.length} alternatives to the NdFeB permanent magnet electric actuator in four families: rare-earth-free motors, artificial muscles, hydraulic drives and transmissions. Today's baseline holds about ${fn.value(NDFEB_PER_HUMANOID)} of NdFeB magnet per humanoid robot; see [/metals](${absoluteUrl("/metals.md")}) for where it comes from. As of ${ALTS_AS_OF}. Interactive page: ${absoluteUrl(ALTS_PATH)} (deep link \`?tech=<id>\` and \`?group=family|company-type|end-market|country\`). JSON: ${absoluteUrl("/api/v1/alts")}.
+${ALT_TECHS.length} alternatives to the NdFeB permanent magnet electric actuator in four families: rare-earth-free motors, artificial muscles, hydraulic drives and transmissions. Today's baseline holds about ${fn.value(NDFEB_PER_HUMANOID)} of NdFeB magnet per humanoid robot; see [/metals](${absoluteUrl("/metals.md")}) for where it comes from. As of ${ALTS_AS_OF}. Interactive page: ${absoluteUrl(ALTS_PATH)} (deep link \`?tech=<id>\`). JSON: ${absoluteUrl("/api/v1/alts")}.
 
 ## Technologies
 
@@ -156,7 +160,6 @@ ${market}
 
 - Market size: top-down, one market report per row, quoted as that publisher's estimate. We found no company revenue split by technology, so there is no bottom-up check yet.
 - Growth: the same report's forecast compound annual growth rate.
-- Grouping on the page: by family or end market a market moves whole; by company type or country it is split evenly across the types or home countries of the companies we list for its technologies. That split is our model, not a measured share.
 - Readiness: TRL 1 (principle observed) to 9 (proven in volume use), judged from the cited basis.
 
 ## Deployments
@@ -172,6 +175,7 @@ export const ALTS_PAGE: Page = {
     title: TITLE,
     description: DESCRIPTION,
     body: altsBody,
+    updatedAt: ALTS_UPDATED,
     jsonLd: () => [
         ld.webPage("WebPage", ALTS_PATH, TITLE),
         ld.breadcrumbs([

@@ -120,6 +120,9 @@ export interface CycloidDiscProps {
     holes?: number;
     // Also draw the fixed ring of lobes + 1 housing pins.
     pins?: boolean;
+    // Draw only that ring of pins, no disc (a fixed housing beside a
+    // separately moving disc).
+    pinsOnly?: boolean;
 }
 
 export interface BallScrewProps {
@@ -237,9 +240,11 @@ export interface RotorCoreProps {
 }
 
 // A helical coil about Z (a spring, a twisted fibre, a cable wrap) of
-// `turns` turns at `pitch`, centred on the origin. With `strands`, that many
-// helices at even phases; `crossed` adds the same set wound the other way (a
-// braided sleeve).
+// `turns` turns at `pitch`, centred on the origin, so `turns * pitch` long.
+// With `strands`, that many helices at even phases, as in a multi-start
+// thread: `pitch` stays the gap between neighbouring wires and each helix's
+// lead is `pitch * strands`. `crossed` adds the same set wound the other way
+// (a braided sleeve).
 export interface CoilProps {
     radius: number;
     wire: number;

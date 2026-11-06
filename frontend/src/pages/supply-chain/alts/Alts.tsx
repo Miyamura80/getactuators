@@ -67,6 +67,9 @@ function Legend({ hidden, onToggle }: { hidden: ReadonlySet<AltFamily>; onToggle
     </div>;
 }
 
+// The phone layout (ladder plus bottom sheet), as alts.css switches it.
+const isNarrow = (): boolean => typeof window.matchMedia === "function" && window.matchMedia("(max-width: 760px)").matches;
+
 export function Alts({ menuOpen = false }: { menuOpen?: boolean }) {
     const [tech, setTech] = useState<string | null>(() => readState(window.location.search).tech);
     const [hover, setHover] = useState<string | null>(null);
@@ -84,16 +87,22 @@ export function Alts({ menuOpen = false }: { menuOpen?: boolean }) {
     const close = useCallback(() => {
         const was = tech;
         pick(null);
-        if (was) requestAnimationFrame(() => document.querySelector<SVGElement>(`.al-land [data-tech="${was}"]`)?.focus({ preventScroll: true }));
+        // Back to the node that opened it: the ladder chip on phones, the
+        // landscape node otherwise.
+        if (was) requestAnimationFrame(() => {
+            const root = isNarrow() ? ".al-ladder" : ".al-land";
+            document.querySelector<HTMLElement | SVGElement>(`${root} [data-tech="${was}"]`)?.focus({ preventScroll: true });
+        });
     }, [pick, tech]);
     // Desktop: when a card opens, bring the chart's top to the top of the
     // screen so the lit node and the docked card are both in view.
     const stageRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
         const el = stageRef.current;
-        if (!tech || !el || typeof window.matchMedia !== "function" || !window.matchMedia("(min-width: 761px)").matches) return;
+        if (!tech || !el || typeof window.matchMedia !== "function" || isNarrow()) return;
         const top = el.getBoundingClientRect().top + window.scrollY - 12;
-        if (Math.abs(window.scrollY - top) > 40) window.scrollTo({ top, behavior: "smooth" });
+        const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (Math.abs(window.scrollY - top) > 40) window.scrollTo({ top, behavior: still ? "auto" : "smooth" });
     }, [tech]);
     const toggle = (f: AltFamily) => setHidden((cur) => {
         const next = new Set(cur);
@@ -134,7 +143,7 @@ export function Alts({ menuOpen = false }: { menuOpen?: boolean }) {
                         <summary>How nodes are placed</summary>
                         <ul>
                             <li><b>Across</b> Technology readiness 1 to 9: our reading of the cited evidence, so a model, not a measurement. Hover the TRL figure for its sources.</li>
-                            <li><b>Up</b> What the actuator does for magnets, from its sources. Pump-driven hydraulics inherit whatever motor drives the pump.</li>
+                            <li><b>Up</b> What the actuator does for magnets, from its sources. Pump-driven hydraulics inherit whatever motor drives the pump, and a transmission inherits the magnets of the motor that drives it.</li>
                             <li><b>Size</b> How many dated deployments we cite (shipping, pilot, demo or retired). Hollow means none yet. No market estimate sets any size.</li>
                             <li><b>Milestones</b> The year of the earliest dated source we cite; the event may be earlier.</li>
                         </ul>

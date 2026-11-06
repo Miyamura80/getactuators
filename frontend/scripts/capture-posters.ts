@@ -42,11 +42,11 @@ const STEPS: Target[] = PROCESS_CHAINS.flatMap((c) => [
         .map((s) => ({ id: s.animation?.id ?? s.id, url: `${base}${MANUFACTURING_PATH}#step=${s.id}`, scale: 2 })),
     ...(c.productScene ? [{ id: c.productScene.id, url: `${base}${MANUFACTURING_PATH}#step=${PRODUCT_ID}`, scale: 2 }] : []),
 ]);
-// /alts?tech=<id> shows that technology's scene under "Under the hood".
+// /alts?tech=<id> opens that technology's spec card with its scene.
 const ALTS: Target[] = ALT_TECHS.map((t) => ({
     id: t.scene.spec.id,
     url: `${base}${ALTS_PATH}?tech=${t.id}`,
-    scroll: "#under-the-hood .al-uh-stage",
+    scroll: ".al-sp-stage .x3-stage",
     scale: 2,
 }));
 const TARGETS = [...LAB, ...STEPS, ...ALTS].filter((t) => only.length === 0 || only.includes(t.id));

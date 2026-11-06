@@ -10,7 +10,6 @@ const SW = 1072;
 const LANE = 13;
 const TICKS = [1900, 1950, 1990, 2000, 2010, 2020, 2030];
 const { items, lanes } = placeMilestones(ALT_TECHS, SW);
-const undated = ALT_TECHS.filter((t) => t.milestones.length === 0);
 
 export function MilestoneStrip({ hidden, hover, focus, onHover, onPick }: {
     hidden: ReadonlySet<AltFamily>;
@@ -20,6 +19,7 @@ export function MilestoneStrip({ hidden, hover, focus, onHover, onPick }: {
     onPick: (id: string) => void;
 }) {
     const lit = hover ?? focus;
+    const undated = ALT_TECHS.filter((t) => t.milestones.length === 0 && !hidden.has(t.family));
     const top = 10;
     const axisY = top + lanes * LANE + 4;
     return <figure className="al-strip">
@@ -46,7 +46,7 @@ export function MilestoneStrip({ hidden, hover, focus, onHover, onPick }: {
                     const cls = `al-ms al-f-${FAMILY_KEY[tech.family]}${m.announced ? " is-announced" : ""}${lit === tech.id ? " is-lit" : lit ? " is-dim" : ""}`;
                     const label = `${tech.short}: ${MILESTONE_LABEL[m.kind]}, ${m.announced ? "announced for " : ""}${m.year.value}. ${m.label}`;
                     return <g key={`${tech.id}-${m.kind}-${m.year.value}`} className={cls} transform={`translate(${x},${top + lane * LANE + 4})`}
-                        role="button" tabIndex={-1} aria-label={label} data-tech={tech.id}
+                        role="button" tabIndex={0} aria-label={label} data-tech={tech.id}
                         onMouseEnter={() => onHover(tech.id)} onMouseLeave={() => onHover(null)}
                         onClick={() => onPick(tech.id)} onKeyDown={onActivate(() => onPick(tech.id))}>
                         <title>{label}</title>

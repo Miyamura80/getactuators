@@ -56,8 +56,11 @@ export const HYDRAULIC_TECHS: AltTech[] = [
             milestone(
                 "first-commercial",
                 2005,
-                "A380 flies on EHAs with no hydraulics",
+                "A380 flies with EHAs in two channels",
                 ["icas-a380-flight-controls-2006"],
+                {
+                    note: "Two hydraulic and two electrical flight-control channels; the hydraulics stay.",
+                },
             ),
         ],
         players: [],
@@ -76,7 +79,7 @@ export const TRANSMISSION_TECHS: AltTech[] = [
         short: "Cycloidal",
         principle:
             "A lobed disc wobbles around a ring of pins and turns back one lobe per input turn: high ratio, shock-tolerant.",
-        magnets: "none",
+        magnets: "drive-motor",
         trl: trl(
             9,
             ["sumitomo-drive-profile", "pat-nabtesco-share"],
@@ -120,7 +123,7 @@ export const TRANSMISSION_TECHS: AltTech[] = [
         short: "Cable capstan",
         principle:
             "Cable wrapped on a small drum turns a large one; the diameter ratio is the gear ratio, without backlash.",
-        magnets: "none",
+        magnets: "drive-motor",
         trl: trl(
             9,
             ["barrett-history"],
@@ -147,7 +150,7 @@ export const TRANSMISSION_TECHS: AltTech[] = [
         short: "Roller screw",
         principle:
             "Threaded rollers orbit between screw and nut, so many lines carry load where a ball screw has a few points.",
-        magnets: "none",
+        magnets: "drive-motor",
         trl: trl(
             9,
             ["machinedesign-roller-screw"],

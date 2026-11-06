@@ -47,7 +47,9 @@ const Alts = lazy(() => import("./pages/supply-chain/alts/Alts").then((m) => ({ 
 function AltsLoading({ menuOpen }: { menuOpen: boolean }) {
     return <div className="tool-page al-page">
         <PublicHeader path={ALTS_PATH} initialOpen={menuOpen} />
-        <main className="tool-main" aria-busy="true" />
+        <main className="tool-main" aria-busy="true">
+            <p role="status">Loading alternatives</p>
+        </main>
     </div>;
 }
 

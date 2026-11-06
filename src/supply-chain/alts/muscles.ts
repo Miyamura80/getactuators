@@ -78,13 +78,13 @@ export const MUSCLE_TECHS: AltTech[] = [
         metrics: {},
         facts: [
             {
-                label: "Strain",
+                label: "Strain, lower bound",
                 value: reported(
                     1,
                     "fraction",
                     ["srt-pelrine-dea-2000"],
                     "2000",
-                    "Over 100% strain in the 2000 Science paper.",
+                    "A lower bound: the 2000 Science paper reports strain greater than 100%.",
                 ),
             },
         ],
@@ -199,13 +199,16 @@ export const MUSCLE_TECHS: AltTech[] = [
         facts: [
             {
                 label: "Usual air pressure",
-                value: reported(
-                    0.6,
-                    "MPa",
-                    ["tokyotech-hydraulic-muscle-2017"],
-                    "2017",
-                    "Conventional McKibben muscles run at 0.3 to 0.6 MPa.",
-                ),
+                value: {
+                    ...reported(
+                        0.6,
+                        "MPa",
+                        ["tokyotech-hydraulic-muscle-2017"],
+                        "2017",
+                        "Conventional McKibben muscles run at 0.3 to 0.6 MPa.",
+                    ),
+                    range: [0.3, 0.6],
+                },
             },
         ],
         scene: { kind: "loop", spec: ALT_MUSCLE_SCENES.mckibben },

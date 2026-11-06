@@ -149,10 +149,11 @@ export const CYCLOIDAL_LOOP: ProcessLoopSpec = {
                 radius: 34,
                 eccentricity: ECC,
                 pinRadius: 2.6,
-                thickness: 1,
-                pins: true,
+                thickness: 8,
+                pinsOnly: true,
             },
-            assembled: { position: z(-8) },
+            // In the disc's plane, so the lobes visibly roll on the pins.
+            assembled: { position: z(0) },
             track: [{ at: 0, opacity: 0.35 }],
         },
         {
@@ -181,7 +182,23 @@ export const CYCLOIDAL_LOOP: ProcessLoopSpec = {
 };
 
 // Cable capstan: a small drum winds a cable that turns a large drum, so the
-// ratio is the drum diameters and there is no backlash.
+// ratio is the drum diameters and there is no backlash. The capstan sits on
+// the drum's rim, so its cable wrap touches the cable laid on the drum; the
+// drum turns the other way by the radius ratio.
+const DRUM_R = 40;
+const DRUM_Y = -10;
+const WRAP_R = 5.6;
+const CAPSTAN_Y = DRUM_Y + DRUM_R + WRAP_R;
+const spin = (turn: number) => [
+    { at: 0, rotation: [0, 0, 0] as Vec3 },
+    { at: 0.5, rotation: [0, 0, turn] as Vec3 },
+    { at: 1, rotation: [0, 0, 0] as Vec3 },
+];
+// Capstan turns per half loop; kept small enough that the contact point
+// stays on the drum sector.
+const CAPSTAN_TURN = TAU * 1.5;
+const drumTurn = (-CAPSTAN_TURN * WRAP_R) / DRUM_R;
+
 export const CAPSTAN_LOOP: ProcessLoopSpec = {
     id: "capstan-loop",
     title: "Capstan drive: a small drum winding a cable on a large one",
@@ -197,37 +214,34 @@ export const CAPSTAN_LOOP: ProcessLoopSpec = {
             label: "Capstan on the motor",
             component: "cylinder",
             props: { radius: 5, length: 16 },
-            assembled: { position: [0, 30, 0] },
-            track: [
-                { at: 0, rotation: [0, 0, 0] },
-                { at: 0.5, rotation: [0, 0, TAU * 2] },
-                { at: 1, rotation: [0, 0, 0] },
-            ],
+            assembled: { position: [0, CAPSTAN_Y, 0] },
+            track: spin(CAPSTAN_TURN),
         },
         {
             id: "wrap",
             label: "Cable wraps",
             component: "coil",
-            props: { radius: 5.6, wire: 0.6, pitch: 2, turns: 6 },
-            assembled: { position: [0, 30, 0] },
+            props: { radius: WRAP_R, wire: 0.6, pitch: 2, turns: 6 },
+            assembled: { position: [0, CAPSTAN_Y, 0] },
             accent: true,
-            track: [
-                { at: 0, rotation: [0, 0, 0] },
-                { at: 0.5, rotation: [0, 0, TAU * 2] },
-                { at: 1, rotation: [0, 0, 0] },
-            ],
+            track: spin(CAPSTAN_TURN),
         },
         {
             id: "drum",
             label: "Output drum sector",
             component: "arc-segment",
-            props: { outer: 40, inner: 30, angle: 1.6, length: 14 },
-            assembled: { position: [0, -10, 0], rotation: [0, 0, Math.PI / 2] },
-            track: [
-                { at: 0, rotation: [0, 0, 0] },
-                { at: 0.5, rotation: [0, 0, (TAU * 2 * 5.6) / 40] },
-                { at: 1, rotation: [0, 0, 0] },
-            ],
+            props: { outer: DRUM_R, inner: 30, angle: 1.6, length: 14 },
+            assembled: { position: [0, DRUM_Y, 0], rotation: [0, 0, Math.PI / 2] },
+            track: spin(drumTurn),
+        },
+        {
+            id: "cable",
+            label: "Cable along the drum, anchored at both ends",
+            component: "arc-segment",
+            props: { outer: DRUM_R + 0.6, inner: DRUM_R, angle: 1.6, length: 1.2 },
+            assembled: { position: [0, DRUM_Y, 0], rotation: [0, 0, Math.PI / 2] },
+            accent: true,
+            track: spin(drumTurn),
         },
     ],
 };

@@ -120,6 +120,8 @@ export function rotorCorePart(p: RotorCoreProps): Piece[] {
 export function coilPart(p: CoilProps): Piece[] {
     const strands = Math.max(1, Math.round(p.strands ?? 1));
     const h = (p.turns * p.pitch) / 2;
+    // Multi-start: neighbouring wires stay `pitch` apart, so each helix advances
+    // `pitch * strands` per turn.
     const lead = p.pitch * strands;
     const tube = (phase: number, hand: 1 | -1) => {
         const pts = helixLine(p.radius, lead, -h, h, phase).map((v) => {

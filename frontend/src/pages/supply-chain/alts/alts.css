@@ -115,7 +115,7 @@
 .al-node { cursor: pointer; transition: opacity 160ms ease; outline: none; }
 .al-node .al-hit { fill: transparent; }
 .al-node-label { fill: var(--text); font: 500 11.5px var(--sans); }
-.al-node.is-baseline { cursor: default; }
+.al-node.is-baseline { cursor: pointer; }
 .al-node.is-baseline .al-node-label { fill: var(--muted); font: 600 10px var(--mono); letter-spacing: 0.04em; }
 .al-node.is-dim { opacity: 0.32; }
 .al-node.is-lit .al-node-label, .al-node:focus-visible .al-node-label { fill: var(--fam); font-weight: 700; }
@@ -157,6 +157,8 @@
 .al-ms circle, .al-ms rect, .al-ms path { fill: var(--fam, var(--muted)); stroke: var(--fam, var(--muted)); stroke-width: 1.4; }
 .al-ms.is-announced circle, .al-ms.is-announced rect, .al-ms.is-announced path { fill: var(--black); stroke: var(--al-amber); stroke-dasharray: 2 1.5; }
 .al-ms.is-dim { opacity: 0.18; }
+.al-strip .al-ms { outline: none; }
+.al-strip .al-ms:focus-visible circle, .al-strip .al-ms:focus-visible rect, .al-strip .al-ms:focus-visible path { stroke: var(--cyan); stroke-width: 2; }
 .al-ms.is-lit circle, .al-ms.is-lit rect, .al-ms.is-lit path { stroke: var(--text); stroke-width: 2; }
 
 /* Details */

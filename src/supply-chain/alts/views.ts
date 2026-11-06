@@ -69,7 +69,7 @@ export const altTechOut = z.object({
     magnets: z
         .enum(MAGNET_USES)
         .describe(
-            "none, ferrite, iron-nitride, permanent, or motor (set by its pump motor).",
+            "none, ferrite, iron-nitride, permanent, motor (set by its pump motor) or drive-motor (a transmission: depends on the motor that drives it).",
         ),
     trl: sourcedOut.describe(
         "Technology readiness 1..9: our reading of the cited evidence (modeled).",

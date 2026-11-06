@@ -42,6 +42,7 @@ const MAGNET_ICON: Record<MagnetUse, string> = {
     "iron-nitride": "M12 5l7 7-7 7-7-7z",
     permanent: "M8 5v8a4 4 0 0 0 8 0V5",
     motor: "M12 4a8 8 0 1 0 .01 0M12 9v6M9 12h6",
+    "drive-motor": "M12 4a8 8 0 1 0 .01 0M12 9v6M9 12h6",
 };
 
 function MagnetIcon({ use }: { use: MagnetUse }) {
@@ -117,7 +118,7 @@ function Tech({ t, onClose }: { t: AltTech; onClose: () => void }) {
                     return <div key={s.key} className={v ? "" : "is-gap"}><dt>{s.label}</dt><dd>{v ? <SourcedValue value={v} /> : "no public figure"}</dd></div>;
                 })}
                 {t.facts.map((f) => <div key={f.label}><dt>{f.label}</dt><dd><SourcedValue value={f.value} /></dd></div>)}
-                {slices.map((s) => <div key={s.id}><dt>Market{s.techIds.length > 1 ? `, shared with ${s.techIds.length - 1} more` : ""}</dt>
+                {slices.map((s) => <div key={s.id}><dt>Market: {s.label}{s.techIds.length > 1 ? `, shared with ${s.techIds.length - 1} more` : ""}</dt>
                     <dd><SourcedValue value={s.revenueUsd} /><span className="al-dim">growing</span><SourcedValue value={s.cagr} /><span className="al-dim">/yr</span></dd></div>)}
                 {slices.length === 0 ? <div className="is-gap"><dt>Market</dt><dd>no published size</dd></div> : null}
                 {players.length ? <div><dt>Who</dt><dd>{players.join(", ")}</dd></div> : null}
@@ -172,9 +173,14 @@ export function Card({ id, onClose }: { id: string; onClose: () => void }) {
             document.removeEventListener("pointerdown", onDown);
         };
     }, []);
+    // On phones the card is a sheet over the ladder: move focus into it so
+    // keyboard and screen-reader users are not left behind the overlay.
+    useEffect(() => {
+        if (typeof window.matchMedia === "function" && window.matchMedia("(max-width: 760px)").matches) ref.current?.focus({ preventScroll: true });
+    }, []);
     const t = getAltTech(id);
     const fam = t ? ` al-f-${FAMILY_KEY[t.family]}` : " is-baseline";
-    return <article ref={ref} className={`al-sp${fam}`} aria-labelledby="al-sp-h">
+    return <article ref={ref} className={`al-sp${fam}`} aria-labelledby="al-sp-h" tabIndex={-1}>
         {id === BASELINE_ID || !t ? <Baseline onClose={onClose} /> : <Tech t={t} onClose={onClose} />}
     </article>;
 }

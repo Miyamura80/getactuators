@@ -183,12 +183,29 @@ export const SMA_LOOP: ProcessLoopSpec = {
 
 // McKibben muscle (pneumatic or hydraulic): an inner bladder in a braided
 // sleeve; pressure widens it and the braid angle turns that into pull.
+
+// Opacity track that swaps the relaxed and contracted shapes with the
+// pressure cycle: `from` is the relaxed opacity.
+function fade(from: 0 | 1): LoopActor["track"] {
+    const to = 1 - from;
+    return [
+        { at: 0.2, opacity: from },
+        { at: 0.4, opacity: to },
+        { at: 0.75, opacity: to },
+        { at: 0.95, opacity: from },
+    ];
+}
 function mckibben(
     id: string,
     title: string,
     medium: string,
     withPump: boolean,
 ): ProcessLoopSpec {
+    // The renderer scales uniformly, so the contracted muscle (12 mm shorter,
+    // wider) is its own geometry that fades in as the relaxed one fades out.
+    // Both hang from the mount, so the free end and the load rise together.
+    const relaxed = fade(1);
+    const contracted = fade(0);
     const actors: LoopActor[] = [
         anchor,
         {
@@ -197,12 +214,15 @@ function mckibben(
             component: "cylinder",
             props: { radius: 7, length: 56 },
             assembled: { position: [0, 8, 0], rotation: UPRIGHT },
-            track: [
-                { at: 0.2, scale: 1, position: [0, 0, 0] },
-                { at: 0.45, scale: 1.18, position: [0, 6, 0] },
-                { at: 0.75, scale: 1.18, position: [0, 6, 0] },
-                { at: 0.95, scale: 1, position: [0, 0, 0] },
-            ],
+            track: relaxed,
+        },
+        {
+            id: "bladder-full",
+            label: "Pressurised bladder, wider and shorter",
+            component: "cylinder",
+            props: { radius: 9.5, length: 44 },
+            assembled: { position: [0, 14, 0], rotation: UPRIGHT },
+            track: contracted,
         },
         {
             id: "braid",
@@ -218,12 +238,23 @@ function mckibben(
             },
             assembled: { position: [0, 8, 0], rotation: UPRIGHT },
             accent: true,
-            track: [
-                { at: 0.2, scale: 1, position: [0, 0, 0] },
-                { at: 0.45, scale: 1.12, position: [0, 6, 0] },
-                { at: 0.75, scale: 1.12, position: [0, 6, 0] },
-                { at: 0.95, scale: 1, position: [0, 0, 0] },
-            ],
+            track: relaxed,
+        },
+        {
+            id: "braid-full",
+            label: "Braid at a wider angle",
+            component: "coil",
+            props: {
+                radius: 10.5,
+                wire: 0.5,
+                pitch: 5.5,
+                turns: 8,
+                strands: 3,
+                crossed: true,
+            },
+            assembled: { position: [0, 14, 0], rotation: UPRIGHT },
+            accent: true,
+            track: contracted,
         },
         load(12, 0.22, 0.75),
     ];

@@ -7,7 +7,6 @@ import {
     altErrors,
     techsIn,
 } from "@/supply-chain/alts";
-import { UNATTRIBUTED, groupSlices, groupsOf } from "@/supply-chain/alts/treemap";
 import { getSource } from "@/supply-chain/sources";
 
 const ISSUE_TECHS = [
@@ -58,47 +57,20 @@ describe("/alts data", () => {
         for (const s of MARKET_SLICES) {
             for (const v of [s.revenueUsd, s.cagr]) {
                 expect(v.confidence).toBe("estimated");
-                expect(getSource(v.sources[0] ?? "")?.reuse).toBe("restricted");
+                expect(v.sources.length).toBeGreaterThan(0);
+                for (const source of v.sources)
+                    expect(getSource(source)?.reuse).toBe("restricted");
             }
         }
+    });
+
+    test("a transmission is never counted as magnet-free: it depends on its motor", () => {
+        for (const t of techsIn("transmission"))
+            expect(["drive-motor", "permanent"]).toContain(t.magnets);
     });
 
     test("deployments are dated and tied to a technology", () => {
         for (const d of DEPLOYMENTS) expect(d.date).toMatch(/^\d{4}(-\d{2}){0,2}$/);
         expect(DEPLOYMENTS.some((d) => d.status === "retired")).toBe(true);
-    });
-});
-
-describe("treemap grouping", () => {
-    const total = MARKET_SLICES.reduce((a, s) => a + s.revenueUsd.value, 0);
-
-    test("every grouping keeps the total market size", () => {
-        for (const by of ["family", "company-type", "end-market", "country"] as const) {
-            const groups = groupSlices(MARKET_SLICES, by, ALT_TECHS);
-            const sum = groups.reduce((a, g) => a + g.value, 0);
-            expect(sum).toBeCloseTo(total, 0);
-            expect(groups.map((g) => g.value)).toEqual(
-                [...groups.map((g) => g.value)].sort((a, b) => b - a),
-            );
-        }
-    });
-
-    test("family and end market move tiles whole; country splits across player homes", () => {
-        const family = groupSlices(MARKET_SLICES, "family", ALT_TECHS);
-        expect(family.flatMap((g) => g.leaves).every((l) => l.share === 1)).toBe(true);
-        const cyclo = MARKET_SLICES.find((s) => s.id === "cycloidal-reducers");
-        if (!cyclo) throw new Error("no cycloidal slice");
-        expect(groupsOf(cyclo, "country", ALT_TECHS)).toEqual(["JP"]);
-        const induction = MARKET_SLICES.find((s) => s.id === "induction-motors");
-        if (!induction) throw new Error("no induction slice");
-        expect(groupsOf(induction, "country", ALT_TECHS)).toEqual(["CH", "US"]);
-        const eha = MARKET_SLICES.find((s) => s.id === "eha");
-        if (!eha) throw new Error("no eha slice");
-        expect(groupsOf(eha, "company-type", ALT_TECHS)).toEqual([UNATTRIBUTED]);
-        const byCountry = groupSlices(MARKET_SLICES, "country", ALT_TECHS);
-        const split = byCountry
-            .flatMap((g) => g.leaves)
-            .filter((l) => l.sliceId === "induction-motors");
-        expect(split.map((l) => l.share)).toEqual([0.5, 0.5]);
     });
 });

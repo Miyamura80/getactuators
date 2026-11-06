@@ -56,6 +56,7 @@ export const MAGNET_USES = [
     "iron-nitride",
     "permanent",
     "motor",
+    "drive-motor",
 ] as const;
 export type MagnetUse = (typeof MAGNET_USES)[number];
 
@@ -65,6 +66,8 @@ export const MAGNET_USE_LABEL: Record<MagnetUse, string> = {
     "iron-nitride": "Iron nitride magnets",
     permanent: "Permanent magnets",
     motor: "Set by its pump motor",
+    // A transmission has no magnets itself, but the motor driving it may.
+    "drive-motor": "Depends on its motor",
 };
 
 export const MILESTONE_KINDS = ["lab", "first-commercial", "volume"] as const;
@@ -139,7 +142,7 @@ export interface AltTech {
     sources: SourceId[];
 }
 
-// A treemap leaf: one published market size and growth rate, covering one
+// One published market size and growth rate, covering one
 // or more technologies. The grouping fields are our classification (see the
 // methodology box), not the publisher's split.
 export interface MarketSlice {

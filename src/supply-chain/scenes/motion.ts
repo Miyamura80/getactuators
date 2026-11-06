@@ -87,7 +87,7 @@ const EXTENT: { [K in PartKind]: (p: PartPropsByKind[K]) => Extent } = {
     "wave-generator": (p) => ({ r: p.major, h: p.width / 2 }),
     "circular-spline": (p) => ({ r: p.outer, h: p.width / 2 }),
     "cycloid-disc": (p) => ({
-        r: p.radius + (p.pins ? 2 * p.pinRadius : 0),
+        r: p.radius + (p.pins || p.pinsOnly ? 2 * p.pinRadius : 0),
         h: p.thickness / 2,
     }),
     "ball-screw": (p) => {

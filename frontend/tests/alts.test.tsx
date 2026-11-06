@@ -28,6 +28,7 @@ test("url state keeps only the focused technology or the NdFeB baseline", () => 
 test("layout places every technology once, plus the NdFeB baseline, without overlaps", () => {
     const geo = layout();
     expect(geo.nodes.filter((n) => n.tech)).toHaveLength(ALT_TECHS.length);
+    expect(new Set(geo.nodes.flatMap((n) => n.tech?.id ?? []))).toEqual(new Set(ALT_TECHS.map((t) => t.id)));
     expect(geo.nodes.filter((n) => n.id === BASELINE_ID)).toHaveLength(1);
     for (const n of geo.nodes) {
         expect(n.x).toBeGreaterThan(0);
@@ -36,7 +37,15 @@ test("layout places every technology once, plus the NdFeB baseline, without over
     const keys = new Set(geo.nodes.map((n) => `${Math.round(n.x)}:${Math.round(n.y)}`));
     expect(keys.size).toBe(geo.nodes.length);
     // TRL 9 splits into family stacks, so no stack is taller than four.
-    expect(geo.columns[8]?.sub).toBeGreaterThan(2);
+    const col9 = geo.columns[8];
+    expect(col9?.sub).toBeGreaterThan(1);
+    const stacks = new Map<string, number>();
+    for (const n of geo.nodes.filter((x) => col9 && x.x >= col9.x && x.x < col9.x + col9.w)) {
+        const band = geo.bands.findIndex((b) => n.y >= b.y && n.y < b.y + b.h);
+        const key = `${Math.round(n.x)}:${band}`;
+        stacks.set(key, (stacks.get(key) ?? 0) + 1);
+    }
+    expect(Math.max(...stacks.values())).toBeLessThanOrEqual(4);
     const { items } = placeMilestones(ALT_TECHS, 1000);
     expect(items).toHaveLength(ALT_TECHS.reduce((a, t) => a + t.milestones.length, 0));
 });
@@ -48,7 +57,7 @@ test("opens on the landscape with every node, the ladder and the milestone strip
     expect(view.getByRole("heading", { level: 1 }).textContent).toBe("What could replace the rare-earth motor?");
     expect(c.querySelectorAll(".al-land [data-tech]")).toHaveLength(ALT_TECHS.length + 1);
     expect(c.querySelectorAll(".al-ladder [data-tech]")).toHaveLength(ALT_TECHS.length + 1);
-    expect(c.querySelector(".al-strip .al-ms.is-announced")).not.toBeNull();
+    expect(c.querySelector(".al-strip .al-ms.is-announced[data-tech]")).not.toBeNull();
     expect(c.querySelector(".al-sp")).toBeNull();
     expect(c.querySelectorAll(".al-cta")).toHaveLength(1);
     expect(c.textContent).not.toContain(String.fromCharCode(0x2014));
@@ -90,9 +99,14 @@ test("clicking a node opens its card and a family toggle hides its nodes", () =>
     });
     expect(window.location.search).toBe("?tech=cycloidal");
     expect(c.querySelector(".al-sp h2")?.textContent).toBe("Cycloidal reducer");
+    // A transmission has no magnets itself, but is not counted as magnet-free.
+    expect(c.querySelector(".al-sp-spec")?.textContent).toContain("Depends on its motor");
     act(() => {
         fireEvent.click(view.getByRole("button", { name: /^Artificial muscles/ }));
     });
     expect(c.querySelector('.al-land [data-tech="hasel"]')).toBeNull();
     expect(c.querySelector('.al-ladder [data-tech="hasel"]')).toBeNull();
+    // TRL 4 holds only muscles: hidden, not "none cited".
+    const rung4 = [...c.querySelectorAll(".al-rung")].find((r) => r.querySelector(".al-rung-n b")?.textContent === "4");
+    expect(rung4?.querySelector(".al-gap")?.textContent).toBe("hidden by filter");
 });

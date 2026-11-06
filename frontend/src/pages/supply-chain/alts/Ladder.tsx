@@ -4,6 +4,7 @@ import { BASELINE_ID, radiusFor, stageOf } from "./landscape-model";
 
 // Phone layout of the landscape: one rung per TRL, 9 at the top. The
 // magnet axis becomes a short tag on each chip (none when it has no magnets).
+// A rung with technologies only in hidden families says so, not "none cited".
 
 const MAGNET_TAG: Record<MagnetUse, string | null> = {
     none: null,
@@ -11,6 +12,7 @@ const MAGNET_TAG: Record<MagnetUse, string | null> = {
     "iron-nitride": "iron nitride",
     permanent: "permanent magnet",
     motor: "pump motor",
+    "drive-motor": "depends on motor",
 };
 
 export function Ladder({ hidden, focus, onPick }: {
@@ -22,8 +24,10 @@ export function Ladder({ hidden, focus, onPick }: {
     const order = (f: AltFamily) => ALT_FAMILIES.indexOf(f);
     return <ol className="al-ladder" aria-label="Technologies by readiness level">
         {rungs.map((trl) => {
-            const techs = ALT_TECHS.filter((t) => t.trl.value === trl && !hidden.has(t.family)).sort((a, b) => order(a.family) - order(b.family));
+            const atTrl = ALT_TECHS.filter((t) => t.trl.value === trl);
+            const techs = atTrl.filter((t) => !hidden.has(t.family)).sort((a, b) => order(a.family) - order(b.family));
             const empty = techs.length === 0 && trl !== 9;
+            const gap = atTrl.length ? "hidden by filter" : "none cited";
             return <li key={trl} className={`al-rung${empty ? " is-empty" : ""}`}>
                 <span className="al-rung-n"><b>{trl}</b><span>{stageOf(trl)}</span></span>
                 <span className="al-rung-items">
@@ -39,7 +43,7 @@ export function Ladder({ hidden, focus, onPick }: {
                             {tag ? <i>{tag}</i> : null}
                         </button>;
                     })}
-                    {empty ? <span className="al-gap">none cited</span> : null}
+                    {empty ? <span className="al-gap">{gap}</span> : null}
                 </span>
             </li>;
         })}

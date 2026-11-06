@@ -173,7 +173,18 @@ export function cycloidPoints(p: CycloidDiscProps, samples = 0): Vector2[] {
     return pts;
 }
 
+// The fixed housing: lobes + 1 pins and the ring that holds them.
+function pinRing(p: CycloidDiscProps): Piece[] {
+    const pin = rod(p.pinRadius, p.thickness * 1.5, 16);
+    const ring = ringGeometry(p.radius + p.pinRadius * 2.4, p.radius + p.pinRadius * 0.4, p.thickness * 1.5);
+    return [
+        { geometry: pin, matrices: aroundZ(p.lobes + 1, p.radius), tone: "alt", edges: 40 },
+        { geometry: ring, edges: 30 },
+    ];
+}
+
 export function cycloidPart(p: CycloidDiscProps): Piece[] {
+    if (p.pinsOnly) return pinRing(p);
     const holes = [circlePath(p.radius * 0.16)];
     const nHoles = p.holes ?? 0;
     for (let i = 0; i < nHoles; i++) {
@@ -184,13 +195,5 @@ export function cycloidPart(p: CycloidDiscProps): Piece[] {
         holes.push(h);
     }
     const disc = extrude(polygonShape(cycloidPoints(p), holes), p.thickness, 24);
-    const pieces: Piece[] = [{ geometry: disc, edges: 35 }];
-    if (p.pins) {
-        const n = p.lobes + 1;
-        const pin = rod(p.pinRadius, p.thickness * 1.5, 16);
-        pieces.push({ geometry: pin, matrices: aroundZ(n, p.radius), tone: "alt", edges: 40 });
-        const ring = ringGeometry(p.radius + p.pinRadius * 2.4, p.radius + p.pinRadius * 0.4, p.thickness * 1.5);
-        pieces.push({ geometry: ring, edges: 30 });
-    }
-    return pieces;
+    return [{ geometry: disc, edges: 35 }, ...(p.pins ? pinRing(p) : [])];
 }

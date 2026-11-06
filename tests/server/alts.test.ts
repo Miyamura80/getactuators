@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { AltTechListSchema, AltTechSchema } from "@/api/alts";
+import { SITE_URL } from "@/server/site";
 import { ALT_TECHS, DEPLOYMENTS, MARKET_SLICES } from "@/supply-chain/alts";
 import { get, getMarkdown } from "./agent-helpers";
 import { callTool } from "./mcp-helpers";
@@ -25,7 +26,7 @@ describe("/alts page and twin", () => {
             distribution: { contentUrl: string }[];
         };
         expect(dataset.distribution.map((d) => d.contentUrl)).toContain(
-            "https://actuatorlist.com/api/v1/alts",
+            `${SITE_URL}/api/v1/alts`,
         );
         expect(await (await get("/sitemap.xml")).text()).toContain("/alts");
         expect(await (await get("/llms.txt")).text()).toContain("/alts.md");
