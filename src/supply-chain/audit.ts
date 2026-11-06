@@ -1,3 +1,4 @@
+import { openSourceLicenceErrors } from "../open-source/licence";
 import { sdkErrors } from "../sdk/audit";
 import { SDK_CHECKS } from "../sdk/checks";
 import { COMPANIES } from "./companies";
@@ -281,6 +282,7 @@ export function auditRegistry(
             allowlist: FACTS_ALLOWLIST,
         }),
         ...humanoidLicenceErrors(),
+        ...openSourceLicenceErrors(),
     );
     const values = sourcedValueIssues(today);
     const orphans = SOURCES.filter((s) => !used.has(s.id)).map(

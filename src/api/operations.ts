@@ -39,6 +39,13 @@ import {
     getMetalPricesHandler,
     listMetalsHandler,
 } from "./metals";
+import {
+    OpenRobotListParams,
+    OpenRobotListSchema,
+    OpenRobotSchema,
+    getOpenRobotHandler,
+    listOpenRobotsHandler,
+} from "./open-robots";
 import { ActuatorListParams, CompareQueryParams, RobotListParams } from "./params";
 import {
     PolicyListParams,
@@ -402,6 +409,36 @@ export const OPERATIONS: Operation[] = [
         errors: [404],
         example: "/api/v1/humanoids/unitree-g1",
         handler: getHumanoidById,
+    },
+    {
+        operationId: "list_open_robots",
+        method: "GET",
+        path: "/api/v1/open-robots",
+        summary: "List open-source robots",
+        description:
+            "Every robot on /open-source (mobile manipulators, arms, humanoids, legged): licences, an openness score over eight dimensions (CAD, electronics, firmware, software, BOM, assembly guide, sim model, licence) with a link per published artefact, BOM or kit cost, GitHub stars and last commit, family-tree parent, and the actuator in each joint group with its catalog id when listed.",
+        query: OpenRobotListParams,
+        response: OpenRobotListSchema,
+        errors: [400],
+        example: "/api/v1/open-robots?type=humanoid",
+        handler: listOpenRobotsHandler,
+    },
+    {
+        operationId: "get_open_robot",
+        method: "GET",
+        path: "/api/v1/open-robots/:id",
+        summary: "Get one open-source robot",
+        description:
+            "One open robot with its openness matrix row (status, link, licence per dimension), joints mapped to catalog actuators, cost, repository stats and sources.",
+        pathParam: {
+            name: "id",
+            description: "Open robot id (slug).",
+            example: "yor",
+        },
+        response: OpenRobotSchema,
+        errors: [404],
+        example: "/api/v1/open-robots/yor",
+        handler: getOpenRobotHandler,
     },
     {
         operationId: "list_benchmarks",

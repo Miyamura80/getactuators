@@ -36,6 +36,7 @@ const EXPECTED_TOOLS = [
     "get_metal_supply",
     "get_metal_prices",
     "list_policy_measures",
+    "list_open_robots",
     "get_benchmarks",
     "get_process",
     "get_country",
