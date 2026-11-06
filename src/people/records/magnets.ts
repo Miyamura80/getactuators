@@ -197,7 +197,6 @@ export const MAGNETS: DirectoryRecord[] = [
         name: "Erik Eschen",
         role: "CEO, VAC Group (VACUUMSCHMELZE and eVAC Magnetics)",
         orgId: "vac",
-        alsoOrgIds: ["energy-fuels"],
         domain: "magnets",
         criterion: "leads",
         whyTheyMatter:

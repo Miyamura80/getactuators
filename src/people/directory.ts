@@ -44,6 +44,7 @@ export const KEY_WORK_KINDS = [
     "report",
     "award",
     "role",
+    "trial",
 ] as const;
 export type KeyWorkKind = (typeof KEY_WORK_KINDS)[number];
 

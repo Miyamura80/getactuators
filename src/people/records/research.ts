@@ -147,14 +147,8 @@ export const RESEARCH: DirectoryRecord[] = [
         keyWorks: [
             {
                 title: "Agonist-antagonist myoneural interface trial (NCT03913273)",
-                url: "https://cdn.clinicaltrials.gov/large-docs/73/NCT03913273/ICF_002.pdf",
-                kind: "report",
-            },
-            {
-                title: "Upper-extremity amputation with AMI construction",
-                year: 2025,
-                url: "https://www.media.mit.edu/people/hherr/publications/",
-                kind: "paper",
+                url: "https://clinicaltrials.gov/study/NCT03913273",
+                kind: "trial",
             },
         ],
         sources: src("mit-media-herr-publications", "clinicaltrials-ami"),
@@ -194,7 +188,7 @@ export const RESEARCH: DirectoryRecord[] = [
             {
                 title: "Artificial muscles from fishing line and sewing thread (Science)",
                 year: 2014,
-                url: "https://news.utdallas.edu/science-technology/researchers-create-powerful-muscles-from-fishing-l",
+                url: "https://doi.org/10.1126/science.1246906",
                 kind: "paper",
             },
         ],

@@ -94,7 +94,10 @@ export const POLICY: DirectoryRecord[] = [
             "https://benchmarkevents.benchmarkminerals.com/summit-toronto/speaker/2162420/tae-yoon-kim",
         ),
     },
-    // To verify: sources differ on the exact title.
+    // To verify: sources differ on the exact title. The Anchor House interview
+    // names the Chinese Society of Rare Earths and is reachable only through
+    // a category archive, so it backs the "cited" criterion but is not listed
+    // as a key work.
     {
         id: "chen-zhanheng",
         name: "Chen Zhanheng",
@@ -106,13 +109,16 @@ export const POLICY: DirectoryRecord[] = [
             "A long-standing industry voice on Chinese rare earth policy, quoted on consolidation and export rules.",
         keyWorks: [
             {
-                title: "Interview on China's rare earth industry (Chinese Society of Rare Earths)",
-                url: "https://www.theanchorhouse.com/?cat=3",
+                title: "International cooperation: Association of China Rare Earth Industry delegation",
+                year: 2021,
+                url: "https://en.cae.cn/cae/html/en/col2061/2021-11/12/20211112206111111110242_1.html",
                 kind: "report",
             },
         ],
         sources: src("cae-chen-zhanheng", "anchorhouse-chen-zhanheng"),
-        links: web("https://www.theanchorhouse.com/?cat=3"),
+        links: web(
+            "https://en.cae.cn/cae/html/en/col2061/2021-11/12/20211112206111111110242_1.html",
+        ),
     },
     {
         id: "neha-mukherjee",

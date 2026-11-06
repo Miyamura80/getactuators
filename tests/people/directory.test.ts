@@ -86,10 +86,10 @@ describe("/people directory", () => {
         const again = peopleNetwork(720, 520);
         expect(net.nodes).toEqual(again.nodes);
         for (const n of net.nodes) {
-            expect(n.x).toBeGreaterThanOrEqual(24);
-            expect(n.x).toBeLessThanOrEqual(720 - 24);
-            expect(n.y).toBeGreaterThanOrEqual(24);
-            expect(n.y).toBeLessThanOrEqual(520 - 24);
+            expect(n.x).toBeGreaterThanOrEqual(28);
+            expect(n.x).toBeLessThanOrEqual(720 - 28);
+            expect(n.y).toBeGreaterThanOrEqual(28);
+            expect(n.y).toBeLessThanOrEqual(520 - 28);
         }
         // No two drawn marks overlap, at the page's canvas size either.
         for (const { nodes } of [net, peopleNetwork(960, 620)])

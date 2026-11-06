@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { DIRECTORY, DOMAIN_LABEL, ORGS, type Org, type OrgId, PEOPLE_DOMAINS, type PeopleDomain, initials } from "../../../../src/people";
 import { countryName } from "../../../../src/country-flag";
 import { type NetNode, PERSON_RADIUS, netRadius, orgLogoOnLight, orgLogoUrl, peopleNetwork } from "../../../../src/people/views";
-import { LOGO_TOKEN } from "../../components/CompanyLogo";
+import { LOGO_TOKEN } from "../../lib/logo-token";
 
 const W = 960;
 const H = 620;

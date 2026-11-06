@@ -226,8 +226,10 @@ export function netRadius(n: Pick<NetNode, "kind" | "degree">): number {
     return n.kind === "person" ? PERSON_RADIUS : 13 + Math.min(n.degree, 6) * 2.5;
 }
 
-// The margin nodes are kept inside, in both the collision pass and the output.
-const NET_PAD = 24;
+// The margin nodes are kept inside, in both the collision pass and the
+// output: the largest drawn radius (an org with six or more people), so no
+// mark is clipped at the SVG edge.
+const NET_PAD = netRadius({ kind: "org", degree: 6 });
 
 interface Box {
     w: number;
