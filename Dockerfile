@@ -20,6 +20,8 @@ COPY src/people ./src/people/
 COPY src/brands ./src/brands
 # The supply-chain registry and kit helpers (zod schemas stay server-side).
 COPY src/supply-chain ./src/supply-chain
+# Open-source robot directory (/open-source).
+COPY src/open-source ./src/open-source
 # Measured benchmark runs (/benchmarks, Measured panel, /compare overlay).
 COPY src/benchmarks ./src/benchmarks
 COPY data/benchmarks ./data/benchmarks

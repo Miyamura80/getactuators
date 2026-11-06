@@ -142,6 +142,7 @@ const PAGE_PATHS = [
     "/humanoids",
     "/metals",
     "/policy",
+    "/open-source",
     "/benchmarks",
     "/manufacturing",
     "/alts",
