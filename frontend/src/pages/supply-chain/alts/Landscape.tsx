@@ -1,7 +1,7 @@
 import type { KeyboardEvent } from "react";
 import { type AltFamily, MAGNET_USE_LABEL } from "../../../../../src/supply-chain/alts";
 import { TechDot, TodayMark } from "./glyphs";
-import { BASELINE_ID, GUTTER, type Layout, STAGES, W, splitLabel, stageOf } from "./landscape-model";
+import { BASELINE_ID, FAMILY_KEY, GUTTER, type Layout, STAGES, W, splitLabel, stageOf } from "./landscape-model";
 
 // The hero: every technology placed by readiness (x) and magnet use (y).
 
@@ -52,15 +52,18 @@ export function Landscape({ geo, hidden, hover, focus, onHover, onPick }: {
             <text className="al-trl-title" x={GUTTER - 10} y={plotBottom + 16}>TRL</text>
         </g>
         {nodes.map((n) => {
-            if (n.id === BASELINE_ID) return <g key={n.id} className="al-node is-baseline" transform={`translate(${n.x},${n.y})`}>
-                <title>Today's baseline: NdFeB permanent magnet servo motor, in mass production</title>
+            if (n.id === BASELINE_ID) return <g key={n.id} className={`al-node is-baseline${focus === n.id ? " is-lit is-focus" : lit ? " is-dim" : ""}`} transform={`translate(${n.x},${n.y})`}
+                data-tech={n.id} role="button" tabIndex={0} aria-pressed={focus === n.id}
+                aria-label="Today's baseline: NdFeB permanent magnet motor, in mass production"
+                onClick={() => onPick(n.id)} onKeyDown={onActivate(() => onPick(n.id))}>
+                <rect className="al-hit" x={-14} y={-14} width={geo.subW - 6} height={28} />
                 <TodayMark />
                 <text className="al-node-label" x={16} y={4}>Today: NdFeB</text>
             </g>;
             const t = n.tech;
             if (!t || hidden.has(t.family)) return null;
             const lines = splitLabel(t.short);
-            const cls = `al-node${lit === t.id ? " is-lit" : lit ? " is-dim" : ""}${focus === t.id ? " is-focus" : ""}`;
+            const cls = `al-node al-f-${FAMILY_KEY[t.family]}${lit === t.id ? " is-lit" : lit ? " is-dim" : ""}${focus === t.id ? " is-focus" : ""}`;
             const label = `${t.name}. TRL ${t.trl.value}, ${stageOf(t.trl.value)}. ${MAGNET_USE_LABEL[t.magnets]}. ${n.deployments || "No"} dated deployment${n.deployments === 1 ? "" : "s"} cited.`;
             return <g key={n.id} className={cls} transform={`translate(${n.x},${n.y})`} data-tech={t.id}
                 role="button" tabIndex={0} aria-label={label} aria-pressed={focus === t.id}

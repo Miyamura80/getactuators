@@ -1,6 +1,6 @@
 import { ALT_FAMILIES, ALT_TECHS, type AltFamily, type MagnetUse, deploymentsOf } from "../../../../../src/supply-chain/alts";
 import { TechDot, TodayMark } from "./glyphs";
-import { radiusFor, stageOf } from "./landscape-model";
+import { BASELINE_ID, radiusFor, stageOf } from "./landscape-model";
 
 // Phone layout of the landscape: one rung per TRL, 9 at the top. The
 // magnet axis becomes a short tag on each chip (none when it has no magnets).
@@ -27,7 +27,9 @@ export function Ladder({ hidden, focus, onPick }: {
             return <li key={trl} className={`al-rung${empty ? " is-empty" : ""}`}>
                 <span className="al-rung-n"><b>{trl}</b><span>{stageOf(trl)}</span></span>
                 <span className="al-rung-items">
-                    {trl === 9 ? <span className="al-lchip is-baseline"><svg viewBox="-14 -14 28 28" aria-hidden="true"><TodayMark r={7} /></svg>Today: NdFeB</span> : null}
+                    {trl === 9 ? <button type="button" className="al-lchip is-baseline" data-tech={BASELINE_ID} aria-pressed={focus === BASELINE_ID} onClick={() => onPick(BASELINE_ID)}>
+                        <svg viewBox="-14 -14 28 28" aria-hidden="true"><TodayMark r={7} /></svg>Today: NdFeB
+                    </button> : null}
                     {techs.map((t) => {
                         const n = deploymentsOf(t.id).length;
                         const tag = MAGNET_TAG[t.magnets];

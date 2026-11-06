@@ -21,9 +21,8 @@ export const BAND_PAD = 14;
 export const TOP = 22;
 export const AXIS_H = 46;
 const EMPTY_COL = 34;
-const MAX_ROWS = 5;
 
-export const BASELINE_ID = "ndfeb-today";
+export const BASELINE_ID = "ndfeb";
 
 export interface Band {
     id: string;
@@ -88,25 +87,51 @@ export interface Layout {
     subW: number;
 }
 
-type Cell = { id: string; tech?: AltTech }[];
+interface Item {
+    id: string;
+    tech?: AltTech;
+    // Family, or "baseline" for the NdFeB marker.
+    group: string;
+    band: string;
+}
 
-function cells(techs: readonly AltTech[]): Map<string, Cell> {
-    const out = new Map<string, Cell>();
-    const put = (trl: number, band: string, item: Cell[number]) => {
-        const k = `${trl}:${band}`;
-        out.set(k, [...(out.get(k) ?? []), item]);
-    };
-    put(9, "permanent", { id: BASELINE_ID });
+function items(techs: readonly AltTech[]): Item[] {
     const order = (t: AltTech) => ALT_FAMILIES.indexOf(t.family);
-    for (const t of [...techs].sort((a, b) => order(a) - order(b))) put(t.trl.value, bandOf(t.magnets).id, { id: t.id, tech: t });
+    return [
+        { id: BASELINE_ID, group: "baseline", band: "permanent" },
+        ...[...techs].sort((a, b) => order(a) - order(b)).map((t) => ({ id: t.id, tech: t, group: t.family, band: bandOf(t.magnets).id })),
+    ];
+}
+
+// Within one TRL column, families get their own sub-column unless they
+// never share a band, so a crowded column reads as family stacks.
+function packColumn(col: Item[]): Map<string, number> {
+    const groups = [...new Set(col.map((i) => i.group))];
+    const bandsOf = (g: string) => new Set(col.filter((i) => i.group === g).map((i) => i.band));
+    const slots: Set<string>[] = [];
+    const out = new Map<string, number>();
+    for (const g of groups) {
+        const mine = bandsOf(g);
+        let k = slots.findIndex((used) => ![...mine].some((b) => used.has(b)));
+        if (k < 0) {
+            k = slots.length;
+            slots.push(new Set());
+        }
+        for (const b of mine) slots[k].add(b);
+        out.set(g, k);
+    }
     return out;
 }
 
 export function layout(techs: readonly AltTech[] = ALT_TECHS): Layout {
-    const grid = cells(techs);
-    const count = (trl: number, band: string) => grid.get(`${trl}:${band}`)?.length ?? 0;
+    const all = items(techs);
     const trls = Array.from({ length: 9 }, (_, i) => i + 1);
-    const subs = trls.map((trl) => Math.max(0, ...BANDS.map((b) => Math.ceil(count(trl, b.id) / MAX_ROWS))));
+    const trlOf = (i: Item) => i.tech?.trl.value ?? 9;
+    const packs = trls.map((trl) => packColumn(all.filter((i) => trlOf(i) === trl)));
+    const subs = packs.map((p) => (p.size ? Math.max(...p.values()) + 1 : 0));
+    const cellOf = (i: Item) => `${trlOf(i)}:${packs[trlOf(i) - 1].get(i.group) ?? 0}:${i.band}`;
+    const cells = new Map<string, Item[]>();
+    for (const i of all) cells.set(cellOf(i), [...(cells.get(cellOf(i)) ?? []), i]);
     const empties = subs.filter((s) => s === 0).length;
     const units = subs.reduce((a, b) => a + b, 0);
     const subW = (W - GUTTER - empties * EMPTY_COL) / Math.max(1, units);
@@ -118,47 +143,38 @@ export function layout(techs: readonly AltTech[] = ALT_TECHS): Layout {
         x += w;
         return c;
     });
-    const rowsIn = (trl: number, band: string) => {
-        const n = count(trl, band);
-        const sub = Math.max(1, subs[trl - 1]);
-        return Math.ceil(n / sub);
-    };
     let y = TOP;
     const bands = BANDS.map((band) => {
-        const rows = Math.max(1, ...trls.map((t) => rowsIn(t, band.id)));
+        const rows = Math.max(1, ...[...cells.entries()].filter(([k]) => k.endsWith(`:${band.id}`)).map(([, v]) => v.length));
         const h = rows * ROW + BAND_PAD;
         const b = { band, y, h };
         y += h;
         return b;
     });
     const nodes: Node[] = [];
-    for (const col of columns) {
-        for (const b of bands) {
-            const items = grid.get(`${col.trl}:${b.band.id}`) ?? [];
-            if (!items.length) continue;
-            const sub = Math.max(1, col.sub);
-            const rows = Math.ceil(items.length / sub);
-            const top = b.y + b.h / 2 - ((rows - 1) * ROW) / 2;
-            items.forEach((item, i) => {
-                const si = Math.floor(i / rows);
-                const ri = i % rows;
-                const deployments = item.tech ? deploymentsOf(item.tech.id).length : 0;
-                nodes.push({
-                    id: item.id,
-                    tech: item.tech,
-                    x: col.x + si * subW + 16,
-                    y: top + ri * ROW,
-                    r: item.tech ? radiusFor(deployments) : 9,
-                    deployments,
-                });
+    for (const [key, list] of cells) {
+        const [trl, sub, bandId] = key.split(":");
+        const col = columns[Number(trl) - 1];
+        const b = bands.find((x) => x.band.id === bandId);
+        if (!b) continue;
+        const top = b.y + b.h / 2 - ((list.length - 1) * ROW) / 2;
+        list.forEach((item, ri) => {
+            const deployments = item.tech ? deploymentsOf(item.tech.id).length : 0;
+            nodes.push({
+                id: item.id,
+                tech: item.tech,
+                x: col.x + Number(sub) * subW + 16,
+                y: top + ri * ROW,
+                r: item.tech ? radiusFor(deployments) : 9,
+                deployments,
             });
-        }
+        });
     }
     return { columns, bands, nodes, height: y + AXIS_H, plotBottom: y, subW };
 }
 
 // Two lines when a name is long, split at the space nearest the middle.
-export function splitLabel(s: string, max = 13): string[] {
+export function splitLabel(s: string, max = 11): string[] {
     if (s.length <= max || !s.includes(" ")) return [s];
     const mid = s.length / 2;
     let best = -1;

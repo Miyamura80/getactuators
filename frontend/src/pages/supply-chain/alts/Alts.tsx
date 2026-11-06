@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PublicFooter } from "../../../components/PublicFooter";
 import { PublicHeader } from "../../../components/PublicHeader";
 import { FootnotesProvider } from "../../../components/supply-chain/footnotes";
@@ -18,11 +18,11 @@ import {
     techsIn,
 } from "../../../../../src/supply-chain/alts";
 import { NDFEB_PER_HUMANOID } from "../../../../../src/supply-chain/perspective";
-import { FocusCard } from "./FocusCard";
+import { Card } from "./Card";
 import { FamilyGlyph, TechDot, TodayMark } from "./glyphs";
 import { Ladder } from "./Ladder";
 import { Landscape } from "./Landscape";
-import { FAMILY_KEY, W, layout, radiusFor } from "./landscape-model";
+import { FAMILY_KEY, layout, radiusFor } from "./landscape-model";
 import { MilestoneStrip } from "./MilestoneStrip";
 import { readState, writeState } from "./url-state";
 import "../../tools.css";
@@ -30,16 +30,17 @@ import "../../../components/supply-chain/supply-chain.css";
 import "./alts.css";
 
 const TITLE = "Alternatives";
+const HEADLINE = "What could replace the rare-earth motor?";
 
 // /alts as one readiness landscape: TRL across, rare-earth dependence up,
 // one node per technology sized by the deployments we can date. Clicking a
-// node zooms into its card; ?tech= keeps that zoom in the URL.
+// node opens its spec card under the chart; ?tech= keeps it in the URL.
 
 function Evidence({ id }: { id: string | null }) {
     const t = id ? getAltTech(id) : undefined;
     if (!t) return <p className="al-evidence is-baseline">
         <svg viewBox="-14 -14 28 28" aria-hidden="true"><TodayMark r={7} /></svg>
-        <span>Today an NdFeB actuator humanoid carries about <SourcedValue value={NDFEB_PER_HUMANOID} /> of rare-earth magnet. Pick a node to compare.</span>
+        <span>Hover a node for its evidence, click it for the spec card.</span>
     </p>;
     const n = t.milestones.length;
     return <p className={`al-evidence al-f-${FAMILY_KEY[t.family]}`}>
@@ -85,6 +86,15 @@ export function Alts({ menuOpen = false }: { menuOpen?: boolean }) {
         pick(null);
         if (was) requestAnimationFrame(() => document.querySelector<SVGElement>(`.al-land [data-tech="${was}"]`)?.focus({ preventScroll: true }));
     }, [pick, tech]);
+    // Desktop: when a card opens, bring the chart's top to the top of the
+    // screen so the lit node and the docked card are both in view.
+    const stageRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        const el = stageRef.current;
+        if (!tech || !el || typeof window.matchMedia !== "function" || !window.matchMedia("(min-width: 761px)").matches) return;
+        const top = el.getBoundingClientRect().top + window.scrollY - 12;
+        if (Math.abs(window.scrollY - top) > 40) window.scrollTo({ top, behavior: "smooth" });
+    }, [tech]);
     const toggle = (f: AltFamily) => setHidden((cur) => {
         const next = new Set(cur);
         if (next.has(f)) next.delete(f);
@@ -92,32 +102,32 @@ export function Alts({ menuOpen = false }: { menuOpen?: boolean }) {
         if (next.size === ALT_FAMILIES.length) return new Set();
         return next;
     });
-    const focused = tech ? getAltTech(tech) : undefined;
-    const node = geo.nodes.find((n) => n.id === tech);
-    const origin = node ? { x: (node.x / W) * 100, y: (node.y / geo.height) * 100 } : { x: 50, y: 50 };
     return <div className="tool-page al-page">
         <PublicHeader path={ALTS_PATH} initialOpen={menuOpen} />
         <FootnotesProvider>
             <main className="tool-main">
                 <header className="tool-head al-head">
-                    <p className="tool-kicker">Supply chain · as of {ALTS_AS_OF}</p>
-                    <h1>{TITLE}</h1>
-                    <p className="tool-lede">{ALT_TECHS.length} ways to move a robot joint with less or no rare earth, placed by how ready they are.</p>
+                    <p className="tool-kicker">Supply chain · Alternatives · as of {ALTS_AS_OF}</p>
+                    <h1>{HEADLINE}</h1>
+                    <p className="tool-lede al-lede">
+                        <span className="al-lede-num"><SourcedValue value={NDFEB_PER_HUMANOID} /></span>
+                        <span>of rare-earth magnet in a humanoid today. {ALT_TECHS.length} ways to need less, or none, placed by how ready they are.</span>
+                    </p>
                     <a className="al-cta" href="/api/v1/alts">Get the data</a>
                 </header>
 
                 <section className="al-hero" aria-label="Readiness landscape">
                     <Legend hidden={hidden} onToggle={toggle} />
-                    <div className={`al-stage${focused ? " is-zoomed" : ""}`}>
-                        <div className="al-land" style={{ transformOrigin: `${origin.x}% ${origin.y}%` }} inert={focused ? true : undefined}>
+                    <div className="al-stage" ref={stageRef}>
+                        <div className="al-land">
                             <Landscape geo={geo} hidden={hidden} hover={hover} focus={tech} onHover={setHover} onPick={pick} />
                         </div>
                         <Ladder hidden={hidden} focus={tech} onPick={pick} />
-                        {focused ? <>
-                            <button type="button" className="al-scrim" aria-label="Close" tabIndex={-1} onClick={close} />
-                            <FocusCard key={focused.id} t={focused} origin={origin} onClose={close} />
-                        </> : null}
                     </div>
+                    {tech ? <>
+                        <button type="button" className="al-scrim" aria-hidden="true" tabIndex={-1} onClick={close} />
+                        <Card key={tech} id={tech} onClose={close} />
+                    </> : null}
                     <Evidence id={hover} />
                     <MilestoneStrip hidden={hidden} hover={hover} focus={tech} onHover={setHover} onPick={pick} />
                     <details className="al-more">

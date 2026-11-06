@@ -1,7 +1,9 @@
 import { getAltTech } from "../../../../../src/supply-chain/alts";
+import { BASELINE_ID } from "./landscape-model";
 
 // /alts keeps the focused technology in the query (/alts?tech=hasel), so a
-// link opens the landscape zoomed into it. No tech, no query.
+// link opens its card. ?tech=ndfeb opens the NdFeB reference card. No tech,
+// no query.
 
 export interface AltsState {
     tech: string | null;
@@ -9,7 +11,7 @@ export interface AltsState {
 
 export function readState(search: string): AltsState {
     const tech = new URLSearchParams(search).get("tech");
-    return { tech: tech && getAltTech(tech) ? tech : null };
+    return { tech: tech && (tech === BASELINE_ID || getAltTech(tech)) ? tech : null };
 }
 
 export function writeState(search: string, s: AltsState): string {
