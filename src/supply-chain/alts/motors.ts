@@ -229,7 +229,7 @@ export const MOTOR_TECHS: AltTech[] = [
                 ["evreporter-conifer-pune-2025"],
             ),
         ],
-        players: [],
+        players: [{ companyId: "conifer", companyType: "startup" }],
         metrics: {
             reeIntensityKgPerKw: noRareEarth(
                 ["vcaonline-conifer-seed-2025"],
@@ -249,7 +249,11 @@ export const MOTOR_TECHS: AltTech[] = [
             },
         ],
         scene: { kind: "explode", spec: ALT_MOTOR_SCENES.axial },
-        sources: ["vcaonline-conifer-seed-2025", "evreporter-conifer-pune-2025"],
+        sources: [
+            "vcaonline-conifer-seed-2025",
+            "evreporter-conifer-pune-2025",
+            "dnc-conifer-seed-2025",
+        ],
     },
     {
         id: "iron-nitride",
