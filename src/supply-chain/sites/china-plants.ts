@@ -1,4 +1,5 @@
 import type { SourceId, Sourced } from "../sourced";
+import { CHINA_MORE_PLANTS } from "./china-more";
 import { type Site, plant } from "./types";
 
 // Mines, plants and works in China for /china, including foreign-owned ones
@@ -424,4 +425,5 @@ export const CHINA_PLANTS: Site[] = [
         stages: ["robot"],
         sources: ["mikekalil-leju-factory"],
     }),
+    ...CHINA_MORE_PLANTS,
 ];

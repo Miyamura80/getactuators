@@ -192,13 +192,6 @@ export const US_COMPANIES: Company[] = [
         url: "https://ncnewsline.com/2025/11/18/stein-announces-1b-rare-earth-magnet-plant-in-johnston-county/",
         sources: ["ncnewsline-vulcan-benson-2025", "axios-vulcan-2025"],
     }),
-    co("vac", "VACUUMSCHMELZE (VAC)", "DE", MAG, {
-        stages: ["metal-alloy", "magnet"],
-        ownership: { kind: "private" },
-        products: ["Sintered NdFeB magnets", "Magnet assemblies"],
-        url: "https://vacuumschmelze.com/",
-        sources: ["people-fastmarkets-evac-sc", "engnews-ef-vac-2026"],
-    }),
     co("arnold-magnetic", "Arnold Magnetic Technologies", "US", MAG, {
         stages: ["magnet"],
         ownership: { kind: "private" },
@@ -328,13 +321,6 @@ export const US_COMPANIES: Company[] = [
         sources: ["mfgnet-kaydon-75", "coolen-kaydon"],
     }),
     // Robot and actuator makers
-    co("figure", "Figure AI", "US", OEM, {
-        stages: ["actuator", "robot"],
-        ownership: { kind: "private" },
-        products: ["Figure 03 humanoid"],
-        url: "https://www.figure.ai/",
-        sources: ["people-wiki-figure-ai", "robotreport-botq-2025"],
-    }),
     co("agility", "Agility Robotics", "US", OEM, {
         stages: ["robot"],
         ownership: { kind: "private" },

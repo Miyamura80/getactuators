@@ -183,12 +183,13 @@ export const US_SITES: Site[] = [
     ),
     // Robot and actuator makers
     head(
-        "figure-san-jose",
+        "figure-botq",
         "figure",
-        "Figure headquarters and BotQ factory",
+        "Figure BotQ factory",
         SAN_JOSE,
         ["robotreport-botq-2025", "people-wiki-figure-ai"],
         {
+            kind: "plant",
             makes: ["Humanoid robots"],
             stages: ["robot"],
             capacity: {

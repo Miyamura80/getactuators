@@ -56,7 +56,8 @@ describe("coverage gate", () => {
             investment: count("investment"),
             partnership: count("partnership"),
         }).toEqual({
-            supply: 21,
+            // JAKA's cobots to Toyota (from /china) and one /us link are among these.
+            supply: 22,
             // THK's stake in Samick THK (from /korea) is one of these.
             investment: 9,
             partnership: 8,
@@ -76,6 +77,8 @@ describe("coverage gate", () => {
         expect(kr.companies).toBeGreaterThanOrEqual(30);
         expect(kr.sites).toBeGreaterThanOrEqual(50);
         expect(kr.links).toBeGreaterThanOrEqual(20);
+        // Headroom: losing a few supply links must not take the page offline.
+        expect(kr.supplyLinks).toBeGreaterThanOrEqual(gate.supplyLinks + 3);
         // Japan has no gate of its own and keeps the shared target.
         const jp = getCountryPage("japan");
         expect(jp ? gateOf(jp) : null).toEqual(COVERAGE_TARGET);
@@ -189,6 +192,28 @@ describe("country filter", () => {
         expect(abroad.length).toBeGreaterThanOrEqual(5);
         // Foreign-owned plants in China put their owners on the map.
         for (const id of ["fanuc", "kuka", "proterial"]) expect(ids).toContain(id);
+    });
+
+    test("China grows toward the #80 target with the robot and joint makers it lacked", () => {
+        const cn = coverage("CN");
+        expect(cn.companies).toBeGreaterThanOrEqual(80);
+        expect(cn.sites).toBeGreaterThanOrEqual(122);
+        expect(cn.links).toBeGreaterThanOrEqual(46);
+        expect(cn.supplyLinks).toBeGreaterThanOrEqual(31);
+        const ids = countryCompanies("CN").map((c) => c.id);
+        for (const id of [
+            "kepler",
+            "booster",
+            "agilex",
+            "cubemars",
+            "damiao",
+            "jaka",
+            "aubo",
+        ])
+            expect(ids).toContain(id);
+        // Foreign plants in China put ABB, Schaeffler and Neo on the map too.
+        for (const id of ["abb", "schaeffler", "neo-performance"])
+            expect(ids).toContain(id);
     });
 
     test("every Chinese site has a precision, a source and a point inside China", () => {
