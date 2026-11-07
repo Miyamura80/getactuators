@@ -38,6 +38,7 @@ import {
     listPolicy,
     listSites,
 } from "./supply-chain";
+import { listTrends } from "./trends";
 
 export { apiMarkdownPath };
 
@@ -121,6 +122,7 @@ const RENDERERS: Record<string, Renderer> = {
     list_sdk_scores: sdkScores,
     get_sdk_score: sdkBrandBody,
     list_people: listPeople,
+    list_trends: listTrends,
     get_person: getPerson,
 };
 

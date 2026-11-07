@@ -92,6 +92,7 @@ export const FOOTER_GROUPS = [
             ["/benchmarks", "Measured benchmarks"],
             ["/sdk", "Best actuator SDKs"],
             ["/people", "Leading people"],
+            ["/trends", "Trends over time"],
         ],
     },
     {

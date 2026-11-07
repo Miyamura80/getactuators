@@ -144,6 +144,7 @@ function tagFor(path: string): string {
     )
         return "supply-chain";
     if (path.includes("/benchmarks")) return "actuators";
+    if (path.includes("/trends")) return "actuators";
     if (path.includes("/actuators")) return "actuators";
     if (path.includes("/sdk")) return "actuators";
     if (path.includes("/people")) return "people";
