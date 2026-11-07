@@ -66,6 +66,9 @@ const MAKERS: Row[] = [
     // Asimov 1 joint motors (#100). encos.cn is 南京因克斯智能科技 (Nov 2026).
     ["encos", "ENCOS", "encos.cn"],
     ["atar", "ATAR", "atarrobot.com", ["ATAR Robot"]],
+    // Japanese motor makers added with their robot-joint motors (Nov 2026).
+    // MinebeaMitsumi's row sits with the /japan registry companies below.
+    ["mabuchi-motor", "Mabuchi Motor", "mabuchi-motor.com", ["Mabuchi"]],
 ];
 
 // Robot makers and the people behind the robot data (robots.json).

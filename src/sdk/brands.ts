@@ -244,6 +244,8 @@ export const SDK_BRANDS: readonly SdkBrand[] = [
         REDUCER,
     ),
     none("nidec", "Nidec", ["Nidec Drive Technology (Nidec-Shimpo)"], REDUCER),
+    none("mabuchi-motor", "Mabuchi Motor", ["Mabuchi Motor"], FRAMELESS),
+    none("minebea-mitsumi", "MinebeaMitsumi", ["MinebeaMitsumi"], FRAMELESS),
 ];
 
 const byCatalogBrand = new Map(
