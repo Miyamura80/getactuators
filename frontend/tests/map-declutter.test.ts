@@ -36,11 +36,30 @@ describe("spreadChips", () => {
     });
 
     test("a side chip drops below a top chip in its corner", () => {
+        // "side" leaves by the right edge (x = 1000) near the top-right
+        // corner, where "top" leaves by the top edge: once clamped into the
+        // frame they would sit on each other.
         const chips: EdgeChip[] = [
-            { key: "top", at: [970, 2], w: 60, h: 20 },
-            { key: "side", at: [998, 8], w: 60, h: 20 },
+            { key: "top", at: [960, 0], w: 60, h: 20 },
+            { key: "side", at: [1000, 15], w: 60, h: 20 },
         ];
-        noneOverlap(chips, spreadChips(chips, 1000, 600));
+        const at = spreadChips(chips, 1000, 600);
+        const [top, side] = noneOverlap(chips, at) as [PxRect, PxRect];
+        expect(side[1]).toBeGreaterThanOrEqual(top[3]);
+        // The side chip stays on its edge.
+        expect(side[2]).toBeGreaterThan(990);
+    });
+
+    test("rows fit when chips differ in width", () => {
+        // Total width fits two rows, but a round-robin split of these widths
+        // would overflow one of them.
+        const widths = [150, 30, 150, 30, 150];
+        const chips: EdgeChip[] = widths.map((w, i) => ({ key: `c${i}`, at: [20 + i * 5, 0] as [number, number], w, h: 20 }));
+        const rects = noneOverlap(chips, spreadChips(chips, 400, 300));
+        for (const r of rects) {
+            expect(r[0]).toBeGreaterThanOrEqual(0);
+            expect(r[2]).toBeLessThanOrEqual(400);
+        }
     });
 });
 

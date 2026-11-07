@@ -43,7 +43,9 @@ export function LinkSummary({ arcs, keyOf, inside, region, regionOf, active, pin
         <span className="cp-links-label">Links</span>
         {entries.map((e) => {
             const name = e.name;
-            const what = [e.out ? `${e.out} out` : "", e.in ? `${e.in} in` : ""].filter(Boolean).join(", ");
+            const what = e.key === "within"
+                ? `${e.out} link${e.out === 1 ? "" : "s"}`
+                : [e.out ? `${e.out} out` : "", e.in ? `${e.in} in` : ""].filter(Boolean).join(", ");
             return <button key={e.key} type="button" aria-pressed={pinned === e.key} className={active === e.key ? "is-active" : undefined}
                 aria-label={`${name}: ${what}. Show on the map`}
                 onPointerEnter={() => onHover(e.key)} onPointerLeave={() => onHover(null)}

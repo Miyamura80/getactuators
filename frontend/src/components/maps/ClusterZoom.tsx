@@ -116,7 +116,7 @@ export function ClusterZoom({ pins, radius = 28, clusters = [], activeCluster, o
     ];
     const shown = boxed.map((n) => {
         const [[x0, y0], [x1, y1]] = n.screen;
-        const tag = placeTag([x0 * scale, y0 * scale, x1 * scale, y1 * scale], tagSize(n.c.label), width * scale, height * scale, taken);
+        const tag = placeTag([x0 * scale, y0 * scale, x1 * scale, y1 * scale], tagSize(n.c.label), width * scale, height * scale, [...map.reserved, ...taken]);
         if (tag) taken.push(tag);
         return { ...n, tag };
     });

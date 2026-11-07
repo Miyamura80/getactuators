@@ -273,6 +273,7 @@
 .mk-chip b { color: var(--cyan); }
 a.mk-chip:hover, a.mk-chip:focus-visible, button.mk-chip:hover, button.mk-chip:focus-visible { background: var(--cyan); color: #000; outline: none; }
 button.mk-chip { cursor: pointer; }
+a.mk-chip:hover b, a.mk-chip:focus-visible b, button.mk-chip:hover b, button.mk-chip:focus-visible b { color: #000; }
 span.mk-chip { border-style: dashed; color: var(--muted); }
 .mk-chip-dir { width: 10px; height: 10px; fill: none; stroke: currentColor; stroke-width: 1.4; }
 .mk-chip-dir.is-in { transform: rotate(180deg); }

@@ -106,7 +106,9 @@ export function spreadChips(chips: readonly EdgeChip[], width: number, height: n
         const d: [Edge, number][] = [["top", y], ["bottom", height - y], ["left", x], ["right", width - x]];
         return d.reduce((a, b) => (b[1] < a[1] ? b : a))[0];
     };
-    const placed = chips.map((c) => ({ c, at: clamp(c), edge: edgeOf(clamp(c)) }));
+    // The edge is the one the arc leaves by (the exit point), not the one
+    // the clamped centre happens to sit nearest.
+    const placed = chips.map((c) => ({ c, at: clamp(c), edge: edgeOf(c.at) }));
     // Slide one edge's chips along `axis` (0 = x, 1 = y) within [lo(c), hi].
     // When they do not fit in one row, every other chip (every third, ...)
     // steps inward into a further row, so each row still spans the edge.
@@ -114,9 +116,12 @@ export function spreadChips(chips: readonly EdgeChip[], width: number, height: n
         const size = (c: EdgeChip) => (axis === 0 ? c.w : c.h);
         const across = (c: EdgeChip) => (axis === 0 ? c.h : c.w);
         edge.sort((a, b) => a.at[axis] - b.at[axis]);
-        const need = edge.reduce((n, p) => n + size(p.c) + CHIP_GAP, 0);
+        const need = (row: typeof edge) => row.reduce((n, p) => n + size(p.c) + CHIP_GAP, 0);
         const room = Math.max(1, hi - Math.min(...edge.map((p) => lo(p.c)), hi));
-        const rows = Math.max(1, Math.ceil(need / room));
+        // Enough rows that every round-robin row fits, chips being of
+        // unequal widths.
+        let rows = Math.max(1, Math.ceil(need(edge) / room));
+        while (rows < edge.length && Array.from({ length: rows }, (_, r) => need(edge.filter((_, i) => i % rows === r))).some((n) => n > room)) rows += 1;
         const step = Math.max(0, ...edge.map((p) => across(p.c))) + CHIP_GAP;
         for (let r = 0; r < rows; r++) {
             const row = edge.filter((_, i) => i % rows === r);

@@ -50,18 +50,19 @@ interface Bundle {
     key: string;
     chip: string;
     near: Point;
+    // The on-map end's name.
+    nearLabel: string;
     arcs: MapArc[];
     dirs: Set<"in" | "out">;
 }
 
 const KIND_LABEL = { supply: "Supply", investment: "Investment", partnership: "Partnership" } as const;
 
-// What a set of links shares, for the stroke style: the kind when they all
-// agree (else supply), estimated only when every one is.
+// A bundle holds links of one kind and one confidence, so its stroke keeps
+// the encoding (dotted investment or partnership, dashed estimate).
 function bundleClass(arcs: readonly MapArc[]): string {
-    const kind = arcs.every((a) => a.kind === arcs[0]?.kind) ? arcs[0]?.kind ?? "supply" : "supply";
-    const conf = arcs.every((a) => a.confidence === "estimated") ? "estimated" : "reported";
-    return `mk-arc mk-arc-${conf} mk-arc-kind-${kind}`;
+    const a = arcs[0];
+    return `mk-arc mk-arc-${a?.confidence ?? "reported"} mk-arc-kind-${a?.kind ?? "supply"}`;
 }
 
 // A gentle curve from a site to its chip.
@@ -115,8 +116,8 @@ export function Arcs({ arcs, hrefFor = liveCountryPage, selectedId, table = "Sup
         chips.set(key, chip);
         const nearBase = clip.exit.end === "to" ? base[0] : base.at(-1);
         if (!nearBase) continue;
-        const bkey = `${near.id}|${key}`;
-        const bundle = bundles.get(bkey) ?? { key: bkey, chip: key, near: toScreen(nearBase, zoom), arcs: [], dirs: new Set() };
+        const bkey = `${near.id}|${key}|${arc.kind}|${arc.confidence}`;
+        const bundle = bundles.get(bkey) ?? { key: bkey, chip: key, near: toScreen(nearBase, zoom), nearLabel: near.label, arcs: [], dirs: new Set() };
         bundle.arcs.push(arc);
         bundle.dirs.add(dir);
         bundles.set(bkey, bundle);
@@ -182,8 +183,12 @@ export function Arcs({ arcs, hrefFor = liveCountryPage, selectedId, table = "Sup
             const a = bundle.arcs[0] as MapArc;
             const at = chipAt(chip);
             const mid: Point = [(bundle.near[0] + at[0]) / 2, (bundle.near[1] + at[1]) / 2];
-            const near = bundle.dirs.has("out") ? a.from.label : a.to.label;
-            return { mid, head: bundle.arcs.length > 1 ? `${near} ↔ ${chip.name}` : `${a.from.label} ${a.kind === "partnership" ? "↔" : "→"} ${a.to.label}`, body: bundle.arcs.length > 1 ? `${bundle.arcs.length} links` : `${a.kind === "supply" ? "" : `${KIND_LABEL[a.kind]}: `}${a.label}` };
+            // Several links read as the site and the place, with the arrow
+            // their direction (both ways only when they run both ways).
+            const near = bundle.nearLabel;
+            const many = bundle.dirs.size > 1 || a.kind === "partnership" ? `${near} ↔ ${chip.name}`
+                : bundle.dirs.has("out") ? `${near} → ${chip.name}` : `${chip.name} → ${near}`;
+            return { mid, head: bundle.arcs.length > 1 ? many : `${a.from.label} ${a.kind === "partnership" ? "↔" : "→"} ${a.to.label}`, body: bundle.arcs.length > 1 ? `${bundle.arcs.length} ${a.kind === "supply" ? "" : `${KIND_LABEL[a.kind].toLowerCase()} `}links` : `${a.kind === "supply" ? "" : `${KIND_LABEL[a.kind]}: `}${a.label}` };
         }
         const d = drawn.find((x) => x.arc.id === active && !x.clip.exit);
         const run = d?.clip.runs[0];

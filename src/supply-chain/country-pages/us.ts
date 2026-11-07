@@ -10,6 +10,7 @@ import { US_HUBS, US_REGIONS } from "./us-regions";
 // ([minLat, minLon, maxLat, maxLon]).
 
 // The US share of a /metals stage: US over the sum of the map, to two places.
+// Computed here, so modeled whatever the inputs' confidence.
 const usShare = (s: Sourced<Shares>, note: string): Sourced<number> => {
     const total = Object.values(s.value).reduce((a, b) => a + (b ?? 0), 0);
     return {
@@ -17,7 +18,7 @@ const usShare = (s: Sourced<Shares>, note: string): Sourced<number> => {
         unit: "fraction",
         sources: s.sources,
         asOf: s.asOf,
-        confidence: s.confidence,
+        confidence: "modeled",
         note,
     };
 };

@@ -259,7 +259,8 @@ share one template, so a new country is data only:
    (`[minLat, minLon, maxLat, maxLon]`, each with a one-line `blurb`; the
    tests require each box inside the country and holding at least two
    sites). Optionally add `regions` (the admin-1 regions the map can
-   zoom to, by ISO 3166-2 code and the name sites record in `admin1`; see
+   zoom to, by the ISO 3166-2 subdivision code without the country prefix,
+   `TX` for `US-TX`, and the name sites record in `admin1`; see
    `us-regions.ts`) and `hubs` (regional hubs a busy map shows while zoomed
    out, each a list of region names).
 2. **Companies.** Add a `companies/<country>.ts` list, typed from
