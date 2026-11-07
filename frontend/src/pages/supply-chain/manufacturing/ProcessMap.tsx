@@ -123,7 +123,8 @@ export function ProcessMap({ chain, focusId, onFocus, height = 600 }: ProcessMap
     const [hover, setHover] = useState<string | null>(null);
     const reduced = useReducedMotion();
     const whole: Box = useMemo(() => ({ x: 0, y: 0, w: layout.width, h: layout.height }), [layout]);
-    const fitK = fitTransform(width, height, whole, 16).k;
+    // The overview fits right of the zoom buttons.
+    const fitK = fitTransform(width - HUD_W, height, whole, 16).k;
     const detail = detailFor(t.k, fitK);
 
     useEffect(() => {
@@ -161,7 +162,13 @@ export function ProcessMap({ chain, focusId, onFocus, height = 600 }: ProcessMap
         },
         [reduced],
     );
-    const fit = useCallback((animate = true) => apply(fitTransform(width, height, whole, 16), animate), [apply, width, height, whole]);
+    const fit = useCallback(
+        (animate = true) => {
+            const f = fitTransform(width - HUD_W, height, whole, 16);
+            apply({ ...f, x: f.x + HUD_W }, animate);
+        },
+        [apply, width, height, whole],
+    );
     const cardOpen = focusId !== null && width > 760;
     const viewW = cardOpen ? width - CARD_W : width;
 
