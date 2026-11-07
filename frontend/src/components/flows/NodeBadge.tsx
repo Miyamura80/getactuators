@@ -1,5 +1,6 @@
 import { countryName } from "../../../../src/country-flag";
 import { concentration, type Shares } from "../../../../src/supply-chain/concentration";
+import { idiotText } from "../../../../src/supply-chain/bom/format";
 import { percent } from "../../../../src/supply-chain/format";
 import { isSourced, type Sourced } from "../../../../src/supply-chain/sourced";
 import { Flag } from "../Flag";
@@ -23,9 +24,7 @@ function unwrap<T>(v: T | Sourced<T>): { value: T; cited: Cited | null } {
     return isSourced(v) ? { value: (v as Sourced<T>).value, cited: v } : { value: v as T, cited: null };
 }
 
-export function idiotText(n: number): string {
-    return `${n < 10 ? Number(n.toFixed(1)) : Math.round(n)}x`;
-}
+export { idiotText };
 
 const IDIOT_GLYPH = <svg className="fk-badge-glyph" viewBox="0 0 12 12" aria-hidden="true"><path d="M1.5 11V8h3v3M7.5 11V2h3v9" /></svg>;
 const MARGIN_GLYPH = <svg className="fk-badge-glyph" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="4.6" /><path d="M6 6V1.4A4.6 4.6 0 0 1 10.6 6Z" className="is-fill" /></svg>;

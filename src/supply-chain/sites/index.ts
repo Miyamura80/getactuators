@@ -1,4 +1,5 @@
 import { ALT_SITES } from "./alts";
+import { BOM_SITES } from "./bom";
 import { CHINA_SITES } from "./china";
 import { CHINA_PLANTS } from "./china-plants";
 import { JAPAN_SITES } from "./japan";
@@ -379,6 +380,7 @@ export const SITES: Site[] = [
     ...JAPAN_PLANTS,
     ...KOREA_SITES,
     ...ALT_SITES,
+    ...BOM_SITES,
     ...CHINA_SITES,
     ...CHINA_PLANTS,
     ...PRECISION_SITES,
