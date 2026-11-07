@@ -24,6 +24,7 @@ export const COUNTRIES = {
     DE: { bbox: [47, 5, 55.5, 15.5] },
     CH: { bbox: [45.5, 5.5, 48, 10.7] },
     CA: { bbox: [41, -141, 84, -52] },
+    GB: { bbox: [49, -9, 61, 2.5] },
 } as const satisfies Record<string, CountryInfo>;
 
 export type CountryCode = keyof typeof COUNTRIES;

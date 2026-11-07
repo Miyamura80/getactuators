@@ -1,8 +1,8 @@
 # Supply-chain atlas: data and page recipe
 
-The supply-chain pages (`/metals`, `/policy`, `/manufacturing`, `/japan` and
-`/korea` are live; `/bom`, `/alts`, `/china`, `/us` are planned;
-`/lab/supply-chain` is the hidden kit page) share one cited registry and one set of components.
+The supply-chain pages (`/metals`, `/policy`, `/manufacturing`, `/alts`, `/japan`,
+`/china` and `/korea` are live; `/bom` and `/us` are planned; `/lab/supply-chain`
+is the hidden kit page) share one cited registry and one set of components.
 Pages hold content; numbers live in the registry and are referenced by id.
 
 ```
@@ -216,6 +216,8 @@ open it before scrolling to the entry.
 | REST (policy) | `GET /api/v1/policy`, `GET /api/v1/policy/{id}`, Atom feed `/policy/feed.xml` |
 | MCP (processes) | `get_process(chain?, step?)` |
 | REST (processes) | `GET /api/v1/processes`, `GET /api/v1/processes/{chain}?step=` |
+| MCP (alts) | `list_alt_technologies(family?)`, `get_alt_technology(id)` |
+| REST (alts) | `GET /api/v1/alts?family=`, `GET /api/v1/alts/{id}` |
 | MCP (countries) | `get_country(code)` |
 | REST (countries) | `GET /api/v1/countries`, `GET /api/v1/countries/{code}` |
 
@@ -234,7 +236,7 @@ source references.
 
 ## Adding a country
 
-Country pages (`/japan` and `/korea` are live; `/china` and `/us` are planned)
+Country pages (`/japan`, `/china` and `/korea` are live; `/us` is planned)
 share one template, so a new country is data only:
 
 ```

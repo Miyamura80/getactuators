@@ -21,13 +21,15 @@ import { linkKind } from "@/supply-chain/links";
 import { getCompany } from "@/supply-chain/registry";
 
 describe("coverage gate", () => {
-    test("Japan and Korea pass; the other planned countries wait for their data", () => {
-        expect(LIVE_COUNTRY_PATHS).toEqual(["/japan", "/korea"]);
-        const jp = coverage("JP");
-        expect(jp.companies).toBeGreaterThanOrEqual(COVERAGE_TARGET.companies);
-        expect(jp.sites).toBeGreaterThanOrEqual(COVERAGE_TARGET.sites);
-        expect(jp.links).toBeGreaterThanOrEqual(COVERAGE_TARGET.links);
-        expect(passesGate(coverage("CN"))).toBe(false);
+    test("Japan, China and Korea pass; the US waits for its data", () => {
+        expect(LIVE_COUNTRY_PATHS).toEqual(["/japan", "/china", "/korea"]);
+        for (const code of ["JP", "CN"] as const) {
+            const c = coverage(code);
+            expect(c.companies).toBeGreaterThanOrEqual(COVERAGE_TARGET.companies);
+            expect(c.sites).toBeGreaterThanOrEqual(COVERAGE_TARGET.sites);
+            expect(c.links).toBeGreaterThanOrEqual(COVERAGE_TARGET.links);
+            expect(c.supplyLinks).toBeGreaterThanOrEqual(COVERAGE_TARGET.supplyLinks);
+        }
         expect(COUNTRY_SLUGS.map((s) => COUNTRY_OF[s])).toEqual([
             "JP",
             "CN",
@@ -53,10 +55,10 @@ describe("coverage gate", () => {
             investment: count("investment"),
             partnership: count("partnership"),
         }).toEqual({
-            supply: 19,
-            // THK's stake in Samick THK (from /korea) is the sixth.
-            investment: 6,
-            partnership: 6,
+            supply: 20,
+            // THK's stake in Samick THK (from /korea) is one of these.
+            investment: 8,
+            partnership: 7,
         });
         expect(coverage("JP").supplyLinks).toBeGreaterThanOrEqual(
             COVERAGE_TARGET.supplyLinks,
@@ -85,7 +87,8 @@ describe("coverage gate", () => {
         expect(getCountryPage("Japan")?.code).toBe("JP");
         expect(getCountryPage("JP")?.path).toBe("/japan");
         expect(getCountryPage("jP")?.path).toBe("/japan");
-        expect(getCountryPage("china")).toBeUndefined();
+        expect(getCountryPage("china")?.code).toBe("CN");
+        expect(getCountryPage("cn")?.path).toBe("/china");
         expect(getCountryPage("kr")?.path).toBe("/korea");
     });
 });
@@ -166,6 +169,32 @@ describe("country filter", () => {
         for (const s of countrySites("KR")) {
             expect(["site", "city", "region"]).toContain(s.precision);
             expect(s.sources.length).toBeGreaterThan(0);
+        }
+    });
+
+    test("China spans all four segments and its links reach abroad", () => {
+        const companies = countryCompanies("CN");
+        for (const s of SEGMENTS)
+            expect(
+                companies.filter((c) => c.segment === s).length,
+            ).toBeGreaterThanOrEqual(5);
+        const ids = companies.map((c) => c.id);
+        expect(new Set(ids).size).toBe(ids.length);
+        const abroad = countryLinks("CN").filter(
+            (l) =>
+                getCompany(l.from)?.hqCountry !== "CN" ||
+                getCompany(l.to)?.hqCountry !== "CN",
+        );
+        expect(abroad.length).toBeGreaterThanOrEqual(5);
+        // Foreign-owned plants in China put their owners on the map.
+        for (const id of ["fanuc", "kuka", "proterial"]) expect(ids).toContain(id);
+    });
+
+    test("every Chinese site has a precision, a source and a point inside China", () => {
+        for (const s of countrySites("CN")) {
+            expect(["site", "city", "region"]).toContain(s.precision);
+            expect(s.sources.length).toBeGreaterThan(0);
+            expect(insideCountry("CN", s.lat, s.lon)).toBe(true);
         }
     });
 

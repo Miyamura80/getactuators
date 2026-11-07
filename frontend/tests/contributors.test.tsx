@@ -51,7 +51,7 @@ test("a person without a headshot gets a monogram, never a borrowed photo", () =
         if (person.headshot) expect(img?.getAttribute("src")).toBe(person.headshot.path);
         else {
             expect(img).toBeNull();
-            expect(view.container.querySelector(".pc-monogram")?.textContent).toMatch(/^[A-Z]{1,2}$/);
+            expect(view.container.querySelector(".pc-monogram")?.textContent).toMatch(/^\p{Lu}{1,2}$/u);
         }
         cleanup();
     }

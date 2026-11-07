@@ -1,3 +1,4 @@
+import { CHINA_LINKS } from "./country-pages/china-links";
 import { JAPAN_LINKS } from "./country-pages/japan-links";
 import { KOREA_LINKS } from "./country-pages/korea-links";
 import type { Confidence, SourceId } from "./sourced";
@@ -96,4 +97,5 @@ export const SUPPLY_LINKS: SupplyLink[] = [
     },
     ...JAPAN_LINKS,
     ...KOREA_LINKS,
+    ...CHINA_LINKS,
 ];

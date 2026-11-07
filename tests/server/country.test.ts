@@ -15,6 +15,15 @@ const ldNodes = (html: string) =>
         .map((m) => JSON.stringify(JSON.parse(m[1] ?? "{}")))
         .join("\n");
 
+// Data rows of the twin's Sites table (header and rule excluded).
+const siteRows = (md: string) =>
+    (md.split("\n## Sites")[1]?.split("\n## Links")[0] ?? "")
+        .split("\n")
+        .filter(
+            (l) =>
+                l.startsWith("| ") && !l.startsWith("| Site") && !l.startsWith("| ---"),
+        );
+
 describe("/japan page and twin", () => {
     test("serves the SPA with Place and ItemList JSON-LD and is linked site-wide", async () => {
         const res = await get("/japan");
@@ -48,8 +57,7 @@ describe("/japan page and twin", () => {
     });
 
     test("countries without a dataset past the gate are not routed", async () => {
-        for (const path of ["/china", "/us"])
-            expect((await get(path)).status).toBe(404);
+        for (const path of ["/us"]) expect((await get(path)).status).toBe(404);
     });
 
     test("markdown twin: overview, policies, clusters, companies, sites, links, sources", async () => {
@@ -67,17 +75,7 @@ describe("/japan page and twin", () => {
             ])
                 expect(md).toContain(h);
             for (const c of countryCompanies("JP")) expect(md).toContain(`\`${c.id}\``);
-            const siteRows = md.split("\n## Sites")[1]?.split("\n## Links")[0] ?? "";
-            expect(
-                siteRows
-                    .split("\n")
-                    .filter(
-                        (l) =>
-                            l.startsWith("| ") &&
-                            !l.startsWith("| Site") &&
-                            !l.startsWith("| ---"),
-                    ),
-            ).toHaveLength(countrySites("JP").length);
+            expect(siteRows(md)).toHaveLength(countrySites("JP").length);
             expect(md).toContain("/policy#measure=jp-espa-hds-reducers-2023");
             expect(md).toContain("**Nagano precision belt**");
             // Revenue is a converted estimate, with its footnote.
@@ -115,17 +113,7 @@ describe("/korea page and twin", () => {
         ])
             expect(md).toContain(h);
         for (const c of countryCompanies("KR")) expect(md).toContain(`\`${c.id}\``);
-        const siteRows = md.split("\n## Sites")[1]?.split("\n## Links")[0] ?? "";
-        expect(
-            siteRows
-                .split("\n")
-                .filter(
-                    (l) =>
-                        l.startsWith("| ") &&
-                        !l.startsWith("| Site") &&
-                        !l.startsWith("| ---"),
-                ),
-        ).toHaveLength(countrySites("KR").length);
+        expect(siteRows(md)).toHaveLength(countrySites("KR").length);
         expect(md).toContain("/policy#measure=kr-k-humanoid-2025");
         expect(md).toContain("**Changwon machinery cluster**");
         expect(md).not.toContain(String.fromCharCode(0x2014));
@@ -143,6 +131,7 @@ describe("/korea page and twin", () => {
         expect(body.coverage.sites).toBeGreaterThanOrEqual(50);
         expect(body.coverage.links).toBeGreaterThanOrEqual(20);
         expect(body.coverage.supply_links).toBeGreaterThanOrEqual(10);
+        expect((await get("/api/v1/countries/korea.md")).status).toBe(200);
         expect(body.sites.map((s) => s.id)).toEqual(
             countrySites("KR").map((s) => s.id),
         );
@@ -157,12 +146,68 @@ describe("/korea page and twin", () => {
     });
 });
 
+describe("/china page and twin", () => {
+    test("is routed, linked site-wide, in the sitemap and in llms.txt", async () => {
+        const res = await get("/china");
+        expect(res.status).toBe(200);
+        const html = await res.text();
+        expect(html).toContain("<title>China: actuator supply chain");
+        expect(ldNodes(html)).toContain('"name":"JL MAG Rare-Earth"');
+        expect(html).toContain('<a href="/china"');
+        expect(await (await get("/sitemap.xml")).text()).toContain("/china");
+        const llms = await (await get("/llms.txt")).text();
+        expect(llms).toContain("/china.md");
+        expect(llms).toContain('get_country("CN")');
+    });
+
+    test("markdown twin lists every company and site, with sources", async () => {
+        const md = await (await get("/china.md")).text();
+        for (const h of [
+            "## Share of each stage",
+            "## Policies",
+            "## Clusters",
+            "## Companies",
+            "## Sites",
+            "## Links",
+            "## Sources",
+        ])
+            expect(md).toContain(h);
+        for (const c of countryCompanies("CN")) expect(md).toContain(`\`${c.id}\``);
+        expect(siteRows(md)).toHaveLength(countrySites("CN").length);
+        expect(md).toContain("**Baotou rare earth hub**");
+        expect(md).not.toContain(String.fromCharCode(0x2014));
+    });
+
+    test("REST and MCP return China's filtered registry", async () => {
+        const res = await get("/api/v1/countries/china");
+        expect(res.status).toBe(200);
+        const body = CountrySchema.parse(await res.json());
+        expect(body.code).toBe("CN");
+        expect(body.sites.map((s) => s.id)).toEqual(
+            countrySites("CN").map((s) => s.id),
+        );
+        expect(body.links.length).toBe(countryLinks("CN").length);
+        const baotou = body.clusters.find((c) => c.id === "baotou-ree");
+        expect(baotou?.site_ids).toContain("baotou-steel-bayan-obo");
+        const out = CountrySchema.parse(
+            (await callTool("get_country", { code: "CN" })).structuredContent,
+        );
+        expect(out.name).toBe("China");
+        expect(
+            out.links.some(
+                (l) =>
+                    l.from === "baotou-steel" && l.to === "china-northern-rare-earth",
+            ),
+        ).toBe(true);
+    });
+});
+
 describe("REST /api/v1/countries", () => {
     test("lists live countries with coverage", async () => {
         const res = await get("/api/v1/countries");
         expect(res.status).toBe(200);
         const body = CountryListSchema.parse(await res.json());
-        expect(body.results.map((r) => r.code)).toEqual(["JP", "KR"]);
+        expect(body.results.map((r) => r.code)).toEqual(["JP", "CN", "KR"]);
         const cov = body.results[0]?.coverage;
         expect(cov?.companies).toBeGreaterThanOrEqual(COVERAGE_TARGET.companies);
         expect(cov?.sites).toBeGreaterThanOrEqual(COVERAGE_TARGET.sites);
@@ -197,9 +242,9 @@ describe("REST /api/v1/countries", () => {
     });
 
     test("404s for a country that is not live, and is in the OpenAPI document", async () => {
-        const res = await get("/api/v1/countries/CN");
+        const res = await get("/api/v1/countries/US");
         expect(res.status).toBe(404);
-        expect((await get("/api/v1/countries/CN.md")).status).toBe(404);
+        expect((await get("/api/v1/countries/US.md")).status).toBe(404);
         expect(res.headers.get("content-type")).toContain("application/problem+json");
         const openapi = await (await get("/openapi.json")).json();
         expect(Object.keys(openapi.paths)).toContain("/api/v1/countries/{code}");

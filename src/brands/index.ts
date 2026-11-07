@@ -215,6 +215,65 @@ const SUPPLY_CHAIN: Row[] = [
     ["angel-robotics", "Angel Robotics", "angel-robotics.com"],
     ["bear-robotics", "Bear Robotics", "bearrobotics.ai"],
     ["onexia", "ONExia", null],
+    // /alts (#78): makers of the alternative actuator technologies.
+    ["renault-group", "Renault Group", "renaultgroup.com", ["Renault"]],
+    ["bmw-group", "BMW Group", "bmwgroup.com", ["BMW"]],
+    ["turntide", "Turntide Technologies", "turntide.com", ["Turntide"]],
+    ["conifer", "Conifer", "conifer.io"],
+    ["niron-magnetics", "Niron Magnetics", "nironmagnetics.com", ["Niron"]],
+    [
+        "cambridge-mechatronics",
+        "Cambridge Mechatronics",
+        "cambridgemechatronics.com",
+        ["CML"],
+    ],
+    ["festo", "Festo", "festo.com"],
+    ["barrett-technology", "Barrett Technology", "barrett.com", ["Barrett"]],
+    ["magnomatics", "Magnomatics", "magnomatics.com"],
+    // /china (#80): Chinese companies and partners. Domains only where a
+    // source in the dataset is the company's own site; the rest stay null.
+    ["baotou-steel", "Baotou Steel", null],
+    ["xiamen-tungsten", "Xiamen Tungsten", null],
+    [
+        "china-rare-earth-nonferrous",
+        "China Rare Earth Nonferrous Metals (ex-Guangsheng)",
+        null,
+        ["Guangsheng Nonferrous"],
+    ],
+    ["jiangxi-copper", "Jiangxi Copper", null],
+    ["grirem", "Grirem Advanced Materials", null, ["Grirem"]],
+    ["ningbo-yunsheng", "Ningbo Yunsheng", null],
+    ["zhong-ke-san-huan", "Zhong Ke San Huan", null, ["Zhongke Sanhuan"]],
+    ["zhenghai-magnetic", "Zhenghai Magnetic Material", null, ["ZHmag"]],
+    ["earth-panda", "Earth-Panda Advance Magnetic Material", null, ["Earth-Panda"]],
+    ["yantai-dongxing", "Yantai Dongxing Magnetic Materials (YSM)", null, ["YSM"]],
+    ["tianhe-magnetics", "Tianhe Magnetics", null],
+    ["galaxy-magnets", "Galaxy Magnets", null],
+    ["inovance", "Inovance", "inovance.com"],
+    ["wolong-electric", "Wolong Electric Drive", null, ["Wolong"]],
+    ["hechuan", "Hechuan Technology (HCFA)", null, ["HCFA"]],
+    ["moons", "MOONS' Electric", null, ["MOONS'"]],
+    ["leadshine", "Leadshine", "leadshine.com"],
+    ["zhaowei", "Zhaowei Machinery & Electronics", null, ["Zhaowei"]],
+    ["shuanghuan-driveline", "Shuanghuan Driveline", null],
+    ["zd-leader", "ZD Leader", null, ["Zhongda Leader"]],
+    ["laifual", "Laifual Drive", null, ["Laifual"]],
+    ["beite", "Beite Technology", null],
+    ["best-precision", "Best Precision Machinery", null],
+    ["zwz-bearing", "ZWZ Bearing", null, ["Wafangdian Bearing"]],
+    ["lyc-bearing", "LYC Bearing", null],
+    ["harbin-bearing", "Harbin Bearing (HRB)", null],
+    ["zhenhua-bearing", "Zhenhua Bearing", null],
+    ["galbot", "Galbot", null],
+    ["estun", "Estun", null],
+    ["efort", "Efort", null],
+    ["siasun", "Siasun", null],
+    ["sanhua", "Sanhua Intelligent Controls", null, ["Sanhua"]],
+    ["midea", "Midea", null],
+    ["shanghai-electric", "Shanghai Electric", "shanghai-electric.com"],
+    ["dobot", "Dobot", null],
+    ["leju", "Leju Robotics", null, ["Leju"]],
+    ["joyson", "Ningbo Joyson Electronic", null, ["Joyson"]],
 ];
 
 // Companies behind the /investors deals (src/investors.ts COMPANIES).
@@ -286,6 +345,39 @@ const INVESTORS: Row[] = [
     ["younick-mint", "YouNick Mint", null],
 ];
 
+// Affiliations of the people on /people (src/people/orgs.ts) not listed
+// above, keyed by the org id. Domains are each org's own site as cited in
+// that registry; the Association of China Rare Earth Industry has no verified
+// site of its own, so it stays a monogram.
+const PEOPLE_ORGS: Row[] = [
+    ["mit", "MIT", "mit.edu", ["Massachusetts Institute of Technology"]],
+    ["notre-dame", "University of Notre Dame", "nd.edu"],
+    ["mpi-is", "Max Planck Institute for Intelligent Systems", "is.mpg.de"],
+    ["ut-dallas", "UT Dallas", "utdallas.edu"],
+    ["oregon-state", "Oregon State University", "oregonstate.edu"],
+    ["dlr", "DLR", "dlr.de"],
+    ["mbzuai", "MBZUAI", "mbzuai.ac.ae"],
+    ["science-tokyo", "Institute of Science Tokyo", "isct.ac.jp"],
+    ["kaist", "KAIST", "kaist.ac.kr"],
+    ["ihmc", "IHMC", "ihmc.us"],
+    ["rai-institute", "RAI Institute", "rai-inst.com"],
+    ["toyota-research-institute", "Toyota Research Institute", "tri.global"],
+    ["meta", "Meta", "meta.com"],
+    ["persona-ai", "Persona AI", "personainc.ai"],
+    ["clone-robotics", "Clone Robotics", "clonerobotics.com"],
+    ["general-motors", "General Motors", "gm.com", ["GM"]],
+    ["vac", "VACUUMSCHMELZE (VAC)", "vacuumschmelze.com", ["eVAC Magnetics"]],
+    ["energy-fuels", "Energy Fuels", "energyfuels.com"],
+    ["adamas", "Adamas Intelligence", "adamasintel.com"],
+    ["csis", "CSIS", "csis.org"],
+    ["ames-lab", "Ames National Laboratory (CMI)", "ameslab.gov"],
+    ["iea", "IEA", "iea.org", ["International Energy Agency"]],
+    ["china-rare-earth-assoc", "Association of China Rare Earth Industry", null],
+    ["benchmark-minerals", "Benchmark Mineral Intelligence", "benchmarkminerals.com"],
+    ["u-montana", "University of Montana", "umt.edu"],
+    ["colorado-mines", "Colorado School of Mines", "mines.edu"],
+];
+
 const host = (url: string): string => new URL(url).hostname.replace(/^www\./, "");
 
 // /startups rows carry their own site and, usually, a self-hosted logo. A
@@ -337,6 +429,7 @@ export const BRANDS: BrandEntry[] = [
         ...SUPPLY_CHAIN,
         ...PORTFOLIO,
         ...INVESTORS,
+        ...PEOPLE_ORGS,
     ].map(fromRow),
 ];
 

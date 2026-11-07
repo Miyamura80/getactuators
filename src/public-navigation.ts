@@ -41,6 +41,7 @@ export const SUPPLY_CHAIN_PAGES_LIVE: ReadonlySet<string> = new Set<string>([
     "/metals",
     "/policy",
     "/manufacturing",
+    "/alts",
     // Country pages go live when their dataset passes the coverage gate.
     ...LIVE_COUNTRY_PATHS,
 ]);
@@ -90,6 +91,7 @@ export const FOOTER_GROUPS = [
             ["/llms.txt", "llms.txt"],
             ["/benchmarks", "Measured benchmarks"],
             ["/sdk", "Best actuator SDKs"],
+            ["/people", "Leading people"],
         ],
     },
     {

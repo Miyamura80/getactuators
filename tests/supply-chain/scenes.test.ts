@@ -69,6 +69,11 @@ const SAMPLE_SHAPES: PartShape[] = [
         component: "arc-segment",
         props: { outer: 26, inner: 20, angle: 0.55, length: 16, count: 10 },
     },
+    {
+        component: "rotor-core",
+        props: { kind: "salient", poles: 4, outer: 25, inner: 5, length: 20 },
+    },
+    { component: "coil", props: { radius: 5, wire: 1, pitch: 4, turns: 10 } },
 ];
 
 const part = (over: Partial<PartSpec> = {}): PartSpec =>

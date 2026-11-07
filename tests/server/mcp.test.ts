@@ -41,6 +41,9 @@ const EXPECTED_TOOLS = [
     "get_process",
     "get_country",
     "get_sdk_score",
+    "list_people",
+    "list_alt_technologies",
+    "get_alt_technology",
 ];
 
 const usedActuator = ACTUATORS.find((a) => robotsUsingActuator(a.id).length > 0);

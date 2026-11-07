@@ -99,7 +99,7 @@ test("the full catalog has distinct reviewed metadata", async () => {
     const registered = allPages();
     // Pinned so a generator that silently emits nothing still fails here.
     expect(GENERATED_COMPARISON_PAGES).toHaveLength(28);
-    expect(registered).toHaveLength(95 + GENERATED_COMPARISON_PAGES.length);
+    expect(registered).toHaveLength(98 + GENERATED_COMPARISON_PAGES.length);
     // Pages added after the baseline capture have their own tests.
     const added = new Set([
         "/faq",
@@ -117,9 +117,12 @@ test("the full catalog has distinct reviewed metadata", async () => {
         "/open-source",
         "/benchmarks",
         "/manufacturing",
+        "/alts",
         "/japan",
         "/korea",
         "/sdk",
+        "/people",
+        "/china",
     ]);
     const pages = registered.filter((page) => !added.has(page.path));
     expect(ACTUATORS).toHaveLength(68);
@@ -129,6 +132,11 @@ test("the full catalog has distinct reviewed metadata", async () => {
     );
     expect(new Set(pages.map((page) => documentTitle(page.title))).size).toBe(
         pages.length,
+    );
+    // Titles stay distinct across every registered page, including the ones
+    // added after the baseline.
+    expect(new Set(registered.map((page) => documentTitle(page.title))).size).toBe(
+        registered.length,
     );
     expect(sha256(JSON.stringify(ACTUATORS))).toBe(baseline.catalogSha256);
     for (const [index, page] of pages.entries()) {

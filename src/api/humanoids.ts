@@ -428,11 +428,13 @@ function serializeBom(h: Humanoid, b: Bom): z.infer<typeof ActuatorBomSchema> {
     };
 }
 
-export function listHumanoids(): Response {
-    return json({ data: HUMANOIDS.map(serializeHumanoid), as_of: HUMANOIDS_AS_OF });
+export function humanoidList(): z.infer<typeof HumanoidListSchema> {
+    return { data: HUMANOIDS.map(serializeHumanoid), as_of: HUMANOIDS_AS_OF };
 }
 
-export function getHumanoidById({ params }: ApiContext): Response {
+export function humanoidDetail({
+    params,
+}: ApiContext): z.infer<typeof HumanoidDetailSchema> {
     const id = params.id ?? "";
     const h = getHumanoid(id);
     if (!h) {
@@ -441,5 +443,8 @@ export function getHumanoidById({ params }: ApiContext): Response {
             hint: "List valid ids with GET /api/v1/humanoids.",
         });
     }
-    return json(serializeHumanoidDetail(h));
+    return serializeHumanoidDetail(h);
 }
+
+export const listHumanoids = (): Response => json(humanoidList());
+export const getHumanoidById = (ctx: ApiContext): Response => json(humanoidDetail(ctx));

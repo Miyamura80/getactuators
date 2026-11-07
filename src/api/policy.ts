@@ -48,12 +48,11 @@ export const PolicyListParams = z.object({
         .describe("draft, announced, in-force, suspended or expired."),
 });
 
-export function listPolicyHandler({ url }: ApiContext): Response {
-    const filter = parseQuery(PolicyListParams, url);
-    return json(measureListView(findMeasures(filter)));
+export function policyList({ url }: ApiContext) {
+    return measureListView(findMeasures(parseQuery(PolicyListParams, url)));
 }
 
-export function getPolicyHandler({ params }: ApiContext): Response {
+export function policyMeasure({ params }: ApiContext) {
     const id = params.id ?? "";
     const m = getMeasure(id);
     if (!m)
@@ -61,5 +60,8 @@ export function getPolicyHandler({ params }: ApiContext): Response {
             detail: `No policy measure "${id}".`,
             hint: "List measure ids with GET /api/v1/policy.",
         });
-    return json(measureView(m));
+    return measureView(m);
 }
+
+export const listPolicyHandler = (ctx: ApiContext): Response => json(policyList(ctx));
+export const getPolicyHandler = (ctx: ApiContext): Response => json(policyMeasure(ctx));

@@ -30,9 +30,11 @@ import {
     robotsBody,
     topBy,
 } from "./pages-md";
+import { PEOPLE_PAGE } from "./people/page";
 import { SDK_PAGE } from "./sdk";
 import { actuatorSeoTitle } from "./seo-titles";
 import { startupsBody } from "./startups";
+import { ALTS_PAGE } from "./supply-chain/alts";
 import { COUNTRY_PAGE_ENTRIES } from "./supply-chain/country";
 import { MANUFACTURING_PAGE } from "./supply-chain/manufacturing";
 import { METALS_PAGE } from "./supply-chain/metals";
@@ -157,8 +159,10 @@ const STATIC_PAGES: Page[] = [
     POLICY_PAGE,
     BENCHMARKS_PAGE,
     MANUFACTURING_PAGE,
+    ALTS_PAGE,
     ...COUNTRY_PAGE_ENTRIES,
     SDK_PAGE,
+    PEOPLE_PAGE,
     sub(
         PATHS.agentsPage,
         "spa",

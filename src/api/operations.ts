@@ -1,5 +1,12 @@
 import type { z } from "zod";
 import {
+    AltListParams,
+    AltTechListSchema,
+    AltTechSchema,
+    getAltHandler,
+    listAltsHandler,
+} from "./alts";
+import {
     BenchmarkListParams,
     BenchmarkListSchema,
     actuatorBenchmarksHandler,
@@ -47,6 +54,13 @@ import {
     listOpenRobotsHandler,
 } from "./open-robots";
 import { ActuatorListParams, CompareQueryParams, RobotListParams } from "./params";
+import {
+    PeopleListParams,
+    PeopleListSchema,
+    PersonSchema,
+    getPersonHandler,
+    listPeopleHandler,
+} from "./people";
 import {
     PolicyListParams,
     PolicyListSchema,
@@ -382,6 +396,36 @@ export const OPERATIONS: Operation[] = [
         handler: getProcessHandler,
     },
     {
+        operationId: "list_alt_technologies",
+        method: "GET",
+        path: "/api/v1/alts",
+        summary: "List alternative actuator technologies",
+        description:
+            "Every technology on /alts (rare-earth-free motors, artificial muscles, hydraulic drives, transmissions) with principle, magnet use, TRL, milestones, companies, cited performance figures, market sizes and deployments. Filter with `family`.",
+        query: AltListParams,
+        response: AltTechListSchema,
+        errors: [400],
+        example: "/api/v1/alts?family=artificial-muscle",
+        handler: listAltsHandler,
+    },
+    {
+        operationId: "get_alt_technology",
+        method: "GET",
+        path: "/api/v1/alts/:id",
+        summary: "Get an alternative actuator technology",
+        description:
+            "One /alts technology: principle, magnet use, TRL with its evidence, dated milestones (announced targets flagged), companies, performance figures, market size and growth, deployments and sources.",
+        pathParam: {
+            name: "id",
+            description: "Technology id, e.g. switched-reluctance.",
+            example: "switched-reluctance",
+        },
+        response: AltTechSchema,
+        errors: [404],
+        example: "/api/v1/alts/switched-reluctance",
+        handler: getAltHandler,
+    },
+    {
         operationId: "list_humanoids",
         method: "GET",
         path: "/api/v1/humanoids",
@@ -530,5 +574,35 @@ export const OPERATIONS: Operation[] = [
         errors: [400, 404],
         example: "/api/v1/sdk/odrive",
         handler: getSdkHandler,
+    },
+    {
+        operationId: "list_people",
+        method: "GET",
+        path: "/api/v1/people",
+        summary: "List leading people in actuators and rare earths",
+        description:
+            "The /people directory: actuator researchers, actuator and robot founders, magnet and rare earth executives, and analysts and policy leads. Each person carries role, affiliations (with supply-chain company ids), why they matter, key works, the inclusion criterion met and sources. Filter by domain.",
+        query: PeopleListParams,
+        response: PeopleListSchema,
+        errors: [400],
+        example: "/api/v1/people?domain=magnets",
+        handler: listPeopleHandler,
+    },
+    {
+        operationId: "get_person",
+        method: "GET",
+        path: "/api/v1/people/:id",
+        summary: "Get one person from the people directory",
+        description:
+            "One person from /people with affiliations, key works, site links (country page, humanoid joint map, catalog) and sources.",
+        pathParam: {
+            name: "id",
+            description: "Person id (slug).",
+            example: "masato-sagawa",
+        },
+        response: PersonSchema,
+        errors: [404],
+        example: "/api/v1/people/masato-sagawa",
+        handler: getPersonHandler,
     },
 ];

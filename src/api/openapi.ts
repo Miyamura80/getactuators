@@ -139,12 +139,14 @@ function tagFor(path: string): string {
         path.includes("/metal") ||
         path.includes("/policy") ||
         path.includes("/processes") ||
+        path.includes("/alts") ||
         path.includes("/countries")
     )
         return "supply-chain";
     if (path.includes("/benchmarks")) return "actuators";
     if (path.includes("/actuators")) return "actuators";
     if (path.includes("/sdk")) return "actuators";
+    if (path.includes("/people")) return "people";
     if (path.startsWith("/api/v1/")) return "taxonomy";
     return "meta";
 }
@@ -232,9 +234,14 @@ export function buildOpenApi(operations: readonly Operation[]): Json {
             },
             { name: "meta", description: "Discovery: index and this document." },
             {
+                name: "people",
+                description:
+                    "Leading people in actuators and rare-earth magnet supply, with affiliations, key works and sources.",
+            },
+            {
                 name: "supply-chain",
                 description:
-                    "Companies, sites, magnet metals (supply, reserves, prices), policy measures, manufacturing process steps and country pages along the actuator supply chain, with citations.",
+                    "Companies, sites, magnet metals (supply, reserves, prices), policy measures, manufacturing process steps, alternative actuator technologies and country pages along the actuator supply chain, with citations.",
             },
         ],
         externalDocs: { description: "Developer guide", url: absoluteUrl("/docs/api") },
