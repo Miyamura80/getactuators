@@ -50,7 +50,7 @@ The deployed site (actuatorlist.com) is built for AI agents as well as people. I
 
 ## Data sourcing and licences
 
-The dataset is published under CC BY 4.0 (`LICENSE-DATA`). Facts are not copyrightable, so citing single facts is fine; copying a source's table, prose or paid data is not. Sources live in `src/supply-chain/sources.ts` and `src/humanoids/sources.ts`, and every one has a required `reuse` value:
+The dataset is published under CC BY 4.0 (`LICENSE-DATA`). Facts are not copyrightable, so citing single facts is fine; copying a source's table, prose or paid data is not. Sources live in a `sources.ts` registry next to the data they back (`src/supply-chain/` and its subfolders, `src/humanoids/`, `src/people/`, `src/open-source/`, `src/sdk/`, `src/benchmarks/`), and every one has a required `reuse` value:
 
 - `open`: public domain or openly licensed (USGS and other government statistics, CC-licensed papers, our own catalog paths). Use it only when the licence is clear; arXiv papers carry per-paper licences, so they default to `facts`.
 - `facts`: a copyrighted page we take individual facts from (news, datasheets, retailers, vendor sites, blogs). This is the default when unsure.
@@ -61,7 +61,7 @@ Rules when adding data:
 - Record a source for every new figure, and add the source with its `reuse` value.
 - Never copy a source's prose; write notes and summaries in your own words.
 - Never import a whole third-party table or dataset. A `facts` source backing more than 10 records fails the audit unless it is in that registry's allowlist (`FACTS_ALLOWLIST` or `HUMANOID_FACTS_ALLOWLIST`) with a one-line reason; prefer citing a second source.
-- `make citation_audit` (also in `make ci` and a prek hook on `src/supply-chain/` and `src/humanoids/`) enforces these rules; the logic is in `src/supply-chain/licence.ts`.
+- `make citation_audit` (also in `make ci` and a prek hook on `src/supply-chain/`, `src/humanoids/`, `src/sdk/`, `src/people/` and `src/open-source/`) enforces these rules; the logic is in `src/supply-chain/licence.ts`.
 - Measured runs under `data/benchmarks/` cite sources from `src/benchmarks/sources.ts` (allowlist `BENCHMARK_FACTS_ALLOWLIST`); `make validate_benchmarks` (in `make ci`) applies the same licence rules plus the test protocol in `docs/benchmarks/protocol.md`.
 
 ## Code Style
