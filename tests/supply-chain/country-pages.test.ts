@@ -75,6 +75,8 @@ describe("coverage gate", () => {
         expect(kr.companies).toBeGreaterThanOrEqual(30);
         expect(kr.sites).toBeGreaterThanOrEqual(50);
         expect(kr.links).toBeGreaterThanOrEqual(20);
+        // Headroom: losing a few supply links must not take the page offline.
+        expect(kr.supplyLinks).toBeGreaterThanOrEqual(gate.supplyLinks + 3);
         // Japan has no gate of its own and keeps the shared target.
         const jp = getCountryPage("japan");
         expect(jp ? gateOf(jp) : null).toEqual(COVERAGE_TARGET);

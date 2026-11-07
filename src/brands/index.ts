@@ -215,6 +215,7 @@ const SUPPLY_CHAIN: Row[] = [
     ["angel-robotics", "Angel Robotics", "angel-robotics.com"],
     ["bear-robotics", "Bear Robotics", "bearrobotics.ai"],
     ["onexia", "ONExia", null],
+    ["kimm", "Korea Institute of Machinery & Materials (KIMM)", "kimm.re.kr", ["KIMM"]],
     // /alts (#78): makers of the alternative actuator technologies.
     ["renault-group", "Renault Group", "renaultgroup.com", ["Renault"]],
     ["bmw-group", "BMW Group", "bmwgroup.com", ["BMW"]],
