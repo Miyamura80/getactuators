@@ -74,6 +74,14 @@ const SAMPLE_SHAPES: PartShape[] = [
         props: { kind: "salient", poles: 4, outer: 25, inner: 5, length: 20 },
     },
     { component: "coil", props: { radius: 5, wire: 1, pitch: 4, turns: 10 } },
+    { component: "grinding-wheel", props: { radius: 30, width: 12, ribs: 6 } },
+    { component: "hob", props: { radius: 10, length: 24, gashes: 10, lead: 3 } },
+    { component: "broach", props: { radius: 4, length: 80, teeth: 10, rise: 0.4 } },
+    {
+        component: "finishing-stone",
+        props: { width: 8, height: 14, depth: 10, radius: 20 },
+    },
+    { component: "grating-disc", props: { radius: 20, thickness: 1.5, lines: 90 } },
 ];
 
 const part = (over: Partial<PartSpec> = {}): PartSpec =>

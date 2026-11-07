@@ -11,6 +11,19 @@ export function ClusterCards({ chain, focusId, onFocus }: {
     focusId: string | null;
     onFocus: (id: string) => void;
 }) {
+    const productButton = <button type="button" aria-pressed={focusId === PRODUCT_ID} data-step={PRODUCT_ID} onClick={() => onFocus(PRODUCT_ID)}>
+        <ProcessIconSvg icon="product" className="mf-step-icon" />
+        <span className="mf-step-label">{chain.productLabel}</span>
+    </button>;
+    // Side-by-side sub-chains all feed the product, so it gets its own card.
+    const productCard = chain.parallel ? <li className="mf-cluster-card is-product">
+        <header>
+            <span className="mf-cluster-n">{chain.clusters.length + 1}</span>
+            <ProcessIconSvg icon="product" className="mf-stage-svg" />
+            <h2>Product</h2>
+        </header>
+        <ul><li>{productButton}</li></ul>
+    </li> : null;
     return <ol className="mf-clusters">
         {chain.clusters.map((c, i) => {
             const shares = sharesOf(c.shares);
@@ -34,14 +47,10 @@ export function ClusterCards({ chain, focusId, onFocus }: {
                             {k ? <span className="mf-step-num"><SourcedValue value={k.value} /></span> : null}
                         </li>;
                     })}
-                    {i === chain.clusters.length - 1 ? <li>
-                        <button type="button" aria-pressed={focusId === PRODUCT_ID} data-step={PRODUCT_ID} onClick={() => onFocus(PRODUCT_ID)}>
-                            <ProcessIconSvg icon="product" className="mf-step-icon" />
-                            <span className="mf-step-label">Rotor segment</span>
-                        </button>
-                    </li> : null}
+                    {!chain.parallel && i === chain.clusters.length - 1 ? <li>{productButton}</li> : null}
                 </ul>
             </li>;
         })}
+        {productCard}
     </ol>;
 }

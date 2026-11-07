@@ -37,7 +37,7 @@
 .mf-node:hover rect, .mf-node:focus-visible rect { stroke: var(--cyan); }
 .mf-node.is-focus rect { stroke: var(--cyan); stroke-width: 2; fill: #0f3634; }
 .mf-node.is-dim { opacity: 0.35; }
-.mf-node.is-heavy rect, .mf-node.is-optional rect { stroke-dasharray: 5 3; }
+.mf-node.is-heavy rect, .mf-node.is-optional rect, .mf-node.is-alternative rect { stroke-dasharray: 5 3; }
 .mf-node.is-recycling rect { stroke: #38d9a9; stroke-dasharray: 2 3; }
 .mf-node-icon path { fill: none; stroke: var(--cyan); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .mf-node-3d { fill: none; stroke: var(--muted); stroke-width: 1; }
@@ -115,7 +115,7 @@ a.mf-chip:hover, a.mf-chip:focus-visible { border-color: var(--cyan); color: var
 .mf-cluster-card li { display: flex; align-items: center; }
 .mf-cluster-card li button { flex: 1; min-width: 0; display: grid; grid-template-columns: 28px minmax(0, 1fr); align-items: center; gap: 10px; width: 100%; min-height: 48px; padding: 8px 12px; border: 0; background: none; color: var(--text); text-align: left; cursor: pointer; }
 .mf-cluster-card li button[aria-pressed="true"] { background: #0f3634; }
-.mf-cluster-card li button.is-heavy .mf-step-label::after, .mf-cluster-card li button.is-optional .mf-step-label::after { content: " ·"; color: var(--muted); }
+.mf-cluster-card li button.is-heavy .mf-step-label::after, .mf-cluster-card li button.is-optional .mf-step-label::after, .mf-cluster-card li button.is-alternative .mf-step-label::after { content: " ·"; color: var(--muted); }
 .mf-step-icon { width: 24px; height: 24px; color: var(--cyan); }
 .mf-step-label { font: 600 13px/1.25 var(--mono); }
 .mf-step-num { padding-right: 12px; color: var(--muted); font: 500 11px/1.2 var(--mono); white-space: nowrap; }

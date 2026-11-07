@@ -159,19 +159,43 @@ the URL hash (`#step=` on /manufacturing, `#node=` on /bom):
  +-- types.ts     ProcessChain: clusters, steps (label <= 4 words, caption <= 12),
  |                edges (main | branch | loop), product scene
  +-- magnet.ts    the NdFeB chain, ore to rotor segment; step ids are the /bom contract
- +-- sources.ts   the documents behind the chain's key numbers (spread into SOURCES)
+ +-- precision.ts strain-wave gear, roller screw, precision bearing, encoder:
+ |                four side-by-side sub-chains (parallel: true), bar stock to tested part;
+ |                gear and screw steps in precision-drive-steps.ts
+ +-- key-number.ts num() / range() builders shared by every chain
+ +-- sources.ts   the documents behind the magnet chain's key numbers (spread into SOURCES)
+ +-- precision-sources.ts  the precision chain's documents (none opened: no accessed date)
+ +-- precision-shares.ts   modeled country shares per precision sub-chain, with method notes
+ +-- step-index.ts step id -> chain for chains after the first, without loading them
  +-- path.ts      MANUFACTURING_PATH, the /manufacturing route
- +-- layout.ts    grid -> map boxes, cluster frames, edge curves, zoom detail
+ +-- layout.ts    grid -> map boxes, cluster frames, edge curves, bus to the product, zoom detail
  +-- index.ts     PROCESS_CHAINS, getChain, isProcessStepId, processErrors
  +-- views.ts     REST / MCP wire shape (server only)
- src/supply-chain/scenes/magnet-loops.ts   the ProcessLoop vignettes + rotor explode
+ src/supply-chain/scenes/magnet-loops.ts     the magnet ProcessLoop vignettes + rotor explode
+ src/supply-chain/scenes/precision-loops.ts  21 precision vignettes + the joint explode
+                                             (gear and screw loops in precision-drive-loops.ts,
+                                             shared tracks in precision-kit.ts)
 ```
 
-A new chain (#83) is a new file with the same schema appended to
-`PROCESS_CHAINS`; the switcher, map, twin, REST and MCP pick it up. Country
-shares on steps are keys into the /metals stage shares (`PROCESS_SHARES`), so
-they are cited once. Posters: `bun frontend/scripts/capture-posters.ts <base>
-[ids]` captures every animated step from `/manufacturing#step=<id>`.
+```
+ parallel chain on the map:
+
+ [strain-wave gear  ...  test ]--+
+ [roller screw      ...  test ]--+
+ [precision bearing ...  test ]--+--> [Precision set]
+ [encoder           ... seal  ]--+
+```
+
+A new chain is a new file with the same schema appended to `PROCESS_CHAINS`;
+the switcher, map, twin, REST and MCP pick it up. Add its step ids to
+`step-index.ts` (a test checks) so /bom chips link with `?chain=`. Magnet
+country shares are keys into the /metals stage shares (`PROCESS_SHARES`), so
+they are cited once; the precision chain's are its own modeled records,
+audited as `process-shares`. Precision parts use the shared tool parts
+(`grinding-wheel`, `hob`, `broach`, `finishing-stone`, `grating-disc` in
+`frontend/src/three/parts/tools.ts`). Posters: `bun
+frontend/scripts/capture-posters.ts <base> [ids]` captures every animated
+step from its chain's URL (`/manufacturing?chain=<id>#step=<id>`).
 
 ## The kit page
 

@@ -19,6 +19,7 @@ import {
     type ZoomTransform,
     chainLayout,
     detailFor,
+    busPath,
     edgePath,
     fitTransform,
 } from "../../../../../src/supply-chain/processes/layout";
@@ -81,7 +82,7 @@ function tierText(step: { shares?: ProcessStep["shares"] }): { text: string; tie
     const s = sharesOf(step.shares);
     const c = s ? concentrationTier(s.value) : null;
     if (!s || !c) return null;
-    const est = s.confidence === "estimated" ? "~" : "";
+    const est = s.confidence === "reported" ? "" : "~";
     return { text: `${TIER_LABEL[c.tier].toUpperCase()} ${countryFlag(c.top.country)} ${est}${percent(c.top.share)}`, tier: c.tier };
 }
 
@@ -219,15 +220,24 @@ export function ProcessMap({ chain, focusId, onFocus, height = 600 }: ProcessMap
         else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onFocus(id); }
     };
 
+    // Stages in sequence get an arrow from each to the next; side-by-side
+    // sub-chains each get one into the product, along a shared trunk.
     const clusterEdges = useMemo(() => {
         const out: { key: string; d: string }[] = [];
+        const product = layout.nodes.get(PRODUCT_ID) as Box;
+        if (chain.parallel) {
+            const right = Math.max(...layout.clusters.map((c) => c.x + c.w));
+            const trunk = right + (product.x - right) / 2;
+            layout.clusters.forEach((c, i) => out.push({ key: `c${i}`, d: busPath(c, product, trunk).d }));
+            return out;
+        }
         for (let i = 1; i < layout.clusters.length; i++) {
             const a = layout.clusters[i - 1] as Box;
             const b = layout.clusters[i] as Box;
             out.push({ key: `c${i}`, d: edgePath(a, b).d });
         }
         return out;
-    }, [layout]);
+    }, [layout, chain.parallel]);
     const showSteps = detail === "steps";
     useEffect(() => {
         if (!showSteps || !pendingFocus.current) return;
@@ -296,6 +306,7 @@ export function ProcessMap({ chain, focusId, onFocus, height = 600 }: ProcessMap
                     </g>;
                 })}
                 {!showSteps ? clusterEdges.map((e) => <path key={e.key} className="mf-cluster-edge" d={e.d} markerEnd="url(#mf-arrow)" />) : null}
+                {!showSteps && chain.parallel ? node(PRODUCT_ID, chain.productLabel, PRODUCT_ICON_PATHS, layout.nodes.get(PRODUCT_ID) as Box, { animated: Boolean(chain.productScene) }) : null}
                 {showSteps ? <>
                     <g className="mf-edges">
                         {layout.edges.map((e) => {
@@ -304,7 +315,7 @@ export function ProcessMap({ chain, focusId, onFocus, height = 600 }: ProcessMap
                         })}
                     </g>
                     {chain.steps.map((s) => node(s.id, s.label, PROCESS_ICON_PATHS[s.icon], layout.nodes.get(s.id) as Box, { animated: Boolean(s.animation), branch: s.branch }))}
-                    {node(PRODUCT_ID, "Rotor segment", PRODUCT_ICON_PATHS, layout.nodes.get(PRODUCT_ID) as Box, { animated: Boolean(chain.productScene) })}
+                    {node(PRODUCT_ID, chain.productLabel, PRODUCT_ICON_PATHS, layout.nodes.get(PRODUCT_ID) as Box, { animated: Boolean(chain.productScene) })}
                     <g className="mf-edge-labels" aria-hidden="true">
                         {layout.edges.filter((e) => lit && (e.from === (hover ?? focusId) || e.to === (hover ?? focusId))).map((e) => {
                             const label = chain.edges.find((x) => x.from === e.from && x.to === e.to)?.label;
@@ -325,7 +336,7 @@ export function ProcessMap({ chain, focusId, onFocus, height = 600 }: ProcessMap
                 <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M8 3v10" /></svg>
             </button>
         </div>
-        <p className="mf-level" aria-live="polite">{focusId ? "Step" : showSteps ? "Steps" : "Stages"}</p>
+        <p className="mf-level" aria-live="polite">{focusId ? "Step" : showSteps ? "Steps" : chain.parallel ? "Parts" : "Stages"}</p>
         <Minimap layout={layout} transform={t} viewW={viewW} viewH={height} onCenter={centerOn} focusId={focusId} />
     </div>;
 }

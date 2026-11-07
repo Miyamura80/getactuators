@@ -17,7 +17,7 @@ import { CountryMap } from "../src/components/maps/CountryMap";
 import { Arcs } from "../src/components/maps/Arcs";
 import { layers, monogram } from "../src/components/flows/graph-layout";
 import { NodeBadge } from "../src/components/flows/NodeBadge";
-import { ProcessStepChip } from "../src/components/flows/ProcessStepChip";
+import { ProcessStepChip, stepHref } from "../src/components/flows/ProcessStepChip";
 import { flowPath, layoutSankey } from "../src/components/flows/sankey-layout";
 import { SupplyGraph } from "../src/components/flows/SupplyGraph";
 import { ValueSankey } from "../src/components/flows/ValueSankey";
@@ -347,6 +347,8 @@ test("SupplyGraph layers suppliers before buyers; badges and step chips render",
     const step = c.querySelector(".fk-step");
     expect(step?.getAttribute("href")).toBe("/manufacturing#step=strip-casting");
     expect(step?.textContent).toBe("Strip casting");
+    // A precision step links into its own chain.
+    expect(stepHref("roller-thread-grinding")).toBe("/manufacturing?chain=precision#step=roller-thread-grinding");
     act(() => { fireEvent.focus(c.querySelector(".fk-card-main") as Element); });
     expect(c.querySelector(".fk-graph")?.classList.contains("has-focus")).toBe(true);
 });

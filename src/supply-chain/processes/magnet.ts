@@ -13,8 +13,8 @@ import {
     SOLVENT_EXTRACTION_LOOP,
     STRIP_CASTING_LOOP,
 } from "../scenes/magnet-loops";
-import type { Sourced } from "../sourced";
-import type { KeyNumber, ProcessChain, ProcessEdge, ProcessStep } from "./types";
+import { num, range } from "./key-number";
+import type { ProcessChain, ProcessEdge, ProcessStep } from "./types";
 
 // The sintered NdFeB magnet chain, ore to a magnetised segment ready to bond
 // into a rotor. Step ids are stable: /bom nodes and #step= links use them.
@@ -22,41 +22,6 @@ import type { KeyNumber, ProcessChain, ProcessEdge, ProcessStep } from "./types"
 // spread that source gives, not a world average.
 
 const ROTOR_MAGNET = "rotor-magnet";
-
-function num(
-    label: string,
-    value: number,
-    unit: string,
-    sources: string[],
-    asOf: string,
-    extra: Partial<Sourced<number>> = {},
-): KeyNumber {
-    return {
-        label,
-        value: {
-            value,
-            ...(unit ? { unit } : {}),
-            sources,
-            asOf,
-            confidence: "reported",
-            ...extra,
-        },
-    };
-}
-
-const range = (
-    label: string,
-    lo: number,
-    hi: number,
-    unit: string,
-    sources: string[],
-    asOf: string,
-    note?: string,
-): KeyNumber =>
-    num(label, hi, unit, sources, asOf, {
-        range: [lo, hi],
-        ...(note ? { note } : {}),
-    });
 
 const STEPS: ProcessStep[] = [
     // ---- Mining ---------------------------------------------------------
@@ -651,7 +616,9 @@ export const MAGNET_CHAIN: ProcessChain = {
     id: "magnet",
     label: "Magnet",
     title: "How an NdFeB magnet is made",
+    span: "ore to rotor",
     product: "Magnetised NdFeB segments, ready to bond into a rotor",
+    productLabel: "Rotor segment",
     clusters: [
         { id: "mining", label: "Mining", stage: "mining", shares: "ree-mining" },
         {

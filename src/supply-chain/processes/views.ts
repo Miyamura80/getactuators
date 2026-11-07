@@ -11,6 +11,7 @@ import {
     PROCESS_CHAINS,
     type ProcessChain,
     type ProcessStep,
+    STEP_BRANCHES,
     type ShareRef,
     orderedSteps,
     sharesOf,
@@ -70,9 +71,11 @@ export const processStepOut = z.object({
     country_shares: sharesOut.nullable(),
     upstream: z.array(z.string()).describe("Step ids feeding this one."),
     downstream: z.array(z.string()).describe("Step ids this one feeds."),
-    branch: z.enum(["heavy", "optional", "recycling"]).nullable(),
+    branch: z.enum(STEP_BRANCHES).nullable(),
     bom_node_ids: z.array(z.string()),
-    element_ids: z.array(z.string()).describe("/metals elements (nd, pr, dy, tb)."),
+    element_ids: z
+        .array(z.string())
+        .describe("/metals elements (nd, pr, dy, tb); empty for the precision chain."),
     animation_id: z
         .string()
         .nullable()
@@ -98,7 +101,13 @@ const edgeOut = z.object({
 export const processChainOut = z.object({
     id: z.string(),
     title: z.string(),
+    span: z.string().describe("Where the chain starts and ends."),
     product: z.string(),
+    parallel: z
+        .boolean()
+        .describe(
+            "True when clusters are side-by-side sub-chains that each feed the product, not stages in sequence.",
+        ),
     url: z.string(),
     as_of: z.string(),
     clusters: z.array(clusterOut),
@@ -184,7 +193,9 @@ export function processChainView(chain: ProcessChain): z.input<typeof processCha
     return {
         id: chain.id,
         title: chain.title,
+        span: chain.span,
         product: chain.product,
+        parallel: chain.parallel ?? false,
         url: processChainUrl(chain),
         as_of: MANUFACTURING_AS_OF,
         clusters: chain.clusters.map((c) => ({

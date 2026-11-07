@@ -10,6 +10,7 @@ import {
     type ProcessChain,
     type ProcessStep,
     type ShareRef,
+    getChain,
     neighbours,
     orderedSteps,
     sharesOf,
@@ -27,9 +28,9 @@ import { type Footnotes, footnotes } from "./footnotes";
 // with its key numbers, who runs it, the stage's country concentration and
 // sources; plus HowTo and Dataset JSON-LD.
 
-const TITLE = "How an actuator magnet is made";
+const TITLE = "How actuator magnets and precision parts are made";
 const DESCRIPTION =
-    "A zoomable process map of the sintered NdFeB magnet in an actuator, from rare earth ore to a magnetised rotor segment: every step with cited temperatures, particle sizes and yields, who runs it and which country holds it.";
+    "Zoomable process maps of an actuator's hardest parts: the sintered NdFeB magnet from rare earth ore to a rotor segment, and the precision chain of strain-wave gears, planetary roller screws, precision bearings and encoders from bar stock to a tested part. Every step with cited tolerances, temperatures and yields, who runs it and which country holds it.";
 
 function concentrationText(fn: Footnotes, ref: ShareRef | undefined): string {
     const s = sharesOf(ref);
@@ -37,7 +38,7 @@ function concentrationText(fn: Footnotes, ref: ShareRef | undefined): string {
     const c = concentrationTier(s.value);
     if (!c) return "no public country split";
     const { country, share } = c.top;
-    return `${TIER_LABEL[c.tier].toLowerCase()}: ${countryFlag(country)} ${countryName(country)} ${s.confidence === "estimated" ? "~" : ""}${percent(share)}${fn.ref(s.sources)} (${s.asOf})`;
+    return `${TIER_LABEL[c.tier].toLowerCase()}: ${countryFlag(country)} ${countryName(country)} ${s.confidence === "reported" ? "" : "~"}${percent(share)}${fn.ref(s.sources)} (${s.asOf})`;
 }
 
 const names = (ids: readonly string[]): string =>
@@ -79,23 +80,30 @@ function chainMd(fn: Footnotes, chain: ProcessChain): string {
             const steps = stepsIn(chain, c.id)
                 .map((s) => stepMd(fn, chain, s, ++n))
                 .join("\n\n");
-            return `### ${mdText(c.label)}\n\nStage concentration: ${concentrationText(fn, c.shares)}.\n\n${steps}`;
+            // A modeled or estimated split says how it was made.
+            const s = sharesOf(c.shares);
+            const method =
+                s && s.confidence !== "reported" && s.note ? ` ${mdText(s.note)}` : "";
+            return `### ${mdText(c.label)}\n\n${chain.parallel ? "Sub-chain" : "Stage"} concentration: ${concentrationText(fn, c.shares)}.${method}\n\n${steps}`;
         })
         .join("\n\n");
-    const head = `## ${mdText(chain.title)} (\`${chain.id}\`)\n\n${chain.steps.length} steps. Map: ${absoluteUrl(processChainUrl(chain))}. JSON: ${absoluteUrl(`/api/v1/processes/${chain.id}`)}.`;
+    const shape = chain.parallel
+        ? `${chain.clusters.length} sub-chains side by side, each feeding the product`
+        : `${chain.clusters.length} stages in sequence`;
+    const head = `## ${mdText(chain.title)} (\`${chain.id}\`)\n\n${chain.steps.length} steps in ${shape}, ${mdText(chain.span)}. Map: ${absoluteUrl(processChainUrl(chain))}. JSON: ${absoluteUrl(`/api/v1/processes/${chain.id}`)}.`;
     return `${head}\n\n${clusters}\n\n### Product\n\n${mdText(chain.product)}.`;
 }
 
 export function manufacturingBody(): string {
     const fn = footnotes();
     const chains = PROCESS_CHAINS.map((c) => chainMd(fn, c)).join("\n\n");
-    const chain = PROCESS_CHAINS[0];
-    const count = chain ? chain.steps.length : 0;
+    const magnet = getChain("magnet");
+    const precision = getChain("precision");
     return `# ${TITLE}
 
-The permanent magnet at the heart of an actuator, step by step: ${count} steps in four stages (mining, separation, metal and alloy, magnet), with the heavy rare earth branch, grain boundary diffusion and the scrap loop. As of ${MANUFACTURING_AS_OF}. Interactive map: ${absoluteUrl(MANUFACTURING_PATH)} (deep link a step with \`#step=<id>\`). JSON: ${absoluteUrl("/api/v1/processes/magnet")}.
+Two process maps, step by step, as of ${MANUFACTURING_AS_OF}: the magnet chain (${magnet?.steps.length ?? 0} steps through mining, separation, metal and alloy, and magnet making, with the heavy rare earth branch, grain boundary diffusion and the scrap loop) and the precision chain (${precision?.steps.length ?? 0} steps across the strain-wave gear, planetary roller screw, precision bearing and encoder, the micron-tolerance parts few suppliers make). Interactive map: ${absoluteUrl(MANUFACTURING_PATH)} (pick a chain with \`?chain=<id>\`, deep link a step with \`#step=<id>\`). JSON: ${absoluteUrl("/api/v1/processes")}.
 
-Numbers are each source's published figure for one plant, paper or patent; a range is the spread that source gives, not a world average. Country concentration is the stage's share of world output from [/metals](${absoluteUrl("/metals.md")}).
+Numbers are each source's published figure for one plant, paper, patent or catalogue; a range is the spread that source gives, not a world average. Magnet country concentration is the stage's share of world output from [/metals](${absoluteUrl("/metals.md")}); precision country splits are modeled from company shares by headquarters, with the method given under each sub-chain.
 
 ${chains}
 
@@ -134,7 +142,7 @@ export const MANUFACTURING_PAGE: Page = {
         {
             "@type": "Dataset",
             "@id": `${SITE_URL}${MANUFACTURING_PATH}#processes`,
-            name: "Actuator magnet process steps",
+            name: "Actuator magnet and precision part process steps",
             description: DESCRIPTION,
             url: absoluteUrl(MANUFACTURING_PATH),
             isAccessibleForFree: true,

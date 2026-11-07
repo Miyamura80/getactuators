@@ -15,7 +15,8 @@ export function ConcentrationBadge({ shares, compact = false }: {
     const cited = isSourced(shares) ? (shares as Sourced<Shares>) : null;
     const c = concentrationTier(cited ? cited.value : (shares as Shares));
     if (!c) return null;
-    const est = cited?.confidence === "estimated" ? "~" : "";
+    // Estimates and models both read as approximate.
+    const est = cited && cited.confidence !== "reported" ? "~" : "";
     const label = `${TIER_LABEL[c.tier]}: ${countryName(c.top.country)} ${est}${percent(c.top.share)}`;
     return <span className={`fk-tier is-${c.tier}${compact ? " is-compact" : ""}`} role="img" aria-label={label} title={label}>
         <b>{TIER_LABEL[c.tier]}</b>

@@ -96,17 +96,37 @@ export function edgePath(a: Box, b: Box): { d: string; mid: [number, number] } {
     return { d, mid };
 }
 
+// For side-by-side sub-chains: right from `a`, along a vertical trunk at
+// `trunk`, then right into `b`, with rounded corners. Every final step's
+// line shares the trunk, so the product reads as one merge point.
+export function busPath(
+    a: Box,
+    b: Box,
+    trunk: number,
+): { d: string; mid: [number, number] } {
+    const p0: [number, number] = [a.x + a.w, a.y + a.h / 2];
+    const p1: [number, number] = [b.x, b.y + b.h / 2];
+    const dy = p1[1] - p0[1];
+    const r = Math.min(16, Math.abs(dy) / 2, (trunk - p0[0]) / 2, (p1[0] - trunk) / 2);
+    if (Math.abs(dy) < 1 || r <= 0) return edgePath(a, b);
+    const s = Math.sign(dy);
+    const d = `M${r1(p0[0])},${r1(p0[1])}H${r1(trunk - r)}Q${r1(trunk)},${r1(p0[1])} ${r1(trunk)},${r1(p0[1] + s * r)}V${r1(p1[1] - s * r)}Q${r1(trunk)},${r1(p1[1])} ${r1(trunk + r)},${r1(p1[1])}H${r1(p1[0])}`;
+    return { d, mid: [r1(trunk), r1((p0[1] + p1[1]) / 2)] };
+}
+
 export function chainLayout(chain: ProcessChain): ChainLayout {
     const nodes = new Map<string, Box>();
     for (const s of chain.steps) nodes.set(s.id, nodeBox(s.pos));
     nodes.set(PRODUCT_ID, nodeBox(chain.productPos));
     const clusters: ClusterFrame[] = chain.clusters.map((c) => {
         // The recycling loop floats between clusters; the product sits in
-        // the last cluster's frame.
+        // the last cluster's frame, or outside every frame when the
+        // clusters are side-by-side sub-chains.
         const members = chain.steps
             .filter((s) => s.cluster === c.id && s.branch !== "recycling")
             .map((s) => nodes.get(s.id) as Box);
-        if (c === chain.clusters.at(-1)) members.push(nodes.get(PRODUCT_ID) as Box);
+        if (!chain.parallel && c === chain.clusters.at(-1))
+            members.push(nodes.get(PRODUCT_ID) as Box);
         const u = union(members);
         return {
             id: c.id,
@@ -124,11 +144,26 @@ export function chainLayout(chain: ProcessChain): ChainLayout {
         const g = edgePath(nodes.get(e.from) as Box, nodes.get(e.to) as Box);
         return { from: e.from, to: e.to, kind: e.kind, ...g };
     });
-    // The finished part leaves the last main-line step.
-    const end = terminal.at(-1) ?? last;
-    if (end) {
-        const g = edgePath(nodes.get(end.id) as Box, nodes.get(PRODUCT_ID) as Box);
-        edges.push({ from: end.id, to: PRODUCT_ID, kind: "main", ...g });
+    const product = nodes.get(PRODUCT_ID) as Box;
+    if (chain.parallel) {
+        // Every sub-chain's final step feeds the product along one trunk,
+        // halfway between the cluster frames and the product.
+        const right = Math.max(
+            ...terminal.map((s) => (nodes.get(s.id) as Box).x + NODE_W),
+        );
+        const frameRight = right + CLUSTER_PAD;
+        const trunk = frameRight + (product.x - frameRight) / 2;
+        for (const s of terminal) {
+            const g = busPath(nodes.get(s.id) as Box, product, trunk);
+            edges.push({ from: s.id, to: PRODUCT_ID, kind: "main", ...g });
+        }
+    } else {
+        // The finished part leaves the last main-line step.
+        const end = terminal.at(-1) ?? last;
+        if (end) {
+            const g = edgePath(nodes.get(end.id) as Box, product);
+            edges.push({ from: end.id, to: PRODUCT_ID, kind: "main", ...g });
+        }
     }
     const all = union([...nodes.values(), ...clusters]);
     return {

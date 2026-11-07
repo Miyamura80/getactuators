@@ -2,6 +2,7 @@ import { ALT_COMPANIES } from "./alts";
 import { CHINA_COMPANIES, UNITREE_REVENUE } from "./china";
 import { JAPAN_COMPANIES, grossMargin, yenRevenue } from "./japan";
 import { KOREA_COMPANIES } from "./korea";
+import { PRECISION_COMPANIES } from "./precision";
 import type { Company } from "./types";
 
 // Companies along the actuator supply chain, ore to robot. Seed set: enough
@@ -301,4 +302,5 @@ export const COMPANIES: Company[] = [
     ...KOREA_COMPANIES,
     ...ALT_COMPANIES,
     ...CHINA_COMPANIES,
+    ...PRECISION_COMPANIES,
 ];
