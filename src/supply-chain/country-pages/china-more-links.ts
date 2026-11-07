@@ -74,16 +74,16 @@ export const CHINA_MORE_LINKS: ChinaLink[] = [
         to: "schaeffler",
         what: "Light industrial robots",
         sources: ["yicai-rokae-2021"],
-        confidence: "reported",
-        note: "Schaeffler was named as a ROKAE client in 2021.",
+        confidence: "estimated",
+        note: "Schaeffler was named as a ROKAE client in May 2021; no later source confirms the supply is current.",
     },
     {
         from: "rokae",
         to: "xiaomi",
         what: "Light industrial robots",
         sources: ["yicai-rokae-2021"],
-        confidence: "reported",
-        note: "Xiaomi was named as a ROKAE client in 2021.",
+        confidence: "estimated",
+        note: "Xiaomi was named as a ROKAE client in May 2021; no later source confirms the supply is current.",
     },
     {
         from: "schaeffler",
@@ -104,14 +104,7 @@ export const CHINA_MORE_LINKS: ChinaLink[] = [
         note: "Signed in March 2026; Leju is Schaeffler's first embodied-AI partner in China.",
     },
     // Rare earths
-    {
-        from: "shenghe-resources",
-        to: "neo-performance",
-        what: "Heavy rare earth products from JAMR (Neo distributes them outside China)",
-        sources: ["magneticsmag-neo-shenghe-2025"],
-        confidence: "reported",
-        note: "Exclusive distribution agreement with an initial term of five years.",
-    },
+    // One link for both ties: two with the same ends would share a map arc id.
     {
         from: "shenghe-resources",
         to: "neo-performance",
@@ -119,7 +112,7 @@ export const CHINA_MORE_LINKS: ChinaLink[] = [
         kind: "investment",
         sources: ["magneticsmag-neo-shenghe-2025"],
         confidence: "reported",
-        note: "Bought by a Shenghe affiliate in 2025; Neo kept 9% of JAMR and 10% of ZAMR.",
+        note: "Bought by a Shenghe affiliate in 2025; Neo kept 9% of JAMR and 10% of ZAMR and holds a five-year exclusive right to distribute JAMR's heavy rare earth products outside China.",
     },
     // Equity
     {
@@ -139,14 +132,5 @@ export const CHINA_MORE_LINKS: ChinaLink[] = [
         sources: ["36kr-guohua-2025"],
         confidence: "reported",
         note: "Part of a round worth tens of millions of yuan in 2025.",
-    },
-    {
-        from: "xpeng",
-        to: "engineai",
-        what: "Pre-A++ round led by XPeng-backed Rockets Capital",
-        kind: "investment",
-        sources: ["prn-engineai-2025"],
-        confidence: "estimated",
-        note: "The lead was a fund XPeng backs, not XPeng itself.",
     },
 ];

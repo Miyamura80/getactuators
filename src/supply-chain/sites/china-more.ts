@@ -112,17 +112,6 @@ export const CHINA_MORE_SITES: Site[] = [
         [24.33, 109.43],
         ["chinadaily-ubtech-factories-2025"],
     ),
-    // Schaeffler's own headquarters, so its arcs to Chinese partners start in
-    // Germany rather than at its first listed plant (in Korea).
-    hq("schaeffler-herzogenaurach", {
-        companyId: "schaeffler",
-        name: "Schaeffler headquarters",
-        country: "DE",
-        admin1: "Bavaria",
-        lat: 49.57,
-        lon: 10.88,
-        sources: ["wiki-schaeffler"],
-    }),
 ];
 
 export const CHINA_MORE_PLANTS: Site[] = [

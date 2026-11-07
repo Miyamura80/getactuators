@@ -3,7 +3,9 @@ import type { SourceReuse } from "../reuse";
 // Sources for the second /china batch (#80): humanoid, cobot and joint makers,
 // the carmakers that buy or back them, and foreign-owned plants in China.
 // Spread into CHINA_SOURCES (./china-sources); kept apart so neither file
-// outgrows the line limit. Facts were read on the pages in November 2026.
+// outgrows the line limit. Pages opened while building the batch carry that
+// date in `accessed`; the Wikipedia headquarters entries were read from search
+// results only, so they carry none (see SourceRef in ../sources).
 
 // Structural copy of SourceRef, as in ./china-sources (import cycle).
 type Kind = "filing" | "industry-report" | "press" | "company-site" | "reference";
@@ -15,7 +17,10 @@ interface ChinaSource {
     url: string;
     kind: Kind;
     reuse: SourceReuse;
+    accessed?: string;
 }
+
+const ACCESSED = "2026-11-07";
 
 function src(
     id: string,
@@ -25,11 +30,21 @@ function src(
     kind: Kind = "press",
     reuse: SourceReuse = "facts",
 ): ChinaSource {
-    return { id, publisher, title, url, kind, reuse };
+    return { id, publisher, title, url, kind, reuse, accessed: ACCESSED };
 }
 
 const ref = (id: string, publisher: string, title: string, url: string) =>
     src(id, publisher, title, url, "reference");
+
+// A Wikipedia article whose facts came from search results, never opened.
+const wiki = (id: string, title: string, slug: string): ChinaSource => ({
+    id,
+    publisher: "Wikipedia",
+    title,
+    url: `https://en.wikipedia.org/wiki/${slug}`,
+    kind: "reference",
+    reuse: "facts",
+});
 
 const GASGOO = "https://autonews.gasgoo.com/articles";
 const YICAI = "https://www.yicaiglobal.com";
@@ -155,18 +170,8 @@ export const CHINA_MORE_SOURCES: ChinaSource[] = [
         `${YICAI}/star50news/2025_02_286798911192308908066`,
     ),
     // Carmakers that buy or back robots
-    ref(
-        "wiki-byd",
-        "Wikipedia",
-        "BYD Company",
-        "https://en.wikipedia.org/wiki/BYD_Company",
-    ),
-    ref(
-        "wiki-geely",
-        "Wikipedia",
-        "Geely Holding Group",
-        "https://en.wikipedia.org/wiki/Geely_Holding_Group",
-    ),
+    wiki("wiki-byd", "BYD Company", "BYD_Company"),
+    wiki("wiki-geely", "Geely Holding Group", "Geely_Holding_Group"),
     src(
         "cnevpost-zeekr-ubtech-2024",
         "CnEVPost",
@@ -180,12 +185,7 @@ export const CHINA_MORE_SOURCES: ChinaSource[] = [
         "https://ningbo.chinadaily.com.cn/2025-05/08/c_1091152.htm",
     ),
     // Foreign-owned plants and partnerships
-    ref(
-        "wiki-schaeffler",
-        "Wikipedia",
-        "Schaeffler Group",
-        "https://en.wikipedia.org/wiki/Schaeffler_Group",
-    ),
+    wiki("wiki-schaeffler", "Schaeffler Group", "Schaeffler_Group"),
     src(
         "gasgoo-schaeffler-rokae-2026",
         "Gasgoo",

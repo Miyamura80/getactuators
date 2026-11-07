@@ -194,8 +194,9 @@ describe("country filter", () => {
     test("China grows toward the #80 target with the robot and joint makers it lacked", () => {
         const cn = coverage("CN");
         expect(cn.companies).toBeGreaterThanOrEqual(80);
-        expect(cn.sites).toBeGreaterThanOrEqual(120);
-        expect(cn.links).toBeGreaterThanOrEqual(45);
+        expect(cn.sites).toBeGreaterThanOrEqual(122);
+        expect(cn.links).toBeGreaterThanOrEqual(46);
+        expect(cn.supplyLinks).toBeGreaterThanOrEqual(31);
         const ids = countryCompanies("CN").map((c) => c.id);
         for (const id of [
             "kepler",
