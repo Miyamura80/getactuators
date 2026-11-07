@@ -48,7 +48,7 @@ test("the lab HTML carries a server-rendered world map before hydration", async 
     // what it holds.
     expect(svg).toContain("<title>China</title>");
     expect(svg).toMatch(
-        /<title>[^<]*\d+ magnet and motor sites[^<]*JL MAG Rare-Earth · Ganzhou headquarters and magnet plant[^<]*<\/title>/,
+        /<title>[^<]*\d+ magnet and motor sites?[^<]*JL MAG Rare-Earth · Ganzhou headquarters and magnet plant[^<]*<\/title>/,
     );
     expect(svg).toContain(`<path d="${SEGMENT_PICTO["magnets-motors"].line}"/>`);
     // A city-centre pin is a dashed (hollow) tile.

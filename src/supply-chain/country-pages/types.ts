@@ -29,4 +29,7 @@ export interface CountryContent {
     lede: string;
     stages: CountryStage[];
     clusters: CountryCluster[];
+    // The counts this country must reach to go live, when its data issue sets
+    // a lower bar than the shared COVERAGE_TARGET.
+    gate?: { companies: number; sites: number; links: number; supplyLinks: number };
 }

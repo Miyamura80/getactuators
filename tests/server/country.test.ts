@@ -5,6 +5,7 @@ import {
     countryCompanies,
     countryLinks,
     countrySites,
+    coverage,
 } from "@/supply-chain/country-pages";
 import { get, getMarkdown } from "./agent-helpers";
 import { callTool } from "./mcp-helpers";
@@ -56,8 +57,7 @@ describe("/japan page and twin", () => {
     });
 
     test("countries without a dataset past the gate are not routed", async () => {
-        for (const path of ["/korea", "/us"])
-            expect((await get(path)).status).toBe(404);
+        for (const path of ["/us"]) expect((await get(path)).status).toBe(404);
     });
 
     test("markdown twin: overview, policies, clusters, companies, sites, links, sources", async () => {
@@ -83,6 +83,66 @@ describe("/japan page and twin", () => {
             expect(md).toMatch(/\[\^\d+\]: FANUC, "Production: factories in Japan"/);
             expect(md).not.toContain(String.fromCharCode(0x2014));
         }
+    });
+});
+
+describe("/korea page and twin", () => {
+    test("is routed, in nav, sitemap and llms.txt, with Korean companies in JSON-LD", async () => {
+        const res = await get("/korea");
+        expect(res.status).toBe(200);
+        const html = await res.text();
+        expect(html).toContain("<title>South Korea: actuator supply chain");
+        const ld = ldNodes(html);
+        expect(ld).toContain('"@type":"Country"');
+        expect(ld).toContain('"name":"Rainbow Robotics"');
+        expect(html).toContain('<a href="/korea"');
+        expect(await (await get("/sitemap.xml")).text()).toContain("/korea");
+        const llms = await (await get("/llms.txt")).text();
+        expect(llms).toContain("/korea.md");
+        expect(llms).toContain('get_country("KR")');
+    });
+
+    test("markdown twin lists every company and site, with policies and clusters", async () => {
+        const md = await (await get("/korea.md")).text();
+        for (const h of [
+            "## Share of each stage",
+            "## Policies",
+            "## Clusters",
+            "## Sites",
+            "## Links",
+        ])
+            expect(md).toContain(h);
+        for (const c of countryCompanies("KR")) expect(md).toContain(`\`${c.id}\``);
+        expect(siteRows(md)).toHaveLength(countrySites("KR").length);
+        expect(md).toContain("/policy#measure=kr-k-humanoid-2025");
+        expect(md).toContain("**Changwon machinery cluster**");
+        expect(md).not.toContain(String.fromCharCode(0x2014));
+    });
+
+    test("REST and MCP return Korea with its coverage and links abroad", async () => {
+        const body = CountrySchema.parse(
+            await (await get("/api/v1/countries/korea")).json(),
+        );
+        expect(body.code).toBe("KR");
+        // Korea's own gate (issue #81): 30 companies, 50 sites, 20 links, 10 supply.
+        const { supplyLinks, ...counts } = coverage("KR");
+        expect(body.coverage).toEqual({ ...counts, supply_links: supplyLinks });
+        expect(body.coverage.companies).toBeGreaterThanOrEqual(30);
+        expect(body.coverage.sites).toBeGreaterThanOrEqual(50);
+        expect(body.coverage.links).toBeGreaterThanOrEqual(20);
+        expect(body.coverage.supply_links).toBeGreaterThanOrEqual(10);
+        expect((await get("/api/v1/countries/korea.md")).status).toBe(200);
+        expect(body.sites.map((s) => s.id)).toEqual(
+            countrySites("KR").map((s) => s.id),
+        );
+        expect(
+            body.links.some((l) => l.from === "arafura" && l.to === "hyundai-motor"),
+        ).toBe(true);
+        const out = CountrySchema.parse(
+            (await callTool("get_country", { code: "KR" })).structuredContent,
+        );
+        expect(out.name).toBe("South Korea");
+        expect(out.companies.length).toBeGreaterThanOrEqual(30);
     });
 });
 
@@ -147,7 +207,7 @@ describe("REST /api/v1/countries", () => {
         const res = await get("/api/v1/countries");
         expect(res.status).toBe(200);
         const body = CountryListSchema.parse(await res.json());
-        expect(body.results.map((r) => r.code)).toEqual(["JP", "CN"]);
+        expect(body.results.map((r) => r.code)).toEqual(["JP", "CN", "KR"]);
         const cov = body.results[0]?.coverage;
         expect(cov?.companies).toBeGreaterThanOrEqual(COVERAGE_TARGET.companies);
         expect(cov?.sites).toBeGreaterThanOrEqual(COVERAGE_TARGET.sites);
@@ -182,9 +242,9 @@ describe("REST /api/v1/countries", () => {
     });
 
     test("404s for a country that is not live, and is in the OpenAPI document", async () => {
-        const res = await get("/api/v1/countries/KR");
+        const res = await get("/api/v1/countries/US");
         expect(res.status).toBe(404);
-        expect((await get("/api/v1/countries/KR.md")).status).toBe(404);
+        expect((await get("/api/v1/countries/US.md")).status).toBe(404);
         expect(res.headers.get("content-type")).toContain("application/problem+json");
         const openapi = await (await get("/openapi.json")).json();
         expect(Object.keys(openapi.paths)).toContain("/api/v1/countries/{code}");

@@ -3,6 +3,7 @@ import { CHINA_SITES } from "./china";
 import { CHINA_PLANTS } from "./china-plants";
 import { JAPAN_SITES } from "./japan";
 import { JAPAN_PLANTS } from "./japan-plants";
+import { KOREA_SITES } from "./korea";
 import { type Site, hq } from "./types";
 
 // Physical places: headquarters, plants, mines and refineries. `precision`
@@ -353,6 +354,7 @@ export const SITES: Site[] = [
     }),
     ...JAPAN_SITES,
     ...JAPAN_PLANTS,
+    ...KOREA_SITES,
     ...ALT_SITES,
     ...CHINA_SITES,
     ...CHINA_PLANTS,

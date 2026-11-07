@@ -3,6 +3,7 @@ import { SDK_SOURCES } from "../sdk/sources";
 import { ALT_SOURCES } from "./alts/sources";
 import { CHINA_SOURCES } from "./country-pages/china-sources";
 import { JAPAN_SOURCES } from "./country-pages/japan-sources";
+import { KOREA_SOURCES } from "./country-pages/korea-sources";
 import { POLICY_SOURCES } from "./policy/sources";
 import { PROCESS_SOURCES } from "./processes/sources";
 import type { ReuseAllowlist, SourceReuse } from "./reuse";
@@ -610,6 +611,7 @@ export const SOURCES: SourceRef[] = [
     ...JAPAN_SOURCES,
     ...CHINA_SOURCES,
     ...SDK_SOURCES,
+    ...KOREA_SOURCES,
     ...PEOPLE_SOURCES,
     ...ALT_SOURCES,
 ];

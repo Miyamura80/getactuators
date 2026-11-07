@@ -1,7 +1,7 @@
 # Supply-chain atlas: data and page recipe
 
-The supply-chain pages (`/metals`, `/policy`, `/manufacturing`, `/alts`, `/japan`
-and `/china` are live; `/bom`, `/korea`, `/us` are planned; `/lab/supply-chain`
+The supply-chain pages (`/metals`, `/policy`, `/manufacturing`, `/alts`, `/japan`,
+`/china` and `/korea` are live; `/bom` and `/us` are planned; `/lab/supply-chain`
 is the hidden kit page) share one cited registry and one set of components.
 Pages hold content; numbers live in the registry and are referenced by id.
 
@@ -236,7 +236,7 @@ source references.
 
 ## Adding a country
 
-Country pages (`/japan` and `/china` are live; `/korea` and `/us` are planned)
+Country pages (`/japan`, `/china` and `/korea` are live; `/us` is planned)
 share one template, so a new country is data only:
 
 ```
@@ -289,7 +289,9 @@ share one template, so a new country is data only:
    least 15 are supply (parts or materials). Tag a money link
    `kind: "investment"` and a research or integration tie
    `kind: "partnership"`; untagged links are supply. Until
-   then nothing is routed, so the data can merge in steps.
+   then nothing is routed, so the data can merge in steps. When a country's
+   data issue sets a lower bar, put it in the page's `gate` field
+   (`/korea` uses 30 companies, 50 sites and 20 links, 10 of them supply).
 7. **Check.** `make citation_audit`, `bun test tests/supply-chain` and
    `bun test tests/server/country.test.ts`; update the page count in
    `tests/server/short-titles-golden.ts` and the live-page list in

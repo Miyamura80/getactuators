@@ -1,5 +1,6 @@
 import { CHINA_LINKS } from "./country-pages/china-links";
 import { JAPAN_LINKS } from "./country-pages/japan-links";
+import { KOREA_LINKS } from "./country-pages/korea-links";
 import type { Confidence, SourceId } from "./sourced";
 
 // Who sells what to whom. Used by country arcs and BOM graphs. A link marked
@@ -95,5 +96,6 @@ export const SUPPLY_LINKS: SupplyLink[] = [
         note: "Supplier audits and orders reported by Chinese media; Tesla has not confirmed.",
     },
     ...JAPAN_LINKS,
+    ...KOREA_LINKS,
     ...CHINA_LINKS,
 ];

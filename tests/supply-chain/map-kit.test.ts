@@ -87,9 +87,36 @@ describe("map data", () => {
         expect(companyAnchor("tesla")?.kind).toBe("hq");
         // Leaderdrive has no headquarters site: its first plant anchors it.
         expect(companyAnchor("leaderdrive")?.id).toBe("leaderdrive-suzhou");
-        expect(arcsTouching(arcs, "KR").map((a) => a.id)).toEqual([
-            "hyundai-mobis--boston-dynamics",
-        ]);
+        // The full Korean arc set, so a dropped or miswired link fails here.
+        expect(
+            arcsTouching(arcs, "KR")
+                .map((a) => a.id)
+                .sort(),
+        ).toEqual(
+            [
+                "arafura--hyundai-motor",
+                "asm--neo-performance",
+                "asm--noveon-magnetics",
+                "boston-dynamics--hyundai-motor",
+                "doosan-robotics--onexia",
+                "hyundai-mobis--boston-dynamics",
+                "hyundai-motor--boston-dynamics",
+                "komir--arafura",
+                "komir--asm",
+                "lg-electronics--bear-robotics",
+                "lg-innotek--boston-dynamics",
+                "lynas--ls-eco-energy",
+                "posco-international--hyundai-motor",
+                "posco-international--reelement",
+                "reelement--posco-international",
+                "samsung-electronics--rainbow-robotics",
+                "snt-motiv--hyundai-motor",
+                "spg--rainbow-robotics",
+                "star-group--posco-international",
+                "thk--samick-thk",
+                "woorim-pts--boston-dynamics",
+            ].sort(),
+        );
     });
 
     test("pins carry the short company label and region for on-map callouts", () => {

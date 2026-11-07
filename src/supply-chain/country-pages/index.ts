@@ -8,6 +8,7 @@ import { SITES, type Site } from "../sites";
 import type { Sourced } from "../sourced";
 import { CHINA_PAGE } from "./china";
 import { JAPAN_PAGE } from "./japan";
+import { KOREA_PAGE } from "./korea";
 import type { CountryContent, CountryStage } from "./types";
 
 // The country page template's data: one entry per planned country, the
@@ -31,6 +32,7 @@ export const COUNTRY_OF: Record<CountrySlug, Admin1Country> = {
 // Page content per country; a country without content never goes live.
 const CONTENT: Partial<Record<CountrySlug, CountryContent>> = {
     japan: JAPAN_PAGE,
+    korea: KOREA_PAGE,
     china: CHINA_PAGE,
 };
 
@@ -102,10 +104,13 @@ function pageOf(slug: CountrySlug): CountryPage | null {
     return content ? { ...content, slug, path: countryPath(slug) } : null;
 }
 
+// The bar a country must clear: its own `gate` when its data issue set one.
+export const gateOf = (page: CountryContent): Coverage => page.gate ?? COVERAGE_TARGET;
+
 // Country pages with content that pass the coverage gate, in menu order.
 export const LIVE_COUNTRY_PAGES: CountryPage[] = COUNTRY_SLUGS.flatMap((slug) => {
     const page = pageOf(slug);
-    return page && passesGate(coverage(page.code)) ? [page] : [];
+    return page && passesGate(coverage(page.code), gateOf(page)) ? [page] : [];
 });
 
 export const LIVE_COUNTRY_PATHS: string[] = LIVE_COUNTRY_PAGES.map((p) => p.path);
