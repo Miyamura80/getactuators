@@ -91,9 +91,9 @@ const STEPS: ProcessStep[] = [
         id: "ring-hardening",
         cluster: "bearing",
         label: "Through hardening",
-        caption: "Quench and temper the rings so the raceway is fully hard.",
+        caption: "Soft-turn the rolled rings, then quench and temper them fully hard.",
         icon: "furnace",
-        inputs: ["Turned rings"],
+        inputs: ["Rolled ring blanks"],
         outputs: ["Hardened rings"],
         keyNumbers: [
             range("Raceway", 58, 65, "HRC", ["uspto-us9540705-bearing-ring"], "2017"),
@@ -168,7 +168,7 @@ const STEPS: ProcessStep[] = [
         id: "rolling-element-sorting",
         cluster: "bearing",
         label: "Ball and roller sorting",
-        caption: "Gauge every ball or roller and bin it by size class.",
+        caption: "Gauge balls or rollers, made apart or bought in; bin by size.",
         icon: "gauge",
         inputs: ["Lapped balls or rollers"],
         outputs: ["Sorted element lots"],
@@ -304,8 +304,8 @@ const STEPS: ProcessStep[] = [
             num("Scale pitch", 30, "µm", ["renishaw-resa30"], "2026", {
                 note: "Single-track absolute code on a steel ring.",
             }),
-            num("Jitter", 10, "nm RMS", ["renishaw-resolute-datasheet"], "2026", {
-                note: "Below; sub-divisional error within 40 nm.",
+            num("Max jitter", 10, "nm RMS", ["renishaw-resolute-datasheet"], "2026", {
+                note: "Sub-divisional error is within 40 nm.",
             }),
         ],
         companyIds: ["renishaw", "heidenhain", "tamagawa-seiki", "rls"],
@@ -321,8 +321,8 @@ const STEPS: ProcessStep[] = [
         label: "Interpolation ASIC",
         caption: "A chip splits each sine period of the scale into fine counts.",
         icon: "chip",
-        inputs: ["Read head signals"],
-        outputs: ["Digital position"],
+        inputs: ["Read head and scale"],
+        outputs: ["Assembled encoder"],
         keyNumbers: [
             num("Resolution", 16, "bit", ["ichaus-tw8"], "2026", {
                 note: "One sin/cos interpolator chip, per signal period.",

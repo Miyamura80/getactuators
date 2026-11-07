@@ -64,7 +64,7 @@ export const DRIVE_STEPS: ProcessStep[] = [
         inputs: ["Forged cup blank"],
         outputs: ["Thin-wall cup"],
         keyNumbers: [
-            num("Wall", 1, "mm", ["emag-flexspline"], "2026", {
+            num("Max wall", 1, "mm", ["emag-flexspline"], "2026", {
                 note: "Typical flexspline walls are under 1 mm; uneven thickness causes meshing errors.",
             }),
             num("Wall share", 0.6, "%", ["uspto-us4934212-flexspline"], "1990", {
@@ -137,6 +137,7 @@ export const DRIVE_STEPS: ProcessStep[] = [
                 "2022",
                 {
                     note: "Compressive, after fine particle peening; simulation checked by experiment.",
+                    confidence: "estimated",
                 },
             ),
             num("Roughness Sa", 0.5, "µm", ["liu-flexspline-peening-2022"], "2022"),
@@ -198,7 +199,7 @@ export const DRIVE_STEPS: ProcessStep[] = [
         label: "Matched set assembly",
         caption: "Pair wave generator, flexspline and circular spline as one set.",
         icon: "assemble",
-        inputs: ["Flexspline", "Circular spline", "Wave generator"],
+        inputs: ["Toothed or peened flexspline", "Circular spline", "Wave generator"],
         outputs: ["Strain-wave gear set"],
         keyNumbers: [
             range("Ratio to 1", 50, 160, "", ["hd-csg-gh"], "2026", {
@@ -268,7 +269,11 @@ export const DRIVE_STEPS: ProcessStep[] = [
         caption: "Scan a coil along the shaft; rollers and nut harden through.",
         icon: "coil",
         inputs: ["Screw, roller and nut blanks"],
-        outputs: ["Hardened blanks"],
+        outputs: [
+            "Hardened screw blank",
+            "Hardened roller blanks",
+            "Hardened nut blank",
+        ],
         keyNumbers: [
             num("Surface", 56, "HRC", ["nook-roller-screw"], "2026", {
                 note: "Minimum on rolling surfaces; case depth chosen for the load.",
@@ -291,7 +296,7 @@ export const DRIVE_STEPS: ProcessStep[] = [
         inputs: ["Hardened screw blank"],
         outputs: ["Ground screw"],
         keyNumbers: [
-            num("Pitch error", 2, "µm", ["emag-roller-screw-threads"], "2026", {
+            num("Max pitch error", 2, "µm", ["emag-roller-screw-threads"], "2026", {
                 note: "Below 2 µm between individual thread turns, in practice.",
             }),
         ],

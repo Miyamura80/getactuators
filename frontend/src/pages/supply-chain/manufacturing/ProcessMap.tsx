@@ -4,7 +4,7 @@ import { type ZoomBehavior, zoom, zoomIdentity, zoomTransform } from "d3-zoom";
 import { type KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { TIER_LABEL, concentrationTier } from "../../../../../src/supply-chain/concentration-tier";
 import { countryFlag } from "../../../../../src/country-flag";
-import { percent } from "../../../../../src/supply-chain/format";
+import { sharePercent } from "../../../../../src/supply-chain/format";
 import {
     type ProcessChain,
     type ProcessStep,
@@ -98,8 +98,7 @@ function tierText(step: { shares?: ProcessStep["shares"] }): { text: string; tie
     const s = sharesOf(step.shares);
     const c = s ? concentrationTier(s.value) : null;
     if (!s || !c) return null;
-    const est = s.confidence === "reported" ? "" : "~";
-    return { text: `${TIER_LABEL[c.tier].toUpperCase()} ${countryFlag(c.top.country)} ${est}${percent(c.top.share)}`, tier: c.tier };
+    return { text: `${TIER_LABEL[c.tier].toUpperCase()} ${countryFlag(c.top.country)} ${sharePercent(c.top.share, s.confidence)}`, tier: c.tier };
 }
 
 export interface ProcessMapProps {
@@ -137,12 +136,18 @@ export function ProcessMap({ chain, focusId, onFocus, height = 600 }: ProcessMap
         return () => ro.disconnect();
     }, []);
 
+    // The latest pan limits, read by d3 on every drag, wheel and scaleBy.
+    const clampRef = useRef<(t: ZoomTransform) => ZoomTransform>((t) => t);
     useEffect(() => {
         const svg = svgRef.current;
         if (!svg) return;
         const b = zoom<SVGSVGElement, unknown>()
             .scaleExtent([MIN_K, MAX_K])
             .filter(allowGesture)
+            .constrain((tr) => {
+                const c = clampRef.current({ k: tr.k, x: tr.x, y: tr.y });
+                return zoomIdentity.translate(c.x, c.y).scale(c.k);
+            })
             .on("zoom", (e: { transform: ZoomTransform }) => setT({ k: e.transform.k, x: e.transform.x, y: e.transform.y }));
         const sel = select(svg).call(b);
         behavior.current = b;
@@ -191,6 +196,9 @@ export function ProcessMap({ chain, focusId, onFocus, height = 600 }: ProcessMap
         }),
         [bounds, viewW, height],
     );
+    useEffect(() => {
+        clampRef.current = clampT;
+    }, [clampT]);
     // Zoom to the focused step, centred between the zoom buttons and the card.
     const zoomTo = useCallback(
         (id: string, animate = true) => {
@@ -299,12 +307,12 @@ export function ProcessMap({ chain, focusId, onFocus, height = 600 }: ProcessMap
         pendingFocus.current = null;
     }, [showSteps]);
 
-    const node = (id: string, label: string, icon: string[], box: Box, extra?: { animated?: boolean; branch?: string }) => {
+    const node = (id: string, label: string, icon: string[], box: Box, extra?: { animated?: boolean; branch?: string; focusable?: boolean }) => {
         const dim = lit !== null && !lit.has(id);
         const ls = lines(label);
         return <g key={id} ref={(el) => { if (el) nodeRefs.current.set(id, el); else nodeRefs.current.delete(id); }}
             className={`mf-node${focusId === id ? " is-focus" : ""}${dim ? " is-dim" : ""}${extra?.branch ? ` is-${extra.branch}` : ""}`}
-            transform={`translate(${box.x},${box.y})`} role="button" tabIndex={showSteps ? 0 : -1}
+            transform={`translate(${box.x},${box.y})`} role="button" tabIndex={showSteps || extra?.focusable ? 0 : -1}
             aria-label={`${label}${extra?.animated ? ", 3D animation" : ""}`} aria-pressed={focusId === id}
             data-step={id}
             onClick={() => onFocus(id)} onKeyDown={onKey(id)}
@@ -360,7 +368,7 @@ export function ProcessMap({ chain, focusId, onFocus, height = 600 }: ProcessMap
                     </g>;
                 })}
                 {!showSteps ? clusterEdges.map((e) => <path key={e.key} className="mf-cluster-edge" d={e.d} markerEnd="url(#mf-arrow)" />) : null}
-                {!showSteps && chain.parallel ? node(PRODUCT_ID, chain.productLabel, PRODUCT_ICON_PATHS, layout.nodes.get(PRODUCT_ID) as Box, { animated: Boolean(chain.productScene) }) : null}
+                {!showSteps && chain.parallel ? node(PRODUCT_ID, chain.productLabel, PRODUCT_ICON_PATHS, layout.nodes.get(PRODUCT_ID) as Box, { animated: Boolean(chain.productScene), focusable: true }) : null}
                 {showSteps ? <>
                     <g className="mf-edges">
                         {layout.edges.map((e) => {

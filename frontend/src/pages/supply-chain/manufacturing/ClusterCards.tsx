@@ -20,7 +20,7 @@ export function ClusterCards({ chain, focusId, onFocus }: {
         <header>
             <span className="mf-cluster-n">{chain.clusters.length + 1}</span>
             <ProcessIconSvg icon="product" className="mf-stage-svg" />
-            <h2>Product</h2>
+            <h2>{chain.productLabel}</h2>
         </header>
         <ul><li>{productButton}</li></ul>
     </li> : null;

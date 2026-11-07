@@ -6,8 +6,9 @@
 //
 // None was opened: page fetches from the research session were blocked, so
 // every figure was confirmed from search results and carries no `accessed`
-// date. Open each and add its date when checked (PRECISION_UNOPENED lists
-// them for the audit). Leaderdrive's own share claim is the registry's
+// date. Open each and add its `accessed` date when checked;
+// PRECISION_UNOPENED is every source still without one, so it shrinks as
+// documents are checked. Leaderdrive's own share claim is the registry's
 // existing Gasgoo source.
 
 // Structural copy of SourceRef: importing the type from ../sources would make
@@ -31,6 +32,8 @@ interface PrecisionSource {
     kind: Kind;
     reuse: Reuse;
     paywalled?: boolean;
+    // ISO date the document was opened and checked.
+    accessed?: string;
 }
 
 const src = (
@@ -399,7 +402,7 @@ export const PRECISION_SOURCES: PrecisionSource[] = [
     ),
 ];
 
-// Every source above: none was opened (see the header).
+// Sources not yet opened and checked: those without an `accessed` date.
 export const PRECISION_UNOPENED: ReadonlySet<string> = new Set(
-    PRECISION_SOURCES.map((s) => s.id),
+    PRECISION_SOURCES.filter((s) => !s.accessed).map((s) => s.id),
 );

@@ -41,7 +41,10 @@ test("?chain=precision opens four sub-chains, each feeding the product", () => {
     expect(c.querySelectorAll(".mf-cluster")).toHaveLength(4);
     expect(c.querySelectorAll(".mf-cluster-edge")).toHaveLength(4);
     expect(c.querySelector('.mf-node[data-step="product"]')?.getAttribute("aria-label")).toContain("Precision set");
-    expect(c.textContent).toContain("~78%");
+    // The product is a tab stop on the overview, as the stages are.
+    expect(c.querySelector('.mf-node[data-step="product"]')?.getAttribute("tabindex")).toBe("0");
+    expect(c.textContent).toContain("78% (model)");
+    expect(c.textContent).toContain("~40%");
     expect(c.textContent).toContain("STRAIN-WAVE GEAR");
     expect(c.textContent).toContain("CONCENTRATED");
     expect(view.getByRole("button", { name: /^Encoder: zoom in to its 7 steps$/ })).toBeTruthy();

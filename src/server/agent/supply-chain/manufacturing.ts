@@ -103,7 +103,7 @@ export function manufacturingBody(): string {
 
 Two process maps, step by step, as of ${MANUFACTURING_AS_OF}: the magnet chain (${magnet?.steps.length ?? 0} steps through mining, separation, metal and alloy, and magnet making, with the heavy rare earth branch, grain boundary diffusion and the scrap loop) and the precision chain (${precision?.steps.length ?? 0} steps across the strain-wave gear, planetary roller screw, precision bearing and encoder, the micron-tolerance parts few suppliers make). Interactive map: ${absoluteUrl(MANUFACTURING_PATH)} (pick a chain with \`?chain=<id>\`, deep link a step with \`#step=<id>\`). JSON: ${absoluteUrl("/api/v1/processes")}.
 
-Numbers are each source's published figure for one plant, paper, patent or catalogue; a range is the spread that source gives, not a world average. Magnet country concentration is the stage's share of world output from [/metals](${absoluteUrl("/metals.md")}); precision country splits are modeled from company shares by headquarters, with the method given under each sub-chain.
+Numbers are each source's published figure for one plant, paper, patent or catalogue; a range is the spread that source gives, not a world average. Magnet country concentration is the stage's share of world output from [/metals](${absoluteUrl("/metals.md")}); precision country splits are modeled from company shares by headquarters, except the encoder split, an estimate from one production capacity chart; the method is given under each sub-chain.
 
 ${chains}
 

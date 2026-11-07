@@ -272,7 +272,6 @@ export interface HobProps {
     length: number;
     gashes: number;
     lead: number;
-    bore?: number;
 }
 
 // An internal broach about Z: `teeth` rings along the bar, each a little

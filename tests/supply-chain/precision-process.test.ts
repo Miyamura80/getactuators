@@ -135,6 +135,12 @@ describe("precision process chain", () => {
                 ...s.keyNumbers.flatMap((k) => k.value.sources),
             ];
             expect(cited.filter((id) => !getSource(id))).toEqual([]);
+            // Every number names at least one source of its own.
+            expect(
+                s.keyNumbers
+                    .filter((k) => k.value.sources.length === 0)
+                    .map((k) => k.label),
+            ).toEqual([]);
             expect(s.keyNumbers.length).toBeLessThanOrEqual(3);
             expect(s.keyNumbers.every((k) => wordCount(k.label) <= 3)).toBe(true);
             // Labels key the card's list, so they are unique per step.
@@ -156,12 +162,16 @@ describe("precision process chain", () => {
         expect(auditRegistry("2026-11-07").errors).toEqual([]);
     });
 
-    test("documents were never opened, so none carries an accessed date", () => {
-        expect(PRECISION_UNOPENED.size).toBe(PRECISION_SOURCES.length);
-        for (const id of PRECISION_UNOPENED) {
-            expect(getSource(id)).toBeDefined();
-            expect(getSource(id)?.accessed).toBeUndefined();
+    test("unopened documents are exactly those without an accessed date", () => {
+        for (const s of PRECISION_SOURCES) {
+            const accessed = getSource(s.id)?.accessed;
+            expect({ id: s.id, unopened: PRECISION_UNOPENED.has(s.id) }).toEqual({
+                id: s.id,
+                unopened: accessed === undefined,
+            });
         }
+        // Opening a document and dating it takes it off the list.
+        expect(PRECISION_UNOPENED.size).toBeLessThanOrEqual(PRECISION_SOURCES.length);
     });
 
     test("at least four animated vignettes per sub-chain, each valid", () => {

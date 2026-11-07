@@ -1,19 +1,24 @@
 import { type Site, hq } from "./types";
 
 // Headquarters of the precision chain makers added for
-// /manufacturing?chain=precision, pinned to their home city. GSA's town is
-// not confirmed, so it is pinned to Switzerland as a region.
+// /manufacturing?chain=precision, pinned to their home city. Rollvis's and
+// GSA's towns are not confirmed by a cited source, so both are pinned to
+// Switzerland as a region.
 
 export const PRECISION_SITES: Site[] = [
-    hq("rollvis-geneva", {
+    {
+        id: "rollvis-switzerland",
         companyId: "rollvis",
+        kind: "hq",
         name: "Rollvis headquarters",
         country: "CH",
-        admin1: "Geneva",
-        lat: 46.2,
-        lon: 6.14,
+        lat: 46.8,
+        lon: 8.2,
+        precision: "region",
+        stages: [],
+        status: "operating",
         sources: ["med-technews-rollvis"],
-    }),
+    },
     {
         id: "gsa-switzerland",
         companyId: "gsa",

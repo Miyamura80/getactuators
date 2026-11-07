@@ -77,7 +77,8 @@ export const PRECISION_COMPANIES: Company[] = [
         hqCountry: "SI",
         stages: ["electronics"],
         segment: MOTOR,
-        ownership: { kind: "subsidiary", parent: "Renishaw" },
+        // Ownership left out: Renishaw is reported to hold a stake, but no
+        // cited source states RLS's ownership.
         products: ["Magnetic rotary and linear encoders", "Magnetic rings"],
         url: "https://www.rls.si/",
         sources: ["rls-aksim-2"],

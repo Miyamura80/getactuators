@@ -63,7 +63,10 @@ export function hobPart(p: HobProps): Piece[] {
                 .multiply(new Matrix4().makeTranslation(p.radius, 0, z)),
         );
     }
-    const helix = helixLine(p.radius * 1.02, p.lead, -p.length / 2, p.length / 2);
+    // The teeth start a quarter lead in at angle 0, so the guide helix
+    // (which starts at the body's end) is turned back a quarter turn to
+    // run through them.
+    const helix = helixLine(p.radius * 1.02, p.lead, -p.length / 2, p.length / 2, -Math.PI / 2);
     return [
         { geometry: shank, edges: 30 },
         { geometry: section, edges: 30 },
@@ -96,7 +99,11 @@ export function finishingStonePart(p: FinishingStoneProps): Piece[] {
     // of `radius`, centred below the stone, extruded through the depth.
     const w = p.width / 2;
     const h = p.height / 2;
-    const r = Math.max(p.radius, w * 1.01);
+    // The hollow rises by its sagitta; keep that under 80% of the height,
+    // so a wide, shallow stone never has its arc cross the top face.
+    const maxSag = p.height * 0.8;
+    let r = Math.max(p.radius, w * 1.01);
+    if (r - Math.sqrt(r * r - w * w) > maxSag) r = (w * w + maxSag * maxSag) / (2 * maxSag);
     const yc = -h - Math.sqrt(r * r - w * w);
     const a = Math.atan2(-h - yc, w);
     const s = new Shape();

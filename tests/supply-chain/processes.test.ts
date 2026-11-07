@@ -227,9 +227,15 @@ describe("process map layout", () => {
         expect(v.startsWith("M50,50")).toBe(true);
     });
 
-    test("edge labels sit clear of every step card and of each other", () => {
+    test("edge labels sit clear of every step card, cluster head and each other", () => {
         for (const chain of PROCESS_CHAINS) {
             const l = chainLayout(chain);
+            const heads = l.clusters.map((c) => ({
+                x: c.x,
+                y: c.y,
+                w: c.w,
+                h: CLUSTER_HEAD,
+            }));
             const labelled = l.edges.filter((e) => e.label);
             expect(labelled.length).toBe(chain.edges.filter((e) => e.label).length);
             for (const e of labelled) {
@@ -241,6 +247,7 @@ describe("process map layout", () => {
                     edge: `${e.from}->${e.to}`,
                     hits: [],
                 });
+                expect(heads.filter((h) => overlaps(box, h))).toEqual([]);
                 // Labels show for one step's edges at a time.
                 const clash = labelled.filter(
                     (f) =>

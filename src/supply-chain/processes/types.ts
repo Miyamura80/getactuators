@@ -57,7 +57,8 @@ export const PROCESS_ICONS = [
 ] as const;
 export type ProcessIcon = (typeof PROCESS_ICONS)[number];
 
-// A headline number on a step: two or three per step, each cited.
+// A headline number on a step: up to three per step, each cited. A step
+// shows fewer, or none, when no confirmed source gives a figure for it.
 export interface KeyNumber {
     // One to three words: "Grade", "Particle size".
     label: string;

@@ -383,7 +383,7 @@ export const OPERATIONS: Operation[] = [
         path: "/api/v1/processes/:chain",
         summary: "Get a manufacturing process chain",
         description:
-            "Every step of one chain in order, grouped by stage or sub-chain: inputs and outputs, cited key numbers (temperature, particle size, tolerance, surface finish, yield), the companies that run it, the stage's country shares and concentration tier, upstream and downstream steps, /bom node and /metals element links, and sources. Pass `step` for one step and its edges.",
+            "Every step of one chain in order, grouped by stage or sub-chain: inputs and outputs, cited key numbers (temperature, particle size, tolerance, surface finish, yield, energy), the companies that run it, the stage's country shares and concentration tier, upstream and downstream steps, /bom node and /metals element links, and sources. Pass `step` for one step and its edges.",
         pathParam: {
             name: "chain",
             description: "Chain id: magnet or precision.",
