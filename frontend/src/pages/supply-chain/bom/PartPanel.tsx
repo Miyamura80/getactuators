@@ -78,7 +78,7 @@ function Stack({ st }: { st: CostStack }) {
             {bands.map((b) => <i key={b.key} className={`is-${b.key}`} style={{ width: `${(st[b.key] / st.total) * 100}%` }} />)}
         </div>
         <ul className="bm-stack-key">{bands.map((b) => <li key={b.key}><i className={`is-${b.key}`} />{b.label}<b>{money(st[b.key])}</b></li>)}</ul>
-        {st.short ? <p className="bm-note">Its inputs as modeled cost more than it does, so the bands are clipped.</p> : null}
+        {st.short ? <p className="bm-note">The bands are clipped and do not add up: its inputs as modeled cost more than it does, or a cited input costs less than its raw material.</p> : null}
     </section>;
 }
 
@@ -86,6 +86,8 @@ function NodeBody({ m, node, onSelect, onCompany }: { m: CaseModel; node: BomNod
     const x = m.metrics.get(node.id);
     const count = x?.count ?? 1;
     const grams = node.material ? node.material.massG.value * count : undefined;
+    // Mass and raw material are totals over every unit in one actuator.
+    const all = count > 1 ? " in one actuator" : "";
     const price = node.material ? materialPrice(node.material.seriesId, m.c.month) : null;
     const shares = stageSharesFor(node);
     const kids = node.children ?? [];
@@ -93,10 +95,10 @@ function NodeBody({ m, node, onSelect, onCompany }: { m: CaseModel; node: BomNod
         <dl className="bm-figs">
             {node.unitCost ? <Row label="Unit cost"><SourcedValue value={node.unitCost} format={usdText} /></Row> : node.kind !== "material" ? <Row label="Unit cost"><span className="bm-gap">not public</span></Row> : null}
             {count > 1 ? <Row label="In one actuator">{count}</Row> : null}
-            {!node.material && (x?.mass ?? 0) > 0 ? <Row label="Mass">{gramsText((x?.mass ?? 0) * count)} <span className="sc-tag">model</span></Row> : null}
-            {node.material ? <Row label="Mass"><SourcedValue value={node.material.massG} format={() => gramsText(grams ?? 0)} /></Row> : null}
+            {!node.material && (x?.mass ?? 0) > 0 ? <Row label={`Mass${all}`}>{gramsText((x?.mass ?? 0) * count)} <span className="sc-tag">model</span></Row> : null}
+            {node.material ? <Row label={`Mass${all}`}><SourcedValue value={node.material.massG} format={() => gramsText(grams ?? 0)} /></Row> : null}
             {price ? <Row label="Price per kg"><SourcedValue value={price.price} /></Row> : null}
-            <Row label="Raw material">{money((x?.raw ?? 0) * count)}</Row>
+            <Row label={`Raw material${all}`}>{money((x?.raw ?? 0) * count)}</Row>
             {x?.idiot ? <Row label="Idiot index"><NodeBadge kind="idiot-index" value={x.idiot} cite={false} /></Row> : null}
             {x?.step ? <Row label="Step markup"><span className="sc-num">{idiotText(x.step)}</span></Row> : null}
         </dl>

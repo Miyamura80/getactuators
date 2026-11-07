@@ -59,7 +59,9 @@ export function ValueSankey({ nodes, links, label, unit = "USD", format, selecte
     // The latest hover and callback, so unmounting mid-hover (a keyed
     // remount on a mode switch) clears the linked view's highlight.
     const hoverRef = useRef<{ id: string | null; cb?: (id: string | null) => void }>({ id: null });
-    hoverRef.current.cb = onHoverNode;
+    useEffect(() => {
+        hoverRef.current.cb = onHoverNode;
+    });
     const setHover = (id: string | null) => {
         setHoverState(id);
         hoverRef.current.id = id;
