@@ -1,9 +1,21 @@
+import { ACTUATORS } from "@/catalog";
+import { galleryCards } from "@/catalog/gallery";
+import { publicFooter } from "../../../public-navigation";
 import { DIST_DIR } from "../../static";
 import { graph } from "../jsonld";
 import { type Page, markdownPath } from "../pages";
-import { pageBody } from "./body";
+import {
+    foldLimits,
+    foldQuestions,
+    foldWorkedExamples,
+    markdownToHtml,
+    pageBody,
+    withHeadingIds,
+    withSectionIcons,
+} from "./body";
 import { type HeadMeta, documentTitle, esc, headTags } from "./head";
 import { PAGE_CSS } from "./style";
+import { withToolCards } from "./tool-cards";
 
 // HTML for every page: the React shell enriched at serve time (SPA pages) or a
 // complete server-rendered document (trust pages, 404).
@@ -34,7 +46,7 @@ async function loadShell(): Promise<string> {
     return shellCache;
 }
 
-function headMeta(page: Page, noindex = false): HeadMeta {
+function headMeta(page: Page, noindex = page.noindex ?? false): HeadMeta {
     return {
         path: page.path,
         title: page.title,
@@ -44,15 +56,63 @@ function headMeta(page: Page, noindex = false): HeadMeta {
         image: page.image,
         jsonLd: graph(page.jsonLd()),
         noindex,
+        canonicalWhenNoindex: noindex && !page.noindex,
     };
 }
 
-// The built SPA shell with the page's metadata, JSON-LD and a prerendered copy
-// of its content inside #root. main.tsx mounts with createRoot, which replaces
-// the prerendered children on first render.
-export async function renderSpaPage(page: Page): Promise<string> {
-    const meta = headMeta(page);
-    const prerender = `<div class="ga-page">${pageBody(page.body())}</div>`;
+// A page's server-rendered picture (e.g. a map), placed after its H1.
+function withPicture(page: Page, html: string): string {
+    const picture = page.prerender?.() ?? "";
+    return picture ? html.replace("</h1>", `</h1>${picture}`) : html;
+}
+
+// React owns #root: only the built gallery is hydrated; other fallbacks mount.
+// Catalog facts and homepage FAQ live in visible siblings, rendered from the
+// same markdown as the agent twins (FAQ answers also supply JSON-LD). React's
+// visuals stay intact without discarding that substantive content.
+export async function renderSpaPage(
+    page: Page,
+    visual?: string,
+    search = "",
+    noindex = page.noindex ?? false,
+): Promise<string> {
+    const meta = headMeta(page, noindex);
+    const body = page.body();
+    const marker =
+        page.persistentFrom ??
+        (page.ogType === "product" ? "\n\n## Specifications" : null);
+    const split = marker === null ? -1 : body.indexOf(marker);
+    const fallback = split < 0 ? body : body.slice(0, split);
+    const content = split < 0 ? "" : body.slice(split);
+    const fallbackBody = pageBody(fallback, false, undefined, page.path, !content);
+    const fallbackHtml = `<div class="ga-page">${withPicture(page, fallbackBody)}</div>`;
+    // Built with the frontend's own React tree; no React dependency at runtime.
+    // Bare/backend-only checkouts keep the existing catalog fallback.
+    const galleryFile = Bun.file(`${DIST_DIR}/actuators.html`);
+    const galleryHtml =
+        page.path === "/actuators" && (await galleryFile.exists())
+            ? await galleryFile.text()
+            : null;
+    const prerender = galleryHtml ?? visual ?? fallbackHtml;
+    const rendered = withToolCards(
+        foldLimits(
+            withSectionIcons(
+                foldQuestions(
+                    foldWorkedExamples(
+                        page.headingIds
+                            ? withHeadingIds(markdownToHtml(content))
+                            : markdownToHtml(content),
+                    ),
+                ),
+            ),
+        ),
+    );
+    const persistentHtml = page.persistentHtml
+        ? page.persistentHtml(rendered)
+        : rendered;
+    const persistent = content
+        ? `<section class="ga-page" id="catalog-content" ${page.ogType === "product" ? 'tabindex="-1" aria-label="Specifications and catalog details"' : `tabindex="-1" aria-label="${esc(page.persistentLabel ?? "Catalog details")}"`}><div class="ga-main">${persistentHtml}</div></section>${publicFooter()}`
+        : "";
     const rewriter = new HTMLRewriter()
         .on("html", {
             element: (el) => {
@@ -71,6 +131,25 @@ export async function renderSpaPage(page: Page): Promise<string> {
         })
         .on("head", {
             element: (el) => {
+                // One tiny, already optimized photo: discover the leading gallery
+                // image while the application bundle is still downloading. Do not
+                // preload later cards (especially on a narrow mobile viewport).
+                // The application grouping reorders cards after hydration and
+                // the list view shows no photos, so skip the hint there rather
+                // than fetch the wrong image early.
+                const params = new URLSearchParams(search);
+                const firstPhoto =
+                    page.path === "/actuators" &&
+                    params.get("by") !== "application" &&
+                    params.get("view") !== "list"
+                        ? galleryCards(ACTUATORS)[0]?.a.image_url
+                        : null;
+                if (firstPhoto) {
+                    el.append(
+                        `<link rel="preload" as="image" href="${esc(firstPhoto)}" fetchpriority="high">\n`,
+                        { html: true },
+                    );
+                }
                 el.append(`${headTags(meta)}\n<style>${PAGE_CSS}</style>\n`, {
                     html: true,
                 });
@@ -79,6 +158,12 @@ export async function renderSpaPage(page: Page): Promise<string> {
         .on("div#root", {
             element: (el) => {
                 el.setInnerContent(prerender, { html: true });
+                if (galleryHtml) {
+                    el.setAttribute("data-gallery-prerender", "true");
+                    // The real gallery is the no-JavaScript fallback too. Keep
+                    // the loaded page unchanged; canonical Markdown stays intact.
+                }
+                if (persistent) el.after(persistent, { html: true });
             },
         });
     return rewriter.transform(await loadShell());
@@ -87,10 +172,17 @@ export async function renderSpaPage(page: Page): Promise<string> {
 export interface StandaloneDoc {
     meta: HeadMeta;
     markdown: string;
+    editorial?: boolean;
+    visual?: string;
 }
 
 // A complete server-rendered document in the site's look.
-export function renderStandalone({ meta, markdown }: StandaloneDoc): string {
+export function renderStandalone({
+    meta,
+    markdown,
+    editorial = false,
+    visual,
+}: StandaloneDoc): string {
     return `<!doctype html>
 <html lang="en">
   <head>
@@ -104,13 +196,18 @@ export function renderStandalone({ meta, markdown }: StandaloneDoc): string {
     ${headTags(meta)}
     <style>${PAGE_CSS}</style>
   </head>
-  <body class="ga-page">
-${pageBody(markdown)}
+  <body class="ga-page${editorial ? " ga-editorial" : ""}">
+${pageBody(markdown, editorial, visual, meta.path)}
   </body>
 </html>
 `;
 }
 
 export function renderStaticPage(page: Page): string {
-    return renderStandalone({ meta: headMeta(page), markdown: page.body() });
+    return renderStandalone({
+        meta: headMeta(page),
+        markdown: page.body(),
+        editorial: page.layout === "editorial",
+        visual: page.visual?.(),
+    });
 }

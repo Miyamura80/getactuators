@@ -8,6 +8,7 @@ export interface FilterState {
     search: string;
     categories: Set<CategorySlug>;
     useCases: Set<string>;
+    countries: Set<string>;
     sortKey: string;
     sortDir: SortDir;
 }
@@ -16,6 +17,7 @@ export const DEFAULT_FILTERS: FilterState = {
     search: "",
     categories: new Set(),
     useCases: new Set(),
+    countries: new Set(),
     sortKey: "torque_density_nm_per_kg",
     sortDir: "desc",
 };
@@ -37,7 +39,8 @@ export function applyFilters(list: Actuator[], f: FilterState): Actuator[] {
             matchesSearch(a, f.search) &&
             (f.categories.size === 0 || f.categories.has(a.category)) &&
             (f.useCases.size === 0 ||
-                (a.use_cases ?? []).some((u) => f.useCases.has(u))),
+                (a.use_cases ?? []).some((u) => f.useCases.has(u))) &&
+            (f.countries.size === 0 || (a.country != null && f.countries.has(a.country))),
     );
 
     if (!col) return filtered;
@@ -61,6 +64,7 @@ export function filtersToQuery(f: FilterState): string {
     if (f.search) p.set("q", f.search);
     if (f.categories.size) p.set("cat", [...f.categories].join(","));
     if (f.useCases.size) p.set("use", [...f.useCases].join(","));
+    if (f.countries.size) p.set("country", [...f.countries].join(","));
     if (f.sortKey !== DEFAULT_FILTERS.sortKey) p.set("sort", f.sortKey);
     if (f.sortDir !== DEFAULT_FILTERS.sortDir) p.set("dir", f.sortDir);
     const s = p.toString();
@@ -76,16 +80,23 @@ export function filtersFromQuery(search: string): FilterState {
         .split(",")
         .filter((s): s is CategorySlug => CATEGORY_SLUGS.has(s));
     const uses = (p.get("use") ?? "").split(",").filter(Boolean);
+    const countries = (p.get("country") ?? "").split(",").filter(Boolean);
     const sort = p.get("sort");
     const dir = p.get("dir");
     return {
         search: p.get("q") ?? "",
         categories: new Set(cats),
         useCases: new Set(uses),
+        countries: new Set(countries),
         // Object.hasOwn, not COLUMN_MAP[sort]: a crafted ?sort=toString would
         // otherwise match an inherited prototype member and crash applyFilters.
         sortKey:
             sort && Object.hasOwn(COLUMN_MAP, sort) ? sort : DEFAULT_FILTERS.sortKey,
         sortDir: dir === "asc" || dir === "desc" ? dir : DEFAULT_FILTERS.sortDir,
     };
+}
+
+// Number of active narrowing choices (search excluded), for the filter badge.
+export function activeFilterCount(f: FilterState): number {
+    return f.categories.size + f.useCases.size + f.countries.size;
 }

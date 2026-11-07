@@ -1,9 +1,19 @@
 import { ACTUATORS, type Actuator } from "@/catalog";
-import { REPO_URL, SITE_DESCRIPTION, SITE_NAME, SITE_URL, absoluteUrl } from "../site";
+import { CONTRIBUTORS } from "@/people";
+import {
+    DATA_LICENSE,
+    REPO_URL,
+    SITE_DESCRIPTION,
+    SITE_NAME,
+    SITE_URL,
+    absoluteUrl,
+} from "../site";
 import { actuatorPath, actuatorSummary, categoryLabel } from "./catalog-md";
+import { personId } from "./contributors";
 import { CATALOG_UPDATED_AT } from "./freshness";
 import { PATHS } from "./links";
 import type { FaqItem } from "./pages-md";
+import { productSummary } from "./product-content";
 
 // schema.org JSON-LD builders. Pages combine these into one @graph.
 
@@ -12,7 +22,6 @@ type Node = Record<string, unknown>;
 const ORG_ID = `${SITE_URL}/#organization`;
 const SITE_ID = `${SITE_URL}/#website`;
 const DATASET_ID = `${SITE_URL}/#dataset`;
-const MIT = "https://opensource.org/licenses/MIT";
 const FREE_OFFER = { "@type": "Offer", price: "0", priceCurrency: "USD" };
 
 export function organization(): Node {
@@ -44,11 +53,12 @@ export function website(): Node {
         description: SITE_DESCRIPTION,
         inLanguage: "en",
         publisher: { "@id": ORG_ID },
+        contributor: CONTRIBUTORS.map((p) => ({ "@id": personId(p) })),
         potentialAction: {
             "@type": "SearchAction",
             target: {
                 "@type": "EntryPoint",
-                urlTemplate: `${SITE_URL}/all?q={search_term_string}`,
+                urlTemplate: `${SITE_URL}/actuators?view=list&q={search_term_string}`,
             },
             "query-input": "required name=search_term_string",
         },
@@ -61,8 +71,9 @@ export function dataset(): Node {
         "@id": DATASET_ID,
         name: "actuatorlist robot actuator catalog",
         description: `Specifications of ${ACTUATORS.length} robot actuators (QDD motors, integrated joints, smart servos, harmonic and cycloidal reducers) and the robots that use them: torque, speed, weight, torque density, backlash, price and sources.`,
-        url: `${SITE_URL}/all`,
-        license: MIT,
+        url: `${SITE_URL}/actuators`,
+        license: DATA_LICENSE.url,
+        creditText: DATA_LICENSE.credit,
         isAccessibleForFree: true,
         creator: { "@id": ORG_ID },
         dateModified: CATALOG_UPDATED_AT,
@@ -121,9 +132,27 @@ export function software(): Node[] {
     ];
 }
 
+// A free in-browser engineering tool (calculator) on its own page.
+export function webApplication(path: string, name: string, description: string): Node {
+    return {
+        "@type": "WebApplication",
+        "@id": `${absoluteUrl(path)}#app`,
+        name,
+        url: absoluteUrl(path),
+        description,
+        applicationCategory: "EngineeringApplication",
+        operatingSystem: "Web",
+        isAccessibleForFree: true,
+        offers: FREE_OFFER,
+        publisher: { "@id": ORG_ID },
+    };
+}
+
 export function faqPage(items: FaqItem[]): Node {
     return {
         "@type": "FAQPage",
+        "@id": `${absoluteUrl("/faq")}#faq`,
+        url: absoluteUrl("/faq"),
         mainEntity: items.map((f) => ({
             "@type": "Question",
             name: f.q,
@@ -200,7 +229,9 @@ export function product(a: Actuator): Node {
             ...property("Weight", a.weight_g, "g"),
             ...property("Torque density", a.torque_density_nm_per_kg, "Nm/kg"),
             ...property("Max speed", a.max_speed_rpm, "rpm"),
-            ...property("Backlash", a.backlash_arcmin, "arcmin"),
+            ...(productSummary(a.id)
+                ? []
+                : property("Backlash", a.backlash_arcmin, "arcmin")),
         ],
     };
     if (a.image_url) node.image = toAbsolute(a.image_url);

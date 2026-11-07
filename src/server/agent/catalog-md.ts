@@ -1,7 +1,17 @@
 import { ACTUATORS, type Actuator, CATEGORIES, type Robot } from "@/catalog";
+import { evidenceFor, fieldCaveat } from "@/catalog/evidence";
 import { resolveJoints, robotsUsingActuator } from "@/catalog/query";
 import { absoluteUrl } from "../site";
+import { measuredSection } from "./benchmarks/markdown";
+import { catalogComparisonLinks } from "./comparison-links";
+import { engineeringEvidenceSection } from "./engineering-evidence";
 import { bullets, humanize, mdLink, mdTable, mdText, num, usd } from "./md";
+import {
+    engineeringNotes,
+    engineeringSources,
+    productSummary,
+} from "./product-content";
+import { sizeAJointSection } from "./size-a-joint";
 
 // Markdown fragments describing catalog records. Shared by the page twins,
 // llms-full.txt and the prerendered HTML.
@@ -20,6 +30,8 @@ export function actuatorLabel(a: Actuator): string {
 }
 
 export function actuatorSummary(a: Actuator): string {
+    const researched = productSummary(a.id);
+    if (researched) return researched;
     const parts = [
         `${categoryLabel(a.category)} actuator from ${a.brand}${a.country ? ` (${a.country})` : ""}.`,
         `Peak torque ${num(a.peak_torque_nm, "Nm")}, rated ${num(a.rated_torque_nm, "Nm")},`,
@@ -55,9 +67,37 @@ function specRows(a: Actuator): string[][] {
             a.integrated_driver === null ? "n/a" : a.integrated_driver ? "yes" : "no",
         ],
         ["Availability", a.availability ? humanize(a.availability) : "n/a"],
-        ["Data status", a.verified ? "verified against sources" : "unverified"],
+        ["Data status", evidenceFor(a).label],
     ];
-    return rows.map(([k, v]) => [k, mdText(v)]);
+    return rows.map(([k, v]) => {
+        if (
+            productSummary(a.id) &&
+            ["Backlash", "Backdrivable", "Encoder"].includes(k)
+        ) {
+            return [
+                k,
+                "Legacy catalog placeholder; not a measured family rating. See engineering notes.",
+            ];
+        }
+        const fields: Record<string, string> = {
+            "Peak torque": "peak_torque_nm",
+            "Rated torque": "rated_torque_nm",
+            "Max speed": "max_speed_rpm",
+            "Gear ratio": "gear_ratio",
+            Price: "price_usd",
+            "Price per Nm": "price_per_nm",
+            Voltage: "voltage_v",
+            "Peak current": "peak_current_a",
+            Weight: "weight_g",
+            Encoder: "encoder",
+            "Torque density": "torque_density_nm_per_kg",
+            Backdrivable: "backdrivable",
+            Backlash: "backlash_arcmin",
+        };
+        const field = fields[k];
+        const caveat = field ? fieldCaveat(a, field) : undefined;
+        return [k, mdText(`${v}${caveat ? `: ${caveat}` : ""}`)];
+    });
 }
 
 function similarTo(a: Actuator, limit = 5): Actuator[] {
@@ -75,20 +115,37 @@ export function actuatorBody(a: Actuator): string {
     const sections = [
         `# ${mdText(a.name)} by ${mdText(a.brand)}`,
         `> ${mdText(actuatorSummary(a))}`,
-        `## Specifications\n\n${mdTable(["Spec", "Value"], specRows(a))}`,
+        `## Specifications\n\n${mdTable(["Spec", "Value"], specRows(a))}${a.id === "cubemars-ak80-9" ? "\n\n**Legacy catalog / revision conflict:** retained catalog fields are not revalidated by this editorial review. Catalog mass is 485 g and motor-side encoder is 14-bit; the [reviewed V3.0 KV100 model page](https://www.cubemars.com/product/ak80-9-v3-0-robotic-actuator.html) lists 490 g and 16-bit inner sensing, while the [AK family manual V3.2.0](https://www.cubemars.com/data/cms/202602/ak-series-prodcut-manual-v3-2-0-for-ak-3-0-robotic-actuator.pdf) lists 21-bit. Confirm the installed revision before using these values or derived torque density; the documentation discrepancy is unresolved." : ""}`,
         `## Use cases\n\n${bullets(a.use_cases.map(humanize))}`,
     ];
+    const sizing = sizeAJointSection(a);
+    if (sizing) sections.splice(3, 0, sizing);
     if (robots.length > 0) {
         sections.push(
-            `## Robots that use it\n\n${bullets(robots.map((r) => `${mdText(r.name)} by ${mdText(r.brand)}: ${mdText(r.summary)}`))}`,
+            `## Robots that use it\n\n${bullets(robots.map((r) => `${mdLink(r.name, absoluteUrl(`/robots#${encodeURIComponent(r.id)}`))} by ${mdText(r.brand)}: ${mdText(r.summary)}`))}`,
         );
     }
-    if (a.notes) sections.push(`## Notes\n\n${mdText(a.notes)}`);
-    const sources = [a.product_url, a.datasheet_url, ...a.sources].filter(
-        (u, i, all): u is string => Boolean(u) && all.indexOf(u) === i,
-    );
+    if (a.notes && !productSummary(a.id))
+        sections.push(`## Notes\n\n${mdText(a.notes)}`);
+    const engineering = engineeringNotes(a.id);
+    if (engineering) sections.push(engineering);
+    if (a.id === "cubemars-ak80-9" || a.id === "xiaomi-cybergear") {
+        sections.push(
+            "## Engineering comparison\n\nRead the [AK80-9 V3.0 KV100 versus original CyberGear comparison](/comparisons/cubemars-ak80-9-vs-xiaomi-cybergear) for source-qualified efficiency, thermal duty, precision and modeling boundaries. Hardware/firmware identity and unresolved document conflicts matter; this is not a matched bench test. See the [selection guide](/guides/robot-actuator-selection) for a proposed validation protocol.",
+        );
+    }
+    const measured = measuredSection(a);
+    if (measured) sections.push(measured);
+    const researchedEvidence = engineeringEvidenceSection(a.id);
+    if (researchedEvidence) sections.push(researchedEvidence);
+    const sources = [
+        ...engineeringSources(a.id),
+        a.product_url,
+        a.datasheet_url,
+        ...a.sources,
+    ].filter((u, i, all): u is string => Boolean(u) && all.indexOf(u) === i);
     if (sources.length > 0) {
-        sections.push(`## Sources\n\n${bullets(sources.map((u) => `<${u}>`))}`);
+        sections.push(`## Sources\n\n${bullets(sources.map((u) => mdLink(u, u)))}`);
     }
     if (similar.length > 0) {
         sections.push(
@@ -100,6 +157,8 @@ export function actuatorBody(a: Actuator): string {
             )}`,
         );
     }
+    const comparisons = catalogComparisonLinks([a.id]);
+    if (comparisons) sections.push(comparisons);
     sections.push(
         `## Machine-readable\n\n${bullets([
             `JSON: ${absoluteUrl(`/api/v1/actuators/${encodeURIComponent(a.id)}`)}`,
@@ -124,15 +183,61 @@ export function actuatorTable(list: readonly Actuator[]): string {
     );
 }
 
+const AVAILABILITY: Record<NonNullable<Robot["availability"]>, string> = {
+    shipping: "shipping",
+    preorder: "pre-order",
+    quote_only: "quote only",
+    discontinued: "discontinued",
+};
+
+function runtimeFact(r: Robot): string | null {
+    if (r.power === "mains") return "Runtime: mains-powered";
+    if (r.power !== "battery") return null;
+    const value = r.runtime_h == null ? "not published" : `${r.runtime_h} h`;
+    return `Runtime: ${value}${r.runtime_note ? ` (${mdText(r.runtime_note)})` : ""}`;
+}
+
+function opennessFact(r: Robot): string | null {
+    const o = r.openness;
+    if (!o) return null;
+    const parts = [
+        o.cad && "CAD",
+        o.urdf && "URDF",
+        o.sdk && "SDK source",
+        o.bom && "BOM",
+    ].filter(Boolean);
+    return `Published: ${parts.length ? parts.join(", ") : "none"}`;
+}
+
+// Power, buying and openness facts, for robots that have been researched.
+function researchFacts(r: Robot): string[] {
+    const sourcing = r.actuator_sourcing
+        ? `Actuators: ${r.actuator_sourcing === "in_house" ? "designed in-house" : "bought off the shelf"}`
+        : null;
+    const availability = r.availability
+        ? `Availability: ${AVAILABILITY[r.availability]}${r.lead_time ? ` (${mdText(r.lead_time)})` : ""}`
+        : null;
+    return [runtimeFact(r), sourcing, opennessFact(r), availability].filter(
+        (x): x is string => x != null,
+    );
+}
+
 export function robotSection(r: Robot, level = 2): string {
     const h = "#".repeat(level);
     const facts = [
         `Brand: ${mdText(r.brand)}${r.country ? ` (${mdText(r.country)})` : ""}`,
-        `Degrees of freedom: ${r.dof}`,
-        `Payload: ${num(r.payload_kg, "kg")}`,
-        `Reach: ${num(r.reach_mm, "mm", 0)}`,
+        ...(r.kind === "humanoid" ? ["Type: Humanoid"] : []),
+        `Degrees of freedom: ${num(r.dof)}`,
+        `Payload: ${num(r.payload_kg, "kg")}${r.payload_basis === "whole_body" ? " (whole body)" : ""}`,
+        r.kind === "humanoid"
+            ? `Height: ${num(r.height_m, "m", 2)}`
+            : `Reach: ${num(r.reach_mm, "mm", 0)}`,
+        ...(r.kind === "humanoid" && r.reach_mm != null
+            ? [`Arm reach: ${num(r.reach_mm, "mm", 0)}`]
+            : []),
         `Weight: ${num(r.weight_kg, "kg", 2)}`,
         `Price: ${usd(r.price_usd)}${r.price_max_usd ? ` to ${usd(r.price_max_usd)}` : ""}`,
+        ...researchFacts(r),
     ];
     const joints = resolveJoints(r).map((j) => [
         mdText(j.role),

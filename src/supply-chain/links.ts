@@ -1,0 +1,103 @@
+import { CHINA_LINKS } from "./country-pages/china-links";
+import { JAPAN_LINKS } from "./country-pages/japan-links";
+import { KOREA_LINKS } from "./country-pages/korea-links";
+import { US_LINKS } from "./country-pages/us-links";
+import type { Confidence, SourceId } from "./sourced";
+
+// Who sells what to whom. Used by country arcs and BOM graphs. A link marked
+// "estimated" rests on press reports the buyer has not confirmed. A link with
+// `ended` is historical: kept for the record, never drawn as a current flow.
+// `kind` says what flows: parts or materials (supply, the default), money
+// (investment: equity or loans) or neither (partnership: joint research or a
+// product integration). Only supply links count as supply on the maps.
+
+export const LINK_KINDS = ["supply", "investment", "partnership"] as const;
+export type LinkKind = (typeof LINK_KINDS)[number];
+
+export interface SupplyLink {
+    from: string;
+    to: string;
+    what: string;
+    sources: SourceId[];
+    confidence: Confidence;
+    note?: string;
+    // YYYY-MM the relationship stopped; absent while it is active.
+    ended?: string;
+    // Absent means supply.
+    kind?: Exclude<LinkKind, "supply">;
+}
+
+export const linkKind = (l: SupplyLink): LinkKind => l.kind ?? "supply";
+
+export const SUPPLY_LINKS: SupplyLink[] = [
+    {
+        from: "mp-materials",
+        to: "shenghe-resources",
+        what: "Rare earth concentrate (offtake)",
+        sources: ["mp-10q-q1-2025", "alcircle-crg-shenghe-2026"],
+        confidence: "reported",
+        note: "MP halted shipments to China in April 2025.",
+        ended: "2025-04",
+    },
+    {
+        from: "china-northern-rare-earth",
+        to: "jl-mag",
+        what: "Rare earth raw materials (long-term agreement)",
+        sources: ["jlmag-about"],
+        confidence: "reported",
+    },
+    {
+        from: "china-rare-earth-group",
+        to: "jl-mag",
+        what: "Rare earth raw materials (long-term agreement)",
+        sources: ["jlmag-about"],
+        confidence: "reported",
+    },
+    {
+        from: "hyundai-mobis",
+        to: "boston-dynamics",
+        what: "Actuators for the production Atlas humanoid",
+        sources: ["mobis-boston-dynamics-2026"],
+        confidence: "reported",
+    },
+    {
+        from: "nabtesco",
+        to: "fanuc",
+        what: "RV precision reduction gears",
+        sources: ["bloomberg-japangov-robots"],
+        confidence: "reported",
+    },
+    {
+        from: "nabtesco",
+        to: "yaskawa",
+        what: "RV precision reduction gears",
+        sources: ["bloomberg-japangov-robots"],
+        confidence: "reported",
+    },
+    {
+        from: "leaderdrive",
+        to: "ubtech",
+        what: "Harmonic reducers",
+        sources: ["gasgoo-leaderdrive-ipo-2026"],
+        confidence: "reported",
+    },
+    {
+        from: "leaderdrive",
+        to: "agibot",
+        what: "Harmonic reducers",
+        sources: ["gasgoo-leaderdrive-ipo-2026"],
+        confidence: "reported",
+    },
+    {
+        from: "tuopu-group",
+        to: "tesla",
+        what: "Optimus actuator assemblies",
+        sources: ["cnevpost-optimus-audits-2026"],
+        confidence: "estimated",
+        note: "Supplier audits and orders reported by Chinese media; Tesla has not confirmed.",
+    },
+    ...JAPAN_LINKS,
+    ...KOREA_LINKS,
+    ...CHINA_LINKS,
+    ...US_LINKS,
+];

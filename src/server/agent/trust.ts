@@ -1,5 +1,5 @@
 import { ROBOT_CREDIT } from "@/catalog";
-import { REPO_URL, absoluteUrl } from "../site";
+import { LICENSE_SPLIT, REPO_URL, absoluteUrl } from "../site";
 import { CATALOG_UPDATED_DATE } from "./freshness";
 import { PATHS, RATE_LIMIT_PER_MINUTE } from "./links";
 import { bullets, mdLink } from "./md";
@@ -15,7 +15,7 @@ export function aboutBody(): string {
         "# About actuatorlist",
         `actuatorlist is a free, open directory of robot actuators. It holds ${catalogStats()}. The goal is one place where a robot builder can compare the parts that decide a design (peak torque, weight, torque density, backlash, price) without re-reading the same datasheets for every project.`,
         `## Where the numbers come from\n\nEach entry is compiled from manufacturer product pages, datasheets and retailer listings, and every entry links the sources it was built from. Entries marked verified have been spot-checked against those sources; the rest are labelled unverified until someone checks them. Torque density is peak torque divided by mass, and price per Nm is the public USD price divided by peak torque. The robot joint data (which motor sits in each joint) is credited to ${ROBOT_CREDIT.name} of ${mdLink(ROBOT_CREDIT.org, ROBOT_CREDIT.org_url)}.`,
-        `## Independence\n\nThe site carries no advertising and no sponsored placements. Rankings are computed from the published numbers, and anyone can audit them because the dataset, the build scripts and the site code are all public in the ${mdLink("GitHub repository", REPO_URL)} under the MIT License.`,
+        `## Independence\n\nThe site carries no advertising and no sponsored placements. Rankings are computed from the published numbers, and anyone can audit them because the dataset, the build scripts and the site code are all public in the ${mdLink("GitHub repository", REPO_URL)}. ${LICENSE_SPLIT}`,
         `## Who runs it\n\nactuatorlist is maintained by Eito Miyamura and open-source contributors. The catalog was last updated on ${CATALOG_UPDATED_DATE}. Corrections and new entries arrive as GitHub issues and pull requests; see the ${mdLink("contact page", absoluteUrl("/contact"))}.`,
         `## For software and AI agents\n\nThe same data is available as a JSON REST API (${absoluteUrl(PATHS.apiIndex)}), an MCP server (${absoluteUrl(PATHS.mcp)}) and markdown twins of every page. No account or key is needed. Start at ${absoluteUrl(PATHS.llms)}.`,
     ].join("\n\n");
@@ -36,7 +36,9 @@ export function privacyBody(): string {
     return [
         "# Privacy at actuatorlist",
         "actuatorlist has no accounts, no sign-up forms, no newsletter and no payments, so it never asks for personal information. This page lists everything that does happen when you visit.",
-        `## Cookies and tracking\n\nThe site sets no cookies and runs no analytics, advertising or tracking scripts. The web app does not write to your browser's local storage.`,
+        "## Cookies and tracking\n\nOptional Google Analytics (GA4) is available only when configured by the site operator and only after you choose Allow analytics. Without a configured measurement ID there is no analytics banner or collection. Rejecting analytics sends no analytics events or cookieless pings. We respect Do Not Track and Global Privacy Control. Advertising storage, advertising personalization and Google signals are disabled.",
+        "Analytics uses cookies after opt-in and sends page paths and catalog product IDs for manufacturer/datasheet clicks, comparison actions and guide-to-product visits. Query strings, fragments, search text, link text, clipboard contents and user IDs are not included in our event parameters. Google receives network request details including your IP address and browser information when analytics is allowed.",
+        "The browser stores only your explicit analytics preference in local storage. Use the Analytics preferences button to change your choice or withdraw consent at any time; rejection stops further site analytics events and attempts to remove accessible GA cookies on this host and parent domains. It cannot recall information already sent to Google. If storage is unavailable, your choice applies only to the current page.",
         `## Requests to other services\n\n${bullets([
             "Fonts load from Google Fonts (fonts.googleapis.com and fonts.gstatic.com), so Google receives your IP address and browser details when the page loads. See Google's privacy policy for how it handles those requests.",
             "Some robot photos load from the manufacturer's own image host, which receives the same request details.",

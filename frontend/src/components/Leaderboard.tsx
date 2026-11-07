@@ -4,6 +4,8 @@ import { COLUMNS } from "../lib/columns";
 import { colorForBrand } from "../lib/brands";
 import { list } from "../lib/format";
 import { MetricBar } from "./MetricBar";
+import { CompanyLogo } from "./CompanyLogo";
+import { CountryFlag } from "./CountryFlag";
 
 interface Props {
     rows: Actuator[];
@@ -91,7 +93,11 @@ export function Leaderboard({
                                             style={{ background: colorForBrand(a.brand) }}
                                         />
                                         <span className="name-block">
-                                            <span className="name">
+                                            <a
+                                                className="name"
+                                                href={`/actuators/${encodeURIComponent(a.id)}`}
+                                                onClick={(e) => e.stopPropagation()}
+                                            >
                                                 {a.name}
                                                 {a.verified && (
                                                     <span
@@ -101,8 +107,11 @@ export function Leaderboard({
                                                         {"✓"}
                                                     </span>
                                                 )}
+                                            </a>
+                                            <span className="brand with-logo">
+                                                <CompanyLogo name={a.brand} size={16} />
+                                                {a.brand}
                                             </span>
-                                            <span className="brand">{a.brand}</span>
                                         </span>
                                     </div>
                                 </td>
@@ -114,9 +123,8 @@ export function Leaderboard({
                                         {cat?.label ?? a.category}
                                     </span>
                                 </td>
-                                <td className="col-country" title={a.country ?? undefined}>
-                                    <span className="flag">{a.country_flag ?? "–"}</span>
-                                    <span className="country-name">{a.country ?? ""}</span>
+                                <td className="col-country">
+                                    {a.country ? <CountryFlag country={a.country} /> : "–"}
                                 </td>
                                 {COLUMNS.map((c) => (
                                     <td key={c.key} className="col-num">

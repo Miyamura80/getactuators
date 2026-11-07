@@ -10,6 +10,7 @@ import { ROBOTS } from "../lib/robots";
 import { CATEGORY_MAP } from "../types";
 import { navigate } from "../lib/router";
 import { ActuatorIcon, RobotIcon } from "./PaletteIcons";
+import { CompanyLogo } from "./CompanyLogo";
 
 // One searchable entry. `to` is the item's canonical deeplink; `hay` is the
 // pre-lowercased text every query term must match.
@@ -18,6 +19,7 @@ interface Item {
     kind: "actuator" | "robot";
     name: string;
     sub: string;
+    brand: string;
     to: string;
     hay: string;
 }
@@ -30,6 +32,7 @@ function buildIndex(): Item[] {
         kind: "robot",
         name: r.name,
         sub: r.brand,
+        brand: r.brand,
         to: `/robots#${r.id}`,
         hay: `${r.name} ${r.brand} ${r.country ?? ""}`.toLowerCase(),
     }));
@@ -38,7 +41,8 @@ function buildIndex(): Item[] {
         kind: "actuator",
         name: a.name,
         sub: `${a.brand} · ${CATEGORY_MAP[a.category]?.label ?? a.category}`,
-        to: `/all?sel=${encodeURIComponent(a.id)}`,
+        brand: a.brand,
+        to: `/actuators?view=list&sel=${encodeURIComponent(a.id)}`,
         hay: `${a.name} ${a.brand} ${a.category} ${CATEGORY_MAP[a.category]?.label ?? ""} ${a.notes ?? ""}`.toLowerCase(),
     }));
     // Robots first (small, curated set), then the actuator catalog.
@@ -198,7 +202,10 @@ export function CommandPalette() {
                                         </span>
                                         <span className="cmdk-item-text">
                                             <span className="cmdk-name">{it.name}</span>
-                                            <span className="cmdk-sub">{it.sub}</span>
+                                            <span className="cmdk-sub">
+                                                <CompanyLogo name={it.brand} size={14} />
+                                                {it.sub}
+                                            </span>
                                         </span>
                                         <span className="cmdk-go" aria-hidden="true">
                                             ↵

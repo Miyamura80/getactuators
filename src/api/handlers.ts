@@ -1,7 +1,15 @@
-import { ACTUATORS, CATEGORIES, ROBOTS, getActuator, getRobot } from "@/catalog";
+import {
+    ACTUATORS,
+    type Actuator,
+    CATEGORIES,
+    ROBOTS,
+    type Robot,
+    getActuator,
+    getRobot,
+} from "@/catalog";
 import { listBrands, listUseCases, queryActuators } from "@/catalog/query";
 import { type ApiContext, json } from "./http";
-import { paginate } from "./pagination";
+import { type Page, paginate } from "./pagination";
 import {
     ActuatorListParams,
     CompareQueryParams,
@@ -18,9 +26,18 @@ import {
     serializeRobotDetail,
 } from "./serialize";
 
-export function listActuators({ url }: ApiContext): Response {
+// Each GET operation is a data function (validated params, catalog records,
+// pagination) plus a thin JSON handler. The markdown twins of the API
+// (src/server/agent/api-md.ts) render the same data functions, so the two
+// representations never disagree.
+
+export function actuatorPage({ url }: ApiContext): Page<Actuator> {
     const { limit, cursor, ...filters } = parseQuery(ActuatorListParams, url);
-    const page = paginate(queryActuators(filters), limit, cursor, filters);
+    return paginate(queryActuators(filters), limit, cursor, filters);
+}
+
+export function listActuators(ctx: ApiContext): Response {
+    const page = actuatorPage(ctx);
     return json({ ...page, data: page.data.map(serializeActuator) });
 }
 
@@ -31,29 +48,43 @@ function notFound(kind: string, id: string, listPath: string): ApiError {
     });
 }
 
-export function getActuatorById({ params }: ApiContext): Response {
+export function findActuator({ params }: ApiContext): Actuator {
     const id = params.id ?? "";
     const a = getActuator(id);
     if (!a) throw notFound("actuator", id, "/api/v1/actuators");
-    return json(serializeActuatorDetail(a));
+    return a;
 }
 
-function compareIds(ids: string[]): Response {
-    const data = ids.map((id) => {
-        const a = getActuator(id);
-        return { id, found: Boolean(a), actuator: a ? serializeActuator(a) : null };
-    });
+export function getActuatorById(ctx: ApiContext): Response {
+    return json(serializeActuatorDetail(findActuator(ctx)));
+}
+
+interface CompareLookup {
+    id: string;
+    actuator: Actuator | undefined;
+}
+
+function lookup(ids: string[]): CompareLookup[] {
+    return ids.map((id) => ({ id, actuator: getActuator(id) }));
+}
+
+function compareJson(found: CompareLookup[]): Response {
+    const data = found.map(({ id, actuator }) => ({
+        id,
+        found: Boolean(actuator),
+        actuator: actuator ? serializeActuator(actuator) : null,
+    }));
     return json({ data, not_found: data.filter((d) => !d.found).map((d) => d.id) });
 }
 
-export function compareActuatorsGet({ url }: ApiContext): Response {
+export function compareQuery({ url }: ApiContext): CompareLookup[] {
     const { ids } = parseQuery(CompareQueryParams, url);
     const list = ids
         .split(",")
         .map((s) => s.trim())
         .filter(Boolean);
     try {
-        return compareIds(parseCompareIds({ ids: list }));
+        return lookup(parseCompareIds({ ids: list }));
     } catch (err) {
         if (!(err instanceof ApiError)) throw err;
         throw new ApiError("invalid_parameter", {
@@ -61,6 +92,10 @@ export function compareActuatorsGet({ url }: ApiContext): Response {
             hint: `Pass ?ids=a,b,c with 1 to ${MAX_COMPARE_IDS} ids.`,
         });
     }
+}
+
+export function compareActuatorsGet(ctx: ApiContext): Response {
+    return compareJson(compareQuery(ctx));
 }
 
 export async function compareActuatorsPost({ req }: ApiContext): Promise<Response> {
@@ -80,10 +115,10 @@ export async function compareActuatorsPost({ req }: ApiContext): Promise<Respons
             hint: 'Send a JSON object such as {"ids": ["robstride-02"]}.',
         });
     }
-    return compareIds(parseCompareIds(body));
+    return compareJson(lookup(parseCompareIds(body)));
 }
 
-export function listRobots({ url }: ApiContext): Response {
+export function robotPage({ url }: ApiContext): Page<Robot> {
     const { limit, cursor, ...filters } = parseQuery(RobotListParams, url);
     const q = filters.q?.toLowerCase().split(/\s+/).filter(Boolean) ?? [];
     const brand = filters.brand?.toLowerCase();
@@ -92,15 +127,23 @@ export function listRobots({ url }: ApiContext): Response {
         const hay = [r.id, r.name, r.brand, r.summary].join(" ").toLowerCase();
         return q.every((t) => hay.includes(t));
     }).sort((a, b) => a.id.localeCompare(b.id));
-    const page = paginate(items, limit, cursor, filters);
+    return paginate(items, limit, cursor, filters);
+}
+
+export function listRobots(ctx: ApiContext): Response {
+    const page = robotPage(ctx);
     return json({ ...page, data: page.data.map(serializeRobot) });
 }
 
-export function getRobotById({ params }: ApiContext): Response {
+export function findRobot({ params }: ApiContext): Robot {
     const id = params.id ?? "";
     const r = getRobot(id);
     if (!r) throw notFound("robot", id, "/api/v1/robots");
-    return json(serializeRobotDetail(r));
+    return r;
+}
+
+export function getRobotById(ctx: ApiContext): Response {
+    return json(serializeRobotDetail(findRobot(ctx)));
 }
 
 function countBy(key: (a: (typeof ACTUATORS)[number]) => string[]) {
@@ -110,32 +153,40 @@ function countBy(key: (a: (typeof ACTUATORS)[number]) => string[]) {
     return counts;
 }
 
-export function listCategories(): Response {
+export function categoryCounts() {
     const counts = countBy((a) => [a.category]);
-    return json({
-        data: CATEGORIES.map((c) => ({
-            ...c,
-            actuator_count: counts.get(c.slug) ?? 0,
-        })),
-    });
+    return CATEGORIES.map((c) => ({ ...c, actuator_count: counts.get(c.slug) ?? 0 }));
+}
+
+export function listCategories(): Response {
+    return json({ data: categoryCounts() });
+}
+
+interface NamedCount {
+    name: string;
+    actuator_count: number;
+}
+
+export function brandCounts(): NamedCount[] {
+    const counts = countBy((a) => [a.brand]);
+    return listBrands().map((name) => ({
+        name,
+        actuator_count: counts.get(name) ?? 0,
+    }));
 }
 
 export function listBrandsHandler(): Response {
-    const counts = countBy((a) => [a.brand]);
-    return json({
-        data: listBrands().map((name) => ({
-            name,
-            actuator_count: counts.get(name) ?? 0,
-        })),
-    });
+    return json({ data: brandCounts() });
+}
+
+export function useCaseCounts(): NamedCount[] {
+    const counts = countBy((a) => a.use_cases);
+    return listUseCases().map((name) => ({
+        name,
+        actuator_count: counts.get(name) ?? 0,
+    }));
 }
 
 export function listUseCasesHandler(): Response {
-    const counts = countBy((a) => a.use_cases);
-    return json({
-        data: listUseCases().map((name) => ({
-            name,
-            actuator_count: counts.get(name) ?? 0,
-        })),
-    });
+    return json({ data: useCaseCounts() });
 }

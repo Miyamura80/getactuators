@@ -183,6 +183,30 @@ describe("actuators dataset integrity", () => {
         }
     });
 
+    // The catalog JSON is edited by hand, so nothing else derives these.
+    test("torque density and price per Nm are filled whenever their inputs are", () => {
+        const positive = (v: unknown): v is number => typeof v === "number" && v > 0;
+        for (const row of rows) {
+            if (typeof row.peak_torque_nm === "number" && positive(row.weight_g))
+                expect([row.id, row.torque_density_nm_per_kg]).toEqual([
+                    row.id,
+                    expect.any(Number),
+                ]);
+            const priced =
+                typeof row.price_usd === "number" && positive(row.peak_torque_nm);
+            expect([row.id, row.price_per_nm !== null]).toEqual([row.id, priced]);
+        }
+    });
+
+    test("data_source follows verified", () => {
+        for (const row of rows) {
+            expect([row.id, row.data_source]).toEqual([
+                row.id,
+                row.verified ? "spot_checked" : "web_search",
+            ]);
+        }
+    });
+
     test("price per Nm matches price over peak torque when all present", () => {
         for (const row of rows) {
             const { price_per_nm: ppn, price_usd: price, peak_torque_nm: peak } = row;
@@ -212,6 +236,12 @@ interface RobotRow {
     id: string;
     joints: RobotJointRow[];
     sources: unknown;
+    power?: unknown;
+    runtime_h?: unknown;
+    openness?: Record<string, unknown>;
+    actuator_sourcing?: unknown;
+    availability?: unknown;
+    payload_basis?: unknown;
 }
 
 interface RobotDataShape {
@@ -247,6 +277,43 @@ describe("robots dataset integrity", () => {
         for (const robot of robotData.robots) {
             for (const joint of robot.joints) {
                 expect(motorKeys.has(joint.motor)).toBe(true);
+            }
+        }
+    });
+
+    // The /robots charts read these fields directly, so a bad enum or a runtime
+    // on a robot with no power source would chart wrongly rather than fail.
+    test("researched robot fields use known values", () => {
+        const oneOf = (v: unknown, ok: unknown[]) => v === undefined || ok.includes(v);
+        for (const robot of robotData.robots) {
+            expect(oneOf(robot.power, ["battery", "mains"])).toBe(true);
+            expect(
+                oneOf(robot.actuator_sourcing, ["in_house", "off_the_shelf", null]),
+            ).toBe(true);
+            expect(
+                oneOf(robot.availability, [
+                    "shipping",
+                    "preorder",
+                    "quote_only",
+                    "discontinued",
+                ]),
+            ).toBe(true);
+            expect(oneOf(robot.payload_basis, ["per_arm", "whole_body"])).toBe(true);
+            if (robot.runtime_h != null) {
+                expect(robot.power).toBe("battery");
+                expect(typeof robot.runtime_h === "number" && robot.runtime_h > 0).toBe(
+                    true,
+                );
+            }
+            if (robot.openness) {
+                expect(Object.keys(robot.openness).sort()).toEqual([
+                    "bom",
+                    "cad",
+                    "sdk",
+                    "urdf",
+                ]);
+                for (const v of Object.values(robot.openness))
+                    expect(typeof v).toBe("boolean");
             }
         }
     });

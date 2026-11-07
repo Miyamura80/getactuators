@@ -16,6 +16,7 @@ describe("filtersToQuery", () => {
             search: "rmd",
             categories: new Set(),
             useCases: new Set(),
+            countries: new Set(),
             sortKey: DEFAULT_FILTERS.sortKey,
             sortDir: DEFAULT_FILTERS.sortDir,
         };
@@ -30,6 +31,7 @@ describe("filtersToQuery", () => {
             search: "",
             categories: new Set(),
             useCases: new Set(),
+            countries: new Set(),
             sortKey: "price_usd",
             sortDir: "asc",
         };
@@ -45,6 +47,7 @@ describe("filtersFromQuery / round-trip", () => {
             search: "harmonic drive",
             categories: new Set(["harmonic_precision", "smart_servo"]),
             useCases: new Set(["cobot", "robot_arm"]),
+            countries: new Set(["South Korea", "Japan"]),
             sortKey: "peak_torque_nm",
             sortDir: "asc",
         };
@@ -52,6 +55,7 @@ describe("filtersFromQuery / round-trip", () => {
         expect(back.search).toBe(original.search);
         expect([...back.categories].sort()).toEqual([...original.categories].sort());
         expect([...back.useCases].sort()).toEqual([...original.useCases].sort());
+        expect([...back.countries].sort()).toEqual([...original.countries].sort());
         expect(back.sortKey).toBe(original.sortKey);
         expect(back.sortDir).toBe(original.sortDir);
     });

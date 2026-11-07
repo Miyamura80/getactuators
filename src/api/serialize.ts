@@ -1,6 +1,7 @@
 import type { Actuator, Robot } from "@/catalog";
 import { getActuator } from "@/catalog";
 import { resolveJoints, robotsUsingActuator } from "@/catalog/query";
+import { sdkLookupView } from "@/sdk/views";
 import { absoluteUrl } from "@/server/site";
 import type {
     ApiActuator,
@@ -40,12 +41,23 @@ export function serializeActuatorDetail(a: Actuator) {
     return {
         ...serializeActuator(a),
         robots_using: robotsUsingActuator(a.id).map(robotRef),
+        sdk: sdkLookupView(a.id),
     };
 }
 
 function robotBase(r: Robot) {
-    const { joints: _joints, ...rest } = r;
-    return { ...rest, image_url: r.image_url ?? null, ...robotRef(r) };
+    const {
+        joints: _joints,
+        image_fit: _imageFit,
+        image_crop: _imageCrop,
+        ...rest
+    } = r;
+    return {
+        ...rest,
+        height_m: r.height_m ?? null,
+        image_url: r.image_url ?? null,
+        ...robotRef(r),
+    };
 }
 
 export function serializeRobot(r: Robot): ApiRobot {

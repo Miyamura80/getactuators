@@ -1,15 +1,18 @@
 import { absoluteUrl } from "../site";
 import { CATALOG_UPDATED_AT } from "./freshness";
 
-// Shared markdown building blocks. Every served markdown document opens with a
-// frontmatter block (title, description, canonical, last-updated) and then an
-// H1, so agents get document metadata without scraping.
+// Shared markdown building blocks. Page twins open with a frontmatter block
+// (title, description, canonical, last-updated) and then an H1, so agents get
+// document metadata without scraping. Standalone agent documents (agents.md,
+// auth.md, pricing.md) are read by checkers that expect the very first line to
+// be an H1, so they carry the same metadata in a trailing line instead.
 
 export interface MdMeta {
     title: string;
     description: string;
     // Canonical path of the page the document describes ("/actuators/x").
     canonical: string;
+    updatedAt?: string;
 }
 
 function yamlString(s: string): string {
@@ -22,7 +25,7 @@ export function frontmatter(meta: MdMeta): string {
         `title: ${yamlString(meta.title)}`,
         `description: ${yamlString(meta.description)}`,
         `canonical: ${absoluteUrl(meta.canonical)}`,
-        `last-updated: ${CATALOG_UPDATED_AT}`,
+        `last-updated: ${meta.updatedAt ?? CATALOG_UPDATED_AT}`,
         "---",
         "",
     ].join("\n");
@@ -31,6 +34,16 @@ export function frontmatter(meta: MdMeta): string {
 // Frontmatter + body. The body must start with the document's H1.
 export function mdDocument(meta: MdMeta, body: string): string {
     return `${frontmatter(meta)}${body.trim()}\n`;
+}
+
+// Body first (its first line must be the H1), then a metadata footer. No
+// frontmatter, so the response opens with "# ".
+export function mdStandalone(meta: MdMeta, body: string): string {
+    const text = body.trim();
+    if (!text.startsWith("# "))
+        throw new Error(`${meta.canonical}: body must start with an H1`);
+    const footer = `Canonical: ${absoluteUrl(meta.canonical)}. Last updated: ${CATALOG_UPDATED_AT}.`;
+    return `${text}\n\n${footer}\n`;
 }
 
 // Drop the frontmatter block (used when rendering a markdown body to HTML).
@@ -69,9 +82,15 @@ export function num(value: number | null | undefined, unit = "", digits = 1): st
     return unit ? `${rounded} ${unit}` : rounded;
 }
 
+// "26 DOF", or a note when the maker has not published a joint count.
+export function dofText(value: number | null): string {
+    return value === null ? "DOF not published" : `${value} DOF`;
+}
+
 export function usd(value: number | null | undefined): string {
     if (value === null || value === undefined) return "quote only";
-    return `$${value.toLocaleString("en-US")}`;
+    const cents = Number.isInteger(value) ? 0 : 2;
+    return `$${value.toLocaleString("en-US", { minimumFractionDigits: cents, maximumFractionDigits: cents })}`;
 }
 
 export function humanize(slug: string): string {

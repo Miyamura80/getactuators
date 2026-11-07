@@ -1,21 +1,21 @@
+import { PublicHeader } from "../components/PublicHeader";
+import { EngineeringEvidencePanel } from "../components/EngineeringEvidencePanel";
+import { MeasuredPanel } from "../components/benchmarks/MeasuredPanel";
+import { evidenceFor, fieldCaveat, isReducerFamily } from "../../../src/catalog/evidence";
 import { useEffect, useRef } from "react";
 import { ACTUATORS } from "../lib/data";
 import { num, price } from "../lib/format";
 import { Link } from "../lib/router";
-import { BrandMark } from "../components/BrandMark";
+import { CompanyLogo } from "../components/CompanyLogo";
+import { CountryFlag } from "../components/CountryFlag";
+import { SdkBadge } from "./sdk/SdkBadge";
 
 interface Props {
     id: string;
+    menuOpen?: boolean;
 }
 
-type Kind =
-    | "flange"
-    | "bearing"
-    | "gear"
-    | "wave"
-    | "rotor"
-    | "stator"
-    | "encoder";
+type Kind = "outline" | "interface" | "boundary";
 
 interface PartDef {
     kind: Kind;
@@ -23,19 +23,14 @@ interface PartDef {
     blurb: string;
 }
 
-// Front (output) to rear, the order you'd pull a strain-wave joint apart on the
-// bench. Generic to rotary actuators; the specifics on the right come from data.
+// Abstract panels deliberately do not depict unverified internal geometry.
 const PARTS: PartDef[] = [
-    { kind: "flange", label: "Output flange", blurb: "Bolts to the load. Carries the joint's rated torque." },
-    { kind: "bearing", label: "Cross-roller bearing", blurb: "Takes moment and axial load so the output stays true." },
-    { kind: "gear", label: "Strain-wave gear", blurb: "The reduction stage. Sets ratio, backlash and stiffness." },
-    { kind: "wave", label: "Wave generator", blurb: "Elliptical cam that flexes the spline to transmit torque." },
-    { kind: "rotor", label: "Rotor", blurb: "Permanent-magnet ring. Its field chases the stator's." },
-    { kind: "stator", label: "Stator", blurb: "Wound iron. Current here is torque at the output." },
-    { kind: "encoder", label: "Encoder + rear cap", blurb: "Reads angle for commutation and closed-loop control." },
+    { kind: "outline", label: "Product envelope", blurb: "Illustrative silhouette; dimensions and mounting geometry are not to scale." },
+    { kind: "interface", label: "Mechanical interface", blurb: "Confirm the selected model drawing, reduction and load support before design use." },
+    { kind: "boundary", label: "System boundary", blurb: "Motor, sensing and drive integration require model-specific confirmation." },
 ];
 
-export function ExplodedView({ id }: Props) {
+export function ExplodedView({ id, menuOpen = false }: Props) {
     const actuator = ACTUATORS.find((a) => a.id === id);
     const stageRef = useRef<HTMLDivElement>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
@@ -71,14 +66,7 @@ export function ExplodedView({ id }: Props) {
     if (!actuator) {
         return (
             <div className="exploded-page">
-                <header className="page-bar">
-                    <Link to="/actuators" className="page-brand">
-                        <BrandMark size={24} />
-                        <span>
-                            <b>actuator</b>list.com
-                        </span>
-                    </Link>
-                </header>
+                <PublicHeader path="/actuators" initialOpen={menuOpen} />
                 <div className="xp-missing">
                     <p>No actuator with id "{id}".</p>
                     <Link to="/actuators" className="page-nav-link">
@@ -89,43 +77,41 @@ export function ExplodedView({ id }: Props) {
         );
     }
 
-    const mid = (PARTS.length - 1) / 2;
+    const reducerFamily = isReducerFamily(id);
+    const parts = PARTS.map((part) => part.kind === "boundary" ? {
+        ...part,
+        blurb: reducerFamily
+            ? "Reducer only; select motor and drive separately. Sensor electronics are not a motor driver."
+            : actuator.category === "frameless_driver"
+                ? "Frameless motor / drive offering; enclosure, load support and integration depend on configuration."
+                : "Motor, sensing and drive integration require model-specific confirmation.",
+    } : part);
+    const mid = (parts.length - 1) / 2;
 
     return (
         <div className="exploded-page">
-            <header className="page-bar">
-                <Link to="/actuators" className="page-brand" aria-label="Back to gallery">
-                    <BrandMark size={24} />
-                    <span>
-                        <b>actuator</b>list.com
-                    </span>
-                </Link>
-                <nav className="page-nav">
-                    <Link to="/actuators" className="page-nav-link">
-                        ← Gallery
-                    </Link>
-                    <Link to="/all" className="page-nav-link">
-                        All actuators
-                    </Link>
-                    <Link to="/agents" className="page-nav-link">
-                        Agents
-                    </Link>
-                </nav>
-            </header>
+            <PublicHeader path="/actuators" initialOpen={menuOpen} />
 
             <div className="xp-scroll" ref={scrollRef}>
                 <div className="xp-stage" ref={stageRef}>
                     <div className="xp-heading">
-                        <p className="xp-eyebrow">
-                            {actuator.country_flag} {actuator.brand}
+                        <p className="xp-eyebrow with-logo">
+                            <CompanyLogo name={actuator.brand} size={20} />
+                            <CountryFlag country={actuator.country} />
+                            {actuator.brand}
                         </p>
                         <h1>{actuator.name}</h1>
-                        <p className="xp-hint">Scroll to pull it apart</p>
+                        <p className="xp-evidence">{evidenceFor(actuator).label}</p>
+                        <SdkBadge actuatorId={actuator.id} />
+                        <p className="xp-hint">{"Conceptual silhouette: not CAD or model-specific internals."} {reducerFamily ? "Generic reducer illustration. No motor included." : "Scroll to separate the illustrative panels."}</p>
+                        <a className="xp-specs-jump" href="#catalog-content">
+                            Jump to specifications
+                        </a>
                     </div>
 
                     <div className="xp-viewport">
                         <div className="xp-scene">
-                            {PARTS.map((part, i) => (
+                            {parts.map((part, i) => (
                                 <div
                                     key={part.kind}
                                     className="xp-part"
@@ -138,11 +124,11 @@ export function ExplodedView({ id }: Props) {
                     </div>
 
                     <ol className="xp-callouts">
-                        {PARTS.map((part, i) => (
+                        {parts.map((part, i) => (
                             <li
                                 key={part.kind}
                                 className="xp-callout"
-                                style={{ ["--s" as string]: (i / PARTS.length).toFixed(3) }}
+                                style={{ ["--s" as string]: (i / parts.length).toFixed(3) }}
                             >
                                 <span className="xp-callout-idx">
                                     {String(i + 1).padStart(2, "0")}
@@ -156,152 +142,42 @@ export function ExplodedView({ id }: Props) {
                     </ol>
 
                     <div className="xp-specs">
-                        <Spec label="Peak torque" value={`${num(actuator.peak_torque_nm)} N·m`} />
-                        <Spec label="Rated torque" value={`${num(actuator.rated_torque_nm)} N·m`} />
+                        <Spec label="Peak torque" value={`${num(actuator.peak_torque_nm)} N·m`} caveat={fieldCaveat(actuator, "peak_torque_nm")} />
+                        <Spec label="Rated torque" value={`${num(actuator.rated_torque_nm)} N·m`} caveat={fieldCaveat(actuator, "rated_torque_nm")} />
                         <Spec
                             label="Torque density"
                             value={`${num(actuator.torque_density_nm_per_kg)} N·m/kg`}
+                            caveat={fieldCaveat(actuator, "torque_density_nm_per_kg")}
                         />
-                        <Spec label="Reduction" value={actuator.gear_ratio ?? "–"} />
-                        <Spec label="Weight" value={`${num(actuator.weight_g)} g`} />
-                        <Spec label="Price" value={price(actuator.price_usd)} />
+                        <Spec label="Reduction" value={actuator.gear_ratio ?? "–"} caveat={fieldCaveat(actuator, "gear_ratio")} />
+                        <Spec label="Weight" value={`${num(actuator.weight_g)} g`} caveat={fieldCaveat(actuator, "weight_g")} />
+                        <Spec label="Price" value={price(actuator.price_usd)} caveat={fieldCaveat(actuator, "price_usd")} />
                     </div>
                 </div>
             </div>
+            <EngineeringEvidencePanel id={id} />
+            <MeasuredPanel id={id} />
         </div>
     );
 }
 
-function Spec({ label, value }: { label: string; value: string }) {
+function Spec({ label, value, caveat }: { label: string; value: string; caveat?: string }) {
     return (
         <div className="xp-spec">
             <span className="xp-spec-label">{label}</span>
             <span className="xp-spec-value">{value}</span>
+            {caveat && <small>{caveat}</small>}
         </div>
     );
 }
 
-const R = 108;
-
-function ring(count: number, inner: number, outer: number, stroke: string, w: number) {
-    return Array.from({ length: count }, (_, i) => {
-        const a = (i / count) * Math.PI * 2;
-        const c = Math.cos(a);
-        const s = Math.sin(a);
-        return (
-            <line
-                key={i}
-                x1={120 + inner * c}
-                y1={120 + inner * s}
-                x2={120 + outer * c}
-                y2={120 + outer * s}
-                stroke={stroke}
-                strokeWidth={w}
-            />
-        );
-    });
-}
-
-// Each face is drawn flat in the XY plane; the scene's tilt turns them into the
-// ellipses that read as a stacked, exploded assembly.
+// Neutral silhouettes preserve the animated stacked visual without fake CAD.
 function PartFace({ kind }: { kind: Kind }) {
-    const common = (
-        <>
-            <circle cx="120" cy="120" r={R} fill="var(--panel)" stroke="var(--line-strong)" strokeWidth="1.5" />
-            <circle cx="120" cy="120" r={R} fill="none" stroke="var(--cyan)" strokeWidth="2.4" />
-        </>
-    );
-    let inner = null;
-    if (kind === "flange") {
-        inner = (
-            <>
-                {Array.from({ length: 6 }, (_, i) => {
-                    const a = (i / 6) * Math.PI * 2 - Math.PI / 2;
-                    return (
-                        <circle
-                            key={i}
-                            cx={120 + 82 * Math.cos(a)}
-                            cy={120 + 82 * Math.sin(a)}
-                            r="7"
-                            fill="var(--black)"
-                            stroke="var(--cyan)"
-                            strokeWidth="2"
-                        />
-                    );
-                })}
-                <circle cx="120" cy="120" r="34" fill="var(--black)" stroke="var(--cyan)" strokeWidth="2" />
-                <rect x="112" y="112" width="16" height="16" fill="none" stroke="var(--cyan)" strokeWidth="2" />
-            </>
-        );
-    } else if (kind === "bearing") {
-        inner = (
-            <>
-                <circle cx="120" cy="120" r="86" fill="none" stroke="var(--cyan)" strokeWidth="1.4" />
-                <circle cx="120" cy="120" r="58" fill="none" stroke="var(--cyan)" strokeWidth="1.4" />
-                {ring(40, 62, 82, "var(--cyan-dim)", 3)}
-            </>
-        );
-    } else if (kind === "gear") {
-        inner = (
-            <>
-                {ring(64, 90, 100, "var(--green)", 2)}
-                <circle cx="120" cy="120" r="90" fill="none" stroke="var(--green)" strokeWidth="1.6" />
-                <circle cx="120" cy="120" r="52" fill="none" stroke="var(--cyan)" strokeWidth="1.4" />
-            </>
-        );
-    } else if (kind === "wave") {
-        inner = (
-            <>
-                <ellipse cx="120" cy="120" rx="92" ry="52" fill="none" stroke="var(--cyan)" strokeWidth="2.4" />
-                <ellipse cx="120" cy="120" rx="60" ry="34" fill="var(--black)" stroke="var(--cyan-dim)" strokeWidth="1.6" />
-                <circle cx="120" cy="120" r="16" fill="var(--black)" stroke="var(--cyan)" strokeWidth="2" />
-            </>
-        );
-    } else if (kind === "rotor") {
-        inner = (
-            <>
-                <circle cx="120" cy="120" r="88" fill="none" stroke="var(--cyan)" strokeWidth="1.4" />
-                {Array.from({ length: 16 }, (_, i) => {
-                    const a = (i / 16) * Math.PI * 2;
-                    const c = Math.cos(a);
-                    const s = Math.sin(a);
-                    return (
-                        <line
-                            key={i}
-                            x1={120 + 60 * c}
-                            y1={120 + 60 * s}
-                            x2={120 + 84 * c}
-                            y2={120 + 84 * s}
-                            stroke={i % 2 ? "var(--red)" : "var(--cyan)"}
-                            strokeWidth="6"
-                            opacity="0.85"
-                        />
-                    );
-                })}
-                <circle cx="120" cy="120" r="24" fill="var(--black)" stroke="var(--cyan)" strokeWidth="2" />
-            </>
-        );
-    } else if (kind === "stator") {
-        inner = (
-            <>
-                <circle cx="120" cy="120" r="88" fill="none" stroke="var(--cyan)" strokeWidth="1.4" />
-                {ring(30, 46, 84, "var(--cyan)", 4)}
-                <circle cx="120" cy="120" r="40" fill="var(--black)" stroke="var(--cyan)" strokeWidth="1.6" />
-            </>
-        );
-    } else {
-        inner = (
-            <>
-                {ring(120, 70, 88, "var(--cyan-dim)", 1.2)}
-                <circle cx="120" cy="120" r="66" fill="var(--black)" stroke="var(--cyan)" strokeWidth="1.6" />
-                <circle cx="120" cy="120" r="10" fill="var(--cyan)" />
-            </>
-        );
-    }
     return (
         <svg viewBox="0 0 240 240" className="xp-face" aria-hidden="true">
-            {common}
-            {inner}
+            <circle cx="120" cy="120" r="108" fill="var(--panel)" stroke="var(--cyan)" strokeWidth="2.4" />
+            <circle cx="120" cy="120" r={kind === "outline" ? 86 : 64} fill="none" stroke="var(--cyan-dim)" strokeWidth="1.6" />
+            <circle cx="120" cy="120" r="28" fill="var(--black)" stroke="var(--line-strong)" strokeWidth="1.5" />
         </svg>
     );
 }

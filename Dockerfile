@@ -1,22 +1,50 @@
 # Build the Vite frontend and serve it (plus the agent-facing routes in
 # src/server/) with Bun. Deployed on Railway.
-FROM oven/bun:1 AS build
+FROM oven/bun:1.4.4@sha256:1d22548f177f4ff38e0c15baa3c2c46c6c2060ba2d1bc573bb4720b407548f1d AS build
 WORKDIR /app
 COPY frontend/package.json frontend/bun.lock ./frontend/
 RUN cd frontend && bun install --frozen-lockfile
 COPY frontend ./frontend
+# Catalog helpers shared by the browser and server (gallery order, evidence,
+# requirement shortlists, humanoid joint estimates, arm holding torque).
+COPY src/catalog/gallery.ts src/catalog/evidence.ts src/catalog/compare.ts src/catalog/comparison-registry.ts src/catalog/engineering-evidence.ts src/catalog/shortlist.ts src/catalog/brands.ts src/catalog/index.ts src/catalog/types.ts ./src/catalog/
+COPY src/server/agent/humanoid-joints.ts ./src/server/agent/
+COPY src/engineering/arm-torque.ts ./src/engineering/
+COPY src/public-navigation.ts src/public-navigation.css src/repo-link.ts ./src/
+COPY src/comparisons.css ./src/
+# Page data the browser imports directly.
+COPY src/startups.ts src/investors.ts src/country-flag.ts ./src/
+COPY src/humanoids ./src/humanoids
+COPY src/people ./src/people/
+# Company logo registry (domains for the logo provider, local overrides).
+COPY src/brands ./src/brands
+# The supply-chain registry and kit helpers (zod schemas stay server-side).
+COPY src/supply-chain ./src/supply-chain
+# Open-source robot directory (/open-source).
+COPY src/open-source ./src/open-source
+# Measured benchmark runs (/benchmarks, Measured panel, /compare overlay).
+COPY src/benchmarks ./src/benchmarks
+COPY data/benchmarks ./data/benchmarks
+# The /sdk scores, checks and evidence (page, badge and shared sources).
+COPY src/sdk ./src/sdk
+# Logo.dev publishable key (public), baked into the bundle; unset draws monograms.
+ARG VITE_LOGO_DEV_TOKEN=""
+ENV VITE_LOGO_DEV_TOKEN=$VITE_LOGO_DEV_TOKEN
 RUN cd frontend && bun run build
 
-FROM oven/bun:1 AS runtime
+FROM oven/bun:1.4.4@sha256:1d22548f177f4ff38e0c15baa3c2c46c6c2060ba2d1bc573bb4720b407548f1d AS runtime
+# ca-certificates: listed explicitly so each build pulls the post-eMudhra trust store
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY package.json bun.lock tsconfig.json ./
 RUN bun install --frozen-lockfile --production --ignore-scripts
 COPY --from=build /app/frontend/dist ./frontend/dist
 COPY frontend/src/data ./frontend/src/data
 COPY src ./src
-# Served as-is by src/server/routes: the agent skill and the og:image.
+COPY data/benchmarks ./data/benchmarks
+# Served as-is by src/server/routes: the agent skill and the og:images.
 COPY skills ./skills
-COPY media/banner.png ./media/banner.png
+COPY media/og-image.png media/og-startups.png media/og-investors.png ./media/
 COPY scripts/serve_frontend.ts ./scripts/serve_frontend.ts
 EXPOSE 3000
 CMD ["bun", "run", "scripts/serve_frontend.ts"]

@@ -1,3 +1,5 @@
+import { PublicHeader } from "./components/PublicHeader";
+import { PublicFooter } from "./components/PublicFooter";
 import { useEffect, useMemo, useState } from "react";
 import { ACTUATORS } from "./lib/data";
 import { Sidebar } from "./components/Sidebar";
@@ -20,7 +22,7 @@ const NAV: NavItem[] = [
     { id: "scatter", label: "Torque vs Cost" },
 ];
 
-export default function App() {
+export default function App({ menuOpen = false }: { menuOpen?: boolean }) {
     const [selected, setSelected] = useState<Actuator | null>(null);
     const [active, setActive] = useState("highlights");
 
@@ -73,6 +75,8 @@ export default function App() {
     };
 
     return (
+        <>
+        <PublicHeader path="/" initialOpen={menuOpen} />
         <div className="shell">
             <Sidebar items={NAV} active={active} onSelect={goTo} />
 
@@ -117,25 +121,16 @@ export default function App() {
                     </div>
                 </section>
 
-                <Link to="/all" className="all-cta">
-                    <span className="all-cta-kicker">The full dataset</span>
-                    <span className="all-cta-title">
-                        Browse all {ACTUATORS.length} actuators →
-                    </span>
-                    <span className="all-cta-sub">
-                        Sort and filter every rotary actuator by torque, density, price,
-                        speed and more. Every row links back to its source.
-                    </span>
+                <Link to="/actuators?view=list" className="all-cta">
+                    <span className="all-cta-kicker">Full dataset</span>
+                    <span className="all-cta-title">Browse all {ACTUATORS.length} actuators</span>
+                    <span className="all-cta-go" aria-hidden="true">→</span>
                 </Link>
-
-                <footer className="foot">
-                    Community dataset {"·"} v1 sourced from manufacturer pages via web
-                    search {"·"} every row links its source {"·"} verify against
-                    datasheets before engineering use.
-                </footer>
             </main>
 
             <DetailPanel actuator={selected} onClose={() => setSelected(null)} />
         </div>
+        <PublicFooter />
+        </>
     );
 }

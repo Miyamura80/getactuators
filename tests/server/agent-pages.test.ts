@@ -1,15 +1,31 @@
 import { describe, expect, test } from "bun:test";
 import { ACTUATORS } from "@/catalog";
+import { markdownToHtml } from "@/server/agent/html/body";
+import { documentTitle } from "@/server/agent/html/head";
+import { mdText } from "@/server/agent/md";
+import { findPage } from "@/server/agent/pages";
+import { faqItems } from "@/server/agent/pages-md";
 import { SITE_URL } from "@/server/site";
-import { expectFrontmatter, get, getMarkdown, visibleText } from "./agent-helpers";
+import homeCapture from "../../frontend/tests/fixtures/home.json";
+import productCapture from "../../frontend/tests/fixtures/product.json";
+import researchedCaptures from "../../frontend/tests/fixtures/researched.json";
+import {
+    expectFrontmatter,
+    expectLeadingHeading,
+    get,
+    getMarkdown,
+    visibleText,
+} from "./agent-helpers";
 
 const PAGES = [
     "/",
-    "/all",
     "/actuators",
     "/robots",
     "/agents",
+    "/startups",
+    "/investors",
     "/about",
+    "/contributors",
     "/contact",
     "/privacy",
 ];
@@ -60,18 +76,14 @@ describe("markdown negotiation", () => {
 });
 
 describe("markdown twins", () => {
-    test("every page and standalone doc has a .md URL with frontmatter", async () => {
+    test("every page has a .md URL with frontmatter", async () => {
         const twins = [
             "/index.md",
-            "/all.md",
             "/actuators.md",
             "/robots.md",
-            "/agents.md",
             "/about.md",
             "/contact.md",
             "/privacy.md",
-            "/auth.md",
-            "/pricing.md",
             `/actuators/${FIRST}.md`,
         ];
         for (const p of twins) {
@@ -81,6 +93,20 @@ describe("markdown twins", () => {
                 "text/markdown; charset=utf-8",
             );
             expectFrontmatter(await res.text());
+        }
+    });
+
+    test("standalone agent docs start with an H1, not frontmatter", async () => {
+        for (const p of ["/agents.md", "/auth.md", "/pricing.md"]) {
+            const res = await get(p);
+            expect({ p, status: res.status }).toEqual({ p, status: 200 });
+            expect(res.headers.get("content-type")).toBe(
+                "text/markdown; charset=utf-8",
+            );
+            const body = await res.text();
+            expect({ p, head: body.slice(0, 2) }).toEqual({ p, head: "# " });
+            expect(body).not.toStartWith("---");
+            expectLeadingHeading(body);
         }
     });
 
@@ -104,10 +130,146 @@ describe("markdown twins", () => {
         expect(body).toContain("$0");
         expect(body).toContain("120 requests per minute per IP");
         expect(body).toContain("MIT License");
+        expect(body).toStartWith("# actuatorlist pricing\n");
+        expect(body).toContain("| Free | $0 |");
+        expect(body).toContain("There are no paid plans");
+        expect(body).toContain("/mcp/docs");
+        expect(body).toContain("/llms.txt");
+        expect(body).not.toMatch(/\$\d+\s*\/\s*mo|Pro plan|Enterprise plan/i);
     });
 });
 
 describe("HTML pages", () => {
+    test("FAQ page serves seven closed native FAQ disclosures with complete canonical answers", async () => {
+        const content = await (await get("/faq")).text();
+        const items = [
+            ...content.matchAll(
+                /<details class="ga-faq-item"([^>]*)><summary>(<h3>[\s\S]*?<\/h3>)<\/summary>([\s\S]*?)<\/details>/g,
+            ),
+        ];
+        const canonical = faqItems();
+        expect(items).toHaveLength(7);
+        expect(items).toHaveLength(canonical.length);
+        for (const [index, item] of items.entries()) {
+            const faq = canonical[index];
+            if (!faq) throw new Error(`Missing canonical FAQ ${index}`);
+            expect(item[1]).toBe(""); // No open attribute or exclusive grouping.
+            expect(item[2]).toBe(markdownToHtml(`### ${faq.q}`).trim());
+            expect(item[3]?.trim()).toBe(markdownToHtml(mdText(faq.a)).trim());
+        }
+        // The site header may hold its own h3s (the supply-chain menu).
+        const main = content.slice(content.indexOf("</header>"));
+        expect(main.match(/<h3>/g)).toHaveLength(canonical.length);
+        const graph = JSON.parse(
+            /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(
+                content,
+            )?.[1] ?? "{}",
+        )["@graph"];
+        expect(
+            graph
+                .find((node: { "@type": string }) => node["@type"] === "FAQPage")
+                .mainEntity.map(
+                    (question: { name: string; acceptedAnswer: { text: string } }) => ({
+                        q: question.name,
+                        a: question.acceptedAnswer.text,
+                    }),
+                ),
+        ).toEqual(canonical);
+        expect(await (await get("/index.md")).text()).not.toContain("<details");
+        for (const path of [
+            `/actuators/${FIRST}`,
+            "/guides/robot-actuator-selection",
+        ]) {
+            expect(await (await get(path)).text()).not.toContain(
+                '<details class="ga-faq-item"',
+            );
+        }
+    });
+
+    test("product specifications provide a focusable native fragment target", async () => {
+        const html = await (await get(`/actuators/${FIRST}`)).text();
+        const targets: { tabindex: string | null; label: string | null }[] = [];
+        new HTMLRewriter()
+            .on("section#catalog-content", {
+                element: (el) => {
+                    targets.push({
+                        tabindex: el.getAttribute("tabindex"),
+                        label: el.getAttribute("aria-label"),
+                    });
+                },
+            })
+            .transform(html);
+        expect(targets).toEqual([
+            { tabindex: "-1", label: "Specifications and catalog details" },
+        ]);
+    });
+
+    test("frontend mount captures match the actual server markup and FAQ graph", async () => {
+        expect(researchedCaptures).toHaveLength(5);
+        for (const capture of [homeCapture, productCapture, ...researchedCaptures]) {
+            const html = await (await get(capture.path)).text();
+            expect(/<div id="root">[\s\S]*?(?=<script|<\/body>)/.exec(html)?.[0]).toBe(
+                capture.body,
+            );
+            const graph = JSON.parse(
+                /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(
+                    html,
+                )?.[1] ?? "{}",
+            )["@graph"] as Record<string, unknown>[];
+            expect(graph.find((node) => node["@type"] === "FAQPage") ?? null).toEqual(
+                capture.faq,
+            );
+        }
+    });
+
+    test("document navigation targets have matching heads in either visit order", async () => {
+        const paths = [
+            ...PAGES,
+            `/actuators/${FIRST}`,
+            `/actuators/${ACTUATORS.at(-1)?.id}`,
+        ];
+        for (const path of [...paths, ...paths.toReversed()]) {
+            const page = findPage(path);
+            if (!page) throw new Error(`Missing page: ${path}`);
+            const response = await get(path);
+            expect(response.status).toBe(200);
+            let title = "";
+            let description = "";
+            let canonical = "";
+            let jsonLd = "";
+            new HTMLRewriter()
+                .on("title", {
+                    text: (chunk) => {
+                        title += chunk.text;
+                    },
+                })
+                .on('meta[name="description"]', {
+                    element: (el) => {
+                        description = el.getAttribute("content") ?? "";
+                    },
+                })
+                .on('link[rel="canonical"]', {
+                    element: (el) => {
+                        canonical = el.getAttribute("href") ?? "";
+                    },
+                })
+                .on('script[type="application/ld+json"]', {
+                    text: (chunk) => {
+                        jsonLd += chunk.text;
+                    },
+                })
+                .transform(await response.text());
+            expect(title).toBe(documentTitle(page.title));
+            expect(description).toBe(page.description);
+            expect(canonical).toBe(`${SITE_URL}${page.path}`);
+            const nodes = JSON.parse(jsonLd)["@graph"] as Record<string, unknown>[];
+            expect(nodes).toEqual(page.jsonLd());
+            expect(nodes.some((node) => node["@type"] === "Product")).toBe(
+                path.startsWith("/actuators/"),
+            );
+        }
+    });
+
     test("homepage carries metadata, JSON-LD and prerendered content", async () => {
         const res = await get("/");
         const html = await res.text();
@@ -119,24 +281,33 @@ describe("HTML pages", () => {
         expect(html).toMatch(/<meta property="og:image" content="https:\/\//);
         expect(html).toContain('<meta property="og:type" content="website">');
         const types = jsonLdTypes(html);
-        for (const t of [
-            "WebSite",
-            "Organization",
-            "Dataset",
-            "SoftwareApplication",
-            "FAQPage",
-        ]) {
+        for (const t of ["WebSite", "Organization", "Dataset", "SoftwareApplication"]) {
             expect(types).toContain(t);
         }
-        const root = /<div id="root">([\s\S]*)<\/div>\s*<\/body>/.exec(html)?.[1] ?? "";
-        expect(root).toContain("<h1>");
-        expect(visibleText(root).length).toBeGreaterThan(500);
+        let rootText = "";
+        let rootHeading = false;
+        new HTMLRewriter()
+            .on("#root", {
+                text: (chunk) => {
+                    rootText += chunk.text;
+                },
+            })
+            .on("#root h1", {
+                element: () => {
+                    rootHeading = true;
+                },
+            })
+            .transform(html);
+        expect(rootHeading).toBe(true);
+        expect(rootText.length).toBeGreaterThan(500);
     });
 
     test("actuator pages have their own title, Product JSON-LD and breadcrumbs", async () => {
         const a = ACTUATORS[0];
         const html = await (await get(`/actuators/${a?.id}`)).text();
-        expect(html).toContain(`<title>${a?.name}`);
+        expect(html).toContain(
+            "<title>Nabtesco RV-42N cycloidal reducer specs | actuatorlist</title>",
+        );
         const types = jsonLdTypes(html);
         expect(types).toContain("Product");
         expect(types).toContain("BreadcrumbList");
@@ -202,4 +373,15 @@ describe("real 404s", () => {
         expect(res.status).toBe(404);
         expect(res.headers.get("content-type")).toStartWith("application/problem+json");
     });
+});
+
+test("robots markdown gives humanoid arm reach only where published", async () => {
+    const md = await (await get("/robots.md")).text();
+    const section = (name: string) =>
+        md.slice(
+            md.indexOf(`## ${name} by`),
+            md.indexOf("\n## ", md.indexOf(`## ${name} by`) + 1),
+        );
+    expect(section("H2")).toContain("Arm reach: 690 mm");
+    expect(section("NEO")).not.toContain("Arm reach");
 });

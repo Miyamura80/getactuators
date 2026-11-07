@@ -14,6 +14,9 @@ export interface HeadMeta {
     image?: string;
     jsonLd?: Record<string, unknown>;
     noindex?: boolean;
+    // A noindex variant of an indexable page (e.g. a /compare selection) keeps
+    // the page's canonical; a page that is itself noindex gets none.
+    canonicalWhenNoindex?: boolean;
 }
 
 export function esc(s: string): string {
@@ -51,7 +54,8 @@ export function headTags(m: HeadMeta): string {
         `<meta name="twitter:image" content="${esc(image)}">`,
     ];
     if (m.noindex) tags.push(`<meta name="robots" content="noindex, follow">`);
-    else tags.unshift(`<link rel="canonical" href="${esc(url)}">`);
+    if (!m.noindex || m.canonicalWhenNoindex)
+        tags.unshift(`<link rel="canonical" href="${esc(url)}">`);
     if (m.markdownPath) {
         tags.unshift(
             `<link rel="alternate" type="text/markdown" href="${esc(m.markdownPath)}" title="Markdown">`,

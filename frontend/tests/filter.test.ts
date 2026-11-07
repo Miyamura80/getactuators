@@ -11,6 +11,7 @@ function filters(overrides: Partial<FilterState> = {}): FilterState {
         search: "",
         categories: new Set(),
         useCases: new Set(),
+        countries: new Set(),
         // No sort by default here so tests that only exercise the predicate keep
         // input order and read plainly; sort tests set sortKey explicitly.
         sortKey: "",
@@ -86,6 +87,23 @@ describe("applyFilters category and use-case", () => {
 
     test("empty filter sets match everything", () => {
         expect(applyFilters(list, filters())).toHaveLength(3);
+    });
+});
+
+describe("applyFilters country", () => {
+    const list = [
+        makeActuator({ id: "cn", country: "China" }),
+        makeActuator({ id: "jp", country: "Japan" }),
+        makeActuator({ id: "none", country: null }),
+    ];
+
+    test("country filter keeps only selected countries", () => {
+        const f = filters({ countries: new Set(["China", "Japan"]) });
+        expect(ids(applyFilters(list, f))).toEqual(["cn", "jp"]);
+    });
+
+    test("rows without a country drop out once a country is chosen", () => {
+        expect(ids(applyFilters(list, filters({ countries: new Set(["Japan"]) })))).toEqual(["jp"]);
     });
 });
 

@@ -35,24 +35,8 @@ help: ## Show this help message
 
 ### Onboarding & Setup
 .PHONY: onboard
-onboard: check_bun ## Interactive onboarding CLI (rename, deps, env, hooks, media)
+onboard: check_bun ## Interactive onboarding CLI (rename, deps, env, hooks)
 	@bun run onboard.ts
-
-########################################################
-# Asset Generation
-########################################################
-
-### Asset Generation
-.PHONY: banner logo
-banner: check_bun ## Generate project banner image
-	@echo "$(YELLOW)🎨 Generating banner...$(RESET)"
-	@bun run scripts/generate-banner.ts
-	@echo "$(GREEN)✅ Banner generated at media/banner.png$(RESET)"
-
-logo: check_bun ## Generate logo, icons, and favicon
-	@echo "$(YELLOW)🎨 Generating logo suite...$(RESET)"
-	@bun run scripts/generate-logo.ts
-	@echo "$(GREEN)✅ Logo suite generated in frontend/public/$(RESET)"
 
 ########################################################
 # Check dependencies
@@ -105,13 +89,12 @@ view_deps_size_by_package: check_bun ## Show node_modules size by package
 ########################################################
 
 ### Running
-all: check_bun ## Install deps and run main application
+all: check_bun ## Install deps and serve the site
 	@bun install
-	@echo "$(GREEN)🏁 Running main application...$(RESET)"
+	@echo "$(GREEN)🏁 Serving the site...$(RESET)"
 	@bun run start
-	@echo "$(GREEN)✅ Main application run completed.$(RESET)"
 
-dev: check_bun ## Run in watch mode
+dev: check_bun ## Serve the site in watch mode
 	@bun run dev
 
 ########################################################
@@ -182,15 +165,36 @@ agents_validate: check_bun ## Validate AGENTS.md content
 	@bun run scripts/validate-agents-md.ts
 	@echo "$(GREEN)✅AGENTS.md validation completed.$(RESET)"
 
+.PHONY: lint_immutable_refs
+lint_immutable_refs: ## Fail if a Dockerfile or GitHub Actions file uses a mutable image tag or action ref
+	@echo "$(YELLOW)🔍 Checking for mutable image/action references...$(RESET)"
+	@python3 scripts/check_immutable_refs.py
+	@echo "$(GREEN)✅ All non-exempt references are pinned.$(RESET)"
+
 check_ai_writing: check_bun ## Check for AI-written content
 	@echo "$(YELLOW)🔍 Checking AI writing patterns...$(RESET)"
 	@bun run scripts/check_ai_writing.ts
 	@echo "$(GREEN)✅ AI writing check completed.$(RESET)"
+
+citation_audit: check_bun ## Fail if any sourced number is uncited or breaks its source licence
+	@echo "$(YELLOW)🔍 Auditing supply-chain citations...$(RESET)"
+	@bun run scripts/citation-audit.ts
+	@echo "$(GREEN)✅ Citation audit completed.$(RESET)"
+
+validate_benchmarks: check_bun ## Validate data/benchmarks runs (schema, protocol, plausibility, licences)
+	@echo "$(YELLOW)🔍 Validating benchmark runs...$(RESET)"
+	@bun run scripts/validate-benchmarks.ts
+	@echo "$(GREEN)✅ Benchmark validation completed.$(RESET)"
 
 validate_data: check_bun ## Validate actuator + robot datasets (report only, non-blocking)
 	@echo "$(YELLOW)🔍 Validating datasets...$(RESET)"
 	@bun run scripts/validate_actuators.ts
 	@echo "$(GREEN)✅ Dataset validation completed.$(RESET)"
 
-ci: lint deadcode typecheck tech_debt duplicate_code import_lint lint_links check_ai_writing sync-agent-config-check ## Run all CI checks
+sdk_signals: check_bun ## Re-run the /sdk seeding pipeline (collect, objective checks, committed labels, score)
+	@echo "$(YELLOW)🔍 Seeding /sdk scores...$(RESET)"
+	@bun run scripts/sdk-signals/run.ts
+	@echo "$(GREEN)✅ SDK signals written to src/sdk/data/.$(RESET)"
+
+ci: lint deadcode typecheck tech_debt duplicate_code import_lint lint_links check_ai_writing citation_audit sync-agent-config-check lint_immutable_refs validate_benchmarks ## Run all CI checks
 	@echo "$(GREEN)✅ CI checks completed.$(RESET)"

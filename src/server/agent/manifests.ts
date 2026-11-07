@@ -1,4 +1,11 @@
-import { REPO_URL, absoluteUrl } from "../site";
+import {
+    CODE_LICENSE,
+    DATA_LICENSE,
+    LICENSE_EXCLUDES,
+    LICENSE_SPLIT,
+    REPO_URL,
+    absoluteUrl,
+} from "../site";
 import { MCP_TOOLS, PATHS, RATE_LIMIT_PER_MINUTE, REST_ENDPOINTS } from "./links";
 import { bullets, mdTable } from "./md";
 import { catalogStats } from "./pages-md";
@@ -21,6 +28,7 @@ export function whenToUse(): string[] {
         "Compare two or more specific actuators side by side (peak and rated torque, gear ratio, weight, voltage, bus, encoder, price).",
         "Find which motors a real robot uses in each joint, or which robots use a given actuator.",
         "Look up one actuator's datasheet-level specs with source links before recommending it.",
+        "Pick an open-source robot to build from (/open-source, MCP list_open_robots): how open its CAD, BOM, firmware and sim really are, its licence, cost and the actuators in its joints.",
     ];
 }
 
@@ -85,34 +93,45 @@ export function authBody(): string {
 export function pricingBody(): string {
     return [
         "# actuatorlist pricing",
-        "> actuatorlist is free. One plan, no paid tiers, no keys, no trial clock.",
+        "> actuatorlist is free. There is one plan, Free at $0. No paid plans, tiers, add-ons or trials exist, and no API key or account is needed.",
         `## Plans\n\n${mdTable(
-            ["Plan", "Price", "Who it is for"],
-            [["Free", "$0, forever", "Everyone: people, scripts and AI agents"]],
-        )}`,
+            ["Plan", "Price", "Billing", "API key", "Rate limit", "Who it is for"],
+            [
+                [
+                    "Free",
+                    "$0",
+                    "none",
+                    "not required",
+                    `${RATE_LIMIT_PER_MINUTE} requests per minute per IP (REST API)`,
+                    "Everyone: people, scripts and AI agents",
+                ],
+            ],
+        )}\n\nThis is the only plan. There are no paid plans, higher tiers, usage-based charges or enterprise contracts, and nothing to upgrade to.`,
         `## What the free plan includes\n\n${bullets([
             `The full catalog: ${catalogStats()}.`,
             "The website, including the leaderboard, all-actuators table, gallery and robot pages.",
             `The REST API at ${u(PATHS.apiIndex)} with an OpenAPI description at ${u(PATHS.openapi)}.`,
-            `The MCP server at ${u(PATHS.mcp)} for Claude, ChatGPT, Cursor and other MCP clients.`,
-            `Markdown twins of every page, ${u(PATHS.llms)} and ${u(PATHS.llmsFull)}.`,
-            "Commercial use, as permitted by the MIT License.",
+            `The MCP servers: the catalog server at ${u(PATHS.mcp)} and the docs server at ${u(PATHS.mcpDocs)}, for Claude, ChatGPT, Cursor and other MCP clients.`,
+            `Markdown surfaces: a markdown twin of every page, ${u(PATHS.llms)}, ${u(PATHS.llmsFull)} and this document.`,
+            "Read-only access to everything above, anonymously.",
+            `Commercial use, as permitted by the ${CODE_LICENSE.name} (code) and ${DATA_LICENSE.name} (data).`,
         ])}`,
         `## Limits\n\n${mdTable(
             ["Limit", "Value"],
             [
                 [
-                    "API rate limit",
-                    `${RATE_LIMIT_PER_MINUTE} requests per minute per IP`,
+                    "REST API rate limit",
+                    `${RATE_LIMIT_PER_MINUTE} requests per minute per IP (HTTP 429 with Retry-After when exceeded)`,
                 ],
                 ["Monthly quota", "none"],
                 ["API key", "not required"],
-                ["Account", "not required"],
+                ["Account or sign-up", "not required"],
+                ["Payment method", "not required"],
                 ["Write access", "none (read-only; corrections via GitHub)"],
                 ["Uptime SLA", "none (best effort)"],
             ],
         )}`,
-        `## License\n\nThe code and dataset are published under the MIT License in ${REPO_URL}. You can copy, cache or redistribute the data; keep the license notice and cite actuatorlist as the source.`,
+        `## License\n\n${LICENSE_SPLIT} Both are in ${REPO_URL}; the data license is ${DATA_LICENSE.url}. You can copy, cache, adapt or redistribute the data, including commercially, if you credit "${DATA_LICENSE.credit}" and link the license. ${LICENSE_EXCLUDES} Third-party figures keep their original source citations.`,
         "## Costs you might still see\n\nActuator prices in the catalog are list prices from public manufacturer or retailer pages, in USD. actuatorlist does not sell hardware and takes no commission. Entries without a public price read quote only.",
         `## Questions\n\nOpen an issue at ${REPO_URL}/issues. Agent guide: ${u(PATHS.agentsMd)}. Authentication details: ${u(PATHS.authMd)}.`,
     ].join("\n\n");

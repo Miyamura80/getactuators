@@ -1,3 +1,5 @@
+import { activation } from "../lib/svg-link";
+
 export interface BarItem {
     id: string;
     name: string;
@@ -10,21 +12,58 @@ export interface BarItem {
 interface Props {
     items: BarItem[];
     onSelect?: (id: string) => void;
+    // Log-scale bar heights, for values spanning orders of magnitude
+    // (robot prices run from hundreds to tens of thousands of dollars).
+    log?: boolean;
 }
 
 const SLOT = 46;
-const PAD_L = 8;
-const PAD_R = 8;
+const MIN_PAD = 8;
 const TOP = 22;
 const BAR_H = 150;
-const LABEL_H = 118;
+const NAME_Y = 26; // name anchor, below the baseline
+const NAME_ANGLE = 55; // degrees, rotated counter-clockwise
+const NAME_MAX_CHARS = 24;
+// Generous average glyph width for the 10.5px .bar-name font, so the padding
+// errs on the side of a little extra room rather than clipping.
+const NAME_CHAR_W = 6.2;
+
+const COS = Math.cos((NAME_ANGLE * Math.PI) / 180);
+const SIN = Math.sin((NAME_ANGLE * Math.PI) / 180);
+
+// Long names would push the label band far past the bars; cut them and keep
+// the full name in a <title> tooltip.
+export function barLabel(name: string): string {
+    return name.length > NAME_MAX_CHARS ? `${name.slice(0, NAME_MAX_CHARS - 1).trimEnd()}…` : name;
+}
+
+// Rotated names hang down and to the left of their bar, so the first bars'
+// labels can reach past x = 0. Size the left pad and the label band from the
+// labels themselves so nothing is clipped by the SVG edge.
+export function barLayout(names: string[]): { padL: number; labelH: number } {
+    let padL = MIN_PAD;
+    let drop = 0;
+    names.forEach((name, i) => {
+        const w = barLabel(name).length * NAME_CHAR_W;
+        const reach = w * COS + MIN_PAD - (i * SLOT + SLOT / 2);
+        padL = Math.max(padL, reach);
+        drop = Math.max(drop, w * SIN);
+    });
+    return { padL: Math.ceil(padL), labelH: Math.ceil(NAME_Y + drop + MIN_PAD * 2) };
+}
 
 // Vertical bar chart: value above each bar, flag + rotated name below.
 // Sized by item count and scrolled horizontally by its container when wide.
-export function BarChart({ items, onSelect }: Props) {
+export function BarChart({ items, onSelect, log = false }: Props) {
     const max = Math.max(...items.map((i) => i.value), 1);
+    // On a log scale the smallest bar keeps a stub of a quarter decade.
+    const lo = Math.log10(Math.min(...items.map((i) => i.value), max)) - 0.25;
+    const frac = (v: number) =>
+        log ? (Math.log10(v) - lo) / (Math.log10(max) - lo) : v / max;
+    const { padL: PAD_L, labelH } = barLayout(items.map((i) => i.name));
+    const PAD_R = MIN_PAD;
     const width = PAD_L + PAD_R + items.length * SLOT;
-    const height = TOP + BAR_H + LABEL_H;
+    const height = TOP + BAR_H + labelH;
     const baseY = TOP + BAR_H;
 
     return (
@@ -46,7 +85,7 @@ export function BarChart({ items, onSelect }: Props) {
                 />
             ))}
             {items.map((it, i) => {
-                const h = Math.max(2, (it.value / max) * BAR_H);
+                const h = Math.max(2, frac(it.value) * BAR_H);
                 const x = PAD_L + i * SLOT;
                 const cx = x + SLOT / 2;
                 const barW = 30;
@@ -54,8 +93,7 @@ export function BarChart({ items, onSelect }: Props) {
                     <g
                         key={it.id}
                         className="bar-g"
-                        onClick={onSelect ? () => onSelect(it.id) : undefined}
-                        style={onSelect ? { cursor: "pointer" } : undefined}
+                        {...(onSelect ? activation(it.name, () => onSelect(it.id)) : {})}
                     >
                         <rect
                             x={cx - barW / 2}
@@ -73,12 +111,13 @@ export function BarChart({ items, onSelect }: Props) {
                         </text>
                         <text
                             x={cx}
-                            y={baseY + 26}
+                            y={baseY + NAME_Y}
                             className="bar-name"
                             textAnchor="end"
-                            transform={`rotate(-55 ${cx} ${baseY + 26})`}
+                            transform={`rotate(-${NAME_ANGLE} ${cx} ${baseY + NAME_Y})`}
                         >
-                            {it.name}
+                            <title>{it.name}</title>
+                            {barLabel(it.name)}
                         </text>
                     </g>
                 );

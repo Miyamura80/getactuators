@@ -1,5 +1,24 @@
 import type { z } from "zod";
 import {
+    AltListParams,
+    AltTechListSchema,
+    AltTechSchema,
+    getAltHandler,
+    listAltsHandler,
+} from "./alts";
+import {
+    BenchmarkListParams,
+    BenchmarkListSchema,
+    actuatorBenchmarksHandler,
+    listBenchmarksHandler,
+} from "./benchmarks";
+import {
+    CountryListSchema,
+    CountrySchema,
+    getCountryHandler,
+    listCountriesHandler,
+} from "./countries";
+import {
     compareActuatorsGet,
     compareActuatorsPost,
     getActuatorById,
@@ -11,7 +30,51 @@ import {
     listUseCasesHandler,
 } from "./handlers";
 import type { ApiHandler } from "./http";
+import {
+    HumanoidDetailSchema,
+    HumanoidListSchema,
+    getHumanoidById,
+    listHumanoids,
+} from "./humanoids";
+import {
+    MetalListSchema,
+    MetalPriceParams,
+    MetalPricesSchema,
+    MetalSupplyParams,
+    MetalSupplySchema,
+    getMetalHandler,
+    getMetalPricesHandler,
+    listMetalsHandler,
+} from "./metals";
+import {
+    OpenRobotListParams,
+    OpenRobotListSchema,
+    OpenRobotSchema,
+    getOpenRobotHandler,
+    listOpenRobotsHandler,
+} from "./open-robots";
 import { ActuatorListParams, CompareQueryParams, RobotListParams } from "./params";
+import {
+    PeopleListParams,
+    PeopleListSchema,
+    PersonSchema,
+    getPersonHandler,
+    listPeopleHandler,
+} from "./people";
+import {
+    PolicyListParams,
+    PolicyListSchema,
+    PolicyMeasureSchema,
+    getPolicyHandler,
+    listPolicyHandler,
+} from "./policy";
+import {
+    ProcessChainListSchema,
+    ProcessChainSchema,
+    ProcessParams,
+    getProcessHandler,
+    listProcessesHandler,
+} from "./processes";
 import {
     ActuatorDetailSchema,
     ActuatorListSchema,
@@ -22,6 +85,23 @@ import {
     RobotDetailSchema,
     RobotListSchema,
 } from "./schemas";
+import {
+    SdkBrandSchema,
+    SdkListParams,
+    SdkListSchema,
+    getSdkHandler,
+    listSdkHandler,
+} from "./sdk";
+import {
+    CompanyDetailSchema,
+    CompanyListParams,
+    CompanyListSchema,
+    SiteListParams,
+    SiteListSchema,
+    getCompanyHandler,
+    listCompaniesHandler,
+    listSitesHandler,
+} from "./supply-chain";
 
 // The API surface as data. Routes, the /api index, the OpenAPI document and the
 // developer docs are all generated from this list, so they cannot disagree.
@@ -166,5 +246,363 @@ export const OPERATIONS: Operation[] = [
         errors: [],
         example: "/api/v1/use-cases",
         handler: listUseCasesHandler,
+    },
+    {
+        operationId: "list_companies",
+        method: "GET",
+        path: "/api/v1/companies",
+        summary: "List supply-chain companies",
+        description:
+            "Companies along the actuator supply chain (rare earths, magnets and motors, gears and bearings, robot and actuator makers). Filter by country, stage or segment. Every number carries sources, as-of date and confidence. Cursor-paginated.",
+        query: CompanyListParams,
+        response: CompanyListSchema,
+        errors: [400],
+        example: "/api/v1/companies?country=JP&stage=gearing",
+        handler: listCompaniesHandler,
+    },
+    {
+        operationId: "get_company",
+        method: "GET",
+        path: "/api/v1/companies/:id",
+        summary: "Get one supply-chain company",
+        description:
+            "One company with its sites, the companies it supplies and the companies that supply it, each with citations.",
+        pathParam: { name: "id", description: "Company id (slug).", example: "jl-mag" },
+        response: CompanyDetailSchema,
+        errors: [404],
+        example: "/api/v1/companies/jl-mag",
+        handler: getCompanyHandler,
+    },
+    {
+        operationId: "list_sites",
+        method: "GET",
+        path: "/api/v1/sites",
+        summary: "List supply-chain sites",
+        description:
+            "Headquarters, plants, mines and refineries with coordinates and their precision. Filter by country, stage, company or kind. Cursor-paginated.",
+        query: SiteListParams,
+        response: SiteListSchema,
+        errors: [400],
+        example: "/api/v1/sites?company=jl-mag",
+        handler: listSitesHandler,
+    },
+    {
+        operationId: "list_metals",
+        method: "GET",
+        path: "/api/v1/metals",
+        summary: "List magnet metals",
+        description:
+            "The six metals in an actuator's permanent magnet (Nd, Pr, Dy, Tb for NdFeB; Sm, Co for SmCo) with their role and the leading country at each stage: mining, separation, metal and alloy, magnets.",
+        response: MetalListSchema,
+        errors: [],
+        example: "/api/v1/metals",
+        handler: listMetalsHandler,
+    },
+    {
+        operationId: "get_metal",
+        method: "GET",
+        path: "/api/v1/metals/:element",
+        summary: "Who supplies one magnet metal",
+        description:
+            "Country shares of each stage (or one with `stage`), USGS mine production, reserves and years of supply by country, and the latest cited price of every series for the element. Stages no public source splits by country are marked `gap`.",
+        pathParam: {
+            name: "element",
+            description: "Element id: nd, pr, dy, tb, sm or co.",
+            example: "dy",
+        },
+        query: MetalSupplyParams,
+        response: MetalSupplySchema,
+        errors: [400, 404],
+        example: "/api/v1/metals/dy?stage=separation",
+        handler: getMetalHandler,
+    },
+    {
+        operationId: "get_metal_prices",
+        method: "GET",
+        path: "/api/v1/metal-prices/:series",
+        summary: "Price history of a magnet metal",
+        description:
+            "Cited price points for one series in US$/kg (USGS annual averages and year-end ranges, monthly SMM readings in 2026) with the events that touched the element. `from` and `to` take YYYY-MM.",
+        pathParam: {
+            name: "series",
+            description:
+                "Series id, e.g. ndpr-oxide, dy-oxide, tb-metal-cn, tb-metal-fob, co-metal.",
+            example: "dy-oxide",
+        },
+        query: MetalPriceParams,
+        response: MetalPricesSchema,
+        errors: [400, 404],
+        example: "/api/v1/metal-prices/dy-oxide?from=2020-01",
+        handler: getMetalPricesHandler,
+    },
+    {
+        operationId: "list_policy_measures",
+        method: "GET",
+        path: "/api/v1/policy",
+        summary: "List policy measures on the actuator chain",
+        description:
+            "Export controls, tariffs, subsidies and standards that touch the actuator supply chain (mining to robot) in China, the US, the EU, Japan, Korea, Australia and international standards bodies, oldest first. Each measure has its status history with a primary source per change. Filter by jurisdiction, type, stage or status.",
+        query: PolicyListParams,
+        response: PolicyListSchema,
+        errors: [400],
+        example: "/api/v1/policy?jurisdiction=CN&type=export-control",
+        handler: listPolicyHandler,
+    },
+    {
+        operationId: "get_policy_measure",
+        method: "GET",
+        path: "/api/v1/policy/:id",
+        summary: "Get one policy measure",
+        description:
+            "One measure with its issuer, dates, status history, affected stages, HS codes, companies, award size and sources.",
+        pathParam: {
+            name: "id",
+            description: "Measure id, e.g. cn-mofcom-2025-18.",
+            example: "cn-mofcom-2025-18",
+        },
+        response: PolicyMeasureSchema,
+        errors: [404],
+        example: "/api/v1/policy/cn-mofcom-2025-18",
+        handler: getPolicyHandler,
+    },
+    {
+        operationId: "list_processes",
+        method: "GET",
+        path: "/api/v1/processes",
+        summary: "List manufacturing process chains",
+        description:
+            "The process graphs on /manufacturing (the NdFeB magnet chain, ore to rotor segment; the precision chain of strain-wave gears, roller screws, precision bearings and encoders, bar stock to tested part) with their step counts.",
+        response: ProcessChainListSchema,
+        errors: [],
+        example: "/api/v1/processes",
+        handler: listProcessesHandler,
+    },
+    {
+        operationId: "get_process",
+        method: "GET",
+        path: "/api/v1/processes/:chain",
+        summary: "Get a manufacturing process chain",
+        description:
+            "Every step of one chain in order, grouped by stage or sub-chain: inputs and outputs, cited key numbers (temperature, particle size, tolerance, surface finish, yield, energy), the companies that run it, the stage's country shares and concentration tier, upstream and downstream steps, /bom node and /metals element links, and sources. Pass `step` for one step and its edges.",
+        pathParam: {
+            name: "chain",
+            description: "Chain id: magnet or precision.",
+            example: "magnet",
+        },
+        query: ProcessParams,
+        response: ProcessChainSchema,
+        errors: [400, 404],
+        example: "/api/v1/processes/magnet?step=jet-milling",
+        handler: getProcessHandler,
+    },
+    {
+        operationId: "list_alt_technologies",
+        method: "GET",
+        path: "/api/v1/alts",
+        summary: "List alternative actuator technologies",
+        description:
+            "Every technology on /alts (rare-earth-free motors, artificial muscles, hydraulic drives, transmissions) with principle, magnet use, TRL, milestones, companies, cited performance figures, market sizes and deployments. Filter with `family`.",
+        query: AltListParams,
+        response: AltTechListSchema,
+        errors: [400],
+        example: "/api/v1/alts?family=artificial-muscle",
+        handler: listAltsHandler,
+    },
+    {
+        operationId: "get_alt_technology",
+        method: "GET",
+        path: "/api/v1/alts/:id",
+        summary: "Get an alternative actuator technology",
+        description:
+            "One /alts technology: principle, magnet use, TRL with its evidence, dated milestones (announced targets flagged), companies, performance figures, market size and growth, deployments and sources.",
+        pathParam: {
+            name: "id",
+            description: "Technology id, e.g. switched-reluctance.",
+            example: "switched-reluctance",
+        },
+        response: AltTechSchema,
+        errors: [404],
+        example: "/api/v1/alts/switched-reluctance",
+        handler: getAltHandler,
+    },
+    {
+        operationId: "list_humanoids",
+        method: "GET",
+        path: "/api/v1/humanoids",
+        summary: "List humanoids with actuator totals",
+        description:
+            "Every humanoid on /humanoids with its actuator count by type (QDD, planetary, harmonic, cycloidal, roller screw, ball screw, hydraulic, tendon, undisclosed) and estimated NdFeB magnet and rare-earth (Nd, Pr, Dy, Tb) mass, each with a range and confidence.",
+        response: HumanoidListSchema,
+        errors: [],
+        example: "/api/v1/humanoids",
+        handler: listHumanoids,
+    },
+    {
+        operationId: "get_humanoid",
+        method: "GET",
+        path: "/api/v1/humanoids/:id",
+        summary: "Get one humanoid joint by joint",
+        description:
+            "One humanoid mapped onto the canonical joint set: per joint the actuator type and whether it is reported or estimated (with what it was inferred from), motor, reducer, peak torque or force, gear ratio and motor-side torque, estimated magnet mass and sources.",
+        pathParam: {
+            name: "id",
+            description: "Humanoid id (slug).",
+            example: "unitree-g1",
+        },
+        response: HumanoidDetailSchema,
+        errors: [404],
+        example: "/api/v1/humanoids/unitree-g1",
+        handler: getHumanoidById,
+    },
+    {
+        operationId: "list_open_robots",
+        method: "GET",
+        path: "/api/v1/open-robots",
+        summary: "List open-source robots",
+        description:
+            "Every robot on /open-source (mobile manipulators, arms, humanoids, legged): licences, an openness score over eight dimensions (CAD, electronics, firmware, software, BOM, assembly guide, sim model, licence) with a link per published artefact, BOM or kit cost, GitHub stars and last commit, family-tree parent, and the actuator in each joint group with its catalog id when listed.",
+        query: OpenRobotListParams,
+        response: OpenRobotListSchema,
+        errors: [400],
+        example: "/api/v1/open-robots?type=humanoid",
+        handler: listOpenRobotsHandler,
+    },
+    {
+        operationId: "get_open_robot",
+        method: "GET",
+        path: "/api/v1/open-robots/:id",
+        summary: "Get one open-source robot",
+        description:
+            "One open robot with its openness matrix row (status, link, licence per dimension), joints mapped to catalog actuators, cost, repository stats and sources.",
+        pathParam: {
+            name: "id",
+            description: "Open robot id (slug).",
+            example: "yor",
+        },
+        response: OpenRobotSchema,
+        errors: [404],
+        example: "/api/v1/open-robots/yor",
+        handler: getOpenRobotHandler,
+    },
+    {
+        operationId: "list_benchmarks",
+        method: "GET",
+        path: "/api/v1/benchmarks",
+        summary: "List measured actuator runs",
+        description:
+            "Measured performance from /benchmarks: torque-speed curves, thermal derating, backlash, friction and control figures from published tests (papers, vendor test reports, blogs) and community runs submitted by pull request. Each run carries its rig, data method (raw, tabulated, digitised or reported), uncertainty per metric, source and the gap to the datasheet. Filter by actuator_id or origin.",
+        query: BenchmarkListParams,
+        response: BenchmarkListSchema,
+        errors: [400],
+        example: "/api/v1/benchmarks?actuator_id=robstride-02",
+        handler: listBenchmarksHandler,
+    },
+    {
+        operationId: "get_actuator_benchmarks",
+        method: "GET",
+        path: "/api/v1/actuators/:id/benchmarks",
+        summary: "Measured runs for one actuator",
+        description:
+            "Every measured run on file for one catalog actuator, newest first, with measured against datasheet ratios. 404 when the actuator is unknown or has no runs yet.",
+        pathParam: {
+            name: "id",
+            description: "Catalog actuator id.",
+            example: "xiaomi-cybergear",
+        },
+        response: BenchmarkListSchema,
+        errors: [404],
+        example: "/api/v1/actuators/xiaomi-cybergear/benchmarks",
+        handler: actuatorBenchmarksHandler,
+    },
+    {
+        operationId: "list_countries",
+        method: "GET",
+        path: "/api/v1/countries",
+        summary: "List live country pages",
+        description:
+            "Country pages of the supply-chain atlas (/japan, ...) that pass the coverage gate, with how many companies, sites and supply links each holds.",
+        response: CountryListSchema,
+        errors: [],
+        example: "/api/v1/countries",
+        handler: listCountriesHandler,
+    },
+    {
+        operationId: "get_country",
+        method: "GET",
+        path: "/api/v1/countries/:code",
+        summary: "One country's actuator supply chain",
+        description:
+            "Everything on a country page: the country's share of each stage (with the world leader), named industrial clusters with their sites, its policy measures, every company headquartered there or with a site there, the sites in the country and the current supply links touching those companies, all with citations.",
+        pathParam: {
+            name: "code",
+            description: "ISO 3166 alpha-2 code or page slug, e.g. JP or japan.",
+            example: "JP",
+        },
+        response: CountrySchema,
+        errors: [404],
+        example: "/api/v1/countries/JP",
+        handler: getCountryHandler,
+    },
+    {
+        operationId: "list_sdk_scores",
+        method: "GET",
+        path: "/api/v1/sdk",
+        summary: "List actuator SDK scores by brand",
+        description:
+            "Every actuator brand with software to score, ranked by SDK quality: seven dimension scores (protocol openness, bindings, ROS 2 and sim, docs, firmware and tooling, support, comms reliability), capability matrix, cited objective checks, top pain points and the newest community evidence. Choose a reader preset to re-weight the overall score.",
+        query: SdkListParams,
+        response: SdkListSchema,
+        errors: [400],
+        example: "/api/v1/sdk?preset=ros2",
+        handler: listSdkHandler,
+    },
+    {
+        operationId: "get_sdk_score",
+        method: "GET",
+        path: "/api/v1/sdk/:brand",
+        summary: "Get one brand's SDK score",
+        description:
+            "One brand's SDK score with every check and every evidence item (claim summary, link, forum, date). Accepts an SDK brand id or a catalog actuator id.",
+        pathParam: {
+            name: "brand",
+            description:
+                "SDK brand id (e.g. odrive) or catalog actuator id (e.g. odrive-s1).",
+            example: "odrive",
+        },
+        query: SdkListParams,
+        response: SdkBrandSchema,
+        errors: [400, 404],
+        example: "/api/v1/sdk/odrive",
+        handler: getSdkHandler,
+    },
+    {
+        operationId: "list_people",
+        method: "GET",
+        path: "/api/v1/people",
+        summary: "List leading people in actuators and rare earths",
+        description:
+            "The /people directory: actuator researchers, actuator and robot founders, magnet and rare earth executives, and analysts and policy leads. Each person carries role, affiliations (with supply-chain company ids), why they matter, key works, the inclusion criterion met and sources. Filter by domain.",
+        query: PeopleListParams,
+        response: PeopleListSchema,
+        errors: [400],
+        example: "/api/v1/people?domain=magnets",
+        handler: listPeopleHandler,
+    },
+    {
+        operationId: "get_person",
+        method: "GET",
+        path: "/api/v1/people/:id",
+        summary: "Get one person from the people directory",
+        description:
+            "One person from /people with affiliations, key works, site links (country page, humanoid joint map, catalog) and sources.",
+        pathParam: {
+            name: "id",
+            description: "Person id (slug).",
+            example: "masato-sagawa",
+        },
+        response: PersonSchema,
+        errors: [404],
+        example: "/api/v1/people/masato-sagawa",
+        handler: getPersonHandler,
     },
 ];

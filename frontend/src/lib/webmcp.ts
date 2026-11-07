@@ -18,6 +18,8 @@ import { ACTUATORS } from "./data";
 import { DEFAULT_FILTERS, applyFilters } from "./filter";
 import { navigate } from "./router";
 import { ROBOTS, motorCount, resolveJoints } from "./robots";
+import { type Arm, MAX_LINKS, MIN_LINKS, armReport, validArm } from "../../../src/engineering/arm-torque";
+import { JOINTS, humanoidJointRequirements } from "../../../src/server/agent/humanoid-joints";
 
 type Args = Record<string, unknown>;
 
@@ -44,7 +46,7 @@ interface ModelContext {
 const SITE = "https://actuatorlist.com";
 const MAX_LIMIT = 50;
 
-function result(data: unknown, isError = false): ToolResult {
+export function result(data: unknown, isError = false): ToolResult {
     return {
         content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
         structuredContent: data,
@@ -87,7 +89,7 @@ export interface SearchArgs {
     limit?: number;
 }
 
-// Filter + sort through the same helper the /all table uses, so an agent sees
+// Filter + sort through the same helper the /actuators list view uses, so an agent sees
 // the order a visitor would. Numeric bounds drop rows with unknown values.
 export function searchActuators(args: SearchArgs) {
     const category = CATEGORIES.some((c) => c.slug === args.category)
@@ -99,6 +101,7 @@ export function searchActuators(args: SearchArgs) {
         search: str(args.query),
         categories: new Set(category ? [category] : []),
         useCases: new Set(),
+        countries: new Set(),
         sortKey,
         sortDir: args.sort_dir === "asc" ? "asc" : "desc",
     }).filter((a) => {
@@ -145,6 +148,71 @@ export function listRobots(query?: string) {
         url: `${SITE}/robots#${encodeURIComponent(r.id)}`,
     }));
 }
+
+// Arm model from untyped tool arguments, or an error message for the agent.
+export function armFromArgs(args: Args): Arm | string {
+    const links = Array.isArray(args.links) ? args.links : [];
+    if (links.length < MIN_LINKS || links.length > MAX_LINKS) return `links: ${MIN_LINKS} to ${MAX_LINKS} items`;
+    const arm: Arm = {
+        payload: numOrNull(args.payload_kg) ?? 0,
+        comFraction: numOrNull(args.com_fraction) ?? 0.5,
+        links: links.map((raw, i) => {
+            const l = (raw ?? {}) as Args;
+            return {
+                length: numOrNull(l.length_m) ?? 0,
+                mass: numOrNull(l.mass_kg) ?? 0,
+                actuatorMass: i === links.length - 1 ? 0 : (numOrNull(l.actuator_mass_kg) ?? 0),
+            };
+        }),
+    };
+    return validArm(arm) ? arm : "Lengths must be above 0, masses 0 or more, com_fraction 0 to 1";
+}
+
+// Shortlist rows carry site paths; tool results give absolute URLs.
+function absoluteRows<T extends { page_path: string }>(rows: T[]) {
+    return rows.map(({ page_path, ...c }) => ({ ...c, page_url: `${SITE}${page_path}` }));
+}
+
+// armReport with absolute URLs, as every other tool result here returns.
+export function armResult(arm: Arm) {
+    const report = armReport(arm);
+    return {
+        assumptions: report.assumptions,
+        joints: report.joints.map((j) => ({
+            ...j,
+            shortlist: absoluteRows(j.shortlist),
+        })),
+        calculator_url: `${SITE}${report.calculator_path}`,
+    };
+}
+
+export const ARM_INPUT_SCHEMA = {
+    type: "object",
+    properties: {
+        links: {
+            type: "array",
+            minItems: MIN_LINKS,
+            maxItems: MAX_LINKS,
+            description: "From the base outward",
+            items: {
+                type: "object",
+                properties: {
+                    length_m: { type: "number", exclusiveMinimum: 0 },
+                    mass_kg: { type: "number", minimum: 0 },
+                    actuator_mass_kg: {
+                        type: "number",
+                        minimum: 0,
+                        description: "Actuator at this link's far end; ignored on the last link",
+                    },
+                },
+                required: ["length_m", "mass_kg"],
+            },
+        },
+        payload_kg: { type: "number", minimum: 0, description: "Payload plus gripper at the tip" },
+        com_fraction: { type: "number", minimum: 0, maximum: 1, description: "Link mass position, default 0.5" },
+    },
+    required: ["links", "payload_kg"],
+};
 
 const CATEGORY_ENUM = CATEGORIES.map((c) => c.slug);
 const ID_SCHEMA = { type: "string", description: "Actuator id, as returned by search_actuators" };
@@ -234,6 +302,45 @@ export function buildTools(): WebMcpTool[] {
             },
         },
         {
+            name: "calculate_arm_holding_torque",
+            title: "Robot arm holding torque",
+            description:
+                "Static holding moment (N·m) at each pitch joint of a 2 to 4 link arm held horizontal, from link lengths, masses, actuator masses and payload, with catalog actuators per joint and a calculator URL. Gravity only.",
+            annotations: { readOnlyHint: true },
+            inputSchema: ARM_INPUT_SCHEMA,
+            async execute(args) {
+                const arm = armFromArgs(args);
+                return typeof arm === "string" ? result({ error: arm }, true) : result(armResult(arm));
+            },
+        },
+        {
+            name: "get_humanoid_joint_requirements",
+            title: "Humanoid joint requirements",
+            description:
+                "Static torque estimate (N·m) per humanoid joint for a stated hypothetical 50 kg robot, with pose, arithmetic and catalog actuators that reach it (rated fits before peak-only). Omit joint for all seven.",
+            annotations: { readOnlyHint: true },
+            inputSchema: {
+                type: "object",
+                properties: { joint: { type: "string", enum: JOINTS.map((j) => j.id) } },
+            },
+            async execute(args) {
+                const id = str(args.joint);
+                if (id && !JOINTS.some((j) => j.id === id)) {
+                    return result({ error: `Unknown joint "${id}"`, joints: JOINTS.map((j) => j.id) }, true);
+                }
+                const data = humanoidJointRequirements(id || undefined);
+                return result({
+                    ...data,
+                    joints: data.joints.map(({ section_path, shortlist, ...j }) => ({
+                        ...j,
+                        section_url: `${SITE}${section_path}`,
+                        shortlist: absoluteRows(shortlist),
+                    })),
+                    guide_url: `${SITE}${data.guide_path}`,
+                });
+            },
+        },
+        {
             name: "get_mcp_install",
             title: "Get MCP install instructions",
             description:
@@ -267,6 +374,20 @@ function getModelContext(): ModelContext | null {
     const doc = (document as unknown as { modelContext?: ModelContext }).modelContext;
     const nav = (navigator as unknown as { modelContext?: ModelContext }).modelContext;
     return doc ?? nav ?? null;
+}
+
+// Tools that only make sense while one page is mounted (they drive its UI).
+// Returns a cleanup that unregisters them; needs registerTool's AbortSignal.
+export function registerPageTools(tools: WebMcpTool[]): () => void {
+    const mc = typeof document === "undefined" ? null : getModelContext();
+    if (!mc || typeof mc.registerTool !== "function") return () => {};
+    const controller = new AbortController();
+    try {
+        for (const t of tools) mc.registerTool(t, { signal: controller.signal });
+    } catch {
+        // Same policy as registerWebMcp: never break the page.
+    }
+    return () => controller.abort();
 }
 
 let registered = false;

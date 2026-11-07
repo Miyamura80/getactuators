@@ -1,3 +1,4 @@
+import { isRankable } from "../../../src/catalog/evidence";
 import type { Actuator } from "../types";
 import { colorForBrand } from "../lib/brands";
 import { BarChart } from "./BarChart";
@@ -9,6 +10,8 @@ interface Props {
     onSelect: (id: string) => void;
 }
 
+// Same rule as the server rankings (isRankable): verified actuators only, no
+// bare gearboxes. The leaderboard table below still lists every entry.
 function topBy(
     list: Actuator[],
     metric: (a: Actuator) => number | null,
@@ -16,7 +19,7 @@ function topBy(
     n: number,
 ): Actuator[] {
     return list
-        .filter((a) => metric(a) != null)
+        .filter((a) => isRankable(a) && metric(a) != null)
         .sort((a, b) => {
             const va = metric(a) as number;
             const vb = metric(b) as number;

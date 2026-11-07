@@ -3,7 +3,7 @@
 // and the companion robots dataset. Prints a human-readable report: row counts,
 // per-category counts, null counts per numeric field, image coverage and any
 // derived-value mismatches (torque density and price per Nm are both derived
-// from PEAK torque in scripts/build_actuator_data.ts).
+// from PEAK torque; tests/data/actuators-integrity.test.ts enforces them).
 //
 // Exit code is non-zero ONLY on hard structural violations (duplicate or empty
 // id, invalid category, non-array sources, missing referenced image). Derived
@@ -223,7 +223,7 @@ function main(): number {
         }
         console.log(
             "\nNote: torque_density_nm_per_kg and price_per_nm are derived from " +
-                "PEAK torque (see scripts/build_actuator_data.ts). Warnings above " +
+                "PEAK torque (see tests/data/actuators-integrity.test.ts). Warnings above " +
                 "flag rows that do not match that peak-based formula.",
         );
     }

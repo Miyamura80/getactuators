@@ -1,3 +1,5 @@
+import { PublicHeader } from "../components/PublicHeader";
+import { PublicFooter } from "../components/PublicFooter";
 import { useMemo } from "react";
 import { ACTUATORS } from "../lib/data";
 import { num } from "../lib/format";
@@ -42,7 +44,7 @@ const CATS: Cat[] = [
     },
 ];
 
-export function Home() {
+export function Home({ menuOpen = false }: { menuOpen?: boolean }) {
     const counts = useMemo(() => {
         const m = new Map<string, number>();
         for (const a of ACTUATORS)
@@ -52,31 +54,7 @@ export function Home() {
 
     return (
         <div className="home-page">
-            <header className="page-bar">
-                <Link to="/" className="page-brand" aria-label="actuatorlist home">
-                    <BrandMark size={24} />
-                    <span>
-                        <b>actuator</b>list.com
-                    </span>
-                </Link>
-                <nav className="page-nav">
-                    <Link to="/" className="page-nav-link">
-                        Leaderboard
-                    </Link>
-                    <Link to="/robots" className="page-nav-link" data-on={true}>
-                        Robot types
-                    </Link>
-                    <Link to="/all" className="page-nav-link">
-                        All actuators
-                    </Link>
-                    <Link to="/actuators" className="page-nav-link">
-                        Gallery
-                    </Link>
-                    <Link to="/agents" className="page-nav-link">
-                        Agents
-                    </Link>
-                </nav>
-            </header>
+            <PublicHeader path="/robots" initialOpen={menuOpen} />
 
             <section className="home-hero">
                 <BrandMark size={54} className="hero-mark" />
@@ -110,22 +88,12 @@ export function Home() {
 
             <RobotShowcase />
 
-            <Link to="/all" className="all-cta">
-                <span className="all-cta-kicker">The full dataset</span>
-                <span className="all-cta-title">
-                    Browse all {ACTUATORS.length} actuators →
-                </span>
-                <span className="all-cta-sub">
-                    Sort and filter every rotary actuator by torque, density, price,
-                    speed and more. Every row links back to its source.
-                </span>
+            <Link to="/actuators?view=list" className="all-cta">
+                <span className="all-cta-kicker">Full dataset</span>
+                <span className="all-cta-title">Browse all {ACTUATORS.length} actuators</span>
+                <span className="all-cta-go" aria-hidden="true">→</span>
             </Link>
-
-            <footer className="foot">
-                Community dataset {"·"} v1 sourced from manufacturer pages via web
-                search {"·"} category art is illustrative, not the listed hardware {"·"}
-                verify against datasheets before engineering use.
-            </footer>
+                <PublicFooter />
         </div>
     );
 }
@@ -133,12 +101,12 @@ export function Home() {
 function CatCard({ cat, count }: { cat: Cat; count: number }) {
     return (
         <Link
-            to={`/all?use=${cat.useCase}`}
+            to={`/actuators?view=list&use=${cat.useCase}`}
             className={`cat-card${cat.feature ? " cat-card-lg" : ""}`}
             aria-label={`${cat.label}: ${count} actuators`}
         >
             <div className="cat-thumb">
-                <RobotArt kind={cat.key} hue={cat.hue} />
+                <RobotArt kind={cat.key} framing={cat.feature ? "card-lg" : "card"} />
                 <span className="cat-scrim" />
             </div>
             <div className="cat-meta" style={{ ["--hue" as string]: String(cat.hue) }}>

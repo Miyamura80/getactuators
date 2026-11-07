@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Actuator } from "../types";
 import { CATEGORY_MAP } from "../types";
 import { colorForBrand } from "../lib/brands";
@@ -6,6 +6,7 @@ import { colorForBrand } from "../lib/brands";
 interface Props {
     actuator: Actuator;
     className?: string;
+    priority?: boolean;
 }
 
 // Deterministic small hash so every actuator gets a stable, distinct render
@@ -22,8 +23,21 @@ function hash(s: string): number {
 // A stylised actuator seen end-on, drawn in the brand's thin-cyan-on-black
 // line style. Detail counts (slots, bolts, gear teeth) vary per actuator so
 // the gallery reads as a set of distinct parts rather than one repeated icon.
-export function ActuatorThumb({ actuator, className }: Props) {
+export function ActuatorThumb({ actuator, className, priority = false }: Props) {
     const [failed, setFailed] = useState(false);
+    const photo = useRef<HTMLImageElement>(null);
+    useEffect(() => {
+        // A prerendered image can finish with an error before React attaches
+        // onError. Check after hydration, never alter the matching initial tree.
+        const image = photo.current;
+        if (
+            image?.closest('[data-gallery-prerender="true"]') &&
+            image.complete &&
+            image.naturalWidth === 0
+        ) {
+            setFailed(true);
+        }
+    }, []);
 
     // Prefer a real product photo when we have one; otherwise fall through to
     // the deterministic schematic below so every part still renders. A photo
@@ -35,11 +49,13 @@ export function ActuatorThumb({ actuator, className }: Props) {
         // thumb box collapses to zero height.
         return (
             <img
+                ref={photo}
                 src={actuator.image_url}
                 className="actuator-photo"
                 alt={`${actuator.name} product photo`}
-                loading="lazy"
-                decoding="async"
+                loading={priority ? "eager" : "lazy"}
+                fetchPriority={priority ? "high" : undefined}
+                decoding={priority ? "auto" : "async"}
                 onError={() => setFailed(true)}
             />
         );

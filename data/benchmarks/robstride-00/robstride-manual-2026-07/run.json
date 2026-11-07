@@ -1,0 +1,101 @@
+{
+    "actuatorId": "robstride-00",
+    "runId": "robstride-manual-2026-07",
+    "date": "2026-07",
+    "origin": "published",
+    "sourceKind": "vendor",
+    "source": {
+        "url": "https://github.com/RobStride/Product_Information/blob/main/Product%20Literature/CAN2.0/RS00/RS00User%20Manual260713.pdf",
+        "title": "RobStride RS00 user manual (260713)"
+    },
+    "dataMethod": "digitised",
+    "methodNote": "T-N points read off the manual's 48 V chart (about 0.3 N·m reading error). Overload times are the manual's table at 100 rpm on a 90 x 85 mm aluminium plate, 145 °C winding limit. Thermal torques are the table's whole-N·m figures and the manual states no measurement uncertainty, so the ±0.5 N·m is that rounding only. windingRiseC is the rise from 25 °C ambient to the winding limit, entered only for points that reached it.",
+    "rig": {
+        "torqueSensor": "not stated",
+        "accuracyPct": null,
+        "encoder": "actuator's own dual 14-bit magnetic encoders",
+        "ambientC": 25,
+        "busV": 48,
+        "controller": "built-in RobStride driver"
+    },
+    "torqueSpeed": [
+        {
+            "rpm": 100,
+            "torqueNm": 14
+        },
+        {
+            "rpm": 150,
+            "torqueNm": 12
+        },
+        {
+            "rpm": 200,
+            "torqueNm": 9.5
+        },
+        {
+            "rpm": 225,
+            "torqueNm": 8
+        },
+        {
+            "rpm": 250,
+            "torqueNm": 6.6
+        },
+        {
+            "rpm": 275,
+            "torqueNm": 4.5
+        },
+        {
+            "rpm": 300,
+            "torqueNm": 2
+        },
+        {
+            "rpm": 315,
+            "torqueNm": 0.5
+        }
+    ],
+    "thermal": [
+        {
+            "torqueNm": 14,
+            "tToLimitS": 3,
+            "windingRiseC": 120
+        },
+        {
+            "torqueNm": 13,
+            "tToLimitS": 7,
+            "windingRiseC": 120
+        },
+        {
+            "torqueNm": 12,
+            "tToLimitS": 10,
+            "windingRiseC": 120
+        },
+        {
+            "torqueNm": 10,
+            "tToLimitS": 20,
+            "windingRiseC": 120
+        },
+        {
+            "torqueNm": 8,
+            "tToLimitS": 53,
+            "windingRiseC": 120
+        },
+        {
+            "torqueNm": 7,
+            "tToLimitS": 94,
+            "windingRiseC": 120
+        },
+        {
+            "torqueNm": 6,
+            "tToLimitS": 285,
+            "windingRiseC": 120
+        },
+        {
+            "torqueNm": 5,
+            "tToLimitS": null
+        }
+    ],
+    "uncertainty": {
+        "torqueSpeed": 0.3,
+        "thermal": 0.5
+    },
+    "note": "Vendor test data. The manual adds a stall table: with the rotor locked one phase carries the heat, so times are shorter than these."
+}

@@ -1,7 +1,12 @@
+import type { ReactNode } from "react";
+import { evidenceFor, fieldCaveat } from "../../../src/catalog/evidence";
 import type { Actuator } from "../types";
 import { CATEGORY_MAP } from "../types";
 import { bool, dash, list, num, price, voltage } from "../lib/format";
+import { robotsUsingActuator } from "../lib/robots";
 import { CopyLinkButton } from "./CopyLinkButton";
+import { CompanyLogo } from "./CompanyLogo";
+import { CountryFlag } from "./CountryFlag";
 
 interface Props {
     actuator: Actuator | null;
@@ -10,8 +15,14 @@ interface Props {
 
 interface Spec {
     label: string;
-    value: string;
+    value: ReactNode;
 }
+
+const evidenceFields: Record<string, string> = {
+    Power: "power_w",
+    Weight: "weight_g", Encoder: "encoder", "Torque density": "torque_density_nm_per_kg",
+    Backdrivable: "backdrivable", Backlash: "backlash_arcmin",
+};
 
 function specs(a: Actuator): Spec[] {
     return [
@@ -35,7 +46,7 @@ function specs(a: Actuator): Spec[] {
         { label: "IP rating", value: a.ip_rating ?? dash() },
         { label: "Price", value: price(a.price_usd) },
         { label: "$ / peak N·m", value: a.price_per_nm == null ? dash() : `$${num(a.price_per_nm, 1)}` },
-        { label: "Origin", value: a.country ? `${a.country_flag ?? ""} ${a.country}` : dash() },
+        { label: "Origin", value: a.country ? <CountryFlag country={a.country} /> : dash() },
     ];
 }
 
@@ -43,6 +54,9 @@ export function DetailPanel({ actuator, onClose }: Props) {
     if (!actuator) return null;
     const a = actuator;
     const cat = CATEGORY_MAP[a.category];
+    const evidence = evidenceFor(a);
+    const usedIn = robotsUsingActuator(a.id);
+    const evidenceClass = evidence.label.startsWith("Catalog headline specs spot-checked:") ? "verified-note" : "evidence-note";
     return (
         <div className="drawer-scrim" onClick={onClose}>
             <aside
@@ -60,11 +74,14 @@ export function DetailPanel({ actuator, onClose }: Props) {
                             {cat?.label ?? a.category}
                         </span>
                         <h2>{a.name}</h2>
-                        <p className="drawer-brand">{a.brand}</p>
+                        <p className="drawer-brand with-logo">
+                            <CompanyLogo name={a.brand} size={20} />
+                            {a.brand}
+                        </p>
                     </div>
                     <div className="drawer-head-actions">
                         <CopyLinkButton
-                            path={`/all?sel=${encodeURIComponent(a.id)}`}
+                            path={`/actuators/${encodeURIComponent(a.id)}`}
                             label={`Copy link to ${a.name}`}
                         />
                         <button type="button" className="drawer-close" onClick={onClose} aria-label="Close">
@@ -73,35 +90,39 @@ export function DetailPanel({ actuator, onClose }: Props) {
                     </div>
                 </header>
 
-                {a.verified ? (
-                    <p className="verified-note" title="Headline specs spot-checked against manufacturer/reseller pages">
-                        {"✓"} Headline specs spot-checked against manufacturer sources (Sep 2026)
-                    </p>
-                ) : (
-                    <p className="unverified" title="Sourced from web search, not a direct datasheet read">
-                        Specs sourced from web search {"·"} verify against the datasheet before design use
-                    </p>
-                )}
+                <p className={evidenceClass}>{evidence.label}</p>
+                {evidence.caveats.map((note) => <p className="drawer-notes" key={note}>{note}</p>)}
 
                 <dl className="spec-grid">
                     {specs(a).map((s) => (
                         <div className="spec" key={s.label}>
                             <dt>{s.label}</dt>
-                            <dd>{s.value}</dd>
+                            <dd>{s.value}{fieldCaveat(a, evidenceFields[s.label] ?? s.label) && <small style={{ display: "block" }}>{fieldCaveat(a, evidenceFields[s.label] ?? s.label)}</small>}</dd>
                         </div>
                     ))}
                 </dl>
+
+                {usedIn.length > 0 && (
+                    <p className="drawer-used-in">
+                        <span>Used in</span>
+                        {usedIn.map((r) => (
+                            <a key={r.id} href={`/robots#${encodeURIComponent(r.id)}`}>
+                                {r.name}
+                            </a>
+                        ))}
+                    </p>
+                )}
 
                 {a.notes && <p className="drawer-notes">{a.notes}</p>}
 
                 <div className="drawer-links">
                     {a.product_url && (
-                        <a href={a.product_url} target="_blank" rel="noopener noreferrer">
+                        <a href={a.product_url} data-measure-event="manufacturer_click" data-product-id={a.id} data-measure-surface="drawer" target="_blank" rel="noopener noreferrer">
                             Product page
                         </a>
                     )}
                     {a.datasheet_url && (
-                        <a href={a.datasheet_url} target="_blank" rel="noopener noreferrer">
+                        <a href={a.datasheet_url} data-measure-event="datasheet_click" data-product-id={a.id} data-measure-surface="drawer" target="_blank" rel="noopener noreferrer">
                             Datasheet
                         </a>
                     )}

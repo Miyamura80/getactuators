@@ -1,0 +1,54 @@
+Data License
+
+Copyright (c) 2025-2026 Eito Miyamura
+
+The actuatorlist catalog and dataset are licensed under the Creative Commons
+Attribution 4.0 International License (CC BY 4.0). To view a copy of this
+license, visit https://creativecommons.org/licenses/by/4.0/
+
+You are free to share and adapt the data for any purpose, including
+commercially, provided you give appropriate credit, provide a link to the
+license, and indicate if changes were made.
+
+Attribution: actuatorlist.com (Eito Miyamura)
+
+Example credit line:
+
+    Data from actuatorlist.com (Eito Miyamura), licensed under CC BY 4.0
+    (https://creativecommons.org/licenses/by/4.0/).
+
+What this covers
+----------------
+
+The data records (specifications, prices, joint mappings, sources, figures
+and other facts and compilations) in:
+
+- frontend/src/data/actuators.json (the actuator catalog)
+- frontend/src/data/robots.json (robots and the motors in each joint)
+- src/humanoids/ (humanoid fleet, bill of materials and rare-earth data)
+- src/supply-chain/ (companies, sites, magnet metals, market shares,
+  reserves, prices and events)
+- src/catalog/engineering-evidence.ts (reviewed engineering evidence)
+- src/investors.ts and src/startups.ts (investor and startup records)
+- src/brands/self-hosted.json (logo provenance records only, not the logos)
+- the same data as served by actuatorlist.com, including the REST API,
+  the MCP servers, the JSON Lines feed, llms.txt, llms-full.txt and the
+  markdown twins of each page
+
+Where a file mixes data with code, the data records fall under this license
+and the code falls under the MIT License in LICENSE. All other code in this
+repository is MIT licensed.
+
+What this does not cover
+------------------------
+
+- Third-party images are NOT licensed under CC BY 4.0 or MIT. This covers
+  every product photo, company or brand logo and headshot of a person,
+  wherever it is stored in this repository or served by actuatorlist.com.
+  They remain the property of their respective owners and are used only to
+  identify the products, companies and people they depict.
+- Product names, company names and trademarks belong to their owners.
+- Figures sourced from third parties (manufacturer datasheets, retailer
+  listings, USGS, market reports, news and similar) keep their original
+  source citations. Keep those citations when you reuse the figures; this
+  license grants rights only to the extent the licensor holds them.

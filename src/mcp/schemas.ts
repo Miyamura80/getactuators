@@ -104,7 +104,7 @@ export const robotRefSchema = z.object({
 
 export const robotSummarySchema = robotRefSchema.extend({
     country: str,
-    dof: z.number(),
+    dof: z.number().nullable(),
     payload_kg: num,
     reach_mm: num,
     weight_kg: num,

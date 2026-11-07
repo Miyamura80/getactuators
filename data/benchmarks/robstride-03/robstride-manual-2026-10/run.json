@@ -1,0 +1,82 @@
+{
+    "actuatorId": "robstride-03",
+    "runId": "robstride-manual-2026-10",
+    "date": "2026-10",
+    "origin": "published",
+    "sourceKind": "vendor",
+    "source": {
+        "url": "https://github.com/RobStride/Product_Information/blob/main/Product%20Literature/CAN2.0/RS03/RS03User%20Manual261013.pdf",
+        "title": "RobStride RS03 user manual (261013)"
+    },
+    "dataMethod": "digitised",
+    "methodNote": "T-N points read off the manual's chart (about 1 N·m reading error). Overload times are the manual's table at 100 rpm on a 215 x 220 mm aluminium plate, 145 °C winding limit. Thermal torques are the table's whole-N·m figures and the manual states no measurement uncertainty, so the ±0.5 N·m is that rounding only. windingRiseC is the rise from 25 °C ambient to the winding limit, entered only for points that reached it.",
+    "rig": {
+        "torqueSensor": "not stated",
+        "accuracyPct": null,
+        "encoder": "actuator's own dual 14-bit magnetic encoders",
+        "ambientC": 25,
+        "busV": 48,
+        "controller": "built-in RobStride driver"
+    },
+    "torqueSpeed": [
+        {
+            "rpm": 120,
+            "torqueNm": 60
+        },
+        {
+            "rpm": 135,
+            "torqueNm": 54.5
+        },
+        {
+            "rpm": 150,
+            "torqueNm": 47.5
+        },
+        {
+            "rpm": 165,
+            "torqueNm": 38.5
+        },
+        {
+            "rpm": 180,
+            "torqueNm": 28.5
+        },
+        {
+            "rpm": 186,
+            "torqueNm": 20
+        },
+        {
+            "rpm": 187,
+            "torqueNm": 10
+        }
+    ],
+    "thermal": [
+        {
+            "torqueNm": 60,
+            "tToLimitS": 13,
+            "windingRiseC": 120
+        },
+        {
+            "torqueNm": 50,
+            "tToLimitS": 34,
+            "windingRiseC": 120
+        },
+        {
+            "torqueNm": 40,
+            "tToLimitS": 67,
+            "windingRiseC": 120
+        },
+        {
+            "torqueNm": 30,
+            "tToLimitS": 393,
+            "windingRiseC": 120
+        },
+        {
+            "torqueNm": 20,
+            "tToLimitS": null
+        }
+    ],
+    "uncertainty": {
+        "torqueSpeed": 1,
+        "thermal": 0.5
+    },
+    "note": "Vendor test data. The chart stops near 187 rpm at 10 N·m, short of the 200 rpm no-load speed the same manual states. The last two points drop 10 N·m within 1 rpm; we could not re-check that against the chart, so treat the end of the curve as approximate."
+}

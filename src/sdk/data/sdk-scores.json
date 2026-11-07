@@ -1,0 +1,3983 @@
+{
+    "asOf": "2026-11-03",
+    "method": {
+        "labelledBy": "Claude Code (one-off review session, 2026-11-03), reading each matched post against the labelling guide; no model API in the pipeline",
+        "guideVersion": "v1",
+        "postsScanned": 9987,
+        "postsMatched": 3513,
+        "gold": {
+            "items": 150,
+            "labelledBy": "one reviewer reading each post in full before seeing the classifier output (agent-assisted; maintainer spot check pending)",
+            "agreement": [
+                {
+                    "dimension": "protocol",
+                    "agreement": 0.99,
+                    "overlap": 0.75,
+                    "goldItems": 4
+                },
+                {
+                    "dimension": "bindings",
+                    "agreement": 0.98,
+                    "overlap": 0.33,
+                    "goldItems": 2
+                },
+                {
+                    "dimension": "ros",
+                    "agreement": 1,
+                    "overlap": 1,
+                    "goldItems": 0
+                },
+                {
+                    "dimension": "docs",
+                    "agreement": 0.99,
+                    "overlap": 0.5,
+                    "goldItems": 4
+                },
+                {
+                    "dimension": "firmware",
+                    "agreement": 0.98,
+                    "overlap": 0.4,
+                    "goldItems": 2
+                },
+                {
+                    "dimension": "support",
+                    "agreement": 0.99,
+                    "overlap": 0.5,
+                    "goldItems": 2
+                },
+                {
+                    "dimension": "reliability",
+                    "agreement": 1,
+                    "overlap": 1,
+                    "goldItems": 2
+                }
+            ]
+        }
+    },
+    "brands": [
+        {
+            "brand": "robotis",
+            "dimensions": {
+                "protocol": {
+                    "score": 78.7,
+                    "objective": 100,
+                    "community": 37.9,
+                    "positive": 3,
+                    "negative": 5
+                },
+                "bindings": {
+                    "score": 53.9,
+                    "objective": 75,
+                    "community": 13.7,
+                    "positive": 3,
+                    "negative": 55
+                },
+                "ros": {
+                    "score": 63.6,
+                    "objective": 83.3,
+                    "community": 27.5,
+                    "positive": 7,
+                    "negative": 29
+                },
+                "docs": {
+                    "score": 85.7,
+                    "objective": 100,
+                    "community": 43.4,
+                    "positive": 2,
+                    "negative": 11
+                },
+                "firmware": {
+                    "score": 45.2,
+                    "objective": 50,
+                    "community": 25,
+                    "positive": 1,
+                    "negative": 11
+                },
+                "support": {
+                    "score": 69.4,
+                    "objective": 75,
+                    "community": 55.6,
+                    "positive": 1,
+                    "negative": 0
+                },
+                "reliability": {
+                    "score": 82.3,
+                    "objective": 100,
+                    "community": 51.6,
+                    "positive": 2,
+                    "negative": 23
+                }
+            },
+            "overall": 68.4,
+            "evidenceCount": 153
+        },
+        {
+            "brand": "cubemars",
+            "dimensions": {
+                "protocol": {
+                    "score": 85.8,
+                    "objective": 100,
+                    "community": 47.6,
+                    "positive": 1,
+                    "negative": 2
+                },
+                "bindings": {
+                    "score": 43.1,
+                    "objective": 50,
+                    "community": 22.4,
+                    "positive": 2,
+                    "negative": 13
+                },
+                "ros": {
+                    "score": 10,
+                    "objective": 0,
+                    "community": null,
+                    "positive": 0,
+                    "negative": 0
+                },
+                "docs": {
+                    "score": 40.9,
+                    "objective": 50,
+                    "community": 13.9,
+                    "positive": 0,
+                    "negative": 12
+                },
+                "firmware": {
+                    "score": 12.7,
+                    "objective": 0,
+                    "community": 25.8,
+                    "positive": 0,
+                    "negative": 5
+                },
+                "support": {
+                    "score": 44.8,
+                    "objective": null,
+                    "community": 35.7,
+                    "positive": 0,
+                    "negative": 1
+                },
+                "reliability": {
+                    "score": 38.5,
+                    "objective": null,
+                    "community": 26.7,
+                    "positive": 0,
+                    "negative": 2
+                }
+            },
+            "overall": 39.1,
+            "evidenceCount": 38
+        },
+        {
+            "brand": "myactuator",
+            "dimensions": {
+                "protocol": {
+                    "score": 50.8,
+                    "objective": 50,
+                    "community": 60.5,
+                    "positive": 3,
+                    "negative": 0
+                },
+                "bindings": {
+                    "score": 43.5,
+                    "objective": 50,
+                    "community": 20.8,
+                    "positive": 1,
+                    "negative": 22
+                },
+                "ros": {
+                    "score": 50,
+                    "objective": 50,
+                    "community": 50.1,
+                    "positive": 1,
+                    "negative": 1
+                },
+                "docs": {
+                    "score": 49.3,
+                    "objective": 50,
+                    "community": 40.2,
+                    "positive": 0,
+                    "negative": 1
+                },
+                "firmware": {
+                    "score": 13.1,
+                    "objective": 0,
+                    "community": 32.2,
+                    "positive": 1,
+                    "negative": 4
+                },
+                "support": {
+                    "score": 50,
+                    "objective": null,
+                    "community": 49.9,
+                    "positive": 1,
+                    "negative": 1
+                },
+                "reliability": {
+                    "score": 41.8,
+                    "objective": null,
+                    "community": 31.2,
+                    "positive": 0,
+                    "negative": 6
+                }
+            },
+            "overall": 42.3,
+            "evidenceCount": 42
+        },
+        {
+            "brand": "robstride",
+            "dimensions": {
+                "protocol": {
+                    "score": 52.1,
+                    "objective": 50,
+                    "community": 67.2,
+                    "positive": 2,
+                    "negative": 0
+                },
+                "bindings": {
+                    "score": 59.4,
+                    "objective": 75,
+                    "community": 19.8,
+                    "positive": 0,
+                    "negative": 10
+                },
+                "ros": {
+                    "score": 44.4,
+                    "objective": 50,
+                    "community": 21.8,
+                    "positive": 0,
+                    "negative": 8
+                },
+                "docs": {
+                    "score": 49.8,
+                    "objective": 50,
+                    "community": 44.3,
+                    "positive": 0,
+                    "negative": 1
+                },
+                "firmware": {
+                    "score": 11.6,
+                    "objective": 0,
+                    "community": 43.5,
+                    "positive": 0,
+                    "negative": 1
+                },
+                "support": {
+                    "score": 90,
+                    "objective": 100,
+                    "community": null,
+                    "positive": 0,
+                    "negative": 0
+                },
+                "reliability": {
+                    "score": 36.4,
+                    "objective": null,
+                    "community": 24.1,
+                    "positive": 0,
+                    "negative": 3
+                }
+            },
+            "overall": 47.1,
+            "evidenceCount": 25
+        },
+        {
+            "brand": "steadywin",
+            "dimensions": {
+                "protocol": {
+                    "score": 11.4,
+                    "objective": 0,
+                    "community": 54.4,
+                    "positive": 1,
+                    "negative": 0
+                },
+                "bindings": {
+                    "score": 50,
+                    "objective": 50,
+                    "community": null,
+                    "positive": 0,
+                    "negative": 0
+                },
+                "ros": {
+                    "score": 49.7,
+                    "objective": 50,
+                    "community": 43.9,
+                    "positive": 0,
+                    "negative": 1
+                },
+                "docs": {
+                    "score": 12.4,
+                    "objective": 0,
+                    "community": 37.9,
+                    "positive": 0,
+                    "negative": 2
+                },
+                "firmware": {
+                    "score": 16.3,
+                    "objective": 0,
+                    "community": 44.9,
+                    "positive": 1,
+                    "negative": 4
+                },
+                "support": {
+                    "score": 45.4,
+                    "objective": null,
+                    "community": 36.6,
+                    "positive": 0,
+                    "negative": 1
+                }
+            },
+            "overall": 33,
+            "evidenceCount": 10
+        },
+        {
+            "brand": "feetech",
+            "dimensions": {
+                "protocol": {
+                    "score": 87.2,
+                    "objective": 100,
+                    "community": 53.3,
+                    "positive": 2,
+                    "negative": 1
+                },
+                "bindings": {
+                    "score": 54.5,
+                    "objective": 75,
+                    "community": 15,
+                    "positive": 2,
+                    "negative": 25
+                },
+                "ros": {
+                    "score": 50.1,
+                    "objective": 50,
+                    "community": 50.8,
+                    "positive": 1,
+                    "negative": 3
+                },
+                "docs": {
+                    "score": 48.9,
+                    "objective": 50,
+                    "community": 37.7,
+                    "positive": 0,
+                    "negative": 2
+                },
+                "firmware": {
+                    "score": 23.5,
+                    "objective": 0,
+                    "community": 63.3,
+                    "positive": 6,
+                    "negative": 4
+                },
+                "support": {
+                    "score": 90,
+                    "objective": 100,
+                    "community": null,
+                    "positive": 0,
+                    "negative": 0
+                },
+                "reliability": {
+                    "score": 31.4,
+                    "objective": null,
+                    "community": 21.2,
+                    "positive": 1,
+                    "negative": 18
+                }
+            },
+            "overall": 53.3,
+            "evidenceCount": 65
+        },
+        {
+            "brand": "waveshare",
+            "dimensions": {
+                "protocol": {
+                    "score": 90,
+                    "objective": 100,
+                    "community": null,
+                    "positive": 0,
+                    "negative": 0
+                },
+                "bindings": {
+                    "score": 45,
+                    "objective": 50,
+                    "community": 23.4,
+                    "positive": 0,
+                    "negative": 7
+                },
+                "ros": {
+                    "score": 15.8,
+                    "objective": 0,
+                    "community": 65,
+                    "positive": 2,
+                    "negative": 0
+                },
+                "docs": {
+                    "score": 78.5,
+                    "objective": 100,
+                    "community": 32.7,
+                    "positive": 1,
+                    "negative": 4
+                },
+                "firmware": {
+                    "score": 12.2,
+                    "objective": 0,
+                    "community": 20.5,
+                    "positive": 0,
+                    "negative": 7
+                },
+                "support": {
+                    "score": 49.7,
+                    "objective": null,
+                    "community": 49.2,
+                    "positive": 1,
+                    "negative": 1
+                },
+                "reliability": {
+                    "score": 47,
+                    "objective": null,
+                    "community": 39.4,
+                    "positive": 0,
+                    "negative": 2
+                }
+            },
+            "overall": 48.2,
+            "evidenceCount": 25
+        },
+        {
+            "brand": "mjbots",
+            "dimensions": {
+                "protocol": {
+                    "score": 86.5,
+                    "objective": 100,
+                    "community": 53.4,
+                    "positive": 2,
+                    "negative": 1
+                },
+                "bindings": {
+                    "score": 78,
+                    "objective": 100,
+                    "community": 32.7,
+                    "positive": 3,
+                    "negative": 14
+                },
+                "ros": {
+                    "score": 10.9,
+                    "objective": 0,
+                    "community": 46.4,
+                    "positive": 0,
+                    "negative": 1
+                },
+                "docs": {
+                    "score": 84.8,
+                    "objective": 100,
+                    "community": 44.2,
+                    "positive": 1,
+                    "negative": 5
+                },
+                "firmware": {
+                    "score": 80,
+                    "objective": 100,
+                    "community": 46.3,
+                    "positive": 3,
+                    "negative": 19
+                },
+                "support": {
+                    "score": 87.2,
+                    "objective": 100,
+                    "community": 69.4,
+                    "positive": 2,
+                    "negative": 0
+                },
+                "reliability": {
+                    "score": 89.1,
+                    "objective": 100,
+                    "community": 47.1,
+                    "positive": 0,
+                    "negative": 2
+                }
+            },
+            "overall": 73.1,
+            "evidenceCount": 53
+        },
+        {
+            "brand": "odrive",
+            "dimensions": {
+                "protocol": {
+                    "score": 81.8,
+                    "objective": 100,
+                    "community": 37.6,
+                    "positive": 1,
+                    "negative": 10
+                },
+                "bindings": {
+                    "score": 77.3,
+                    "objective": 100,
+                    "community": 33.4,
+                    "positive": 1,
+                    "negative": 20
+                },
+                "ros": {
+                    "score": 70.5,
+                    "objective": 100,
+                    "community": 14.6,
+                    "positive": 1,
+                    "negative": 36
+                },
+                "docs": {
+                    "score": 79.4,
+                    "objective": 100,
+                    "community": 26.4,
+                    "positive": 0,
+                    "negative": 4
+                },
+                "firmware": {
+                    "score": 60,
+                    "objective": 75,
+                    "community": 31.1,
+                    "positive": 4,
+                    "negative": 43
+                },
+                "support": {
+                    "score": 68.3,
+                    "objective": 75,
+                    "community": 41.5,
+                    "positive": 0,
+                    "negative": 1
+                },
+                "reliability": {
+                    "score": 85.3,
+                    "objective": 100,
+                    "community": 37.4,
+                    "positive": 0,
+                    "negative": 5
+                }
+            },
+            "overall": 75,
+            "evidenceCount": 126
+        },
+        {
+            "brand": "damiao",
+            "dimensions": {
+                "protocol": {
+                    "score": 50.6,
+                    "objective": 50,
+                    "community": 55.3,
+                    "positive": 2,
+                    "negative": 1
+                },
+                "bindings": {
+                    "score": 42.4,
+                    "objective": 50,
+                    "community": 18.6,
+                    "positive": 1,
+                    "negative": 15
+                },
+                "ros": {
+                    "score": 49.8,
+                    "objective": 50,
+                    "community": 44.4,
+                    "positive": 0,
+                    "negative": 1
+                },
+                "docs": {
+                    "score": 10.9,
+                    "objective": 0,
+                    "community": 46.5,
+                    "positive": 0,
+                    "negative": 1
+                },
+                "firmware": {
+                    "score": 12.3,
+                    "objective": 0,
+                    "community": 38.9,
+                    "positive": 0,
+                    "negative": 2
+                },
+                "reliability": {
+                    "score": 44.3,
+                    "objective": null,
+                    "community": 38.8,
+                    "positive": 2,
+                    "negative": 5
+                }
+            },
+            "overall": 36.5,
+            "evidenceCount": 30
+        },
+        {
+            "brand": "unitree",
+            "dimensions": {
+                "protocol": {
+                    "score": 14.9,
+                    "objective": 0,
+                    "community": 30.4,
+                    "positive": 1,
+                    "negative": 6
+                },
+                "bindings": {
+                    "score": 70.8,
+                    "objective": 100,
+                    "community": 21.9,
+                    "positive": 3,
+                    "negative": 25
+                },
+                "ros": {
+                    "score": 74.8,
+                    "objective": 100,
+                    "community": 29.9,
+                    "positive": 3,
+                    "negative": 23
+                },
+                "docs": {
+                    "score": 46.6,
+                    "objective": 50,
+                    "community": 35.9,
+                    "positive": 2,
+                    "negative": 12
+                },
+                "firmware": {
+                    "score": 12.8,
+                    "objective": 0,
+                    "community": 27.9,
+                    "positive": 0,
+                    "negative": 7
+                },
+                "support": {
+                    "score": 33.2,
+                    "objective": 25,
+                    "community": 47.1,
+                    "positive": 1,
+                    "negative": 3
+                },
+                "reliability": {
+                    "score": 35.8,
+                    "objective": null,
+                    "community": 23.5,
+                    "positive": 0,
+                    "negative": 9
+                }
+            },
+            "overall": 41.7,
+            "evidenceCount": 95
+        },
+        {
+            "brand": "xiaomi",
+            "dimensions": {
+                "protocol": {
+                    "score": 50,
+                    "objective": 50,
+                    "community": 49.7,
+                    "positive": 1,
+                    "negative": 1
+                },
+                "bindings": {
+                    "score": 46.3,
+                    "objective": 50,
+                    "community": 27.2,
+                    "positive": 0,
+                    "negative": 9
+                },
+                "ros": {
+                    "score": 12.1,
+                    "objective": 0,
+                    "community": 40.5,
+                    "positive": 0,
+                    "negative": 3
+                },
+                "docs": {
+                    "score": 11.6,
+                    "objective": 0,
+                    "community": 43.3,
+                    "positive": 0,
+                    "negative": 2
+                },
+                "firmware": {
+                    "score": 10.8,
+                    "objective": 0,
+                    "community": 47.2,
+                    "positive": 0,
+                    "negative": 1
+                },
+                "support": {
+                    "score": 49.4,
+                    "objective": null,
+                    "community": 45.5,
+                    "positive": 0,
+                    "negative": 1
+                }
+            },
+            "overall": 32.1,
+            "evidenceCount": 18
+        },
+        {
+            "brand": "harmonic-drive",
+            "dimensions": {
+                "protocol": {
+                    "score": 90,
+                    "objective": 100,
+                    "community": null,
+                    "positive": 0,
+                    "negative": 0
+                },
+                "bindings": {
+                    "score": 10,
+                    "objective": 0,
+                    "community": null,
+                    "positive": 0,
+                    "negative": 0
+                },
+                "ros": {
+                    "score": 10,
+                    "objective": 0,
+                    "community": null,
+                    "positive": 0,
+                    "negative": 0
+                },
+                "docs": {
+                    "score": 90,
+                    "objective": 100,
+                    "community": null,
+                    "positive": 0,
+                    "negative": 0
+                },
+                "firmware": {
+                    "score": 90,
+                    "objective": 100,
+                    "community": null,
+                    "positive": 0,
+                    "negative": 0
+                }
+            },
+            "overall": 56,
+            "evidenceCount": 0
+        },
+        {
+            "brand": "maxon",
+            "dimensions": {
+                "protocol": {
+                    "score": 88.4,
+                    "objective": 100,
+                    "community": 45,
+                    "positive": 0,
+                    "negative": 1
+                },
+                "bindings": {
+                    "score": 47.8,
+                    "objective": 50,
+                    "community": 32.3,
+                    "positive": 0,
+                    "negative": 9
+                },
+                "ros": {
+                    "score": 46.7,
+                    "objective": 50,
+                    "community": 28.5,
+                    "positive": 2,
+                    "negative": 20
+                },
+                "docs": {
+                    "score": 86.6,
+                    "objective": 100,
+                    "community": 40.3,
+                    "positive": 0,
+                    "negative": 3
+                },
+                "firmware": {
+                    "score": 10,
+                    "objective": 0,
+                    "community": null,
+                    "positive": 0,
+                    "negative": 0
+                },
+                "reliability": {
+                    "score": 44.7,
+                    "objective": null,
+                    "community": 35.4,
+                    "positive": 0,
+                    "negative": 7
+                }
+            },
+            "overall": 53.6,
+            "evidenceCount": 42
+        },
+        {
+            "brand": "innfos",
+            "dimensions": {
+                "protocol": {
+                    "score": 10,
+                    "objective": 0,
+                    "community": null,
+                    "positive": 0,
+                    "negative": 0
+                },
+                "bindings": {
+                    "score": 50,
+                    "objective": 50,
+                    "community": null,
+                    "positive": 0,
+                    "negative": 0
+                },
+                "ros": {
+                    "score": 10,
+                    "objective": 0,
+                    "community": null,
+                    "positive": 0,
+                    "negative": 0
+                },
+                "docs": {
+                    "score": 10.5,
+                    "objective": 0,
+                    "community": 48,
+                    "positive": 0,
+                    "negative": 1
+                },
+                "firmware": {
+                    "score": 10,
+                    "objective": 0,
+                    "community": null,
+                    "positive": 0,
+                    "negative": 0
+                },
+                "support": {
+                    "score": 11.5,
+                    "objective": 0,
+                    "community": 43.9,
+                    "positive": 0,
+                    "negative": 3
+                }
+            },
+            "overall": 22.2,
+            "evidenceCount": 4
+        },
+        {
+            "brand": "hiwonder",
+            "dimensions": {
+                "protocol": {
+                    "score": 84.1,
+                    "objective": 100,
+                    "community": 49.5,
+                    "positive": 2,
+                    "negative": 3
+                },
+                "bindings": {
+                    "score": 47.9,
+                    "objective": 50,
+                    "community": 41.7,
+                    "positive": 4,
+                    "negative": 19
+                },
+                "ros": {
+                    "score": 12.3,
+                    "objective": 0,
+                    "community": 38.4,
+                    "positive": 0,
+                    "negative": 7
+                },
+                "docs": {
+                    "score": 85.1,
+                    "objective": 100,
+                    "community": 37,
+                    "positive": 0,
+                    "negative": 4
+                },
+                "firmware": {
+                    "score": 12.8,
+                    "objective": 0,
+                    "community": 30.5,
+                    "positive": 0,
+                    "negative": 9
+                },
+                "reliability": {
+                    "score": 40.6,
+                    "objective": null,
+                    "community": 29.5,
+                    "positive": 0,
+                    "negative": 3
+                }
+            },
+            "overall": 47.4,
+            "evidenceCount": 51
+        },
+        {
+            "brand": "lkmtech",
+            "dimensions": {
+                "protocol": {
+                    "score": 90,
+                    "objective": 100,
+                    "community": null,
+                    "positive": 0,
+                    "negative": 0
+                },
+                "bindings": {
+                    "score": 49.6,
+                    "objective": 50,
+                    "community": 42.7,
+                    "positive": 0,
+                    "negative": 1
+                },
+                "ros": {
+                    "score": 10,
+                    "objective": 0,
+                    "community": null,
+                    "positive": 0,
+                    "negative": 0
+                },
+                "docs": {
+                    "score": 10,
+                    "objective": 0,
+                    "community": null,
+                    "positive": 0,
+                    "negative": 0
+                },
+                "firmware": {
+                    "score": 90,
+                    "objective": 100,
+                    "community": null,
+                    "positive": 0,
+                    "negative": 0
+                }
+            },
+            "overall": 49.9,
+            "evidenceCount": 1
+        },
+        {
+            "brand": "encos",
+            "dimensions": {
+                "protocol": {
+                    "score": 10,
+                    "objective": 0,
+                    "community": null,
+                    "positive": 0,
+                    "negative": 0
+                },
+                "bindings": {
+                    "score": 10,
+                    "objective": 0,
+                    "community": null,
+                    "positive": 0,
+                    "negative": 0
+                },
+                "ros": {
+                    "score": 10,
+                    "objective": 0,
+                    "community": null,
+                    "positive": 0,
+                    "negative": 0
+                },
+                "docs": {
+                    "score": 10,
+                    "objective": 0,
+                    "community": null,
+                    "positive": 0,
+                    "negative": 0
+                },
+                "firmware": {
+                    "score": 10,
+                    "objective": 0,
+                    "community": null,
+                    "positive": 0,
+                    "negative": 0
+                }
+            },
+            "overall": 20,
+            "evidenceCount": 0
+        },
+        {
+            "brand": "vesc",
+            "dimensions": {
+                "protocol": {
+                    "score": 84.1,
+                    "objective": 100,
+                    "community": 53.6,
+                    "positive": 3,
+                    "negative": 9
+                },
+                "bindings": {
+                    "score": 47.5,
+                    "objective": 50,
+                    "community": 31.3,
+                    "positive": 0,
+                    "negative": 14
+                },
+                "ros": {
+                    "score": 50.2,
+                    "objective": 50,
+                    "community": 51.4,
+                    "positive": 3,
+                    "negative": 6
+                },
+                "docs": {
+                    "score": 48.8,
+                    "objective": 50,
+                    "community": 37.2,
+                    "positive": 0,
+                    "negative": 10
+                },
+                "firmware": {
+                    "score": 67.2,
+                    "objective": 100,
+                    "community": 17.3,
+                    "positive": 6,
+                    "negative": 123
+                },
+                "support": {
+                    "score": 89.7,
+                    "objective": 100,
+                    "community": 48.9,
+                    "positive": 0,
+                    "negative": 1
+                },
+                "reliability": {
+                    "score": 42.5,
+                    "objective": null,
+                    "community": 32.2,
+                    "positive": 0,
+                    "negative": 8
+                }
+            },
+            "overall": 60,
+            "evidenceCount": 183
+        },
+        {
+            "brand": "trinamic",
+            "dimensions": {
+                "protocol": {
+                    "score": 86.5,
+                    "objective": 100,
+                    "community": 55.9,
+                    "positive": 2,
+                    "negative": 2
+                },
+                "bindings": {
+                    "score": 68.7,
+                    "objective": 100,
+                    "community": 12.6,
+                    "positive": 3,
+                    "negative": 72
+                },
+                "ros": {
+                    "score": 12.2,
+                    "objective": 0,
+                    "community": 39.3,
+                    "positive": 0,
+                    "negative": 3
+                },
+                "docs": {
+                    "score": 79.3,
+                    "objective": 100,
+                    "community": 26.1,
+                    "positive": 0,
+                    "negative": 17
+                },
+                "firmware": {
+                    "score": 83.3,
+                    "objective": 100,
+                    "community": 33.3,
+                    "positive": 0,
+                    "negative": 4
+                },
+                "support": {
+                    "score": 49.9,
+                    "objective": 50,
+                    "community": 45.9,
+                    "positive": 0,
+                    "negative": 2
+                },
+                "reliability": {
+                    "score": 46.6,
+                    "objective": null,
+                    "community": 38.7,
+                    "positive": 0,
+                    "negative": 3
+                }
+            },
+            "overall": 61.5,
+            "evidenceCount": 108
+        },
+        {
+            "brand": "atar",
+            "dimensions": {
+                "protocol": {
+                    "score": 50,
+                    "objective": 50,
+                    "community": null,
+                    "positive": 0,
+                    "negative": 0
+                },
+                "bindings": {
+                    "score": 10,
+                    "objective": 0,
+                    "community": null,
+                    "positive": 0,
+                    "negative": 0
+                },
+                "ros": {
+                    "score": 10,
+                    "objective": 0,
+                    "community": null,
+                    "positive": 0,
+                    "negative": 0
+                },
+                "docs": {
+                    "score": 50,
+                    "objective": 50,
+                    "community": null,
+                    "positive": 0,
+                    "negative": 0
+                },
+                "firmware": {
+                    "score": 10,
+                    "objective": 0,
+                    "community": null,
+                    "positive": 0,
+                    "negative": 0
+                }
+            },
+            "overall": 32,
+            "evidenceCount": 0
+        }
+    ],
+    "timeline": {
+        "robotis": [
+            {
+                "month": "2014-02",
+                "positive": 1,
+                "negative": 1
+            },
+            {
+                "month": "2014-04",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2014-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2015-11",
+                "positive": 1,
+                "negative": 1
+            },
+            {
+                "month": "2016-02",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2016-05",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2016-07",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2016-08",
+                "positive": 1,
+                "negative": 0
+            },
+            {
+                "month": "2017-02",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2017-03",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2017-04",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2017-05",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2017-06",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2017-07",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2017-08",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2017-09",
+                "positive": 0,
+                "negative": 4
+            },
+            {
+                "month": "2017-10",
+                "positive": 0,
+                "negative": 5
+            },
+            {
+                "month": "2017-11",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2018-02",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2018-03",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2018-05",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2018-06",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2018-07",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2018-08",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2018-09",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2018-10",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2018-11",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2018-12",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2019-01",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2019-04",
+                "positive": 1,
+                "negative": 0
+            },
+            {
+                "month": "2019-07",
+                "positive": 1,
+                "negative": 0
+            },
+            {
+                "month": "2019-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2019-09",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2019-10",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2019-12",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2020-05",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2020-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2020-11",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2020-12",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2021-03",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2021-05",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2021-07",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2021-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2021-09",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2021-10",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2022-03",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2022-11",
+                "positive": 1,
+                "negative": 0
+            },
+            {
+                "month": "2023-02",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-05",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-06",
+                "positive": 1,
+                "negative": 2
+            },
+            {
+                "month": "2023-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-01",
+                "positive": 1,
+                "negative": 0
+            },
+            {
+                "month": "2024-03",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-04",
+                "positive": 1,
+                "negative": 1
+            },
+            {
+                "month": "2024-05",
+                "positive": 1,
+                "negative": 3
+            },
+            {
+                "month": "2024-07",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-09",
+                "positive": 1,
+                "negative": 3
+            },
+            {
+                "month": "2024-12",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-01",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-02",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2025-04",
+                "positive": 2,
+                "negative": 2
+            },
+            {
+                "month": "2025-05",
+                "positive": 1,
+                "negative": 1
+            },
+            {
+                "month": "2025-06",
+                "positive": 0,
+                "negative": 4
+            },
+            {
+                "month": "2025-07",
+                "positive": 1,
+                "negative": 3
+            },
+            {
+                "month": "2025-08",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2025-09",
+                "positive": 0,
+                "negative": 4
+            },
+            {
+                "month": "2025-11",
+                "positive": 1,
+                "negative": 1
+            },
+            {
+                "month": "2025-12",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-01",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2026-02",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2026-03",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-04",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2026-05",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2026-07",
+                "positive": 0,
+                "negative": 4
+            },
+            {
+                "month": "2026-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-09",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2026-10",
+                "positive": 3,
+                "negative": 10
+            }
+        ],
+        "cubemars": [
+            {
+                "month": "2022-01",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2022-02",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2022-03",
+                "positive": 1,
+                "negative": 0
+            },
+            {
+                "month": "2023-01",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-05",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-10",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2023-11",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2023-12",
+                "positive": 1,
+                "negative": 2
+            },
+            {
+                "month": "2024-01",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-05",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-09",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2024-10",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-11",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-04",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-05",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2025-06",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-01",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2026-02",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2026-03",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2026-06",
+                "positive": 0,
+                "negative": 5
+            },
+            {
+                "month": "2026-07",
+                "positive": 1,
+                "negative": 0
+            }
+        ],
+        "myactuator": [
+            {
+                "month": "2020-04",
+                "positive": 1,
+                "negative": 0
+            },
+            {
+                "month": "2021-09",
+                "positive": 1,
+                "negative": 5
+            },
+            {
+                "month": "2021-11",
+                "positive": 1,
+                "negative": 0
+            },
+            {
+                "month": "2023-03",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-04",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-05",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-06",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2024-02",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2024-03",
+                "positive": 1,
+                "negative": 0
+            },
+            {
+                "month": "2024-04",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-05",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-06",
+                "positive": 0,
+                "negative": 5
+            },
+            {
+                "month": "2024-07",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2024-10",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2024-12",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-03",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-04",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-05",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2025-07",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-09",
+                "positive": 2,
+                "negative": 1
+            },
+            {
+                "month": "2025-12",
+                "positive": 1,
+                "negative": 0
+            },
+            {
+                "month": "2026-02",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-10",
+                "positive": 0,
+                "negative": 1
+            }
+        ],
+        "robstride": [
+            {
+                "month": "2024-12",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-07",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2025-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-09",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-12",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2026-01",
+                "positive": 1,
+                "negative": 0
+            },
+            {
+                "month": "2026-04",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-05",
+                "positive": 1,
+                "negative": 3
+            },
+            {
+                "month": "2026-07",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-08",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2026-09",
+                "positive": 0,
+                "negative": 4
+            },
+            {
+                "month": "2026-10",
+                "positive": 0,
+                "negative": 3
+            }
+        ],
+        "steadywin": [
+            {
+                "month": "2022-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-07",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-02",
+                "positive": 1,
+                "negative": 1
+            },
+            {
+                "month": "2025-04",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-09",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-12",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2026-03",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-05",
+                "positive": 1,
+                "negative": 0
+            }
+        ],
+        "feetech": [
+            {
+                "month": "2016-03",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2018-05",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2019-07",
+                "positive": 1,
+                "negative": 0
+            },
+            {
+                "month": "2023-04",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-11",
+                "positive": 1,
+                "negative": 1
+            },
+            {
+                "month": "2024-11",
+                "positive": 1,
+                "negative": 3
+            },
+            {
+                "month": "2025-02",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-04",
+                "positive": 1,
+                "negative": 0
+            },
+            {
+                "month": "2025-06",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-08",
+                "positive": 1,
+                "negative": 0
+            },
+            {
+                "month": "2025-09",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-10",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2025-11",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-01",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-03",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-04",
+                "positive": 1,
+                "negative": 2
+            },
+            {
+                "month": "2026-05",
+                "positive": 0,
+                "negative": 17
+            },
+            {
+                "month": "2026-06",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2026-07",
+                "positive": 1,
+                "negative": 2
+            },
+            {
+                "month": "2026-08",
+                "positive": 2,
+                "negative": 0
+            },
+            {
+                "month": "2026-09",
+                "positive": 1,
+                "negative": 3
+            },
+            {
+                "month": "2026-10",
+                "positive": 2,
+                "negative": 10
+            }
+        ],
+        "waveshare": [
+            {
+                "month": "2024-04",
+                "positive": 1,
+                "negative": 1
+            },
+            {
+                "month": "2024-07",
+                "positive": 0,
+                "negative": 5
+            },
+            {
+                "month": "2024-11",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-01",
+                "positive": 1,
+                "negative": 2
+            },
+            {
+                "month": "2025-05",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-06",
+                "positive": 1,
+                "negative": 1
+            },
+            {
+                "month": "2025-09",
+                "positive": 1,
+                "negative": 0
+            },
+            {
+                "month": "2025-11",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-12",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-01",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-03",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-04",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-05",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2026-06",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-09",
+                "positive": 0,
+                "negative": 1
+            }
+        ],
+        "mjbots": [
+            {
+                "month": "2020-10",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2021-02",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2021-03",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2021-06",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2021-07",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2021-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2021-09",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2022-01",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2022-02",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2022-04",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2022-07",
+                "positive": 1,
+                "negative": 1
+            },
+            {
+                "month": "2022-08",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2022-10",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2023-02",
+                "positive": 1,
+                "negative": 0
+            },
+            {
+                "month": "2023-06",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-09",
+                "positive": 2,
+                "negative": 1
+            },
+            {
+                "month": "2023-11",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-12",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2024-04",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-06",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-07",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-10",
+                "positive": 1,
+                "negative": 0
+            },
+            {
+                "month": "2024-11",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2025-03",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-04",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2025-05",
+                "positive": 1,
+                "negative": 2
+            },
+            {
+                "month": "2025-06",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-11",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-03",
+                "positive": 1,
+                "negative": 1
+            },
+            {
+                "month": "2026-05",
+                "positive": 1,
+                "negative": 0
+            },
+            {
+                "month": "2026-07",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2026-10",
+                "positive": 3,
+                "negative": 0
+            }
+        ],
+        "odrive": [
+            {
+                "month": "2018-01",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2018-06",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2018-07",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2018-08",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2018-09",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2019-06",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2019-07",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2019-10",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2020-01",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2020-03",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2020-06",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2020-08",
+                "positive": 0,
+                "negative": 4
+            },
+            {
+                "month": "2020-09",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2020-10",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2020-11",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2020-12",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2021-01",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2021-05",
+                "positive": 1,
+                "negative": 3
+            },
+            {
+                "month": "2021-06",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2021-07",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2021-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2021-09",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2021-10",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2021-11",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2021-12",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2022-01",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2022-02",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2022-03",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2022-04",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2022-06",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2022-07",
+                "positive": 1,
+                "negative": 0
+            },
+            {
+                "month": "2022-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2022-11",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-02",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2023-03",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2023-05",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-06",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2023-07",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2023-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-10",
+                "positive": 1,
+                "negative": 0
+            },
+            {
+                "month": "2023-11",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-12",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-01",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2024-02",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-03",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2024-04",
+                "positive": 0,
+                "negative": 7
+            },
+            {
+                "month": "2024-05",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2024-07",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2024-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-09",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2024-10",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2024-12",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-02",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2025-03",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-07",
+                "positive": 1,
+                "negative": 1
+            },
+            {
+                "month": "2025-09",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-11",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-12",
+                "positive": 0,
+                "negative": 4
+            },
+            {
+                "month": "2026-02",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-03",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-04",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2026-05",
+                "positive": 2,
+                "negative": 3
+            },
+            {
+                "month": "2026-07",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-08",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2026-10",
+                "positive": 1,
+                "negative": 4
+            }
+        ],
+        "damiao": [
+            {
+                "month": "2024-05",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-02",
+                "positive": 1,
+                "negative": 0
+            },
+            {
+                "month": "2025-05",
+                "positive": 1,
+                "negative": 0
+            },
+            {
+                "month": "2025-06",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-10",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2025-11",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-12",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2026-02",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-03",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2026-05",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-06",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2026-07",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2026-08",
+                "positive": 1,
+                "negative": 0
+            },
+            {
+                "month": "2026-09",
+                "positive": 2,
+                "negative": 3
+            },
+            {
+                "month": "2026-10",
+                "positive": 0,
+                "negative": 4
+            }
+        ],
+        "unitree": [
+            {
+                "month": "2021-12",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2022-01",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2022-04",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2022-05",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2022-07",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2022-09",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2022-10",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2022-11",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2022-12",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-03",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2023-05",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2023-06",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2023-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-10",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-11",
+                "positive": 0,
+                "negative": 4
+            },
+            {
+                "month": "2023-12",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-01",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2024-03",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2024-04",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-05",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2024-06",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-07",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2024-08",
+                "positive": 1,
+                "negative": 1
+            },
+            {
+                "month": "2024-09",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2024-11",
+                "positive": 2,
+                "negative": 1
+            },
+            {
+                "month": "2024-12",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-01",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-02",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-03",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-04",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2025-05",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2025-07",
+                "positive": 0,
+                "negative": 5
+            },
+            {
+                "month": "2025-08",
+                "positive": 0,
+                "negative": 4
+            },
+            {
+                "month": "2025-10",
+                "positive": 1,
+                "negative": 4
+            },
+            {
+                "month": "2025-11",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-01",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-02",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-07",
+                "positive": 1,
+                "negative": 3
+            },
+            {
+                "month": "2026-08",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2026-09",
+                "positive": 0,
+                "negative": 4
+            },
+            {
+                "month": "2026-10",
+                "positive": 5,
+                "negative": 9
+            }
+        ],
+        "xiaomi": [
+            {
+                "month": "2023-09",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-10",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-12",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-04",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-05",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-07",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-09",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2024-11",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-12",
+                "positive": 1,
+                "negative": 0
+            },
+            {
+                "month": "2025-02",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2025-03",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2026-05",
+                "positive": 0,
+                "negative": 1
+            }
+        ],
+        "harmonic-drive": [],
+        "maxon": [
+            {
+                "month": "2014-10",
+                "positive": 1,
+                "negative": 0
+            },
+            {
+                "month": "2015-02",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2015-04",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2015-05",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2016-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2016-09",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2017-05",
+                "positive": 1,
+                "negative": 0
+            },
+            {
+                "month": "2018-05",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2018-06",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2019-06",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2019-08",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2019-12",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2020-09",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2021-03",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2021-04",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2021-06",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2022-02",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2022-03",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2022-10",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-10",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2023-11",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-12",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2024-02",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-04",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-10",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-02",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-07",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-09",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-11",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-01",
+                "positive": 0,
+                "negative": 2
+            }
+        ],
+        "innfos": [
+            {
+                "month": "2019-12",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2022-09",
+                "positive": 0,
+                "negative": 1
+            }
+        ],
+        "hiwonder": [
+            {
+                "month": "2018-09",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2018-10",
+                "positive": 1,
+                "negative": 2
+            },
+            {
+                "month": "2019-01",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2019-06",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2019-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2019-09",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2020-01",
+                "positive": 1,
+                "negative": 0
+            },
+            {
+                "month": "2020-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2020-11",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2020-12",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2021-01",
+                "positive": 1,
+                "negative": 1
+            },
+            {
+                "month": "2021-02",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2021-03",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2021-09",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2021-11",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2022-01",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-01",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-02",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-03",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-04",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-09",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2023-12",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-06",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2025-04",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-08",
+                "positive": 1,
+                "negative": 1
+            },
+            {
+                "month": "2025-11",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-01",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-03",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-04",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2026-06",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-07",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-09",
+                "positive": 1,
+                "negative": 1
+            },
+            {
+                "month": "2026-10",
+                "positive": 1,
+                "negative": 7
+            }
+        ],
+        "lkmtech": [
+            {
+                "month": "2026-10",
+                "positive": 0,
+                "negative": 1
+            }
+        ],
+        "encos": [],
+        "vesc": [
+            {
+                "month": "2016-04",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2017-10",
+                "positive": 1,
+                "negative": 0
+            },
+            {
+                "month": "2017-11",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2018-02",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2018-04",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2018-06",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2018-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2018-09",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2019-03",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2019-04",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2019-05",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2019-07",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2019-08",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2019-10",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2019-12",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2020-01",
+                "positive": 1,
+                "negative": 2
+            },
+            {
+                "month": "2020-02",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2020-04",
+                "positive": 0,
+                "negative": 5
+            },
+            {
+                "month": "2020-06",
+                "positive": 1,
+                "negative": 1
+            },
+            {
+                "month": "2020-07",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2020-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2020-09",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2020-12",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2021-01",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2021-02",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2021-03",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2021-04",
+                "positive": 0,
+                "negative": 6
+            },
+            {
+                "month": "2021-05",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2021-06",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2021-07",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2021-08",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2021-09",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2021-10",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2021-11",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2021-12",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2022-01",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2022-02",
+                "positive": 0,
+                "negative": 4
+            },
+            {
+                "month": "2022-03",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2022-05",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2022-06",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2022-07",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2022-08",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2022-09",
+                "positive": 0,
+                "negative": 4
+            },
+            {
+                "month": "2022-10",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2022-11",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2022-12",
+                "positive": 0,
+                "negative": 7
+            },
+            {
+                "month": "2023-01",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2023-02",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2023-04",
+                "positive": 1,
+                "negative": 4
+            },
+            {
+                "month": "2023-05",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-06",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-09",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2023-10",
+                "positive": 0,
+                "negative": 4
+            },
+            {
+                "month": "2023-11",
+                "positive": 0,
+                "negative": 6
+            },
+            {
+                "month": "2023-12",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-01",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2024-02",
+                "positive": 0,
+                "negative": 5
+            },
+            {
+                "month": "2024-03",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-04",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2024-05",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2024-06",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2024-07",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2024-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-09",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-10",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2024-11",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-02",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-04",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2025-05",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-06",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2025-07",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2025-09",
+                "positive": 1,
+                "negative": 2
+            },
+            {
+                "month": "2025-12",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-01",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2026-02",
+                "positive": 1,
+                "negative": 2
+            },
+            {
+                "month": "2026-05",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2026-07",
+                "positive": 1,
+                "negative": 1
+            },
+            {
+                "month": "2026-08",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2026-09",
+                "positive": 3,
+                "negative": 1
+            },
+            {
+                "month": "2026-10",
+                "positive": 2,
+                "negative": 5
+            },
+            {
+                "month": "2026-11",
+                "positive": 0,
+                "negative": 1
+            }
+        ],
+        "trinamic": [
+            {
+                "month": "2017-05",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2017-10",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2017-11",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2018-06",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2018-08",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2019-01",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2019-07",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2019-10",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2019-11",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2019-12",
+                "positive": 0,
+                "negative": 5
+            },
+            {
+                "month": "2020-01",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2020-02",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2020-07",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2020-09",
+                "positive": 0,
+                "negative": 4
+            },
+            {
+                "month": "2020-10",
+                "positive": 1,
+                "negative": 2
+            },
+            {
+                "month": "2020-11",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2020-12",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2021-01",
+                "positive": 1,
+                "negative": 0
+            },
+            {
+                "month": "2021-02",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2021-03",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2021-06",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2021-07",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2021-11",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2021-12",
+                "positive": 1,
+                "negative": 3
+            },
+            {
+                "month": "2022-01",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2022-02",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2022-03",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2022-04",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2022-06",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2022-07",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2022-09",
+                "positive": 1,
+                "negative": 0
+            },
+            {
+                "month": "2022-10",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2022-11",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2022-12",
+                "positive": 0,
+                "negative": 4
+            },
+            {
+                "month": "2023-01",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2023-02",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2023-03",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2023-04",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-06",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2023-08",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2023-11",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2024-01",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2024-04",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2024-05",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2024-06",
+                "positive": 1,
+                "negative": 1
+            },
+            {
+                "month": "2024-07",
+                "positive": 0,
+                "negative": 4
+            },
+            {
+                "month": "2024-09",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2024-12",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2025-01",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2025-05",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2025-06",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2025-07",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2025-10",
+                "positive": 0,
+                "negative": 3
+            },
+            {
+                "month": "2026-02",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-03",
+                "positive": 0,
+                "negative": 2
+            },
+            {
+                "month": "2026-05",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-07",
+                "positive": 0,
+                "negative": 1
+            },
+            {
+                "month": "2026-09",
+                "positive": 0,
+                "negative": 1
+            }
+        ],
+        "atar": []
+    }
+}

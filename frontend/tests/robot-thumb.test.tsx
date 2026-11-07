@@ -1,4 +1,4 @@
-// DOM test for the robot-card thumbnail's photo/schematic fallback.
+// DOM test for the robot-card thumbnail's photo/render fallback.
 // `./happydom` must be imported first so the DOM globals exist before React
 // and testing-library are evaluated.
 import "./happydom";
@@ -16,7 +16,7 @@ describe("RobotThumb fallback", () => {
         expect(photos.length).toBeGreaterThan(0);
     });
 
-    test("falls back to the schematic svg when the image fails to load", () => {
+    test("falls back to the rendered robot when the image fails to load", () => {
         const { container } = render(<RobotShowcase />);
         const thumb = container.querySelector(".robot-thumb");
         expect(thumb).not.toBeNull();
@@ -28,9 +28,9 @@ describe("RobotThumb fallback", () => {
         // Simulate a broken hotlink: the CDN image 404s.
         fireEvent.error(img as HTMLImageElement);
 
-        // The photo is replaced by the schematic render, not a broken icon.
+        // The photo is replaced by the 3D render, not a broken icon.
         expect(thumb?.querySelector("img.robot-photo")).toBeNull();
-        expect(thumb?.querySelector("svg")).not.toBeNull();
+        expect(thumb?.querySelector("canvas")).not.toBeNull();
         expect(thumb?.getAttribute("data-photo")).toBe("false");
     });
 });

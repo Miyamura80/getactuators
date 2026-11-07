@@ -64,8 +64,8 @@
     "rated_torque_nm": null,
     "max_speed_rpm": null,
     "gear_ratio": null,
-    "weight_g": 1900,
-    "torque_density_nm_per_kg": 189.5,
+    "weight_g": null,
+    "torque_density_nm_per_kg": null,
     "backdrivable": true,
     "backlash_arcmin": null,
     "repeatability_arcmin": null,
@@ -82,10 +82,11 @@
     "encoder": "dual encoder (position + velocity)",
     "integrated_driver": true,
     "ip_rating": null,
-    "notes": "High-torque internal-rotor PMSM joint used across the Unitree H1 humanoid; the same M107 unit is deployed at different gear stages for different joints - Unitree quotes 360 N.m (knee), 220 N.m (hip), 75 N.m (arm), 45 N.m (ankle). Peak torque here uses the 360 N.m knee figure. 107x74mm, hollow shaft for cable routing, industrial crossed-roller output bearing. Manufacturer states 189 N.m/kg torque density; weight_g (~1.9 kg) is INFERRED from 360 N.m / 189 (N.m/kg) and is not a directly published value, so verified is false. Gear ratio, voltage, comm bus and price are not published for the bare motor (sold as part of H1); left null.",
+    "notes": "High-torque internal-rotor PMSM joint used across the Unitree H1 / H1-2 humanoid. Unitree publishes no standalone motor spec table. The 360 N.m peak is Unitree's robot-level 'knee torque about 360 N.m' (H1 also lists hip ~220, arm ~75, ankle ~59 N.m; H1-2 arm 120 N.m), not a motor rating. Unitree also states a 189 N.m/kg peak torque density for H1 without giving the motor mass. The previous 1900 g weight was inferred from 360/189 and is removed, since Unitree does not publish it. Weight, gear ratio, rated torque, speed, voltage and price are not published for the bare motor (sold as part of H1). Unverified: no manufacturer weight or ratio.",
     "sources": [
       "https://www.unitree.com/h1/",
-      "https://top3dshop.com/product/unitree-robotics-h1-2-humanoid-robot"
+      "https://top3dshop.com/product/unitree-robotics-h1-2-humanoid-robot",
+      "https://www.unitree.com/cn/h1/"
     ],
     "verified": false,
     "price_per_nm": null,
@@ -94,7 +95,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://www.unitree.com/h1/",
     "source_domain": "unitree.com",
-    "image_url": null
+    "image_url": "/actuator-images/unitree-m107.webp"
   },
   {
     "id": "myactuator-rmd-x8-120",
@@ -148,7 +149,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://www.robotshop.com/products/myactuator-myactuator-brushless-dc-motor-rmd-x8-120-ethercat-large-torque-120nm-robot-joint-module-large-hollow-planetary-reduction-torque",
     "source_domain": "robotshop.com",
-    "image_url": null
+    "image_url": "/actuator-images/myactuator-rmd-x8-120.webp"
   },
   {
     "id": "robstride-04",
@@ -166,7 +167,7 @@
     "availability": "in_production",
     "peak_torque_nm": 120,
     "rated_torque_nm": 40,
-    "max_speed_rpm": null,
+    "max_speed_rpm": 200,
     "gear_ratio": "9:1",
     "weight_g": 1420,
     "torque_density_nm_per_kg": 84.5,
@@ -189,13 +190,14 @@
     "encoder": "dual magnetic",
     "integrated_driver": true,
     "ip_rating": null,
-    "notes": "Largest mainstream RobStride QDD module. 120 N.m peak, 40 N.m rated, 9:1 reduction, size 110x50 mm, 15-60 V driver working voltage, CAN, dual magnetic encoders. Installed mass 1420 g (1.4 kg) per RobStride/Seeed/OpenELAB. Priced at $255 on Seeed Studio (authorized RobStride distributor, USD).",
+    "notes": "Largest mainstream RobStride QDD module. 120 N.m peak, 40 N.m rated, 9:1 reduction, size 110x50 mm, 15-60 V driver working voltage, CAN, dual magnetic encoders. Installed mass 1420 g (1.4 kg) per RobStride/Seeed/OpenELAB. Priced at $255 on Seeed Studio (authorized RobStride distributor, USD). No-load speed 200 rpm +/-10% at 48 V per RobStride RS04 user manual 260713.",
     "sources": [
       "https://x.com/RobStride_com/status/1802891697912737824",
       "https://www.seeedstudio.com/Robostride-04-Actuator-p-6775.html",
       "https://openelab.io/blogs/learn/robstride04-qdd-120n-m-integrated-joint-bldc-gear-motor-complete-guide",
       "https://github.com/RobStride/Product_Information",
-      "https://www.robstride.com/products/robStride04"
+      "https://www.robstride.com/products/robStride04",
+      "https://github.com/RobStride/Product_Information/blob/main/Product%20Literature/RS04/RS04User%20Manual260713.pdf"
     ],
     "verified": true,
     "price_per_nm": 2.13,
@@ -218,7 +220,7 @@
     ],
     "product_url": "https://steadywin-motor.com/products/planetary-torque-motor-1-36-bipolar-reduction-joint-module-servo-motor-robot",
     "datasheet_url": "https://openelab.io/products/steadywin-gim6010-36-precision-robotic-actuator",
-    "price_usd": null,
+    "price_usd": 203.6,
     "availability": "in_production",
     "peak_torque_nm": 41,
     "rated_torque_nm": 18,
@@ -245,14 +247,14 @@
     "encoder": "14-bit magnetic",
     "integrated_driver": true,
     "ip_rating": "IP54",
-    "notes": "Steel two-stage 36:1 planetary joint module with a published ~15 arcmin gearbox backlash (important for arms). 48 V config: 221 W, 18 N.m rated, 41 N.m stall, 12-56 V range. Weight 574 g with driver (546 g without) per Steadywin/OpenELAB. Output speed 50-97 rpm depending on driver.",
+    "notes": "Steel two-stage 36:1 planetary joint module with a published ~15 arcmin gearbox backlash (important for arms). 48 V config: 221 W, 18 N.m rated, 41 N.m stall, 12-56 V range. Weight 574 g with driver (546 g without) per Steadywin/OpenELAB. Output speed 50-97 rpm depending on driver. Price $203.60 is Steadywin's own store price with the GDK468 driver (12-60 V), the cheapest driver bundle (bare motor $152; GDS6 $221.80; GDZ468 $223), checked Oct 2026.",
     "sources": [
       "https://steadywin-motor.com/products/planetary-torque-motor-1-36-bipolar-reduction-joint-module-servo-motor-robot",
       "https://openelab.io/products/steadywin-gim6010-36-precision-robotic-actuator",
       "https://rcdrone.top/products/steadywin-gim6010-36-planetary-reducer-servo-motor"
     ],
     "verified": true,
-    "price_per_nm": null,
+    "price_per_nm": 4.97,
     "data_source": "spot_checked",
     "country": "China",
     "country_flag": "🇨🇳",
@@ -275,11 +277,11 @@
     "price_usd": 249.99,
     "availability": "in_production",
     "peak_torque_nm": 60,
-    "rated_torque_nm": 21,
+    "rated_torque_nm": 20,
     "max_speed_rpm": null,
     "gear_ratio": "9:1",
-    "weight_g": 900,
-    "torque_density_nm_per_kg": 66.7,
+    "weight_g": 880,
+    "torque_density_nm_per_kg": 68.2,
     "backdrivable": true,
     "backlash_arcmin": null,
     "repeatability_arcmin": null,
@@ -299,12 +301,13 @@
     "encoder": "dual magnetic",
     "integrated_driver": true,
     "ip_rating": null,
-    "notes": "Mid-size QDD module for larger arms/legs. 60 N.m peak, 21 N.m rated at 100 rpm, 9:1 reduction, 48 V nominal (15-60 V driver range), dual magnetic encoders. Installed mass 900 g +/-20 g per Seeed/OpenELAB. Priced at $249.99 on Seeed Studio (authorized RobStride distributor, USD).",
+    "notes": "Mid-size QDD module for larger arms/legs. 60 N.m peak, 20 N.m rated at 100 rpm, 9:1 reduction, 48 V nominal (15-60 V driver range), dual magnetic encoders. Rated 20 N.m (tested at 100 rpm) and mass 880 g +/-20 g per RobStride RS03 user manual 260713 (Seeed/OpenELAB list 21 N.m and 900 g). Priced at $249.99 on Seeed Studio (authorized RobStride distributor, USD).",
     "sources": [
       "https://www.seeedstudio.com/Robostride-03-Actuator-p-6774.html",
       "https://openelab.io/blogs/learn/what-is-robstride03-qdd-60n-m-actuator",
       "https://github.com/RobStride/Product_Information",
-      "https://www.robstride.com/products/robStride03"
+      "https://www.robstride.com/products/robStride03",
+      "https://github.com/RobStride/Product_Information/blob/main/Product%20Literature/RS03/RS03User%20Manual260713.pdf"
     ],
     "verified": true,
     "price_per_nm": 4.17,
@@ -488,7 +491,7 @@
     ],
     "product_url": "https://openelab.io/products/steadywin-gim8108-8-robot-motor",
     "datasheet_url": "https://manuals.plus/ae/1005007128509920",
-    "price_usd": null,
+    "price_usd": 129.2,
     "availability": "in_production",
     "peak_torque_nm": 22,
     "rated_torque_nm": 7.5,
@@ -514,14 +517,15 @@
     "encoder": "16-bit",
     "integrated_driver": true,
     "ip_rating": "IP54",
-    "notes": "MIT-Cheetah-style QDD clone with very high torque density. 22 Nm stall / 7.5 Nm rated, 8:1 steel planetary (~15 arcmin backlash), nominal 110 rpm / max 320 rpm after reduction, 336W, 48V nominal (24-56V). SDC-series driver with CAN and USB-C config. Weight 375 g (net; ~0.8 kg gross shipping). Price roughly $55-112/unit wholesale (Alibaba, MOQ 2); no confirmed retail USD, so null.",
+    "notes": "MIT-Cheetah-style QDD clone with very high torque density. 22 Nm stall / 7.5 Nm rated, 8:1 steel planetary (~15 arcmin backlash), nominal 110 rpm / max 320 rpm after reduction, 336W, 48V nominal (24-56V). SDC-series driver with CAN and USB-C config. Weight 375 g (net; ~0.8 kg gross shipping). Price $129.20 is Steadywin's own store price for the standard version with the GDS68 driver (bare motor $93.89), checked Oct 2026.",
     "sources": [
       "https://openelab.io/products/steadywin-gim8108-8-robot-motor",
       "https://rcdrone.top/products/steadywin-gim8108-8-planetary-reducer-servo-motor",
-      "https://www.alibaba.com/product-detail/Steadywin-GIM8108-8-Gear-Motor-8_1601153179912.html"
+      "https://www.alibaba.com/product-detail/Steadywin-GIM8108-8-Gear-Motor-8_1601153179912.html",
+      "https://steadywin-motor.com/products/planetary-reduction-motor-robot-dog-humanoid-robot-joint-module-flat-thin-large-torque"
     ],
     "verified": true,
-    "price_per_nm": null,
+    "price_per_nm": 5.87,
     "data_source": "spot_checked",
     "country": "China",
     "country_flag": "🇨🇳",
@@ -541,7 +545,7 @@
     ],
     "product_url": "https://www.cubemars.com/product/ak10-9-v3-0-kv60-robotic-actuator.html",
     "datasheet_url": "https://www.cubemars.com/images/file/20240523/1716429938564781.pdf",
-    "price_usd": null,
+    "price_usd": 798.9,
     "availability": "in_production",
     "peak_torque_nm": 53,
     "rated_torque_nm": 18,
@@ -568,14 +572,15 @@
     "encoder": "14-bit magnetic (motor-side)",
     "integrated_driver": true,
     "ip_rating": null,
-    "notes": "Largest AK-series QDD, for big-dog legs and heavy arms. V3.0 KV60: 53 Nm peak / 18 Nm rated, no-load 320 rpm / rated 235 rpm at 48V (max_speed_rpm is the rated figure). Earlier V2.0 KV60 rated 48 Nm peak / 18 Nm. Net weight 960 g (V2.0 confirmed at 0.96 kg; V3.0 is the same motor and gearbox with only an updated driver board, so weight is unchanged). Pricing varies widely by retailer/version (RobotShop lists V3.0 KV60 ~$1,140; historical V2 street ~$400-500) so price_usd left null.",
+    "notes": "Largest AK-series QDD, for big-dog legs and heavy arms. V3.0 KV60: 53 Nm peak / 18 Nm rated, no-load 320 rpm / rated 235 rpm at 48V (max_speed_rpm is the rated figure). Earlier V2.0 KV60 rated 48 Nm peak / 18 Nm. Net weight 960 g (V2.0 confirmed at 0.96 kg; V3.0 is the same motor and gearbox with only an updated driver board, so weight is unchanged). Price $798.90 is the CubeMars store sale price for the V3.0 KV60 (regular $818.90), checked Oct 2026; RobotShop has listed it near $1,140.",
     "sources": [
       "https://www.cubemars.com/product/ak10-9-v3-0-kv60-robotic-actuator.html",
       "https://servodatabase.com/servo/cubemars/ak10-9-v3-0-kv60",
-      "https://www.cubemars.com/product/ak10-9-v2-0-kv60-robotic-actuator.html"
+      "https://www.cubemars.com/product/ak10-9-v2-0-kv60-robotic-actuator.html",
+      "https://store.cubemars.com/products/ak10-9-v3-0-kv60"
     ],
     "verified": true,
-    "price_per_nm": null,
+    "price_per_nm": 15.07,
     "data_source": "spot_checked",
     "country": "China",
     "country_flag": "🇨🇳",
@@ -632,7 +637,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://www.feetechrc.com/products/serial-port-series-steering-gear-page-3",
     "source_domain": "feetechrc.com",
-    "image_url": null
+    "image_url": "/actuator-images/feetech-sts3215.webp"
   },
   {
     "id": "dynamixel-h54-200-s500-r",
@@ -684,7 +689,7 @@
     "country_flag": "🇰🇷",
     "source_url": "https://docs.robotis.com/docs/dxl/model_reference/pro_series/pro_h_series/h54-200-s500-r/",
     "source_domain": "docs.robotis.com",
-    "image_url": null
+    "image_url": "/actuator-images/dynamixel-h54-200-s500-r.webp"
   },
   {
     "id": "dynamixel-xm430-w350-t",
@@ -863,8 +868,8 @@
     "price_usd": 125,
     "availability": "in_production",
     "peak_torque_nm": 14,
-    "rated_torque_nm": null,
-    "max_speed_rpm": null,
+    "rated_torque_nm": 5,
+    "max_speed_rpm": 315,
     "gear_ratio": "10:1",
     "weight_g": 310,
     "torque_density_nm_per_kg": 45.2,
@@ -887,11 +892,12 @@
     "encoder": "dual 14-bit magnetic",
     "integrated_driver": true,
     "ip_rating": null,
-    "notes": "Smallest RobStride QDD integrated module. 14 N.m peak, 10:1 reduction, ~170 W, 24-60 V, dual 14-bit encoders, CAN, MIT-mode control. Weight 310 g per RobStride/Seeed/OpenELAB. Rated (continuous) torque not clearly published. Priced at $125 on Seeed Studio (authorized RobStride distributor, USD).",
+    "notes": "Smallest RobStride QDD integrated module. 14 N.m peak, 10:1 reduction, ~170 W, 24-60 V, dual 14-bit encoders, CAN, MIT-mode control. Weight 310 g per RobStride/Seeed/OpenELAB. Priced at $125 on Seeed Studio (authorized RobStride distributor, USD). Rated 5 N.m (tested at 100 rpm, 48 V) and no-load speed 315 rpm +/-10% per RobStride RS00 user manual 260713.",
     "sources": [
       "https://robstride.com/products/robStride00",
       "https://www.seeedstudio.com/Robostride-00-Actuator-p-6664.html",
-      "https://openelab.io/blogs/learn/robstride00-qdd-14n-m-integrated-joint-motor-module-complete-guide"
+      "https://openelab.io/blogs/learn/robstride00-qdd-14n-m-integrated-joint-motor-module-complete-guide",
+      "https://github.com/RobStride/Product_Information/blob/main/Product%20Literature/RS00/RS00User%20Manual260713.pdf"
     ],
     "verified": true,
     "price_per_nm": 8.93,
@@ -917,8 +923,8 @@
     "price_usd": 143.99,
     "availability": "in_production",
     "peak_torque_nm": 17,
-    "rated_torque_nm": 7,
-    "max_speed_rpm": null,
+    "rated_torque_nm": 6,
+    "max_speed_rpm": 315,
     "gear_ratio": "7.75:1",
     "weight_g": 380,
     "torque_density_nm_per_kg": 44.7,
@@ -941,11 +947,12 @@
     "encoder": "single 14-bit magnetic",
     "integrated_driver": true,
     "ip_rating": null,
-    "notes": "Compact 36 V-nominal QDD module (24-48 V range). 17 N.m peak, 7 N.m rated at 100 rpm, 7.75:1 reduction, single magnetic encoder, 380 g per Seeed/OpenELAB. Rated torque quoted at 100 rpm; no-load max speed not published. Priced at $143.99 on Seeed Studio (authorized RobStride distributor, USD).",
+    "notes": "Compact 36 V-nominal QDD module (24-48 V range). 17 N.m peak, 6 N.m rated at 100 rpm, 7.75:1 reduction, single magnetic encoder, 380 g per Seeed/OpenELAB. Rated 6 N.m (tested at 100 rpm) per RobStride RS01 user manual 260713; earlier reseller listings quoted 7 N.m. Priced at $143.99 on Seeed Studio (authorized RobStride distributor, USD). No-load speed 315 rpm +/-10% at 36 V per RobStride RS01 user manual 260713.",
     "sources": [
       "https://www.seeedstudio.com/Robostride-01-Actuator-p-6773.html",
       "https://openelab.io/blogs/learn/what-is-robstride01-36v-qdd-motor-robot-arms-automation",
-      "https://openelab.io/products/robstride01-qdd-17n-m-integrated-joint-motor-module"
+      "https://openelab.io/products/robstride01-qdd-17n-m-integrated-joint-motor-module",
+      "https://github.com/RobStride/Product_Information/blob/main/Product%20Literature/RS01/RS01User%20Manual260713.pdf"
     ],
     "verified": true,
     "price_per_nm": 8.47,
@@ -1025,7 +1032,7 @@
     "availability": "in_production",
     "peak_torque_nm": 40,
     "rated_torque_nm": 20,
-    "max_speed_rpm": null,
+    "max_speed_rpm": 160,
     "gear_ratio": "9:1",
     "weight_g": 896,
     "torque_density_nm_per_kg": 44.6,
@@ -1047,12 +1054,13 @@
     "encoder": "dual magnetic encoder",
     "integrated_driver": true,
     "ip_rating": null,
-    "notes": "98mm OD x 61.7mm integrated joint motor, MIT driver + dual magnetic encoders, CAN bus at 1 Mbps with telemetry (speed/position/torque/temperature). 20 N.m rated, 40 N.m peak, ~100 rpm rated output, 9:1, 24V. Supports MIT, speed and position modes. User manual lists ~896g. DM-J8009P-2EC variant uses a crossed-roller output bearing instead of the deep-groove bearing. Priced at $385 on Foxtech (authorized DAMIAO distributor, USD).",
+    "notes": "98mm OD x 61.7mm integrated joint motor, MIT driver + dual magnetic encoders, CAN bus at 1 Mbps with telemetry (speed/position/torque/temperature). 20 N.m rated, 40 N.m peak, ~100 rpm rated output, 9:1, 24V. Supports MIT, speed and position modes. User manual lists ~896g. DM-J8009P-2EC variant uses a crossed-roller output bearing instead of the deep-groove bearing. Priced at $385 on Foxtech (authorized DAMIAO distributor, USD). Maximum no-load speed 160 rpm at the 24 V rated voltage (320 rpm at 48 V) per DAMIAO user manual V1.1 specifications table.",
     "sources": [
       "https://github.com/dmBots/DM-J8009-2EC",
       "https://www.dronegearup.com/products/damiao-dm-j8009-2ec-24-v-20-n-m-9-1-98-mm-od-dual-encoder-integrated-robot-motor-with-can-1-mbps/",
       "https://manuals.plus/damiao/dm-j8009-2ec-servo-motor-manual",
-      "https://store.foxtech.com/dm-j8009-2ec-mit-driven-brushless-servo-joint-motor-with-dual-encoders-gear-reduction-for-robotic-arms/"
+      "https://store.foxtech.com/dm-j8009-2ec-mit-driven-brushless-servo-joint-motor-with-dual-encoders-gear-reduction-for-robotic-arms/",
+      "https://github.com/dmBots/DM-J8009-2EC/blob/master/manual/DM-J8009-2EC%20Gear%20Motor%20User%20Manual%20V1.1(4).pdf"
     ],
     "verified": true,
     "price_per_nm": 9.63,
@@ -1061,7 +1069,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://www.dronegearup.com/products/damiao-dm-j8009-2ec-24-v-20-n-m-9-1-98-mm-od-dual-encoder-integrated-robot-motor-with-can-1-mbps/",
     "source_domain": "dronegearup.com",
-    "image_url": null
+    "image_url": "/actuator-images/damiao-dm-j8009-2ec.webp"
   },
   {
     "id": "innfos-sca-qdd-lite-ne30-36",
@@ -1164,7 +1172,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://www.waveshare.com/st3215-servo.htm",
     "source_domain": "waveshare.com",
-    "image_url": null
+    "image_url": "/actuator-images/waveshare-st3215.webp"
   },
   {
     "id": "robstride-02",
@@ -1182,10 +1190,10 @@
     "availability": "in_production",
     "peak_torque_nm": 17,
     "rated_torque_nm": 6,
-    "max_speed_rpm": null,
+    "max_speed_rpm": 410,
     "gear_ratio": "7.75:1",
-    "weight_g": 405,
-    "torque_density_nm_per_kg": 42,
+    "weight_g": 380,
+    "torque_density_nm_per_kg": 44.7,
     "backdrivable": true,
     "backlash_arcmin": null,
     "repeatability_arcmin": null,
@@ -1205,11 +1213,12 @@
     "encoder": "dual 14-bit magnetic",
     "integrated_driver": true,
     "ip_rating": null,
-    "notes": "Dual-encoder sibling of RobStride 01. 17 N.m peak, 6 N.m rated, 7.75:1 reduction, 48 V nominal (24-60 V range), ~170 W, torque constant 1.22 N.m/A, dual 14-bit magnetic encoders, CAN with MIT-mode control. Weight 405 g +/-5 g per Seeed/OpenELAB. Priced at $160.99 on Seeed Studio (authorized RobStride distributor, USD).",
+    "notes": "Dual-encoder sibling of RobStride 01. 17 N.m peak, 6 N.m rated, 7.75:1 reduction, 48 V nominal (24-60 V range), ~170 W, torque constant 1.22 N.m/A, dual 14-bit magnetic encoders, CAN with MIT-mode control. Weight 380 g +/-3 g per RobStride RS02 user manual 260713 (Seeed/OpenELAB list 405 g). Priced at $160.99 on Seeed Studio (authorized RobStride distributor, USD). No-load speed 410 rpm +/-10% at 48 V per RobStride RS02 user manual 260713.",
     "sources": [
       "https://www.seeedstudio.com/Robostride-02-Actuator-p-6665.html",
       "https://openelab.io/blogs/learn/robstride02-qdd-17n-m-joint-motor-module-complete-technical-guide",
-      "https://openelab.io/products/robstride02-qdd-17n-m-joint-motor-module-dual-encoders"
+      "https://openelab.io/products/robstride02-qdd-17n-m-joint-motor-module-dual-encoders",
+      "https://github.com/RobStride/Product_Information/blob/main/Product%20Literature/RS02/RS02User%20Manual260713.pdf"
     ],
     "verified": true,
     "price_per_nm": 9.47,
@@ -1274,7 +1283,7 @@
     "country_flag": "🇯🇵",
     "source_url": "https://www.harmonicdrive.net/products/integrated-actuators/integrated-actuators/lpa-integrated-servo-drive",
     "source_domain": "harmonicdrive.net",
-    "image_url": null
+    "image_url": "/actuator-images/harmonic-drive-lpa-20.webp"
   },
   {
     "id": "xiaomi-cybergear",
@@ -1288,7 +1297,7 @@
     ],
     "product_url": "https://openelab.io/products/xiaomi-cybergear-micromotor-intelligent-motor",
     "datasheet_url": "https://github.com/belovictor/cybergear-docs/blob/main/instructionmanual/instructionmanual.md",
-    "price_usd": null,
+    "price_usd": 179,
     "availability": "eol",
     "peak_torque_nm": 12,
     "rated_torque_nm": 4,
@@ -1315,14 +1324,15 @@
     "encoder": "14-bit",
     "integrated_driver": true,
     "ip_rating": null,
-    "notes": "Xiaomi's low-cost MIT-Cheetah-style micromotor (from the CyberDog / CyberOne ecosystem), popular for hobby legs and arms. 12 Nm peak / 4 Nm continuous, 7.75:1 reduction, 24V, max 296 rpm, 14-bit encoder, CAN (1 Mbps) plus serial, integrated FOC driver with position/velocity/torque/impedance (MIT) modes. Manufacturer-stated torque density 37.85 Nm/kg. Listed EOL by some distributors; street price historically ~$80-120, so price_usd left null.",
+    "notes": "Xiaomi's low-cost MIT-Cheetah-style micromotor (from the CyberDog / CyberOne ecosystem), popular for hobby legs and arms. 12 Nm peak / 4 Nm continuous, 7.75:1 reduction, 24V, max 296 rpm, 14-bit encoder, CAN (1 Mbps) plus serial, integrated FOC driver with position/velocity/torque/impedance (MIT) modes. Manufacturer-stated torque density 37.85 Nm/kg. Listed EOL by some distributors. Price $179 is the AiFitLab price for the bare motor (no cables or USB-CAN adapter), checked Oct 2026; launch price was CNY 499.",
     "sources": [
       "https://openelab.io/products/xiaomi-cybergear-micromotor-intelligent-motor",
       "https://github.com/belovictor/cybergear-docs/blob/main/instructionmanual/instructionmanual.md",
-      "https://hackaday.io/project/202366-the-unnamed-spider-bot/log/239239-steadywin-gim6010-8-vs-xiaomi-cybergear-micromotor"
+      "https://hackaday.io/project/202366-the-unnamed-spider-bot/log/239239-steadywin-gim6010-8-vs-xiaomi-cybergear-micromotor",
+      "https://aifitlab.com/products/xiaomi-cybergear-micromotor"
     ],
     "verified": true,
-    "price_per_nm": null,
+    "price_per_nm": 14.92,
     "data_source": "spot_checked",
     "country": "China",
     "country_flag": "🇨🇳",
@@ -1433,7 +1443,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://www.robotshop.com/products/my-actuator-rmd-x8-pro-v2-can-bus-bldc-actuator-w-19-reduction-mc-x-300-o-driver",
     "source_domain": "robotshop.com",
-    "image_url": null
+    "image_url": "/actuator-images/myactuator-rmd-x8-pro-v2.webp"
   },
   {
     "id": "mjbots-qdd100",
@@ -1537,7 +1547,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://www.feetechrc.com/en/scs_ttl_Servo.html",
     "source_domain": "feetechrc.com",
-    "image_url": null
+    "image_url": "/actuator-images/feetech-scs15.webp"
   },
   {
     "id": "dynamixel-xl330-m288-t",
@@ -1605,7 +1615,7 @@
     ],
     "product_url": "https://openelab.io/products/steadywin-gim6010-8-robot-motor",
     "datasheet_url": "https://sdalal1.github.io/assets/pdf/SteadyWin_GIM6010-8_Manual_rev1.pdf",
-    "price_usd": null,
+    "price_usd": 93.88,
     "availability": "in_production",
     "peak_torque_nm": 11,
     "rated_torque_nm": 5,
@@ -1631,14 +1641,15 @@
     "encoder": "16-bit (dual-encoder option)",
     "integrated_driver": true,
     "ip_rating": "IP54",
-    "notes": "Compact 80 mm QDD joint, MIT-Cheetah-style. 11 Nm stall / 5 Nm rated, 8:1 steel planetary (~15 arcmin), nominal 120 rpm / max 420 rpm, 252W, 24V nominal (12-56V), continuous current 10.5A. SDC104 driver (CAN + USB-C). Weight ~388 g net. Often compared with Xiaomi CyberGear. Wholesale ~$50-100/unit (Alibaba, MOQ 2); no confirmed retail USD, so null.",
+    "notes": "Compact 80 mm QDD joint, MIT-Cheetah-style. 11 Nm stall / 5 Nm rated, 8:1 steel planetary (~15 arcmin), nominal 120 rpm / max 420 rpm, 252W, 24V nominal (12-56V), continuous current 10.5A. SDC104 driver (CAN + USB-C). Weight ~388 g net. Often compared with Xiaomi CyberGear. Price $93.88 is Steadywin's own store price for the standard version with the GDS68 driver (bare motor $70.35; GDK468 $112.20), checked Oct 2026.",
     "sources": [
       "https://openelab.io/products/steadywin-gim6010-8-robot-motor",
       "https://sdalal1.github.io/assets/pdf/SteadyWin_GIM6010-8_Manual_rev1.pdf",
-      "https://hackaday.io/project/202366-the-unnamed-spider-bot/log/239239-steadywin-gim6010-8-vs-xiaomi-cybergear-micromotor"
+      "https://hackaday.io/project/202366-the-unnamed-spider-bot/log/239239-steadywin-gim6010-8-vs-xiaomi-cybergear-micromotor",
+      "https://steadywin-motor.com/products/built-in-star-gear-motor-motor-robot-joint-driver-actuator-controller-motor"
     ],
     "verified": true,
-    "price_per_nm": null,
+    "price_per_nm": 8.53,
     "data_source": "spot_checked",
     "country": "China",
     "country_flag": "🇨🇳",
@@ -1815,7 +1826,7 @@
     ],
     "product_url": "https://www.waveshare.com/sc15-servo.htm",
     "datasheet_url": "https://servodatabase.com/servo/waveshare/sc15",
-    "price_usd": null,
+    "price_usd": 17.99,
     "availability": "in_production",
     "peak_torque_nm": 1.67,
     "rated_torque_nm": null,
@@ -1840,13 +1851,13 @@
     "encoder": "potentiometer, 10-bit (1024 steps over 180 deg)",
     "integrated_driver": true,
     "ip_rating": null,
-    "notes": "Lower-cost Waveshare/Feetech bus servo with potentiometer feedback (180 deg servo / 360 deg motor mode). Stall torque 14 kg.cm @4.8V, 15 kg.cm @6V, 17 kg.cm (1.67 N.m) @8.4V; no-load ~62 rpm (0.16 s/60 deg) @6V; stall current 1.7A. Price left null - retail listings ranged widely (~$15-22) and could not be reliably confirmed.",
+    "notes": "Lower-cost Waveshare/Feetech bus servo with potentiometer feedback (180 deg servo / 360 deg motor mode). Stall torque 14 kg.cm @4.8V, 15 kg.cm @6V, 17 kg.cm (1.67 N.m) @8.4V; no-load ~62 rpm (0.16 s/60 deg) @6V; stall current 1.7A. Price $17.99 is Waveshare's own single-unit price, checked Oct 2026.",
     "sources": [
       "https://www.waveshare.com/sc15-servo.htm",
       "https://servodatabase.com/servo/waveshare/sc15"
     ],
     "verified": true,
-    "price_per_nm": null,
+    "price_per_nm": 10.77,
     "data_source": "spot_checked",
     "country": "China",
     "country_flag": "🇨🇳",
@@ -1962,7 +1973,7 @@
     "country_flag": "🇯🇵",
     "source_url": "https://www.harmonicdrive.net/products/rotary-actuators/hollow-shaft-servo-actuators/fha-mini",
     "source_domain": "harmonicdrive.net",
-    "image_url": null
+    "image_url": "/actuator-images/harmonic-drive-fha-14c-100.webp"
   },
   {
     "id": "myactuator-rmd-x6-8",
@@ -2016,7 +2027,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://www.robotshop.com/products/myactuator-rmd-x6-v3-can-bus-18-mc-x-300-o-brushless-servo-driver",
     "source_domain": "robotshop.com",
-    "image_url": null
+    "image_url": "/actuator-images/myactuator-rmd-x6-8.webp"
   },
   {
     "id": "cubemars-ri60-kv120",
@@ -2031,7 +2042,7 @@
     ],
     "product_url": "https://www.cubemars.com/product/ri60-kv120-frameless-inrunner-torque-motor.html",
     "datasheet_url": "https://www.directindustry.com/prod/cubemars/product-217143-2270624.html",
-    "price_usd": null,
+    "price_usd": 98.9,
     "availability": "in_production",
     "peak_torque_nm": 1.63,
     "rated_torque_nm": 0.57,
@@ -2051,14 +2062,15 @@
     "encoder": "Optional Hall-sensor version; bare frameless kit (add own encoder)",
     "integrated_driver": false,
     "ip_rating": null,
-    "notes": "Motor. Frameless inrunner torque motor kit, dia 60 x 23 mm. Peak torque 1.63 Nm at 16.8A peak; rated torque 0.57 Nm; rated current 5.6A; 85 W. Phase resistance 900 mOhm, inductance 877.5 uH, 14 pole pairs. max_speed is no-load computed from KV120 x 48V (not a published datasheet figure; rated speed at 48V is ~3190 rpm). Kt not published. Needs external FOC driver.",
+    "notes": "Motor. Frameless inrunner torque motor kit, dia 60 x 23 mm. Peak torque 1.63 Nm at 16.8A peak; rated torque 0.57 Nm; rated current 5.6A; 85 W. Phase resistance 900 mOhm, inductance 877.5 uH, 14 pole pairs. max_speed is no-load computed from KV120 x 48V (not a published datasheet figure; rated speed at 48V is ~3190 rpm). Kt not published. Needs external FOC driver. Price $98.90 is the CubeMars store price without hall sensor ($113.90 with), checked Oct 2026.",
     "sources": [
       "https://www.cubemars.com/product/ri60-kv120-frameless-inrunner-torque-motor.html",
       "https://www.robotshop.com/products/cubemars-ri60-kv120-ri-series-frameless-inrunner-torque-motor-w-hall-sensor",
-      "https://www.directindustry.com/prod/cubemars/product-217143-2270624.html"
+      "https://www.directindustry.com/prod/cubemars/product-217143-2270624.html",
+      "https://store.cubemars.com/products/ri60"
     ],
     "verified": true,
-    "price_per_nm": null,
+    "price_per_nm": 60.67,
     "data_source": "spot_checked",
     "country": "China",
     "country_flag": "🇨🇳",
@@ -2079,7 +2091,7 @@
     ],
     "product_url": "https://www.cubemars.com/product/ri80-v2-0-kv75-frameless-inrunner-torque-motor.html",
     "datasheet_url": "https://www.robotshop.com/products/cubemars-ri80-kv75-ri-series-frameless-inrunner-torque-motor",
-    "price_usd": null,
+    "price_usd": 132.9,
     "availability": "in_production",
     "peak_torque_nm": 4.1,
     "rated_torque_nm": 1.45,
@@ -2099,14 +2111,15 @@
     "encoder": "Optional Hall-sensor version; bare frameless kit (add own encoder)",
     "integrated_driver": false,
     "ip_rating": null,
-    "notes": "Motor. Frameless inrunner torque motor, dia 85 x 82 mm, delta winding, 8 pole pairs. Peak torque 4.1 Nm; rated torque 1.45 Nm; rated current 9.4A. max_speed_rpm is the rated speed at 48V. Kt not published. Needs external FOC driver.",
+    "notes": "Motor. Frameless inrunner torque motor, dia 85 x 82 mm, delta winding, 8 pole pairs. Peak torque 4.1 Nm; rated torque 1.45 Nm; rated current 9.4A. max_speed_rpm is the rated speed at 48V. Kt not published. Needs external FOC driver. Price $132.90 is the CubeMars store price for the V2.0 KV75 without hall sensor ($147.90 with), checked Oct 2026.",
     "sources": [
       "https://www.cubemars.com/product/ri80-v2-0-kv75-frameless-inrunner-torque-motor.html",
       "https://www.robotshop.com/products/cubemars-ri80-kv75-ri-series-frameless-inrunner-torque-motor",
-      "https://www.directindustry.com/prod/cubemars/product-217143-2272307.html"
+      "https://www.directindustry.com/prod/cubemars/product-217143-2272307.html",
+      "https://store.cubemars.com/products/ri80"
     ],
     "verified": true,
-    "price_per_nm": null,
+    "price_per_nm": 32.41,
     "data_source": "spot_checked",
     "country": "China",
     "country_flag": "🇨🇳",
@@ -2274,20 +2287,20 @@
       "quadruped_leg"
     ],
     "product_url": "https://store.foxtech.com/dm-j10010-2ec-mit-driven-brushless-servo-joint-motor/",
-    "datasheet_url": "https://github.com/dmBots/DM-J10010-2EC",
+    "datasheet_url": "https://github.com/dmBots/DM-J10010-2EC/blob/master/manual/DM-J10010-2EC%E5%87%8F%E9%80%9F%E7%94%B5%E6%9C%BA%E8%AF%B4%E6%98%8E%E4%B9%A6V1.0.pdf",
     "price_usd": 357,
     "availability": "in_production",
     "peak_torque_nm": 150,
     "rated_torque_nm": 40,
-    "max_speed_rpm": null,
+    "max_speed_rpm": 150,
     "gear_ratio": "10:1",
-    "weight_g": null,
-    "torque_density_nm_per_kg": null,
+    "weight_g": 1485,
+    "torque_density_nm_per_kg": 101,
     "backdrivable": true,
     "backlash_arcmin": null,
     "repeatability_arcmin": null,
     "voltage_v": "48",
-    "peak_current_a": null,
+    "peak_current_a": 70,
     "power_w": null,
     "kt_nm_per_a": null,
     "comm": [
@@ -2301,15 +2314,16 @@
     "encoder": "dual magnetic encoder",
     "integrated_driver": true,
     "ip_rating": null,
-    "notes": "MIT-driven integrated joint motor with built-in gearbox and dual encoders; supports MIT (impedance/torque), position and velocity modes. 100mm-class body, ~100 rpm class output, 10:1 reduction. Resellers agree on 40 N.m rated / 150 N.m peak at 48V. Net weight is not stated in the primary datasheet/manual (some resellers imply ~1.6-1.8 kg, unverified) so weight_g and torque_density are left null and verified is false. Priced at $357 on Foxtech (authorized DAMIAO distributor, USD).",
+    "notes": "MIT-driven integrated joint motor with built-in 10:1 reduction and dual 14-bit magnetic encoders; MIT (impedance/torque), position and velocity modes; CAN 1 Mbps control, UART tuning. Spot-checked against the DAMIAO manual V1.0 (2024-05-19) specifications table: rated 40 N.m, peak 150 N.m, 10:1, rated 100 rpm, max no-load 150 rpm, 48 V rated (24-48 V supported), rated 20 A, peak 70 A, about 1485 g, 112 mm OD (120 mm max outline) x 62 mm. Torques are listed for the geared unit; the manual does not say 'output shaft' explicitly, but the 100/150 rpm speeds only fit output-side values at 10:1. Not to be confused with the DM-J10010L-2EC. No DAMIAO product page for this model on damiaokeji.com; price is Foxtech's (authorized distributor, USD).",
     "sources": [
       "https://github.com/dmBots/DM-J10010-2EC",
       "https://store.foxtech.com/dm-j10010-2ec-mit-driven-brushless-servo-joint-motor/",
-      "https://rcdrone.top/products/damiao-dm-j10010-2ec-servo-motor"
+      "https://rcdrone.top/products/damiao-dm-j10010-2ec-servo-motor",
+      "https://github.com/dmBots/DM-J10010-2EC/blob/master/manual/DM-J10010-2EC%E5%87%8F%E9%80%9F%E7%94%B5%E6%9C%BA%E8%AF%B4%E6%98%8E%E4%B9%A6V1.0.pdf"
     ],
-    "verified": false,
+    "verified": true,
     "price_per_nm": 2.38,
-    "data_source": "web_search",
+    "data_source": "spot_checked",
     "country": "China",
     "country_flag": "🇨🇳",
     "source_url": "https://store.foxtech.com/dm-j10010-2ec-mit-driven-brushless-servo-joint-motor/",
@@ -2327,8 +2341,8 @@
       "quadruped_leg"
     ],
     "product_url": "https://steadywin-motor.com/products/gim6010-6",
-    "datasheet_url": "https://www.alibaba.com/product-detail/Steadywin-MIT-GIM8115-36-Gear-Ratio_1600644941419.html",
-    "price_usd": null,
+    "datasheet_url": "https://islandcloud.co/link/69abbe2f8ff913ac14f68111/07952673-8729-4303-b1d9-1b2b8c6f1439",
+    "price_usd": 259.8,
     "availability": "in_production",
     "peak_torque_nm": 54,
     "rated_torque_nm": null,
@@ -2339,7 +2353,7 @@
     "backdrivable": false,
     "backlash_arcmin": null,
     "repeatability_arcmin": null,
-    "voltage_v": "36-48",
+    "voltage_v": "24-48",
     "peak_current_a": null,
     "power_w": 160,
     "kt_nm_per_a": 0.28,
@@ -2354,13 +2368,14 @@
     "encoder": "magnetic",
     "integrated_driver": true,
     "ip_rating": null,
-    "notes": "8115-frame BLDC (mini-Cheetah style) with 36:1 planetary reducer and built-in driver; 54 N.m high-ratio variant of the GIM8115 family (also sold as -6/-9). ~30 rpm output, 160W, 36-48V. kt 0.28 N.m/A is the MOTOR-side torque constant (before the gearbox). Rated (continuous) output torque is not separately published (54 N.m is the stall/peak figure). Only a gross shipping weight (~1.2 kg incl. packaging) is listed by resellers, not a net actuator mass, so weight_g and torque_density are left null and verified is false. 36:1 ratio makes it largely non-backdrivable.",
+    "notes": "8115-frame BLDC with 36:1 planetary reducer and optional integrated driver (GDZ810/GDS810/GDM810). Note: SteadyWin's own store serves the GIM8115-36 at the URL slug /products/gim6010-6 (page title 'SteadyWin GIM8115-36 Planetary Gearbox Motor'; /products/gim8115-36 is a 404), so product_url is correct despite the slug. SteadyWin offers 24 V and 48 V variants. The page's parameter table is published only as images, with detail in a downloadable xlsx selection table (datasheet_url); neither could be read for this check, so peak 54 N.m, 30 rpm, 160 W and kt 0.28 (motor-side) remain reseller-sourced. Store shipping weights (925-971 g) are not a stated net mass, so weight is null. Unverified. 36:1 makes it largely non-backdrivable. Price $259.80 is Steadywin's own store price for the 24 V version with the GDZ810 driver (bare motor $190), checked Oct 2026; the 48 V driver options list a placeholder $190, so the 24 V price is used.",
     "sources": [
-      "https://www.alibaba.com/product-detail/Steadywin-MIT-GIM8115-36-Gear-Ratio_1600644941419.html",
-      "https://steadywin-motor.com/products/gim6010-6"
+      "https://steadywin-motor.com/products/gim6010-6",
+      "https://islandcloud.co/link/69abbe2f8ff913ac14f68111/07952673-8729-4303-b1d9-1b2b8c6f1439",
+      "https://www.alibaba.com/product-detail/Steadywin-MIT-GIM8115-36-Gear-Ratio_1600644941419.html"
     ],
     "verified": false,
-    "price_per_nm": null,
+    "price_per_nm": 4.81,
     "data_source": "web_search",
     "country": "China",
     "country_flag": "🇨🇳",
@@ -2412,7 +2427,7 @@
     "country_flag": "🇸🇰",
     "source_url": "https://www.spinea.com/en/products/drivespin/standard/ds110",
     "source_domain": "spinea.com",
-    "image_url": null
+    "image_url": "/actuator-images/spinea-drivespin-ds110.webp"
   },
   {
     "id": "atar-arc-cycloidal-joint",
@@ -2428,7 +2443,7 @@
     "datasheet_url": "https://www.atarrobot.com/cycloidal-robot/arc-serie/Arc-cycloidal-joint-actuators.html",
     "price_usd": null,
     "availability": "in_production",
-    "peak_torque_nm": 530,
+    "peak_torque_nm": 590,
     "rated_torque_nm": null,
     "max_speed_rpm": 100,
     "gear_ratio": null,
@@ -2453,7 +2468,7 @@
     "encoder": "dual encoder",
     "integrated_driver": true,
     "ip_rating": null,
-    "notes": "Integrated cycloidal joint module line aimed at humanoids/heavy arms: self-developed cycloidal reducer + BLDC motor + driver + dual encoders in one unit. Series-level specs: rated torque range 3-150 N.m across sizes, max torque up to 530 N.m (used as peak here), 24-72V, rated speed 80-100 rpm, backlash and repeatability ~1 arcmin, withstands >5x rated momentary overload, CAN-FD + EtherCAT. Per-model rated torque, weight and gear ratio are not published individually (this entry represents the series envelope) so those are null and verified is false. Low backdrivability by design. Quote/OEM pricing.",
+    "notes": "Integrated cycloidal joint family (cycloidal reducer + BLDC + driver + dual encoders), kept as a series entry. ATAR's table lists six sizes, all 24-72 V: Arc47 (ratio 25, 3/12 N.m rated/peak), Arc68 (25, 28/112.1), Arc78 (25, 40/135.8), Arc95 (21, 75/283.1), Arc102 (25, 60/263.2), Arc150 (25, 180/590). Peak here is the largest model's 590 N.m from that table; the same page's summary says 'max torque 530 N.m' and 'rated 3-150 N.m', which conflicts with the Arc150 row. No per-model weight is published (only an unattributed 'Arc series weighs only 0.2 kg'), so no single model can be verified and the entry stays an unverified family envelope. Rated speed 80-100 rpm, backlash and repeatability ~1 arcmin, CAN-FD (Arc95 and up add EtherCAT). Quote/OEM pricing.",
     "sources": [
       "https://www.atarrobot.com/cycloidal-robot/arc-serie/Arc-cycloidal-joint-actuators.html",
       "https://atarrobot.com/cycloidal-robot/"
@@ -2465,7 +2480,7 @@
     "country_flag": "🇨🇳",
     "source_url": "https://www.atarrobot.com/cycloidal-robot/arc-serie/Arc-cycloidal-joint-actuators.html",
     "source_domain": "atarrobot.com",
-    "image_url": null
+    "image_url": "/actuator-images/atar-arc-cycloidal-joint.webp"
   },
   {
     "id": "maxon-ec-frameless-90-flat-260w",
@@ -2479,7 +2494,7 @@
     ],
     "product_url": "https://www.maxongroup.com/maxon/view/product/542099",
     "datasheet_url": "https://datasheets.globalspec.com/ds/maxon-motor-ag/542099/abc9aff5-cce5-4b70-a592-8dbb20e40d6b",
-    "price_usd": null,
+    "price_usd": 437,
     "availability": "eol",
     "peak_torque_nm": 9.76,
     "rated_torque_nm": 1,
@@ -2499,14 +2514,14 @@
     "encoder": "None (frameless rotor/stator kit; add own sensor)",
     "integrated_driver": false,
     "ip_rating": null,
-    "notes": "Motor. Part 542099, dia 90 mm flat frameless BLDC kit (rotor + stator supplied separately, no bearings/shaft). The maxon product page lists nominal (max continuous) torque 989 mNm (~1 N.m), stall torque 9.76 N.m, weight 814 g, and max speed 5000 rpm; torque constant 136 mNm/A, 11 pole pairs. Suited to gearless direct drive. maxon lists this part as NRND (not recommended for new designs); listed at EUR pricing only so price_usd left null.",
+    "notes": "Motor. Part 542099, dia 90 mm flat frameless BLDC kit (rotor + stator supplied separately, no bearings/shaft). The maxon product page lists nominal (max continuous) torque 989 mNm (~1 N.m), stall torque 9.76 N.m, weight 814 g, and max speed 5000 rpm; torque constant 136 mNm/A, 11 pole pairs. Suited to gearless direct drive. maxon lists this part as NRND (not recommended for new designs). Price is approximate: the maxon shop lists EUR 379.78 for 1-4 pcs excluding VAT and shipping (checked Oct 2026), converted at about 1.15 USD/EUR.",
     "sources": [
       "https://www.maxongroup.com/maxon/view/product/542099",
       "https://www.expo21xx.com/news/maxon-brushless-ec-90-flat-motor-with-160-w-or-260-w-of-power/",
       "https://datasheets.globalspec.com/ds/maxon-motor-ag/542099/abc9aff5-cce5-4b70-a592-8dbb20e40d6b"
     ],
     "verified": true,
-    "price_per_nm": null,
+    "price_per_nm": 44.77,
     "data_source": "spot_checked",
     "country": "Switzerland",
     "country_flag": "🇨🇭",
@@ -2527,7 +2542,7 @@
     ],
     "product_url": "https://www.tq-group.com/en/products/tq-robodrive/servo-kits/ilm85x26/",
     "datasheet_url": "https://www.tq-group.com/filedownloads/files/products/robodrive/data-sheets/en/DRVA_DB_Servo-Kits_ILM_EN_Rev0414_Web.pdf",
-    "price_usd": null,
+    "price_usd": 810,
     "availability": "in_production",
     "peak_torque_nm": 9.37,
     "rated_torque_nm": 2.9,
@@ -2547,14 +2562,14 @@
     "encoder": "None (frameless stator/rotor kit; add own sensor)",
     "integrated_driver": false,
     "ip_rating": null,
-    "notes": "Motor. Frameless hollow-shaft servo kit, dia 85 x 26 mm. TQ-RoboDrive ILM datasheet gives rated torque 2.9 N.m, peak torque 9.37 N.m (at 20% deviation from linearity), and kit weight 670 g for the ILM85x26. Kt 73 mNm/A at 20C, Km 0.52 Nm/sqrt(W), rated current 39.8A (delta-parallel), terminal resistance 27 mOhm, inductance 87 uH, no-load speed 5400 rpm. High-end frameless kit for cobot/humanoid joints; needs external FOC driver.",
+    "notes": "Motor. Frameless hollow-shaft servo kit, dia 85 x 26 mm. TQ-RoboDrive ILM datasheet gives rated torque 2.9 N.m, peak torque 9.37 N.m (at 20% deviation from linearity), and kit weight 670 g for the ILM85x26. Kt 73 mNm/A at 20C, Km 0.52 Nm/sqrt(W), rated current 39.8A (delta-parallel), terminal resistance 27 mOhm, inductance 87 uH, no-load speed 5400 rpm. High-end frameless kit for cobot/humanoid joints; needs external FOC driver. Price is approximate: the TQ RoboDrive shop lists EUR 704.38 per kit for up to 10 pcs for the ILM85x26 VSS (star-serial winding, no sensors; checked Oct 2026), converted at about 1.15 USD/EUR. Other windings are configured on the same page.",
     "sources": [
       "https://robodriveshop.tq-group.com/en/ILM85x26-VSS/304397-286842",
       "https://www.tq-group.com/en/products/tq-robodrive/servo-kits/ilm85x26/",
       "https://www.tq-group.com/filedownloads/files/products/robodrive/data-sheets/en/DRVA_DB_Servo-Kits_ILM_EN_Rev0414_Web.pdf"
     ],
     "verified": true,
-    "price_per_nm": null,
+    "price_per_nm": 86.45,
     "data_source": "spot_checked",
     "country": "Germany",
     "country_flag": "🇩🇪",
@@ -2993,7 +3008,7 @@
     "country_flag": "🇩🇪",
     "source_url": "https://www.analog.com/en/products/tmc4671.html",
     "source_domain": "analog.com",
-    "image_url": null
+    "image_url": "/actuator-images/trinamic-tmc4671.webp"
   },
   {
     "id": "harmonic-drive-sha-cg",
@@ -3049,7 +3064,7 @@
     "country_flag": "🇯🇵",
     "source_url": "https://www.harmonicdrive.net/products/rotary-actuators/hollow-shaft-servo-actuators/sha-cg",
     "source_domain": "harmonicdrive.net",
-    "image_url": null
+    "image_url": "/actuator-images/harmonic-drive-sha-cg.webp"
   },
   {
     "id": "harmonic-drive-cha-series",
@@ -3352,7 +3367,7 @@
       "humanoid_joint",
       "industrial_automation"
     ],
-    "product_url": "https://www.robotshop.com/products/myactuator-rmd-x10-s2-v3-bldc-can-bus-135mc-x-500-o-brushless-servo-driver",
+    "product_url": "https://www.myactuator.com/x10-100-details",
     "datasheet_url": "https://www.myactuator.com/downloads-xseries",
     "price_usd": 625,
     "availability": "in_production",
@@ -3381,20 +3396,22 @@
     "encoder": "18-bit magnetic (dual)",
     "integrated_driver": true,
     "ip_rating": null,
-    "notes": "High-reduction planetary joint (MC-X-500 driver). Peak 100 N.m per RobotShop, rated 50 N.m at 50 rpm, 265 W. Net weight not reliably corroborated: listings vary from ~980 g (Amazon) to ~1190 g (X10 family) to 2.0 kg (gross), so weight and torque density left null. Good for high-torque, low-speed arm joints.",
+    "notes": "High-reduction planetary joint. MyActuator now sells it as the X10-100 (RMD-X10-P35-100-R/C-N; page names the old 'RMD-X10 S2 1:35'), where '100' is peak torque per MyActuator's naming key and P35 the 35:1 ratio. The manufacturer page's parameter table is an image and the datasheet zip and drawing PDF carry no readable mass, so rated 50 N.m, 50 rpm, 265 W and weight could not be confirmed from a primary source. Listings disagree on weight (~980 g to ~1190 g, 2.0 kg gross), so weight and torque density stay null and the entry is unverified.",
     "sources": [
       "https://www.robotshop.com/products/myactuator-rmd-x10-s2-v3-bldc-can-bus-135mc-x-500-o-brushless-servo-driver",
       "https://us.amazon.com/MyActuator-Servo-Actuator-System-RMD-X10/dp/B0CD23TJB9",
-      "https://www.alibaba.com/product-detail/Myactuator-Gear-RMD-X10S2-1-35_1600462911342.html"
+      "https://www.alibaba.com/product-detail/Myactuator-Gear-RMD-X10S2-1-35_1600462911342.html",
+      "https://www.myactuator.com/x10-100-details",
+      "https://www.myactuator.cn/rmd3/179"
     ],
     "verified": false,
     "price_per_nm": 6.25,
     "data_source": "web_search",
     "country": "China",
     "country_flag": "🇨🇳",
-    "source_url": "https://www.robotshop.com/products/myactuator-rmd-x10-s2-v3-bldc-can-bus-135mc-x-500-o-brushless-servo-driver",
-    "source_domain": "robotshop.com",
-    "image_url": null
+    "source_url": "https://www.myactuator.com/x10-100-details",
+    "source_domain": "myactuator.com",
+    "image_url": "/actuator-images/myactuator-rmd-x10-s2-v3.webp"
   },
   {
     "id": "lkmtech-mg5010e-i36-v3",
@@ -3408,14 +3425,14 @@
     ],
     "product_url": "https://makerselectronics.com/product/lkmtech-mg5010e-i36-24v-brushless-dc-motor-dual-encoder/",
     "datasheet_url": "https://aifitlab.com/products/lkmtech-mg5010e-i36-v3-motor",
-    "price_usd": null,
+    "price_usd": 240,
     "availability": "in_production",
     "peak_torque_nm": 25,
     "rated_torque_nm": 13,
     "max_speed_rpm": 74,
     "gear_ratio": "36:1",
-    "weight_g": null,
-    "torque_density_nm_per_kg": null,
+    "weight_g": 460,
+    "torque_density_nm_per_kg": 54.3,
     "backdrivable": false,
     "backlash_arcmin": null,
     "repeatability_arcmin": null,
@@ -3435,14 +3452,15 @@
     "encoder": "18-bit motor + 14-bit output (dual)",
     "integrated_driver": true,
     "ip_rating": null,
-    "notes": "LKMTech planetary joint motor with built-in driver and dual encoders (18-bit on motor, 14-bit on reducer). V3 rated/peak torque 13/25 N.m at 36:1, ~74 rpm, 24 V, continuous current ~4.4 A. Some base i36 listings quote 4 N.m. Net weight not published on primary sources.",
+    "notes": "LKMTech planetary joint motor with built-in driver and dual encoders (18-bit motor, 14-bit reducer). Reseller figures: rated/peak 13/25 N.m at 36:1, ~74 rpm, 24 V. Unverified: LKTECH's official site (lkmotor.cn MG planetary series) lists no MG5010E-i36 model, only the MG5010E-i10v3, and its MG40-50 manual has no spec table; no manufacturer weight, torque or speed figure was found. Some older i36 listings quote 4 N.m. Price $240 is the AiFitLab price for the CAN or RS-485 version, checked Oct 2026. Weight 460 g is from the AiFitLab spec table ('Motor Weight'), which also lists <=12 arcmin backlash and recommends the DG40 driver; still a reseller figure, not LKTECH's.",
     "sources": [
       "https://makerselectronics.com/product/lkmtech-mg5010e-i36-24v-brushless-dc-motor-dual-encoder/",
       "https://aifitlab.com/products/lkmtech-mg5010e-i36-v3-motor",
-      "https://www.amazon.com/MG5010E-i36v3-Small-Size-Planetary-Reduction/dp/B0GPJ7JLZZ"
+      "https://www.amazon.com/MG5010E-i36v3-Small-Size-Planetary-Reduction/dp/B0GPJ7JLZZ",
+      "http://www.lkmotor.cn/Product.aspx?TypeID=18"
     ],
     "verified": false,
-    "price_per_nm": null,
+    "price_per_nm": 9.6,
     "data_source": "web_search",
     "country": "China",
     "country_flag": "🇨🇳",
@@ -3459,16 +3477,16 @@
       "robot_arm",
       "humanoid_joint"
     ],
-    "product_url": "https://www.robotis.us/dynamixel-ph54-200-s500-r/",
+    "product_url": "https://robotis.us/products/dynamixel-ph54-200-s500-r",
     "datasheet_url": "https://emanual.robotis.com/docs/en/dxl/p/ph54-200-s500-r/",
     "price_usd": 3542,
     "availability": "in_production",
-    "peak_torque_nm": null,
+    "peak_torque_nm": 73,
     "rated_torque_nm": 44.7,
     "max_speed_rpm": 33.1,
-    "gear_ratio": "501.9:1",
+    "gear_ratio": "501.923:1",
     "weight_g": 855,
-    "torque_density_nm_per_kg": null,
+    "torque_density_nm_per_kg": 85.4,
     "backdrivable": null,
     "backlash_arcmin": 6,
     "repeatability_arcmin": null,
@@ -3490,18 +3508,18 @@
     "encoder": "absolute, 1,003,846 steps/rev",
     "integrated_driver": true,
     "ip_rating": null,
-    "notes": "Top-end Dynamixel-P (Pro+) joint for humanoids/large arms. Robotis publishes an estimated continuous/rated torque of 44.7 N.m at 24V (29 rpm, 9.3A); no clean peak/stall torque figure is published, so peak and torque_density are left null. Backlash <0.1 deg (~6 arcmin). 200W. RS-485 only.",
+    "notes": "Top-end Dynamixel-P (Pro+) joint for humanoids/large arms. Peak is a STALL figure: ROBOTIS's own store (robotis.us) lists stall torque 73 N.m at stall current 14 A; the e-Manual has no stall row. Rated 44.7 N.m is the e-Manual continuous torque at 24 V (29 rpm, 9.3 A), which ROBOTIS calculates from core-motor specs (robotis.us calls it 20% of stall, which does not match 44.7/73). Weight 855 g, 54x126x54 mm, 501.923:1, 33.1 rpm no-load, 200 W, backlash <6 arcmin, per the e-Manual. Default Current Limit 22.74 A. RS-485 only.",
     "sources": [
-      "https://www.robotis.us/dynamixel-ph54-200-s500-r/",
       "https://emanual.robotis.com/docs/en/dxl/p/ph54-200-s500-r/",
-      "https://www.generationrobots.com/en/403321-dynamixel-pro-plus-h54p-200-s500-r-servo.html"
+      "https://www.generationrobots.com/en/403321-dynamixel-pro-plus-h54p-200-s500-r-servo.html",
+      "https://robotis.us/products/dynamixel-ph54-200-s500-r"
     ],
-    "verified": false,
-    "price_per_nm": null,
-    "data_source": "web_search",
+    "verified": true,
+    "price_per_nm": 48.52,
+    "data_source": "spot_checked",
     "country": "South Korea",
     "country_flag": "🇰🇷",
-    "source_url": "https://www.robotis.us/dynamixel-ph54-200-s500-r/",
+    "source_url": "https://robotis.us/products/dynamixel-ph54-200-s500-r",
     "source_domain": "robotis.us",
     "image_url": "/actuator-images/dynamixel-ph54-200-s500-r.webp"
   },
@@ -3514,21 +3532,21 @@
       "robot_arm",
       "humanoid_joint"
     ],
-    "product_url": "https://www.robotis.us/dynamixel-pm54-060-s250-r/",
+    "product_url": "https://robotis.us/products/dynamixel-pm54-060-s250-r",
     "datasheet_url": "https://emanual.robotis.com/docs/en/dxl/p/pm54-060-s250-r/",
     "price_usd": 2196,
     "availability": "in_production",
-    "peak_torque_nm": null,
+    "peak_torque_nm": 38,
     "rated_torque_nm": 10.1,
     "max_speed_rpm": 33.1,
-    "gear_ratio": "251.4:1",
+    "gear_ratio": "251.417:1",
     "weight_g": 855,
-    "torque_density_nm_per_kg": null,
+    "torque_density_nm_per_kg": 44.4,
     "backdrivable": null,
     "backlash_arcmin": 6,
     "repeatability_arcmin": null,
     "voltage_v": "24",
-    "peak_current_a": null,
+    "peak_current_a": 10.1,
     "power_w": 60,
     "kt_nm_per_a": null,
     "comm": [
@@ -3545,19 +3563,633 @@
     "encoder": "absolute, 502,834 steps/rev",
     "integrated_driver": true,
     "ip_rating": null,
-    "notes": "Mid-tier 60W Dynamixel-P (Pro+) joint. Robotis lists estimated rated torque 10.1 N.m at 24V (28.3 rpm, 3.0A continuous); no clean peak/stall figure is published, so peak and torque_density are left null. Weight 855 g in the 54x126x54 mm frame (same body as the PH54), confirmed by the Robotis distributor datasheet. Backlash ~6 arcmin. RS-485 only.",
+    "notes": "Mid-tier 60 W Dynamixel-P (Pro+) joint. The e-Manual confirms 855 g in the same 54x126x54 mm body as the PH54 (the identical weight is correct), 251.417:1, 33.1 rpm no-load, continuous 10.1 N.m at 28.3 rpm / 3.0 A. Peak 38 N.m is ROBOTIS's store (robotis.us) STALL torque, with stall current 10.1 A; the e-Manual publishes no stall figure. Left unverified because the store figures conflict with the e-Manual: the stall current exceeds the e-Manual's maximum Current Limit (7.98 A), and the same store page gives 28.3 rpm as no-load speed (the e-Manual's continuous speed). Backlash <6 arcmin. RS-485 only.",
     "sources": [
-      "https://www.robotis.us/dynamixel-pm54-060-s250-r/",
       "https://emanual.robotis.com/docs/en/dxl/p/pm54-060-s250-r/",
-      "https://static.generation-robots.com/media/fiche-technique-pm54-060-s250-r.pdf"
+      "https://static.generation-robots.com/media/fiche-technique-pm54-060-s250-r.pdf",
+      "https://robotis.us/products/dynamixel-pm54-060-s250-r"
     ],
     "verified": false,
-    "price_per_nm": null,
+    "price_per_nm": 57.79,
     "data_source": "web_search",
     "country": "South Korea",
     "country_flag": "🇰🇷",
-    "source_url": "https://www.robotis.us/dynamixel-pm54-060-s250-r/",
+    "source_url": "https://robotis.us/products/dynamixel-pm54-060-s250-r",
     "source_domain": "robotis.us",
     "image_url": "/actuator-images/dynamixel-pm54-060-s250-r.webp"
+  },
+  {
+    "id": "damiao-dm-j4310-2ec",
+    "name": "DM-J4310-2EC",
+    "brand": "DAMIAO (DMBots)",
+    "category": "integrated_joint",
+    "use_cases": [
+      "robot_arm",
+      "humanoid_joint",
+      "exoskeleton"
+    ],
+    "product_url": "https://aifitlab.com/products/damiao-dm-j4310-2ec-v1-1-servo-motor",
+    "datasheet_url": "https://github.com/dmBots/DM-J4310-2EC",
+    "price_usd": 125,
+    "availability": "in_production",
+    "peak_torque_nm": 7,
+    "rated_torque_nm": 3,
+    "max_speed_rpm": 200,
+    "gear_ratio": "10:1",
+    "weight_g": 306,
+    "torque_density_nm_per_kg": 22.9,
+    "backdrivable": null,
+    "backlash_arcmin": null,
+    "repeatability_arcmin": null,
+    "voltage_v": "24",
+    "peak_current_a": 7.5,
+    "power_w": null,
+    "kt_nm_per_a": null,
+    "comm": [
+      "CAN"
+    ],
+    "control_modes": [
+      "position",
+      "velocity",
+      "torque"
+    ],
+    "encoder": "dual 14-bit magnetic single-turn encoders (motor and output)",
+    "integrated_driver": true,
+    "ip_rating": null,
+    "notes": "57mm OD x 46mm planetary joint motor with integrated driver, the wrist motor of the i2RT YAM arms and Manmaru YOR. Specs are for hardware V1.1 from the DAMIAO manual: 3 N.m rated, 7 N.m peak, 120 rpm rated and 200 rpm no-load at 24V (400 rpm on the 48V build), 10:1, 2.5A rated and 7.5A peak phase current, ~306g. CAN at 1 Mbps with MIT, position-velocity and velocity modes. DAMIAO also sells a V1.2 revision rated 3.5 N.m / 12.5 N.m peak with 16-bit encoders, and resellers may ship either. $125 is the AIFITLAB price for the 24V motor alone.",
+    "sources": [
+      "https://github.com/dmBots/DM-J4310-2EC",
+      "https://github.com/dmBots/DM-J4310-2EC/blob/master/manual/DM-J4310-2EC%20V1.1%20Geared%20Motor%20User%20Manual%20V1.3%202026-09-14.pdf",
+      "https://damiao.enactic.ai/en/products/hardware/dm-j4310-2ec-v1.1/",
+      "https://aifitlab.com/products/damiao-dm-j4310-2ec-v1-1-servo-motor"
+    ],
+    "verified": true,
+    "price_per_nm": 17.86,
+    "data_source": "spot_checked",
+    "country": "China",
+    "country_flag": "🇨🇳",
+    "source_url": "https://aifitlab.com/products/damiao-dm-j4310-2ec-v1-1-servo-motor",
+    "source_domain": "aifitlab.com",
+    "image_url": "/actuator-images/damiao-dm-j4310-2ec.webp"
+  },
+  {
+    "id": "damiao-dm-j4340-2ec",
+    "name": "DM-J4340-2EC",
+    "brand": "DAMIAO (DMBots)",
+    "category": "integrated_joint",
+    "use_cases": [
+      "robot_arm",
+      "humanoid_joint",
+      "exoskeleton"
+    ],
+    "product_url": "https://aifitlab.com/products/damiao-dm-j4340-2ec-servo-motor",
+    "datasheet_url": "https://github.com/dmBots/DM-J4340-2EC",
+    "price_usd": 155,
+    "availability": "in_production",
+    "peak_torque_nm": 27,
+    "rated_torque_nm": 9,
+    "max_speed_rpm": 52.5,
+    "gear_ratio": "40:1",
+    "weight_g": 362,
+    "torque_density_nm_per_kg": 74.6,
+    "backdrivable": null,
+    "backlash_arcmin": null,
+    "repeatability_arcmin": null,
+    "voltage_v": "24",
+    "peak_current_a": 8,
+    "power_w": null,
+    "kt_nm_per_a": null,
+    "comm": [
+      "CAN"
+    ],
+    "control_modes": [
+      "position",
+      "velocity",
+      "torque"
+    ],
+    "encoder": "dual 14-bit magnetic single-turn encoders (motor and output)",
+    "integrated_driver": true,
+    "ip_rating": null,
+    "notes": "57mm OD x 53.3mm planetary joint motor with integrated driver, used in the shoulder and elbow of the i2RT YAM arms. Specs are for the original DM-J4340-2EC in the DAMIAO manual: 9 N.m rated, 27 N.m peak, 36 rpm rated and 52.5 rpm no-load at 24V (100 rpm on the 48V build), 40:1, 3A rated and 8A peak phase current, ~362g. CAN at 1 Mbps with MIT, position-velocity, velocity and force-position modes. DAMIAO's newer DM-J4340-2EC V1.1 lifts this to 12 N.m rated / 40 N.m peak with 16-bit encoders in the same housing, and resellers may ship either. $155 is the AIFITLAB price for the 24V motor alone.",
+    "sources": [
+      "https://github.com/dmBots/DM-J4340-2EC",
+      "https://github.com/dmBots/DM-J4340-2EC/blob/master/manual/DM-J4340-2EC%20%20Geared%20Motor%20User%20Manual%20V1.1%202026-09-08.pdf",
+      "https://github.com/dmBots/DM-J4340-2EC/blob/master/manual/DM-J4340-2EC%20%20V1.1%20Geared%20Motor%20User%20Manual%20V1.3%202026-08-13.pdf",
+      "https://aifitlab.com/products/damiao-dm-j4340-2ec-servo-motor"
+    ],
+    "verified": true,
+    "price_per_nm": 5.74,
+    "data_source": "spot_checked",
+    "country": "China",
+    "country_flag": "🇨🇳",
+    "source_url": "https://aifitlab.com/products/damiao-dm-j4340-2ec-servo-motor",
+    "source_domain": "aifitlab.com",
+    "image_url": "/actuator-images/damiao-dm-j4340-2ec.webp"
+  },
+  {
+    "id": "damiao-dm-j6248p-2ec",
+    "name": "DM-J6248P-2EC",
+    "brand": "DAMIAO (DMBots)",
+    "category": "integrated_joint",
+    "use_cases": [
+      "robot_arm",
+      "humanoid_joint",
+      "exoskeleton",
+      "quadruped_leg"
+    ],
+    "product_url": "https://aifitlab.com/products/damiao-dm-j6248p-2ec-motor",
+    "datasheet_url": "https://github.com/dmBots/DM-J6248P-2EC",
+    "price_usd": 265,
+    "availability": "in_production",
+    "peak_torque_nm": 97,
+    "rated_torque_nm": 30,
+    "max_speed_rpm": 60,
+    "gear_ratio": "48:1",
+    "weight_g": 660,
+    "torque_density_nm_per_kg": 147,
+    "backdrivable": null,
+    "backlash_arcmin": null,
+    "repeatability_arcmin": null,
+    "voltage_v": "24-48",
+    "peak_current_a": 38.7,
+    "power_w": null,
+    "kt_nm_per_a": null,
+    "comm": [
+      "CAN"
+    ],
+    "control_modes": [
+      "position",
+      "velocity",
+      "torque"
+    ],
+    "encoder": "dual 16-bit magnetic single-turn encoders (motor and output)",
+    "integrated_driver": true,
+    "ip_rating": null,
+    "notes": "76mm OD x 62.5mm planetary joint motor with integrated driver and crossed-roller output bearing (the P suffix), the shoulder motor of the i2RT BIG YAM. 30 N.m rated, 97 N.m peak, 40 rpm rated, 48:1. No-load 60 rpm at 24V and 115 rpm at 48V; 11.3A rated and 38.7A peak phase current. DAMIAO manual V1.4 lists ~660g (AIFITLAB lists 628g). CAN with MIT, speed and position modes. $265 is the AIFITLAB price for the motor alone.",
+    "sources": [
+      "https://github.com/dmBots/DM-J6248P-2EC",
+      "https://github.com/dmBots/DM-J6248P-2EC/blob/master/manual/DM-J6248P-2EC%20Gear%20Motor%20User%20Manual%20%20V1.4%20%202026-10-23.pdf",
+      "https://aifitlab.com/products/damiao-dm-j6248p-2ec-motor",
+      "https://doc.i2rt.com/products/yam-big.html"
+    ],
+    "verified": true,
+    "price_per_nm": 2.73,
+    "data_source": "spot_checked",
+    "country": "China",
+    "country_flag": "🇨🇳",
+    "source_url": "https://aifitlab.com/products/damiao-dm-j6248p-2ec-motor",
+    "source_domain": "aifitlab.com",
+    "image_url": "/actuator-images/damiao-dm-j6248p-2ec.webp"
+  },
+  {
+    "id": "dynamixel-xl330-m077-t",
+    "name": "XL330-M077-T",
+    "brand": "Robotis (Dynamixel)",
+    "category": "smart_servo",
+    "use_cases": [
+      "robot_arm"
+    ],
+    "product_url": "https://robotis.us/products/dynamixel-xl330-m077-t",
+    "datasheet_url": "https://emanual.robotis.com/docs/en/dxl/x/xl330-m077/",
+    "price_usd": 27.49,
+    "availability": "in_production",
+    "peak_torque_nm": 0.215,
+    "rated_torque_nm": null,
+    "max_speed_rpm": 383,
+    "gear_ratio": "77.5:1",
+    "weight_g": 18,
+    "torque_density_nm_per_kg": 11.9,
+    "backdrivable": null,
+    "backlash_arcmin": null,
+    "repeatability_arcmin": null,
+    "voltage_v": "3.7-6.0",
+    "peak_current_a": 1.47,
+    "power_w": null,
+    "kt_nm_per_a": 0.146,
+    "comm": [
+      "TTL"
+    ],
+    "control_modes": [
+      "current",
+      "velocity",
+      "position",
+      "extended_position",
+      "current_based_position",
+      "pwm"
+    ],
+    "encoder": "12-bit absolute (4096 steps), contactless magnetic",
+    "integrated_driver": true,
+    "ip_rating": null,
+    "notes": "Fast, low-ratio sibling of the XL330-M288-T in the same 18g plastic-gear case. Stall torque 0.215 N.m at 1.47A and no-load 383 rpm quoted at 5.0V (0.180 N.m / 278 rpm at 3.7V, 0.228 N.m / 456 rpm at 6.0V). Cored motor, 77.5:1. Drives the antennas on Pollen's Reachy Mini. Protocol 2.0 over TTL.",
+    "sources": [
+      "https://robotis.us/products/dynamixel-xl330-m077-t",
+      "https://emanual.robotis.com/docs/en/dxl/x/xl330-m077/",
+      "https://github.com/ROBOTIS-GIT/emanual/blob/master/_data/dxl_x_info.yml"
+    ],
+    "verified": true,
+    "price_per_nm": 127.86,
+    "data_source": "spot_checked",
+    "country": "South Korea",
+    "country_flag": "🇰🇷",
+    "source_url": "https://robotis.us/products/dynamixel-xl330-m077-t",
+    "source_domain": "robotis.us",
+    "image_url": "/actuator-images/dynamixel-xl330-m077-t.webp"
+  },
+  {
+    "id": "dynamixel-xc430-w240-t",
+    "name": "XC430-W240-T",
+    "brand": "Robotis (Dynamixel)",
+    "category": "smart_servo",
+    "use_cases": [
+      "robot_arm"
+    ],
+    "product_url": "https://robotis.us/products/dynamixel-xc430-w240-t",
+    "datasheet_url": "https://emanual.robotis.com/docs/en/dxl/x/xc430-w240/",
+    "price_usd": 137.89,
+    "availability": "in_production",
+    "peak_torque_nm": 1.9,
+    "rated_torque_nm": null,
+    "max_speed_rpm": 70,
+    "gear_ratio": "245.22:1",
+    "weight_g": 65,
+    "torque_density_nm_per_kg": 29.2,
+    "backdrivable": null,
+    "backlash_arcmin": null,
+    "repeatability_arcmin": null,
+    "voltage_v": "6.5-14.8",
+    "peak_current_a": 1.4,
+    "power_w": null,
+    "kt_nm_per_a": 1.357,
+    "comm": [
+      "TTL"
+    ],
+    "control_modes": [
+      "velocity",
+      "position",
+      "extended_position",
+      "pwm"
+    ],
+    "encoder": "12-bit absolute (4096 steps), contactless magnetic",
+    "integrated_driver": true,
+    "ip_rating": null,
+    "notes": "Higher-ratio version of the XC430-W150-T in the XL430 frame with a full metal gear train. Stall torque 1.9 N.m at 1.4A and no-load 70 rpm quoted at 12.0V (1.4 N.m / 52 rpm at 9V). No current-control mode. Used in the Hello Robot Stretch 3 gripper and wrist.",
+    "sources": [
+      "https://robotis.us/products/dynamixel-xc430-w240-t",
+      "https://emanual.robotis.com/docs/en/dxl/x/xc430-w240/",
+      "https://github.com/ROBOTIS-GIT/emanual/blob/master/_data/dxl_x_info.yml"
+    ],
+    "verified": true,
+    "price_per_nm": 72.57,
+    "data_source": "spot_checked",
+    "country": "South Korea",
+    "country_flag": "🇰🇷",
+    "source_url": "https://robotis.us/products/dynamixel-xc430-w240-t",
+    "source_domain": "robotis.us",
+    "image_url": "/actuator-images/dynamixel-xc430-w240-t.webp"
+  },
+  {
+    "id": "feetech-sts3215-c001",
+    "name": "STS3215 C001 (7.4V, 19.5 kg.cm)",
+    "brand": "Feetech",
+    "category": "smart_servo",
+    "use_cases": [
+      "robot_arm"
+    ],
+    "product_url": "https://www.seeedstudio.com/STS3215-19kg-cm-7-4V-Serial-Servo-p-6338.html",
+    "datasheet_url": "https://akizukidenshi.com/goodsaffix/STS3215-C001%20SEPC.pdf",
+    "price_usd": 20,
+    "availability": "in_production",
+    "peak_torque_nm": 1.91,
+    "rated_torque_nm": 0.49,
+    "max_speed_rpm": 52,
+    "gear_ratio": "345:1",
+    "weight_g": 55,
+    "torque_density_nm_per_kg": 34.7,
+    "backdrivable": null,
+    "backlash_arcmin": 30,
+    "repeatability_arcmin": null,
+    "voltage_v": "4.0-7.4",
+    "peak_current_a": 2.5,
+    "power_w": null,
+    "kt_nm_per_a": 0.78,
+    "comm": [
+      "TTL"
+    ],
+    "control_modes": [
+      "position",
+      "velocity"
+    ],
+    "encoder": "12-bit magnetic absolute (4096 steps, 360 deg)",
+    "integrated_driver": true,
+    "ip_rating": null,
+    "notes": "The 7.4V STS3215 build (SKU C001, 1:345) that TheRobotStudio specifies for the SO-101 follower arm; distinct from the 12V / 30 kg.cm STS3215. Feetech spec sheet: stall 19.5 kg.cm (1.91 N.m) at 2.5A and no-load 52 rpm (0.192 s/60 deg) at 7.4V, 16.5 kg.cm and 42 rpm at 6V; rated 5 kg.cm (0.49 N.m); 4 to 7.4V input; backlash 0.5 deg or less; 55g; copper gears, ball bearings, core motor. Kt 8 kg.cm/A. Half-duplex TTL bus at up to 1 Mbps with servo, closed and open loop wheel, and step modes. $20 at Seeed.",
+    "sources": [
+      "https://akizukidenshi.com/goodsaffix/STS3215-C001%20SEPC.pdf",
+      "https://akizukidenshi.com/catalog/g/g116312/",
+      "https://www.seeedstudio.com/STS3215-19kg-cm-7-4V-Serial-Servo-p-6338.html",
+      "https://github.com/TheRobotStudio/SO-ARM100"
+    ],
+    "verified": true,
+    "price_per_nm": 10.47,
+    "data_source": "spot_checked",
+    "country": "China",
+    "country_flag": "🇨🇳",
+    "source_url": "https://www.seeedstudio.com/STS3215-19kg-cm-7-4V-Serial-Servo-p-6338.html",
+    "source_domain": "seeedstudio.com",
+    "image_url": "/actuator-images/feetech-sts3215-c001.webp"
+  },
+  {
+    "id": "encos-ec-a6416-p2-25",
+    "name": "EC-A6416-P2-25",
+    "brand": "ENCOS",
+    "category": "integrated_joint",
+    "use_cases": [
+      "humanoid_joint",
+      "robot_arm",
+      "exoskeleton"
+    ],
+    "product_url": "https://aifitlab.com/products/encos-ec-a6416-p2-25-motor",
+    "datasheet_url": null,
+    "price_usd": 925,
+    "availability": "in_production",
+    "peak_torque_nm": 120,
+    "rated_torque_nm": 40,
+    "max_speed_rpm": 120,
+    "gear_ratio": "25:1",
+    "weight_g": 805,
+    "torque_density_nm_per_kg": 149.1,
+    "backdrivable": null,
+    "backlash_arcmin": 15,
+    "repeatability_arcmin": null,
+    "voltage_v": "48",
+    "peak_current_a": 60,
+    "power_w": 624,
+    "kt_nm_per_a": 2.74,
+    "comm": [
+      "CAN"
+    ],
+    "control_modes": null,
+    "encoder": "dual encoder",
+    "integrated_driver": true,
+    "ip_rating": null,
+    "notes": "88mm x 67.5mm planetary joint module with dual encoders and a 4005 crossed-roller bearing; the hip and knee actuator of Menlo Research's Asimov 1. 40 N.m rated, 120 N.m peak, 107 rpm rated and 120 rpm peak at 48V, 25:1, 17.5A rated and 60A peak phase current, 624W rated, 73% efficiency, 15 arcmin backlash, 805g. CAN at 1 Mbps. Specs and the $925 motor-only price are from the AIFITLAB listing; no ENCOS datasheet was found online. A hollow-shaft EC-A6416-P2-30.25H variant is sold separately.",
+    "sources": [
+      "https://aifitlab.com/products/encos-ec-a6416-p2-25-motor",
+      "https://autonews.gasgoo.com/articles/news/ces-2026-encos-showcases-three-core-products-enabling-mass-production-of-humanoid-robots-2008894532819447809"
+    ],
+    "verified": false,
+    "price_per_nm": 7.71,
+    "data_source": "web_search",
+    "country": "China",
+    "country_flag": "🇨🇳",
+    "source_url": "https://aifitlab.com/products/encos-ec-a6416-p2-25-motor",
+    "source_domain": "aifitlab.com",
+    "image_url": "/actuator-images/encos-ec-a6416-p2-25.webp"
+  },
+  {
+    "id": "encos-ec-a4315-p2-36",
+    "name": "EC-A4315-P2-36",
+    "brand": "ENCOS",
+    "category": "integrated_joint",
+    "use_cases": [
+      "humanoid_joint",
+      "robot_arm",
+      "exoskeleton"
+    ],
+    "product_url": "https://aifitlab.com/products/encos-ec-a4315-p2-36-motor",
+    "datasheet_url": null,
+    "price_usd": 750,
+    "availability": "in_production",
+    "peak_torque_nm": 75,
+    "rated_torque_nm": 25,
+    "max_speed_rpm": 117,
+    "gear_ratio": "36:1",
+    "weight_g": 485,
+    "torque_density_nm_per_kg": 154.6,
+    "backdrivable": null,
+    "backlash_arcmin": 10,
+    "repeatability_arcmin": null,
+    "voltage_v": "48",
+    "peak_current_a": 30,
+    "power_w": 397,
+    "kt_nm_per_a": 2.8,
+    "comm": [
+      "CAN"
+    ],
+    "control_modes": null,
+    "encoder": "dual encoder",
+    "integrated_driver": true,
+    "ip_rating": null,
+    "notes": "56mm x 69.5mm planetary joint module with dual encoders and a 3005 crossed-roller bearing, used in Asimov 1's legs. 25 N.m rated, 75 N.m peak, 109 rpm rated and 117 rpm peak at 48V, 36:1, 10.22A rated and 30A peak phase current, 397W rated, 74% efficiency, 10 arcmin backlash, 485g. CAN at 1 Mbps. Specs and the $750 motor-only price are from the AIFITLAB listing; no ENCOS datasheet was found online.",
+    "sources": [
+      "https://aifitlab.com/products/encos-ec-a4315-p2-36-motor",
+      "https://autonews.gasgoo.com/articles/news/ces-2026-encos-showcases-three-core-products-enabling-mass-production-of-humanoid-robots-2008894532819447809"
+    ],
+    "verified": false,
+    "price_per_nm": 10,
+    "data_source": "web_search",
+    "country": "China",
+    "country_flag": "🇨🇳",
+    "source_url": "https://aifitlab.com/products/encos-ec-a4315-p2-36-motor",
+    "source_domain": "aifitlab.com",
+    "image_url": "/actuator-images/encos-ec-a4315-p2-36.webp"
+  },
+  {
+    "id": "encos-ec-a4310-p2-36",
+    "name": "EC-A4310-P2-36",
+    "brand": "ENCOS",
+    "category": "integrated_joint",
+    "use_cases": [
+      "humanoid_joint",
+      "robot_arm",
+      "exoskeleton"
+    ],
+    "product_url": "https://aifitlab.com/products/encos-ec-a4310-p2-36-motor",
+    "datasheet_url": null,
+    "price_usd": 700,
+    "availability": "in_production",
+    "peak_torque_nm": 36,
+    "rated_torque_nm": 12,
+    "max_speed_rpm": 89,
+    "gear_ratio": "36:1",
+    "weight_g": 382,
+    "torque_density_nm_per_kg": 94.2,
+    "backdrivable": null,
+    "backlash_arcmin": 10,
+    "repeatability_arcmin": null,
+    "voltage_v": "24-48",
+    "peak_current_a": 30,
+    "power_w": 156,
+    "kt_nm_per_a": 1.4,
+    "comm": [
+      "CAN"
+    ],
+    "control_modes": null,
+    "encoder": "dual encoder",
+    "integrated_driver": true,
+    "ip_rating": null,
+    "notes": "56mm x 60.5mm planetary joint module with dual encoders and a 3005 crossed-roller bearing, used in Asimov 1. 12 N.m rated, 36 N.m peak, 75 rpm rated and 89 rpm peak, 36:1, rated 24V and supports 48V, 7.8A rated and 30A peak phase current, 156W rated, 71% efficiency, 10 arcmin backlash, 382g. CAN at 1 Mbps. Specs and the $700 motor-only price are from the AIFITLAB listing; no ENCOS datasheet was found online. A hollow-shaft EC-A4310-P2-36H (414g) is sold separately.",
+    "sources": [
+      "https://aifitlab.com/products/encos-ec-a4310-p2-36-motor",
+      "https://autonews.gasgoo.com/articles/news/ces-2026-encos-showcases-three-core-products-enabling-mass-production-of-humanoid-robots-2008894532819447809"
+    ],
+    "verified": false,
+    "price_per_nm": 19.44,
+    "data_source": "web_search",
+    "country": "China",
+    "country_flag": "🇨🇳",
+    "source_url": "https://aifitlab.com/products/encos-ec-a4310-p2-36-motor",
+    "source_domain": "aifitlab.com",
+    "image_url": "/actuator-images/encos-ec-a4310-p2-36.webp"
+  },
+  {
+    "id": "encos-ec-a5013-h17-100",
+    "name": "EC-A5013-H17-100",
+    "brand": "ENCOS",
+    "category": "harmonic_precision",
+    "use_cases": [
+      "humanoid_joint",
+      "robot_arm",
+      "exoskeleton"
+    ],
+    "product_url": "https://aifitlab.com/products/encos-ec-a5013-h17-100-motor",
+    "datasheet_url": null,
+    "price_usd": 1500,
+    "availability": "in_production",
+    "peak_torque_nm": 90,
+    "rated_torque_nm": 30,
+    "max_speed_rpm": 38,
+    "gear_ratio": "100:1",
+    "weight_g": 630,
+    "torque_density_nm_per_kg": 142.9,
+    "backdrivable": null,
+    "backlash_arcmin": 0.17,
+    "repeatability_arcmin": null,
+    "voltage_v": "48",
+    "peak_current_a": 20,
+    "power_w": 120,
+    "kt_nm_per_a": 5.9,
+    "comm": [
+      "CAN"
+    ],
+    "control_modes": null,
+    "encoder": "dual encoder",
+    "integrated_driver": true,
+    "ip_rating": null,
+    "notes": "63mm x 81.5mm harmonic-drive joint module with an 8mm through hole, dual encoders and a 3005 crossed-roller bearing, used in Asimov 1. 30 N.m rated, 90 N.m peak, 33 rpm rated and 38 rpm peak at 48V, 100:1, 3A rated and 20A peak phase current, 120W rated, 31% efficiency, 630g. Backlash is listed as 10 arcsec (0.17 arcmin). CAN at 1 Mbps. Specs and the $1,500 motor-only price are from the AIFITLAB listing; no ENCOS datasheet was found online.",
+    "sources": [
+      "https://aifitlab.com/products/encos-ec-a5013-h17-100-motor",
+      "https://autonews.gasgoo.com/articles/news/ces-2026-encos-showcases-three-core-products-enabling-mass-production-of-humanoid-robots-2008894532819447809"
+    ],
+    "verified": false,
+    "price_per_nm": 16.67,
+    "data_source": "web_search",
+    "country": "China",
+    "country_flag": "🇨🇳",
+    "source_url": "https://aifitlab.com/products/encos-ec-a5013-h17-100-motor",
+    "source_domain": "aifitlab.com",
+    "image_url": "/actuator-images/encos-ec-a5013-h17-100.webp"
+  },
+  {
+    "id": "encos-ec-a3814-h14-107",
+    "name": "EC-A3814-H14-107",
+    "brand": "ENCOS",
+    "category": "harmonic_precision",
+    "use_cases": [
+      "humanoid_joint",
+      "robot_arm",
+      "exoskeleton"
+    ],
+    "product_url": "https://aifitlab.com/products/encos-ec-a3814-h14-107-motor",
+    "datasheet_url": null,
+    "price_usd": 1375,
+    "availability": "in_production",
+    "peak_torque_nm": 60,
+    "rated_torque_nm": 20,
+    "max_speed_rpm": 52,
+    "gear_ratio": "107:1",
+    "weight_g": 434,
+    "torque_density_nm_per_kg": 138.2,
+    "backdrivable": null,
+    "backlash_arcmin": 0.17,
+    "repeatability_arcmin": null,
+    "voltage_v": "48",
+    "peak_current_a": 10,
+    "power_w": 134.4,
+    "kt_nm_per_a": 4.2,
+    "comm": [
+      "CAN"
+    ],
+    "control_modes": null,
+    "encoder": "dual encoder",
+    "integrated_driver": true,
+    "ip_rating": null,
+    "notes": "53mm x 78.5mm harmonic-drive joint module with an 8mm through hole, dual encoders and a 3005 crossed-roller bearing, used in Asimov 1. 20 N.m rated, 60 N.m peak, 47 rpm rated and 52 rpm peak at 48V, 107:1, 4A rated and 10A peak phase current, 134.4W rated, 51% efficiency, 434g. Backlash is listed as 10 arcsec (0.17 arcmin). CAN at 1 Mbps. Specs and the $1,375 motor-only price are from the AIFITLAB listing; no ENCOS datasheet was found online.",
+    "sources": [
+      "https://aifitlab.com/products/encos-ec-a3814-h14-107-motor",
+      "https://autonews.gasgoo.com/articles/news/ces-2026-encos-showcases-three-core-products-enabling-mass-production-of-humanoid-robots-2008894532819447809"
+    ],
+    "verified": false,
+    "price_per_nm": 22.92,
+    "data_source": "web_search",
+    "country": "China",
+    "country_flag": "🇨🇳",
+    "source_url": "https://aifitlab.com/products/encos-ec-a3814-h14-107-motor",
+    "source_domain": "aifitlab.com",
+    "image_url": "/actuator-images/encos-ec-a3814-h14-107.webp"
+  },
+  {
+    "id": "damiao-dm-j4340p-2ec",
+    "name": "DM-J4340P-2EC",
+    "brand": "DAMIAO (DMBots)",
+    "category": "integrated_joint",
+    "use_cases": [
+      "robot_arm",
+      "humanoid_joint",
+      "exoskeleton"
+    ],
+    "product_url": "https://www.seeedstudio.com/DM4340P-Actuator-p-6663.html",
+    "datasheet_url": "https://github.com/dmBots/DM-J4340P-2EC",
+    "price_usd": 175,
+    "availability": "in_production",
+    "peak_torque_nm": 27,
+    "rated_torque_nm": 9,
+    "max_speed_rpm": 52.5,
+    "gear_ratio": "40:1",
+    "weight_g": 381,
+    "torque_density_nm_per_kg": 70.9,
+    "backdrivable": null,
+    "backlash_arcmin": null,
+    "repeatability_arcmin": null,
+    "voltage_v": "24",
+    "peak_current_a": 8,
+    "power_w": null,
+    "kt_nm_per_a": null,
+    "comm": [
+      "CAN"
+    ],
+    "control_modes": [
+      "position",
+      "velocity",
+      "torque"
+    ],
+    "encoder": "dual 14-bit magnetic single-turn encoders (motor and output)",
+    "integrated_driver": true,
+    "ip_rating": null,
+    "notes": "57mm OD x 56.5mm planetary joint motor with integrated driver, a taller sibling of the DM-J4340-2EC with the same 40:1 ratio and torque ratings. Used for the three higher-torque joints of each Seeed reBot Arm B601-DM (the Manmaru YOR arms). Specs are for the original DM-J4340P-2EC in the DAMIAO manual: 9 N.m rated, 27 N.m peak, 36 rpm rated and 52.5 rpm no-load at 24V (100 rpm on the 48V build), 3A rated and 8A peak phase current, ~381g. CAN at 1 Mbps with MIT, position-velocity, velocity and force-position modes. DAMIAO's DM-J4340P-2EC V1.1 lifts this to 12 N.m rated / 40 N.m peak with 16-bit encoders in the same housing, and resellers may ship either. $175 is the Seeed Studio price for one motor ($166 at 10+).",
+    "sources": [
+      "https://github.com/dmBots/DM-J4340P-2EC",
+      "https://github.com/dmBots/DM-J4340P-2EC/blob/master/manual/DM-J4340P-2EC%20Geared%20Motor%20User%20Manual%20V1.2%202026-09-14.pdf",
+      "https://github.com/dmBots/DM-J4340P-2EC/blob/master/manual/DM-J4340P-2EC%20V1.1%20Geared%20Motor%20User%20Manual%20V1.4%202026-09-14.pdf",
+      "https://www.seeedstudio.com/DM4340P-Actuator-p-6663.html"
+    ],
+    "verified": true,
+    "price_per_nm": 6.48,
+    "data_source": "spot_checked",
+    "country": "China",
+    "country_flag": "🇨🇳",
+    "source_url": "https://www.seeedstudio.com/DM4340P-Actuator-p-6663.html",
+    "source_domain": "seeedstudio.com",
+    "image_url": "/actuator-images/damiao-dm-j4340p-2ec.webp"
   }
 ]

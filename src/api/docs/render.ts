@@ -1,3 +1,4 @@
+import { withRepoMarks } from "@/repo-link";
 import { SITE_NAME, absoluteUrl } from "@/server/site";
 import {
     type Block,
@@ -90,11 +91,12 @@ pre{background:var(--code);padding:12px 14px;border-radius:6px;overflow-x:auto}p
 .t{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:0.92rem}
 th,td{text-align:left;border-bottom:1px solid var(--line);padding:6px 8px;vertical-align:top}
 tr:target{background:var(--code)}.meta{color:var(--muted);margin:0 0 24px}nav a{margin-right:12px}
+.gh-mark{display:inline-block;margin-right:.35em;vertical-align:-.125em}
 `;
 
 export function renderDocsHtml(): string {
     const canonical = absoluteUrl("/docs/api");
-    const body = docsBlocks().map(blockToHtml).join("\n");
+    const body = withRepoMarks(docsBlocks().map(blockToHtml).join("\n"));
     return `<!doctype html>
 <html lang="en">
 <head>

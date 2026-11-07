@@ -1,3 +1,4 @@
+import { sdkLookupOut } from "@/sdk/views";
 import { z } from "zod";
 
 // Response contracts for /api/v1. These zod schemas are the single source of
@@ -90,6 +91,7 @@ export const ActuatorDetailSchema = named(
         robots_using: z
             .array(RobotRefSchema)
             .describe("Robots in the catalog whose joints use this actuator."),
+        sdk: sdkLookupOut,
     }),
 );
 
@@ -119,11 +121,18 @@ const robotFields = {
     id: z.string(),
     name: z.string(),
     brand: z.string(),
+    kind: z.enum(["robot_arm", "humanoid"]).describe("Robot type."),
     country: str("Manufacturer country."),
     country_flag: str("Flag emoji."),
-    dof: z.number().describe("Degrees of freedom."),
+    dof: z
+        .number()
+        .nullable()
+        .describe(
+            "Degrees of freedom; null when the maker has not published a joint count.",
+        ),
     payload_kg: num("Payload in kg."),
     reach_mm: num("Reach in mm."),
+    height_m: num("Standing height in m (humanoids)."),
     weight_kg: num("Mass in kg."),
     price_usd: num("Price (or lower bound) in USD."),
     price_max_usd: num("Upper price bound in USD, if a range."),

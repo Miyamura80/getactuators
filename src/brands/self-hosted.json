@@ -1,0 +1,424 @@
+[
+    {
+        "id": "1x",
+        "logo": "/logos/brands/1x.png",
+        "source": "https://avatars.githubusercontent.com/u/16383118?v=4&s=460"
+    },
+    {
+        "id": "8vc",
+        "logo": "/logos/brands/8vc.svg",
+        "source": "https://www.8vc.com/ (header inline svg)"
+    },
+    {
+        "id": "a16z",
+        "logo": "/logos/brands/a16z.png",
+        "source": "https://d1lamhf6l6yk6d.cloudfront.net/uploads/2025/06/Favicon-%E2%80%94-270x270px.png"
+    },
+    {
+        "id": "accel",
+        "logo": "/logos/brands/accel.svg",
+        "source": "https://www.accel.com/ (header inline svg #accel-logo-svg)"
+    },
+    {
+        "id": "allied-motion",
+        "logo": "/logos/brands/allied-motion.png",
+        "tile": "light",
+        "source": "https://allient.com/wp-content/uploads/2025/04/Allied-Motion-Logo_Stacked-Center_white-bkg.webp"
+    },
+    {
+        "id": "anybotics",
+        "logo": "/logos/brands/anybotics.png",
+        "source": "https://www.anybotics.com/favicon.ico"
+    },
+    {
+        "id": "atar",
+        "logo": "/logos/brands/atar.png",
+        "source": "https://www.atarrobot.com/images/logo.png"
+    },
+    {
+        "id": "bain-capital-ventures",
+        "logo": "/logos/brands/bain-capital-ventures.svg",
+        "source": "https://baincapitalventures.com/ (header inline svg)"
+    },
+    {
+        "id": "battery",
+        "logo": "/logos/brands/battery.png",
+        "source": "https://www.battery.com/wp-content/uploads/2025/03/cropped-battery-favicon-circle-192x192.png"
+    },
+    {
+        "id": "benchmark",
+        "logo": "/logos/brands/benchmark.svg",
+        "tile": "light",
+        "source": "https://www.benchmark.com/fonts/benchmark.svg"
+    },
+    {
+        "id": "bessemer",
+        "logo": "/logos/brands/bessemer.svg",
+        "source": "https://www.bvp.com/ (header inline svg)"
+    },
+    {
+        "id": "booster",
+        "logo": "/logos/brands/booster.svg",
+        "source": "https://fe-cdn.booster.tech/booster-official-website/release-0.1.9/favicon.svg"
+    },
+    {
+        "id": "botco",
+        "logo": "/logos/brands/botco.png",
+        "source": "https://www.bot.co/icon/icon.png"
+    },
+    {
+        "id": "clearmotion",
+        "logo": "/logos/brands/clearmotion.svg",
+        "source": "https://cdn.prod.website-files.com/67e5838983d440c501cc48ba/67fcf0183cfa8b0515215361_brand_logo-white.svg"
+    },
+    {
+        "id": "coatue",
+        "logo": "/logos/brands/coatue.svg",
+        "source": "https://www.coatue.com/ (header inline svg)"
+    },
+    {
+        "id": "cobot",
+        "logo": "/logos/brands/cobot.png",
+        "source": "https://www.co.bot/apple-touch-icon.png"
+    },
+    {
+        "id": "crv",
+        "logo": "/logos/brands/crv.svg",
+        "source": "https://www.crv.com/ (header inline svg)"
+    },
+    {
+        "id": "cubemars",
+        "logo": "/logos/brands/cubemars.png",
+        "tile": "light",
+        "source": "https://www.cubemars.com/themes/tmotor/images/logox500.jpg"
+    },
+    {
+        "id": "damiao",
+        "logo": "/logos/brands/damiao.png",
+        "source": "https://www.damiaokeji.com/uploadfile/202606/8e721034bb0a.png"
+    },
+    {
+        "id": "dyna",
+        "logo": "/logos/brands/dyna.svg",
+        "source": "https://www.dyna.co/icon.svg"
+    },
+    {
+        "id": "feetech",
+        "logo": "/logos/brands/feetech.png",
+        "tile": "light",
+        "source": "https://www.feetechrc.com/Data/feetechrc/template/en/images/logo.png"
+    },
+    {
+        "id": "first-round",
+        "logo": "/logos/brands/first-round.svg",
+        "source": "https://www.firstround.com/ (header inline svg)"
+    },
+    {
+        "id": "founders-fund",
+        "logo": "/logos/brands/founders-fund.png",
+        "source": "https://foundersfund.com/apple-touch-icon-152x152.png"
+    },
+    {
+        "id": "general-catalyst",
+        "logo": "/logos/brands/general-catalyst.svg",
+        "tile": "light",
+        "source": "https://cdn.prod.website-files.com/69df4e62ff62d7b5568fc58b/6ad7690f43c3b51b5518d369_GC_Symbol_Black_RGB.svg"
+    },
+    {
+        "id": "genesis",
+        "logo": "/logos/brands/genesis.png",
+        "source": "https://www.datocms-assets.com/199265/1790235967-genesis-favicon.png"
+    },
+    {
+        "id": "greenoaks",
+        "logo": "/logos/brands/greenoaks.svg",
+        "source": "https://www.greenoaks.com/images/logo.svg"
+    },
+    {
+        "id": "greycroft",
+        "logo": "/logos/brands/greycroft.png",
+        "source": "https://cdn.greycroft.com/wp-content/uploads/2025/05/22165517/cropped-Greycroft_FavIcon_RGB_Small-192x192.webp"
+    },
+    {
+        "id": "greylock",
+        "logo": "/logos/brands/greylock.svg",
+        "source": "https://greylock.com/icon.svg"
+    },
+    {
+        "id": "harmonic-drive",
+        "logo": "/logos/brands/harmonic-drive.png",
+        "source": "https://www.harmonicdrive.net/_hd/theme/images/logo.gif"
+    },
+    {
+        "id": "hiwonder",
+        "logo": "/logos/brands/hiwonder.svg",
+        "source": "https://www.hiwonder.com/cdn/shop/files/H.svg"
+    },
+    {
+        "id": "i2rt",
+        "logo": "/logos/brands/i2rt.png",
+        "source": "https://i2rt.com/cdn/shop/files/Screenshot_2026-08-30_at_5.54.35_PM.png?width=480"
+    },
+    {
+        "id": "icon",
+        "logo": "/logos/brands/icon.png",
+        "source": "https://cdn.prod.website-files.com/696aa403bbe74c1adbd1ed11/6980559ff7cfeb7efbb0d078_icon-webclip.png"
+    },
+    {
+        "id": "index",
+        "logo": "/logos/brands/index.svg",
+        "source": "https://www.indexventures.com/ (header inline svg)"
+    },
+    {
+        "id": "ipower",
+        "logo": "/logos/brands/ipower.svg",
+        "source": "https://www.iflight.com/catalog/view/theme/default/images/logo_green.svg"
+    },
+    {
+        "id": "ivp",
+        "logo": "/logos/brands/ivp.svg",
+        "tile": "light",
+        "source": "https://www.ivp.com/ (header inline svg 'IVP Logo')"
+    },
+    {
+        "id": "khosla",
+        "logo": "/logos/brands/khosla.png",
+        "source": "https://cdn.prod.website-files.com/67539a3c13f571f3ecb310f9/67eda1f7d10e329c601e7a46_kv-favicon%202.png"
+    },
+    {
+        "id": "kleiner-perkins",
+        "logo": "/logos/brands/kleiner-perkins.png",
+        "tile": "light",
+        "source": "https://www.kleinerperkins.com/wp-content/uploads/2026/03/cropped-Frame-1.png?w=192"
+    },
+    {
+        "id": "leaderdrive",
+        "logo": "/logos/brands/leaderdrive.png",
+        "tile": "light",
+        "source": "https://www.leaderdrive.com/statics/lvdi/images/a_logo.png"
+    },
+    {
+        "id": "lightspeed",
+        "logo": "/logos/brands/lightspeed.svg",
+        "tile": "light",
+        "source": "https://lsvp.com/wp-content/uploads/2023/04/favico.svg"
+    },
+    {
+        "id": "lkmtech",
+        "logo": "/logos/brands/lkmtech.png",
+        "tile": "light",
+        "source": "http://www.lkmotor.cn/upload/img/20221025093202.png"
+    },
+    {
+        "id": "lux",
+        "logo": "/logos/brands/lux.png",
+        "source": "https://upload.wikimedia.org/wikipedia/commons/8/84/Lux_Capital_logo.png"
+    },
+    {
+        "id": "manmaru",
+        "logo": "/logos/brands/manmaru.png",
+        "source": "https://www.manmaruai.co.jp/favicon.ico"
+    },
+    {
+        "id": "maxon",
+        "logo": "/logos/brands/maxon.svg",
+        "source": "https://upload.wikimedia.org/wikipedia/commons/3/36/Maxon_logo.svg"
+    },
+    {
+        "id": "menlo-research",
+        "logo": "/logos/brands/menlo-research.png",
+        "source": "https://menlo.ai/apple-icon.png"
+    },
+    {
+        "id": "menlo-ventures",
+        "logo": "/logos/brands/menlo-ventures.png",
+        "source": "https://menlovc.com/wp-content/uploads/2025/02/menlo_logo-2022.png"
+    },
+    {
+        "id": "mind",
+        "logo": "/logos/brands/mind.svg",
+        "source": "https://www.mindrobotics.com/ (inline header SVG)"
+    },
+    {
+        "id": "minerva",
+        "logo": "/logos/brands/minerva.png",
+        "source": "https://www.minervahumanoids.com/assets/minerva-icon-v1-180.png"
+    },
+    {
+        "id": "mjbots",
+        "logo": "/logos/brands/mjbots.svg",
+        "tile": "light",
+        "source": "https://mjbots.com/cdn/shop/files/20191008-logo-favicon.svg"
+    },
+    {
+        "id": "myactuator",
+        "logo": "/logos/brands/myactuator.png",
+        "source": "https://static.wixstatic.com/media/cab28a_aafa9b0c57934216b9d4d37b1dab16c1~mv2.png"
+    },
+    {
+        "id": "nabtesco",
+        "logo": "/logos/brands/nabtesco.svg",
+        "source": "https://upload.wikimedia.org/wikipedia/commons/7/78/Nabtesco_company_logo.svg"
+    },
+    {
+        "id": "nea",
+        "logo": "/logos/brands/nea.svg",
+        "source": "https://statamic.nea.com/assets/favicons/nea_favicon_16x16px.svg"
+    },
+    {
+        "id": "nidec",
+        "logo": "/logos/brands/nidec.svg",
+        "source": "https://upload.wikimedia.org/wikipedia/commons/3/32/Nidec_company_logo.svg"
+    },
+    {
+        "id": "norwest",
+        "logo": "/logos/brands/norwest.png",
+        "tile": "light",
+        "source": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Norwest_Venture_Partners_2024_Logo.png"
+    },
+    {
+        "id": "odrive",
+        "logo": "/logos/brands/odrive.png",
+        "tile": "light",
+        "source": "https://avatars.githubusercontent.com/odriverobotics?s=460"
+    },
+    {
+        "id": "pollen",
+        "logo": "/logos/brands/pollen.svg",
+        "source": "https://pollen-robotics.com/assets/pollen-logo-icon.svg"
+    },
+    {
+        "id": "proception",
+        "logo": "/logos/brands/proception.svg",
+        "source": "https://www.proception.ai/proception-icon-P.svg"
+    },
+    {
+        "id": "redpoint",
+        "logo": "/logos/brands/redpoint.png",
+        "source": "https://www.redpoint.com/favicon.png"
+    },
+    {
+        "id": "rhoda",
+        "logo": "/logos/brands/rhoda.svg",
+        "source": "https://www.rhoda.ai/assets/images/logo/favicon.svg"
+    },
+    {
+        "id": "ribbit",
+        "logo": "/logos/brands/ribbit.png",
+        "source": "https://www.ribbitcap.com/icon.ico"
+    },
+    {
+        "id": "robco",
+        "logo": "/logos/brands/robco.png",
+        "source": "https://cdn.prod.website-files.com/68f2341d705f07db40d6f962/68f2341d705f07db40d6ffef_Rmark%20dark.png"
+    },
+    {
+        "id": "robotiq",
+        "logo": "/logos/brands/robotiq.svg",
+        "source": "https://robotiq.com/hubfs/theme-hs-parkour3/images/brand-images/Robotiq-refonte-logo.svg"
+    },
+    {
+        "id": "robotis",
+        "logo": "/logos/brands/robotis.png",
+        "source": "https://avatars.githubusercontent.com/ROBOTIS-GIT?s=460"
+    },
+    {
+        "id": "robstride",
+        "logo": "/logos/brands/robstride.png",
+        "tile": "light",
+        "source": "https://avatars.githubusercontent.com/RobStride?s=460"
+    },
+    {
+        "id": "salient",
+        "logo": "/logos/brands/salient.svg",
+        "source": "https://salientmotion.com/ (inline nav brand-icon SVG)"
+    },
+    {
+        "id": "sequoia",
+        "logo": "/logos/brands/sequoia.png",
+        "source": "https://framerusercontent.com/images/BjlCZkZ0WlX5JcURORpeyljjCmM.png"
+    },
+    {
+        "id": "spark",
+        "logo": "/logos/brands/spark.png",
+        "source": "https://cdn.prod.website-files.com/5f6113b98d41b1cec6bbba44/6a3262456fb9dcae7a0fb361_Spark-Capital_Investor-Portal_Shortcut-Icon_260612.png"
+    },
+    {
+        "id": "spinea",
+        "logo": "/logos/brands/spinea.png",
+        "tile": "light",
+        "source": "https://www.spinea.com/media/content/media/for%20Distributors/Logo%20Spinea%20By%20Timken/500x125.png"
+    },
+    {
+        "id": "standardbots",
+        "logo": "/logos/brands/standardbots.png",
+        "source": "https://cdn.prod.website-files.com/6a79c2eee1f5842051c44586/6a7da9825efd7842875e3f21_standard-bots_icon_256w.png"
+    },
+    {
+        "id": "steadywin",
+        "logo": "/logos/brands/steadywin.png",
+        "source": "https://steadywin-motor.com/cdn/shop/files/SteadyWin-02.jpg?width=512"
+    },
+    {
+        "id": "sunday",
+        "logo": "/logos/brands/sunday.svg",
+        "source": "https://www.sunday.ai/ (inline header Home-link SVG)"
+    },
+    {
+        "id": "theker",
+        "logo": "/logos/brands/theker.png",
+        "source": "https://cdn.prod.website-files.com/5fc4cbd9bf51be84a6399307/643969596c40c8436c43659a_webclip.png"
+    },
+    {
+        "id": "thirdwave",
+        "logo": "/logos/brands/thirdwave.svg",
+        "source": "https://thirdwave.ai/ (inline header 'TWA Horizontal' SVG)"
+    },
+    {
+        "id": "thrive",
+        "logo": "/logos/brands/thrive.png",
+        "source": "https://framerusercontent.com/images/wTRQbw1UlJLLsjPTdU2bulTkj6M.png"
+    },
+    {
+        "id": "tq-systems",
+        "logo": "/logos/brands/tq-systems.svg",
+        "source": "https://www.tq-group.com/fileadmin/html/img/logo.svg"
+    },
+    {
+        "id": "trinamic",
+        "logo": "/logos/brands/trinamic.svg",
+        "tile": "light",
+        "source": "https://upload.wikimedia.org/wikipedia/commons/8/86/Analog_Devices_Logo.svg"
+    },
+    {
+        "id": "unitree",
+        "logo": "/logos/brands/unitree.svg",
+        "source": "https://www.unitree.com/unitree-favicon.svg"
+    },
+    {
+        "id": "unitzero",
+        "logo": "/logos/brands/unitzero.png",
+        "tile": "light",
+        "source": "https://unitzero.ai/apple-touch-icon.png"
+    },
+    {
+        "id": "usv",
+        "logo": "/logos/brands/usv.png",
+        "source": "https://www.usv.com/apple-touch-icon.png"
+    },
+    {
+        "id": "vesc",
+        "logo": "/logos/brands/vesc.png",
+        "source": "https://trampa.co.uk/wp-content/uploads/2023/10/cropped-FAVICON-PNG-2-192x192.png"
+    },
+    {
+        "id": "waveshare",
+        "logo": "/logos/brands/waveshare.png",
+        "source": "https://avatars.githubusercontent.com/waveshareteam?s=460"
+    },
+    {
+        "id": "xiaomi",
+        "logo": "/logos/brands/xiaomi.svg",
+        "source": "https://registry.npmjs.org/simple-icons/-/simple-icons-16.35.0.tgz"
+    }
+]

@@ -1,7 +1,8 @@
 import { describe, expect, test } from "bun:test";
+import { DOCS_TOOLS } from "@/mcp/docs-server";
 import { CATALOG_TOOLS, REGISTRY_NAME, SERVER_VERSION } from "@/mcp/server";
 import registryJson from "../../server.json";
-import { appHandler } from "./mcp-helpers";
+import { appHandler, rpc } from "./mcp-helpers";
 
 async function getJson(path: string) {
     const handler = await appHandler();
@@ -30,16 +31,55 @@ describe("MCP discovery manifests", () => {
         for (const t of tools) expect(t.description.length).toBeGreaterThanOrEqual(20);
     });
 
-    test("mcp.json lists the catalog and docs endpoints", async () => {
+    test("server card tools equal the tools the live /mcp server registers", async () => {
+        const card = await getJson("/.well-known/mcp/server-card.json");
+        const cardTools = (card.tools as { name: string }[]).map((t) => t.name);
+        const live = await rpc("tools/list", {}, "/mcp");
+        const liveTools = (live.result?.tools as { name: string }[]).map((t) => t.name);
+        expect([...cardTools].sort()).toEqual([...liveTools].sort());
+        expect(cardTools).toEqual(CATALOG_TOOLS.map((t) => t.name));
+        expect(new URL(card.serverUrl as string).pathname).toBe("/mcp");
+        expect(JSON.stringify(card)).not.toContain("/mcp/docs");
+    });
+
+    test("docs server has its own card matching the live /mcp/docs server", async () => {
+        const card = await getJson("/.well-known/mcp/docs-server-card.json");
+        expect(new URL(card.serverUrl as string).pathname).toBe("/mcp/docs");
+        const cardTools = (card.tools as { name: string }[]).map((t) => t.name);
+        const live = await rpc("tools/list", {}, "/mcp/docs");
+        const liveTools = (live.result?.tools as { name: string }[]).map((t) => t.name);
+        expect([...cardTools].sort()).toEqual([...liveTools].sort());
+        expect(cardTools).toEqual(DOCS_TOOLS.map((t) => t.name));
+    });
+
+    test("mcp.json names /mcp as the primary server, docs only as related", async () => {
         for (const path of ["/.well-known/mcp.json", "/.well-known/mcp"]) {
             const doc = await getJson(path);
+            expect(new URL(doc.url as string).pathname).toBe("/mcp");
+            expect(new URL(doc.serverCard as string).pathname).toBe(
+                "/.well-known/mcp/server-card.json",
+            );
             const servers = doc.servers as { url: string; transport: string }[];
-            expect(servers.map((s) => new URL(s.url).pathname)).toEqual([
-                "/mcp",
-                "/mcp/docs",
-            ]);
-            for (const s of servers) expect(s.transport).toBe("streamable-http");
+            expect(servers.map((s) => new URL(s.url).pathname)).toEqual(["/mcp"]);
+            const related = doc.relatedServers as { url: string; transport: string }[];
+            expect(related.map((s) => new URL(s.url).pathname)).toEqual(["/mcp/docs"]);
+            for (const s of [...servers, ...related]) {
+                expect(s.transport).toBe("streamable-http");
+            }
         }
+    });
+
+    test("ARD lists the catalog MCP card first with the registered tools", async () => {
+        const ard = await getJson("/.well-known/ard.json");
+        const mcp = (ard.entries as Record<string, unknown>[]).filter(
+            (e) => e.type === "application/mcp-server-card+json",
+        );
+        expect(mcp.map((e) => new URL(e.url as string).pathname)).toEqual([
+            "/.well-known/mcp/server-card.json",
+            "/.well-known/mcp/docs-server-card.json",
+        ]);
+        expect(mcp[0]?.capabilities).toEqual(CATALOG_TOOLS.map((t) => t.name));
+        for (const e of mcp) expect(e).not.toHaveProperty("data");
     });
 
     test("registry server.json matches the running server", () => {

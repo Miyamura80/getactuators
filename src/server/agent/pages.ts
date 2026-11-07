@@ -1,17 +1,46 @@
 import { ACTUATORS, getActuator } from "@/catalog";
-import { queryActuators } from "@/catalog/query";
-import { SITE_DESCRIPTION } from "../site";
+import { compareBody } from "./compare";
+
+import { INVESTORS_PATH } from "@/investors";
+import { CONTRIBUTORS, CONTRIBUTORS_PATH } from "@/people";
+import { STARTUPS_PATH } from "@/startups";
+import { BENCHMARKS_PAGE } from "./benchmarks/page";
 import {
     actuatorBody,
     actuatorPath,
     actuatorSummary,
     categoryLabel,
 } from "./catalog-md";
+import { contributorsBody, personNode } from "./contributors";
+import { EDITORIAL_PAGES } from "./editorial";
+import { GENERATED_COMPARISON_PAGES } from "./generated-comparisons";
+import { HUMANOID_GUIDE } from "./humanoid-guide";
+import { HUMANOIDS_PAGE } from "./humanoids";
+import { investorsBody } from "./investors";
 import * as ld from "./jsonld";
 import { PATHS } from "./links";
 import { agentsBody } from "./manifests";
 import { mdDocument } from "./md";
-import { allBody, faqItems, galleryBody, homeBody, robotsBody } from "./pages-md";
+import { OPEN_SOURCE_PAGE } from "./open-source/page";
+import {
+    actuatorsBody,
+    faqItems,
+    faqSection,
+    homeBody,
+    robotsBody,
+    topBy,
+} from "./pages-md";
+import { PEOPLE_PAGE } from "./people/page";
+import { SDK_PAGE } from "./sdk";
+import { actuatorSeoTitle } from "./seo-titles";
+import { startupsBody } from "./startups";
+import { ALTS_PAGE } from "./supply-chain/alts";
+import { COUNTRY_PAGE_ENTRIES } from "./supply-chain/country";
+import { MANUFACTURING_PAGE } from "./supply-chain/manufacturing";
+import { METALS_PAGE } from "./supply-chain/metals";
+import { HIDDEN_PAGES } from "./supply-chain/pages";
+import { POLICY_PAGE } from "./supply-chain/policy";
+import { TOOL_PAGES } from "./tools";
 import { aboutBody, contactBody, privacyBody } from "./trust";
 
 // Every HTML page the site serves, with the metadata and markdown body shared
@@ -20,16 +49,8 @@ import { aboutBody, contactBody, privacyBody } from "./trust";
 // "spa" pages are the React app's routes: the server enriches the built shell.
 // "static" pages are rendered entirely on the server.
 
-export interface Page {
-    path: string;
-    kind: "spa" | "static";
-    title: string;
-    description: string;
-    ogType?: "website" | "product" | "article";
-    image?: string;
-    body: () => string;
-    jsonLd: () => Record<string, unknown>[];
-}
+export type { Page } from "./page-types";
+import type { Page } from "./page-types";
 
 const HOME: ld.Crumb = { name: "Home", path: "/" };
 
@@ -55,37 +76,55 @@ function sub(
 }
 
 const STATIC_PAGES: Page[] = [
+    sub(
+        "/compare",
+        "spa",
+        "Compare actuators",
+        "Pick two to four robot actuators for a visual, shareable specification comparison with source and revision caveats.",
+        compareBody,
+    ),
+    {
+        ...sub(
+            "/faq",
+            "static",
+            "Frequently asked questions",
+            "Answers about robot actuators, catalog sources and free API access.",
+            () => `# Frequently asked questions\n\n${faqSection()}`,
+            "FAQPage",
+        ),
+        jsonLd: () => [
+            ld.faqPage(faqItems()),
+            ld.breadcrumbs([HOME, { name: "FAQ", path: "/faq" }]),
+        ],
+    },
+    ...EDITORIAL_PAGES,
+    ...GENERATED_COMPARISON_PAGES,
+    HUMANOID_GUIDE,
+    ...TOOL_PAGES,
     {
         path: "/",
         kind: "spa",
         title: "actuatorlist: robot actuator leaderboard and spec database",
-        description: `${SITE_DESCRIPTION} Compare torque, weight, torque density and price.`,
+        description:
+            "Compare robot actuators by torque, weight, torque density and price. Browse QDD motors, integrated joints, smart servos and reducers.",
         body: homeBody,
         jsonLd: () => [
             ld.website(),
             ld.organization(),
             ld.dataset(),
             ...ld.software(),
-            ld.faqPage(faqItems()),
             ld.itemList(
                 "Highest torque density actuators",
-                queryActuators({ sort: "torque_density_nm_per_kg" }).slice(0, 10),
+                topBy("torque_density_nm_per_kg", undefined, 10),
             ),
         ],
     },
     sub(
-        "/all",
-        "spa",
-        "All robot actuators",
-        `Every actuator in the catalog (${ACTUATORS.length}) in one table: peak torque, weight, torque density and price.`,
-        allBody,
-    ),
-    sub(
         "/actuators",
         "spa",
-        "Actuator gallery by category",
-        "Robot actuators grouped by drive type: QDD, integrated joints, smart servos, harmonic, cycloidal and frameless kits.",
-        galleryBody,
+        "All robot actuators",
+        `Every actuator in the catalog (${ACTUATORS.length}) as a photo gallery or one sortable table: peak torque, weight, torque density and price.`,
+        actuatorsBody,
     ),
     sub(
         "/robots",
@@ -94,6 +133,36 @@ const STATIC_PAGES: Page[] = [
         "Which motor sits in each joint of real robot arms and legged robots, linked to actuator specs.",
         robotsBody,
     ),
+    {
+        ...sub(
+            STARTUPS_PATH,
+            "spa",
+            "Actuator startups",
+            "Venture-backed robot actuator and motor startups compared by money raised and reported production volume.",
+            startupsBody,
+        ),
+        image: PATHS.ogStartups,
+    },
+    {
+        ...sub(
+            INVESTORS_PATH,
+            "spa",
+            "Actuator investors",
+            "Which of 29 top venture funds have backed actuator makers or robot hardware, and which are still on the sidelines.",
+            investorsBody,
+        ),
+        image: PATHS.ogInvestors,
+    },
+    HUMANOIDS_PAGE,
+    OPEN_SOURCE_PAGE,
+    METALS_PAGE,
+    POLICY_PAGE,
+    BENCHMARKS_PAGE,
+    MANUFACTURING_PAGE,
+    ALTS_PAGE,
+    ...COUNTRY_PAGE_ENTRIES,
+    SDK_PAGE,
+    PEOPLE_PAGE,
     sub(
         PATHS.agentsPage,
         "spa",
@@ -110,6 +179,22 @@ const STATIC_PAGES: Page[] = [
         aboutBody,
         "AboutPage",
     ),
+    {
+        ...sub(
+            CONTRIBUTORS_PATH,
+            "spa",
+            "Contributors",
+            "The people who build actuatorlist: the maintainer and each contributor, with their affiliations and profile links.",
+            contributorsBody,
+            "AboutPage",
+        ),
+        jsonLd: () => [
+            ld.webPage("AboutPage", CONTRIBUTORS_PATH, "Contributors"),
+            ld.website(),
+            ...CONTRIBUTORS.map(personNode),
+            ld.breadcrumbs([HOME, { name: "Contributors", path: CONTRIBUTORS_PATH }]),
+        ],
+    },
     sub(
         "/contact",
         "static",
@@ -122,7 +207,7 @@ const STATIC_PAGES: Page[] = [
         "/privacy",
         "static",
         "Privacy at actuatorlist",
-        "No accounts, no cookies, no analytics: what happens to your data when you visit actuatorlist.",
+        "No accounts or advertising: optional opt-in analytics, browser preferences and what happens when you visit actuatorlist.",
         privacyBody,
         "WebPage",
     ),
@@ -130,18 +215,21 @@ const STATIC_PAGES: Page[] = [
 
 const ALIASES: Record<string, string> = { "/robot": "/robots", "/index.html": "/" };
 
-const byPath = new Map(STATIC_PAGES.map((p) => [p.path, p]));
+const byPath = new Map([...STATIC_PAGES, ...HIDDEN_PAGES].map((p) => [p.path, p]));
 
 function actuatorPage(id: string): Page | null {
     const a = getActuator(id);
     if (!a) return null;
     const path = actuatorPath(a.id);
-    const title = `${a.name} by ${a.brand}: specs, torque and price`;
+    const title = actuatorSeoTitle(a);
     return {
         path,
         kind: "spa",
         title,
-        description: actuatorSummary(a),
+        description:
+            a.id === "harmonic-drive-cha-series"
+                ? "Harmonic Drive CHA hollow-shaft servo actuator family. Torque, mass and price are unspecified in this catalog; confirm model-specific data."
+                : actuatorSummary(a),
         ogType: "product",
         image: a.image_url ?? undefined,
         body: () => actuatorBody(a),
@@ -187,7 +275,12 @@ export function markdownPath(page: Page): string {
 
 export function pageMarkdown(page: Page): string {
     return mdDocument(
-        { title: page.title, description: page.description, canonical: page.path },
+        {
+            title: page.title,
+            description: page.description,
+            canonical: page.path,
+            updatedAt: page.updatedAt,
+        },
         page.body(),
     );
 }

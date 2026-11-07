@@ -1,5 +1,3 @@
-import { BrandMark } from "./BrandMark";
-import { Link } from "../lib/router";
 
 export interface NavItem {
     id: string;
@@ -15,12 +13,6 @@ interface Props {
 export function Sidebar({ items, active, onSelect }: Props) {
     return (
         <aside className="sidebar">
-            <Link to="/" className="side-brand" aria-label="actuatorlist home">
-                <BrandMark size={26} />
-                <span>
-                    <b>actuator</b>list.com
-                </span>
-            </Link>
             <nav>
                 {items.map((it) => (
                     <button
@@ -34,24 +26,7 @@ export function Sidebar({ items, active, onSelect }: Props) {
                     </button>
                 ))}
             </nav>
-            <div className="side-pages">
-                <Link to="/robots" className="side-page-link">
-                    Browse by robot type →
-                </Link>
-                <Link to="/all" className="side-page-link">
-                    All actuators (full table) →
-                </Link>
-                <Link to="/actuators" className="side-page-link">
-                    Actuator gallery →
-                </Link>
-                <Link to="/agents" className="side-page-link">
-                    AI agents (MCP) →
-                </Link>
-            </div>
-            <p className="side-note">
-                v1 dataset {"·"} sourced from manufacturer pages via web search.
-                Verify against datasheets before design use.
-            </p>
+
         </aside>
     );
 }

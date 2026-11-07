@@ -1,5 +1,7 @@
 import type { Actuator } from "../types";
 import { colorForBrand } from "../lib/brands";
+import { frontierPath, paretoFront } from "../lib/pareto";
+import { activation } from "../lib/svg-link";
 
 interface Props {
     actuators: Actuator[]; // should already be filtered to those with price + density
@@ -19,16 +21,6 @@ interface P {
     front: boolean;
 }
 
-// Points on the upper-left Pareto frontier: no other point has both a lower
-// price AND a higher torque density.
-function frontier(pts: { price: number; dens: number }[]): boolean[] {
-    return pts.map((p, i) =>
-        pts.every(
-            (q, j) => j === i || !(q.price <= p.price && q.dens >= p.dens && (q.price < p.price || q.dens > p.dens)),
-        ),
-    );
-}
-
 const PRICE_TICKS = [25, 50, 100, 200, 500, 1000];
 
 export function Scatter({ actuators, onSelect }: Props) {
@@ -46,18 +38,18 @@ export function Scatter({ actuators, onSelect }: Props) {
         M.left + ((Math.log10(p) - Math.log10(minP)) / (Math.log10(maxP) - Math.log10(minP))) * (W - M.left - M.right);
     const ly = (d: number) => H - M.bottom - (d / maxD) * (H - M.top - M.bottom);
 
-    const front = frontier(rows.map((r) => ({ price: r.price, dens: r.dens })));
+    const front = paretoFront(
+        rows,
+        (r) => r.price,
+        (r) => r.dens,
+    );
     const pts: P[] = rows.map((r, i) => ({
         ...r,
         x: lx(r.price),
         y: ly(r.dens),
         front: front[i],
     }));
-    const frontPath = pts
-        .filter((p) => p.front)
-        .sort((a, b) => a.price - b.price)
-        .map((p, i) => `${i === 0 ? "M" : "L"} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`)
-        .join(" ");
+    const frontPath = frontierPath(pts.filter((p) => p.front));
 
     // "Best value" region: cheaper than the median price, denser than the median.
     const medP = [...prices].sort((a, b) => a - b)[Math.floor(prices.length / 2)];
@@ -90,11 +82,7 @@ export function Scatter({ actuators, onSelect }: Props) {
             ))}
             {frontPath && <path d={frontPath} className="pareto" />}
             {pts.map((p) => (
-                <g
-                    key={p.a.id}
-                    onClick={onSelect ? () => onSelect(p.a.id) : undefined}
-                    style={onSelect ? { cursor: "pointer" } : undefined}
-                >
+                <g key={p.a.id} {...(onSelect ? activation(p.a.name, () => onSelect(p.a.id)) : {})}>
                     <circle
                         cx={p.x}
                         cy={p.y}

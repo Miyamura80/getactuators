@@ -1,4 +1,11 @@
-import { REPO_URL, SITE_URL, absoluteUrl } from "@/server/site";
+import {
+    CODE_LICENSE,
+    DATA_LICENSE,
+    LICENSE_EXCLUDES,
+    REPO_URL,
+    SITE_URL,
+    absoluteUrl,
+} from "@/server/site";
 import { z } from "zod";
 import { API_VERSION } from "./http";
 import type { Operation } from "./operations";
@@ -124,8 +131,22 @@ function operationObject(op: Operation, tag: string): Json {
 }
 
 function tagFor(path: string): string {
-    if (path.includes("/robots")) return "robots";
+    if (path.includes("/robots") || path.includes("/humanoids")) return "robots";
+    if (path.includes("/open-robots")) return "robots";
+    if (
+        path.includes("/companies") ||
+        path.includes("/sites") ||
+        path.includes("/metal") ||
+        path.includes("/policy") ||
+        path.includes("/processes") ||
+        path.includes("/alts") ||
+        path.includes("/countries")
+    )
+        return "supply-chain";
+    if (path.includes("/benchmarks")) return "actuators";
     if (path.includes("/actuators")) return "actuators";
+    if (path.includes("/sdk")) return "actuators";
+    if (path.includes("/people")) return "people";
     if (path.startsWith("/api/v1/")) return "taxonomy";
     return "meta";
 }
@@ -189,9 +210,9 @@ export function buildOpenApi(operations: readonly Operation[]): Json {
             version: `${API_VERSION}.0.0`,
             summary:
                 "Read-only REST API over the actuatorlist robot actuator and robot catalog.",
-            description: `Free, anonymous, read-only access to every actuator and robot on ${SITE_URL}. No API key, no account, no writes: production is safe to call, so there is no separate sandbox.\n\n**Rate limits:** ${RATE_LIMIT} requests per ${RATE_WINDOW_S}s per client IP, reported in \`RateLimit\`/\`RateLimit-Policy\` and \`X-RateLimit-*\` headers; a 429 carries \`Retry-After\`.\n\n**Errors:** RFC 9457 \`application/problem+json\` with a stable \`code\`.\n\n**Versioning and deprecation:** ${DEPRECATION_POLICY}`,
+            description: `Free, anonymous, read-only access to every actuator and robot on ${SITE_URL}. No API key, no account, no writes: production is safe to call, so there is no separate sandbox.\n\n**Rate limits:** ${RATE_LIMIT} requests per ${RATE_WINDOW_S}s per client IP, reported in \`RateLimit\`/\`RateLimit-Policy\` and \`X-RateLimit-*\` headers; a 429 carries \`Retry-After\`.\n\n**Errors:** RFC 9457 \`application/problem+json\` with a stable \`code\`.\n\n**License:** the API description and code are under the ${CODE_LICENSE.name}; the data it returns is ${DATA_LICENSE.name} (${DATA_LICENSE.url}), credit \"${DATA_LICENSE.credit}\". ${LICENSE_EXCLUDES}\n\n**Versioning and deprecation:** ${DEPRECATION_POLICY}`,
             contact: { name: "actuatorlist on GitHub", url: `${REPO_URL}/issues` },
-            license: { name: "MIT", identifier: "MIT" },
+            license: { name: CODE_LICENSE.name, identifier: CODE_LICENSE.spdx },
             "x-deprecation-policy": DEPRECATION_POLICY,
         },
         servers: [
@@ -212,6 +233,16 @@ export function buildOpenApi(operations: readonly Operation[]): Json {
                 description: "Categories, brands and use cases for filters.",
             },
             { name: "meta", description: "Discovery: index and this document." },
+            {
+                name: "people",
+                description:
+                    "Leading people in actuators and rare-earth magnet supply, with affiliations, key works and sources.",
+            },
+            {
+                name: "supply-chain",
+                description:
+                    "Companies, sites, magnet metals (supply, reserves, prices), policy measures, manufacturing process steps, alternative actuator technologies and country pages along the actuator supply chain, with citations.",
+            },
         ],
         externalDocs: { description: "Developer guide", url: absoluteUrl("/docs/api") },
         paths,

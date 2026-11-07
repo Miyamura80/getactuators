@@ -31,3 +31,14 @@ export function bool(v: boolean | null | undefined): string {
     if (v == null) return DASH;
     return v ? "Yes" : "No";
 }
+
+// Compact USD for chart labels: $399, $3.5k, $70k.
+export function usdShort(v: number): string {
+    if (v >= 10_000) return `$${Math.round(v / 1000)}k`;
+    if (v >= 1000) return `$${Number((v / 1000).toFixed(1))}k`;
+    return `$${Math.round(v)}`;
+}
+
+export function hours(v: number): string {
+    return `${Number.isInteger(v) ? v : v.toFixed(1)} h`;
+}

@@ -3,4 +3,6 @@
 // first import of any DOM test, before React or testing-library load.
 import { GlobalRegistrator } from "@happy-dom/global-registrator";
 
-GlobalRegistrator.register();
+// A real origin, so self-hosted assets with root-relative URLs (robot photos)
+// resolve instead of failing as invalid on about:blank.
+GlobalRegistrator.register({ url: "http://localhost/" });
