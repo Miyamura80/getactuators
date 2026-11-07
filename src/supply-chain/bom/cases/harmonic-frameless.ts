@@ -72,7 +72,7 @@ const strainWave: BomNode = {
     makerNote:
         "ZeroErr does not name its gear source. Harmonic Drive Systems, the incumbent that sets the price of the category, stands in.",
     alternateMakerIds: ["leaderdrive", "laifual"],
-    route: ["Match flexspline to spline", "Assemble", "Run in", "Measure backlash"],
+    route: ["Pair flexspline, spline", "Assemble", "Run in", "Measure backlash"],
     references: [
         {
             label: "High-end gear unit",
@@ -656,7 +656,7 @@ const rest: BomNode = {
                     LISTING,
                     {
                         ...shape,
-                        qty: 16,
+                        qty: 12,
                         route: FASTENER_ROUTE,
                         part3d: {
                             component: "bolt",
@@ -704,7 +704,7 @@ export const HARMONIC_FRAMELESS: BomCase = {
             "Mount stator",
             "Fit gear",
             "Fit bearing",
-            "Fit brake and board",
+            "Fit brake, board",
             "Calibrate encoders",
             "Test",
         ],

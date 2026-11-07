@@ -159,12 +159,14 @@ export const NDFEB_DENSITY = density(
     [7.5, 7.8],
 );
 
-// The rare-earth price series a magnet is costed with: China-domestic metal,
-// so magnet raw content is priced at the same month as copper and steel.
+// The rare-earth price series a magnet is costed with: China-domestic metal
+// on /metals, read at the case month (or the latest earlier reading). The
+// other commodities carry one cited reading each, whatever the case month,
+// so their months need not match the magnet's.
 export const MAGNET_SERIES = { ndpr: "ndpr-alloy-cn", dy: "dy-metal-cn" } as const;
 
 const METAL_LABEL: Record<string, string> = {
-    "ndpr-alloy-cn": "NdPr metal",
+    "ndpr-alloy-cn": "NdPr alloy",
     "dy-metal-cn": "Dy metal",
     "tb-metal-cn": "Tb metal",
 };
@@ -173,8 +175,11 @@ export function getCommodity(id: string): Commodity | undefined {
     return COMMODITIES.find((c) => c.id === id);
 }
 
+const metalLabel = (id: string): string | undefined =>
+    Object.hasOwn(METAL_LABEL, id) ? METAL_LABEL[id] : undefined;
+
 export function materialLabel(seriesId: string): string {
-    return METAL_LABEL[seriesId] ?? getCommodity(seriesId)?.label ?? seriesId;
+    return metalLabel(seriesId) ?? getCommodity(seriesId)?.label ?? seriesId;
 }
 
 export interface MaterialPrice {
@@ -194,5 +199,5 @@ export function materialPrice(seriesId: string, month: string): MaterialPrice | 
 }
 
 export function isMaterialSeries(seriesId: string): boolean {
-    return seriesId in METAL_LABEL || getCommodity(seriesId) !== undefined;
+    return metalLabel(seriesId) !== undefined || getCommodity(seriesId) !== undefined;
 }

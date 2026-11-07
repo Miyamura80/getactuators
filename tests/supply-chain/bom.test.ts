@@ -3,6 +3,7 @@ import {
     BOM_CASES,
     bomErrors,
     caseScene,
+    caseWithMaker,
     caseWithNode,
     partFor,
 } from "@/supply-chain/bom";
@@ -199,6 +200,10 @@ describe("BOM metrics (hand-checked fixture)", () => {
         expect(costStack(coil, "2026-09", PRICES)).toBeNull();
         const tight = costStack({ ...motor, unitCost: usd(8) }, "2026-09", PRICES, gm);
         expect(tight?.short).toBe(true);
+        // A cited input cost below its own raw material: $0.10 gear on $0.40
+        // of steel, so the bands would overstate the total.
+        const cheap = { ...motor, children: [{ ...gear, unitCost: usd(0.1) }, coil] };
+        expect(costStack(cheap, "2026-09", PRICES, gm)?.short).toBe(true);
         expect(massOf(motor)).toBe(250);
     });
 });
@@ -235,8 +240,8 @@ describe("BOM cases", () => {
 
     test("part costs never exceed the price, and every case has a positive idiot index", () => {
         for (const c of BOM_CASES) {
-            for (const kid of c.root.children ?? [])
-                expect(kid.unitCost?.value ?? 0).toBeLessThanOrEqual(c.price.value);
+            for (const { node } of flatten(c.root))
+                expect(node.unitCost?.value ?? 0).toBeLessThanOrEqual(c.price.value);
             expect(idiotIndex(c.root, c.month) ?? 0).toBeGreaterThan(1);
         }
     });
@@ -248,20 +253,29 @@ describe("BOM cases", () => {
             )?.node;
             expect(magnet?.processStepIds?.every(isProcessStepId)).toBe(true);
             expect(partFor(c, "rotor-magnet")).toBe("rotor");
-            expect(caseScene(c).parts.every((p) => p.bomNodeId === p.id)).toBe(true);
+            const withPart = flatten(c.root)
+                .filter((p) => p.node.part3d)
+                .map((p) => p.node.id);
+            const parts = caseScene(c).parts;
+            expect(parts.map((p) => p.id)).toEqual(withPart);
+            expect(parts.map((p) => p.bomNodeId)).toEqual(withPart);
         }
         expect(caseWithNode("rotor-magnet")?.slug).toBe("optimus-linear");
+        const beite = caseWithMaker("beite");
+        expect(beite?.c.slug).toBe("optimus-linear");
+        expect(beite?.nodeId).toBe("roller-screw");
+        expect(caseWithMaker("no-such-company")).toBeUndefined();
     });
 
     test("every part says how it is made, and priced parts have a cost stack", () => {
         for (const c of BOM_CASES) {
             const m = nodeMetrics(c);
             for (const { node } of flatten(c.root)) {
+                if (node.unitCost) expect(m.get(node.id)?.stack?.short).toBe(false);
                 if (node.kind !== "component") continue;
                 expect(
                     (node.route?.length ?? 0) + (node.processStepIds?.length ?? 0),
                 ).toBeGreaterThan(0);
-                if (node.unitCost) expect(m.get(node.id)?.stack?.short).toBe(false);
             }
         }
     });

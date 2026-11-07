@@ -204,8 +204,9 @@ export function marginMaker(
 //   conversion  this step's labour, energy, machines and overhead, plus any
 //               margin we cannot attribute
 //   profit      this node's maker's gross profit (company margin x cost)
-// `short` is true when the inputs as modeled cost more than the node, so
-// the bands are clipped at zero and do not add up.
+// `short` is true when the bands are clipped at zero and do not add up:
+// the inputs as modeled cost more than the node, or a cited input cost is
+// below the raw material inside it.
 export interface CostStack {
     total: number;
     raw: number;
@@ -258,7 +259,7 @@ export function costStack(
         below: Math.max(0, inputs - raw),
         conversion: Math.max(0, added - profit),
         profit,
-        short: added < -total * 0.005,
+        short: added < -total * 0.005 || raw - inputs > total * 0.005,
     };
 }
 

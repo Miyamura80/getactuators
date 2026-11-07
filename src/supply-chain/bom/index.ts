@@ -44,7 +44,21 @@ export function caseWithNode(id: string): BomCase | undefined {
     return BOM_CASES.find((c) => flatten(c.root).some((p) => p.node.id === id));
 }
 
+// The first case and top-most node a company makes (for /bom?company=<id>
+// links from the company drawer).
+export function caseWithMaker(
+    companyId: string,
+): { c: BomCase; nodeId: string } | undefined {
+    for (const c of BOM_CASES) {
+        const hit = flatten(c.root).find((p) => p.node.makerIds?.includes(companyId));
+        if (hit) return { c, nodeId: hit.node.id };
+    }
+    return undefined;
+}
+
 export const MAX_LABEL_WORDS = 5;
+const MAX_SHORT_WORDS = 3;
+const MAX_ROUTE_STEP_WORDS = 3;
 const KEBAB = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const words = (s: string): number => s.trim().split(/\s+/).filter(Boolean).length;
 
@@ -57,6 +71,18 @@ function nodeErrors(c: BomCase, n: BomNode): string[] {
             words(n.label) > MAX_LABEL_WORDS,
             `label "${n.label}" is over ${MAX_LABEL_WORDS} words`,
         ],
+        ...(n.references ?? [])
+            .filter((r) => words(r.label) < 2 || words(r.label) > MAX_LABEL_WORDS)
+            .map((r): [boolean, string] => [
+                true,
+                `reference label "${r.label}" is not two to ${MAX_LABEL_WORDS} words`,
+            ]),
+        ...(n.route ?? [])
+            .filter((step) => words(step) > MAX_ROUTE_STEP_WORDS)
+            .map((step): [boolean, string] => [
+                true,
+                `route step "${step}" is over ${MAX_ROUTE_STEP_WORDS} words`,
+            ]),
         [n.sources.length === 0, "no sources"],
         [n.kind === "material" && !n.material, "material node without a material"],
         [
@@ -100,9 +126,14 @@ function caseErrors(c: BomCase): string[] {
             ? []
             : [`bom ${c.slug}: root unit cost must equal the case price`];
     const scene = sceneProblems(caseScene(c)).map((p) => `bom ${c.slug} scene: ${p}`);
+    const short =
+        words(c.short) > MAX_SHORT_WORDS
+            ? [`bom ${c.slug}: short "${c.short}" is over ${MAX_SHORT_WORDS} words`]
+            : [];
     return [
         ...dupes,
         ...rootCost,
+        ...short,
         ...scene,
         ...placed.flatMap((p) => nodeErrors(c, p.node)),
     ];
@@ -132,11 +163,13 @@ export function bomRecords(): unknown[] {
     ];
 }
 
-// Nodes as citing records (each node's structural sources).
+// Nodes and catalog-less robot links as citing records (their structural
+// sources).
 export function bomNodeRecords(): { sources: readonly string[] }[] {
-    return BOM_CASES.flatMap((c) =>
-        flatten(c.root).map(({ node }) => ({ sources: node.sources })),
-    );
+    return BOM_CASES.flatMap((c) => [
+        ...flatten(c.root).map(({ node }) => ({ sources: node.sources })),
+        ...(c.uses.other ?? []).map((o) => ({ sources: o.sources })),
+    ]);
 }
 
 export { caseScene, nodePart, partFor } from "./scene";

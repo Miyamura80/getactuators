@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { BOM_AS_OF, BOM_CASES, BOM_PATH, bomCasePath, caseWithNode } from "../../../../../src/supply-chain/bom";
+import { BOM_AS_OF, BOM_CASES, BOM_PATH, bomCasePath, caseWithMaker, caseWithNode } from "../../../../../src/supply-chain/bom";
 import { idiotText } from "../../../../../src/supply-chain/bom/format";
 import { heroOf, usesOf } from "../../../../../src/supply-chain/bom/used-in";
 import { ValueSankey } from "../../../components/flows/ValueSankey";
@@ -17,14 +17,21 @@ import { money, usdText } from "./PartPanel";
 const TITLE = "What an actuator is really made of";
 
 // /bom: the three teardowns side by side. #node=<id> (the link from a
-// /manufacturing step) forwards to the first case with that node.
+// /manufacturing step) forwards to the first case with that node, and
+// ?company=<id> (the company drawer's link) to the first node it makes.
 export function BomIndex({ menuOpen }: { menuOpen: boolean }) {
     const models = useMemo(() => BOM_CASES.map(caseModel), []);
     const [compare, setCompare] = useState(true);
     useEffect(() => {
         const node = readSelection(window.location.hash, "node");
         const c = node ? caseWithNode(node) : undefined;
-        if (c && node) window.location.replace(`${bomCasePath(c.slug)}#node=${encodeURIComponent(node)}`);
+        if (c && node) {
+            window.location.replace(`${bomCasePath(c.slug)}#node=${encodeURIComponent(node)}`);
+            return;
+        }
+        const company = new URLSearchParams(window.location.search).get("company");
+        const made = company ? caseWithMaker(company) : undefined;
+        if (made) window.location.replace(`${bomCasePath(made.c.slug)}#node=${encodeURIComponent(made.nodeId)}`);
     }, []);
     useEffect(() => {
         const prev = document.title;
@@ -66,18 +73,18 @@ export function BomIndex({ menuOpen }: { menuOpen: boolean }) {
                 <section className="bm-sec-block" aria-labelledby="bm-compare-h">
                     <div className="bm-sec-head">
                         <h2 id="bm-compare-h">Flows at one scale</h2>
-                        <button type="button" className="bm-toggle-one" aria-pressed={compare} onClick={() => setCompare((v) => !v)}>{compare ? "Hide" : "Compare"}</button>
+                        <button type="button" className="bm-toggle-one" aria-expanded={compare} aria-controls="bm-compare" onClick={() => setCompare((v) => !v)}>Compare</button>
                     </div>
                     <p className="bm-sub">The parts each actuator is built from, drawn against the most expensive case so band widths compare across actuators.</p>
-                    {compare ? <div className="bm-compare">
-                        {models.map((m) => {
+                    <div className="bm-compare" id="bm-compare" hidden={!compare}>
+                        {compare ? models.map((m) => {
                             const f = topSankey(m);
                             return <div key={m.c.slug} className="bm-compare-one">
                                 <h3><a href={bomCasePath(m.c.slug)}>{m.c.short}</a></h3>
                                 <ValueSankey nodes={f.nodes} links={f.links} label={m.c.name} format={money} valueMax={max} height={260} orientation="horizontal" />
                             </div>;
-                        })}
-                    </div> : null}
+                        }) : null}
+                    </div>
                 </section>
                 <details className="bm-method">
                     <summary>How to read this</summary>

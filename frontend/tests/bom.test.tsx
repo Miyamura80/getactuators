@@ -102,3 +102,21 @@ test("a case page syncs the part panel, Sankey and graph through #node=", async 
     await act(async () => { fireEvent.click(getByRole("radio", { name: "Raw material only" })); });
     expect(window.location.hash).toBe("#node=m-copper");
 });
+
+test("an unknown case shows a not-found state, not the index", () => {
+    setURL("/bom/no-such-case");
+    const { getByRole } = render(<Bom />);
+    expect(getByRole("heading", { level: 1 }).textContent).toBe("No such teardown");
+    expect(document.querySelector(".bm-card")).toBeNull();
+});
+
+test("the index's compare toggle is a disclosure with a fixed name", async () => {
+    setURL("/bom");
+    const { getByRole } = render(<Bom />);
+    const toggle = getByRole("button", { name: "Compare" });
+    expect(toggle.getAttribute("aria-expanded")).toBe("true");
+    await act(async () => { fireEvent.click(toggle); });
+    expect(toggle.textContent).toBe("Compare");
+    expect(toggle.getAttribute("aria-expanded")).toBe("false");
+    expect(document.getElementById("bm-compare")?.hidden).toBe(true);
+});

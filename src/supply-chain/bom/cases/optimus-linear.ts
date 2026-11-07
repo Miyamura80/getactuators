@@ -89,7 +89,7 @@ const rollerScrew: BomNode = {
     makerNote:
         "Tesla has not named its roller screw supplier. Beite, a listed Chinese maker sampling planetary roller screws for humanoids, stands in.",
     alternateMakerIds: ["best-precision", "nousbot"],
-    route: ["Match rollers to nut", "Assemble", "Run in", "Measure lead error"],
+    route: ["Match rollers, nut", "Assemble", "Run in", "Measure lead error"],
     references: [
         {
             label: "Market average, bank estimate",
@@ -592,7 +592,7 @@ export const OPTIMUS_LINEAR: BomCase = {
         ],
         note: "Tesla shows six actuator designs on Optimus, three of them roller-screw linear units at 500, 3,900 and 8,000 N.",
         route: [
-            "Fit motor on nut",
+            "Mount motor, nut",
             "Insert screw",
             "Fit sensors",
             "Close housing",

@@ -468,7 +468,7 @@ export const UNITREE_QDD: BomCase = {
     month: "2026-09",
     why: "A cheap, high-volume joint: one company designs the motor, gearbox and driver, so the chain has few hand-offs.",
     takeaway:
-        "No supplier margin sits between the metal and the shelf: the bought-in chips come to about $5, and almost everything else is Unitree's own step.",
+        "No supplier margin sits between the metal and the shelf: the bought-in chips come to about $4, and almost everything else is Unitree's own step.",
     uses: {
         actuators: [{ id: "unitree-go-m8010-6", relation: "this" }],
         other: [
@@ -489,8 +489,8 @@ export const UNITREE_QDD: BomCase = {
         kind: "assembly",
         unitCost: PRICE,
         ...UNITREE,
-        sources: [...LISTING, "unitree-go1-motor-shop"],
-        note: "Unitree's core business ran a 60% gross margin in 2025, per its IPO filing.",
+        sources: [...LISTING, "unitree-go1-motor-shop", "sse-unitree-pricing-2026"],
+        note: "Unitree's core business ran a 60% gross margin in 2025, per its IPO prospectus as the exchange quotes it.",
         route: [
             "Wind stator",
             "Bond magnets",

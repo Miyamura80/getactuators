@@ -189,6 +189,9 @@ const SH_GBD = GBD_DY.find((g) => g.grade === "sh")?.dy;
 // The raw materials in a magnet of `magnet` grams: an SH-grade recipe with
 // grain-boundary-diffused Dy, the grade robot motors run hot enough to need.
 // NdPr is total rare earth less Dy; iron is the remainder after boron.
+// Boron (about 1% of the magnet by weight) has no leaf: there is no cited
+// ferroboron price, and it moves magnet mass and raw cost by about 1%. Iron
+// takes the rest after rare earths and boron.
 export function magnetContent(prefix: string, magnet: Sourced<number>): BomNode[] {
     const dyFrac = SH_GBD?.value ?? 0.02;
     const ndprFrac = TOTAL_RE_FRACTION.value - dyFrac;

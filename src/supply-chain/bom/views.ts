@@ -23,6 +23,9 @@ const cited = (s: Sourced<number>) => sourced(s) as z.input<typeof sourcedOut>;
 const r2 = (n: number) => Math.round(n * 100) / 100;
 const r1 = (n: number | null) => (n === null ? null : Math.round(n * 10) / 10);
 
+const CARRIED =
+    "True when no /metals reading exists for the case month and the latest earlier one is carried forward.";
+
 const makerOut = z.object({
     company_id: z.string(),
     name: z.string(),
@@ -43,11 +46,13 @@ const stackOut = z
             ),
         maker_gross_profit_usd: z
             .number()
-            .describe("This node's maker's company gross margin times its unit cost."),
+            .describe(
+                "This node's maker's company gross margin times its unit cost, capped at what the node adds over its inputs.",
+            ),
         short: z
             .boolean()
             .describe(
-                "Inputs as modeled cost more than the node, so the bands are clipped.",
+                "Bands are clipped at zero and do not add up: inputs as modeled cost more than the node, or a cited input costs less than its raw material.",
             ),
     })
     .describe(
@@ -125,6 +130,7 @@ const nodeOut = z.object({
             label: z.string(),
             mass_g: sourcedOut,
             price_usd_per_kg: sourcedOut.nullable(),
+            price_carried: z.boolean().describe(CARRIED),
         })
         .nullable(),
     makers: z.array(makerOut),
@@ -151,7 +157,11 @@ const tierOut = z.object({
     node_id: z.string(),
     company_id: z.string(),
     revenue_usd: z.number(),
-    gross_margin: z.number(),
+    gross_margin: z
+        .number()
+        .describe(
+            "The maker's latest gross margin, as a fraction; its source and fiscal year are on the node's makers in get_bom.",
+        ),
     gross_profit_usd: z.number(),
     share_of_price: z.number(),
     representative: z
@@ -174,6 +184,7 @@ const materialOut = z.object({
     grams: z.number(),
     cost_usd: z.number(),
     price_usd_per_kg: sourcedOut.nullable(),
+    price_carried: z.boolean().describe(CARRIED),
 });
 
 export const bomCaseOut = z.object({
@@ -220,11 +231,13 @@ export const bomListOut = z.object({
 function materialView(node: BomNode, month: string) {
     const m = node.material;
     if (!m) return null;
+    const p = materialPrice(m.seriesId, month);
     return {
         series_id: m.seriesId,
         label: materialLabel(m.seriesId),
         mass_g: cited(m.massG),
-        price_usd_per_kg: sourced(materialPrice(m.seriesId, month)?.price),
+        price_usd_per_kg: sourced(p?.price),
+        price_carried: p?.carried ?? false,
     };
 }
 
@@ -305,13 +318,17 @@ export function bomCaseView(c: BomCase): z.input<typeof bomCaseOut> {
                 sources: refs(node.sources),
             };
         }),
-        materials: materialTotals(c).map((t) => ({
-            series_id: t.seriesId,
-            label: materialLabel(t.seriesId),
-            grams: r2(t.grams),
-            cost_usd: r2(t.cost),
-            price_usd_per_kg: sourced(materialPrice(t.seriesId, c.month)?.price),
-        })),
+        materials: materialTotals(c).map((t) => {
+            const p = materialPrice(t.seriesId, c.month);
+            return {
+                series_id: t.seriesId,
+                label: materialLabel(t.seriesId),
+                grams: r2(t.grams),
+                cost_usd: r2(t.cost),
+                price_usd_per_kg: sourced(p?.price),
+                price_carried: p?.carried ?? false,
+            };
+        }),
         margin_capture: {
             price_usd: mc.price,
             raw_material_usd: r2(mc.raw),

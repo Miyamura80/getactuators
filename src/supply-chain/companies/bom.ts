@@ -67,7 +67,7 @@ export const BOM_MARGINS = {
         0.6013,
         ["sse-unitree-pricing-2026"],
         "2025",
-        "Gross margin of the core businesses in 2025, from the IPO prospectus as reported.",
+        "Gross margin of the core businesses in 2025, the prospectus figure as quoted in the exchange's IPO pricing news release; the prospectus itself is not cited.",
     ),
     renishaw: margin(
         0.617,

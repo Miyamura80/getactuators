@@ -32,7 +32,8 @@ export function caseScene(c: BomCase): ExplodeSceneSpec {
 
 // The node a 3D part stands for: the part's own node, or for a node without
 // one, the nearest ancestor that has a part (so selecting magnets lights the
-// rotor).
+// rotor). Linking runs up the tree only: an assembly with no part of its own
+// (a stator) lights nothing, though its children's parts are drawn.
 export function partFor(c: BomCase, nodeId: string): string | null {
     const placed = flatten(c.root);
     const parent = new Map(placed.map((p) => [p.node.id, p.parent?.id ?? null]));

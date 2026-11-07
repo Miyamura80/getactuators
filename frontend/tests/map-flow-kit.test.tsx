@@ -302,7 +302,9 @@ test("Sankey: hover lights a node's upstream and downstream paths only", () => {
     const p = flowPath(LINKS, "oxide");
     expect([...p.nodes].sort()).toEqual(["magnet", "motor", "ore", "oxide"]);
     expect(p.links.has("other->motor")).toBe(false);
-    const c = render(<ValueSankey label="Chain" nodes={NODES} links={LINKS} />).container;
+    const hovered: (string | null)[] = [];
+    const r = render(<ValueSankey label="Chain" nodes={NODES} links={LINKS} onHoverNode={(id) => hovered.push(id)} />);
+    const c = r.container;
     const hit = c.querySelector('.fk-node-hit[aria-label^="Oxide"]') as Element;
     act(() => { fireEvent.pointerEnter(hit); });
     expect(c.querySelector(".fk-sankey")?.classList.contains("has-focus")).toBe(true);
@@ -310,6 +312,13 @@ test("Sankey: hover lights a node's upstream and downstream paths only", () => {
     expect(c.querySelector(".fk-readout-name")?.textContent).toBe("Oxide");
     act(() => { fireEvent.pointerLeave(hit); });
     expect(c.querySelector(".fk-sankey")?.classList.contains("has-focus")).toBe(false);
+    act(() => { fireEvent.focus(hit); });
+    act(() => { fireEvent.blur(hit); });
+    expect(hovered).toEqual(["oxide", null, "oxide", null]);
+    // Unmounting mid-hover clears the linked view.
+    act(() => { fireEvent.pointerEnter(hit); });
+    r.unmount();
+    expect(hovered).toEqual(["oxide", null, "oxide", null, "oxide", null]);
 });
 
 test("Sankey: click selects through onSelectNode; layout turns vertical when asked", () => {

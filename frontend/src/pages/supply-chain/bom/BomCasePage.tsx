@@ -112,15 +112,15 @@ export function BomCasePage({ c, menuOpen }: { c: BomCase; menuOpen: boolean }) 
                         <summary>Every part, its cost and idiot index</summary>
                         <div className="bm-nodes-wrap">
                             <table>
-                                <thead><tr><th scope="col">Part</th><th scope="col">Qty</th><th scope="col">Mass</th><th scope="col">Unit cost</th><th scope="col">Raw material</th><th scope="col">Idiot index</th></tr></thead>
+                                <thead><tr><th scope="col">Part</th><th scope="col">Qty</th><th scope="col">Unit mass</th><th scope="col">Unit cost</th><th scope="col">Unit raw material</th><th scope="col">Idiot index</th></tr></thead>
                                 <tbody>{flatten(c.root).filter((p) => p.node.kind !== "material").map(({ node, depth, count }) => {
                                     const x = m.metrics.get(node.id);
                                     return <tr key={node.id} className={node.id === selected ? "is-selected" : undefined}>
                                         <th scope="row" style={{ paddingLeft: 8 + depth * 12 }}><button type="button" className="bm-link" onClick={() => select(node.id)}>{node.label}</button></th>
                                         <td className="sc-num">{count}</td>
-                                        <td className="sc-num">{gramsText((x?.mass ?? 0) * count)}</td>
+                                        <td className="sc-num">{gramsText(x?.mass ?? 0)}</td>
                                         <td className="sc-num">{node.unitCost ? money(node.unitCost.value) : "n/a"}</td>
-                                        <td className="sc-num">{money((x?.raw ?? 0) * count)}</td>
+                                        <td className="sc-num">{money(x?.raw ?? 0)}</td>
                                         <td className="sc-num">{x?.idiot ? idiotText(x.idiot) : "n/a"}</td>
                                     </tr>;
                                 })}</tbody>

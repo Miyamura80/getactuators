@@ -1,4 +1,4 @@
-import { type ReactNode, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { formatValue } from "../../../../src/supply-chain/format";
 import { NodeBadge, type NodeBadgeProps } from "./NodeBadge";
 import { ProcessStepChip } from "./ProcessStepChip";
@@ -15,7 +15,7 @@ export interface FlowNode {
     // /manufacturing step ids that make this node.
     steps?: string[];
     // "value": a source of value added rather than a part (labour and
-    // overhead, gross profit); drawn hatched with its links tinted.
+    // overhead, gross profit); drawn in its own tone with its links tinted.
     tone?: "value";
 }
 
@@ -56,10 +56,18 @@ export function ValueSankey({ nodes, links, label, unit = "USD", format, selecte
     const fmt = format ?? usdFormat(unit);
     const vertical = orientation === "vertical" || (orientation === "auto" && width < VERTICAL_BELOW);
     const [hover, setHoverState] = useState<string | null>(null);
+    // The latest hover and callback, so unmounting mid-hover (a keyed
+    // remount on a mode switch) clears the linked view's highlight.
+    const hoverRef = useRef<{ id: string | null; cb?: (id: string | null) => void }>({ id: null });
+    hoverRef.current.cb = onHoverNode;
     const setHover = (id: string | null) => {
         setHoverState(id);
+        hoverRef.current.id = id;
         onHoverNode?.(id);
     };
+    useEffect(() => () => {
+        if (hoverRef.current.id !== null) hoverRef.current.cb?.(null);
+    }, []);
     const [picked, setPicked] = useState<string | null>(null);
     const selected = selectedId !== undefined ? selectedId : picked;
     const ids = useMemo(() => nodes.map((n) => n.id), [nodes]);

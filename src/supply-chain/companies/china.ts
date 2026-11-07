@@ -7,7 +7,9 @@ import type { Company } from "./types";
 // (Midea's KUKA is already there). Records already in the seed list
 // (Northern Rare Earth, JL MAG, Leaderdrive, Unitree, UBTech, AgiBot, Tuopu)
 // are reused, not repeated. Many robot makers are private: revenue and
-// margin are left out unless a filing or IPO report gives them.
+// margin are left out unless a filing or IPO report gives them. Listed
+// part makers' gross margins (for /bom) come from ./bom, some from an
+// aggregator's statements page, with the confidence set to match.
 
 // Yuan to dollars for calendar 2025.
 const CNY_PER_USD = 7.2;

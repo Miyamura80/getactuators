@@ -94,7 +94,7 @@
 .bm-sec-tools { display: flex; flex-wrap: wrap; gap: 8px; }
 .bm-toggle { display: inline-flex; border: 1px solid var(--line-strong); }
 .bm-toggle button, .bm-toggle-one { padding: 5px 12px; border: 0; background: none; color: var(--muted); font: 600 11px/1.2 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; }
-.bm-toggle button[aria-checked="true"], .bm-toggle-one[aria-pressed="true"] { background: var(--cyan); color: var(--black); }
+.bm-toggle button[aria-checked="true"], .bm-toggle-one[aria-pressed="true"], .bm-toggle-one[aria-expanded="true"] { background: var(--cyan); color: var(--black); }
 .bm-toggle-one { border: 1px solid var(--line-strong); }
 .bm-method { margin-top: 32px; border-top: 1px solid var(--line); padding-top: 12px; }
 .bm-method summary { cursor: pointer; font: 600 12px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; }
@@ -134,6 +134,7 @@
 .bm-card-name { font-size: 18px; font-weight: 600; line-height: 1.25; }
 .bm-card-take { flex: 1; margin: 10px 0 12px; color: var(--muted); font-size: 13px; line-height: 1.5; }
 .bm-compare { display: grid; gap: 24px; }
+.bm-compare[hidden] { display: none; }
 .bm-compare-one h3 { margin: 0 0 6px; font: 600 12px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; }
 .bm-compare-one h3 a { color: var(--text); }
 
@@ -152,8 +153,7 @@ a.bm-hero:hover .bm-hero-cap { color: var(--cyan); }
 /* "Used in" line: avatars for robots with photos, names for the rest */
 .bm-used { display: flex; align-items: center; gap: 0 6px; margin: 10px 0 0; min-width: 0; overflow: hidden; white-space: nowrap; font-size: 13px; line-height: 28px; }
 .bm-used-k { flex: none; font: 600 10px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-right: 2px; }
-.bm-used-slot { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
-.bm-used-slot:last-of-type { overflow: hidden; }
+.bm-used-slot { display: inline-flex; align-items: center; gap: 6px; min-width: 0; overflow: hidden; }
 .bm-used-dot { color: var(--muted); }
 .bm-used-item { display: inline-flex; align-items: center; gap: 6px; min-width: 0; color: var(--text); text-decoration: none; }
 .bm-used-item > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }

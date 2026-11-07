@@ -162,6 +162,7 @@ export function topSankey(m: CaseModel): SankeyModel {
 export function graphModel(m: CaseModel): { nodes: GraphNode[]; edges: GraphEdge[] } {
     const nodes = new Map<string, GraphNode>();
     const edges = new Map<string, GraphEdge>();
+    const labels = new Map<string, Set<string>>();
     for (const n of m.byId.values()) {
         const maker = n.makerIds?.[0];
         if (!maker) continue;
@@ -182,9 +183,16 @@ export function graphModel(m: CaseModel): { nodes: GraphNode[]; edges: GraphEdge
         const prev = edges.get(key);
         const confidence = n.makerConfidence === "reported" ? "reported" : "estimated";
         if (prev) {
-            prev.label = prev.label?.includes(n.label) ? prev.label : `${prev.label}, ${n.label}`;
+            const seen = labels.get(key);
+            if (seen && !seen.has(n.label)) {
+                seen.add(n.label);
+                prev.label = `${prev.label}, ${n.label}`;
+            }
             if (confidence === "reported") prev.confidence = "reported";
-        } else edges.set(key, { from: maker, to: buyer, label: n.label, confidence });
+        } else {
+            edges.set(key, { from: maker, to: buyer, label: n.label, confidence });
+            labels.set(key, new Set([n.label]));
+        }
     }
     return { nodes: [...nodes.values()], edges: [...edges.values()] };
 }

@@ -42,6 +42,7 @@
 /* Value added (labour and overhead, gross profit) rather than a part. */
 .fk-node.is-value { fill: var(--fk-value, #8a7a52); }
 .fk-link.is-value { stroke: var(--fk-value, #8a7a52); stroke-opacity: 0.16; }
+.fk-sankey.has-focus .fk-link.is-value { stroke-opacity: 0.1; }
 .fk-sankey.has-focus .fk-link.is-value.is-lit { stroke: var(--fk-value, #8a7a52); stroke-opacity: 0.6; }
 .fk-node-hit {
     position: absolute;
