@@ -1,4 +1,5 @@
 import type { Confidence } from "../sourced";
+import { CHINA_MORE_LINKS } from "./china-more-links";
 
 // Links that touch the /china companies: ore to separator, magnets to
 // carmakers and appliance makers, reported Optimus parts, and the equity
@@ -134,4 +135,5 @@ export const CHINA_LINKS: ChinaLink[] = [
         confidence: "estimated",
         note: "Reported as a strategic investment; the size of the stake is not public.",
     },
+    ...CHINA_MORE_LINKS,
 ];

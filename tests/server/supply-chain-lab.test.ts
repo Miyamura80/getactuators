@@ -71,7 +71,8 @@ test("the lab twin has the map and flow kits as tables", async () => {
     expect(md).toContain(
         "| Ningbo Tuopu Group (CN) | Tesla (US) | Optimus actuator assemblies | estimated |",
     );
-    expect(md).not.toContain("Shenghe Resources (CN) |");
+    // The ended MP Materials offtake is history, not a current flow.
+    expect(md).not.toContain("| MP Materials (US) | Shenghe Resources (CN) |");
     expect(md).toContain("## Flow kit");
     expect(md).toContain("| Actuators | Berkeley Humanoid Lite | $3,616 |");
 });
