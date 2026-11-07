@@ -25,6 +25,7 @@ export function CompanyDrawer({ companyId, onClose }: { companyId: string | null
                 {c.stages.map((s) => <li key={s}>{STAGE_LABEL[s]}</li>)}
             </ul>
             {c.revenue ? <p className="fk-company-num"><span>Revenue</span> <SourcedValue value={c.revenue} /></p> : null}
+            {c.grossMargin ? <p className="fk-company-num"><span>Gross margin</span> <SourcedValue value={c.grossMargin} /></p> : null}
             {c.ownership?.ticker ? <p className="fk-company-num"><span>Ticker</span> <b>{c.ownership.ticker}</b></p> : null}
             {c.products?.length ? <ul className="fk-company-products">{c.products.map((p) => <li key={p}>{p}</li>)}</ul> : null}
             <p className="fk-company-links">

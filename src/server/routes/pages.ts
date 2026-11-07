@@ -146,6 +146,8 @@ const PAGE_PATHS = [
     "/benchmarks",
     "/manufacturing",
     "/alts",
+    "/bom",
+    "/bom/:slug",
     ...LIVE_COUNTRY_PATHS,
     "/sdk",
     "/people",
@@ -179,4 +181,5 @@ export const routes: Route[] = [
     { method: "GET", path: "/comparisons/:file", handler: twin },
     { method: "GET", path: "/tools/:file", handler: twin },
     { method: "GET", path: "/lab/:file", handler: twin },
+    { method: "GET", path: "/bom/:file", handler: twin },
 ];
