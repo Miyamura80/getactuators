@@ -215,7 +215,18 @@ test("?region= zooms to a state: pins, links and table narrow to it, and there i
     const rows = c.querySelectorAll(".sc-ctable tbody tr");
     expect(rows.length).toBeGreaterThan(0);
     expect(rows.length).toBeLessThan(countryCompanies("US").length);
+    // A state opens on its sites alone; the links summary draws a place's
+    // links on hover, one chip per country.
+    expect(c.querySelectorAll(".mk-arc")).toHaveLength(0);
+    expect(c.querySelector(".mk-cluster-box")).toBeNull();
+    const cn = [...c.querySelectorAll(".cp-links button")].find((b) => b.getAttribute("aria-label")?.startsWith("China")) as HTMLElement;
+    expect(cn).toBeDefined();
+    act(() => { fireEvent.pointerEnter(cn); });
     expect(c.querySelectorAll(".mk-arc").length).toBeGreaterThan(0);
+    act(() => { fireEvent.pointerLeave(cn); });
+    expect(c.querySelectorAll(".mk-arc")).toHaveLength(0);
+    // Links to other states are listed by state code.
+    expect([...c.querySelectorAll(".cp-links button")].some((x) => x.getAttribute("aria-label")?.startsWith("Florida"))).toBe(true);
     expect(c.querySelector(".cp-regions summary")?.textContent).toContain("Texas");
     act(() => { fireEvent.keyDown(window, { key: "Escape" }); });
     expect(readCountryState(window.location.search).region).toBeNull();
@@ -241,4 +252,16 @@ test("clicking a state outline zooms to it", () => {
     expect(readCountryState(window.location.search).region).toBe("CO");
     // States without sites are not buttons.
     expect(c.querySelector('.mk-land[data-id="US-AK"]')?.getAttribute("role")).toBeNull();
+});
+
+test("in a state, a company's links bundle per country into one chip each", () => {
+    setURL("/us?region=TX&company=tesla");
+    const c = mountUS().container;
+    const chips = [...c.querySelectorAll(".mk-chip")];
+    const codes = chips.map((x) => x.getAttribute("aria-label") ?? "");
+    expect(new Set(codes).size).toBe(codes.length);
+    const china = chips.find((x) => (x.getAttribute("aria-label") ?? "").includes("China"));
+    expect(china?.querySelector("b")?.textContent).toBe("8");
+    // Eight Chinese suppliers to one Tesla site draw as one stroke.
+    expect(c.querySelectorAll(".mk-arcs .mk-arc").length).toBeLessThan(8);
 });

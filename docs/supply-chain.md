@@ -311,5 +311,10 @@ precision, source) and `<CompanyTable>` (sortable, row click selects), all
 in `frontend/src/components/supply-chain/`. URL state is `?segment=`,
 `?company=`, `?site=`, `?cluster=` and, on a page with `regions`,
 `?region=` (`/us?region=TX`; `?state=` is read as the same). A region
-narrows the map, links and company table to it, and the markdown twin lists
-sites by region with those links.
+narrows the map and company table to it and opens on its sites alone: the
+links in and out of the region (those with an end at a head office there)
+are listed under the map by partner country or region, and draw on hover or
+click, or once a company is picked. Arcs whose far end is off the map run to
+one chip per country (or, for a domestic partner, its region code, which
+zooms there), bundled per site. The markdown twin lists sites by region with
+deep links.

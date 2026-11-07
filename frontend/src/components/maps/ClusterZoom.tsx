@@ -28,6 +28,9 @@ export interface ClusterZoomProps {
     // joins that hub's one marker, named after it, instead of grouping by
     // distance, and named cluster boxes wait until the map is zoomed in.
     hubs?: readonly MapHub[];
+    // Named cluster boxes and tags on the map (false: the index under the
+    // map still lists them), e.g. off when zoomed into one region.
+    boxes?: boolean;
 }
 
 export interface MapHub {
@@ -51,7 +54,7 @@ const HUB_K = 1.25;
 // A group marker shows what it holds, one segment tile per segment present
 // with its site count (SegmentMix), and, when its members share a named
 // cluster, a company or a region, a callout naming it ("Yangtze River Delta").
-export function ClusterZoom({ pins, radius = 28, clusters = [], activeCluster, onCluster, selectedId, onSelect, table = "Sites", labels = true, hubs }: ClusterZoomProps) {
+export function ClusterZoom({ pins, radius = 28, clusters = [], activeCluster, onCluster, selectedId, onSelect, table = "Sites", labels = true, hubs, boxes = true }: ClusterZoomProps) {
     const map = useMap();
     const { width, height, project, zoom, scale, svgLayer, belowLayer, zoomTo } = map;
     const r = radius / scale;
@@ -90,12 +93,12 @@ export function ClusterZoom({ pins, radius = 28, clusters = [], activeCluster, o
     const go = (c: NamedCluster, box: Box) => { zoomTo(box, MAX_K); onCluster?.(c.id); };
     // On-map boxes only once they are big enough to read; the index under
     // the map always lists them.
-    const boxed = (hubbed ? [] : named).map((n) => ({ ...n, screen: [toScreen(n.box[0], zoom), toScreen(n.box[1], zoom)] as Box }))
+    const boxed = (hubbed || !boxes ? [] : named).map((n) => ({ ...n, screen: [toScreen(n.box[0], zoom), toScreen(n.box[1], zoom)] as Box }))
         .filter((n) => (n.screen[1][0] - n.screen[0][0]) * scale >= MIN_BOX_PX);
     const multi = groups.filter((g) => g.ids.length > 1).map((g) => {
         const members = g.ids.flatMap((id) => byId.get(id) ?? []);
         const mix = segmentMix(members);
-        const name = hubbed ? hubName(members.map(hubOf)) : groupName(members, clusters, !oneRegion);
+        const name = hubbed ? hubName(members.map(hubOf)) : groupName(members, boxes ? clusters : [], !oneRegion);
         return { g, key: g.ids.join("|"), members, mix, size: mixSize(mix, GROUP_TILE), name };
     });
     // Each tag takes a free corner of its box, clear of every marker and of

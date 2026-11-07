@@ -177,3 +177,21 @@
     .cp-filter button + button { border-left: 0; border-top: 1px solid var(--line-strong); }
     .cp-mapwrap .mk-drawer { width: auto; }
 }
+
+/* A region's links: one chip per partner place, drawn on hover or click */
+.cp-links { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 8px 0 0; }
+.cp-links-label { margin-right: 4px; font: 600 10px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.cp-links button {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    min-height: 28px;
+    padding: 0 8px;
+    border: 1px solid var(--line-strong);
+    background: none;
+    color: var(--text);
+    font: 600 11px var(--mono);
+    cursor: pointer;
+}
+.cp-links button i { font-style: normal; font-weight: 500; color: var(--muted); }
+.cp-links button:hover, .cp-links button:focus-visible, .cp-links button.is-active, .cp-links button[aria-pressed="true"] { border-color: var(--cyan); outline: none; }

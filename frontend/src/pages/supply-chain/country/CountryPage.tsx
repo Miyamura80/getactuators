@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { SEGMENTS, SEGMENT_LABEL } from "../../../../../src/supply-chain/companies";
 import {
     COUNTRY_AS_OF,
@@ -8,7 +8,7 @@ import {
     countryLinks,
     countrySites,
 } from "../../../../../src/supply-chain/country-pages";
-import { SEGMENT_SHORT, sitePins, supplyArcs } from "../../../../../src/supply-chain/map";
+import { type MapArc, type MapArcEnd, SEGMENT_SHORT, sitePins, supplyArcs } from "../../../../../src/supply-chain/map";
 import { getCompany, sitesOf } from "../../../../../src/supply-chain/registry";
 import { Arcs } from "../../../components/maps/Arcs";
 import { ClusterZoom } from "../../../components/maps/ClusterZoom";
@@ -21,6 +21,7 @@ import { CompanyDrawer } from "../../../components/supply-chain/CompanyDrawer";
 import { CompanyTable } from "../../../components/supply-chain/CompanyTable";
 import { FootnotesProvider } from "../../../components/supply-chain/footnotes";
 import { SourcesSection } from "../../../components/supply-chain/SourcesSection";
+import { LinkSummary } from "./LinkSummary";
 import { RegionPicker } from "./RegionPicker";
 import { StageStrip } from "./StageStrip";
 import { useCountryState } from "./url-state";
@@ -86,8 +87,34 @@ export function CountryPage({ page, menuOpen = false, topology }: {
     const companyId = site?.companyId ?? company;
     const busy = data.arcs.length > BUSY_LINKS || data.sites.length > BUSY_SITES;
     const touches = (ids: (id: string) => boolean) => data.arcs.filter((a) => ids(a.from.id) || ids(a.to.id));
+    const regions = page.regions;
+    // The region code of a domestic arc end ("CA"), for chips and the links
+    // summary.
+    const regionOf = (end: MapArcEnd) => (end.country === page.code ? regions?.list.find((r) => r.name === end.admin1)?.code : undefined);
+    // A region opens on its sites alone; its links draw from the summary
+    // under the map (hovered or picked) or once a company is chosen.
+    // Links in and out of the region: arcs anchor at a company's head office,
+    // so those are the links with an end there.
+    const inside = (end: MapArcEnd) => !!region && end.country === page.code && end.admin1 === region.name;
+    const regionArcs = region ? data.arcs.filter((a) => inside(a.from) || inside(a.to)) : [];
+    // The partner place hovered or picked in the summary, kept per region
+    // so a new region starts with none.
+    const [link, setLink] = useState<{ region: string; hover: string | null; pin: string | null } | null>(null);
+    const here = link && link.region === region?.code ? link : null;
+    const linkKey = here?.hover ?? null;
+    const linkPin = here?.pin ?? null;
+    const setLinkKey = (hover: string | null) => region && setLink({ region: region.code, hover, pin: linkPin });
+    const setLinkPin = (pin: string | null) => region && setLink({ region: region.code, hover: linkKey, pin });
+    const partnerKey = (a: MapArc) => {
+        const inFrom = inside(a.from);
+        const inTo = inside(a.to);
+        if (inFrom && inTo) return "within";
+        const far = inFrom ? a.to : a.from;
+        return regionOf(far) ?? far.country;
+    };
+    const linkFocus = linkKey ?? linkPin;
     const arcs = companyId ? touches((id) => id === companyId)
-        : inRegion ? touches((id) => inRegion.has(id))
+        : inRegion ? (linkFocus ? regionArcs.filter((a) => partnerKey(a) === linkFocus) : [])
             : busy ? []
                 : segment ? touches((id) => getCompany(id)?.segment === segment)
                     : data.arcs;
@@ -98,7 +125,6 @@ export function CountryPage({ page, menuOpen = false, topology }: {
     const hubs = busy && !region && page.hubs
         ? page.hubs.map((h) => ({ id: h.id, label: h.label, has: (p: { admin1?: string }) => h.regions.includes(p.admin1 ?? "") }))
         : undefined;
-    const regions = page.regions;
     // Outline ids ("US-TX") of the regions holding a shown site.
     const regionIds = new Set(pins.flatMap((p) => {
         const r = regions?.list.find((x) => x.name === p.admin1);
@@ -153,7 +179,7 @@ export function CountryPage({ page, menuOpen = false, topology }: {
                         toggle={region ? <button type="button" className="cp-back" onClick={() => toRegion(null)}>
                             <svg viewBox="0 0 10 10" aria-hidden="true"><path d="M8 5H2M5 2 2 5l3 3" /></svg>All {regions?.plural}
                         </button> : undefined}>
-                        <Arcs arcs={arcs} />
+                        <Arcs arcs={arcs} regionOf={regions ? regionOf : undefined} onRegion={regions ? (code) => toRegion(code) : undefined} />
                         <ClusterZoom
                             pins={shown}
                             clusters={page.clusters}
@@ -164,6 +190,7 @@ export function CountryPage({ page, menuOpen = false, topology }: {
                             table={`${where} sites`}
                             labels={busy && !region ? "zoomed" : true}
                             hubs={hubs}
+                            boxes={!region}
                         />
                     </CountryMap>
                     {companyId ? <CompanyDrawer
@@ -176,6 +203,18 @@ export function CountryPage({ page, menuOpen = false, topology }: {
                         onMap={onMap}
                     /> : null}
                 </section>
+
+                {region && inRegion && !companyId && regionArcs.length ? <LinkSummary
+                    arcs={regionArcs}
+                    keyOf={partnerKey}
+                    inside={inside}
+                    region={region}
+                    regionOf={regionOf}
+                    active={linkFocus}
+                    pinned={linkPin}
+                    onHover={setLinkKey}
+                    onPin={(k) => setLinkPin(k === linkPin ? null : k)}
+                /> : null}
 
                 {cluster ? <section className="cp-cluster" aria-label={cluster.label}>
                     <h2>{cluster.label} <span>{members.length} companies</span></h2>
