@@ -238,7 +238,7 @@ export function buildOpenApi(operations: readonly Operation[]): Json {
             {
                 name: "trends",
                 description:
-                    "Dated, cited points over time: actuator prices, robot market shares, roller screw cost, the price of AI and humanoid battery runtime.",
+                    "Dated, cited points over time: actuator list prices, strain-wave gear rated life, humanoid and industrial robot market shares, the rotary and linear actuator split, roller screw cost, how fast AI and other technologies get cheaper, and humanoid battery runtime.",
             },
             {
                 name: "people",
