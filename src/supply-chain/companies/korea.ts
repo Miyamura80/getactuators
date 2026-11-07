@@ -2,9 +2,11 @@ import type { Company } from "./types";
 
 // Korean companies along the actuator chain for /korea, the foreign makers
 // with plants in Korea (Schaeffler, ASM), and the foreign partners their
-// supply links reach (ReElement, Arafura, Bear Robotics, ONExia). Hyundai
-// Mobis, Rainbow Robotics and NSK were already in the registry. No revenue
-// or margin yet: the DART figures were not read for this dataset.
+// supply links reach (ReElement, Arafura, Bear Robotics, ONExia, VAC,
+// Figure AI). KIMM, a state research institute, is here as the customer for
+// SPG's reducers. Hyundai Mobis, Rainbow Robotics and NSK were already in the
+// registry. No revenue or margin yet: the DART figures were not read for
+// this dataset.
 
 export const KOREA_COMPANIES: Company[] = [
     // Rare earths, stockpiles and materials
@@ -419,5 +421,44 @@ export const KOREA_COMPANIES: Company[] = [
         products: ["Turnkey robot cells", "Packaging and palletizing automation"],
         url: "https://pennbizreport.com/news/31097-korean-robotics-company-purchases-majority-stake-in-exton-based-onexia/",
         sources: ["koreaherald-doosan-onexia-2025", "pennbiz-onexia-2025"],
+    },
+    {
+        id: "kimm",
+        name: "Korea Institute of Machinery & Materials (KIMM)",
+        localName: "한국기계연구원",
+        hqCountry: "KR",
+        stages: ["actuator", "robot"],
+        segment: "robot-actuator-oem",
+        ownership: { kind: "state", parent: "Ministry of Science and ICT" },
+        products: [
+            "KAIROS humanoid research platform",
+            "Standard humanoid drive modules and actuators",
+        ],
+        url: "https://www.kimm.re.kr/eng/",
+        sources: ["kimm-site", "linkedin-kimm", "biggo-spg-kimm-2026"],
+    },
+    {
+        id: "vac",
+        name: "VACUUMSCHMELZE (VAC)",
+        hqCountry: "DE",
+        stages: ["magnet"],
+        segment: "magnets-motors",
+        products: [
+            "Rare earth permanent magnets",
+            "Magnetic alloys and inductive components",
+        ],
+        url: "https://vacuumschmelze.com/",
+        sources: ["vac-press-cyclic-2025", "vac-sustainability-statement"],
+    },
+    {
+        id: "figure",
+        name: "Figure AI",
+        hqCountry: "US",
+        stages: ["robot"],
+        segment: "robot-actuator-oem",
+        ownership: { kind: "private" },
+        products: ["Figure 03 humanoid"],
+        url: "https://www.figure.ai/",
+        sources: ["wiki-figure-ai"],
     },
 ];

@@ -1,4 +1,5 @@
 import type { SourceId, Sourced } from "../sourced";
+import { CHINA_MORE_COMPANIES } from "./china-more";
 import type { Company } from "./types";
 
 // Chinese companies along the actuator chain for /china, plus the foreign
@@ -435,6 +436,7 @@ export const CHINA_COMPANIES: Company[] = [
         url: "https://cnevpost.com/2026/09/21/tesla-audits-china-suppliers-optimus-mass-production/",
         sources: ["cnevpost-optimus-audits-2026"],
     }),
+    ...CHINA_MORE_COMPANIES,
 ];
 
 // Unitree's IPO figures, attached to the seed record in ./index.ts.

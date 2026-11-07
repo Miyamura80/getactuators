@@ -32,15 +32,6 @@ export const PRECISION_SITES: Site[] = [
         status: "operating",
         sources: ["gsa-roller-screw-catalog"],
     },
-    hq("schaeffler-herzogenaurach", {
-        companyId: "schaeffler",
-        name: "Schaeffler headquarters",
-        country: "DE",
-        admin1: "Bavaria",
-        lat: 49.57,
-        lon: 10.89,
-        sources: ["schaeffler-ewellix-purchase"],
-    }),
     hq("ewellix-gothenburg", {
         companyId: "ewellix",
         name: "Ewellix headquarters",

@@ -76,6 +76,14 @@ export const KOREA_LINKS: KoreaLink[] = [
         note: "About 19 t delivered by June 2025 and another 10 t sold in July 2025, with first kilogram lots of terbium and dysprosium sent to Neo's Estonia magnet plant.",
     },
     {
+        from: "asm",
+        to: "vac",
+        what: "NdFeB alloy from the Korean Metals Plant (7.2 t purchase order across five grades)",
+        sources: ["investornews-asm-sales-2025", "smallcaps-asm-sales-2025"],
+        confidence: "reported",
+        note: "Ordered in June 2025 after VAC validated earlier KMP material; shipments were scheduled from July through the second half of 2025.",
+    },
+    {
         from: "komir",
         to: "arafura",
         what: "Cooperation on rare earth supply to Korea",
@@ -116,6 +124,22 @@ export const KOREA_LINKS: KoreaLink[] = [
         confidence: "estimated",
         note: "The two agreed in 2025 to co-develop Atlas's vision module; a March 2026 press report says shipments have started, which neither company has confirmed.",
     },
+    {
+        from: "lg-innotek",
+        to: "figure",
+        what: "Camera modules for Figure's humanoid robots",
+        sources: ["koreaherald-lg-innotek-figure-2025", "donga-lg-innotek-ces-2026"],
+        confidence: "estimated",
+        note: "Talks on volume and price were reported in June 2025, with mass production expected from early 2026; in January 2026 Dong-A Ilbo named Figure an LG Innotek client. Neither company has published contract terms.",
+    },
+    {
+        from: "samsung-electro-mechanics",
+        to: "tesla",
+        what: "Camera modules for the Optimus humanoid",
+        sources: ["investing-semco-optimus-2025"],
+        confidence: "estimated",
+        note: "Single source: an August 2025 Investing.com summary of an Electronic Times report. Neither company has confirmed it.",
+    },
     // Gears and reducers
     {
         from: "spg",
@@ -124,6 +148,14 @@ export const KOREA_LINKS: KoreaLink[] = [
         sources: ["asiae-spg-rainbow-2026"],
         confidence: "estimated",
         note: "One report calls SPG the exclusive reducer supplier; no second source confirms exclusivity.",
+    },
+    {
+        from: "spg",
+        to: "kimm",
+        what: "Precision reducers for the KAIROS humanoid's standard drive modules (waist, hip and ankle joints)",
+        sources: ["biggo-spg-kimm-2026", "kalpha-spg-kairos-2026"],
+        confidence: "reported",
+        note: "SPG announced the installation in September 2026, about a year after an October 2025 actuator development MoU. KAIROS is a state research platform, so this is a prototype supply, not a volume order.",
     },
     {
         from: "woorim-pts",

@@ -262,6 +262,17 @@ export const SITES: Site[] = [
         lon: -81.4,
         sources: ["timken-site"],
     }),
+    // Schaeffler's own headquarters (sourced in /china), so its arcs to
+    // Chinese partners start in Germany, not at its first plant (in Korea).
+    hq("schaeffler-herzogenaurach", {
+        companyId: "schaeffler",
+        name: "Schaeffler headquarters",
+        country: "DE",
+        admin1: "Bavaria",
+        lat: 49.57,
+        lon: 10.88,
+        sources: ["wiki-schaeffler"],
+    }),
     // Robot and actuator makers
     hq("tesla-austin", {
         companyId: "tesla",

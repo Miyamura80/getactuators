@@ -215,6 +215,7 @@ const SUPPLY_CHAIN: Row[] = [
     ["angel-robotics", "Angel Robotics", "angel-robotics.com"],
     ["bear-robotics", "Bear Robotics", "bearrobotics.ai"],
     ["onexia", "ONExia", null],
+    ["kimm", "Korea Institute of Machinery & Materials (KIMM)", "kimm.re.kr", ["KIMM"]],
     // /alts (#78): makers of the alternative actuator technologies.
     ["renault-group", "Renault Group", "renaultgroup.com", ["Renault"]],
     ["bmw-group", "BMW Group", "bmwgroup.com", ["BMW"]],
@@ -284,6 +285,19 @@ const SUPPLY_CHAIN: Row[] = [
     ["rls", "RLS", "rls.si"],
     ["heidenhain", "HEIDENHAIN", "heidenhain.com"],
     ["ic-haus", "iC-Haus", "ichaus.de"],
+    // /china second batch (#80). jaka.com is cited directly; aubo-robotics.cn,
+    // engineai.com.cn and guohuaintel.com are the sites named by the company's
+    // EtherCAT listing or press release in the dataset. The rest stay null.
+    ["jaka", "JAKA Robotics", "jaka.com", ["JAKA"]],
+    ["aubo", "AUBO Robotics", "aubo-robotics.cn", ["AUBO"]],
+    ["rokae", "ROKAE", null],
+    ["engineai", "EngineAI", "engineai.com.cn", ["ENGINEAI"]],
+    ["deep-robotics", "Deep Robotics", null, ["DEEP Robotics"]],
+    ["wuzhou-xinchun", "Wuzhou Xinchun", null],
+    ["guohua", "Guohua Intelligent", "guohuaintel.com", ["Guohua Intelligence"]],
+    ["byd", "BYD", null],
+    ["geely", "Geely Holding", null, ["Geely"]],
+    ["dongfeng-liuzhou", "Dongfeng Liuzhou Motor", null],
 ];
 
 // Companies behind the /investors deals (src/investors.ts COMPANIES).
