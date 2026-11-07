@@ -9,6 +9,9 @@ import type { BomCase, BomKind, BomNode } from "./types";
 //   idiotIndex      unit cost / raw content: Musk's ratio, cumulative
 //   stepMultiplier  unit cost / what its inputs cost: the markup of one step
 //   marginCapture   each tier's gross profit on its slice, over the price
+//   costStack       a priced node's cost split: raw material, what the tiers
+//                   below added, this step's conversion, its maker's profit
+//   massOf          modeled grams in one unit (sum of leaves)
 //   toSankey        nodes and links for the value-added Sankey
 
 // US$/kg of a material series in a month, or null when unknown.
@@ -41,6 +44,12 @@ export function rawContentCost(
         (s, c) => s + rawContentCost(c, month, price) * qtyOf(c),
         0,
     );
+}
+
+// Modeled grams in one unit of a node: its material leaves times quantity.
+export function massOf(node: BomNode): number {
+    if (node.kind === "material") return node.material?.massG.value ?? 0;
+    return (node.children ?? []).reduce((s, c) => s + massOf(c) * qtyOf(c), 0);
 }
 
 // What the next tier pays for one unit: the cited cost, or for a material its
@@ -120,6 +129,9 @@ export interface NodeMetrics {
     cost: number | null;
     idiot: number | null;
     step: number | null;
+    // Modeled grams in one unit.
+    mass: number;
+    stack: CostStack | null;
 }
 
 export function nodeMetrics(
@@ -136,6 +148,8 @@ export function nodeMetrics(
                 cost: nodeCost(node, c.month, price),
                 idiot: idiotIndex(node, c.month, price),
                 step: stepMultiplier(node, c.month, price),
+                mass: massOf(node),
+                stack: costStack(node, c.month, price),
             },
         ]),
     );
@@ -180,6 +194,72 @@ export function marginMaker(
     if (named)
         return { companyId: named, representative: node.makerConfidence === "modeled" };
     return null;
+}
+
+// ---- Cost stack ------------------------------------------------------
+
+// One priced node's unit cost in four bands that add up to it:
+//   raw         raw material inside (miners' and mills' margins included)
+//   below       what the tiers below added on top of their raw material
+//   conversion  this step's labour, energy, machines and overhead, plus any
+//               margin we cannot attribute
+//   profit      this node's maker's gross profit (company margin x cost)
+// `short` is true when the inputs as modeled cost more than the node, so
+// the bands are clipped at zero and do not add up.
+export interface CostStack {
+    total: number;
+    raw: number;
+    below: number;
+    conversion: number;
+    profit: number;
+    short: boolean;
+}
+
+// What one unit of a node is known to cost: its cited cost, else what its
+// inputs are known to cost (so a priced chip on an unpriced board still
+// counts), down to raw material at the leaves.
+export function knownCost(
+    node: BomNode,
+    month: string,
+    price: PriceFn = defaultPrice,
+): number {
+    return nodeCost(node, month, price) ?? inputsCost(node, month, price);
+}
+
+// What one unit of a node's inputs is known to cost.
+export function inputsCost(
+    node: BomNode,
+    month: string,
+    price: PriceFn = defaultPrice,
+): number {
+    return (node.children ?? []).reduce(
+        (s, c) => s + knownCost(c, month, price) * qtyOf(c),
+        0,
+    );
+}
+
+export function costStack(
+    node: BomNode,
+    month: string,
+    price: PriceFn = defaultPrice,
+    margin: MarginFn = defaultMargin,
+): CostStack | null {
+    if (node.kind === "material" || !node.unitCost) return null;
+    const total = node.unitCost.value;
+    const raw = rawContentCost(node, month, price);
+    const inputs = inputsCost(node, month, price);
+    const added = total - inputs;
+    const maker = marginMaker(node);
+    const gm = maker ? (margin(maker.companyId) ?? 0) : 0;
+    const profit = Math.max(0, Math.min(added, gm * total));
+    return {
+        total,
+        raw,
+        below: Math.max(0, inputs - raw),
+        conversion: Math.max(0, added - profit),
+        profit,
+        short: added < -total * 0.005,
+    };
 }
 
 // For each tier with a maker and a known gross margin: revenue in this
@@ -234,7 +314,8 @@ export function marginCapture(
 export interface SankeyNodeOut {
     id: string;
     label: string;
-    kind: BomKind | "sale";
+    // "value": the merged labour-and-overhead and gross-profit sources.
+    kind: BomKind | "sale" | "value";
     // Material nodes stand for every leaf of that series.
     seriesId?: string;
 }
@@ -251,63 +332,92 @@ export interface SankeyOut {
 }
 
 export const SALE_ID = "sale";
+export const CONVERSION_ID = "conversion";
+export const PROFIT_ID = "gross-profit";
 export const materialNodeId = (seriesId: string): string => `m-${seriesId}`;
 
 // The value-added Sankey: every BOM part and assembly once (all its units),
 // raw materials merged by series on the left. A link carries what flows from
-// child to parent: its cost (or raw cost when unpriced) in "cost" mode, its
-// raw-material content in "raw" mode. Value added at a node is what leaves
-// it beyond what came in; the price leaves the root through a "Price" sink
-// when the root's inputs fall short of it.
+// child to parent: its known cost (see knownCost) in "cost" mode, its
+// raw-material content in "raw" mode. In "cost" mode the value a priced node
+// adds over its inputs enters it from two merged sources on the left, so no
+// step is a bare jump: labour, energy and overhead, and its maker's gross
+// profit (see costStack). The price leaves the root through a "Price" sink
+// when what flows into the root still falls short of it.
+const VALUE_NODES = {
+    conversion: { id: CONVERSION_ID, label: "Labour and overhead", kind: "value" },
+    profit: { id: PROFIT_ID, label: "Gross profit", kind: "value" },
+} as const satisfies Record<string, SankeyNodeOut>;
+
+// A Sankey under construction: nodes once each, links summed by pair.
+function sankeyBuilder() {
+    const nodes: SankeyNodeOut[] = [];
+    const seen = new Set<string>();
+    const links = new Map<string, SankeyLinkOut>();
+    return {
+        add(n: SankeyNodeOut) {
+            if (seen.has(n.id)) return;
+            seen.add(n.id);
+            nodes.push(n);
+        },
+        flow(source: string, target: string, value: number) {
+            if (value <= 0) return;
+            const key = `${source}->${target}`;
+            const l = links.get(key);
+            if (l) l.value += value;
+            else links.set(key, { source, target, value });
+        },
+        inflow: (id: string) =>
+            [...links.values()]
+                .filter((l) => l.target === id)
+                .reduce((s, l) => s + l.value, 0),
+        out: (): SankeyOut => ({ nodes, links: [...links.values()] }),
+    };
+}
+
+function sankeyNode(node: BomNode): SankeyNodeOut {
+    const m = node.kind === "material" ? node.material : undefined;
+    return m
+        ? {
+              id: materialNodeId(m.seriesId),
+              label: materialLabel(m.seriesId),
+              kind: "material",
+              seriesId: m.seriesId,
+          }
+        : { id: node.id, label: node.label, kind: node.kind };
+}
+
 export function toSankey(
     c: BomCase,
     mode: "cost" | "raw" = "cost",
     price: PriceFn = defaultPrice,
+    margin: MarginFn = defaultMargin,
 ): SankeyOut {
-    const nodes: SankeyNodeOut[] = [];
-    const seen = new Set<string>();
-    const add = (n: SankeyNodeOut) => {
-        if (!seen.has(n.id)) {
-            seen.add(n.id);
-            nodes.push(n);
-        }
-    };
-    const links = new Map<string, SankeyLinkOut>();
-    const flow = (source: string, target: string, value: number) => {
-        if (value <= 0) return;
-        const key = `${source}->${target}`;
-        const l = links.get(key);
-        if (l) l.value += value;
-        else links.set(key, { source, target, value });
-    };
+    const b = sankeyBuilder();
     for (const { node, parent, count } of flatten(c.root)) {
-        const material = node.kind === "material" && node.material;
-        const id = material ? materialNodeId(material.seriesId) : node.id;
-        add(
-            material
-                ? {
-                      id,
-                      label: materialLabel(material.seriesId),
-                      kind: "material",
-                      seriesId: material.seriesId,
-                  }
-                : { id, label: node.label, kind: node.kind },
-        );
-        if (!parent) continue;
-        const raw = rawContentCost(node, c.month, price);
-        const unit = mode === "raw" ? raw : (nodeCost(node, c.month, price) ?? raw);
-        flow(id, parent.id, unit * count);
-    }
-    if (mode === "cost") {
-        const inflow = [...links.values()]
-            .filter((l) => l.target === c.root.id)
-            .reduce((s, l) => s + l.value, 0);
-        if (c.price.value - inflow > c.price.value * 0.005) {
-            add({ id: SALE_ID, label: "Price", kind: "sale" });
-            flow(c.root.id, SALE_ID, c.price.value);
+        const sn = sankeyNode(node);
+        b.add(sn);
+        const st = mode === "cost" ? costStack(node, c.month, price, margin) : null;
+        for (const band of ["conversion", "profit"] as const) {
+            if (!st || st[band] <= 0) continue;
+            b.add(VALUE_NODES[band]);
+            b.flow(VALUE_NODES[band].id, sn.id, st[band] * count);
         }
+        if (!parent) continue;
+        const unit =
+            mode === "raw"
+                ? rawContentCost(node, c.month, price)
+                : knownCost(node, c.month, price);
+        b.flow(sn.id, parent.id, unit * count);
     }
-    return { nodes, links: [...links.values()] };
+    if (
+        mode === "cost" &&
+        c.price.value - b.inflow(c.root.id) > c.price.value * 0.005
+    ) {
+        b.add({ id: SALE_ID, label: "Price", kind: "sale" });
+        b.flow(c.root.id, SALE_ID, c.price.value);
+    }
+    return b.out();
 }
 
 // Grams and cost of each material series in one actuator.

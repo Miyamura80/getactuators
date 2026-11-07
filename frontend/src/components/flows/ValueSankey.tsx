@@ -14,6 +14,9 @@ export interface FlowNode {
     badges?: NodeBadgeProps[];
     // /manufacturing step ids that make this node.
     steps?: string[];
+    // "value": a source of value added rather than a part (labour and
+    // overhead, gross profit); drawn hatched with its links tinted.
+    tone?: "value";
 }
 
 export interface ValueSankeyProps {
@@ -98,9 +101,9 @@ export function ValueSankey({ nodes, links, label, unit = "USD", format, selecte
         </div>
         <div className="fk-sankey-stage" style={{ height: h }}>
             <svg width={width} height={h} viewBox={`0 0 ${width} ${h}`} aria-hidden="true">
-                {layout.links.map((l) => <path key={l.key} className={`fk-link${!path || path.links.has(l.key) ? " is-lit" : ""}`}
+                {layout.links.map((l) => <path key={l.key} className={`fk-link${!path || path.links.has(l.key) ? " is-lit" : ""}${byId.get(l.source)?.tone === "value" ? " is-value" : ""}`}
                     d={l.d} strokeWidth={Math.max(1, l.width)} />)}
-                {layout.nodes.map((n) => <rect key={n.id} className={`fk-node${lit(n.id) ? " is-lit" : ""}${n.id === selected ? " is-selected" : ""}`}
+                {layout.nodes.map((n) => <rect key={n.id} className={`fk-node${lit(n.id) ? " is-lit" : ""}${n.id === selected ? " is-selected" : ""}${byId.get(n.id)?.tone === "value" ? " is-value" : ""}`}
                     x={n.x0} y={n.y0} width={Math.max(1, n.x1 - n.x0)} height={Math.max(1, n.y1 - n.y0)} />)}
             </svg>
             {layout.nodes.map((n) => {
@@ -109,7 +112,7 @@ export function ValueSankey({ nodes, links, label, unit = "USD", format, selecte
                 const side = labelSide(n);
                 const room = vertical ? n.x1 - n.x0 >= LABEL_MIN : true;
                 const pos = side === "below"
-                    ? { left: n.x0, top: n.y1 + 4 }
+                    ? { left: n.x0, top: n.y1 + 4, maxWidth: Math.max(LABEL_MIN, n.x1 - n.x0 - 4) }
                     : side === "right" ? { left: n.x1 + 6, top: (n.y0 + n.y1) / 2 } : { right: width - n.x0 + 6, top: (n.y0 + n.y1) / 2 };
                 return <div key={n.id}>
                     <button type="button" className={`fk-node-hit${n.id === selected ? " is-selected" : ""}`}

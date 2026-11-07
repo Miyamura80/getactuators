@@ -4,7 +4,7 @@ import { act, cleanup, fireEvent, render } from "@testing-library/react";
 import { BOM_CASES, getBomCase } from "../../src/supply-chain/bom";
 import { Bom } from "../src/pages/supply-chain/bom/Bom";
 import { marginSegments } from "../src/pages/supply-chain/bom/MarginBar";
-import { SMALL_PARTS_ID, caseModel, graphModel, makerOf, sankeyModel, topSankey } from "../src/pages/supply-chain/bom/model";
+import { SANKEY_DEPTH, SMALL_PARTS_ID, caseModel, graphModel, makerOf, sankeyModel, shownAs, topSankey } from "../src/pages/supply-chain/bom/model";
 import { setWebGLSupport } from "../src/three/support";
 
 const setURL = (path: string) =>
@@ -30,6 +30,19 @@ test("sankey model drops unlinked nodes and badges only wide nodes", () => {
     expect(s.nodes.every((n) => ids.has(n.id))).toBe(true);
     expect(s.nodes.find((n) => n.id === "roller-screw")?.badges?.some((b) => b.kind === "idiot-index")).toBe(true);
     expect(s.nodes.find((n) => n.id === "rollers")?.badges).toEqual([]);
+});
+
+test("the folded sankey keeps flows balanced and the value sources", () => {
+    const m = optimus();
+    const folded = sankeyModel(m, "cost", SANKEY_DEPTH);
+    const full = sankeyModel(m, "cost");
+    expect(folded.nodes.length).toBeLessThan(full.nodes.length);
+    expect(folded.nodes.some((n) => n.id === "stator-core")).toBe(false);
+    expect(folded.nodes.find((n) => n.id === "conversion")?.tone).toBe("value");
+    const into = (s: typeof folded, id: string) => s.links.filter((l) => l.target === id).reduce((x, l) => x + l.value, 0);
+    expect(into(folded, m.c.root.id)).toBeCloseTo(m.c.price.value, 6);
+    expect(into(folded, "roller-screw")).toBeCloseTo(into(full, "roller-screw"), 6);
+    expect(shownAs(m, "stator-core", SANKEY_DEPTH)).toBe("stator");
 });
 
 test("compare sankey keeps the top tier and merges slivers", () => {
@@ -59,6 +72,9 @@ test("the index lists every case with its margin bar", () => {
     setURL("/bom");
     const { getAllByRole, getByText } = render(<Bom />);
     for (const c of BOM_CASES) expect(getByText(c.name)).toBeTruthy();
+    // Each card shows the robots that use its actuator, photos from the repo.
+    expect(getAllByRole("list", { name: "Used in" })).toHaveLength(BOM_CASES.length);
+    expect(document.querySelector('img[src="/actuator-images/unitree-go-m8010-6.webp"]')).toBeTruthy();
     expect(getAllByRole("img", { name: /Share of the price/ })).toHaveLength(BOM_CASES.length);
 });
 
@@ -68,6 +84,8 @@ test("a case page syncs the part panel, Sankey and graph through #node=", async 
     const panel = getByRole("complementary", { name: "Selected part" });
     expect(panel.textContent).toContain("Planetary roller screw");
     expect(panel.textContent).toContain("Beite Technology");
+    expect(panel.textContent).toContain("Cost stack");
+    expect(container.querySelector('.bm-head a[href="/humanoids?robot=tesla-optimus"]')).toBeTruthy();
     // The graph lights the maker.
     expect(container.querySelector('.fk-card.is-selected[data-node="beite"]')).toBeTruthy();
     // Pick a raw material from the Sankey.

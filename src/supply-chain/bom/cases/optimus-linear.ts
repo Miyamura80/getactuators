@@ -1,15 +1,25 @@
+import { BOM_MARGINS } from "../../companies/bom";
 import type { Vec3 } from "../../scenes/spec";
 import type { Sourced } from "../../sourced";
 import {
+    BEARING_ROUTE,
+    CAST_ROUTE,
+    FASTENER_ROUTE,
+    LAMINATION_ROUTE,
     MAGNET_STEPS,
+    SCREW_ROUTE,
+    TURNED_ROUTE,
+    WINDING_ROUTE,
+    blankReference,
     boardCopper,
-    dieSilicon,
+    chip,
     disc,
+    listed,
     magnetContent,
     magnetGrams,
+    piece,
     ring,
-    shareOfPrice,
-    weighed,
+    shareOfCost,
 } from "../make";
 import type { BomCase, BomNode } from "../types";
 
@@ -18,7 +28,9 @@ import type { BomCase, BomNode } from "../types";
 // and two bearings, per secondary accounts of AI Day 2022. Tesla publishes
 // no cost or teardown, so:
 //   - the price is the average linear unit in two analyst BOMs (range);
-//   - part costs are HONPINE's published shares of a linear actuator's cost;
+//   - the assembler keeps its gross margin (Sanhua's, as the reported
+//     maker), and HONPINE's published shares of a linear actuator's cost
+//     split what is left between the parts;
 //   - geometry (and so every gram) is our model at a 60 mm, 3,900 N class
 //     size, marked inferred.
 
@@ -26,6 +38,7 @@ const z = (v: number): Vec3 => [0, 0, v];
 const STACK = ["optimusk-actuators"];
 const SHARES = ["honpine-actuator-cost-2025"];
 const CNY_PER_USD = 7.2;
+const ASSEMBLER = BOM_MARGINS.sanhua;
 
 // Average linear unit: Huibo's CNY 44,000 for 14 linear units (low) to
 // Morgan Stanley's $55k BOM x 56% actuators over 28 body actuators (high).
@@ -42,6 +55,9 @@ const PRICE: Sourced<number> = {
     note: `Midpoint of two analyst BOMs for Optimus Gen 2: Huibo's CNY 44,000 for 14 linear units at ${CNY_PER_USD} CNY/USD ($${LOW} each) and Morgan Stanley's $55k robot BOM, 56% actuators over 28 body actuators ($${HIGH} each).`,
 };
 
+const cost = (share: number, what: string) =>
+    shareOfCost(PRICE, ASSEMBLER, share, SHARES, what);
+
 const SCREW = {
     screwDiameter: 14,
     length: 150,
@@ -54,15 +70,18 @@ const SCREW = {
 
 // Geometry is ours: sized to a 60 mm actuator, not measured.
 const shape = { sources: STACK, inferred: true } as const;
+const bearingSteel = (v: ReturnType<typeof ring>, label = "Bearing steel") => ({
+    label,
+    seriesId: "bearing-steel",
+    v,
+});
 
 const rollerScrew: BomNode = {
     id: "roller-screw",
     label: "Planetary roller screw",
     kind: "assembly",
-    unitCost: shareOfPrice(
-        PRICE,
+    unitCost: cost(
         0.642,
-        SHARES,
         "the roller screw's share of a linear actuator's cost (HONPINE).",
     ),
     makerIds: ["beite"],
@@ -70,6 +89,7 @@ const rollerScrew: BomNode = {
     makerNote:
         "Tesla has not named its roller screw supplier. Beite, a listed Chinese maker sampling planetary roller screws for humanoids, stands in.",
     alternateMakerIds: ["best-precision", "nousbot"],
+    route: ["Match rollers to nut", "Assemble", "Run in", "Measure lead error"],
     references: [
         {
             label: "Market average, bank estimate",
@@ -96,85 +116,111 @@ const rollerScrew: BomNode = {
         },
     ],
     sources: STACK,
-    note: "The inverted type: the motor turns the nut and the threaded rod moves the joint.",
+    note: "The inverted type: the motor turns the nut and the threaded rod moves the joint. The thread grinding is the slow, costly step.",
     children: [
-        {
-            id: "screw-shaft",
-            label: "Threaded screw",
-            kind: "component",
-            ...shape,
-            part3d: {
-                component: "roller-screw",
-                props: { ...SCREW, piece: "screw" },
-                explodedOffset: z(0),
+        piece(
+            "screw-shaft",
+            "Threaded screw",
+            bearingSteel(disc(7, 150, 0.85), "Screw steel"),
+            STACK,
+            {
+                ...shape,
+                route: SCREW_ROUTE,
+                part3d: {
+                    component: "roller-screw",
+                    props: { ...SCREW, piece: "screw" },
+                    explodedOffset: z(0),
+                },
             },
-            children: [
-                weighed(
-                    "screw-shaft-steel",
-                    "Screw steel",
-                    "bearing-steel",
-                    disc(7, 150, 0.85),
-                    STACK,
-                ),
-            ],
-        },
-        {
-            id: "rollers",
-            label: "Planetary rollers",
-            kind: "component",
-            qty: 10,
-            ...shape,
-            part3d: {
-                component: "roller-screw",
-                props: { ...SCREW, piece: "rollers" },
-                assembled: { position: z(25) },
-                explodedOffset: z(40),
-                accent: true,
+        ),
+        piece(
+            "rollers",
+            "Planetary roller",
+            bearingSteel(disc(2.3, 24, 0.85), "Roller steel"),
+            STACK,
+            {
+                ...shape,
+                qty: 10,
+                route: [
+                    "Cut bar",
+                    "Centreless grind",
+                    "Thread grind",
+                    "Cut end teeth",
+                    "Harden",
+                ],
+                note: "Each roller carries a spur gear at both ends that keeps it in step with the nut.",
+                part3d: {
+                    component: "roller-screw",
+                    props: { ...SCREW, piece: "rollers" },
+                    assembled: { position: z(25) },
+                    explodedOffset: z(40),
+                    accent: true,
+                },
             },
-            children: [
-                weighed(
-                    "roller-steel",
-                    "Roller steel",
-                    "bearing-steel",
-                    disc(2.3, 24, 0.85),
-                    STACK,
-                ),
-            ],
-        },
-        {
-            id: "nut",
-            label: "Roller nut",
-            kind: "component",
-            ...shape,
-            part3d: {
-                component: "roller-screw",
-                props: { ...SCREW, piece: "nut" },
-                assembled: { position: z(25) },
-                explodedOffset: z(76),
+        ),
+        piece(
+            "nut",
+            "Roller nut",
+            bearingSteel(ring(14, 11.6, 24, 0.9), "Nut steel"),
+            STACK,
+            {
+                ...shape,
+                route: ["Cut tube", "Turn", "Internal thread grind", "Harden"],
+                part3d: {
+                    component: "roller-screw",
+                    props: { ...SCREW, piece: "nut" },
+                    assembled: { position: z(25) },
+                    explodedOffset: z(76),
+                },
             },
-            children: [
-                weighed(
-                    "nut-steel",
-                    "Nut steel",
-                    "bearing-steel",
-                    ring(14, 11.6, 24, 0.9),
-                    STACK,
-                ),
-            ],
-        },
+        ),
+        piece(
+            "nut-ring-gears",
+            "Nut ring gear",
+            bearingSteel(ring(11.6, 10.6, 3, 0.85), "Gear steel"),
+            STACK,
+            {
+                ...shape,
+                qty: 2,
+                route: ["Turn", "Shape teeth", "Harden", "Press into nut"],
+                note: "Internal gears at the nut's ends that mesh with the rollers' end teeth.",
+            },
+        ),
+        piece(
+            "roller-carriers",
+            "Roller carrier",
+            { label: "Steel", seriesId: "carbon-steel", v: ring(10.6, 7.4, 2, 0.6) },
+            STACK,
+            {
+                ...shape,
+                qty: 2,
+                route: ["Stamp", "Drill pockets"],
+                note: "Rings that space the rollers evenly around the screw.",
+            },
+        ),
+        piece(
+            "retaining-rings",
+            "Retaining ring",
+            { label: "Spring steel", seriesId: "carbon-steel", v: ring(12, 10.8, 1) },
+            STACK,
+            {
+                ...shape,
+                qty: 2,
+                route: ["Stamp", "Harden"],
+            },
+        ),
     ],
 };
 
 const MAGNET = magnetGrams(ring(14.5, 12.5, 36, 0.85), STACK);
+const SENSOR_MAGNET = magnetGrams(disc(3, 2.5), STACK);
 
 const motor: BomNode = {
     id: "frameless-motor",
     label: "Frameless torque motor",
     kind: "assembly",
-    unitCost: shareOfPrice(
-        PRICE,
+    unitCost: cost(
         0.072,
-        SHARES,
         "the frameless motor's share of a linear actuator's cost (HONPINE).",
     ),
     makerIds: ["leadshine"],
@@ -187,17 +233,22 @@ const motor: BomNode = {
         {
             id: "stator",
             label: "Stator",
-            kind: "component",
+            kind: "assembly",
             ...shape,
             children: [
-                weighed(
-                    "stator-laminations",
-                    "Laminations",
-                    "electrical-steel",
-                    ring(27, 15, 36, 0.6),
+                piece(
+                    "stator-core",
+                    "Lamination stack",
+                    {
+                        label: "Electrical steel",
+                        seriesId: "electrical-steel",
+                        v: ring(27, 15, 36, 0.6),
+                    },
                     STACK,
                     {
                         ...shape,
+                        route: LAMINATION_ROUTE,
+                        makerNote: "Steel mill and stamping shop not public.",
                         part3d: {
                             component: "lamination-stack",
                             props: {
@@ -213,18 +264,19 @@ const motor: BomNode = {
                         },
                     },
                 ),
-                weighed(
-                    "stator-windings",
+                piece(
+                    "stator-winding",
                     "Copper windings",
-                    "copper",
-                    ring(27, 15, 36, 0.234),
+                    { label: "Copper", seriesId: "copper", v: ring(27, 15, 36, 0.234) },
                     STACK,
                     {
+                        ...shape,
+                        route: WINDING_ROUTE,
                         makerIds: ["jiangxi-copper"],
                         makerConfidence: "modeled",
                         makerNote:
                             "China's largest copper producer stands in for the wire's source.",
-                        ...shape,
+                        note: "Slots take 40% of the stack, copper fills 45% of a slot, end turns add 30%.",
                         part3d: {
                             component: "winding-coils",
                             props: {
@@ -237,7 +289,6 @@ const motor: BomNode = {
                             assembled: { position: z(-22) },
                             explodedOffset: z(-104),
                         },
-                        note: "Slots take 40% of the stack, copper fills 45% of a slot, end turns add 30%.",
                     },
                 ),
             ],
@@ -245,7 +296,7 @@ const motor: BomNode = {
         {
             id: "rotor",
             label: "Hollow rotor",
-            kind: "component",
+            kind: "assembly",
             ...shape,
             part3d: {
                 component: "magnet-ring",
@@ -271,15 +322,20 @@ const motor: BomNode = {
                         "JL MAG supplies Tesla's EV magnets (reported); who makes the Optimus magnets is not public.",
                     alternateMakerIds: ["ningbo-yunsheng", "zhong-ke-san-huan"],
                     processStepIds: MAGNET_STEPS,
+                    references: [blankReference(MAGNET)],
                     ...shape,
                     children: magnetContent("rotor-magnet", MAGNET),
                 },
-                weighed(
+                piece(
                     "rotor-sleeve",
                     "Rotor back iron",
-                    "carbon-steel",
-                    ring(12.5, 11, 36),
+                    { label: "Steel", seriesId: "carbon-steel", v: ring(12.5, 11, 36) },
                     STACK,
+                    {
+                        ...shape,
+                        route: TURNED_ROUTE,
+                        note: "The hollow sleeve the nut is fixed in, so the rotor turns the nut directly.",
+                    },
                 ),
             ],
         },
@@ -297,66 +353,64 @@ const BEARING: Pick<
     alternateMakerIds: ["zwz-bearing", "lyc-bearing", "ntn"],
 };
 
+const SENSOR_CHIP = listed(
+    2.07,
+    [2.07, 4.41],
+    ["lcsc-mt6835"],
+    "2025",
+    "LCSC's 1,000-unit tier for a Magn Tek MT6835 magnetic angle sensor, a comparable part; Tesla's sensor is not public.",
+    "modeled",
+);
+
 const rest: BomNode = {
     id: "other-parts",
     label: "Bearings, sensor and housing",
     kind: "assembly",
-    unitCost: shareOfPrice(
-        PRICE,
+    unitCost: cost(
         0.125,
-        SHARES,
         "what is left after the roller screw, force sensor and motor in HONPINE's split.",
     ),
     sources: STACK,
     children: [
-        {
-            id: "four-point-bearing",
-            label: "Four-point contact bearing",
-            kind: "component",
-            ...BEARING,
-            ...shape,
-            part3d: {
-                component: "bearing",
-                props: { kind: "angular-contact", outer: 16, inner: 9.5, width: 8 },
-                assembled: { position: z(43) },
-                explodedOffset: z(108),
+        piece(
+            "four-point-bearing",
+            "Four-point contact bearing",
+            bearingSteel(ring(16, 9.5, 8, 0.55)),
+            STACK,
+            {
+                ...BEARING,
+                ...shape,
+                route: BEARING_ROUTE,
+                note: "Takes the screw's axial load where it leaves the housing.",
+                part3d: {
+                    component: "bearing",
+                    props: { kind: "angular-contact", outer: 16, inner: 9.5, width: 8 },
+                    assembled: { position: z(43) },
+                    explodedOffset: z(108),
+                },
             },
-            children: [
-                weighed(
-                    "four-point-steel",
-                    "Bearing steel",
-                    "bearing-steel",
-                    ring(16, 9.5, 8, 0.55),
-                    STACK,
-                ),
-            ],
-        },
-        {
-            id: "deep-groove-bearing",
-            label: "Deep-groove bearing",
-            kind: "component",
-            ...BEARING,
-            ...shape,
-            part3d: {
-                component: "bearing",
-                props: { kind: "deep-groove", outer: 14, inner: 8, width: 6 },
-                assembled: { position: z(-46) },
-                explodedOffset: z(-132),
+        ),
+        piece(
+            "deep-groove-bearing",
+            "Deep-groove bearing",
+            bearingSteel(ring(14, 8, 6, 0.55)),
+            STACK,
+            {
+                ...BEARING,
+                ...shape,
+                route: BEARING_ROUTE,
+                part3d: {
+                    component: "bearing",
+                    props: { kind: "deep-groove", outer: 14, inner: 8, width: 6 },
+                    assembled: { position: z(-46) },
+                    explodedOffset: z(-132),
+                },
             },
-            children: [
-                weighed(
-                    "deep-groove-steel",
-                    "Bearing steel",
-                    "bearing-steel",
-                    ring(14, 8, 6, 0.55),
-                    STACK,
-                ),
-            ],
-        },
+        ),
         {
             id: "position-sensor",
             label: "Position sensor",
-            kind: "component",
+            kind: "assembly",
             makerNote: "Not public.",
             ...shape,
             part3d: {
@@ -366,26 +420,34 @@ const rest: BomNode = {
                 explodedOffset: z(-160),
             },
             children: [
-                weighed(
-                    "position-sensor-copper",
-                    "Board copper",
-                    "copper",
-                    boardCopper(14),
+                piece(
+                    "sensor-board",
+                    "Sensor board",
+                    { label: "Board copper", seriesId: "copper", v: boardCopper(14) },
                     STACK,
+                    {
+                        ...shape,
+                        route: ["Laminate", "Drill", "Plate", "Etch"],
+                    },
                 ),
-                weighed(
-                    "position-sensor-silicon",
-                    "Sensor chip",
-                    "silicon",
-                    dieSilicon(5),
-                    STACK,
-                ),
+                chip("sensor-chip", "Angle sensor chip", 5, STACK, {
+                    unitCost: SENSOR_CHIP,
+                }),
+                {
+                    id: "sensor-magnet",
+                    label: "Diametric magnet",
+                    kind: "component",
+                    ...shape,
+                    processStepIds: MAGNET_STEPS,
+                    makerNote: "Not public.",
+                    children: magnetContent("sensor-magnet", SENSOR_MAGNET),
+                },
             ],
         },
         {
             id: "housing",
             label: "Housing",
-            kind: "component",
+            kind: "assembly",
             ...shape,
             part3d: {
                 component: "housing",
@@ -394,15 +456,108 @@ const rest: BomNode = {
                 explodedOffset: [0, 74, 0],
             },
             children: [
-                weighed(
-                    "housing-aluminium",
-                    "Aluminium",
-                    "aluminium",
-                    ring(30, 27.5, 100),
+                piece(
+                    "housing-tube",
+                    "Housing tube",
+                    {
+                        label: "Aluminium",
+                        seriesId: "aluminium",
+                        v: ring(30, 27.5, 100),
+                    },
                     STACK,
+                    {
+                        ...shape,
+                        route: ["Extrude", "CNC machine", "Anodise"],
+                    },
+                ),
+                piece(
+                    "end-caps",
+                    "End cap",
+                    { label: "Aluminium", seriesId: "aluminium", v: disc(30, 4, 0.6) },
+                    STACK,
+                    {
+                        ...shape,
+                        qty: 2,
+                        route: CAST_ROUTE,
+                        note: "Carry the bearings and the mounting eyes.",
+                    },
+                ),
+                piece(
+                    "fasteners",
+                    "Screw",
+                    { label: "Steel", seriesId: "carbon-steel", v: disc(1.5, 8) },
+                    STACK,
+                    {
+                        ...shape,
+                        qty: 12,
+                        route: FASTENER_ROUTE,
+                        part3d: {
+                            component: "bolt",
+                            props: { diameter: 3, length: 8, count: 6, circle: 26 },
+                            assembled: { position: z(-56) },
+                            explodedOffset: z(-190),
+                        },
+                    },
                 ),
             ],
         },
+    ],
+};
+
+const forceSensor: BomNode = {
+    id: "force-sensor",
+    label: "Force sensor",
+    kind: "assembly",
+    unitCost: cost(
+        0.161,
+        "the force sensor's share of a linear actuator's cost (HONPINE).",
+    ),
+    makerNote: "Not public.",
+    ...shape,
+    note: "A roller screw does not backdrive, so the joint needs its own load cell to feel force.",
+    route: ["Bond gauges", "Wire bridge", "Calibrate", "Temperature-compensate"],
+    part3d: {
+        component: "cylinder",
+        props: { radius: 16, length: 10, bore: 8 },
+        assembled: { position: z(62) },
+        explodedOffset: z(140),
+    },
+    children: [
+        piece(
+            "sensor-flexure",
+            "Flexure body",
+            {
+                label: "Flexure steel",
+                seriesId: "carbon-steel",
+                v: ring(16, 8, 10, 0.7),
+            },
+            STACK,
+            {
+                ...shape,
+                route: ["Cut bar", "CNC machine", "Heat-treat", "Grind faces"],
+                note: "A spoked steel ring that bends a few microns under load.",
+            },
+        ),
+        piece(
+            "strain-gauges",
+            "Foil strain gauge",
+            {
+                label: "Gauge foil",
+                seriesId: "copper",
+                v: {
+                    cm3: 0.0005,
+                    how: "A 5 x 5 mm foil grid, 5 um thick, priced as copper (constantan is copper and nickel)",
+                },
+            },
+            STACK,
+            {
+                ...shape,
+                qty: 4,
+                route: ["Roll foil", "Photo-etch grid", "Laminate"],
+                note: "Four gauges in a full bridge.",
+            },
+        ),
+        chip("bridge-amplifier", "Bridge amplifier chip", 4, STACK),
     ],
 };
 
@@ -416,7 +571,10 @@ export const OPTIMUS_LINEAR: BomCase = {
     month: "2026-09",
     why: "The most-analysed humanoid actuator. Its roller screw is a precision part with few qualified suppliers.",
     takeaway:
-        "About two thirds of the cost is the roller screw, a few hundred grams of bearing steel.",
+        "About two thirds of what the assembler spends is the roller screw, a few hundred grams of bearing steel turned into a precision part.",
+    uses: {
+        humanoids: { actuatorType: "linear-roller-screw", thisIds: ["tesla-optimus"] },
+    },
     root: {
         id: "optimus-linear",
         label: "Optimus linear actuator",
@@ -433,39 +591,14 @@ export const OPTIMUS_LINEAR: BomCase = {
             "cnevpost-optimus-audits-2026",
         ],
         note: "Tesla shows six actuator designs on Optimus, three of them roller-screw linear units at 500, 3,900 and 8,000 N.",
-        children: [
-            rollerScrew,
-            {
-                id: "force-sensor",
-                label: "Force sensor",
-                kind: "component",
-                unitCost: shareOfPrice(
-                    PRICE,
-                    0.161,
-                    SHARES,
-                    "the force sensor's share of a linear actuator's cost (HONPINE).",
-                ),
-                makerNote: "Not public.",
-                ...shape,
-                note: "A roller screw does not backdrive, so the joint needs its own load cell to feel force.",
-                part3d: {
-                    component: "cylinder",
-                    props: { radius: 16, length: 10, bore: 8 },
-                    assembled: { position: z(62) },
-                    explodedOffset: z(140),
-                },
-                children: [
-                    weighed(
-                        "force-sensor-steel",
-                        "Flexure steel",
-                        "carbon-steel",
-                        ring(16, 8, 10, 0.7),
-                        STACK,
-                    ),
-                ],
-            },
-            motor,
-            rest,
+        route: [
+            "Fit motor on nut",
+            "Insert screw",
+            "Fit sensors",
+            "Close housing",
+            "Calibrate force",
+            "End-of-line test",
         ],
+        children: [rollerScrew, forceSensor, motor, rest],
     },
 };

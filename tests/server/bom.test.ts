@@ -48,6 +48,9 @@ describe("/bom pages and twins", () => {
 
     const HEADINGS = [
         "## Bill of materials",
+        "## Used in",
+        "## Cost stacks",
+        "## How the parts are made",
         "## Raw materials",
         "## Margin capture",
         "## Method",
@@ -95,6 +98,14 @@ describe("REST /api/v1/bom", () => {
             one.margin_capture.tiers.find((t) => t.company_id === "sanhua")
                 ?.representative,
         ).toBe(false);
+        expect(screw?.cost_stack?.maker_gross_profit_usd).toBeGreaterThan(0);
+        expect(screw?.mass_g).toBeGreaterThan(100);
+        expect(one.nodes.find((n) => n.id === "screw-shaft")?.route).toContain(
+            "Grind thread",
+        );
+        expect(one.used_in.find((u) => u.relation === "this")?.url).toBe(
+            "/humanoids?robot=tesla-optimus",
+        );
         const missing = await get("/api/v1/bom/steam-engine");
         expect(missing.status).toBe(404);
         expect(await missing.text()).toContain("unitree-qdd");
@@ -112,5 +123,9 @@ describe("MCP BOM tools", () => {
         );
         expect(one.actuator_id).toBe("unitree-go-m8010-6");
         expect(one.margin_capture.tiers[0]?.company_id).toBe("unitree");
+        expect(one.used_in[0]?.image_url).toBe(
+            "/actuator-images/unitree-go-m8010-6.webp",
+        );
+        expect(list.cases[0]?.used_in.length).toBeGreaterThan(0);
     });
 });

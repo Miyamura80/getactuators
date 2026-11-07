@@ -91,6 +91,7 @@
 .bm-sec-block h2 { margin: 0; font-size: 22px; }
 .bm-sec-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
 .bm-sub { margin: 6px 0 14px; max-width: 72ch; color: var(--muted); font-size: 14px; line-height: 1.5; }
+.bm-sec-tools { display: flex; flex-wrap: wrap; gap: 8px; }
 .bm-toggle { display: inline-flex; border: 1px solid var(--line-strong); }
 .bm-toggle button, .bm-toggle-one { padding: 5px 12px; border: 0; background: none; color: var(--muted); font: 600 11px/1.2 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; }
 .bm-toggle button[aria-checked="true"], .bm-toggle-one[aria-pressed="true"] { background: var(--cyan); color: var(--black); }
@@ -135,6 +136,39 @@
 .bm-compare-one h3 { margin: 0 0 6px; font: 600 12px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; }
 .bm-compare-one h3 a { color: var(--text); }
 
+/* Used in: robot and actuator thumbnails (the catalog's light photo tile) */
+.bm-uses { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0 0; padding: 0; list-style: none; }
+.bm-use > a, .bm-use > span { display: grid; gap: 4px; width: 104px; color: var(--text); text-decoration: none; }
+.bm-use > a:hover .bm-use-name { text-decoration: underline; text-decoration-color: var(--cyan); }
+.bm-use > a:hover .bm-use-img { border-color: var(--cyan); }
+.bm-use-img { display: grid; place-items: center; aspect-ratio: 4 / 3; overflow: hidden; border: 1px solid var(--line); background: var(--panel); color: var(--muted); }
+.bm-use-img[data-photo="true"] { background: radial-gradient(120% 100% at 50% 0%, #f5f7f9 0%, #e5eaef 62%, #d3dae1 100%); }
+.bm-use-img img { box-sizing: border-box; width: 100%; height: 100%; object-fit: contain; padding: 6px; display: block; }
+.bm-use-ph { width: 46%; height: auto; }
+.bm-use-name { font-size: 12px; font-weight: 600; line-height: 1.25; }
+.bm-use-count { font: 500 11px var(--mono); color: var(--muted); }
+.bm-use-tag { justify-self: start; padding: 0 4px; border: 1px solid var(--line-strong); color: var(--muted); font: 600 9px/1.4 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; }
+.bm-use-tag.is-this { border-color: var(--cyan-dim); color: var(--cyan); }
+.bm-uses.is-compact { gap: 6px; margin: 10px 0 2px; }
+.bm-uses.is-compact .bm-use > a, .bm-uses.is-compact .bm-use > span { width: 64px; gap: 2px; }
+.bm-uses.is-compact .bm-use-name { font-size: 10px; font-weight: 500; color: var(--muted); }
+.bm-use.is-more > span { display: grid; place-items: center; width: 40px; aspect-ratio: 1; font: 600 11px var(--mono); color: var(--muted); }
+
+/* Cost stack in the part panel */
+.bm-stack-bar { display: flex; height: 12px; margin: 2px 0 6px; border: 1px solid var(--line); overflow: hidden; }
+.bm-stack-bar i { display: block; height: 100%; min-width: 0; }
+.bm-stack-bar .is-raw, .bm-stack-key .is-raw { background: var(--bm-raw); }
+.bm-stack-bar .is-below, .bm-stack-key .is-below { background: var(--bm-c2); }
+.bm-stack-bar .is-conversion, .bm-stack-key .is-conversion { background: var(--fk-value, #8a7a52); }
+.bm-stack-bar .is-profit, .bm-stack-key .is-profit { background: var(--bm-c1); }
+.bm-stack-key { display: grid; gap: 2px; margin: 0; padding: 0; list-style: none; }
+.bm-stack-key li { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+.bm-stack-key li > i { width: 9px; height: 9px; flex: none; }
+.bm-stack-key li b { margin-left: auto; font: 600 12px var(--mono); }
+.bm-route { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 4px; margin: 0; padding: 0; list-style: none; font-size: 12px; }
+.bm-route li + li::before { content: "→"; margin-right: 4px; color: var(--muted); }
+.bm-route li { color: var(--text); }
+
 @media (max-width: 860px) {
     .bm-top { grid-template-columns: 1fr; }
     .bm-explode { border-right: 0; border-bottom: 1px solid var(--line); }
@@ -145,5 +179,6 @@
 }
 @media (max-width: 480px) {
     .tool-main { padding-left: 16px; padding-right: 16px; }
+    .bm-use > a, .bm-use > span { width: 88px; }
     .bm-stats dd { font-size: 17px; }
 }

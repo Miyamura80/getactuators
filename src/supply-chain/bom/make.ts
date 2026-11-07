@@ -8,7 +8,9 @@ import type { BomNode } from "./types";
 // costs modeled as a cited share of the case price.
 
 const PI = Math.PI;
-const round1 = (n: number) => Math.round(n * 10) / 10;
+// Grams to 0.1 g, or to the milligram below a gram (chip dies, encoder magnets).
+const round1 = (n: number) =>
+    n < 1 ? Math.round(n * 1000) / 1000 : Math.round(n * 10) / 10;
 
 // Volumes in cm3 from millimetre dimensions.
 export const ringCm3 = (outer: number, inner: number, length: number): number =>
@@ -123,6 +125,52 @@ export function weighed(
     return material(id, label, seriesId, gramsOf(seriesId, v, sources), extra);
 }
 
+// A part made of one material: a component over one weighed leaf, whose id
+// is the part's id plus the material's suffix ("sun-gear-steel").
+export function piece(
+    id: string,
+    label: string,
+    leaf: { label: string; seriesId: string; v: Volume; suffix?: string },
+    sources: string[],
+    extra: Partial<BomNode> = {},
+): BomNode {
+    const suffix =
+        leaf.suffix ?? getCommodity(leaf.seriesId)?.id.split("-").pop() ?? "metal";
+    return {
+        id,
+        label,
+        kind: "component",
+        sources,
+        ...extra,
+        children: [
+            weighed(`${id}-${suffix}`, leaf.label, leaf.seriesId, leaf.v, sources),
+        ],
+    };
+}
+
+// A packaged chip: its die as the only raw material, priced when a listing
+// for it (or a comparable part) is given.
+export function chip(
+    id: string,
+    label: string,
+    dieMm2: number,
+    sources: string[],
+    extra: Partial<BomNode> = {},
+): BomNode {
+    return piece(
+        id,
+        label,
+        {
+            label: "Silicon die",
+            seriesId: "silicon",
+            v: dieSilicon(dieMm2),
+            suffix: "die",
+        },
+        sources,
+        { route: CHIP_ROUTE, inferred: true, ...extra },
+    );
+}
+
 // Mass of magnet in a modeled volume (sintered NdFeB).
 export function magnetGrams(v: Volume, sources: string[]): Sourced<number> {
     const fill = v.fill ?? 1;
@@ -220,3 +268,99 @@ export function shareOfPrice(
         note: `${Math.round(share * 1000) / 10}% of the case price: ${what}`,
     };
 }
+
+// A part cost modeled as a cited share of what the assembler spends: the
+// case price less the assembler's gross margin. Analysts' cost shares split
+// the parts an assembler buys, so they apply to its cost of goods, and the
+// gap to the price is the assembler's gross profit.
+export function shareOfCost(
+    price: Sourced<number>,
+    assemblerMargin: Sourced<number>,
+    share: number,
+    sources: string[],
+    what: string,
+): Sourced<number> {
+    const cogs = 1 - assemblerMargin.value;
+    const s = shareOfPrice(
+        price,
+        share * cogs,
+        [...sources, ...assemblerMargin.sources],
+        what,
+    );
+    return {
+        ...s,
+        note: `${Math.round(share * 1000) / 10}% of the assembler's cost (the price less its ${Math.round(assemblerMargin.value * 1000) / 10}% gross margin): ${what}`,
+    };
+}
+
+// A bought-in part priced from a distributor or marketplace listing, US$.
+// Listings are for the same or a comparable part, never the actuator
+// maker's contract price, so they are `estimated` at best.
+export function listed(
+    value: number,
+    range: [number, number] | undefined,
+    sources: string[],
+    asOf: string,
+    note: string,
+    confidence: "estimated" | "modeled" = "estimated",
+): Sourced<number> {
+    return {
+        value,
+        unit: "USD",
+        ...(range ? { range } : {}),
+        sources,
+        asOf,
+        confidence,
+        note,
+    };
+}
+
+// SMM's NdFeB N52(Ce) blank quote, 7 August 2026: US$32.82 to 34.13 per kg.
+const BLANK_USD_KG: [number, number] = [32.82, 34.13];
+const r2 = (n: number) => Math.round(n * 100) / 100;
+
+// A magnet's grams at the N52(Ce) blank price, as a cross-check.
+export function blankReference(magnet: Sourced<number>): {
+    label: string;
+    value: Sourced<number>;
+} {
+    const [lo, hi] = BLANK_USD_KG;
+    const kg = magnet.value / 1000;
+    return {
+        label: "Same mass as N52 blank",
+        value: {
+            value: r2((kg * (lo + hi)) / 2),
+            unit: "USD",
+            range: [r2(kg * lo), r2(kg * hi)],
+            sources: ["smm-ndfeb-blank-2026-08", ...magnet.sources],
+            asOf: "2026-08",
+            confidence: "estimated",
+            note: `${magnet.value} g at SMM's N52(Ce) blank quote of US$${lo} to ${hi}/kg. Blanks swap some Nd for cerium, carry no Dy and are not yet cut, coated or magnetised, so a finished SH-grade segment costs more. The quote sits below our NdPr and Dy content at the case month.`,
+        },
+    };
+}
+
+// Usual routes from raw material to finished part, in our words.
+export const GEAR_ROUTE = ["Cut bar", "Turn blank", "Hob teeth", "Carburise", "Grind"];
+export const RING_GEAR_ROUTE = ["Forge ring", "Turn", "Shape teeth", "Nitride"];
+export const LAMINATION_ROUTE = ["Slit coil", "Stamp sheets", "Stack and bond"];
+export const WINDING_ROUTE = ["Draw wire", "Enamel", "Wind coils", "Impregnate"];
+export const BEARING_ROUTE = [
+    "Forge rings",
+    "Turn",
+    "Harden",
+    "Grind races",
+    "Fit balls",
+];
+export const CAST_ROUTE = ["Die-cast", "CNC machine", "Anodise"];
+export const TURNED_ROUTE = ["Cut bar", "CNC turn", "Heat-treat"];
+export const BOARD_ROUTE = ["Laminate", "Drill", "Plate", "Etch"];
+export const CHIP_ROUTE = ["Wafer fab", "Dice", "Package", "Test"];
+export const FASTENER_ROUTE = ["Cold-head", "Roll thread", "Heat-treat", "Plate"];
+export const SCREW_ROUTE = [
+    "Cut bar",
+    "Turn",
+    "Rough thread",
+    "Induction harden",
+    "Grind thread",
+];

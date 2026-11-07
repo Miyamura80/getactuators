@@ -1,14 +1,25 @@
 import type { Vec3 } from "../../scenes/spec";
 import type { Sourced } from "../../sourced";
 import {
+    BEARING_ROUTE,
+    BOARD_ROUTE,
+    CAST_ROUTE,
+    FASTENER_ROUTE,
+    GEAR_ROUTE,
+    LAMINATION_ROUTE,
     MAGNET_STEPS,
+    RING_GEAR_ROUTE,
+    TURNED_ROUTE,
+    WINDING_ROUTE,
+    blankReference,
     boardCopper,
-    dieSilicon,
+    chip,
     disc,
+    listed,
     magnetContent,
     magnetGrams,
+    piece,
     ring,
-    weighed,
 } from "../make";
 import type { BomCase, BomNode } from "../types";
 
@@ -17,12 +28,15 @@ import type { BomCase, BomNode } from "../types";
 // internals for this motor, so the layout follows teardowns of its sibling,
 // the Go2's GO-M8018-6 (outrunner, 36 slots and 42 poles, one planetary
 // stage, magnetic encoder, Cortex-M0 driver board), sized to the M8010-6's
-// 530 g. Unitree designs the motor, gearbox and driver itself, so no part
-// inside has a public price: every node below the motor carries only its
-// raw material, and the step from that to the shelf price is Unitree's.
+// 530 g. Unitree designs the motor, gearbox and driver itself, so its own
+// parts have no public price: they carry their raw material, and what
+// Unitree adds on top shows at the motor as labour and overhead plus its
+// 60% gross margin. The chips and bearings it buys in are priced from
+// distributor listings for the same or a comparable part.
 
 const z = (v: number): Vec3 => [0, 0, v];
 const SIBLING = ["simplexity-go2-motor"];
+const BOARD = ["simplefoc-go2-motor-2026", "hackaday-go-m8018-2026"];
 const LISTING = ["unitree-go1-motor-page"];
 const shape = { sources: SIBLING, inferred: true } as const;
 
@@ -63,6 +77,13 @@ const PLANET = {
 } as const;
 
 const MAGNET = magnetGrams(ring(39, 37, 10, 0.85), SIBLING);
+const ENCODER_MAGNET = magnetGrams(disc(3, 2.5), SIBLING);
+
+const steel = (v: ReturnType<typeof ring>, label = "Gear steel") => ({
+    label,
+    seriesId: "bearing-steel",
+    v,
+});
 
 const motor: BomNode = {
     id: "motor",
@@ -75,17 +96,23 @@ const motor: BomNode = {
         {
             id: "stator",
             label: "Stator",
-            kind: "component",
+            kind: "assembly",
             ...shape,
+            note: "Wound in house; the core and wire come in as stamped steel and enamelled copper.",
             children: [
-                weighed(
-                    "stator-laminations",
-                    "Laminations",
-                    "electrical-steel",
-                    ring(36, 22, 10, 0.55),
+                piece(
+                    "stator-core",
+                    "Lamination stack",
+                    {
+                        label: "Electrical steel",
+                        seriesId: "electrical-steel",
+                        v: ring(36, 22, 10, 0.55),
+                    },
                     SIBLING,
                     {
                         ...shape,
+                        route: LAMINATION_ROUTE,
+                        makerNote: "Steel mill and stamping shop not public.",
                         part3d: {
                             component: "lamination-stack",
                             props: {
@@ -101,18 +128,19 @@ const motor: BomNode = {
                         },
                     },
                 ),
-                weighed(
-                    "stator-windings",
+                piece(
+                    "stator-winding",
                     "Copper windings",
-                    "copper",
-                    ring(36, 22, 10, 0.27),
+                    { label: "Copper", seriesId: "copper", v: ring(36, 22, 10, 0.27) },
                     SIBLING,
                     {
+                        ...shape,
+                        route: WINDING_ROUTE,
                         makerIds: ["jiangxi-copper"],
                         makerConfidence: "modeled",
                         makerNote:
                             "China's largest copper producer stands in for the wire's source.",
-                        ...shape,
+                        note: "Slots take 45% of the stack, copper fills 40% of a slot; a short stack's end turns add half again.",
                         part3d: {
                             component: "winding-coils",
                             props: {
@@ -125,7 +153,21 @@ const motor: BomNode = {
                             assembled: { position: z(-6) },
                             explodedOffset: z(-34),
                         },
-                        note: "Slots take 45% of the stack, copper fills 40% of a slot; a short stack's end turns add half again.",
+                    },
+                ),
+                piece(
+                    "stator-hub",
+                    "Stator hub",
+                    {
+                        label: "Aluminium",
+                        seriesId: "aluminium",
+                        v: ring(22, 9, 12, 0.6),
+                    },
+                    SIBLING,
+                    {
+                        ...shape,
+                        route: CAST_ROUTE,
+                        note: "Carries the stack on the housing and holds the rotor bearing.",
                     },
                 ),
             ],
@@ -133,7 +175,7 @@ const motor: BomNode = {
         {
             id: "rotor",
             label: "Outer rotor",
-            kind: "component",
+            kind: "assembly",
             ...shape,
             part3d: {
                 component: "magnet-ring",
@@ -162,16 +204,32 @@ const motor: BomNode = {
                         "jl-mag",
                     ],
                     processStepIds: MAGNET_STEPS,
+                    references: [blankReference(MAGNET)],
                     ...shape,
-                    note: "42 arc segments glued inside the rotor cup.",
+                    note: "42 arc segments glued inside the rotor cup; the set is counted as one part.",
                     children: magnetContent("rotor-magnet", MAGNET),
                 },
-                weighed(
+                piece(
                     "rotor-cup",
                     "Rotor back iron",
-                    "carbon-steel",
-                    ring(41, 39, 10),
+                    { label: "Steel", seriesId: "carbon-steel", v: ring(41, 39, 10) },
                     SIBLING,
+                    { ...shape, route: TURNED_ROUTE },
+                ),
+                piece(
+                    "rotor-plate",
+                    "Rotor end plate",
+                    {
+                        label: "Aluminium",
+                        seriesId: "aluminium",
+                        v: disc(41, 1.5, 0.7),
+                    },
+                    SIBLING,
+                    {
+                        ...shape,
+                        route: ["CNC machine", "Press sun gear"],
+                        note: "Closes the cup and carries the sun gear, so the rotor drives the gearbox directly.",
+                    },
                 ),
             ],
         },
@@ -192,61 +250,107 @@ const gearbox: BomNode = {
         explodedOffset: z(70),
     },
     children: [
-        weighed(
-            "sun-gear",
-            "Sun gear steel",
-            "bearing-steel",
-            disc(4.8, 7, 0.9),
-            SIBLING,
-            { inferred: true },
-        ),
-        weighed(
-            "planet-gears",
-            "Planet gear steel",
-            "bearing-steel",
-            ring(10.4, 3, 7, 0.9),
-            SIBLING,
-            { qty: 3, inferred: true },
-        ),
-        weighed(
-            "ring-gear",
-            "Ring gear steel",
-            "bearing-steel",
-            ring(28.5, 25.6, 7, 0.95),
-            SIBLING,
-            { inferred: true },
-        ),
-        {
-            id: "planet-carrier",
-            label: "Planet carrier",
-            kind: "component",
+        piece("sun-gear", "Sun gear", steel(disc(4.8, 7, 0.9)), SIBLING, {
             ...shape,
-            part3d: {
-                component: "cylinder",
-                props: { radius: 22, length: 3, bore: 5 },
-                assembled: { position: z(16) },
-                explodedOffset: z(100),
-                accent: true,
+            route: GEAR_ROUTE,
+        }),
+        piece("planet-gears", "Planet gear", steel(ring(10.4, 3, 7, 0.9)), SIBLING, {
+            ...shape,
+            qty: 3,
+            route: GEAR_ROUTE,
+        }),
+        piece("planet-pins", "Planet pin", steel(disc(1.5, 9), "Pin steel"), SIBLING, {
+            ...shape,
+            qty: 3,
+            route: ["Cut wire", "Harden", "Centreless grind"],
+        }),
+        piece(
+            "planet-needles",
+            "Planet needle bearing",
+            steel(ring(3, 1.5, 7, 0.5), "Bearing steel"),
+            SIBLING,
+            {
+                ...shape,
+                qty: 3,
+                route: BEARING_ROUTE,
+                alternateMakerIds: ["zwz-bearing", "nippon-thompson"],
+                makerNote: "Bought-in needle rollers; supplier not public.",
             },
-            children: [
-                weighed(
-                    "carrier-steel",
-                    "Carrier steel",
-                    "carbon-steel",
-                    disc(22, 3, 0.8),
-                    SIBLING,
-                ),
-            ],
-        },
+        ),
+        piece("ring-gear", "Ring gear", steel(ring(28.5, 25.6, 7, 0.95)), SIBLING, {
+            ...shape,
+            route: RING_GEAR_ROUTE,
+        }),
+        piece(
+            "planet-carrier",
+            "Planet carrier",
+            steel(disc(22, 3, 0.8), "Carrier steel"),
+            SIBLING,
+            {
+                ...shape,
+                route: TURNED_ROUTE,
+                note: "The output: the leg link bolts to it.",
+                part3d: {
+                    component: "cylinder",
+                    props: { radius: 22, length: 3, bore: 5 },
+                    assembled: { position: z(16) },
+                    explodedOffset: z(100),
+                    accent: true,
+                },
+            },
+        ),
     ],
 };
+
+// Distributor prices for the board's bought-in chips. Unitree sands the
+// markings off, so each is a comparable part, not a confirmed one.
+const MCU_COST = listed(
+    0.8,
+    [0.8, 1.1],
+    ["lcsc-stm32f103c8t6"],
+    "2025",
+    "LCSC's 1,000-unit tier for an STM32F103, a Cortex-M3 that stands in for Unitree's Cortex-M0; an M0 usually costs less, so read it as a ceiling.",
+    "modeled",
+);
+const GATE_COST = listed(
+    0.36,
+    [0.25, 0.36],
+    ["lcsc-fd6288q"],
+    "2025",
+    "LCSC's 1,000-unit tier for a Fortior FD6288Q three-phase gate driver, a common Chinese part for this job; the low end is a second maker's version.",
+    "modeled",
+);
+const FET_COST = listed(
+    0.25,
+    [0.25, 0.31],
+    ["lcsc-wsd4066dn"],
+    "2025",
+    "LCSC's 10-unit tier for a 40 V dual N-channel MOSFET in a 3 mm package; three of them make the six switches of a 24 V inverter.",
+    "modeled",
+);
+const RS485_COST = listed(
+    0.12,
+    [0.12, 0.19],
+    ["lcsc-sp3485"],
+    "2025",
+    "LCSC's 500 to 2,500-unit tiers for an SP3485-class RS-485 transceiver.",
+    "modeled",
+);
+const ENCODER_COST = listed(
+    2.07,
+    [2.07, 4.41],
+    ["lcsc-mt6835"],
+    "2025",
+    "LCSC's 1,000-unit tier for a Magn Tek MT6835, a Chinese magnetic angle sensor of the class the 15-bit encoder needs; small lots cost up to twice as much.",
+    "modeled",
+);
 
 const electronics: BomNode = {
     id: "driver-board",
     label: "FOC driver board",
-    kind: "component",
+    kind: "assembly",
     ...UNITREE,
-    sources: ["simplefoc-go2-motor-2026", "hackaday-go-m8018-2026"],
+    sources: BOARD,
     inferred: true,
     note: "Inverter, current sensing and RS-485 on one board; Unitree sands the chip markings off.",
     part3d: {
@@ -256,32 +360,100 @@ const electronics: BomNode = {
         explodedOffset: z(-110),
     },
     children: [
-        weighed("board-copper", "Board copper", "copper", boardCopper(38), SIBLING),
-        {
-            id: "mcu",
-            label: "Motor-control MCU",
-            kind: "component",
+        piece(
+            "bare-board",
+            "Bare circuit board",
+            { label: "Board copper", seriesId: "copper", v: boardCopper(38) },
+            SIBLING,
+            {
+                route: BOARD_ROUTE,
+                inferred: true,
+                makerNote: "Board fab not public; Shenzhen has hundreds.",
+            },
+        ),
+        chip("mcu", "Motor-control MCU", 6, ["simplefoc-go2-motor-2026"], {
+            unitCost: MCU_COST,
             makerIds: ["cmsemicon"],
             makerConfidence: "estimated",
             makerNote:
                 "A reverse engineer identifies a Cmsemicon CMS32M57-series Cortex-M0; the markings are removed, so this is his reading.",
-            sources: ["simplefoc-go2-motor-2026"],
-            inferred: true,
-            children: [
-                weighed("mcu-silicon", "MCU die", "silicon", dieSilicon(6), [
-                    "simplefoc-go2-motor-2026",
-                ]),
-            ],
-        },
-        weighed(
-            "power-silicon",
-            "Power stage dies",
-            "silicon",
-            dieSilicon(12),
-            SIBLING,
-            { inferred: true },
+        }),
+        chip("gate-driver", "Gate driver", 3, SIBLING, {
+            unitCost: GATE_COST,
+            makerNote:
+                "Not public; a Chinese three-phase driver chip is typical at this price.",
+        }),
+        chip("power-mosfets", "Dual power MOSFET", 4, SIBLING, {
+            qty: 3,
+            unitCost: FET_COST,
+            makerNote: "Not public; the markings are removed.",
+        }),
+        chip("rs485-transceiver", "RS-485 transceiver", 2, SIBLING, {
+            unitCost: RS485_COST,
+            makerNote: "Not public.",
+        }),
+        piece(
+            "leads",
+            "Power and bus leads",
+            {
+                label: "Copper",
+                seriesId: "copper",
+                v: {
+                    cm3: 0.5,
+                    how: "Two 300 mm power leads and a bus pair, 0.5 cm3 of copper",
+                },
+            },
+            LISTING,
+            {
+                inferred: true,
+                route: ["Draw wire", "Strand", "Insulate", "Crimp"],
+                note: "The motor takes power and RS-485 on one cable.",
+            },
         ),
     ],
+};
+
+const encoder: BomNode = {
+    id: "magnetic-encoder",
+    label: "Magnetic encoder",
+    kind: "assembly",
+    makerNote: "Chip maker not public.",
+    sources: ["simplefoc-go2-motor-2026"],
+    inferred: true,
+    note: "A diametric magnet on the rotor axis over an angle sensor on the board; 15 bits per Unitree.",
+    part3d: {
+        component: "encoder",
+        props: { radius: 9, thickness: 2, kind: "magnetic" },
+        assembled: { position: z(-14) },
+        explodedOffset: z(-80),
+    },
+    children: [
+        chip("encoder-chip", "Angle sensor chip", 4, ["simplefoc-go2-motor-2026"], {
+            unitCost: ENCODER_COST,
+        }),
+        {
+            id: "encoder-magnet",
+            label: "Diametric magnet",
+            kind: "component",
+            sources: SIBLING,
+            inferred: true,
+            processStepIds: MAGNET_STEPS,
+            alternateMakerIds: ["ningbo-yunsheng"],
+            makerNote: "Not public.",
+            children: magnetContent("encoder-magnet", ENCODER_MAGNET),
+        },
+    ],
+};
+
+const BEARING_PRICE = {
+    label: "6800-series listing",
+    value: listed(
+        1.4,
+        undefined,
+        ["ebay-6800-thin-bearings"],
+        "2026",
+        "A China-based seller's single-unit price for a 6800-series thin-wall bearing (GBP 1.09); volume prices are lower, so a ceiling.",
+    ),
 };
 
 export const UNITREE_QDD: BomCase = {
@@ -296,7 +468,21 @@ export const UNITREE_QDD: BomCase = {
     month: "2026-09",
     why: "A cheap, high-volume joint: one company designs the motor, gearbox and driver, so the chain has few hand-offs.",
     takeaway:
-        "No supplier margin sits between the metal and the shelf: almost everything above raw material is Unitree's own step.",
+        "No supplier margin sits between the metal and the shelf: the bought-in chips come to about $5, and almost everything else is Unitree's own step.",
+    uses: {
+        actuators: [{ id: "unitree-go-m8010-6", relation: "this" }],
+        other: [
+            {
+                name: "Go1",
+                brand: "Unitree",
+                count: 12,
+                relation: "this",
+                how: "The Go1 quadruped's joint motor, three per leg, per the catalog entry and Unitree's motor page.",
+                sources: LISTING,
+            },
+        ],
+        humanoids: { actuatorType: "qdd" },
+    },
     root: {
         id: "unitree-qdd",
         label: "GO-M8010-6 joint motor",
@@ -305,57 +491,43 @@ export const UNITREE_QDD: BomCase = {
         ...UNITREE,
         sources: [...LISTING, "unitree-go1-motor-shop"],
         note: "Unitree's core business ran a 60% gross margin in 2025, per its IPO filing.",
+        route: [
+            "Wind stator",
+            "Bond magnets",
+            "Assemble gearbox",
+            "Fit board",
+            "Calibrate encoder",
+            "Test",
+        ],
         children: [
             motor,
             gearbox,
             electronics,
-            {
-                id: "magnetic-encoder",
-                label: "Magnetic encoder",
-                kind: "component",
-                makerNote: "Chip maker not public.",
-                sources: ["simplefoc-go2-motor-2026"],
-                inferred: true,
-                part3d: {
-                    component: "encoder",
-                    props: { radius: 9, thickness: 2, kind: "magnetic" },
-                    assembled: { position: z(-14) },
-                    explodedOffset: z(-80),
+            encoder,
+            piece(
+                "bearings",
+                "Ball bearing",
+                steel(ring(14, 9, 5, 0.55), "Bearing steel"),
+                SIBLING,
+                {
+                    ...shape,
+                    qty: 2,
+                    route: BEARING_ROUTE,
+                    makerNote: "Bearing supplier not public.",
+                    alternateMakerIds: ["zwz-bearing", "lyc-bearing", "nsk"],
+                    references: [BEARING_PRICE],
+                    part3d: {
+                        component: "bearing",
+                        props: { kind: "deep-groove", outer: 14, inner: 9, width: 5 },
+                        assembled: { position: z(12) },
+                        explodedOffset: z(130),
+                    },
                 },
-                children: [
-                    weighed("encoder-silicon", "Sensor die", "silicon", dieSilicon(4), [
-                        "simplefoc-go2-motor-2026",
-                    ]),
-                ],
-            },
-            {
-                id: "bearings",
-                label: "Ball bearings",
-                kind: "component",
-                qty: 2,
-                makerNote: "Bearing supplier not public.",
-                alternateMakerIds: ["zwz-bearing", "lyc-bearing", "nsk"],
-                ...shape,
-                part3d: {
-                    component: "bearing",
-                    props: { kind: "deep-groove", outer: 14, inner: 9, width: 5 },
-                    assembled: { position: z(12) },
-                    explodedOffset: z(130),
-                },
-                children: [
-                    weighed(
-                        "bearing-steel",
-                        "Bearing steel",
-                        "bearing-steel",
-                        ring(14, 9, 5, 0.55),
-                        SIBLING,
-                    ),
-                ],
-            },
+            ),
             {
                 id: "housing",
                 label: "Housing",
-                kind: "component",
+                kind: "assembly",
                 ...UNITREE,
                 ...shape,
                 part3d: {
@@ -372,18 +544,47 @@ export const UNITREE_QDD: BomCase = {
                     explodedOffset: z(-60),
                 },
                 children: [
-                    weighed(
-                        "housing-aluminium",
-                        "Aluminium",
-                        "aluminium",
+                    piece(
+                        "housing-shell",
+                        "Cast shell",
                         {
-                            cm3:
-                                (Math.PI *
-                                    ((47 * 47 - 45 * 45) * 40 + 47 * 47 * 2 * 2)) /
-                                1000,
-                            how: "Cup r 47 mm, 40 mm long, 2 mm walls and two 2 mm faces",
+                            label: "Aluminium",
+                            seriesId: "aluminium",
+                            v: {
+                                cm3:
+                                    (Math.PI *
+                                        ((47 * 47 - 45 * 45) * 40 + 47 * 47 * 2)) /
+                                    1000,
+                                how: "Cup r 47 mm, 40 mm long, 2 mm wall and a 2 mm face",
+                            },
                         },
                         SIBLING,
+                        { ...shape, route: CAST_ROUTE },
+                    ),
+                    piece(
+                        "housing-cover",
+                        "Rear cover",
+                        { label: "Aluminium", seriesId: "aluminium", v: disc(47, 2) },
+                        SIBLING,
+                        { ...shape, route: CAST_ROUTE, note: "Closes the board end." },
+                    ),
+                    piece(
+                        "fasteners",
+                        "Screw",
+                        { label: "Steel", seriesId: "carbon-steel", v: disc(1.5, 8) },
+                        SIBLING,
+                        {
+                            ...shape,
+                            qty: 16,
+                            route: FASTENER_ROUTE,
+                            note: "M3 screws: eight hold the cover, eight the output face.",
+                            part3d: {
+                                component: "bolt",
+                                props: { diameter: 3, length: 8, count: 8, circle: 43 },
+                                assembled: { position: z(-21) },
+                                explodedOffset: z(-150),
+                            },
+                        },
                     ),
                 ],
             },

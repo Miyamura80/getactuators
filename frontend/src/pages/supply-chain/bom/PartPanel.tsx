@@ -10,15 +10,16 @@ import { ProcessStepChip, stepLabel } from "../../../components/flows/ProcessSte
 import { StageShareBar } from "../../../components/flows/StageShareBar";
 import { Flag } from "../../../components/Flag";
 import { FootnoteRef, SourcedValue } from "../../../components/supply-chain/SourcedValue";
+import type { CostStack } from "../../../../../src/supply-chain/bom/metrics";
 import { type CaseModel, materialLeaves, stageSharesFor } from "./model";
 
 // The selected part: what it costs, what it is made of, who makes it and how
 // it is made. With nothing selected it shows the whole actuator.
 
-export const money = (n: number): string => (n < 1 ? `$${n.toFixed(2)}` : n < 100 ? `$${n.toFixed(1)}` : formatValue(n, "USD"));
+export const money = (n: number): string => (n > 0 && n < 0.005 ? "<$0.01" : n < 1 ? `$${n.toFixed(2)}` : n < 100 ? `$${n.toFixed(1)}` : formatValue(n, "USD"));
 // "$769 ($437-1,100)": a cited US$ figure with its range spelled out.
 export const usdText = (v: Sourced<number>): string => (v.range ? `${money(v.value)} (${money(v.range[0])}-${money(v.range[1])})` : money(v.value));
-const gramsText = (g: number): string => (g < 1 ? `${g.toFixed(2)} g` : `${Math.round(g)} g`);
+export const gramsText = (g: number): string => (g < 1 ? `${g.toFixed(2)} g` : `${Math.round(g)} g`);
 
 function Row({ label, children }: { label: string; children: ReactNode }) {
     return <div className="bm-row"><dt>{label}</dt><dd>{children}</dd></div>;
@@ -52,11 +53,32 @@ function Makers({ node, onCompany }: { node: BomNode; onCompany: (id: string) =>
     </section>;
 }
 
-function Steps({ ids }: { ids: readonly string[] }) {
-    if (ids.length === 0) return null;
+function Steps({ ids, route }: { ids: readonly string[]; route: readonly string[] }) {
+    if (ids.length === 0 && route.length === 0) return null;
     return <section className="bm-sec" aria-label="How it is made">
         <h4>How it is made</h4>
-        <p className="bm-steps">{ids.map((id) => <ProcessStepChip key={id} stepId={id} label={chainOfStep(id)?.steps.find((x) => x.id === id)?.label ?? stepLabel(id)} />)}</p>
+        {ids.length ? <p className="bm-steps">{ids.map((id) => <ProcessStepChip key={id} stepId={id} label={chainOfStep(id)?.steps.find((x) => x.id === id)?.label ?? stepLabel(id)} />)}</p> : null}
+        {route.length ? <ol className="bm-route" aria-label="Usual route, our summary">{route.map((r) => <li key={r}>{r}</li>)}</ol> : null}
+    </section>;
+}
+
+const STACK_BANDS: { key: keyof Omit<CostStack, "total" | "short">; label: string }[] = [
+    { key: "raw", label: "Raw material" },
+    { key: "below", label: "Added by the tiers below" },
+    { key: "conversion", label: "Labour, energy, overhead" },
+    { key: "profit", label: "Maker's gross profit" },
+];
+
+// A priced part's cost in four bands that add up to it.
+function Stack({ st }: { st: CostStack }) {
+    const bands = STACK_BANDS.filter((b) => st[b.key] > 0);
+    return <section className="bm-sec" aria-label="Cost stack">
+        <h4>Cost stack</h4>
+        <div className="bm-stack-bar" role="img" aria-label={bands.map((b) => `${b.label} ${money(st[b.key])}`).join(", ")}>
+            {bands.map((b) => <i key={b.key} className={`is-${b.key}`} style={{ width: `${(st[b.key] / st.total) * 100}%` }} />)}
+        </div>
+        <ul className="bm-stack-key">{bands.map((b) => <li key={b.key}><i className={`is-${b.key}`} />{b.label}<b>{money(st[b.key])}</b></li>)}</ul>
+        {st.short ? <p className="bm-note">Its inputs as modeled cost more than it does, so the bands are clipped.</p> : null}
     </section>;
 }
 
@@ -71,6 +93,7 @@ function NodeBody({ m, node, onSelect, onCompany }: { m: CaseModel; node: BomNod
         <dl className="bm-figs">
             {node.unitCost ? <Row label="Unit cost"><SourcedValue value={node.unitCost} format={usdText} /></Row> : node.kind !== "material" ? <Row label="Unit cost"><span className="bm-gap">not public</span></Row> : null}
             {count > 1 ? <Row label="In one actuator">{count}</Row> : null}
+            {!node.material && (x?.mass ?? 0) > 0 ? <Row label="Mass">{gramsText((x?.mass ?? 0) * count)} <span className="sc-tag">model</span></Row> : null}
             {node.material ? <Row label="Mass"><SourcedValue value={node.material.massG} format={() => gramsText(grams ?? 0)} /></Row> : null}
             {price ? <Row label="Price per kg"><SourcedValue value={price.price} /></Row> : null}
             <Row label="Raw material">{money((x?.raw ?? 0) * count)}</Row>
@@ -78,12 +101,13 @@ function NodeBody({ m, node, onSelect, onCompany }: { m: CaseModel; node: BomNod
             {x?.step ? <Row label="Step markup"><span className="sc-num">{idiotText(x.step)}</span></Row> : null}
         </dl>
         {node.note ? <p className="bm-note">{node.note}</p> : null}
+        {x?.stack ? <Stack st={x.stack} /> : null}
         {node.references?.length ? <section className="bm-sec" aria-label="Cross-checks">
             <h4>Cross-checks</h4>
             <dl className="bm-figs">{node.references.map((r) => <Row key={r.label} label={r.label}><SourcedValue value={r.value} format={usdText} /></Row>)}</dl>
         </section> : null}
         <Makers node={node} onCompany={onCompany} />
-        <Steps ids={node.processStepIds ?? []} />
+        <Steps ids={node.processStepIds ?? []} route={node.route ?? []} />
         {shares ? <section className="bm-sec" aria-label="Where this stage happens"><h4>Where this stage happens</h4><StageShareBar shares={shares} label="Country shares of this stage" /></section> : null}
         {kids.length ? <section className="bm-sec" aria-label="Inside">
             <h4>Inside</h4>

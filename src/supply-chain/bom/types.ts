@@ -1,3 +1,4 @@
+import type { ActuatorType } from "../../humanoids/types";
 import type { PartShape, Transform, Vec3 } from "../scenes/spec";
 import type { Confidence, SourceId, Sourced } from "../sourced";
 import type { BomSlug } from "./path";
@@ -62,6 +63,10 @@ export interface BomNode {
     makerNote?: string;
     // /manufacturing step ids that make this node.
     processStepIds?: string[];
+    // How the part is made from its raw material, in order, one to three
+    // words a step ("Stamp", "Hob teeth"). Our summary of the usual route
+    // for this kind of part, not the maker's process sheet.
+    route?: string[];
     // This node's part in the case's explode; bomNodeId is set from `id`.
     part3d?: BomPart;
     references?: BomReference[];
@@ -93,5 +98,35 @@ export interface BomCase {
     why: string;
     // The page's finding in one sentence, our words.
     takeaway: string;
+    // Robots and catalog actuators the case links to (see ./used-in).
+    uses: BomUseSpec;
     root: BomNode;
 }
+
+// Which robots use a case's actuator (or one of its design), resolved from
+// the /humanoids fleet, the robots catalog and the actuator catalog so the
+// thumbnails come from data. `this` marks the case's own actuator.
+export interface BomUseSpec {
+    // /humanoids robots whose joints are of this design.
+    humanoids?: {
+        actuatorType: ActuatorType;
+        // Robots that use this very actuator, not only its design.
+        thisIds?: string[];
+    };
+    // robots.json motor ids that are this actuator.
+    robotMotorIds?: string[];
+    // Catalog actuators: the case's own (this) or close siblings.
+    actuators?: { id: string; relation: BomUseRelation }[];
+    // A robot with no record in the catalog data.
+    other?: {
+        name: string;
+        brand: string;
+        count?: number;
+        relation: BomUseRelation;
+        // One line: how the link is known.
+        how: string;
+        sources: SourceId[];
+    }[];
+}
+
+export type BomUseRelation = "this" | "same-design";

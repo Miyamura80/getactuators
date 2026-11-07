@@ -287,4 +287,77 @@ export const BOM_SOURCES: BomSource[] = [
         "https://www.allianceorg.com/pdfs/PhysicalPropertiesofMagnets.pdf",
         "reference",
     ),
+    // Bought-in part prices (v2 teardowns). Distributor and marketplace
+    // listings for the same or a comparable part, read from search results;
+    // none of these pages was opened (fetches were blocked).
+    src(
+        "smm-ndfeb-blank-2026-08",
+        "SMM",
+        "Rare-earth magnet prices: NdFeB blank N52(Ce), US$/kg",
+        "https://www-old.metal.com/price/Rare-Earth/Rare-Earth-Magnets",
+        "press",
+    ),
+    src(
+        "lcsc-stm32f103c8t6",
+        "LCSC",
+        "STM32F103C8T6 (C8734) price tiers",
+        "https://www.lcsc.com/product-image/C8734.html",
+        "reference",
+    ),
+    src(
+        "lcsc-fd6288q",
+        "LCSC",
+        "Fortior Tech FD6288Q three-phase gate driver (C328453) price tiers",
+        "https://lcsc.com/product-detail/Gate-Drivers_Fortior-Tech-FD6288Q_C328453.html",
+        "reference",
+    ),
+    src(
+        "lcsc-wsd4066dn",
+        "LCSC",
+        "Winsok WSD4066DN dual N-channel 40 V MOSFET (C377861)",
+        "https://www.lcsc.com/datasheet/lcsc_datasheet_1912111437_Winsok-Semicon-WSD4066DN_C377861.pdf",
+        "reference",
+    ),
+    src(
+        "lcsc-sp3485",
+        "LCSC",
+        "UMW SP3485EN RS-485 transceiver (C44850899) price tiers",
+        "https://www.lcsc.com/product-image/C44850899.html",
+        "reference",
+    ),
+    src(
+        "lcsc-mt6835",
+        "LCSC",
+        "Magn Tek MT6835GT-STD magnetic angle sensor (C2932578) price tiers",
+        "https://www.lcsc.com/product-detail/Position-Sensors_Magn-Tek-MT6835GT-STD_C2932578.html",
+        "reference",
+    ),
+    src(
+        "findchips-as5045",
+        "FindChips",
+        "AS5045-ASST price and stock across distributors",
+        "https://www.findchips.com/search/AS5045-ASST",
+        "reference",
+    ),
+    src(
+        "ebay-6800-thin-bearings",
+        "eBay (China-based seller)",
+        "Deep groove ball bearing 6800 to 6810, metal shielded thin wall",
+        "https://www.ebay.de/itm/356092406455",
+        "reference",
+    ),
+    src(
+        "lkpb-crbh-ebay",
+        "LKPB Bearing (eBay)",
+        "CRBH208 to CRBH4510 crossed roller bearings, P5/P4",
+        "https://www.ebay.de/itm/134251293069",
+        "reference",
+    ),
+    src(
+        "ato-brake-prices",
+        "ATO",
+        "Electromagnetic brake and clutch price list",
+        "https://www.ato.com/electromagnetic-brake-and-clutch-price-list",
+        "company-site",
+    ),
 ];

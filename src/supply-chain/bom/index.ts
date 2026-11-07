@@ -9,7 +9,7 @@ import { flatten } from "./metrics";
 import { caseScene } from "./scene";
 import type { BomCase, BomNode } from "./types";
 
-// /bom: three actuator teardowns, each a cited bill-of-materials tree with
+// /bom: actuator teardowns, each a cited bill-of-materials tree with
 // costs, raw material, makers and margins. Data only; zod wire shapes live
 // in ./views (server side).
 
@@ -141,8 +141,12 @@ export function bomNodeRecords(): { sources: readonly string[] }[] {
 
 export { caseScene, nodePart, partFor } from "./scene";
 export {
+    CONVERSION_ID,
+    PROFIT_ID,
+    costStack,
     flatten,
     findNode,
+    massOf,
     idiotIndex,
     marginCapture,
     materialNodeId,

@@ -14,6 +14,7 @@ import {
     nodeMetrics,
 } from "@/supply-chain/bom";
 import { idiotText } from "@/supply-chain/bom/format";
+import { type BomUse, usesOf } from "@/supply-chain/bom/used-in";
 import { formatValue, percentDigits } from "@/supply-chain/format";
 import { getCompany } from "@/supply-chain/registry";
 import { DATA_LICENSE, SITE_URL, absoluteUrl } from "../../site";
@@ -62,13 +63,11 @@ function bomTable(fn: Footnotes, c: BomCase): string {
         .filter(({ node }) => node.kind !== "material")
         .map(({ node, depth, count }) => {
             const m = metrics.get(node.id);
-            const grams = flatten(node)
-                .filter((p) => p.node.material)
-                .reduce((s, p) => s + (p.node.material?.massG.value ?? 0) * p.count, 0);
+            const grams = m?.mass ?? 0;
             return [
                 `${"· ".repeat(depth)}${mdText(node.label)} (\`${node.id}\`)${node.inferred ? " (inferred)" : ""}${fn.ref(node.sources)}`,
                 String(count),
-                `${Math.round(grams * count)} g (model)`,
+                `${grams * count < 1 ? (grams * count).toFixed(2) : Math.round(grams * count)} g (model)`,
                 node.unitCost ? fn.value(node.unitCost) : "not public",
                 m?.raw !== undefined ? cents(m.raw * count) : "",
                 m?.idiot ? idiotText(m.idiot) : "n/a",
@@ -89,6 +88,59 @@ function bomTable(fn: Footnotes, c: BomCase): string {
         ],
         rows,
     );
+}
+
+function stackTable(c: BomCase): string {
+    const metrics = nodeMetrics(c);
+    const rows = flatten(c.root).flatMap(({ node }) => {
+        const st = metrics.get(node.id)?.stack;
+        if (!st) return [];
+        return [
+            [
+                `${mdText(node.label)} (\`${node.id}\`)`,
+                cents(st.total),
+                cents(st.raw),
+                cents(st.below),
+                cents(st.conversion),
+                cents(st.profit),
+            ],
+        ];
+    });
+    return mdTable(
+        [
+            "Priced node",
+            "Unit cost",
+            "Raw material",
+            "Added by tiers below",
+            "Labour, energy, overhead",
+            "Maker's gross profit",
+        ],
+        rows,
+    );
+}
+
+function routeList(c: BomCase): string {
+    return flatten(c.root)
+        .filter(({ node }) => node.route?.length)
+        .map(
+            ({ node }) =>
+                `- ${mdText(node.label)} (\`${node.id}\`): ${(node.route ?? []).map(mdText).join(" → ")}`,
+        )
+        .join("\n");
+}
+
+function useText(u: BomUse): string {
+    const what = `${mdText(u.brand)} ${mdText(u.name)}`;
+    const name = u.href ? `[${what}](${absoluteUrl(u.href)})` : what;
+    const rel = u.relation === "this" ? "uses this actuator" : "same design";
+    const n = u.count ? `, ${u.count} joints` : "";
+    const photo = u.image ? "" : " (no photo on the site)";
+    return `- ${name}: ${rel}${n}${photo}. ${mdText(u.how)}`;
+}
+
+function usedIn(c: BomCase): string {
+    const uses = usesOf(c);
+    return uses.length ? uses.map(useText).join("\n") : "- None in the catalog data.";
 }
 
 function materialsTable(fn: Footnotes, c: BomCase): string {
@@ -172,6 +224,26 @@ Unit cost is what the next tier pays for one unit. Raw material and the idiot in
 
 ${table}
 
+Modeled parts weigh ${Math.round(root?.mass ?? 0)} g in all${c.massG ? ` against the published ${Math.round(c.massG.value)} g` : ""}.
+
+## Used in
+
+Robots and catalog actuators that use this actuator or one of its design, from the /humanoids fleet and the robots and actuator catalogs.
+
+${usedIn(c)}
+
+## Cost stacks
+
+Each priced node's unit cost in four bands that add up to it: the raw material inside, what the tiers below added on top of their raw material, this step's labour, energy, machines and overhead (with any margin we cannot attribute), and its maker's gross profit at the company's latest margin. The Sankey on the page draws the last two as flows into each step.
+
+${stackTable(c)}
+
+## How the parts are made
+
+The usual route from raw material to each part, in our words; magnets link to the steps on [/manufacturing](${absoluteUrl("/manufacturing.md")}).
+
+${routeList(c)}
+
 ## Raw materials
 
 ${mats}
@@ -184,7 +256,8 @@ ${margins}
 
 ## Method
 
-- Costs: ${c.slug === "unitree-qdd" ? "Unitree makes the parts itself and publishes no internal costs, so only the shelf price and raw materials are known." : "the price is split by a published share of each part in an actuator of this type, so every part cost is a model."}
+- Costs: ${c.slug === "unitree-qdd" ? "Unitree makes the parts itself and publishes no internal costs, so only the shelf price, the chips it buys in (distributor prices for comparable parts) and raw materials are known; what is left shows at the motor as Unitree's labour and overhead and its gross profit." : c.slug === "optimus-linear" ? "the assembler keeps its gross margin, and a published share of each part in an actuator of this type splits the rest, so every part cost is a model." : "the price is split by a published share of each part in an actuator of this type, so every part cost is a model."}
+- Bought-in chips and bearings: distributor or marketplace listings for the same or a comparable part, never the actuator maker's contract price.
 - Raw material: grams from our part geometry times cited densities, priced with /metals for rare earths and cited commodity readings for the rest.
 - Magnets: an SH-grade recipe with grain-boundary diffused Dy, from /metals.
 - See [/manufacturing](${absoluteUrl("/manufacturing.md")}) for how the magnet is made, and [/bom](${absoluteUrl(`${BOM_PATH}.md`)}) for all three cases.
@@ -207,6 +280,13 @@ export function bomIndexBody(): string {
             cents(root?.raw ?? 0),
             root?.idiot ? idiotText(root.idiot) : "n/a",
             who,
+            usesOf(c)
+                .filter((u) => u.kind === "robot")
+                .map(
+                    (u) =>
+                        `${mdText(u.name)}${u.relation === "this" ? "" : " (same design)"}`,
+                )
+                .join(", ") || "n/a",
             mdText(c.takeaway),
         ];
     });
@@ -216,7 +296,7 @@ ${INDEX_DESCRIPTION} As of ${BOM_AS_OF}. Interactive page: ${absoluteUrl(BOM_PAT
 
 ## Cases
 
-${mdTable(["Case", "Price", "Raw material", "Idiot index", "Largest gross profit (share of price)", "Finding"], rows)}
+${mdTable(["Case", "Price", "Raw material", "Idiot index", "Largest gross profit (share of price)", "Robots", "Finding"], rows)}
 
 Idiot index is the price over the cost of the raw materials inside, at ${BOM_CASES[0]?.month ?? ""} prices. Most part costs are models from published shares, so read them as estimates.
 

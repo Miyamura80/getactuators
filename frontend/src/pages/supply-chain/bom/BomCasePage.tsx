@@ -10,6 +10,7 @@ import {
     partFor,
 } from "../../../../../src/supply-chain/bom";
 import { idiotText } from "../../../../../src/supply-chain/bom/format";
+import { usesOf } from "../../../../../src/supply-chain/bom/used-in";
 import { CompanyDrawer } from "../../../components/flows/CompanyDrawer";
 import { SupplyGraph } from "../../../components/flows/SupplyGraph";
 import { ValueSankey } from "../../../components/flows/ValueSankey";
@@ -20,9 +21,10 @@ import { SourcedValue } from "../../../components/supply-chain/SourcedValue";
 import { SourcesSection } from "../../../components/supply-chain/SourcesSection";
 import { useSupplyChainSelection } from "../../../lib/supply-chain-selection";
 import { ExplodeScene } from "../../../three";
+import { BomUses } from "./BomUses";
 import { MarginBar } from "./MarginBar";
-import { caseModel, graphModel, makerOf, sankeyModel } from "./model";
-import { PartPanel, money, usdText } from "./PartPanel";
+import { SANKEY_DEPTH, caseModel, graphModel, makerOf, sankeyModel, shownAs } from "./model";
+import { PartPanel, gramsText, money, usdText } from "./PartPanel";
 
 // /bom/<slug>: one teardown in three linked views. Selecting a part in the
 // 3D explode, the Sankey or the company graph selects it in the other two
@@ -36,7 +38,10 @@ export function BomCasePage({ c, menuOpen }: { c: BomCase; menuOpen: boolean }) 
     const [hover, setHover] = useState<string | null>(null);
     const [mode, setMode] = useState<"cost" | "raw">("cost");
     const [company, setCompany] = useState<string | null>(null);
-    const flow = useMemo(() => sankeyModel(m, mode), [m, mode]);
+    const [every, setEvery] = useState(false);
+    const depth = every ? Number.POSITIVE_INFINITY : SANKEY_DEPTH;
+    const flow = useMemo(() => sankeyModel(m, mode, depth), [m, mode, depth]);
+    const uses = useMemo(() => usesOf(c), [c]);
     const graph = useMemo(() => graphModel(m), [m]);
     useEffect(() => {
         const prev = document.title;
@@ -67,6 +72,7 @@ export function BomCasePage({ c, menuOpen }: { c: BomCase; menuOpen: boolean }) 
                         <div><dt>Idiot index</dt><dd><b className="bm-idiot">{root?.idiot ? idiotText(root.idiot) : "n/a"}</b></dd></div>
                     </dl>
                     <p className="bm-takeaway">{c.takeaway}</p>
+                    <BomUses uses={uses} />
                     <nav className="bm-cases" aria-label="Other cases">{others.map((x) => <a key={x.slug} href={bomCasePath(x.slug)}>{x.short}</a>)}</nav>
                 </header>
 
@@ -83,25 +89,29 @@ export function BomCasePage({ c, menuOpen }: { c: BomCase; menuOpen: boolean }) 
                 <section className="bm-sec-block" aria-labelledby="bm-flow-h">
                     <div className="bm-sec-head">
                         <h2 id="bm-flow-h">Where the money goes</h2>
-                        <div className="bm-toggle" role="radiogroup" aria-label="Flow">
-                            <button type="button" role="radio" aria-checked={mode === "cost"} onClick={() => setMode("cost")}>Cost</button>
-                            <button type="button" role="radio" aria-checked={mode === "raw"} onClick={() => setMode("raw")}>Raw material only</button>
+                        <div className="bm-sec-tools">
+                            <div className="bm-toggle" role="radiogroup" aria-label="Flow">
+                                <button type="button" role="radio" aria-checked={mode === "cost"} onClick={() => setMode("cost")}>Cost</button>
+                                <button type="button" role="radio" aria-checked={mode === "raw"} onClick={() => setMode("raw")}>Raw material only</button>
+                            </div>
+                            <button type="button" className="bm-toggle-one" aria-pressed={every} onClick={() => setEvery((v) => !v)}>Every part</button>
                         </div>
                     </div>
-                    <p className="bm-sub">{mode === "cost" ? "Band width is US$: raw materials on the left, the price on the right. A node wider than what flows into it adds value." : "Only the raw material inside each part, at the same scale. The gap to the price is the idiot index."}</p>
+                    <p className="bm-sub">{mode === "cost" ? "Band width is US$: raw materials on the left, the price on the right. What each step adds enters from the left as labour, energy and overhead, and as its maker's gross profit." : "Only the raw material inside each part, at the same scale. The gap to the price is the idiot index."}{every ? "" : " Smaller parts are folded into their module; show every part to unfold them."}</p>
                     <ValueSankey key={mode} nodes={flow.nodes} links={flow.links} label={`${c.name}, ${mode === "cost" ? "cost" : "raw material"}`}
                         format={money} valueMax={c.price.value} height={540}
-                        selectedId={selected} onSelectNode={pick} onHoverNode={setHover} />
+                        selectedId={selected && m.byId.has(selected) ? shownAs(m, selected, depth) : selected} onSelectNode={pick} onHoverNode={setHover} />
                     <details className="bm-nodes">
                         <summary>Every part, its cost and idiot index</summary>
                         <div className="bm-nodes-wrap">
                             <table>
-                                <thead><tr><th scope="col">Part</th><th scope="col">Qty</th><th scope="col">Unit cost</th><th scope="col">Raw material</th><th scope="col">Idiot index</th></tr></thead>
+                                <thead><tr><th scope="col">Part</th><th scope="col">Qty</th><th scope="col">Mass</th><th scope="col">Unit cost</th><th scope="col">Raw material</th><th scope="col">Idiot index</th></tr></thead>
                                 <tbody>{flatten(c.root).filter((p) => p.node.kind !== "material").map(({ node, depth, count }) => {
                                     const x = m.metrics.get(node.id);
                                     return <tr key={node.id} className={node.id === selected ? "is-selected" : undefined}>
                                         <th scope="row" style={{ paddingLeft: 8 + depth * 12 }}><button type="button" className="bm-link" onClick={() => select(node.id)}>{node.label}</button></th>
                                         <td className="sc-num">{count}</td>
+                                        <td className="sc-num">{gramsText((x?.mass ?? 0) * count)}</td>
                                         <td className="sc-num">{node.unitCost ? money(node.unitCost.value) : "n/a"}</td>
                                         <td className="sc-num">{money((x?.raw ?? 0) * count)}</td>
                                         <td className="sc-num">{x?.idiot ? idiotText(x.idiot) : "n/a"}</td>
@@ -129,7 +139,10 @@ export function BomCasePage({ c, menuOpen }: { c: BomCase; menuOpen: boolean }) 
                     <summary>Method</summary>
                     <ul>
                         <li><b>Price</b> {c.volumeAssumption}</li>
-                        <li><b>Part costs</b> Cited where a source gives them; otherwise a published share of the price, marked as a model. Parts with no public cost carry only their raw material.</li>
+                        <li><b>Part costs</b> Cited where a source gives them; otherwise a published share of the price (less the assembler's margin where it is known), marked as a model. Bought-in chips and bearings use distributor listings for a comparable part. Parts with no public cost carry only their raw material.</li>
+                        <li><b>Cost stack</b> A priced part's cost split into its raw material, what the tiers below added, its own labour, energy and overhead, and its maker's gross profit at the company's latest margin.</li>
+                        <li><b>Routes</b> The usual steps from raw material to each part, in our words, not the maker's process sheet.</li>
+                        <li><b>Mass</b> Modeled parts weigh {Math.round(root?.mass ?? 0)} g{c.massG ? ` against the published ${Math.round(c.massG.value)} g` : ""}.</li>
                         <li><b>Raw material</b> Grams from our model of each part's geometry times cited densities, priced at {c.month} with /metals for rare earths and cited readings for copper, aluminium, steels and silicon.</li>
                         <li><b>Idiot index</b> A part's cost over the raw material in it. The step markup is a part's cost over what its inputs cost, shown only when every input has a cost.</li>
                         <li><b>Makers</b> Named when a filing, the maker or the press says so. Where the supplier is not public, a typical listed maker of that part stands in for its margin.</li>

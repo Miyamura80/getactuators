@@ -4,6 +4,8 @@ import type { GraphEdge, GraphNode } from "../../../components/flows/SupplyGraph
 import {
     type BomCase,
     type BomNode,
+    CONVERSION_ID,
+    PROFIT_ID,
     SALE_ID,
     flatten,
     materialNodeId,
@@ -24,6 +26,7 @@ export interface CaseModel {
     metrics: Map<string, NodeMetrics>;
     byId: Map<string, BomNode>;
     parentOf: Map<string, string | null>;
+    depthOf: Map<string, number>;
     // Every id the selection may hold: BOM nodes and merged material nodes.
     known: Set<string>;
 }
@@ -40,6 +43,7 @@ export function caseModel(c: BomCase): CaseModel {
         metrics: nodeMetrics(c),
         byId: new Map(placed.map((p) => [p.node.id, p.node])),
         parentOf: new Map(placed.map((p) => [p.node.id, p.parent?.id ?? null])),
+        depthOf: new Map(placed.map((p) => [p.node.id, p.depth])),
         known,
     };
 }
@@ -80,8 +84,40 @@ export interface SankeyModel {
 // Badges only on nodes wide enough to carry them (3% of the price), so the
 // thin raw-material end of the chart keeps one label line per node. Nodes
 // with no flow at all (a few milligrams of silicon) are left out.
-export function sankeyModel(m: CaseModel, mode: "cost" | "raw"): SankeyModel {
-    const s = toSankey(m.c, mode);
+// The node a BOM node is drawn as when the Sankey stops at `depth`: itself,
+// or its ancestor at that depth. Materials and value sources stay.
+export function shownAs(m: CaseModel, id: string, depth: number): string {
+    let cur = id;
+    while ((m.depthOf.get(cur) ?? 0) > depth) cur = m.parentOf.get(cur) ?? cur;
+    return cur;
+}
+
+// Fold every part below `depth` into its ancestor at that depth. Flows
+// balance at every node, so the folded node takes in what its parts took
+// in (materials, labour and overhead, profit) and links between folded
+// parts drop out.
+function collapse(m: CaseModel, s: ReturnType<typeof toSankey>, depth: number): ReturnType<typeof toSankey> {
+    const rep = (id: string) => (m.byId.has(id) ? shownAs(m, id, depth) : id);
+    const links = new Map<string, { source: string; target: string; value: number }>();
+    for (const l of s.links) {
+        const source = rep(l.source);
+        const target = rep(l.target);
+        if (source === target) continue;
+        const key = `${source}->${target}`;
+        const prev = links.get(key);
+        if (prev) prev.value += l.value;
+        else links.set(key, { source, target, value: l.value });
+    }
+    const keep = new Set([...links.values()].flatMap((l) => [l.source, l.target]));
+    return { nodes: s.nodes.filter((n) => keep.has(n.id)), links: [...links.values()] };
+}
+
+// Depth the case Sankey opens at: the actuator, its modules and their parts.
+export const SANKEY_DEPTH = 2;
+
+export function sankeyModel(m: CaseModel, mode: "cost" | "raw", depth = Number.POSITIVE_INFINITY): SankeyModel {
+    const full = toSankey(m.c, mode);
+    const s = Number.isFinite(depth) ? collapse(m, full, depth) : full;
     const linked = new Set(s.links.flatMap((l) => [l.source, l.target]));
     const flowOf = (id: string) => Math.max(...s.links.filter((l) => l.source === id || l.target === id).map((l) => l.value), 0);
     const wide = (id: string) => flowOf(id) >= m.c.price.value * 0.03;
@@ -91,6 +127,7 @@ export function sankeyModel(m: CaseModel, mode: "cost" | "raw"): SankeyModel {
             .map((n) => ({
                 id: n.id,
                 label: n.id === SALE_ID ? "Price" : n.label,
+                ...(n.kind === "value" ? { tone: "value" as const } : {}),
                 badges: mode === "cost" && n.kind !== "material" && wide(n.id) ? badges(m, m.byId.get(n.id)) : [],
             })),
         links: s.links,
@@ -99,7 +136,8 @@ export function sankeyModel(m: CaseModel, mode: "cost" | "raw"): SankeyModel {
 
 export const SMALL_PARTS_ID = "small-parts";
 
-// The top tier only: each part the actuator is built from, the actuator and
+// The top tier only: each part the actuator is built from, what the
+// assembler adds (labour and overhead, its gross profit), the actuator and
 // its price, for comparing cases at one scale. Parts under 3% of the price
 // merge into one node, so a column of slivers cannot squeeze the chart.
 export function topSankey(m: CaseModel): SankeyModel {
@@ -108,7 +146,8 @@ export function topSankey(m: CaseModel): SankeyModel {
     const kids = new Set((m.c.root.children ?? []).map((k) => k.id));
     const small = full.links.filter((l) => kids.has(l.source) && l.target === rootId && l.value < m.c.price.value * 0.03);
     const smallIds = new Set(small.map((l) => l.source));
-    const links = full.links.filter((l) => (kids.has(l.source) && !smallIds.has(l.source) && l.target === rootId) || l.target === SALE_ID);
+    const value = new Set([CONVERSION_ID, PROFIT_ID]);
+    const links = full.links.filter((l) => (kids.has(l.source) && !smallIds.has(l.source) && l.target === rootId) || (value.has(l.source) && l.target === rootId) || l.target === SALE_ID);
     const merged = small.reduce((s, l) => s + l.value, 0);
     if (merged > 0) links.push({ source: SMALL_PARTS_ID, target: rootId, value: merged });
     const keep = new Set(links.flatMap((l) => [l.source, l.target]));
