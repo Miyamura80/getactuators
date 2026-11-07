@@ -8,9 +8,15 @@ import type { SourceReuse } from "../reuse";
 // results only, so they carry none (see SourceRef in ../sources).
 
 // Structural copy of SourceRef, as in ./china-sources (import cycle).
-type Kind = "filing" | "industry-report" | "press" | "company-site" | "reference";
+type Kind =
+    | "government"
+    | "filing"
+    | "industry-report"
+    | "press"
+    | "company-site"
+    | "reference";
 
-interface ChinaSource {
+export interface ChinaSource {
     id: string;
     title: string;
     publisher: string;
@@ -22,7 +28,7 @@ interface ChinaSource {
 
 const ACCESSED = "2026-11-07";
 
-function src(
+export function src(
     id: string,
     publisher: string,
     title: string,

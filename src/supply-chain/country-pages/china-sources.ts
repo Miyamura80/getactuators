@@ -1,4 +1,5 @@
 import type { SourceReuse } from "../reuse";
+import { CHINA_EXTRA_SOURCES } from "./china-extra-sources";
 import { CHINA_MORE_SOURCES } from "./china-more-sources";
 
 // Sources behind the /china dataset: trade press (Asian Metal, SMM, Yicai,
@@ -582,4 +583,5 @@ export const CHINA_SOURCES: ChinaSource[] = [
         "https://www2.yicaiglobal.com/news/china-jl-mag-rare-earth-hits-limit-up-on-tesla-permanent-magnet-deal",
     ),
     ...CHINA_MORE_SOURCES,
+    ...CHINA_EXTRA_SOURCES,
 ];

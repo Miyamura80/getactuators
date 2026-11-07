@@ -49,7 +49,8 @@ describe("REST /api/v1/companies and /api/v1/sites", () => {
         expect(body.company.revenue_usd?.range).toEqual([5.8e9, 6.0e9]);
         expect(body.company.revenue_usd?.sources[0]?.url).toStartWith("https://");
         expect(body.supplies.map((l) => l.to)).toEqual(["jl-mag"]);
-        expect(body.sites).toHaveLength(1);
+        // Headquarters plus the smelting, magnet and recycling units on /china.
+        expect(body.sites).toHaveLength(4);
     });
 
     test("unknown company is a 404 problem", async () => {

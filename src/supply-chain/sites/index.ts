@@ -366,6 +366,15 @@ export const SITES: Site[] = [
         lon: 121.84,
         sources: ["tuopu-annual-report-2024"],
     }),
+    // Minth's group headquarters; its Asia-Pacific one is in ./china-extra.
+    hq("minth-taipei", {
+        companyId: "minth",
+        name: "Minth Group headquarters",
+        country: "TW",
+        lat: 25.08,
+        lon: 121.57,
+        sources: ["minth-annual-report-2025"],
+    }),
     ...JAPAN_SITES,
     ...JAPAN_PLANTS,
     ...KOREA_SITES,
