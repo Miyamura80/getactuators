@@ -29,7 +29,7 @@ export const CHINA_EXTRA_COMPANIES: Company[] = [
     {
         ...cn("minth", "Minth Group", {
             stages: ["actuator"],
-            ownership: { kind: "listed", ticker: "HKEX: 425" },
+            ownership: { kind: "listed", ticker: "HKEX: 0425" },
             products: [
                 "Integrated joint modules",
                 "Robot exterior parts",

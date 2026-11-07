@@ -50,6 +50,8 @@ export const CHINA_EXTRA_PLANTS: Site[] = [
         precision: "city",
         makes: ["Humanoid robots"],
         stages: ROBOTS,
+        // The 2024 source describes mass production as about to start.
+        status: "announced",
         sources: ["lingang-agibot-2024"],
     }),
     cnPlant("agibot-chengdu", {
@@ -117,6 +119,8 @@ export const CHINA_EXTRA_PLANTS: Site[] = [
     cnPlant("minth-jiaxing", {
         companyId: "minth",
         kind: "hq",
+        // hq() would set this; cnPlant does not.
+        status: "operating",
         name: "Asia-Pacific regional headquarters",
         admin1: "Zhejiang",
         lat: 30.75,
