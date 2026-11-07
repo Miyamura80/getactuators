@@ -51,8 +51,9 @@
 .tr-notes p { margin: 0 0 4px; }
 .tr-notes a { color: var(--muted); }
 .tr-licence { color: var(--muted); }
+.tr-series-note b { color: var(--muted); font-weight: 500; }
 
-.tr-data summary { cursor: pointer; min-height: 32px; display: flex; align-items: center; font-size: 13px; color: var(--muted); }
+.tr-data summary { cursor: pointer; min-height: 32px; line-height: 32px; font-size: 13px; color: var(--muted); }
 .tr-data summary:focus-visible { outline: 2px solid var(--cyan); }
 .tr-table-wrap { overflow-x: auto; border: 1px solid var(--line); }
 .tr-data table { width: 100%; border-collapse: collapse; font-size: 12px; }

@@ -57,29 +57,6 @@ export function TrendFigure({ chart }: { chart: TrendChart }) {
                     ))}
                 </ul>
             )}
-            <figcaption className="tr-notes">
-                <p>
-                    {chart.kind === "bars" ? `Unit: ${chart.unit}. ` : ""}
-                    {chart.notes[0]}
-                </p>
-                {chart.notes.slice(1).map((n) => (
-                    <p key={n}>{n}</p>
-                ))}
-                <p className="tr-licence">
-                    {chart.licence}
-                    {chart.original && (
-                        <>
-                            {" "}
-                            Original:{" "}
-                            <a href={chart.original.url} target="_blank" rel="noopener">
-                                {chart.original.label}
-                            </a>
-                            .
-                        </>
-                    )}{" "}
-                    Hollow marks are estimated or modeled.
-                </p>
-            </figcaption>
             <details className="tr-data">
                 <summary>Data and {ids.length} sources</summary>
                 <div className="tr-table-wrap">
@@ -127,6 +104,36 @@ export function TrendFigure({ chart }: { chart: TrendChart }) {
                     })}
                 </ol>
             </details>
+            <figcaption className="tr-notes">
+                <p>
+                    {chart.kind === "bars" ? `Unit: ${chart.unit}. ` : ""}
+                    {chart.notes[0]}
+                </p>
+                {chart.series.map((s) =>
+                    s.note ? (
+                        <p key={s.id} className="tr-series-note">
+                            <b>{s.label}:</b> {s.note}
+                        </p>
+                    ) : null,
+                )}
+                {chart.notes.slice(1).map((n) => (
+                    <p key={n}>{n}</p>
+                ))}
+                <p className="tr-licence">
+                    {chart.licence}
+                    {chart.original && (
+                        <>
+                            {" "}
+                            Original:{" "}
+                            <a href={chart.original.url} target="_blank" rel="noopener">
+                                {chart.original.label}
+                            </a>
+                            .
+                        </>
+                    )}{" "}
+                    Hollow marks are estimated or modeled.
+                </p>
+            </figcaption>
         </figure>
     );
 }

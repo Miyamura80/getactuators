@@ -14,7 +14,7 @@ export function listTrends(ctx: ApiContext): string {
     });
     return [
         `# Trends${filterSummary(ctx.url)}`,
-        `${list.count} charts, as of ${list.as_of}. Each point has a date, a confidence and numbered sources.`,
+        `${list.count} ${list.count === 1 ? "chart" : "charts"}, as of ${list.as_of}. Each point has a date, a confidence and numbered sources.`,
         ...charts,
     ].join("\n\n");
 }

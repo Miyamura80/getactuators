@@ -64,7 +64,7 @@ export const RUNTIME_CHART: TrendChart = {
     ],
     notes: [
         "Maker-quoted runtime per charge; makers mix walking, standing and mixed-use figures, and some robots hot-swap packs. Points are flagged estimated where the launch month is the announcement date without a dated source.",
-        "No clear upward trend yet: newer models range from 1 h (R1) to 4 h (NEO), set more by pack size and use than by launch year.",
+        "No clear upward trend yet: newer models spread widely, set more by pack size and use than by launch year.",
     ],
     licence: "CC BY 4.0 (actuatorlist /robots), plus facts from maker pages and press.",
 };

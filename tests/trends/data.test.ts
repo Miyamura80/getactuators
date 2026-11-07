@@ -8,6 +8,7 @@ import {
     allPoints,
     chartsIn,
     getTrendChart,
+    isEstimatedSeries,
     isOwnSource,
     perNm,
     yearOf,
@@ -65,6 +66,21 @@ describe("/trends registry", () => {
         expect(trendsLicenceErrors()).toEqual([]);
     });
 
+    test("the audit rejects points dated after the audit day", () => {
+        expect(
+            trendsLicenceErrors("2025-06-30").some((e) =>
+                e.includes("dated after 2025-06-30"),
+            ),
+        ).toBe(true);
+    });
+
+    test("a series is flagged estimated exactly when no point is reported", () => {
+        const csf = getTrendChart("rated-life")?.series.find((s) => s.id === "hd-csf");
+        expect(csf && isEstimatedSeries(csf)).toBe(true);
+        const xm430 = getTrendChart("actuator-prices")?.series[0];
+        expect(xm430 && isEstimatedSeries(xm430)).toBe(false);
+    });
+
     test("Epoch and Tadepalli figures are facts, linked to the originals", () => {
         for (const id of ["price-of-ai", "price-per-rd"]) {
             const c = getTrendChart(id);
@@ -78,6 +94,7 @@ describe("/trends registry", () => {
 describe("/trends reuses actuatorlist data", () => {
     test("each price series ends on the catalog's current price and torque", () => {
         const c = getTrendChart("actuator-prices");
+        expect(c).toBeDefined();
         for (const s of c?.series ?? []) {
             const last = s.points.at(-1);
             const a = ACTUATORS.find((x) => x.id === s.actuatorId);

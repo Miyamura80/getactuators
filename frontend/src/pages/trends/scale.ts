@@ -16,6 +16,7 @@ export function colorAt(i: number): string {
 // every decade when the range spans many.
 export function makeScale(lo: number, hi: number, p0: number, p1: number, log: boolean): Scale {
     if (log) {
+        if (!(lo > 0 && hi > 0)) throw new RangeError(`log scale needs positive bounds, got ${lo} to ${hi}`);
         // Candidate 1-2-5 (or decade) ticks, trimmed to the nearest ticks
         // around the data so the axis does not run a decade past it.
         const d0 = Math.floor(Math.log10(lo));

@@ -42,6 +42,7 @@ describe("/trends", () => {
             );
             expect(md).toContain("Too thin to read as a trend");
             expect(md).toContain("issue #95");
+            expect(md).toContain("CubeMars AK80-9: Earlier points");
             expect(md).not.toContain(String.fromCharCode(0x2014));
         }
     });
@@ -63,6 +64,13 @@ describe("REST /api/v1/trends", () => {
         const point = prices?.series[0]?.points[0];
         expect(point?.usd_per_nm).toBeGreaterThan(0);
         expect(point?.sources[0]?.url).toContain("web.archive.org");
+        expect(prices?.url).toMatch(/^https:\/\/.+\/trends#actuator-prices$/);
+        const own = prices?.series[0]?.points.at(-1)?.sources[0]?.url;
+        expect(own).toMatch(/^https:\/\/.+\/actuators\/dynamixel-xm430-w350-t$/);
+        const csf = all.results
+            .find((c) => c.id === "rated-life")
+            ?.series.find((s) => s.id === "hd-csf");
+        expect(csf?.estimated).toBe(true);
         const ai = TrendListSchema.parse(
             await (await get("/api/v1/trends?section=ai")).json(),
         );
@@ -74,6 +82,7 @@ describe("REST /api/v1/trends", () => {
         const md = await (await get("/api/v1/trends.md?chart=battery-runtime")).text();
         expect(md).toContain("## Humanoid battery runtime");
         expect(md).not.toContain("## Actuator list prices");
+        expect(md).toContain("1 chart, as of");
     });
 });
 

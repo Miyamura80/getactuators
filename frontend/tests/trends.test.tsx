@@ -41,6 +41,8 @@ test("every chart renders an SVG with notes, licence and its sources", () => {
         expect(f.querySelectorAll(".tr-sources li").length).toBeGreaterThan(0);
     }
     expect(view.container.querySelectorAll(".tr-sparse").length).toBe(TREND_CHARTS.filter((c) => c.sparse).length);
+    for (const f of figures) expect(f.lastElementChild?.tagName).toBe("FIGCAPTION");
+    expect(view.container.querySelector("#actuator-prices .tr-series-note")?.textContent).toContain("CubeMars AK80-9");
     const epoch = view.container.querySelector("#price-of-ai");
     expect(epoch?.querySelector('a[href="https://epoch.ai/publications/the-plunging-price-of-thought"]')).toBeTruthy();
 });

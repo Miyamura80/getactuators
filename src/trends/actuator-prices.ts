@@ -91,6 +91,7 @@ export const PRICE_SERIES: TrendSeries[] = [
         actuatorId: "mjbots-qdd100",
         label: "mjbots qdd100",
         torqueNm: 16,
+        note: "The catalog figure is the regular price on the product page while the beta unit is out of stock (MOQ 50), not a price seen in a snapshot.",
         past: [
             r("2022-08", 539, ["wb-qdd100-2022"]),
             r(

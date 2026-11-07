@@ -1,3 +1,4 @@
+import { absoluteUrl } from "@/server/site";
 import { SOURCE_REUSE } from "@/supply-chain/reuse";
 import {
     TRENDS_AS_OF,
@@ -5,6 +6,7 @@ import {
     TREND_CHARTS,
     TREND_SECTIONS,
     type TrendChart,
+    isEstimatedSeries,
     perNm,
     sourceOf,
     yearSpan,
@@ -101,12 +103,12 @@ function chartView(c: TrendChart): z.infer<typeof chartOut> {
         licence: c.licence,
         ...(c.original ? { original: c.original } : {}),
         notes: c.notes,
-        url: `${TRENDS_PATH}#${c.id}`,
+        url: absoluteUrl(`${TRENDS_PATH}#${c.id}`),
         series: c.series.map((s) => ({
             id: s.id,
             label: s.label,
             ...(s.actuatorId ? { actuator_id: s.actuatorId } : {}),
-            estimated: Boolean(s.estimated),
+            estimated: isEstimatedSeries(s),
             ...(s.note ? { note: s.note } : {}),
             points: s.points.map((p) => {
                 const nm = perNm(p);
@@ -121,7 +123,16 @@ function chartView(c: TrendChart): z.infer<typeof chartOut> {
                     ...(p.label ? { label: p.label } : {}),
                     confidence: p.confidence,
                     ...(p.note ? { note: p.note } : {}),
-                    sources: p.sources.map((id) => ({ id, ...sourceOf(id) })),
+                    sources: p.sources.map((id) => {
+                        const src = sourceOf(id);
+                        return {
+                            id,
+                            ...src,
+                            url: src.url.startsWith("/")
+                                ? absoluteUrl(src.url)
+                                : src.url,
+                        };
+                    }),
                 };
             }),
         })),

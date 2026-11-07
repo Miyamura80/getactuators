@@ -14,6 +14,7 @@ import {
     type TrendChart,
     type TrendPoint,
     type TrendSection,
+    type TrendSeries,
 } from "./types";
 
 export * from "./types";
@@ -47,6 +48,11 @@ export function chartsIn(section: TrendSection): TrendChart[] {
 
 export function isTrendSection(s: string): s is TrendSection {
     return (TREND_SECTIONS as readonly string[]).includes(s);
+}
+
+// True when no point in the series is reported (all estimated or modeled).
+export function isEstimatedSeries(s: TrendSeries): boolean {
+    return s.points.every((p) => p.confidence !== "reported");
 }
 
 export function allPoints(c: TrendChart): TrendPoint[] {

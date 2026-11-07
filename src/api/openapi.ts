@@ -145,7 +145,7 @@ function tagFor(path: string): string {
     )
         return "supply-chain";
     if (path.includes("/benchmarks")) return "actuators";
-    if (path.includes("/trends")) return "actuators";
+    if (path.includes("/trends")) return "trends";
     if (path.includes("/actuators")) return "actuators";
     if (path.includes("/sdk")) return "actuators";
     if (path.includes("/people")) return "people";
@@ -235,6 +235,11 @@ export function buildOpenApi(operations: readonly Operation[]): Json {
                 description: "Categories, brands and use cases for filters.",
             },
             { name: "meta", description: "Discovery: index and this document." },
+            {
+                name: "trends",
+                description:
+                    "Dated, cited points over time: actuator prices, robot market shares, roller screw cost, the price of AI and humanoid battery runtime.",
+            },
             {
                 name: "people",
                 description:

@@ -144,7 +144,7 @@ export const PRICE_PER_RD_CHART: TrendChart = {
         ),
     ],
     notes: [
-        "Slope of log price against log cumulative R&D stock over Epoch's windows, with Tadepalli's sensitivity range (scope, R&D path, depreciation 0 to 30%). Per unit of R&D, AI sits mid-pack: its fast fall tracks fast growth in R&D spending.",
+        "Slope of log price against log cumulative R&D stock over the windows Tadepalli used (Epoch's, except DNA sequencing, where his series stops at 2022), with Tadepalli's sensitivity range (scope, R&D path, depreciation 0 to 30%). Per unit of R&D, AI sits mid-pack: its fast fall tracks fast growth in R&D spending.",
         "Descriptive, not causal: the fit credits every price decline to R&D and ignores scale economies, learning by doing and spillovers.",
     ],
     licence:

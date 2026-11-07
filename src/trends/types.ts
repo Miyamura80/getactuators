@@ -37,8 +37,6 @@ export interface TrendSeries {
     id: string;
     label: string;
     points: TrendPoint[];
-    // Set when every point is modeled or estimated, so the legend can flag it.
-    estimated?: boolean;
     // Catalog actuator this series prices, for links.
     actuatorId?: string;
     note?: string;

@@ -1,4 +1,4 @@
-import { type TrendChart, type TrendPoint, formatValue, yearOf } from "../../../../src/trends";
+import { type TrendChart, type TrendPoint, formatValue, isEstimatedSeries, yearOf } from "../../../../src/trends";
 import { colorAt, makeScale, tickLabel, yearTicks } from "./scale";
 
 const W = 640;
@@ -87,7 +87,7 @@ export function LineChart({
                                 fill="none"
                                 stroke="currentColor"
                                 strokeWidth={1.6}
-                                strokeDasharray={s.estimated ? "4 3" : undefined}
+                                strokeDasharray={isEstimatedSeries(s) ? "4 3" : undefined}
                                 points={pts.map((a) => `${sx(a.x)},${y.at(a.v)}`).join(" ")}
                             />
                         )}

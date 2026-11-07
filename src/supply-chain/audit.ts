@@ -304,7 +304,7 @@ export function auditRegistry(
         }),
         ...humanoidLicenceErrors(),
         ...openSourceLicenceErrors(),
-        ...trendsLicenceErrors(),
+        ...trendsLicenceErrors(today),
     );
     const values = sourcedValueIssues(today);
     const orphans = SOURCES.filter((s) => !used.has(s.id)).map(

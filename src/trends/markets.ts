@@ -225,7 +225,6 @@ export const ROLLER_SCREW_CHART: TrendChart = {
         {
             id: "swiss",
             label: "Swiss screw, early humanoid builds",
-            estimated: true,
             points: [
                 p(
                     "2026",

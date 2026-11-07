@@ -65,7 +65,12 @@ export function chartMarkdown(c: TrendChart, depth = 3): string {
         `${"#".repeat(depth)} ${mdText(c.title)}`,
         `${mdText(c.question)} ${y0 === y1 ? y0 : `${y0} to ${y1}`}, ${rows.length} points.${c.sparse ? " Too thin to read as a trend; shown as the points we have." : ""}`,
         mdTable(head, rows),
-        bullets(c.notes.map(mdText)),
+        bullets([
+            ...c.series.flatMap((s) =>
+                s.note ? [`${mdText(s.label)}: ${mdText(s.note)}`] : [],
+            ),
+            ...c.notes.map(mdText),
+        ]),
         `Licence: ${mdText(c.licence)}${c.original ? ` Original: ${mdLink(c.original.label, c.original.url)}.` : ""}`,
         `Sources:\n\n${ids.map((id, i) => `${i + 1}. ${mdLink(sourceOf(id).title, toAbsolute(sourceOf(id).url))} (${sourceOf(id).reuse})`).join("\n")}`,
     ].join("\n\n");
@@ -78,7 +83,7 @@ function trendsBody(): string {
                 .map((c) => chartMarkdown(c))
                 .join("\n\n")}`,
     );
-    return `How key actuator, robotics and AI quantities have moved over the last decade, as far back as cited data goes: ${TREND_CHARTS.length} charts of dated points, each with its sources, a confidence (reported, estimated or modeled) and notes on gaps. As of ${TRENDS_AS_OF}.
+    return `How key actuator, robotics and AI quantities have moved over time, mostly the last decade and as far back as cited data goes (the AI comparisons reach 1892): ${TREND_CHARTS.length} charts of dated points, each with its sources, a confidence (reported, estimated or modeled) and notes on gaps. As of ${TRENDS_AS_OF}.
 
 Weekly price snapshots for the whole catalog are planned for /prices (issue #95); this page is a curated sample. Same data as JSON: ${mdLink("/api/v1/trends", absoluteUrl("/api/v1/trends"))}, or MCP get_trends.
 
@@ -92,8 +97,7 @@ function trendsDataset(): Record<string, unknown> {
     return {
         "@type": "Dataset",
         name: "actuatorlist trends: actuator, robotics and AI prices over time",
-        description:
-            "Dated, cited points on actuator list prices, humanoid and industrial robot market shares, roller screw cost, the price of AI against earlier technologies and humanoid battery runtime.",
+        description: `Dated, cited points: ${TREND_CHARTS.map((c) => c.title.toLowerCase()).join("; ")}.`,
         url: absoluteUrl(TRENDS_PATH),
         license: DATA_LICENSE.url,
         creditText: DATA_LICENSE.credit,

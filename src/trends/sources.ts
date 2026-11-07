@@ -171,7 +171,7 @@ export function sourceOf(id: string): Source {
         const slug = id.slice("robots:".length);
         return {
             title: `actuatorlist robots: ${slug}`,
-            url: `/robots#${slug}`,
+            url: `/robots#robot-${slug}`,
             reuse: "open",
         };
     }
