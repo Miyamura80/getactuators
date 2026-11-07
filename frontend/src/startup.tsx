@@ -36,6 +36,7 @@ import { Benchmarks } from "./pages/benchmarks/Benchmarks";
 import { BENCHMARKS_PATH } from "../../src/benchmarks";
 import { MANUFACTURING_PATH } from "../../src/supply-chain/processes/path";
 import { ALTS_PATH } from "../../src/supply-chain/alts/path";
+import { BOM_PATH } from "../../src/supply-chain/bom/path";
 import { PublicHeader } from "./components/PublicHeader";
 
 // The process map carries its 3D vignette specs, so it loads in its own chunk.
@@ -45,6 +46,18 @@ const Manufacturing = lazy(() =>
 
 // /alts carries its 3D scene specs too.
 const Alts = lazy(() => import("./pages/supply-chain/alts/Alts").then((m) => ({ default: m.Alts })));
+
+// /bom carries the three teardowns and their 3D scene specs.
+const Bom = lazy(() => import("./pages/supply-chain/bom/Bom").then((m) => ({ default: m.Bom })));
+
+function BomLoading({ menuOpen }: { menuOpen: boolean }) {
+    return <div className="tool-page bm-page">
+        <PublicHeader path={BOM_PATH} initialOpen={menuOpen} />
+        <main className="tool-main" aria-busy="true">
+            <p role="status">Loading bill of materials</p>
+        </main>
+    </div>;
+}
 
 function AltsLoading({ menuOpen }: { menuOpen: boolean }) {
     return <div className="tool-page al-page">
@@ -113,6 +126,7 @@ function Page({ menuOpen }: { menuOpen: boolean }) {
     if (path === TRENDS_PATH) return <Trends menuOpen={menuOpen} />;
     if (path === BENCHMARKS_PATH) return <Benchmarks menuOpen={menuOpen} />;
     if (path === MANUFACTURING_PATH) return <Suspense fallback={<ManufacturingLoading menuOpen={menuOpen} />}><Manufacturing menuOpen={menuOpen} /></Suspense>;
+    if (path === BOM_PATH || path.startsWith(`${BOM_PATH}/`)) return <Suspense fallback={<BomLoading menuOpen={menuOpen} />}><Bom menuOpen={menuOpen} /></Suspense>;
     if (path === ALTS_PATH) return <Suspense fallback={<AltsLoading menuOpen={menuOpen} />}><Alts menuOpen={menuOpen} /></Suspense>;
     const country = LIVE_COUNTRY_PAGES.find((p) => p.path === path);
     if (country) return <CountryPage page={country} menuOpen={menuOpen} />;

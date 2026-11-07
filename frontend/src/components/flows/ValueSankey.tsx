@@ -1,4 +1,4 @@
-import { type ReactNode, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { formatValue } from "../../../../src/supply-chain/format";
 import { NodeBadge, type NodeBadgeProps } from "./NodeBadge";
 import { ProcessStepChip } from "./ProcessStepChip";
@@ -14,6 +14,9 @@ export interface FlowNode {
     badges?: NodeBadgeProps[];
     // /manufacturing step ids that make this node.
     steps?: string[];
+    // "value": a source of value added rather than a part (labour and
+    // overhead, gross profit); drawn in its own tone with its links tinted.
+    tone?: "value";
 }
 
 export interface ValueSankeyProps {
@@ -24,6 +27,9 @@ export interface ValueSankeyProps {
     format?: (v: number) => string;
     selectedId?: string | null;
     onSelectNode?: (id: string) => void;
+    // Hover or focus moved onto a node (null when it leaves), to light the
+    // same part in a linked view.
+    onHoverNode?: (id: string | null) => void;
     // Extra content in a node's label block, after its badges.
     renderNode?: (node: FlowNode, laid: LaidNode) => ReactNode;
     // Shared value scale across several Sankeys (see layoutSankey).
@@ -45,11 +51,25 @@ function usdFormat(unit: string) {
 // Value-added Sankey: band width is the value that flows, left to right
 // (top to bottom on narrow screens). Hover or focus a node to light its
 // upstream and downstream paths; click to select it (`onSelectNode`).
-export function ValueSankey({ nodes, links, label, unit = "USD", format, selectedId, onSelectNode, renderNode, valueMax, orientation = "auto", height = 400 }: ValueSankeyProps) {
+export function ValueSankey({ nodes, links, label, unit = "USD", format, selectedId, onSelectNode, onHoverNode, renderNode, valueMax, orientation = "auto", height = 400 }: ValueSankeyProps) {
     const { ref, width } = useWidth<HTMLElement>(720);
     const fmt = format ?? usdFormat(unit);
     const vertical = orientation === "vertical" || (orientation === "auto" && width < VERTICAL_BELOW);
-    const [hover, setHover] = useState<string | null>(null);
+    const [hover, setHoverState] = useState<string | null>(null);
+    // The latest hover and callback, so unmounting mid-hover (a keyed
+    // remount on a mode switch) clears the linked view's highlight.
+    const hoverRef = useRef<{ id: string | null; cb?: (id: string | null) => void }>({ id: null });
+    useEffect(() => {
+        hoverRef.current.cb = onHoverNode;
+    });
+    const setHover = (id: string | null) => {
+        setHoverState(id);
+        hoverRef.current.id = id;
+        onHoverNode?.(id);
+    };
+    useEffect(() => () => {
+        if (hoverRef.current.id !== null) hoverRef.current.cb?.(null);
+    }, []);
     const [picked, setPicked] = useState<string | null>(null);
     const selected = selectedId !== undefined ? selectedId : picked;
     const ids = useMemo(() => nodes.map((n) => n.id), [nodes]);
@@ -91,9 +111,9 @@ export function ValueSankey({ nodes, links, label, unit = "USD", format, selecte
         </div>
         <div className="fk-sankey-stage" style={{ height: h }}>
             <svg width={width} height={h} viewBox={`0 0 ${width} ${h}`} aria-hidden="true">
-                {layout.links.map((l) => <path key={l.key} className={`fk-link${!path || path.links.has(l.key) ? " is-lit" : ""}`}
+                {layout.links.map((l) => <path key={l.key} className={`fk-link${!path || path.links.has(l.key) ? " is-lit" : ""}${byId.get(l.source)?.tone === "value" ? " is-value" : ""}`}
                     d={l.d} strokeWidth={Math.max(1, l.width)} />)}
-                {layout.nodes.map((n) => <rect key={n.id} className={`fk-node${lit(n.id) ? " is-lit" : ""}${n.id === selected ? " is-selected" : ""}`}
+                {layout.nodes.map((n) => <rect key={n.id} className={`fk-node${lit(n.id) ? " is-lit" : ""}${n.id === selected ? " is-selected" : ""}${byId.get(n.id)?.tone === "value" ? " is-value" : ""}`}
                     x={n.x0} y={n.y0} width={Math.max(1, n.x1 - n.x0)} height={Math.max(1, n.y1 - n.y0)} />)}
             </svg>
             {layout.nodes.map((n) => {
@@ -102,7 +122,7 @@ export function ValueSankey({ nodes, links, label, unit = "USD", format, selecte
                 const side = labelSide(n);
                 const room = vertical ? n.x1 - n.x0 >= LABEL_MIN : true;
                 const pos = side === "below"
-                    ? { left: n.x0, top: n.y1 + 4 }
+                    ? { left: n.x0, top: n.y1 + 4, maxWidth: Math.max(LABEL_MIN, n.x1 - n.x0 - 4) }
                     : side === "right" ? { left: n.x1 + 6, top: (n.y0 + n.y1) / 2 } : { right: width - n.x0 + 6, top: (n.y0 + n.y1) / 2 };
                 return <div key={n.id}>
                     <button type="button" className={`fk-node-hit${n.id === selected ? " is-selected" : ""}`}

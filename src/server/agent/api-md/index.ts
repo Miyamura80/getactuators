@@ -1,4 +1,5 @@
 import { actuatorBenchmarks, benchmarkList } from "@/api/benchmarks";
+import { findBomCase } from "@/api/bom";
 import { findCountry } from "@/api/countries";
 import { brandCounts, findActuator, findRobot, useCaseCounts } from "@/api/handlers";
 import type { ApiContext } from "@/api/http";
@@ -7,6 +8,7 @@ import { absoluteUrl } from "../../site";
 import { actuatorBody, robotSection } from "../catalog-md";
 import { PATHS } from "../links";
 import { bullets, mdLink, mdTable, mdText } from "../md";
+import { bomCaseBody, bomIndexBody } from "../supply-chain/bom";
 import { countryBody } from "../supply-chain/country";
 import { getAlt, listAlts } from "./alts";
 import {
@@ -121,6 +123,8 @@ const RENDERERS: Record<string, Renderer> = {
     get_country: (ctx) => countryBody(findCountry(ctx)),
     list_sdk_scores: sdkScores,
     get_sdk_score: sdkBrandBody,
+    list_bom_cases: bomIndexBody,
+    get_bom: (ctx) => bomCaseBody(findBomCase(ctx)),
     list_people: listPeople,
     list_trends: listTrends,
     get_person: getPerson,

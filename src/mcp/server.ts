@@ -6,6 +6,7 @@ import { type ToolDef, registerTools } from "./tool";
 import { actuatorTools } from "./tools/actuators";
 import { altTools } from "./tools/alts";
 import { benchmarkTools } from "./tools/benchmarks";
+import { bomTools } from "./tools/bom";
 import { compareTools } from "./tools/compare";
 import { engineeringTools } from "./tools/engineering";
 import { peopleTools } from "./tools/people";
@@ -39,6 +40,7 @@ export const CATALOG_TOOLS: readonly ToolDef[] = [
     ...sdkTools,
     ...peopleTools,
     ...altTools,
+    ...bomTools,
     ...trendTools,
 ];
 
@@ -56,7 +58,7 @@ Which tool to use:
 - Humanoids joint by joint (actuator type per joint, reported vs estimated, magnet and rare-earth kg): get_humanoid_joints.
 - Open-source robots to build from (licences, openness per artefact, BOM cost, actuators per joint): list_open_robots.
 - Sizing a humanoid: humanoid_joint_requirements gives a static torque estimate per joint (stated pose and arithmetic) and the catalog actuators that reach it. Treat estimates as a floor, not a dynamic requirement.
-- Supply chain (who makes magnets, gears and actuators, and where): list_companies, get_company and list_sites. Magnet metals (Nd, Pr, Dy, Tb, Sm, Co): get_metal_supply for country shares by stage, reserves and latest prices; get_metal_prices for a cited price history. Export controls, tariffs, subsidies and standards on the chain, with status history: list_policy_measures. How the NdFeB magnet is made (ore to rotor segment) and how the precision parts are made (strain-wave gears, planetary roller screws, precision bearings, encoders), with cited numbers and who runs each step: get_process. One country's chain on a map (companies, plants, links, stage shares, clusters): get_country. Alternatives to rare-earth actuators (rare-earth-free motors, artificial muscles, hydraulics, transmissions) with TRL, milestones, market size and deployments: list_alt_technologies and get_alt_technology. Sourced values carry sources and a confidence (reported, estimated or modeled); quote estimates as estimates.
+- Supply chain (who makes magnets, gears and actuators, and where): list_companies, get_company and list_sites. Magnet metals (Nd, Pr, Dy, Tb, Sm, Co): get_metal_supply for country shares by stage, reserves and latest prices; get_metal_prices for a cited price history. Export controls, tariffs, subsidies and standards on the chain, with status history: list_policy_measures. How the NdFeB magnet is made (ore to rotor segment) and how the precision parts are made (strain-wave gears, planetary roller screws, precision bearings, encoders), with cited numbers and who runs each step: get_process. One country's chain on a map (companies, plants, links, stage shares, clusters): get_country. Alternatives to rare-earth actuators (rare-earth-free motors, artificial muscles, hydraulics, transmissions) with TRL, milestones, market size and deployments: list_alt_technologies and get_alt_technology. What is inside an actuator, who makes each part, the idiot index (cost over raw material) and who keeps the margin, for three teardowns: list_bom_cases and get_bom. Sourced values carry sources and a confidence (reported, estimated or modeled); quote estimates as estimates.
 - Sizing a robot arm: arm_holding_torque takes link lengths, masses, actuator masses and payload and returns static holding torque per joint, catalog actuators per joint and a calculator_url the user can open.
 - Measured performance (dyno and bench tests, not datasheet claims): get_benchmarks gives torque-speed curves, thermal derating, backlash and friction per run with its rig, data method, uncertainty, source and the measured over datasheet ratio. Say whether a figure was digitised from a plot or is vendor data.
 - Which actuator brand has the best SDK (drivers, ROS 2, docs, firmware, support), with linked developer posts: get_sdk_score. get_actuator also returns the brand's SDK score as sdk.

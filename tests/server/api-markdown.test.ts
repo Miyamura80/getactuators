@@ -64,6 +64,8 @@ const TWINS: [string, string][] = [
     ["/api/v1/alts/switched-reluctance.md", "# Switched reluctance motor"],
     ["/api/v1/humanoids.md", "# Humanoids with actuator totals"],
     ["/api/v1/humanoids/unitree-g1.md", "# G1 by Unitree Robotics"],
+    ["/api/v1/bom.md", "# Actuator bills of materials"],
+    ["/api/v1/bom/unitree-qdd.md", "# Unitree GO-M8010-6 joint motor"],
     ["/api/v1/people.md", "# People in actuators and rare earths"],
     ["/api/v1/people/masato-sagawa.md", "# Masato Sagawa"],
 ];

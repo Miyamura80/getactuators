@@ -35,6 +35,7 @@ import { SDK_PAGE } from "./sdk";
 import { actuatorSeoTitle } from "./seo-titles";
 import { startupsBody } from "./startups";
 import { ALTS_PAGE } from "./supply-chain/alts";
+import { BOM_CASE_PAGES, BOM_INDEX_PAGE } from "./supply-chain/bom";
 import { COUNTRY_PAGE_ENTRIES } from "./supply-chain/country";
 import { MANUFACTURING_PAGE } from "./supply-chain/manufacturing";
 import { METALS_PAGE } from "./supply-chain/metals";
@@ -161,6 +162,8 @@ const STATIC_PAGES: Page[] = [
     BENCHMARKS_PAGE,
     MANUFACTURING_PAGE,
     ALTS_PAGE,
+    BOM_INDEX_PAGE,
+    ...BOM_CASE_PAGES,
     ...COUNTRY_PAGE_ENTRIES,
     SDK_PAGE,
     PEOPLE_PAGE,

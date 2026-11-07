@@ -42,6 +42,7 @@ export const SUPPLY_CHAIN_PAGES_LIVE: ReadonlySet<string> = new Set<string>([
     "/policy",
     "/manufacturing",
     "/alts",
+    "/bom",
     // Country pages go live when their dataset passes the coverage gate.
     ...LIVE_COUNTRY_PATHS,
 ]);

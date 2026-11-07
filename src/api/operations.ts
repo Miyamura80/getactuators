@@ -12,6 +12,7 @@ import {
     actuatorBenchmarksHandler,
     listBenchmarksHandler,
 } from "./benchmarks";
+import { BomCaseSchema, BomListSchema, getBomHandler, listBomHandler } from "./bom";
 import {
     CountryListSchema,
     CountrySchema,
@@ -395,6 +396,36 @@ export const OPERATIONS: Operation[] = [
         errors: [400, 404],
         example: "/api/v1/processes/magnet?step=jet-milling",
         handler: getProcessHandler,
+    },
+    {
+        operationId: "list_bom_cases",
+        method: "GET",
+        path: "/api/v1/bom",
+        summary: "List actuator BOM teardowns",
+        description:
+            "The three teardowns on /bom (Optimus roller-screw linear actuator, Unitree GO-M8010-6 joint motor, strain-wave cobot joint) with price, raw-material content, idiot index and each tier's gross profit as a share of the price.",
+        response: BomListSchema,
+        errors: [],
+        example: "/api/v1/bom",
+        handler: listBomHandler,
+    },
+    {
+        operationId: "get_bom",
+        method: "GET",
+        path: "/api/v1/bom/:slug",
+        summary: "Get an actuator bill of materials",
+        description:
+            "One /bom teardown as a tree, parents before children: unit cost (cited or null), raw-material content, idiot index, step multiplier, makers with gross margin and attribution confidence, alternates, /manufacturing step ids and sources; plus raw materials per actuator and margin capture.",
+        pathParam: {
+            name: "slug",
+            description:
+                "Case slug: optimus-linear, unitree-qdd or harmonic-frameless.",
+            example: "unitree-qdd",
+        },
+        response: BomCaseSchema,
+        errors: [404],
+        example: "/api/v1/bom/unitree-qdd",
+        handler: getBomHandler,
     },
     {
         operationId: "list_alt_technologies",
