@@ -70,11 +70,15 @@ test("margin segments add up to the whole price", () => {
 
 test("the index lists every case with its margin bar", () => {
     setURL("/bom");
-    const { getAllByRole, getByText } = render(<Bom />);
-    for (const c of BOM_CASES) expect(getByText(c.name)).toBeTruthy();
+    const { getAllByRole, getAllByText } = render(<Bom />);
+    for (const c of BOM_CASES) expect(getAllByText(c.name).some((e) => e.classList.contains("bm-card-name"))).toBe(true);
     // Each card shows the robots that use its actuator, photos from the repo.
-    expect(getAllByRole("list", { name: "Used in" })).toHaveLength(BOM_CASES.length);
-    expect(document.querySelector('img[src="/actuator-images/unitree-go-m8010-6.webp"]')).toBeTruthy();
+    expect(document.querySelectorAll(".bm-card .bm-hero")).toHaveLength(BOM_CASES.length);
+    expect(document.querySelector('.bm-hero img[src="/actuator-images/unitree-go-m8010-6.webp"]')).toBeTruthy();
+    // No own photo: the case's 3D render, never a drawn placeholder.
+    expect(document.querySelector('.bm-hero.is-render img[src="/posters/bom-optimus-linear.png"]')).toBeTruthy();
+    expect(document.querySelector('.bm-used img.bm-avatar[src="/robot-images/menlo-asimov-1.webp"]')).toBeTruthy();
+    expect(document.querySelectorAll("svg.bm-use-ph")).toHaveLength(0);
     expect(getAllByRole("img", { name: /Share of the price/ })).toHaveLength(BOM_CASES.length);
 });
 

@@ -152,7 +152,7 @@ export function topSankey(m: CaseModel): SankeyModel {
     if (merged > 0) links.push({ source: SMALL_PARTS_ID, target: rootId, value: merged });
     const keep = new Set(links.flatMap((l) => [l.source, l.target]));
     const nodes = full.nodes.filter((n) => keep.has(n.id)).map((n) => ({ ...n, badges: [] }));
-    if (merged > 0) nodes.unshift({ id: SMALL_PARTS_ID, label: links.some((l) => kids.has(l.source)) ? "Smaller parts" : "All parts (raw material)", badges: [] });
+    if (merged > 0) nodes.unshift({ id: SMALL_PARTS_ID, label: links.some((l) => kids.has(l.source)) ? "Smaller parts" : "All parts", badges: [] });
     return { nodes, links };
 }
 

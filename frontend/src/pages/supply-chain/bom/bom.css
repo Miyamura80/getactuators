@@ -126,6 +126,7 @@
 /* Index cards */
 .bm-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin: 24px 0 0; padding: 0; list-style: none; border: 1px solid var(--line); }
 .bm-card { display: flex; flex-direction: column; gap: 4px; padding: 18px; border-right: 1px solid var(--line); min-width: 0; }
+.bm-card > * { min-width: 0; }
 .bm-card:last-child { border-right: 0; }
 .bm-card-link { display: grid; gap: 4px; color: var(--text); text-decoration: none; }
 .bm-card-link:hover .bm-card-name { text-decoration: underline; text-decoration-color: var(--cyan); }
@@ -136,23 +137,35 @@
 .bm-compare-one h3 { margin: 0 0 6px; font: 600 12px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; }
 .bm-compare-one h3 a { color: var(--text); }
 
-/* Used in: robot and actuator thumbnails (the catalog's light photo tile) */
-.bm-uses { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0 0; padding: 0; list-style: none; }
-.bm-use > a, .bm-use > span { display: grid; gap: 4px; width: 104px; color: var(--text); text-decoration: none; }
-.bm-use > a:hover .bm-use-name { text-decoration: underline; text-decoration-color: var(--cyan); }
-.bm-use > a:hover .bm-use-img { border-color: var(--cyan); }
-.bm-use-img { display: grid; place-items: center; aspect-ratio: 4 / 3; overflow: hidden; border: 1px solid var(--line); background: var(--panel); color: var(--muted); }
-.bm-use-img[data-photo="true"] { background: radial-gradient(120% 100% at 50% 0%, #f5f7f9 0%, #e5eaef 62%, #d3dae1 100%); }
-.bm-use-img img { box-sizing: border-box; width: 100%; height: 100%; object-fit: contain; padding: 6px; display: block; }
-.bm-use-ph { width: 46%; height: auto; }
-.bm-use-name { font-size: 12px; font-weight: 600; line-height: 1.25; }
-.bm-use-count { font: 500 11px var(--mono); color: var(--muted); }
-.bm-use-tag { justify-self: start; padding: 0 4px; border: 1px solid var(--line-strong); color: var(--muted); font: 600 9px/1.4 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; }
-.bm-use-tag.is-this { border-color: var(--cyan-dim); color: var(--cyan); }
-.bm-uses.is-compact { gap: 6px; margin: 10px 0 2px; }
-.bm-uses.is-compact .bm-use > a, .bm-uses.is-compact .bm-use > span { width: 64px; gap: 2px; }
-.bm-uses.is-compact .bm-use-name { font-size: 10px; font-weight: 500; color: var(--muted); }
-.bm-use.is-more > span { display: grid; place-items: center; width: 40px; aspect-ratio: 1; font: 600 11px var(--mono); color: var(--muted); }
+/* Hero image: one per case, on the robot gallery's light studio tile */
+.bm-hero { --bm-tile: radial-gradient(120% 100% at 50% 0%, #f5f7f9 0%, #e5eaef 62%, #d3dae1 100%); display: grid; gap: 6px; margin: 0; color: var(--muted); text-decoration: none; }
+.bm-hero-img { display: block; position: relative; aspect-ratio: 16 / 9; overflow: hidden; border: 1px solid var(--line); border-radius: 6px; background: var(--bm-tile); isolation: isolate; }
+.bm-hero-img img { position: absolute; inset: 0; box-sizing: border-box; width: 100%; height: 100%; object-fit: contain; padding: 14px; display: block; mix-blend-mode: multiply; }
+/* The 3D render is cyan lines on black: invert it into teal lines on white,
+   then multiply it onto the tile like the photos. */
+.bm-hero.is-render .bm-hero-img img { padding: 0; object-fit: cover; transform: scale(1.32); filter: brightness(2.6) invert(1) hue-rotate(180deg) saturate(1.6); }
+.bm-hero-cap { font: 500 10px/1.3 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; }
+a.bm-hero:hover .bm-hero-img { border-color: var(--cyan); }
+a.bm-hero:hover .bm-hero-cap { color: var(--cyan); }
+.bm-hero.is-card { margin: 12px 0 2px; }
+
+/* "Used in" line: avatars for robots with photos, names for the rest */
+.bm-used { display: flex; align-items: center; gap: 0 6px; margin: 10px 0 0; min-width: 0; overflow: hidden; white-space: nowrap; font-size: 13px; line-height: 28px; }
+.bm-used-k { flex: none; font: 600 10px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-right: 2px; }
+.bm-used-slot { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
+.bm-used-slot:last-of-type { overflow: hidden; }
+.bm-used-dot { color: var(--muted); }
+.bm-used-item { display: inline-flex; align-items: center; gap: 6px; min-width: 0; color: var(--text); text-decoration: none; }
+.bm-used-item > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+a.bm-used-item:hover span { text-decoration: underline; text-decoration-color: var(--cyan); }
+.bm-used-sd { color: var(--muted); }
+.bm-avatar { flex: none; width: 28px; height: 28px; box-sizing: border-box; border-radius: 50%; border: 1px solid var(--line-strong); object-fit: contain; padding: 2px; background: radial-gradient(120% 100% at 50% 0%, #f5f7f9 0%, #d3dae1 100%); }
+.bm-used-more { flex: none; color: var(--muted); font: 500 12px var(--mono); }
+
+/* Case header: hero beside the title */
+.bm-head-grid { display: grid; grid-template-columns: minmax(280px, 40%) minmax(0, 1fr); gap: 32px; align-items: start; }
+.bm-head-grid > * { min-width: 0; }
+.bm-head-grid .bm-hero { margin-top: 4px; }
 
 /* Cost stack in the part panel */
 .bm-stack-bar { display: flex; height: 12px; margin: 2px 0 6px; border: 1px solid var(--line); overflow: hidden; }
@@ -170,6 +183,7 @@
 .bm-route li { color: var(--text); }
 
 @media (max-width: 860px) {
+    .bm-head-grid { grid-template-columns: 1fr; gap: 16px; }
     .bm-top { grid-template-columns: 1fr; }
     .bm-explode { border-right: 0; border-bottom: 1px solid var(--line); }
     .bm-panel { max-height: none; }
@@ -179,6 +193,5 @@
 }
 @media (max-width: 480px) {
     .tool-main { padding-left: 16px; padding-right: 16px; }
-    .bm-use > a, .bm-use > span { width: 88px; }
     .bm-stats dd { font-size: 17px; }
 }

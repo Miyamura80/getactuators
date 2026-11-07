@@ -1,52 +1,72 @@
 import { useState } from "react";
-import type { BomUse } from "../../../../../src/supply-chain/bom/used-in";
+import type { BomHero, BomUse } from "../../../../../src/supply-chain/bom/used-in";
 
-// Thumbnails of the robots (and catalog actuators) that use a case's
-// actuator or one of its design. Photos are the catalog's own in-repo
-// images, shown the way the robot and actuator galleries show them (whole
-// part on a light tile); a robot with no photo gets a drawn placeholder,
-// never a hotlinked picture.
+// A case's hero image and its "Used in" line. Every image sits on the same
+// light studio tile the robot gallery uses for product photos (photos are
+// shot on white): photos are contained with even padding, and the dark 3D
+// render is inverted to a teal line drawing on the same tile, so a row of
+// cards reads as one set. Robots without an in-repo photo are plain names,
+// never placeholders.
 
-function Placeholder({ use }: { use: BomUse }) {
-    return <svg className="bm-use-ph" viewBox="0 0 60 60" role="img" aria-label={`No photo of ${use.name}`}>
-        {use.kind === "robot"
-            ? <g fill="none" stroke="currentColor" strokeWidth="1.6">
-                <circle cx="30" cy="14" r="6" />
-                <path d="M21 24h18l-2 16h-14z" />
-                <path d="M21 26l-5 12M39 26l5 12M25 40l-2 14M35 40l2 14" />
-            </g>
-            : <g fill="none" stroke="currentColor" strokeWidth="1.6">
-                <circle cx="30" cy="30" r="18" />
-                <circle cx="30" cy="30" r="7" />
-            </g>}
-    </svg>;
-}
-
-function Photo({ use }: { use: BomUse }) {
+export function BomHeroImage({ hero, size = "card" }: { hero: BomHero; size?: "card" | "head" }) {
     const [failed, setFailed] = useState(false);
-    if (!use.image || failed) return <Placeholder use={use} />;
-    return <img src={use.image} alt={`${use.brand} ${use.name}`} decoding="async" onError={() => setFailed(true)} />;
-}
-
-function Tile({ use, compact }: { use: BomUse; compact: boolean }) {
-    const tag = use.relation === "this" ? (use.kind === "actuator" ? "this actuator" : "uses it") : "same design";
+    const img = failed ? null : <img src={hero.src} alt={hero.alt} decoding="async" onError={() => setFailed(true)} />;
     const body = <>
-        <span className="bm-use-img" data-photo={use.image ? "true" : "false"}><Photo use={use} /></span>
-        <span className="bm-use-name">{use.name}{use.count ? <span className="bm-use-count"> ×{use.count}</span> : null}</span>
-        {compact ? null : <span className={`bm-use-tag is-${use.relation}`}>{tag}</span>}
+        <span className="bm-hero-img">{img}</span>
+        <span className="bm-hero-cap">{hero.caption}</span>
     </>;
-    const title = `${use.brand} ${use.name}: ${use.how}${use.image ? "" : " No photo on the site."}`;
-    return <li className="bm-use" title={title}>
-        {use.href ? <a href={use.href}>{body}</a> : <span>{body}</span>}
-    </li>;
+    const cls = `bm-hero is-${hero.kind} is-${size}`;
+    return hero.href ? <a className={cls} href={hero.href}>{body}</a> : <figure className={cls}>{body}</figure>;
 }
 
-export function BomUses({ uses, compact = false, max }: { uses: readonly BomUse[]; compact?: boolean; max?: number }) {
-    if (uses.length === 0) return null;
-    const shown = max ? uses.slice(0, max) : uses;
-    const more = uses.length - shown.length;
-    return <ul className={`bm-uses${compact ? " is-compact" : ""}`} aria-label="Used in">
-        {shown.map((u) => <Tile key={u.key} use={u} compact={compact} />)}
-        {more > 0 ? <li className="bm-use is-more"><span>+{more}</span></li> : null}
-    </ul>;
+const countText = (u: BomUse) =>
+    `${u.brand} ${u.name}${u.count ? `: ${u.count} ${u.relation === "this" ? "joints use this actuator" : "joints of the same design"}` : ""}`;
+
+// "Unitree Go1", "AgiBot X1": the brand too, unless the name carries it.
+const fullName = (u: BomUse) =>
+    u.name.toLowerCase().includes(u.brand.toLowerCase().split(" ")[0] ?? "") ? u.name : `${u.brand.split(" ")[0]} ${u.name}`;
+
+function Name({ use, link, full = true }: { use: BomUse; link: boolean; full?: boolean }) {
+    const inner = <>
+        {use.image ? <img className="bm-avatar" src={use.image} alt="" decoding="async" /> : null}
+        <span>{full ? fullName(use) : use.name}</span>
+    </>;
+    return link && use.href
+        ? <a className="bm-used-item" href={use.href} title={countText(use)}>{inner}</a>
+        : <span className="bm-used-item" title={countText(use)}>{inner}</span>;
+}
+
+// "Used in: [photo] Asimov 1 · Optimus Gen 2 · +1 more", for robots that
+// use this very actuator, or (relation "same-design") robots with a joint
+// of its design. Robots with a photo come first; the line never wraps.
+export function UsedInLine({ uses, relation = "this", max = 3, link = true, full = true }: { uses: readonly BomUse[]; relation?: BomUse["relation"]; max?: number; link?: boolean; full?: boolean }) {
+    const robots = uses
+        .filter((u) => u.kind === "robot" && u.relation === relation)
+        .map((u, i) => ({ u, i }))
+        .sort((a, b) => Number(!a.u.image) - Number(!b.u.image) || a.i - b.i)
+        .map(({ u }) => u);
+    if (robots.length === 0) return null;
+    const shown = robots.slice(0, max);
+    const rest = robots.slice(max);
+    return <p className="bm-used">
+        <span className="bm-used-k">{relation === "this" ? "Used in" : "Same design in"}</span>
+        {shown.map((u, i) => <span key={u.key} className="bm-used-slot">{i > 0 ? <span className="bm-used-dot" aria-hidden="true">·</span> : null}<Name use={u} link={link} full={full} /></span>)}
+        {rest.length ? <span className="bm-used-more" title={rest.map(countText).join("\n")}>+{rest.length} more</span> : null}
+    </p>;
+}
+
+// The card's one line: robots using this actuator, else its design.
+export function CardUsedIn({ uses }: { uses: readonly BomUse[] }) {
+    const own = uses.some((u) => u.kind === "robot" && u.relation === "this");
+    return <UsedInLine uses={uses} relation={own ? "this" : "same-design"} max={2} full={false} />;
+}
+
+// Catalog actuators of the same design, as text links (case page only).
+export function SameDesign({ uses }: { uses: readonly BomUse[] }) {
+    const acts = uses.filter((u) => u.kind === "actuator" && u.relation === "same-design");
+    if (acts.length === 0) return null;
+    return <p className="bm-used">
+        <span className="bm-used-k">Catalog, same design</span>
+        {acts.map((u, i) => <span key={u.key} className="bm-used-slot">{i > 0 ? <span className="bm-used-dot" aria-hidden="true">·</span> : null}<Name use={u} link /></span>)}
+    </p>;
 }

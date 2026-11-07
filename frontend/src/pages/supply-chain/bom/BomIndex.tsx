@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { BOM_AS_OF, BOM_CASES, BOM_PATH, bomCasePath, caseWithNode } from "../../../../../src/supply-chain/bom";
 import { idiotText } from "../../../../../src/supply-chain/bom/format";
-import { usesOf } from "../../../../../src/supply-chain/bom/used-in";
+import { heroOf, usesOf } from "../../../../../src/supply-chain/bom/used-in";
 import { ValueSankey } from "../../../components/flows/ValueSankey";
 import { PublicFooter } from "../../../components/PublicFooter";
 import { PublicHeader } from "../../../components/PublicHeader";
@@ -9,7 +9,7 @@ import { FootnotesProvider } from "../../../components/supply-chain/footnotes";
 import { SourcedValue } from "../../../components/supply-chain/SourcedValue";
 import { SourcesSection } from "../../../components/supply-chain/SourcesSection";
 import { readSelection } from "../../../lib/supply-chain-selection";
-import { BomUses } from "./BomUses";
+import { BomHeroImage, CardUsedIn } from "./BomUses";
 import { MarginBar } from "./MarginBar";
 import { caseModel, topSankey } from "./model";
 import { money, usdText } from "./PartPanel";
@@ -20,7 +20,7 @@ const TITLE = "What an actuator is really made of";
 // /manufacturing step) forwards to the first case with that node.
 export function BomIndex({ menuOpen }: { menuOpen: boolean }) {
     const models = useMemo(() => BOM_CASES.map(caseModel), []);
-    const [compare, setCompare] = useState(false);
+    const [compare, setCompare] = useState(true);
     useEffect(() => {
         const node = readSelection(window.location.hash, "node");
         const c = node ? caseWithNode(node) : undefined;
@@ -44,12 +44,15 @@ export function BomIndex({ menuOpen }: { menuOpen: boolean }) {
                 <ol className="bm-grid">
                     {models.map(({ c, metrics }) => {
                         const root = metrics.get(c.root.id);
+                        const uses = usesOf(c);
+                        const hero = heroOf(c, uses);
                         return <li key={c.slug} className="bm-card">
                             <a className="bm-card-link" href={bomCasePath(c.slug)}>
                                 <span className="bm-card-kicker">{c.short}</span>
                                 <span className="bm-card-name">{c.name}</span>
                             </a>
-                            <BomUses uses={usesOf(c)} compact max={4} />
+                            <BomHeroImage hero={{ ...hero, href: bomCasePath(c.slug) }} />
+                            <CardUsedIn uses={uses} />
                             <dl className="bm-stats is-card">
                                 <div><dt>Price</dt><dd><SourcedValue value={c.price} format={usdText} /></dd></div>
                                 <div><dt>Raw material</dt><dd><span className="sc-num">{money(root?.raw ?? 0)}</span></dd></div>
@@ -82,7 +85,7 @@ export function BomIndex({ menuOpen }: { menuOpen: boolean }) {
                         <li><b>Idiot index</b> The price over the cost of the raw material inside: Musk's test for how much a part is marked up over its metal.</li>
                         <li><b>Who keeps the price</b> Each named or typical maker's gross profit on what it sells into the actuator. The rest pays for labour, energy, machines and margins we cannot name.</li>
                         <li><b>Estimates</b> Most part costs are models from published shares of an actuator's cost, and bought-in chips use distributor prices for comparable parts; every figure links to its source.</li>
-                        <li><b>Photos</b> Robots and actuators that use each design, from the site's own catalog photos. A drawn placeholder marks a robot the site has no photo of.</li>
+                        <li><b>Pictures</b> The actuator's own catalog photo where the site has one, else our 3D model of it. Robots that use it are named, with a photo where the catalog has one.</li>
                     </ul>
                 </details>
                 <p className="bm-foot"><a href={`${BOM_PATH}.md`}>Read as a table</a> · <a href="/api/v1/bom">Get the data</a></p>

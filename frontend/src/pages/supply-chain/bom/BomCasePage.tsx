@@ -10,7 +10,7 @@ import {
     partFor,
 } from "../../../../../src/supply-chain/bom";
 import { idiotText } from "../../../../../src/supply-chain/bom/format";
-import { usesOf } from "../../../../../src/supply-chain/bom/used-in";
+import { heroOf, usesOf } from "../../../../../src/supply-chain/bom/used-in";
 import { CompanyDrawer } from "../../../components/flows/CompanyDrawer";
 import { SupplyGraph } from "../../../components/flows/SupplyGraph";
 import { ValueSankey } from "../../../components/flows/ValueSankey";
@@ -21,7 +21,7 @@ import { SourcedValue } from "../../../components/supply-chain/SourcedValue";
 import { SourcesSection } from "../../../components/supply-chain/SourcesSection";
 import { useSupplyChainSelection } from "../../../lib/supply-chain-selection";
 import { ExplodeScene } from "../../../three";
-import { BomUses } from "./BomUses";
+import { BomHeroImage, SameDesign, UsedInLine } from "./BomUses";
 import { MarginBar } from "./MarginBar";
 import { SANKEY_DEPTH, caseModel, graphModel, makerOf, sankeyModel, shownAs } from "./model";
 import { PartPanel, gramsText, money, usdText } from "./PartPanel";
@@ -63,6 +63,9 @@ export function BomCasePage({ c, menuOpen }: { c: BomCase; menuOpen: boolean }) 
         <FootnotesProvider>
             <main className="tool-main">
                 <header className="tool-head bm-head">
+                    <div className="bm-head-grid">
+                    <BomHeroImage hero={heroOf(c, uses)} size="head" />
+                    <div>
                     <p className="tool-kicker"><a href={BOM_PATH}>Bill of materials</a> · as of {BOM_AS_OF}</p>
                     <h1>{c.name}</h1>
                     <p className="tool-lede">{c.subject}. {c.why}</p>
@@ -72,7 +75,11 @@ export function BomCasePage({ c, menuOpen }: { c: BomCase; menuOpen: boolean }) 
                         <div><dt>Idiot index</dt><dd><b className="bm-idiot">{root?.idiot ? idiotText(root.idiot) : "n/a"}</b></dd></div>
                     </dl>
                     <p className="bm-takeaway">{c.takeaway}</p>
-                    <BomUses uses={uses} />
+                    <UsedInLine uses={uses} max={4} />
+                    <UsedInLine uses={uses} relation="same-design" max={4} />
+                    <SameDesign uses={uses} />
+                    </div>
+                    </div>
                     <nav className="bm-cases" aria-label="Other cases">{others.map((x) => <a key={x.slug} href={bomCasePath(x.slug)}>{x.short}</a>)}</nav>
                 </header>
 

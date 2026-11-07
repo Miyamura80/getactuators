@@ -132,3 +132,36 @@ export function usesOf(c: BomCase): BomUse[] {
         .sort((a, b) => rank(a.u) - rank(b.u) || a.i - b.i)
         .map(({ u }) => u);
 }
+
+// The one image that stands for a case: the actuator's own catalog photo,
+// else a photo of a robot that uses this very actuator, else the case's
+// own 3D explode render (the poster the page shows before WebGL loads).
+export interface BomHero {
+    kind: "photo" | "render";
+    src: string;
+    alt: string;
+    // Catalog page of what the photo shows, when there is one.
+    href: string | null;
+    caption: string;
+}
+
+export function heroOf(c: BomCase, uses: readonly BomUse[] = usesOf(c)): BomHero {
+    const own =
+        uses.find((u) => u.relation === "this" && u.kind === "actuator" && u.image) ??
+        uses.find((u) => u.relation === "this" && u.image);
+    if (own?.image)
+        return {
+            kind: "photo",
+            src: own.image,
+            alt: `${own.brand} ${own.name}`,
+            href: own.href,
+            caption: `${own.brand} ${own.name}`,
+        };
+    return {
+        kind: "render",
+        src: `/posters/bom-${c.slug}.png`,
+        alt: `${c.name}, exploded 3D model`,
+        href: null,
+        caption: "Our 3D model, exploded",
+    };
+}
