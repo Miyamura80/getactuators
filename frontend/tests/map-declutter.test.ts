@@ -35,6 +35,22 @@ describe("spreadChips", () => {
         expect(new Set(rects.map((r) => Math.round(r[1]))).size).toBe(2);
     });
 
+    test("on a short frame, rows from the top never reach the bottom chips", () => {
+        // Eight top chips would need a second row, which on a 60 px frame
+        // would land on the bottom chips.
+        const top: EdgeChip[] = Array.from({ length: 8 }, (_, i) => ({ key: `t${i}`, at: [40 + i * 10, 0] as [number, number], w: 64, h: 20 }));
+        const bottom: EdgeChip[] = [
+            { key: "b0", at: [60, 60], w: 64, h: 20 },
+            { key: "b1", at: [300, 60], w: 64, h: 20 },
+        ];
+        const at = spreadChips([...top, ...bottom], 400, 60);
+        const rect = (c: EdgeChip) => rectOf(c, at.get(c.key) as [number, number]);
+        for (const t of top) {
+            expect(rect(t)[1]).toBeGreaterThanOrEqual(0);
+            for (const b of bottom) expect(overlap(rect(t), rect(b))).toBe(false);
+        }
+    });
+
     test("a side chip drops below a top chip in its corner", () => {
         // "side" leaves by the right edge (x = 1000) near the top-right
         // corner, where "top" leaves by the top edge: once clamped into the

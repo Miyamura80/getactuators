@@ -112,6 +112,8 @@ export function spreadChips(chips: readonly EdgeChip[], width: number, height: n
     // Slide one edge's chips along `axis` (0 = x, 1 = y) within [lo(c), hi].
     // When they do not fit in one row, every other chip (every third, ...)
     // steps inward into a further row, so each row still spans the edge.
+    // Rows step inward at most halfway across the frame, so rows from
+    // opposite edges never meet; past that a row's chips may overlap.
     const sweep = (edge: typeof placed, axis: 0 | 1, inward: 1 | -1, lo: (c: EdgeChip) => number, hi: number) => {
         const size = (c: EdgeChip) => (axis === 0 ? c.w : c.h);
         const across = (c: EdgeChip) => (axis === 0 ? c.h : c.w);
@@ -123,6 +125,8 @@ export function spreadChips(chips: readonly EdgeChip[], width: number, height: n
         let rows = Math.max(1, Math.ceil(need(edge) / room));
         while (rows < edge.length && Array.from({ length: rows }, (_, r) => need(edge.filter((_, i) => i % rows === r))).some((n) => n > room)) rows += 1;
         const step = Math.max(0, ...edge.map((p) => across(p.c))) + CHIP_GAP;
+        const depth = (axis === 0 ? height : width) / 2;
+        rows = Math.max(1, Math.min(rows, Math.floor(depth / step)));
         for (let r = 0; r < rows; r++) {
             const row = edge.filter((_, i) => i % rows === r);
             for (const p of row) p.at[1 - axis] += inward * r * step;
