@@ -1,3 +1,4 @@
+import { CHINA_MORE_SITES } from "./china-more";
 import { type Site, hq } from "./types";
 
 // Headquarters of the /china companies, pinned to their city. "region"
@@ -210,4 +211,5 @@ export const CHINA_SITES: Site[] = [
     head("joyson", "Joyson Electronic", "Zhejiang", ...NINGBO, [
         "cnevpost-optimus-audits-2026",
     ]),
+    ...CHINA_MORE_SITES,
 ];

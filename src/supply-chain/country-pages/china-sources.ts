@@ -1,4 +1,5 @@
 import type { SourceReuse } from "../reuse";
+import { CHINA_MORE_SOURCES } from "./china-more-sources";
 
 // Sources behind the /china dataset: trade press (Asian Metal, SMM, Yicai,
 // Gasgoo), exchange and market-data profiles for headquarters, and company
@@ -580,4 +581,5 @@ export const CHINA_SOURCES: ChinaSource[] = [
         "JL Mag Rare Earth hits limit up on Tesla permanent magnet deal",
         "https://www2.yicaiglobal.com/news/china-jl-mag-rare-earth-hits-limit-up-on-tesla-permanent-magnet-deal",
     ),
+    ...CHINA_MORE_SOURCES,
 ];

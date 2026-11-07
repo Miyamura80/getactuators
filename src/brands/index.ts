@@ -275,6 +275,19 @@ const SUPPLY_CHAIN: Row[] = [
     ["dobot", "Dobot", null],
     ["leju", "Leju Robotics", null, ["Leju"]],
     ["joyson", "Ningbo Joyson Electronic", null, ["Joyson"]],
+    // /china second batch (#80). jaka.com is cited directly; aubo-robotics.cn,
+    // engineai.com.cn and guohuaintel.com are the sites named by the company's
+    // EtherCAT listing or press release in the dataset. The rest stay null.
+    ["jaka", "JAKA Robotics", "jaka.com", ["JAKA"]],
+    ["aubo", "AUBO Robotics", "aubo-robotics.cn", ["AUBO"]],
+    ["rokae", "ROKAE", null],
+    ["engineai", "EngineAI", "engineai.com.cn", ["ENGINEAI"]],
+    ["deep-robotics", "Deep Robotics", null, ["DEEP Robotics"]],
+    ["wuzhou-xinchun", "Wuzhou Xinchun", null],
+    ["guohua", "Guohua Intelligent", "guohuaintel.com", ["Guohua Intelligence"]],
+    ["byd", "BYD", null],
+    ["geely", "Geely Holding", null, ["Geely"]],
+    ["dongfeng-liuzhou", "Dongfeng Liuzhou Motor", null],
 ];
 
 // Companies behind the /investors deals (src/investors.ts COMPANIES).
