@@ -34,7 +34,7 @@ export interface Band {
 // Top to bottom: most rare earth to none.
 export const BANDS: Band[] = [
     { id: "permanent", label: "Permanent", sub: "NdFeB today", uses: ["permanent"] },
-    { id: "motor", label: "Set by motor", sub: "pump, compressor or drive motor", uses: ["motor", "drive-motor"] },
+    { id: "motor", label: "Set by motor", sub: "pump or drive motor", uses: ["motor", "drive-motor"] },
     { id: "re-free", label: "RE-free magnet", sub: "ferrite, FeN", uses: ["ferrite", "iron-nitride"] },
     { id: "none", label: "No magnets", sub: "zero rare earth", uses: ["none"] },
 ];

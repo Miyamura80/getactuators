@@ -1,3 +1,4 @@
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { activation } from "../lib/svg-link";
 
 export interface BarItem {
@@ -27,6 +28,9 @@ const NAME_MAX_CHARS = 24;
 // Generous average glyph width for the 10.5px .bar-name font, so the padding
 // errs on the side of a little extra room rather than clipping.
 const NAME_CHAR_W = 6.2;
+// Cap height of the name font: once rotated, the glyph tops reach further
+// left than the baseline does.
+const NAME_ASCENT = 8;
 
 const COS = Math.cos((NAME_ANGLE * Math.PI) / 180);
 const SIN = Math.sin((NAME_ANGLE * Math.PI) / 180);
@@ -38,14 +42,14 @@ export function barLabel(name: string): string {
 }
 
 // Rotated names hang down and to the left of their bar, so the first bars'
-// labels can reach past x = 0. Size the left pad and the label band from the
-// labels themselves so nothing is clipped by the SVG edge.
+// labels can reach past x = 0. Estimate the left pad and the label band from
+// the labels themselves; BarChart then corrects this against the rendered text.
 export function barLayout(names: string[]): { padL: number; labelH: number } {
     let padL = MIN_PAD;
     let drop = 0;
     names.forEach((name, i) => {
         const w = barLabel(name).length * NAME_CHAR_W;
-        const reach = w * COS + MIN_PAD - (i * SLOT + SLOT / 2);
+        const reach = w * COS + NAME_ASCENT * SIN + MIN_PAD - (i * SLOT + SLOT / 2);
         padL = Math.max(padL, reach);
         drop = Math.max(drop, w * SIN);
     });
@@ -55,12 +59,16 @@ export function barLayout(names: string[]): { padL: number; labelH: number } {
 // Vertical bar chart: value above each bar, flag + rotated name below.
 // Sized by item count and scrolled horizontally by its container when wide.
 export function BarChart({ items, onSelect, log = false }: Props) {
+    const svgRef = useRef<SVGSVGElement>(null);
     const max = Math.max(...items.map((i) => i.value), 1);
     // On a log scale the smallest bar keeps a stub of a quarter decade.
     const lo = Math.log10(Math.min(...items.map((i) => i.value), max)) - 0.25;
     const frac = (v: number) =>
         log ? (Math.log10(v) - lo) / (Math.log10(max) - lo) : v / max;
-    const { padL: PAD_L, labelH } = barLayout(items.map((i) => i.name));
+    const { padL: PAD_L, labelH } = useFittedLayout(
+        items.map((i) => i.name),
+        svgRef,
+    );
     const PAD_R = MIN_PAD;
     const width = PAD_L + PAD_R + items.length * SLOT;
     const height = TOP + BAR_H + labelH;
@@ -68,6 +76,7 @@ export function BarChart({ items, onSelect, log = false }: Props) {
 
     return (
         <svg
+            ref={svgRef}
             className="barchart"
             viewBox={`0 0 ${width} ${height}`}
             width={width}
@@ -124,4 +133,66 @@ export function BarChart({ items, onSelect, log = false }: Props) {
             })}
         </svg>
     );
+}
+
+interface Fit {
+    key: string;
+    padL: number;
+    labelH: number;
+}
+
+// Glyph widths vary by font and name ("W" vs "1"), so the estimate can be a
+// few px short. After render, measure the rotated names and grow the left pad
+// and label band until every name sits MIN_PAD inside the SVG.
+function useFittedLayout(
+    names: string[],
+    svgRef: React.RefObject<SVGSVGElement | null>,
+): { padL: number; labelH: number } {
+    const key = names.join("\u0000");
+    const [fit, setFit] = useState<Fit | null>(null);
+    const layout = fit?.key === key ? fit : { key, ...barLayout(names) };
+    const current = useRef(layout);
+    current.current = layout;
+
+    const measure = () => {
+        const svg = svgRef.current;
+        if (!svg) return;
+        const box = svg.getBoundingClientRect();
+        const viewW = svg.viewBox.baseVal.width;
+        const viewH = svg.viewBox.baseVal.height;
+        if (!box.width || !viewW) return;
+        const scale = viewW / box.width;
+        let left = Number.POSITIVE_INFINITY;
+        let bottom = Number.NEGATIVE_INFINITY;
+        for (const t of svg.querySelectorAll(".bar-name")) {
+            const r = t.getBoundingClientRect();
+            left = Math.min(left, (r.left - box.left) * scale);
+            bottom = Math.max(bottom, (r.bottom - box.top) * scale);
+        }
+        if (!Number.isFinite(left)) return;
+        const prev = current.current;
+        const padL = Math.max(MIN_PAD, Math.ceil(prev.padL + MIN_PAD - left));
+        const labelH = Math.ceil(prev.labelH + bottom + MIN_PAD - viewH);
+        if (padL > prev.padL || labelH > prev.labelH) {
+            setFit({
+                key: prev.key,
+                padL: Math.max(padL, prev.padL),
+                labelH: Math.max(labelH, prev.labelH),
+            });
+        }
+    };
+
+    // biome-ignore lint/correctness/useExhaustiveDependencies: re-measure when the names change
+    useLayoutEffect(measure, [key, layout.padL, layout.labelH]);
+    // Web fonts can land after the first paint and widen the names.
+    // biome-ignore lint/correctness/useExhaustiveDependencies: once per name set
+    useEffect(() => {
+        let live = true;
+        document.fonts?.ready.then(() => live && measure());
+        return () => {
+            live = false;
+        };
+    }, [key]);
+
+    return layout;
 }
