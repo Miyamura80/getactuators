@@ -231,6 +231,7 @@ export const KOREA_SITES: Site[] = [
         127.05,
         ["simplywall-angel-robotics", "angel-robotics-site"],
     ),
+    kr("kimm-daejeon", "kimm", "KIMM", "Daejeon", 36.39, 127.36, ["kimm-site"]),
 
     // Plants, depots and R&D: rare earths and materials
     plant("korea-zinc-onsan", {
@@ -656,5 +657,23 @@ export const KOREA_SITES: Site[] = [
         lat: 40.03,
         lon: -75.62,
         sources: ["pennbiz-onexia-2025"],
+    }),
+    hq("vac-hanau", {
+        companyId: "vac",
+        name: "VAC headquarters",
+        country: "DE",
+        admin1: "Hesse",
+        lat: 50.13,
+        lon: 8.92,
+        sources: ["vac-sustainability-statement"],
+    }),
+    hq("figure-san-jose", {
+        companyId: "figure",
+        name: "Figure AI headquarters",
+        country: "US",
+        admin1: "California",
+        lat: 37.34,
+        lon: -121.89,
+        sources: ["wiki-figure-ai"],
     }),
 ];
