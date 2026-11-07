@@ -1,6 +1,6 @@
 import type { Actuator, Robot } from "@/catalog";
 import { getActuator } from "@/catalog";
-import { resolveJoints, robotsUsingActuator } from "@/catalog/query";
+import { jointRows, robotsUsingActuator } from "@/catalog/query";
 import { sdkLookupView } from "@/sdk/views";
 import { absoluteUrl } from "@/server/site";
 import type {
@@ -55,6 +55,8 @@ function robotBase(r: Robot) {
     return {
         ...rest,
         height_m: r.height_m ?? null,
+        top_speed_mps: r.top_speed_mps ?? null,
+        notes: r.notes ?? null,
         image_url: r.image_url ?? null,
         ...robotRef(r),
     };
@@ -68,14 +70,14 @@ export function serializeRobot(r: Robot): ApiRobot {
 }
 
 export function serializeRobotDetail(r: Robot): ApiRobotDetail {
-    const joints: ApiJoint[] = resolveJoints(r).map((j) => {
-        const linked = j.motor.actuator_id
+    const joints: ApiJoint[] = jointRows(r).map((j) => {
+        const linked = j.motor?.actuator_id
             ? getActuator(j.motor.actuator_id)
             : undefined;
         return {
             role: j.role,
             count: j.count,
-            motor: {
+            motor: j.motor && {
                 ...j.motor,
                 actuator_api_url: linked ? actuatorApiUrl(linked.id) : null,
             },

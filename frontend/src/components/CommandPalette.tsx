@@ -34,7 +34,7 @@ function buildIndex(): Item[] {
         sub: r.brand,
         brand: r.brand,
         to: `/robots#${r.id}`,
-        hay: `${r.name} ${r.brand} ${r.country ?? ""}`.toLowerCase(),
+        hay: `${r.name} ${r.brand} ${r.kind.replace("_", " ")} ${r.country ?? ""}`.toLowerCase(),
     }));
     const actuators: Item[] = ACTUATORS.map((a) => ({
         key: `actuator:${a.id}`,

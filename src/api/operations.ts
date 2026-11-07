@@ -196,7 +196,7 @@ export const OPERATIONS: Operation[] = [
         query: RobotListParams,
         response: RobotListSchema,
         errors: [400],
-        example: "/api/v1/robots?limit=10",
+        example: "/api/v1/robots?kind=quadruped&limit=10",
         handler: listRobots,
     },
     {

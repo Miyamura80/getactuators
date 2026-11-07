@@ -260,6 +260,26 @@ describe("MCP tools/call", () => {
         );
         for (const x of f.robots) expect(x.joints.length).toBeGreaterThan(0);
     });
+
+    test("list_robots filters by kind and get_robot keeps unnamed motors", async () => {
+        const list = (await callTool("list_robots", { kind: "quadruped", limit: 100 }))
+            .structuredContent as { total: number; results: { kind: string }[] };
+        expect(list.total).toBe(ROBOTS.filter((r) => r.kind === "quadruped").length);
+        expect(list.results.every((r) => r.kind === "quadruped")).toBe(true);
+        const spot = (await callTool("get_robot", { id: "boston-dynamics-spot" }))
+            .structuredContent as {
+            joints: { count: number; motor: unknown }[];
+            total_motors: number;
+        };
+        expect(spot.total_motors).toBe(12);
+        expect(spot.joints.every((j) => j.motor === null)).toBe(true);
+        const go1 = (
+            await callTool("find_robots_using_actuator", {
+                actuator_id: "unitree-go-m8010-6",
+            })
+        ).structuredContent as { robots: { id: string }[] };
+        expect(go1.robots.map((r) => r.id)).toContain("unitree-go1");
+    });
 });
 
 describe("MCP error handling", () => {

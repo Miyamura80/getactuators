@@ -1,3 +1,4 @@
+import { ROBOT_KINDS } from "@/catalog";
 import { SORTABLE_FIELDS } from "@/catalog/query";
 import { z } from "zod";
 import { ApiError } from "./problem";
@@ -56,6 +57,10 @@ export const ActuatorListParams = z.object({
 
 export const RobotListParams = z.object({
     q: z.string().optional().describe("Free-text search over name, brand, summary."),
+    kind: z
+        .enum(ROBOT_KINDS)
+        .optional()
+        .describe("Robot type: humanoid, robot_arm or quadruped."),
     brand: z.string().optional().describe("Exact brand name (case-insensitive)."),
     ...pageParams,
 });

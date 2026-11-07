@@ -1,6 +1,13 @@
-import { ACTUATORS, type Actuator, CATEGORIES, type Robot } from "@/catalog";
+import {
+    ACTUATORS,
+    type Actuator,
+    CATEGORIES,
+    ROBOT_KINDS,
+    type Robot,
+    type RobotKind,
+} from "@/catalog";
 import { evidenceFor, fieldCaveat } from "@/catalog/evidence";
-import { resolveJoints, robotsUsingActuator } from "@/catalog/query";
+import { jointRows, robotsUsingActuator } from "@/catalog/query";
 import { absoluteUrl } from "../site";
 import { measuredSection } from "./benchmarks/markdown";
 import { catalogComparisonLinks } from "./comparison-links";
@@ -222,38 +229,75 @@ function researchFacts(r: Robot): string[] {
     );
 }
 
+export const ROBOT_KIND_LABEL: Record<RobotKind, string> = {
+    humanoid: "Humanoid",
+    robot_arm: "Robot arm",
+    quadruped: "Quadruped",
+};
+
+const KIND_PLURAL: Record<RobotKind, string> = {
+    humanoid: "humanoids",
+    robot_arm: "robot arms",
+    quadruped: "quadrupeds",
+};
+
+// "12 humanoids, 10 robot arms and 10 quadrupeds", in ROBOT_KINDS order.
+export function robotKindCounts(robots: readonly Robot[]): string {
+    const parts = ROBOT_KINDS.map(
+        (k) => [k, robots.filter((r) => r.kind === k).length] as const,
+    )
+        .filter(([, n]) => n > 0)
+        .map(([k, n]) => `${n} ${KIND_PLURAL[k]}`);
+    return parts.length > 1
+        ? `${parts.slice(0, -1).join(", ")} and ${parts.at(-1)}`
+        : (parts[0] ?? "no robots");
+}
+
+// The size line differs by body plan: height for humanoids, top speed for
+// quadrupeds, reach for arms.
+function sizeFacts(r: Robot): string[] {
+    if (r.kind === "humanoid")
+        return [
+            `Height: ${num(r.height_m, "m", 2)}`,
+            ...(r.reach_mm != null ? [`Arm reach: ${num(r.reach_mm, "mm", 0)}`] : []),
+        ];
+    if (r.kind === "quadruped") return [`Top speed: ${num(r.top_speed_mps, "m/s", 1)}`];
+    return [`Reach: ${num(r.reach_mm, "mm", 0)}`];
+}
+
+function motorCell(j: ReturnType<typeof jointRows>[number]): string {
+    if (!j.motor) return "not named by its sources";
+    const label = `${j.motor.brand} ${j.motor.name}`;
+    return j.motor.actuator_id
+        ? mdLink(label, absoluteUrl(actuatorPath(j.motor.actuator_id)))
+        : mdText(label);
+}
+
 export function robotSection(r: Robot, level = 2): string {
     const h = "#".repeat(level);
     const facts = [
         `Brand: ${mdText(r.brand)}${r.country ? ` (${mdText(r.country)})` : ""}`,
-        ...(r.kind === "humanoid" ? ["Type: Humanoid"] : []),
+        `Type: ${ROBOT_KIND_LABEL[r.kind]}`,
         `Degrees of freedom: ${num(r.dof)}`,
         `Payload: ${num(r.payload_kg, "kg")}${r.payload_basis === "whole_body" ? " (whole body)" : ""}`,
-        r.kind === "humanoid"
-            ? `Height: ${num(r.height_m, "m", 2)}`
-            : `Reach: ${num(r.reach_mm, "mm", 0)}`,
-        ...(r.kind === "humanoid" && r.reach_mm != null
-            ? [`Arm reach: ${num(r.reach_mm, "mm", 0)}`]
-            : []),
+        ...sizeFacts(r),
         `Weight: ${num(r.weight_kg, "kg", 2)}`,
         `Price: ${usd(r.price_usd)}${r.price_max_usd ? ` to ${usd(r.price_max_usd)}` : ""}`,
         ...researchFacts(r),
+        ...(r.notes ? [`Notes: ${mdText(r.notes)}`] : []),
     ];
-    const joints = resolveJoints(r).map((j) => [
+    const joints = jointRows(r).map((j) => [
         mdText(j.role),
         String(j.count),
-        j.motor.actuator_id
-            ? mdLink(
-                  `${j.motor.brand} ${j.motor.name}`,
-                  absoluteUrl(actuatorPath(j.motor.actuator_id)),
-              )
-            : mdText(`${j.motor.brand} ${j.motor.name}`),
-        num(j.motor.peak_torque_nm, "Nm"),
+        motorCell(j),
+        num(j.motor?.peak_torque_nm ?? null, "Nm"),
     ]);
     return [
         `${h} ${mdText(r.name)} by ${mdText(r.brand)}`,
         mdText(r.summary),
         bullets(facts),
-        mdTable(["Joint", "Count", "Motor", "Peak torque"], joints),
+        joints.length > 0
+            ? mdTable(["Joint", "Count", "Motor", "Peak torque"], joints)
+            : "Joint layout not published by its sources.",
     ].join("\n\n");
 }

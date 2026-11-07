@@ -17,7 +17,7 @@ import { COLUMN_MAP } from "./columns";
 import { ACTUATORS } from "./data";
 import { DEFAULT_FILTERS, applyFilters } from "./filter";
 import { navigate } from "./router";
-import { ROBOTS, motorCount, resolveJoints } from "./robots";
+import { ROBOTS, ROBOT_MOTORS, motorCount } from "./robots";
 import { type Arm, MAX_LINKS, MIN_LINKS, armReport, validArm } from "../../../src/engineering/arm-torque";
 import { JOINTS, humanoidJointRequirements } from "../../../src/server/agent/humanoid-joints";
 
@@ -128,23 +128,28 @@ export function compareActuators(ids: string[]) {
     return { actuators: found, missing };
 }
 
-export function listRobots(query?: string) {
+export function listRobots(query?: string, kind?: string) {
     const terms = str(query).toLowerCase().split(/\s+/).filter(Boolean);
     return ROBOTS.filter((r) => {
-        const hay = `${r.name} ${r.brand} ${r.summary}`.toLowerCase();
+        if (kind && r.kind !== kind) return false;
+        const hay = `${r.name} ${r.brand} ${r.kind.replace("_", " ")} ${r.summary}`.toLowerCase();
         return terms.every((t) => hay.includes(t));
     }).map((r) => ({
         id: r.id,
         name: r.name,
         brand: r.brand,
+        kind: r.kind,
         dof: r.dof,
         actuator_count: motorCount(r),
-        joints: resolveJoints(r).map((j) => ({
-            role: j.role,
-            count: j.count,
-            motor: j.motor.name,
-            actuator_id: j.motor.actuator_id,
-        })),
+        joints: r.joints.map((j) => {
+            const motor = j.motor ? ROBOT_MOTORS[j.motor] : undefined;
+            return {
+                role: j.role,
+                count: j.count,
+                motor: motor?.name ?? null,
+                actuator_id: motor?.actuator_id ?? null,
+            };
+        }),
         url: `${SITE}/robots#${encodeURIComponent(r.id)}`,
     }));
 }
@@ -278,14 +283,17 @@ export function buildTools(): WebMcpTool[] {
             name: "list_robots",
             title: "List robots",
             description:
-                "Robots in the catalog with the actuator behind each joint. Optional text filter.",
+                "Robots in the catalog (humanoids, robot arms, quadrupeds) with the actuator behind each joint; motor is null where no source names it. Optional text and kind filters.",
             annotations: { readOnlyHint: true },
             inputSchema: {
                 type: "object",
-                properties: { query: { type: "string" } },
+                properties: {
+                    query: { type: "string" },
+                    kind: { type: "string", enum: ["humanoid", "robot_arm", "quadruped"] },
+                },
             },
             async execute(args) {
-                return result({ robots: listRobots(str(args.query)) });
+                return result({ robots: listRobots(str(args.query), str(args.kind)) });
             },
         },
         {

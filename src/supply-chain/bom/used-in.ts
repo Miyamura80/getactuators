@@ -81,7 +81,7 @@ function catalogRobotUses(spec: BomUseSpec, skip: Set<string>): BomUse[] {
     if (motors.size === 0) return [];
     return ROBOTS.flatMap((r) => {
         const count = r.joints
-            .filter((j) => motors.has(j.motor))
+            .filter((j) => j.motor !== null && motors.has(j.motor))
             .reduce((s, j) => s + j.count, 0);
         if (count === 0 || skip.has(r.id)) return [];
         return [

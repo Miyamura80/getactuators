@@ -85,6 +85,9 @@ const ROBOT_MAKERS: Row[] = [
     ["franka", "Franka Robotics", "franka.de", ["Franka"]],
     // Domain from its own product page (yor.manmaruai.co.jp) in robots.json.
     ["manmaru", "ManmaruAI", "manmaruai.co.jp", ["Manmaru"]],
+    // Quadruped makers in robots.json not listed elsewhere; domain from its
+    // own product page (ghostrobotics.io/vision-60).
+    ["ghost-robotics", "Ghost Robotics", "ghostrobotics.io", ["Ghost"]],
     // The Asimov 1 bill of materials, not a company: always a monogram.
     ["asimov-bom", "Asimov BOM", null],
 ];

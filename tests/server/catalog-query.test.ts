@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { ACTUATORS, ROBOTS } from "@/catalog";
-import { queryActuators, resolveJoints } from "@/catalog/query";
+import { jointRows, queryActuators, resolveJoints } from "@/catalog/query";
 
 describe("queryActuators", () => {
     test("no filter returns every actuator sorted by id", () => {
@@ -29,6 +29,17 @@ describe("queryActuators", () => {
     });
 });
 
-test("resolveJoints resolves every robot joint", () => {
-    for (const r of ROBOTS) expect(resolveJoints(r).length).toBe(r.joints.length);
+test("resolveJoints resolves every joint with a named motor", () => {
+    for (const r of ROBOTS)
+        expect(resolveJoints(r).length).toBe(
+            r.joints.filter((j) => j.motor !== null).length,
+        );
+});
+
+test("jointRows keeps unnamed motors as null with their role and count", () => {
+    const spot = ROBOTS.find((r) => r.id === "boston-dynamics-spot");
+    if (!spot) throw new Error("missing spot");
+    const rows = jointRows(spot);
+    expect(rows.map((j) => j.count)).toEqual([4, 4, 4]);
+    expect(rows.every((j) => j.motor === null)).toBe(true);
 });

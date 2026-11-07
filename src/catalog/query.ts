@@ -104,14 +104,21 @@ export interface ResolvedJoint {
     motor: RobotMotor;
 }
 
-// Join a robot's joints to the motor table, dropping unknown motor keys.
+// Every joint group with its motor, or null when no source names the motor
+// (or the key is unknown), so agents still see the role and count.
+export function jointRows(
+    robot: Robot,
+): (Omit<ResolvedJoint, "motor"> & { motor: RobotMotor | null })[] {
+    return robot.joints.map((j) => ({
+        role: j.role,
+        count: j.count,
+        motor: (j.motor && ROBOT_MOTORS[j.motor]) || null,
+    }));
+}
+
+// Join a robot's joints to the motor table, dropping unknown or unnamed motors.
 export function resolveJoints(robot: Robot): ResolvedJoint[] {
-    const out: ResolvedJoint[] = [];
-    for (const j of robot.joints) {
-        const motor = ROBOT_MOTORS[j.motor];
-        if (motor) out.push({ role: j.role, count: j.count, motor });
-    }
-    return out;
+    return jointRows(robot).flatMap((j) => (j.motor ? [{ ...j, motor: j.motor }] : []));
 }
 
 // Robots whose joints use this actuator (via RobotMotor.actuator_id).

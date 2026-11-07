@@ -72,13 +72,15 @@ export interface RobotMotor {
 
 export interface RobotJoint {
     role: string;
-    motor: string;
+    // Key into RobotData.motors; null when no source names the motor.
+    motor: string | null;
     count: number;
 }
 
 // What kind of machine a catalog robot is; drives the card's stats and
 // fallback art.
-export type RobotKind = "robot_arm" | "humanoid";
+export const ROBOT_KINDS = ["humanoid", "robot_arm", "quadruped"] as const;
+export type RobotKind = (typeof ROBOT_KINDS)[number];
 
 // Whether a robot can be bought today. Distinct from an actuator's
 // free-form `availability` string (e.g. "in_production").
@@ -110,6 +112,8 @@ export interface Robot {
     reach_mm: number | null;
     // Standing height, for humanoids.
     height_m?: number | null;
+    // Top speed, for quadrupeds: the best figure the maker quotes.
+    top_speed_mps?: number | null;
     weight_kg: number | null;
     price_usd: number | null;
     price_max_usd: number | null;
@@ -132,6 +136,8 @@ export interface Robot {
     availability?: RobotAvailability;
     lead_time?: string | null;
     summary: string;
+    // Which fields are null and why, and which edition a figure is for.
+    notes?: string | null;
     joints: RobotJoint[];
     sources: string[];
 }

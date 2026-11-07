@@ -10,6 +10,7 @@ import type {
 } from "./types";
 
 export type * from "./types";
+export { ROBOT_KINDS } from "./types";
 
 // Single read-only view of the catalog shared by every server surface (REST,
 // MCP, llms.txt, sitemap). frontend/src/data/actuators.json is the canonical

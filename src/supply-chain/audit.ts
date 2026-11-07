@@ -1,3 +1,4 @@
+import { robotLicenceErrors } from "../catalog/robot-licence";
 import { openSourceLicenceErrors } from "../open-source/licence";
 import { DIRECTORY_RECORDS } from "../people/records";
 import { sdkErrors } from "../sdk/audit";
@@ -303,6 +304,7 @@ export function auditRegistry(
         }),
         ...humanoidLicenceErrors(),
         ...openSourceLicenceErrors(),
+        ...robotLicenceErrors(),
     );
     const values = sourcedValueIssues(today);
     const orphans = SOURCES.filter((s) => !used.has(s.id)).map(

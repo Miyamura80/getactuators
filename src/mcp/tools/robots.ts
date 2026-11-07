@@ -1,6 +1,6 @@
 import { OpenRobotListSchema, openRobotList } from "@/api/open-robots";
-import { ROBOTS, ROBOT_CREDIT } from "@/catalog";
-import { resolveJoints, robotsUsingActuator } from "@/catalog/query";
+import { ROBOTS, ROBOT_CREDIT, ROBOT_KINDS } from "@/catalog";
+import { jointRows, resolveJoints, robotsUsingActuator } from "@/catalog/query";
 import { ROBOT_TYPES } from "@/open-source";
 import { z } from "zod";
 import {
@@ -23,7 +23,7 @@ const listRobots = defineTool({
     name: "list_robots",
     title: "List robots",
     description:
-        "List robots (arms, humanoids, quadrupeds) whose joint motors are documented, with DOF, payload (kg), reach (mm), weight (kg), price (USD) and the catalog actuator ids they use. Filter by free text or brand.",
+        "List catalog robots (humanoids, robot arms, quadrupeds) with kind, DOF, payload (kg), reach (mm), weight (kg), top speed (m/s, quadrupeds), price (USD) and the catalog actuator ids their joints use. Filter by kind, free text or brand.",
     input: z.object({
         q: z
             .string()
@@ -35,6 +35,10 @@ const listRobots = defineTool({
             .max(80)
             .optional()
             .describe("Exact brand name (case-insensitive)."),
+        kind: z
+            .enum(ROBOT_KINDS)
+            .optional()
+            .describe("humanoid, robot_arm or quadruped. Omit for all."),
         limit: limitSchema(100, 50),
         offset: offsetSchema,
     }),
@@ -44,10 +48,11 @@ const listRobots = defineTool({
         results: z.array(robotSummarySchema),
         credit: creditSchema,
     }),
-    run: ({ q, brand, limit, offset }) => {
+    run: ({ q, brand, kind, limit, offset }) => {
         const terms = (q ?? "").toLowerCase().split(/\s+/).filter(Boolean);
         const hits = ROBOTS.filter((r) => {
             if (brand && r.brand.toLowerCase() !== brand.toLowerCase()) return false;
+            if (kind && r.kind !== kind) return false;
             const hay = `${r.id} ${r.name} ${r.brand} ${r.summary}`.toLowerCase();
             return terms.every((t) => hay.includes(t));
         });
@@ -64,22 +69,27 @@ const getRobot = defineTool({
     name: "get_robot",
     title: "Get robot and its motors",
     description:
-        "Return one robot by id with every joint group resolved to its motor: role, count, motor torque (N.m), speed (rpm), gear ratio, mass (g) and the matching catalog actuator id when there is one, plus the total motor count.",
+        "Return one robot by id with every joint group resolved to its motor: role, count, motor torque (N.m), speed (rpm), gear ratio, mass (g) and the matching catalog actuator id when there is one, plus the total motor count. A joint's motor is null when no cited source names it (common for quadrupeds).",
     input: z.object({ id: robotIdSchema }),
     output: z.object({
         robot: robotSummarySchema,
         joints: z.array(jointSchema),
         total_motors: z.number(),
+        notes: z
+            .string()
+            .nullable()
+            .describe("Which figures are missing or edition-specific, and why."),
         sources: z.array(z.string()),
         credit: creditSchema,
     }),
     run: ({ id }) => {
         const r = requireRobot(id);
-        const joints = resolveJoints(r);
+        const joints = jointRows(r);
         return {
             robot: robotSummary(r),
             joints,
             total_motors: joints.reduce((s, j) => s + j.count, 0),
+            notes: r.notes ?? null,
             sources: r.sources,
             credit: ROBOT_CREDIT,
         };

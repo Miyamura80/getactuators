@@ -186,7 +186,7 @@ function reportSummary(): void {
 function reportRobots(): void {
     const data = robots as unknown as {
         motors: Record<string, { actuator_id: string | null }>;
-        robots: Array<{ id: string; joints: Array<{ motor: string }> }>;
+        robots: Array<{ id: string; joints: Array<{ motor: string | null }> }>;
     };
     const actuatorIds = new Set(rows.map((row) => row.id));
     const motorKeys = new Set(Object.keys(data.motors));
@@ -201,7 +201,7 @@ function reportRobots(): void {
     }
     for (const robot of data.robots) {
         for (const joint of robot.joints) {
-            if (!motorKeys.has(joint.motor)) {
+            if (joint.motor !== null && !motorKeys.has(joint.motor)) {
                 errors.push(
                     `robot "${robot.id}": joint motor "${joint.motor}" not found`,
                 );
