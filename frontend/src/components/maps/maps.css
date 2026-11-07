@@ -208,7 +208,6 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    transform: translateY(calc(-100% - 2px));
     padding: 3px 6px;
     border: 1px solid var(--line-strong);
     background: #000;
@@ -219,7 +218,6 @@
     white-space: nowrap;
     cursor: pointer;
 }
-.mk-cluster-tag.is-end { transform: translate(-100%, calc(-100% - 2px)); }
 .mk-cluster-index { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .mk-cluster-index button {
     display: inline-flex;

@@ -174,3 +174,16 @@ test("url state round-trips and keeps other params", () => {
     expect(withCountryState("/japan?segment=magnets-motors&company=tdk", { company: null })).toBe("/japan?segment=magnets-motors");
     expect(readCountryState("?segment=nope&cluster=kanto-hq")).toEqual({ segment: null, company: null, site: null, cluster: "kanto-hq" });
 });
+
+test("a busy country opens calm: links draw only once a company is picked", () => {
+    const US = JSON.parse(readFileSync(new URL("../public/geo/us-admin1.json", import.meta.url), "utf8")) as MapTopology;
+    const page = getCountryPage("us") as Page;
+    setURL("/us");
+    let c = render(<CountryPage page={page} topology={US} />).container;
+    expect(c.querySelectorAll(".mk-arc")).toHaveLength(0);
+    expect(c.querySelectorAll(".mk-chip")).toHaveLength(0);
+    cleanup();
+    setURL("/us?company=mp-materials");
+    c = render(<CountryPage page={page} topology={US} />).container;
+    expect(c.querySelectorAll(".mk-arc").length).toBeGreaterThan(0);
+});

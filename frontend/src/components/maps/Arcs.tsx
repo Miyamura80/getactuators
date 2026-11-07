@@ -5,8 +5,10 @@ import { SUPPLY_CHAIN_PAGES_LIVE } from "../../../../src/public-navigation";
 import type { CountryCode } from "../../../../src/supply-chain/countries";
 import { COUNTRY_PAGE, type MapArc } from "../../../../src/supply-chain/map";
 import { Flag } from "../Flag";
-import { clipArc, polyline, sampleGreatCircle } from "./arc-geometry";
+import { clipArc, polyline, sampleGreatCircle, spreadChips } from "./arc-geometry";
+import type { LabelItem } from "./labels";
 import { type Point, pct, toScreen, useMap } from "./map-context";
+import { useMapLabels } from "./MapLabels";
 import { OverlayTable } from "./MapTable";
 
 // A country page link once that page is live; until then the chip is inert.
@@ -39,9 +41,6 @@ const KIND_LABEL = { supply: "Supply", investment: "Investment", partnership: "P
 // country chip that links to that country's page.
 export function Arcs({ arcs, hrefFor = liveCountryPage, selectedId, table = "Supply links" }: ArcsProps) {
     const { width, height, project, zoom, scale, svgLayer } = useMap();
-    // Chip half-size in viewBox units, to keep chips inside the frame.
-    const mx = 40 / scale;
-    const my = 12 / scale;
     const marker = useId().replace(/:/g, "");
     const [active, setActive] = useState<string | null>(null);
     const projected = useMemo(() => arcs.map((a) => ({
@@ -62,6 +61,21 @@ export function Arcs({ arcs, hrefFor = liveCountryPage, selectedId, table = "Sup
         chip.arcs.push(arc);
         chips.set(key, chip);
     }
+    const sizeOf = (c: Chip): [number, number] => [60 + (c.arcs.length > 1 ? 4 + 7 * String(c.arcs.length).length : 0), 20];
+    // Chips spread along the frame edge so none covers another (CSS pixels:
+    // arrow, flag and code, plus the count when there is one).
+    const spread = spreadChips([...chips.values()].map((c) => ({
+        key: c.key,
+        at: [c.at[0] * scale, c.at[1] * scale] as Point,
+        w: sizeOf(c)[0],
+        h: sizeOf(c)[1],
+    })), width * scale, height * scale);
+    // Chips keep site and group labels off them.
+    useMapLabels(`chips${useId()}`, [...chips.values()].map((c): LabelItem => {
+        const at = spread.get(c.key) ?? c.at;
+        const [w, h] = sizeOf(c);
+        return { id: `chip-${c.key}`, at: [at[0] / scale, at[1] / scale], text: "", priority: 0, tone: "cluster", r: w / 2, ry: h / 2 };
+    }));
     const focus = active ?? selectedId ?? null;
     const svg = <g className={`mk-arcs${focus ? " has-focus" : ""}`}>
         <defs>
@@ -103,8 +117,8 @@ export function Arcs({ arcs, hrefFor = liveCountryPage, selectedId, table = "Sup
                 <span>{c.country}</span>
                 {c.arcs.length > 1 ? <b>{c.arcs.length}</b> : null}
             </>;
-            // Keep the chip inside the frame (it is centred on the exit point).
-            const style = pct([Math.min(width - mx, Math.max(mx, c.at[0])), Math.min(height - my, Math.max(my, c.at[1]))], width, height);
+            const at = spread.get(c.key) ?? c.at;
+            const style = pct([at[0] / scale, at[1] / scale], width, height);
             return href
                 ? <a key={c.key} className="mk-chip" href={href} style={style} aria-label={label} title={label}>{body}</a>
                 : <span key={c.key} className="mk-chip" style={style} role="img" aria-label={label} title={label}>{body}</span>;

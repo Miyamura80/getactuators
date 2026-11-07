@@ -79,3 +79,78 @@ export function clipArc(points: readonly (Point | null)[], width: number, height
 export function polyline(run: readonly Point[]): string {
     return run.map((p, i) => `${i ? "L" : "M"}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join("");
 }
+
+// A chip to keep clear of the others: its centre and size, in CSS pixels.
+export interface EdgeChip {
+    key: string;
+    at: Point;
+    w: number;
+    h: number;
+}
+
+type Edge = "top" | "bottom" | "left" | "right";
+const CHIP_GAP = 4;
+
+// Chips sit where their arcs leave the frame, so several bound for nearby
+// countries land on top of each other. Each chip keeps to its edge and
+// slides along it, in order, until it clears its neighbours; chips on the
+// left and right edges also drop below (or rise above) any top or bottom
+// chip in their column. Returns each chip's new centre.
+export function spreadChips(chips: readonly EdgeChip[], width: number, height: number): Map<string, Point> {
+    const out = new Map<string, Point>();
+    const clamp = (c: EdgeChip): Point => [
+        Math.min(width - c.w / 2 - 2, Math.max(c.w / 2 + 2, c.at[0])),
+        Math.min(height - c.h / 2 - 2, Math.max(c.h / 2 + 2, c.at[1])),
+    ];
+    const edgeOf = ([x, y]: Point): Edge => {
+        const d: [Edge, number][] = [["top", y], ["bottom", height - y], ["left", x], ["right", width - x]];
+        return d.reduce((a, b) => (b[1] < a[1] ? b : a))[0];
+    };
+    const placed = chips.map((c) => ({ c, at: clamp(c), edge: edgeOf(clamp(c)) }));
+    // Slide one edge's chips along `axis` (0 = x, 1 = y) within [lo(c), hi].
+    // When they do not fit in one row, every other chip (every third, ...)
+    // steps inward into a further row, so each row still spans the edge.
+    const sweep = (edge: typeof placed, axis: 0 | 1, inward: 1 | -1, lo: (c: EdgeChip) => number, hi: number) => {
+        const size = (c: EdgeChip) => (axis === 0 ? c.w : c.h);
+        const across = (c: EdgeChip) => (axis === 0 ? c.h : c.w);
+        edge.sort((a, b) => a.at[axis] - b.at[axis]);
+        const need = edge.reduce((n, p) => n + size(p.c) + CHIP_GAP, 0);
+        const room = Math.max(1, hi - Math.min(...edge.map((p) => lo(p.c)), hi));
+        const rows = Math.max(1, Math.ceil(need / room));
+        const step = Math.max(0, ...edge.map((p) => across(p.c))) + CHIP_GAP;
+        for (let r = 0; r < rows; r++) {
+            const row = edge.filter((_, i) => i % rows === r);
+            for (const p of row) p.at[1 - axis] += inward * r * step;
+            let prev = -Infinity;
+            for (const p of row) {
+                const min = Math.max(lo(p.c), prev + CHIP_GAP) + size(p.c) / 2;
+                p.at[axis] = Math.max(p.at[axis], min);
+                prev = p.at[axis] + size(p.c) / 2;
+            }
+            let next = Infinity;
+            for (const p of [...row].reverse()) {
+                const max = Math.min(hi, next - CHIP_GAP) - size(p.c) / 2;
+                if (p.at[axis] > max) p.at[axis] = max;
+                next = p.at[axis] - size(p.c) / 2;
+            }
+        }
+    };
+    const on = (e: Edge) => placed.filter((p) => p.edge === e);
+    sweep(on("top"), 0, 1, () => 2, width - 2);
+    sweep(on("bottom"), 0, -1, () => 2, width - 2);
+    // A side chip starts below the lowest top chip it would touch.
+    const across = (side: (typeof placed)[number], other: (typeof placed)[number]) =>
+        Math.abs(side.at[0] - other.at[0]) < (side.c.w + other.c.w) / 2 + CHIP_GAP;
+    for (const e of ["left", "right"] as const) {
+        const row = on(e);
+        const below = (c: EdgeChip) => {
+            const p = row.find((r) => r.c === c);
+            const tops = p ? on("top").filter((t) => across(p, t)) : [];
+            return Math.max(2, ...tops.map((t) => t.at[1] + t.c.h / 2 + CHIP_GAP));
+        };
+        const bottoms = row.flatMap((p) => on("bottom").filter((b) => across(p, b)));
+        sweep(row, 1, e === "left" ? 1 : -1, below, Math.min(height - 2, ...bottoms.map((b) => b.at[1] - b.c.h / 2 - CHIP_GAP)));
+    }
+    for (const p of placed) out.set(p.c.key, p.at);
+    return out;
+}

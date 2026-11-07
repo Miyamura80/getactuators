@@ -42,3 +42,33 @@ export function groupName(members: readonly MapPin[], clusters: readonly NamedCl
     if (first.admin1 && members.every((m) => m.admin1 === first.admin1)) return first.admin1;
     return null;
 }
+
+// [x0, y0, x1, y1] in CSS pixels.
+export type PxRect = [number, number, number, number];
+
+// A named cluster's on-map tag (.mk-cluster-tag: 10px mono caps, padded and
+// bordered), estimated wide so the check errs on the safe side.
+const TAG_CHAR_PX = 6.8;
+const TAG_GAP = 2;
+export function tagSize(text: string): [number, number] {
+    return [Math.ceil(text.length * TAG_CHAR_PX) + 16, 20];
+}
+
+const hits = (a: PxRect, b: PxRect) => a[0] < b[2] && b[0] < a[2] && a[1] < b[3] && b[1] < a[3];
+
+// Where a cluster's tag sits: on a corner of its box (above it, then below
+// it), on the side nearer the middle of the frame first, clear of the frame
+// edge and of everything in `taken`. Null when no corner is free: the box
+// still draws and the index under the map still lists the cluster.
+export function placeTag(box: PxRect, [w, h]: [number, number], frameW: number, frameH: number, taken: readonly PxRect[]): PxRect | null {
+    const [x0, y0, x1, y1] = box;
+    const left = (y: number): PxRect => [x0, y, x0 + w, y + h];
+    const right = (y: number): PxRect => [x1 - w, y, x1, y + h];
+    const above = y0 - TAG_GAP - h;
+    const below = y1 + TAG_GAP;
+    const endFirst = x0 > frameW * 0.7;
+    const order = endFirst
+        ? [right(above), left(above), right(below), left(below)]
+        : [left(above), right(above), left(below), right(below)];
+    return order.find((r) => r[0] >= 2 && r[1] >= 2 && r[2] <= frameW - 2 && r[3] <= frameH - 2 && !taken.some((t) => hits(t, r))) ?? null;
+}

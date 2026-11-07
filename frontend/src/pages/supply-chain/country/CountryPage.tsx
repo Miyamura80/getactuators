@@ -33,6 +33,12 @@ import "./country.css";
 // country's page once live), named clusters to zoom to, the company card in
 // a drawer (a bottom sheet on phones) and the company table. Segment,
 // company, site and cluster live in the URL.
+//
+// A busy country (more links or sites than below) opens calm: links draw
+// once a company or site is chosen, and single sites are named
+// once the map is zoomed in; group and cluster names always show.
+const BUSY_LINKS = 45;
+const BUSY_SITES = 100;
 export function CountryPage({ page, menuOpen = false, topology }: {
     page: CountryPageData;
     menuOpen?: boolean;
@@ -70,7 +76,10 @@ export function CountryPage({ page, menuOpen = false, topology }: {
             ?? null)
         : null;
     const companyId = site?.companyId ?? company;
-    const arcs = companyId
+    const busy = data.arcs.length > BUSY_LINKS || data.sites.length > BUSY_SITES;
+    const arcs = busy && !companyId
+        ? []
+        : companyId
         ? data.arcs.filter((a) => a.from.id === companyId || a.to.id === companyId)
         : segment
             ? data.arcs.filter((a) => [a.from.id, a.to.id].some((id) => getCompany(id)?.segment === segment))
@@ -111,6 +120,7 @@ export function CountryPage({ page, menuOpen = false, topology }: {
                             selectedId={selectedPin}
                             onSelect={(p) => state.set({ site: p.id, company: p.companyId ?? null })}
                             table={`${page.name} sites`}
+                            labels={busy ? "zoomed" : true}
                         />
                     </CountryMap>
                     {companyId ? <CompanyDrawer
