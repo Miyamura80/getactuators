@@ -170,8 +170,8 @@ describe("precision process chain", () => {
                 unopened: accessed === undefined,
             });
         }
-        // Opening a document and dating it takes it off the list.
-        expect(PRECISION_UNOPENED.size).toBeLessThanOrEqual(PRECISION_SOURCES.length);
+        // Every unopened id is a registered source.
+        for (const id of PRECISION_UNOPENED) expect(getSource(id)).toBeDefined();
     });
 
     test("at least four animated vignettes per sub-chain, each valid", () => {
