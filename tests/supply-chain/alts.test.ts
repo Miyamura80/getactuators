@@ -69,6 +69,12 @@ describe("/alts data", () => {
             expect(["drive-motor", "permanent"]).toContain(t.magnets);
     });
 
+    test("fluid-powered muscles are set by the motor on their pump or compressor", () => {
+        const byId = new Map(ALT_TECHS.map((t) => [t.id, t]));
+        expect(byId.get("mckibben")?.magnets).toBe("motor");
+        expect(byId.get("hydraulic-muscle")?.magnets).toBe("motor");
+    });
+
     test("deployments are dated and tied to a technology", () => {
         for (const d of DEPLOYMENTS) expect(d.date).toMatch(/^\d{4}(-\d{2}){0,2}$/);
         expect(DEPLOYMENTS.some((d) => d.status === "retired")).toBe(true);

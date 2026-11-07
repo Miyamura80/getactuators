@@ -1,98 +1,24 @@
-import { actuatorBenchmarks, benchmarkList } from "@/api/benchmarks";
-import { findCountry } from "@/api/countries";
-import {
-    actuatorPage,
-    brandCounts,
-    categoryCounts,
-    compareQuery,
-    findActuator,
-    findRobot,
-    robotPage,
-    useCaseCounts,
-} from "@/api/handlers";
+import type { benchmarkList } from "@/api/benchmarks";
+import { actuatorPage, categoryCounts, compareQuery, robotPage } from "@/api/handlers";
 import type { ApiContext } from "@/api/http";
 import { findOpenRobot, openRobotQuery } from "@/api/open-robots";
-import type { Page } from "@/api/pagination";
 import { sdkBrand, sdkList } from "@/api/sdk";
-import { API_OPERATIONS, apiIndexData } from "@/api/surface";
 import { DIMENSION_SHORT, FORUM_LABEL } from "@/sdk";
 import { countryListView } from "@/supply-chain/country-pages/views";
-import { absoluteUrl } from "../site";
-import { actuatorBody, actuatorTable, robotSection } from "./catalog-md";
-import { PATHS } from "./links";
-import { bullets, mdLink, mdTable, mdText, num, usd } from "./md";
-import { OPEN_ROBOT_COLUMNS, openRobotRow, openRobotSection } from "./open-source/page";
-import { countryBody } from "./supply-chain/country";
+import { absoluteUrl } from "../../site";
+import { actuatorTable } from "../catalog-md";
+import { bullets, mdLink, mdTable, mdText, num, usd } from "../md";
+import {
+    OPEN_ROBOT_COLUMNS,
+    openRobotRow,
+    openRobotSection,
+} from "../open-source/page";
+import { apiMarkdownPath, filterSummary, pageSummary } from "./shared";
 
-// Markdown twins of the REST API's GET endpoints (/api.md, /api/v1/*.md, or
-// Accept: text/markdown). Each renderer reads the same data function as the
-// JSON handler, so filters, validation errors and pagination match exactly.
-// Every document opens with its H1 and ends with a pointer to the JSON.
+// Markdown twins of the catalog endpoints: actuators, robots, facets, open
+// robots, measured runs, country pages and SDK scores.
 
-type Renderer = (ctx: ApiContext) => string;
-
-// The markdown twin of an API URL: `.md` on the path, query string kept.
-export function apiMarkdownPath(path: string, query = ""): string {
-    const q = query && !query.startsWith("?") ? `?${query}` : query;
-    return `${path.replace(/\/$/, "")}.md${q}`;
-}
-
-function filterSummary(url: URL): string {
-    const parts = [...url.searchParams]
-        .filter(([k]) => k !== "cursor" && k !== "limit")
-        .map(([k, v]) => `${k}=${v}`);
-    return parts.length > 0 ? `: ${mdText(parts.join(", "))}` : "";
-}
-
-function pageSummary(page: Page<unknown>, url: URL, noun: string): string {
-    const { total, has_more, next_cursor } = page.pagination;
-    if (page.data.length === 0) return `No ${noun} match this query (total ${total}).`;
-    const lines = [`${page.data.length} of ${total} matching ${noun} on this page.`];
-    if (has_more && next_cursor) {
-        const next = new URLSearchParams(url.searchParams);
-        next.set("cursor", next_cursor);
-        const q = `?${next.toString()}`;
-        lines.push(
-            `Next page: ${mdLink("markdown", absoluteUrl(apiMarkdownPath(url.pathname, q)))}, ${mdLink("JSON", absoluteUrl(`${url.pathname}${q}`))}.`,
-        );
-    }
-    return lines.join(" ");
-}
-
-function apiIndex(): string {
-    const index = apiIndexData();
-    // Link the twins that need no input (no path param, no required ids).
-    const withTwin = new Set(
-        API_OPERATIONS.filter(
-            (op) =>
-                op.method === "GET" &&
-                !op.pathParam &&
-                op.operationId !== "compare_actuators" &&
-                hasApiMarkdown(op.operationId),
-        ).map((op) => op.path),
-    );
-    const rows = index.endpoints.map((e) => [
-        e.method,
-        e.method === "GET" && withTwin.has(e.path)
-            ? mdLink(e.path, absoluteUrl(apiMarkdownPath(e.path)))
-            : mdText(e.path),
-        mdText(e.summary),
-    ]);
-    return [
-        `# ${mdText(index.name)} ${index.version}`,
-        mdText(index.description),
-        bullets([
-            `Auth: ${index.auth}`,
-            `Developer docs: ${index.docs} (markdown: ${absoluteUrl(PATHS.apiDocsMd)})`,
-            `OpenAPI 3.1: ${index.openapi}`,
-            `MCP server: ${index.mcp}`,
-            "Every GET endpoint has a markdown twin: append .md to the path (query string kept) or send Accept: text/markdown.",
-        ]),
-        `## Endpoints\n\n${mdTable(["Method", "Path", "Summary"], rows)}`,
-    ].join("\n\n");
-}
-
-function listActuators(ctx: ApiContext): string {
+export function listActuators(ctx: ApiContext): string {
     const page = actuatorPage(ctx);
     return [
         `# Actuators${filterSummary(ctx.url)}`,
@@ -101,7 +27,7 @@ function listActuators(ctx: ApiContext): string {
     ].join("\n\n");
 }
 
-function compareActuators(ctx: ApiContext): string {
+export function compareActuators(ctx: ApiContext): string {
     const results = compareQuery(ctx);
     const found = results.flatMap((r) => (r.actuator ? [r.actuator] : []));
     const missing = results.filter((r) => !r.actuator).map((r) => mdText(r.id));
@@ -113,7 +39,7 @@ function compareActuators(ctx: ApiContext): string {
     ].join("\n\n");
 }
 
-function listRobots(ctx: ApiContext): string {
+export function listRobots(ctx: ApiContext): string {
     const page = robotPage(ctx);
     const rows = page.data.map((r) => [
         mdLink(
@@ -139,7 +65,7 @@ function listRobots(ctx: ApiContext): string {
     ].join("\n\n");
 }
 
-function listCategories(): string {
+export function listCategories(): string {
     const rows = categoryCounts().map((c) => [
         mdLink(
             c.label,
@@ -156,7 +82,7 @@ function listCategories(): string {
     ].join("\n\n");
 }
 
-function namedCounts(
+export function namedCounts(
     title: string,
     filter: string,
     list: { name: string; actuator_count: number }[],
@@ -180,7 +106,7 @@ function namedCounts(
     ].join("\n\n");
 }
 
-function listOpenRobots(ctx: ApiContext): string {
+export function listOpenRobots(ctx: ApiContext): string {
     const robots = openRobotQuery(ctx);
     return [
         `# Open-source robots${filterSummary(ctx.url)}`,
@@ -191,7 +117,7 @@ function listOpenRobots(ctx: ApiContext): string {
     ].join("\n\n");
 }
 
-function getOpenRobot(ctx: ApiContext): string {
+export function getOpenRobot(ctx: ApiContext): string {
     const r = findOpenRobot(ctx);
     const joints = r.joints.map((j) => [
         mdText(j.role),
@@ -211,7 +137,7 @@ function getOpenRobot(ctx: ApiContext): string {
 
 type BenchmarkList = ReturnType<typeof benchmarkList>;
 
-function benchmarkRuns(title: string, list: BenchmarkList): string {
+export function benchmarkRuns(title: string, list: BenchmarkList): string {
     const ratio = (
         v: BenchmarkList["results"][number]["vs_datasheet"]["peak_torque"],
     ) => (v ? `${num(v.measured, "N·m")} (${v.ratio.toFixed(2)}x)` : "n/a");
@@ -248,7 +174,7 @@ function benchmarkRuns(title: string, list: BenchmarkList): string {
     ].join("\n\n");
 }
 
-function listCountries(): string {
+export function listCountries(): string {
     const list = countryListView();
     const rows = list.results.map((c) => [
         mdLink(c.name, absoluteUrl(apiMarkdownPath(`/api/v1/countries/${c.code}`))),
@@ -267,7 +193,7 @@ function listCountries(): string {
 
 const pct = (x: number) => `${Math.round(x * 100)}%`;
 
-function sdkScores(ctx: ApiContext): string {
+export function sdkScores(ctx: ApiContext): string {
     const list = sdkList(ctx);
     const rows = list.results.map((r) => [
         String(r.rank),
@@ -301,7 +227,7 @@ function sdkScores(ctx: ApiContext): string {
     ].join("\n\n");
 }
 
-function sdkBrandBody(ctx: ApiContext): string {
+export function sdkBrandBody(ctx: ApiContext): string {
     const b = sdkBrand(ctx);
     const dims = b.dimensions.map((d) => [
         d.label,
@@ -326,46 +252,4 @@ function sdkBrandBody(ctx: ApiContext): string {
             ? `## Evidence (${evidence.length}, newest first)\n\n${bullets(evidence)}`
             : "",
     ].join("\n\n");
-}
-
-const RENDERERS: Record<string, Renderer> = {
-    get_api_index: apiIndex,
-    list_actuators: listActuators,
-    compare_actuators: compareActuators,
-    get_actuator: (ctx) => actuatorBody(findActuator(ctx)),
-    list_robots: listRobots,
-    get_robot: (ctx) => robotSection(findRobot(ctx), 1),
-    list_categories: listCategories,
-    list_brands: () => namedCounts("Actuator brands", "brand", brandCounts()),
-    list_use_cases: () => namedCounts("Use-case tags", "use_case", useCaseCounts()),
-    list_open_robots: listOpenRobots,
-    get_open_robot: getOpenRobot,
-    list_benchmarks: (ctx) =>
-        benchmarkRuns(`Measured runs${filterSummary(ctx.url)}`, benchmarkList(ctx)),
-    get_actuator_benchmarks: (ctx) =>
-        benchmarkRuns(
-            `Measured runs: ${mdText(ctx.params.id ?? "")}`,
-            actuatorBenchmarks(ctx),
-        ),
-    list_countries: listCountries,
-    get_country: (ctx) => countryBody(findCountry(ctx)),
-    list_sdk_scores: sdkScores,
-    get_sdk_score: sdkBrandBody,
-};
-
-export function hasApiMarkdown(operationId: string): boolean {
-    return operationId in RENDERERS;
-}
-
-// Markdown for one GET operation, given the context of its JSON URL. Throws
-// the same ApiErrors as the JSON handler (404, invalid parameter, cursor).
-export function apiMarkdown(operationId: string, ctx: ApiContext): string {
-    const render = RENDERERS[operationId];
-    if (!render) throw new Error(`no markdown twin for ${operationId}`);
-    const jsonUrl = absoluteUrl(`${ctx.url.pathname}${ctx.url.search}`);
-    const body = render(ctx)
-        .split("\n\n")
-        .filter((block) => block.trim() !== "")
-        .join("\n\n");
-    return `${body}\n\n## JSON\n\nThis is the markdown twin of ${jsonUrl}. Request that URL for the same data as JSON; the schema is in ${absoluteUrl(PATHS.openapi)}.\n`;
 }

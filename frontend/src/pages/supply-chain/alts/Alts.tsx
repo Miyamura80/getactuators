@@ -143,7 +143,7 @@ export function Alts({ menuOpen = false }: { menuOpen?: boolean }) {
                         <summary>How nodes are placed</summary>
                         <ul>
                             <li><b>Across</b> Technology readiness 1 to 9: our reading of the cited evidence, so a model, not a measurement. Hover the TRL figure for its sources.</li>
-                            <li><b>Up</b> What the actuator does for magnets, from its sources. Pump-driven hydraulics inherit whatever motor drives the pump, and a transmission inherits the magnets of the motor that drives it.</li>
+                            <li><b>Up</b> What the actuator does for magnets, from its sources. Hydraulics and pneumatic muscles inherit whatever motor drives their pump or air compressor, and a transmission inherits the magnets of the motor that drives it.</li>
                             <li><b>Size</b> How many dated deployments we cite (shipping, pilot, demo or retired). Hollow means none yet. No market estimate sets any size.</li>
                             <li><b>Milestones</b> The year of the earliest dated source we cite; the event may be earlier.</li>
                         </ul>

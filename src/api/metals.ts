@@ -49,7 +49,7 @@ export function listMetalsHandler(): Response {
     return json(metalListView());
 }
 
-export function getMetalHandler({ params, url }: ApiContext): Response {
+export function metalSupply({ params, url }: ApiContext) {
     const id = params.element ?? "";
     const metal = getMetal(id);
     if (!metal)
@@ -58,10 +58,10 @@ export function getMetalHandler({ params, url }: ApiContext): Response {
             hint: "Use nd, pr, dy, tb, sm or co; list them with GET /api/v1/metals.",
         });
     const { stage } = parseQuery(MetalSupplyParams, url);
-    return json(metalSupplyView(metal, stage));
+    return metalSupplyView(metal, stage);
 }
 
-export function getMetalPricesHandler({ params, url }: ApiContext): Response {
+export function metalPrices({ params, url }: ApiContext) {
     const id = params.series ?? "";
     const series = getSeries(id);
     if (!series)
@@ -70,5 +70,9 @@ export function getMetalPricesHandler({ params, url }: ApiContext): Response {
             hint: `Series ids: ${PRICE_SERIES_IDS.join(", ")}.`,
         });
     const { from, to } = parseQuery(MetalPriceParams, url);
-    return json(metalPricesView(series, from, to));
+    return metalPricesView(series, from, to);
 }
+
+export const getMetalHandler = (ctx: ApiContext): Response => json(metalSupply(ctx));
+export const getMetalPricesHandler = (ctx: ApiContext): Response =>
+    json(metalPrices(ctx));

@@ -40,6 +40,17 @@ export const ALT_COMPANIES: Company[] = [
         sources: ["turntide-site", "turntide-buildings-2021"],
     },
     {
+        id: "conifer",
+        name: "Conifer",
+        hqCountry: "US",
+        stages: ["motor"],
+        segment: "magnets-motors",
+        ownership: { kind: "private" },
+        products: ["Axial-flux motors for robots, data centres and mobility"],
+        url: "https://conifer.io/",
+        sources: ["conifer-site", "dnc-conifer-seed-2025"],
+    },
+    {
         id: "niron-magnetics",
         name: "Niron Magnetics",
         hqCountry: "US",
