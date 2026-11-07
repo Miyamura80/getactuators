@@ -274,11 +274,10 @@ const SUPPLY_CHAIN: Row[] = [
     ["dobot", "Dobot", null],
     ["leju", "Leju Robotics", null, ["Leju"]],
     ["joyson", "Ningbo Joyson Electronic", null, ["Joyson"]],
-    // Precision chain makers on /manufacturing?chain=precision. GSA's own
-    // domain is unverified.
+    // Precision chain makers on /manufacturing?chain=precision (Schaeffler
+    // is listed with the Korea makers above). GSA's own domain is unverified.
     ["rollvis", "Rollvis", "rollvis.com"],
     ["gsa", "GSA", null],
-    ["schaeffler", "Schaeffler", "schaeffler.com"],
     ["ewellix", "Ewellix", "ewellix.com"],
     ["skf", "SKF", "skf.com"],
     ["renishaw", "Renishaw", "renishaw.com"],
