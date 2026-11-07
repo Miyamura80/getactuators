@@ -147,7 +147,18 @@ export const COMMODITIES: Commodity[] = [
             confidence: "reported",
             note: "US silicon metal spot, December 2025, 142 cents per pound (2.2046 lb/kg). The price of wafer-grade silicon is far higher; die mass is tiny either way.",
         },
-        density: density(2.33, DENSITY_TABLE, "Crystalline silicon.", [2.32, 2.34]),
+        // No registry source covers silicon's density, and the audit needs at
+        // least one source, so the metals table stays attached; the note says
+        // it does not cover silicon.
+        density: {
+            ...density(
+                2.33,
+                DENSITY_TABLE,
+                "Standard density of crystalline silicon. No source in the registry covers it: the cited table gives steel, copper and aluminium only.",
+                [2.32, 2.34],
+            ),
+            confidence: "modeled",
+        },
     },
 ];
 

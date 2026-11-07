@@ -159,13 +159,6 @@ export const BOM_SOURCES: BomSource[] = [
         "reference",
     ),
     src(
-        "renishaw-fy2025",
-        "Renishaw (FCA National Storage Mechanism)",
-        "Renishaw plc final results for the year to 30 June 2025",
-        "https://data.fca.org.uk/artefacts/NSM/RNS/5825346.html",
-        "filing",
-    ),
-    src(
         "leadshine-2025-annual",
         "Leadshine",
         "Leadshine 2025 annual report and 2026 Q1 report: revenue hits new highs",

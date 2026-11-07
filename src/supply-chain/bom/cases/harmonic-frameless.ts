@@ -23,8 +23,8 @@ import {
 import type { BomCase, BomNode } from "../types";
 
 // A strain-wave cobot joint: frameless motor, strain-wave gear, crossed
-// roller bearing, two encoders, a friction brake and a driver in one
-// housing. Priced as ZeroErr's eRob 80, an integrated joint of exactly this
+// roller bearing, a motor-side encoder, a friction brake and a driver in
+// one housing. Priced as ZeroErr's eRob 80 T, an integrated joint of this
 // layout sold off the shelf. Part costs split that price by HONPINE's
 // rotary-actuator shares with its torque sensor taken out (this joint has
 // none), so gear, motor and the rest keep their proportions. ZeroErr is
@@ -373,7 +373,7 @@ const MOTOR_ENCODER_COST = listed(
 
 const rest: BomNode = {
     id: "other-parts",
-    label: "Bearing, encoders, brake, driver",
+    label: "Bearing, encoder, brake, driver",
     kind: "assembly",
     unitCost: shareOfPrice(
         PRICE,
@@ -382,7 +382,7 @@ const rest: BomNode = {
         why("everything else:", 20.5),
     ),
     sources: LISTING,
-    note: "The eRob 80 T has a friction brake and a motor-side absolute encoder; its output encoder is on the eRob 80 I.",
+    note: "The eRob 80 T has a friction brake and a motor-side absolute encoder only; the output encoder comes with the eRob 80 I, so it is not in this tree.",
     children: [
         piece(
             "crossed-roller-bearing",
@@ -424,35 +424,6 @@ const rest: BomNode = {
                 },
             },
         ),
-        {
-            id: "output-encoder",
-            label: "Output encoder",
-            kind: "assembly",
-            makerIds: ["renishaw"],
-            makerConfidence: "modeled",
-            makerNote:
-                "Encoder source not public; Renishaw, a listed maker of absolute ring encoders, stands in.",
-            ...shape,
-            part3d: {
-                component: "encoder",
-                props: { radius: 17, thickness: 1.5, kind: "optical", ticks: 96 },
-                assembled: { position: z(-32) },
-                explodedOffset: z(-176),
-            },
-            children: [
-                piece(
-                    "encoder-scale",
-                    "Scale ring",
-                    { label: "Steel", seriesId: "carbon-steel", v: ring(17, 12, 1.5) },
-                    LISTING,
-                    {
-                        ...shape,
-                        route: ["Turn ring", "Laser-mark code", "Lap"],
-                    },
-                ),
-                chip("encoder-readhead", "Readhead chip", 8, LISTING),
-            ],
-        },
         {
             id: "motor-encoder",
             label: "Motor encoder",
@@ -676,7 +647,7 @@ export const HARMONIC_FRAMELESS: BomCase = {
     name: "Strain-wave cobot joint",
     short: "Harmonic + frameless",
     subject:
-        "Frameless motor, strain-wave gear, brake and encoders: ZeroErr eRob 80 class",
+        "Frameless motor, strain-wave gear, brake and motor encoder: ZeroErr eRob 80 T class",
     price: PRICE,
     volumeAssumption: "Off-the-shelf price for one integrated joint.",
     month: "2026-09",
@@ -705,7 +676,7 @@ export const HARMONIC_FRAMELESS: BomCase = {
             "Fit gear",
             "Fit bearing",
             "Fit brake, board",
-            "Calibrate encoders",
+            "Calibrate encoder",
             "Test",
         ],
         children: [strainWave, motor, rest],

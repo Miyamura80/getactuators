@@ -3,7 +3,7 @@ import type { Company } from "./types";
 
 // Companies the /bom teardowns reach that are not in the registry yet, and
 // the latest gross margins /bom's margin capture reads for companies that
-// are (attached to their records in ./index, ./china and ./precision).
+// are (attached to their records in ./index and ./china).
 
 export function margin(
     value: number,
@@ -40,7 +40,7 @@ export const BOM_MARGINS = {
         0.2047,
         ["stockanalysis-jlmag"],
         "2025",
-        "S&P Global data via an aggregator; the company reports 21.18% consolidated.",
+        "Consolidated gross margin for 2025 on an aggregator (S&P Global data); the company's own report may differ slightly.",
         "estimated",
     ),
     northern: margin(
@@ -68,12 +68,6 @@ export const BOM_MARGINS = {
         ["sse-unitree-pricing-2026"],
         "2025",
         "Gross margin of the core businesses in 2025, the prospectus figure as quoted in the exchange's IPO pricing news release; the prospectus itself is not cited.",
-    ),
-    renishaw: margin(
-        0.617,
-        ["renishaw-fy2025"],
-        "2025-06",
-        "Gross margin excluding engineering costs, year to June 2025.",
     ),
 } as const;
 

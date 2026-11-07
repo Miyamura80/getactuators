@@ -1,4 +1,3 @@
-import { BOM_MARGINS } from "./bom";
 import type { Company } from "./types";
 
 // Makers of the precision parts on /manufacturing?chain=precision that the
@@ -57,7 +56,6 @@ export const PRECISION_COMPANIES: Company[] = [
         stages: ["electronics"],
         segment: MOTOR,
         ownership: { kind: "listed", ticker: "LSE: RSW" },
-        grossMargin: BOM_MARGINS.renishaw,
         products: ["Optical linear and rotary encoders", "Metrology probes"],
         url: "https://www.renishaw.com/",
         sources: ["renishaw-resa30"],
