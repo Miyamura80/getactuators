@@ -79,6 +79,14 @@ test("deep link ?tech=hasel opens its spec card with gaps; close clears the URL"
     expect(window.location.search).toBe("");
 });
 
+test("a McKibben muscle card says its compressor motor sets the magnets", () => {
+    setURL("/alts?tech=mckibben");
+    const view = render(<Alts />);
+    const c = view.container;
+    expect(c.querySelector(".al-sp h2")?.textContent).toBe("Pneumatic McKibben muscle");
+    expect(c.querySelector(".al-sp-spec")?.textContent).toContain("Set by its pump or compressor motor");
+});
+
 test("?tech=ndfeb opens the reference card and Escape closes it", () => {
     setURL("/alts?tech=ndfeb");
     const view = render(<Alts />);

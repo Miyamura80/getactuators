@@ -34,6 +34,18 @@ export const ALT_SITES: Site[] = [
         stages: ["motor"],
         sources: ["turntide-site"],
     }),
+    plant("conifer-silicon-valley", {
+        companyId: "conifer",
+        kind: "hq",
+        name: "Conifer, Silicon Valley",
+        country: "US",
+        admin1: "California",
+        lat: 37.37,
+        lon: -121.97,
+        precision: "region",
+        stages: ["motor"],
+        sources: ["techsteel-conifer-2025"],
+    }),
     plant("niron-minneapolis", {
         companyId: "niron-magnetics",
         name: "Niron Magnetics commercial pilot plant",

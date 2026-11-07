@@ -187,7 +187,10 @@ export const MUSCLE_TECHS: AltTech[] = [
         short: "McKibben",
         principle:
             "Air inflates a bladder inside a braided sleeve; the braid widens and the muscle shortens, like a finger trap.",
-        magnets: "none",
+        // The muscle itself has no magnets, but its air comes from a
+        // compressor whose motor sets the rare-earth content, as the pump
+        // motor does for the hydraulic muscle.
+        magnets: "motor",
         trl: trl(
             9,
             ["machinedesign-fluidic-muscle"],

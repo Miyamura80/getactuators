@@ -11,7 +11,7 @@ const MAGNET_TAG: Record<MagnetUse, string | null> = {
     ferrite: "ferrite",
     "iron-nitride": "iron nitride",
     permanent: "permanent magnet",
-    motor: "pump motor",
+    motor: "pump or compressor motor",
     "drive-motor": "depends on motor",
 };
 
