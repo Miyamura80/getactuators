@@ -24,6 +24,9 @@ export interface ValueSankeyProps {
     format?: (v: number) => string;
     selectedId?: string | null;
     onSelectNode?: (id: string) => void;
+    // Hover or focus moved onto a node (null when it leaves), to light the
+    // same part in a linked view.
+    onHoverNode?: (id: string | null) => void;
     // Extra content in a node's label block, after its badges.
     renderNode?: (node: FlowNode, laid: LaidNode) => ReactNode;
     // Shared value scale across several Sankeys (see layoutSankey).
@@ -45,11 +48,15 @@ function usdFormat(unit: string) {
 // Value-added Sankey: band width is the value that flows, left to right
 // (top to bottom on narrow screens). Hover or focus a node to light its
 // upstream and downstream paths; click to select it (`onSelectNode`).
-export function ValueSankey({ nodes, links, label, unit = "USD", format, selectedId, onSelectNode, renderNode, valueMax, orientation = "auto", height = 400 }: ValueSankeyProps) {
+export function ValueSankey({ nodes, links, label, unit = "USD", format, selectedId, onSelectNode, onHoverNode, renderNode, valueMax, orientation = "auto", height = 400 }: ValueSankeyProps) {
     const { ref, width } = useWidth<HTMLElement>(720);
     const fmt = format ?? usdFormat(unit);
     const vertical = orientation === "vertical" || (orientation === "auto" && width < VERTICAL_BELOW);
-    const [hover, setHover] = useState<string | null>(null);
+    const [hover, setHoverState] = useState<string | null>(null);
+    const setHover = (id: string | null) => {
+        setHoverState(id);
+        onHoverNode?.(id);
+    };
     const [picked, setPicked] = useState<string | null>(null);
     const selected = selectedId !== undefined ? selectedId : picked;
     const ids = useMemo(() => nodes.map((n) => n.id), [nodes]);

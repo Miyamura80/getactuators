@@ -1,4 +1,5 @@
 import { ALT_COMPANIES } from "./alts";
+import { BOM_COMPANIES, BOM_MARGINS } from "./bom";
 import { CHINA_COMPANIES, UNITREE_REVENUE } from "./china";
 import { JAPAN_COMPANIES, grossMargin, yenRevenue } from "./japan";
 import { KOREA_COMPANIES } from "./korea";
@@ -53,6 +54,7 @@ export const COMPANIES: Company[] = [
             note: "Converted from CNY 42.563 bn operating revenue at roughly 7.1 to 7.3 CNY per USD.",
         },
         products: ["Rare earth oxides", "Rare earth metals", "Magnetic materials"],
+        grossMargin: BOM_MARGINS.northern,
         url: "https://www.reht.com/",
     },
     {
@@ -101,6 +103,7 @@ export const COMPANIES: Company[] = [
         segment: "magnets-motors",
         ownership: { kind: "listed", ticker: "SZSE: 300748; HKEX: 6680" },
         products: ["High-performance NdFeB magnets", "Magnet recycling"],
+        grossMargin: BOM_MARGINS.jlMag,
         url: "https://www.jlmag.com.cn/en/",
     },
     {
@@ -160,6 +163,7 @@ export const COMPANIES: Company[] = [
         segment: "gears-screws-bearings",
         ownership: { kind: "listed", ticker: "SHA: 688017" },
         products: ["Harmonic reducers", "Mechatronic actuators"],
+        grossMargin: BOM_MARGINS.leaderdrive,
         url: "https://star.sse.com.cn/star/en/marketdata/snapshot/c/5545073.shtml",
     },
     {
@@ -263,6 +267,7 @@ export const COMPANIES: Company[] = [
         segment: "robot-actuator-oem",
         revenue: UNITREE_REVENUE,
         products: ["Quadrupeds", "Humanoids", "Joint motors"],
+        grossMargin: BOM_MARGINS.unitree,
         url: "https://www.unitree.com/",
     },
     {
@@ -295,10 +300,12 @@ export const COMPANIES: Company[] = [
         segment: "robot-actuator-oem",
         ownership: { kind: "listed", ticker: "SHA: 601689" },
         products: ["Automotive chassis parts", "Robot actuators"],
+        grossMargin: BOM_MARGINS.tuopu,
         url: "https://www.tuopu.com/",
     },
     ...JAPAN_COMPANIES,
     ...KOREA_COMPANIES,
     ...ALT_COMPANIES,
     ...CHINA_COMPANIES,
+    ...BOM_COMPANIES,
 ];

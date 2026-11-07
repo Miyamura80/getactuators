@@ -9,6 +9,7 @@ import {
     altErrors,
     altTechRecords,
 } from "./alts";
+import { bomErrors, bomNodeRecords, bomRecords } from "./bom";
 import { COMPANIES } from "./companies";
 import { insideCountry } from "./countries";
 import { countryStageRecords } from "./country-pages";
@@ -99,6 +100,7 @@ const DATASETS: Record<string, unknown> = {
     "country-stage-shares": countryStageRecords(),
     "alts-techs": altTechRecords(),
     "alts-market": MARKET_SLICES,
+    bom: bomRecords(),
 };
 
 // Records that cite sources without a number of their own.
@@ -115,6 +117,7 @@ const CITING_RECORDS: Record<string, readonly { sources: readonly string[] }[]> 
     "people-directory": DIRECTORY_RECORDS,
     "alts-principles": ALT_TECHS,
     "alts-deployments": DEPLOYMENTS,
+    "bom-nodes": bomNodeRecords(),
 };
 
 // Numbers that need no citation of their own: coordinates (the site carries
@@ -278,6 +281,7 @@ export function auditRegistry(
         ...unopenedSourceErrors(),
         ...sdkErrors(today),
         ...altErrors(),
+        ...bomErrors(),
     ];
     const used = new Set<string>();
     for (const [where, ids] of citations()) {

@@ -230,6 +230,9 @@ const SUPPLY_CHAIN: Row[] = [
     ["festo", "Festo", "festo.com"],
     ["barrett-technology", "Barrett Technology", "barrett.com", ["Barrett"]],
     ["magnomatics", "Magnomatics", "magnomatics.com"],
+    // /bom (#76): part makers the teardowns add.
+    ["renishaw", "Renishaw", "renishaw.com"],
+    ["cmsemicon", "Cmsemicon", null],
     // /china (#80): Chinese companies and partners. Domains only where a
     // source in the dataset is the company's own site; the rest stay null.
     ["baotou-steel", "Baotou Steel", null],

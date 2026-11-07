@@ -12,6 +12,7 @@ import { chromium } from "playwright-core";
 import { MANUFACTURING_PATH, PROCESS_CHAINS } from "../../src/supply-chain/processes";
 import { PRODUCT_ID } from "../../src/supply-chain/processes/layout";
 import { ALTS_PATH, ALT_TECHS } from "../../src/supply-chain/alts";
+import { BOM_CASES, bomCasePath, caseScene } from "../../src/supply-chain/bom";
 import { DEMO_SCENES, MAGNET_PRESS_LOOP } from "../../src/supply-chain/scenes/demos";
 
 const [base = "http://localhost:4317", ...only] = process.argv.slice(2);
@@ -49,7 +50,14 @@ const ALTS: Target[] = ALT_TECHS.map((t) => ({
     scroll: ".al-sp-stage .x3-stage",
     scale: 2,
 }));
-const TARGETS = [...LAB, ...STEPS, ...ALTS].filter((t) => only.length === 0 || only.includes(t.id));
+// Each /bom case page has one explode.
+const BOM: Target[] = BOM_CASES.map((c) => ({
+    id: caseScene(c).id,
+    url: `${base}${bomCasePath(c.slug)}`,
+    scroll: ".bm-explode .x3-stage",
+    scale: 2,
+}));
+const TARGETS = [...LAB, ...STEPS, ...ALTS, ...BOM].filter((t) => only.length === 0 || only.includes(t.id));
 
 const browser = await chromium.launch({
     executablePath: process.env.CHROME_PATH,

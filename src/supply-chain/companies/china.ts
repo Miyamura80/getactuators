@@ -1,4 +1,5 @@
 import type { SourceId, Sourced } from "../sourced";
+import { BOM_MARGINS } from "./bom";
 import type { Company } from "./types";
 
 // Chinese companies along the actuator chain for /china, plus the foreign
@@ -209,6 +210,7 @@ export const CHINA_COMPANIES: Company[] = [
         stages: ["motor", "actuator"],
         ownership: { kind: "listed", ticker: "SZSE: 002979" },
         products: ["Servo and stepper systems", "Frameless motors", "Joint modules"],
+        grossMargin: BOM_MARGINS.leadshine,
         url: "https://en.leadshine.com/abouts/about_corporate_overview.html",
         sources: ["leadshine-about", "prnasia-leadshine-ces-2026"],
     }),
@@ -246,6 +248,7 @@ export const CHINA_COMPANIES: Company[] = [
         stages: ["screw"],
         ownership: { kind: "listed", ticker: "SHA: 603009" },
         products: ["Planetary roller screws", "Automotive chassis parts"],
+        grossMargin: BOM_MARGINS.beite,
         url: "https://itiger.com/news/2475595965",
         sources: ["itiger-beite-prs-2024"],
     }),
@@ -397,6 +400,7 @@ export const CHINA_COMPANIES: Company[] = [
             "Robot joint actuators (in development)",
             "Thermal management parts",
         ],
+        grossMargin: BOM_MARGINS.sanhua,
         url: "https://uk.finance.yahoo.com/quote/002050.SZ/profile",
         sources: ["yahoo-sanhua", "yicai-sanhua-base"],
     }),

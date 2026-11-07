@@ -99,7 +99,7 @@ test("the full catalog has distinct reviewed metadata", async () => {
     const registered = allPages();
     // Pinned so a generator that silently emits nothing still fails here.
     expect(GENERATED_COMPARISON_PAGES).toHaveLength(28);
-    expect(registered).toHaveLength(98 + GENERATED_COMPARISON_PAGES.length);
+    expect(registered).toHaveLength(102 + GENERATED_COMPARISON_PAGES.length);
     // Pages added after the baseline capture have their own tests.
     const added = new Set([
         "/faq",
@@ -118,6 +118,10 @@ test("the full catalog has distinct reviewed metadata", async () => {
         "/benchmarks",
         "/manufacturing",
         "/alts",
+        "/bom",
+        "/bom/optimus-linear",
+        "/bom/unitree-qdd",
+        "/bom/harmonic-frameless",
         "/japan",
         "/korea",
         "/sdk",
