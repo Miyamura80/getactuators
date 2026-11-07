@@ -9,8 +9,9 @@
 // state: explodes fully exploded, loops at their poster frame. Pass scene ids
 // to capture only those; CHROME_PATH picks a browser binary.
 import { chromium } from "playwright-core";
-import { MANUFACTURING_PATH, PROCESS_CHAINS } from "../../src/supply-chain/processes";
+import { PROCESS_CHAINS } from "../../src/supply-chain/processes";
 import { PRODUCT_ID } from "../../src/supply-chain/processes/layout";
+import { stepUrl } from "../../src/supply-chain/processes/views";
 import { ALTS_PATH, ALT_TECHS } from "../../src/supply-chain/alts";
 import { DEMO_SCENES, MAGNET_PRESS_LOOP } from "../../src/supply-chain/scenes/demos";
 
@@ -28,8 +29,8 @@ interface Target {
     scale: number;
 }
 
-// The lab page shows the kit demos; /manufacturing#step= opens a step card
-// with its loop (or the product explode) as the page's only scene.
+// The lab page shows the kit demos; /manufacturing?chain=<id>#step= opens a
+// step card with its loop (or the product explode) as the page's only scene.
 const LAB: Target[] = [...DEMO_SCENES.map((s) => s.id), MAGNET_PRESS_LOOP.id].map((id) => ({
     id,
     url: `${base}/lab/supply-chain`,
@@ -39,8 +40,8 @@ const LAB: Target[] = [...DEMO_SCENES.map((s) => s.id), MAGNET_PRESS_LOOP.id].ma
 const STEPS: Target[] = PROCESS_CHAINS.flatMap((c) => [
     ...c.steps
         .filter((s) => s.animation && s.animation.id !== MAGNET_PRESS_LOOP.id)
-        .map((s) => ({ id: s.animation?.id ?? s.id, url: `${base}${MANUFACTURING_PATH}#step=${s.id}`, scale: 2 })),
-    ...(c.productScene ? [{ id: c.productScene.id, url: `${base}${MANUFACTURING_PATH}#step=${PRODUCT_ID}`, scale: 2 }] : []),
+        .map((s) => ({ id: s.animation?.id ?? s.id, url: `${base}${stepUrl(c, s.id)}`, scale: 2 })),
+    ...(c.productScene ? [{ id: c.productScene.id, url: `${base}${stepUrl(c, PRODUCT_ID)}`, scale: 2 }] : []),
 ]);
 // /alts?tech=<id> opens that technology's spec card with its scene.
 const ALTS: Target[] = ALT_TECHS.map((t) => ({

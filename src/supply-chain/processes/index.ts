@@ -9,6 +9,13 @@ import {
 import { getCompany } from "../registry";
 import type { Sourced } from "../sourced";
 import { MAGNET_CHAIN } from "./magnet";
+import { PRECISION_CHAIN } from "./precision";
+import {
+    ENCODERS_2025,
+    ROLLER_SCREWS_2024,
+    ROLLING_BEARINGS,
+    STRAIN_WAVE_GEARS_2024,
+} from "./precision-shares";
 import type {
     EdgeKind,
     ProcessChain,
@@ -23,14 +30,14 @@ import type {
 export { MANUFACTURING_PATH } from "./path";
 export const MANUFACTURING_AS_OF = "November 2026";
 // ISO date the process data last changed (Dataset dateModified).
-export const MANUFACTURING_UPDATED = "2026-11-03";
+export const MANUFACTURING_UPDATED = "2026-11-07";
 
 export * from "./types";
 export { MAGNET_CHAIN, MAGNET_STEP_IDS } from "./magnet";
+export { PRECISION_CHAIN, PRECISION_PART_STEPS, PRECISION_STEP_IDS } from "./precision";
 
-// Every chain on the map; the switcher lists them in this order. Motor,
-// gearing and precision chains (#83) append here.
-export const PROCESS_CHAINS: readonly ProcessChain[] = [MAGNET_CHAIN];
+// Every chain on the map; the switcher lists them in this order.
+export const PROCESS_CHAINS: readonly ProcessChain[] = [MAGNET_CHAIN, PRECISION_CHAIN];
 
 export const DEFAULT_CHAIN = MAGNET_CHAIN.id;
 
@@ -57,14 +64,27 @@ export function chainOfStep(id: string): ProcessChain | undefined {
 }
 
 // Country shares behind a share key: the /metals stage shares, so each is
-// cited once in the registry.
+// cited once in the registry, and the precision chain's estimates.
 export const PROCESS_SHARES: Record<ShareRef, Sourced<Shares>> = {
     "ree-mining": REE_MINING_2025,
     "ree-separation": REE_SEPARATION_2024,
     "hree-separation": HREE_SEPARATION,
     "metal-alloy": METAL_ALLOY_2023,
     "ndfeb-magnets": NDFEB_MAGNETS_2024,
+    "strain-wave-gears": STRAIN_WAVE_GEARS_2024,
+    "roller-screws": ROLLER_SCREWS_2024,
+    "rolling-bearings": ROLLING_BEARINGS,
+    encoders: ENCODERS_2025,
 };
+
+// Share records that live with the process chains (not /metals), for the
+// citation audit.
+export const PROCESS_OWN_SHARES: readonly Sourced<Shares>[] = [
+    STRAIN_WAVE_GEARS_2024,
+    ROLLER_SCREWS_2024,
+    ROLLING_BEARINGS,
+    ENCODERS_2025,
+];
 
 export function sharesOf(ref: ShareRef | undefined): Sourced<Shares> | undefined {
     return ref ? PROCESS_SHARES[ref] : undefined;

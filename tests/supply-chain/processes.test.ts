@@ -24,6 +24,7 @@ import {
     detailFor,
     edgePath,
     fitTransform,
+    labelBox,
 } from "@/supply-chain/processes/layout";
 import { UNOPENED, unopenedSourceErrors } from "@/supply-chain/processes/sources";
 import { loopProblems, sceneProblems } from "@/supply-chain/scenes/check";
@@ -224,6 +225,39 @@ describe("process map layout", () => {
             { x: 0, y: 200, w: 100, h: 50 },
         ).d;
         expect(v.startsWith("M50,50")).toBe(true);
+    });
+
+    test("edge labels sit clear of every step card, cluster head and each other", () => {
+        for (const chain of PROCESS_CHAINS) {
+            const l = chainLayout(chain);
+            const heads = l.clusters.map((c) => ({
+                x: c.x,
+                y: c.y,
+                w: c.w,
+                h: CLUSTER_HEAD,
+            }));
+            const labelled = l.edges.filter((e) => e.label);
+            expect(labelled.length).toBe(chain.edges.filter((e) => e.label).length);
+            for (const e of labelled) {
+                const box = labelBox(e.label as NonNullable<typeof e.label>);
+                const hits = [...l.nodes.entries()]
+                    .filter(([, n]) => overlaps(box, n))
+                    .map(([id]) => id);
+                expect({ edge: `${e.from}->${e.to}`, hits }).toEqual({
+                    edge: `${e.from}->${e.to}`,
+                    hits: [],
+                });
+                expect(heads.filter((h) => overlaps(box, h))).toEqual([]);
+                // Labels show for one step's edges at a time.
+                const clash = labelled.filter(
+                    (f) =>
+                        f !== e &&
+                        [f.from, f.to].some((id) => id === e.from || id === e.to) &&
+                        overlaps(box, labelBox(f.label as NonNullable<typeof f.label>)),
+                );
+                expect(clash).toEqual([]);
+            }
+        }
     });
 
     test("zoom: clusters at the fitted overview, steps once zoomed in", () => {

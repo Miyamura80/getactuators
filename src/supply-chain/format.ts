@@ -113,6 +113,17 @@ export function percent(share: number): string {
     return `${Math.round(share * 100)}%`;
 }
 
+// A share with the same marks as sourcedText: "~" for an estimate,
+// "(model)" for a model, bare when reported.
+export function sharePercent(
+    share: number,
+    confidence?: Sourced<unknown>["confidence"],
+): string {
+    if (confidence === "estimated") return `~${percent(share)}`;
+    if (confidence === "modeled") return `${percent(share)} (model)`;
+    return percent(share);
+}
+
 // "4.2%": a share with a fixed number of decimals, trailing zeros dropped.
 export function percentDigits(share: number, digits = 1): string {
     return `${Number((share * 100).toFixed(digits))}%`;

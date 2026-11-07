@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { ProcessChainListSchema, ProcessChainSchema } from "@/api/processes";
-import { MAGNET_CHAIN, orderedSteps } from "@/supply-chain/processes";
+import { MAGNET_CHAIN, PRECISION_CHAIN, orderedSteps } from "@/supply-chain/processes";
 import { get, getMarkdown } from "./agent-helpers";
 import { callTool } from "./mcp-helpers";
 
@@ -20,15 +20,22 @@ describe("/manufacturing page and twin", () => {
         const res = await get("/manufacturing");
         expect(res.status).toBe(200);
         const html = await res.text();
-        expect(html).toContain("<title>How an actuator magnet is made");
+        expect(html).toContain(
+            "<title>How actuator magnets and precision parts are made",
+        );
         const nodes = jsonLd(html);
-        const howTo = nodes.find((n) => n["@type"] === "HowTo") as {
+        const howTos = nodes.filter((n) => n["@type"] === "HowTo") as {
             step: { name: string; url: string }[];
-        };
-        expect(howTo).toBeDefined();
-        expect(howTo.step).toHaveLength(MAGNET_CHAIN.steps.length);
-        expect(howTo.step[0]?.url).toBe(
+        }[];
+        expect(howTos).toHaveLength(2);
+        const [howTo, precision] = howTos;
+        expect(howTo?.step).toHaveLength(MAGNET_CHAIN.steps.length);
+        expect(howTo?.step[0]?.url).toBe(
             "https://actuatorlist.com/manufacturing#step=open-pit-mining",
+        );
+        expect(precision?.step).toHaveLength(PRECISION_CHAIN.steps.length);
+        expect(precision?.step[0]?.url).toBe(
+            "https://actuatorlist.com/manufacturing?chain=precision#step=flexspline-forging",
         );
         expect(nodes.some((n) => n["@type"] === "Dataset")).toBe(true);
         expect(await (await get("/sitemap.xml")).text()).toContain("/manufacturing");
@@ -56,7 +63,27 @@ describe("/manufacturing page and twin", () => {
             const headings = [
                 ...md.matchAll(/^#### \d+\. .+ \(`([a-z0-9-]+)`\)$/gm),
             ].map((m) => m[1]);
-            expect(headings).toEqual(orderedSteps(MAGNET_CHAIN).map((s) => s.id));
+            expect(headings).toEqual(
+                [MAGNET_CHAIN, PRECISION_CHAIN].flatMap((c) =>
+                    orderedSteps(c).map((s) => s.id),
+                ),
+            );
+            for (const h of [
+                "## How an actuator's precision parts are made (`precision`)",
+                "### Strain-wave gear",
+                "### Roller screw",
+                "### Precision bearing",
+                "### Encoder",
+            ])
+                expect(md).toMatch(new RegExp(`^${h.replace(/[()]/g, "\\$&")}$`, "m"));
+            // Precision sub-chains carry a modeled split and its method.
+            expect(md).toMatch(
+                /Sub-chain concentration: concentrated: .+ Japan ~78%(\[\^\d+\])+ \(2024\)\. Modeled:/,
+            );
+            expect(md).toContain(
+                "https://actuatorlist.com/manufacturing?chain=precision#step=roller-thread-grinding",
+            );
+            expect(md).toContain("Key numbers: G1 grade 6 µm/300 mm[^");
             expect(md).toContain("Key numbers: Particle size 2-5 µm[^");
             expect(md).toContain("Who does it: JL MAG Rare-Earth, Shin-Etsu Chemical.");
             expect(md).toMatch(
@@ -76,7 +103,7 @@ describe("REST /api/v1/processes", () => {
         const list = ProcessChainListSchema.parse(
             await (await get("/api/v1/processes")).json(),
         );
-        expect(list.results.map((c) => c.id)).toEqual(["magnet"]);
+        expect(list.results.map((c) => c.id)).toEqual(["magnet", "precision"]);
         expect(list.results[0]?.step_count).toBe(MAGNET_CHAIN.steps.length);
         const chain = ProcessChainSchema.parse(
             await (await get("/api/v1/processes/magnet")).json(),
@@ -122,6 +149,32 @@ describe("REST /api/v1/processes", () => {
     });
 });
 
+describe("precision chain over REST", () => {
+    test("four sub-chains, modeled shares, terminal steps feed the product", async () => {
+        const chain = ProcessChainSchema.parse(
+            await (await get("/api/v1/processes/precision")).json(),
+        );
+        expect(chain.parallel).toBe(true);
+        expect(chain.span).toBe("bar stock to tested part");
+        expect(chain.clusters.map((c) => [c.id, c.country_shares?.tier])).toEqual([
+            ["strain-wave", "concentrated"],
+            ["roller-screw", "distributed"],
+            ["bearing", "distributed"],
+            ["encoder", "distributed"],
+        ]);
+        expect(chain.clusters[0]?.country_shares?.confidence).toBe("modeled");
+        const grind = chain.steps.find((s) => s.id === "roller-thread-grinding");
+        expect(grind?.url).toBe(
+            "/manufacturing?chain=precision#step=roller-thread-grinding",
+        );
+        expect(grind?.upstream).toEqual(["screw-hardening"]);
+        expect(grind?.animation_id).toBe("roller-thread-grinding-loop");
+        expect(grind?.key_numbers[0]?.value.sources[0]?.accessed).toBeNull();
+        const pole = chain.steps.find((s) => s.id === "magnetic-pole-writing");
+        expect(pole?.branch).toBe("alternative");
+    });
+});
+
 describe("MCP get_process", () => {
     test("returns the chain, or one step, with sourced numbers", async () => {
         const all = ProcessChainSchema.parse(
@@ -136,5 +189,20 @@ describe("MCP get_process", () => {
             "Anneal",
         ]);
         expect(one.steps[0]?.country_shares?.top_country).toBe("CN");
+        // A precision step resolves its chain without chain=.
+        const screw = ProcessChainSchema.parse(
+            (await callTool("get_process", { step: "lead-accuracy-test" }))
+                .structuredContent,
+        );
+        expect(screw.id).toBe("precision");
+        expect(screw.steps[0]?.key_numbers.map((k) => k.label)).toEqual([
+            "G1 grade",
+            "G5 grade",
+            "Laser residual",
+        ]);
+        const precision = ProcessChainSchema.parse(
+            (await callTool("get_process", { chain: "precision" })).structuredContent,
+        );
+        expect(precision.steps).toHaveLength(PRECISION_CHAIN.steps.length);
     });
 });

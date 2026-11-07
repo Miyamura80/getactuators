@@ -371,7 +371,7 @@ export const OPERATIONS: Operation[] = [
         path: "/api/v1/processes",
         summary: "List manufacturing process chains",
         description:
-            "The process graphs on /manufacturing (the NdFeB magnet chain, ore to rotor segment) with their step counts.",
+            "The process graphs on /manufacturing (the NdFeB magnet chain, ore to rotor segment; the precision chain of strain-wave gears, roller screws, precision bearings and encoders, bar stock to tested part) with their step counts.",
         response: ProcessChainListSchema,
         errors: [],
         example: "/api/v1/processes",
@@ -383,10 +383,10 @@ export const OPERATIONS: Operation[] = [
         path: "/api/v1/processes/:chain",
         summary: "Get a manufacturing process chain",
         description:
-            "Every step of one chain in order, grouped by stage: inputs and outputs, cited key numbers (temperature, particle size, yield, energy), the companies that run it, the stage's country shares and concentration tier, upstream and downstream steps, /bom node and /metals element links, and sources. Pass `step` for one step and its edges.",
+            "Every step of one chain in order, grouped by stage or sub-chain: inputs and outputs, cited key numbers (temperature, particle size, tolerance, surface finish, yield, energy), the companies that run it, the stage's country shares and concentration tier, upstream and downstream steps, /bom node and /metals element links, and sources. Pass `step` for one step and its edges.",
         pathParam: {
             name: "chain",
-            description: "Chain id, e.g. magnet.",
+            description: "Chain id: magnet or precision.",
             example: "magnet",
         },
         query: ProcessParams,

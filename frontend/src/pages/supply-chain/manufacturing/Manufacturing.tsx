@@ -66,7 +66,7 @@ export function Manufacturing({ menuOpen = false }: { menuOpen?: boolean }) {
                 <header className="tool-head mf-head">
                     <p className="tool-kicker">Supply chain · as of {MANUFACTURING_AS_OF}</p>
                     <h1>{TITLE}</h1>
-                    <p className="tool-lede">{chain.title}, ore to rotor.</p>
+                    <p className="tool-lede">{chain.title}, {chain.span}.</p>
                     <div className="mf-switch" role="radiogroup" aria-label="Chain">
                         {PROCESS_CHAINS.map((c) => <button key={c.id} type="button" role="radio" aria-checked={c.id === chain.id} onClick={() => pickChain(c.id)}>{c.label}</button>)}
                     </div>

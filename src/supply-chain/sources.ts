@@ -6,6 +6,7 @@ import { JAPAN_SOURCES } from "./country-pages/japan-sources";
 import { KOREA_SOURCES } from "./country-pages/korea-sources";
 import { US_PARTNER_SOURCES, US_SOURCES } from "./country-pages/us-sources";
 import { POLICY_SOURCES } from "./policy/sources";
+import { PRECISION_SOURCES } from "./processes/precision-sources";
 import { PROCESS_SOURCES } from "./processes/sources";
 import type { ReuseAllowlist, SourceReuse } from "./reuse";
 import type { SourceId } from "./sourced";
@@ -609,6 +610,7 @@ export const SOURCES: SourceRef[] = [
     ),
     ...POLICY_SOURCES,
     ...PROCESS_SOURCES,
+    ...PRECISION_SOURCES,
     ...JAPAN_SOURCES,
     ...CHINA_SOURCES,
     ...US_SOURCES,

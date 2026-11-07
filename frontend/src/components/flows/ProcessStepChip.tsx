@@ -3,9 +3,14 @@
 // (src/supply-chain/processes/ owns them); the label defaults to the id.
 
 import { MANUFACTURING_PATH } from "../../../../src/supply-chain/processes/path";
+import { otherChainOf } from "../../../../src/supply-chain/processes/step-index";
 
+// A step on a chain other than the first carries ?chain= so the page opens
+// the right map (/manufacturing?chain=precision#step=roller-thread-grinding).
 export function stepHref(stepId: string): string {
-    return `${MANUFACTURING_PATH}#step=${encodeURIComponent(stepId)}`;
+    const chain = otherChainOf(stepId);
+    const query = chain ? `?chain=${chain}` : "";
+    return `${MANUFACTURING_PATH}${query}#step=${encodeURIComponent(stepId)}`;
 }
 
 export function stepLabel(stepId: string): string {
