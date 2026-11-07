@@ -128,6 +128,20 @@ export function MapFrame({ view, label, base, children, toggle, readout, legend,
     const [stageWidth, setStageWidth] = useState(width);
     const stageRef = useRef<HTMLDivElement>(null);
     const { sets, setLabels } = useLabelSets();
+    // The top-left slot sits over the stage on wide screens (beside it on
+    // phones): measured, so labels and chips keep off it.
+    const slotRef = useRef<HTMLDivElement>(null);
+    const [slot, setSlot] = useState<Rect | null>(null);
+    useEffect(() => {
+        const el = slotRef.current;
+        if (!el || typeof getComputedStyle === "undefined") { setSlot(null); return; }
+        const measure = () => setSlot(getComputedStyle(el).position === "absolute" ? [0, 0, el.offsetLeft + el.offsetWidth + 4, el.offsetTop + el.offsetHeight + 4] : null);
+        measure();
+        if (typeof ResizeObserver === "undefined") return;
+        const ro = new ResizeObserver(measure);
+        ro.observe(el);
+        return () => ro.disconnect();
+    }, [toggle]);
     useEffect(() => {
         const el = stageRef.current;
         if (!el || typeof ResizeObserver === "undefined") return;
@@ -135,6 +149,7 @@ export function MapFrame({ view, label, base, children, toggle, readout, legend,
         ro.observe(el);
         return () => ro.disconnect();
     }, []);
+    const reserved = useMemo(() => [...hudRects(stageWidth, stageWidth * (height / width), scaleBar), ...(slot ? [slot] : [])], [stageWidth, width, height, scaleBar, slot]);
     const ctx = useMemo<MapContextValue>(() => ({
         width,
         height,
@@ -147,13 +162,13 @@ export function MapFrame({ view, label, base, children, toggle, readout, legend,
         tableLayer,
         belowLayer,
         setLabels,
-    }), [width, height, projection, state, apply, stageWidth, svgLayer, tableLayer, belowLayer, setLabels]);
+        reserved,
+    }), [width, height, projection, state, apply, stageWidth, svgLayer, tableLayer, belowLayer, setLabels, reserved]);
     const zoomed = state.k > 1.01;
     const scale = stageWidth / width;
-    const reserved = useMemo(() => hudRects(stageWidth, stageWidth * (height / width), scaleBar), [stageWidth, width, height, scaleBar]);
     return <figure className={`mk-map${className ? ` ${className}` : ""}`}>
         <MapContext.Provider value={ctx}>
-            {toggle ? <div className="mk-slot">{toggle}</div> : null}
+            {toggle ? <div ref={slotRef} className="mk-slot">{toggle}</div> : null}
             <div ref={stageRef} className={`mk-stage${zoomed ? " is-zoomed" : ""}`} style={{ aspectRatio: `${width} / ${height}` }}>
                 <svg ref={svgRef} className="mk-svg" viewBox={`0 0 ${width} ${height}`} role="group" aria-label={label}>
                     <g className="mk-base" transform={`translate(${state.x},${state.y}) scale(${state.k})`}>{base}</g>

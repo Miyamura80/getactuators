@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import type { LabelItem } from "./labels";
+import type { LabelItem, Rect } from "./labels";
 
 // What a map frame hands its overlays (Pins, Arcs, ClusterZoom). Base
 // coordinates are projected viewBox units at zoom 1; screen coordinates are
@@ -33,6 +33,9 @@ export interface MapContextValue {
     // source's labels together so they avoid each other. One call per source
     // replaces that source's set; [] clears it.
     setLabels: (source: string, items: LabelItem[]) => void;
+    // HUD boxes over the stage (controls, scale bar, the top-left slot) in
+    // CSS pixels, for overlays to keep clear of.
+    reserved: readonly Rect[];
 }
 
 export const MapContext = createContext<MapContextValue | null>(null);

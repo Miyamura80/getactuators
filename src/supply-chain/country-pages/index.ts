@@ -9,7 +9,8 @@ import type { Sourced } from "../sourced";
 import { CHINA_PAGE } from "./china";
 import { JAPAN_PAGE } from "./japan";
 import { KOREA_PAGE } from "./korea";
-import type { CountryContent, CountryStage } from "./types";
+import type { CountryContent, CountryRegion, CountryStage } from "./types";
+import { US_PAGE } from "./us";
 
 // The country page template's data: one entry per planned country, the
 // registry filtered to it, and the coverage gate that decides whether a
@@ -17,7 +18,14 @@ import type { CountryContent, CountryStage } from "./types";
 // a country is data only: write ./<country>.ts and grow the registry until
 // it passes the gate (docs/supply-chain.md, "Adding a country").
 
-export type { CountryCluster, CountryContent, CountryStage } from "./types";
+export type {
+    CountryCluster,
+    CountryContent,
+    CountryHub,
+    CountryRegion,
+    CountryRegions,
+    CountryStage,
+} from "./types";
 
 export const COUNTRY_SLUGS = ["japan", "china", "korea", "us"] as const;
 export type CountrySlug = (typeof COUNTRY_SLUGS)[number];
@@ -34,6 +42,7 @@ const CONTENT: Partial<Record<CountrySlug, CountryContent>> = {
     japan: JAPAN_PAGE,
     korea: KOREA_PAGE,
     china: CHINA_PAGE,
+    us: US_PAGE,
 };
 
 // A country page ships once its dataset reaches these counts. `links` counts
@@ -136,6 +145,18 @@ export function clusterSites(c: NamedCluster, sites: readonly Site[]): Site[] {
     return sites.filter(
         (s) => s.lat >= minLat && s.lat <= maxLat && s.lon >= minLon && s.lon <= maxLon,
     );
+}
+
+// The page's zoomable regions that hold sites, each with its sites, in
+// list order (alphabetical for /us). Empty when the page has no regions.
+export function regionSites(
+    page: CountryContent,
+): { region: CountryRegion; sites: Site[] }[] {
+    const sites = countrySites(page.code);
+    return (page.regions?.list ?? []).flatMap((region) => {
+        const inside = sites.filter((s) => s.admin1 === region.name);
+        return inside.length ? [{ region, sites: inside }] : [];
+    });
 }
 
 // Every stage-share record the citation audit walks.

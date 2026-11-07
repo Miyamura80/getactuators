@@ -50,17 +50,6 @@ export const PRECISION_COMPANIES: Company[] = [
         sources: ["schaeffler-ewellix-purchase"],
     },
     {
-        id: "skf",
-        name: "SKF",
-        hqCountry: "SE",
-        stages: ["bearing"],
-        segment: GEAR,
-        ownership: { kind: "listed", ticker: "STO: SKF B" },
-        products: ["Rolling bearings", "Seals", "Lubrication systems"],
-        url: "https://www.skf.com/",
-        sources: ["morningstar-skf-profile"],
-    },
-    {
         id: "renishaw",
         name: "Renishaw",
         hqCountry: "GB",

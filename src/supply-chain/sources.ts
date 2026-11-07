@@ -4,6 +4,7 @@ import { ALT_SOURCES } from "./alts/sources";
 import { CHINA_SOURCES } from "./country-pages/china-sources";
 import { JAPAN_SOURCES } from "./country-pages/japan-sources";
 import { KOREA_SOURCES } from "./country-pages/korea-sources";
+import { US_PARTNER_SOURCES, US_SOURCES } from "./country-pages/us-sources";
 import { POLICY_SOURCES } from "./policy/sources";
 import { PRECISION_SOURCES } from "./processes/precision-sources";
 import { PROCESS_SOURCES } from "./processes/sources";
@@ -612,6 +613,8 @@ export const SOURCES: SourceRef[] = [
     ...PRECISION_SOURCES,
     ...JAPAN_SOURCES,
     ...CHINA_SOURCES,
+    ...US_SOURCES,
+    ...US_PARTNER_SOURCES,
     ...SDK_SOURCES,
     ...KOREA_SOURCES,
     ...PEOPLE_SOURCES,

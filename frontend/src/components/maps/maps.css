@@ -34,6 +34,8 @@
 .mk-land[data-step="5"] { fill: color-mix(in srgb, var(--cyan-dim) 88%, #000); }
 .mk-land.is-active, .mk-land.is-selected { stroke: var(--cyan); stroke-width: 1.2; }
 .mk-land[role="button"] { cursor: pointer; }
+.mk-country.has-region .mk-land:not(.is-selected) { opacity: 0.35; }
+.mk-country.has-region .mk-land.is-selected { stroke: var(--cyan); stroke-width: 1.5; }
 .mk-land[role="button"]:focus-visible { outline: none; stroke: var(--cyan); stroke-width: 2; }
 
 /* HTML overlay: markers, chips and tags sit on top of the SVG. */
@@ -208,7 +210,6 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    transform: translateY(calc(-100% - 2px));
     padding: 3px 6px;
     border: 1px solid var(--line-strong);
     background: #000;
@@ -219,7 +220,6 @@
     white-space: nowrap;
     cursor: pointer;
 }
-.mk-cluster-tag.is-end { transform: translate(-100%, calc(-100% - 2px)); }
 .mk-cluster-index { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .mk-cluster-index button {
     display: inline-flex;
@@ -271,7 +271,9 @@
 }
 .mk-chip .flag { font-size: 11px; }
 .mk-chip b { color: var(--cyan); }
-a.mk-chip:hover, a.mk-chip:focus-visible { background: var(--cyan); color: #000; outline: none; }
+a.mk-chip:hover, a.mk-chip:focus-visible, button.mk-chip:hover, button.mk-chip:focus-visible { background: var(--cyan); color: #000; outline: none; }
+button.mk-chip { cursor: pointer; }
+a.mk-chip:hover b, a.mk-chip:focus-visible b, button.mk-chip:hover b, button.mk-chip:focus-visible b { color: #000; }
 span.mk-chip { border-style: dashed; color: var(--muted); }
 .mk-chip-dir { width: 10px; height: 10px; fill: none; stroke: currentColor; stroke-width: 1.4; }
 .mk-chip-dir.is-in { transform: rotate(180deg); }

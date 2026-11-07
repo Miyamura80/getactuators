@@ -112,7 +112,7 @@ test("changing segment clears the company and site selection", () => {
     expect(view.container.querySelector(".mk-drawer")).not.toBeNull();
     const radio = view.getAllByRole("radio").find((r) => r.textContent?.startsWith("Magnets")) as HTMLElement;
     act(() => { fireEvent.click(radio); });
-    expect(readCountryState(window.location.search)).toEqual({ segment: "magnets-motors", company: null, site: null, cluster: null });
+    expect(readCountryState(window.location.search)).toEqual({ segment: "magnets-motors", company: null, site: null, cluster: null, region: null });
     expect(view.container.querySelector(".mk-drawer")).toBeNull();
 });
 
@@ -172,5 +172,96 @@ test("company table sorts unknown revenue last in both directions", () => {
 test("url state round-trips and keeps other params", () => {
     expect(withCountryState("/japan?x=1#m", { segment: "magnets-motors", company: "tdk" })).toBe("/japan?x=1&segment=magnets-motors&company=tdk#m");
     expect(withCountryState("/japan?segment=magnets-motors&company=tdk", { company: null })).toBe("/japan?segment=magnets-motors");
-    expect(readCountryState("?segment=nope&cluster=kanto-hq")).toEqual({ segment: null, company: null, site: null, cluster: "kanto-hq" });
+    expect(readCountryState("?segment=nope&cluster=kanto-hq")).toEqual({ segment: null, company: null, site: null, cluster: "kanto-hq", region: null });
+});
+
+test("a busy country opens calm: links draw only once a company is picked", () => {
+    const US = JSON.parse(readFileSync(new URL("../public/geo/us-admin1.json", import.meta.url), "utf8")) as MapTopology;
+    const page = getCountryPage("us") as Page;
+    setURL("/us");
+    let c = render(<CountryPage page={page} topology={US} />).container;
+    expect(c.querySelectorAll(".mk-arc")).toHaveLength(0);
+    expect(c.querySelectorAll(".mk-chip")).toHaveLength(0);
+    cleanup();
+    setURL("/us?company=mp-materials");
+    c = render(<CountryPage page={page} topology={US} />).container;
+    expect(c.querySelectorAll(".mk-arc").length).toBeGreaterThan(0);
+});
+
+const US_TOPO = JSON.parse(readFileSync(new URL("../public/geo/us-admin1.json", import.meta.url), "utf8")) as MapTopology;
+const US_PAGE = getCountryPage("us") as Page;
+const mountUS = () => render(<CountryPage page={US_PAGE} topology={US_TOPO} />);
+
+test("a busy country opens on regional hubs, named after them", () => {
+    setURL("/us");
+    const c = mountUS().container;
+    const hubs = [...c.querySelectorAll(".mk-cluster")].map((b) => b.getAttribute("aria-label") ?? "");
+    expect(hubs.length).toBeGreaterThanOrEqual(6);
+    expect(hubs.length).toBeLessThanOrEqual(8);
+    expect(hubs.some((l) => l.startsWith("Great Lakes"))).toBe(true);
+    // No scattered single pins while zoomed out: every site sits in a hub.
+    expect(c.querySelectorAll(".mk-pin")).toHaveLength(0);
+});
+
+test("?region= zooms to a state: pins, links and table narrow to it, and there is a way back", () => {
+    setURL("/us?region=TX");
+    const view = mountUS();
+    const c = view.container;
+    const texas = US_PAGE.regions?.list.find((r) => r.code === "TX");
+    expect(texas?.name).toBe("Texas");
+    expect(c.querySelector('.mk-land[data-id="US-TX"]')?.getAttribute("aria-pressed")).toBe("true");
+    expect(c.querySelector(".mk-country.has-region")).not.toBeNull();
+    // Only Texas companies in the table, links touching them on the map.
+    const rows = c.querySelectorAll(".sc-ctable tbody tr");
+    expect(rows.length).toBeGreaterThan(0);
+    expect(rows.length).toBeLessThan(countryCompanies("US").length);
+    // A state opens on its sites alone; the links summary draws a place's
+    // links on hover, one chip per country.
+    expect(c.querySelectorAll(".mk-arc")).toHaveLength(0);
+    expect(c.querySelector(".mk-cluster-box")).toBeNull();
+    const cn = [...c.querySelectorAll(".cp-links button")].find((b) => b.getAttribute("aria-label")?.startsWith("China")) as HTMLElement;
+    expect(cn).toBeDefined();
+    act(() => { fireEvent.pointerEnter(cn); });
+    expect(c.querySelectorAll(".mk-arc").length).toBeGreaterThan(0);
+    act(() => { fireEvent.pointerLeave(cn); });
+    expect(c.querySelectorAll(".mk-arc")).toHaveLength(0);
+    // Links to other states are listed by state code.
+    expect([...c.querySelectorAll(".cp-links button")].some((x) => x.getAttribute("aria-label")?.startsWith("Florida"))).toBe(true);
+    expect(c.querySelector(".cp-regions summary")?.textContent).toContain("Texas");
+    act(() => { fireEvent.keyDown(window, { key: "Escape" }); });
+    expect(readCountryState(window.location.search).region).toBeNull();
+});
+
+test("the state picker lists only states with sites; ?state= is read as ?region=", () => {
+    setURL("/us?state=ma");
+    const c = mountUS().container;
+    expect(readCountryState(window.location.search).region).toBe("MA");
+    const picks = [...c.querySelectorAll(".cp-regions-list button")].map((b) => b.textContent ?? "");
+    expect(picks[0]).toContain("All states");
+    expect(picks.some((t) => t.startsWith("Massachusetts"))).toBe(true);
+    expect(picks.some((t) => t.startsWith("Alaska"))).toBe(false);
+    act(() => { fireEvent.click(c.querySelector(".cp-back") as HTMLElement); });
+    expect(readCountryState(window.location.search).region).toBeNull();
+    expect(window.location.search).not.toContain("state=");
+});
+
+test("clicking a state outline zooms to it", () => {
+    setURL("/us");
+    const c = mountUS().container;
+    act(() => { fireEvent.click(c.querySelector('.mk-land[data-id="US-CO"]') as Element); });
+    expect(readCountryState(window.location.search).region).toBe("CO");
+    // States without sites are not buttons.
+    expect(c.querySelector('.mk-land[data-id="US-AK"]')?.getAttribute("role")).toBeNull();
+});
+
+test("in a state, a company's links bundle per country into one chip each", () => {
+    setURL("/us?region=TX&company=tesla");
+    const c = mountUS().container;
+    const chips = [...c.querySelectorAll(".mk-chip")];
+    const codes = chips.map((x) => x.getAttribute("aria-label") ?? "");
+    expect(new Set(codes).size).toBe(codes.length);
+    const china = chips.find((x) => (x.getAttribute("aria-label") ?? "").includes("China"));
+    expect(china?.querySelector("b")?.textContent).toBe("8");
+    // Eight Chinese suppliers to one Tesla site draw as one stroke.
+    expect(c.querySelectorAll(".mk-arcs .mk-arc").length).toBeLessThan(8);
 });

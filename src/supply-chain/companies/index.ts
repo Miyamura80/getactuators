@@ -4,6 +4,7 @@ import { JAPAN_COMPANIES, grossMargin, yenRevenue } from "./japan";
 import { KOREA_COMPANIES } from "./korea";
 import { PRECISION_COMPANIES } from "./precision";
 import type { Company } from "./types";
+import { TIMKEN_REVENUE, US_COMPANIES } from "./us";
 
 // Companies along the actuator supply chain, ore to robot. Seed set: enough
 // to exercise the shared kits across four segments and four countries; the
@@ -170,6 +171,7 @@ export const COMPANIES: Company[] = [
         stages: ["bearing", "gearing"],
         segment: "gears-screws-bearings",
         ownership: { kind: "listed", ticker: "NYSE: TKR" },
+        revenue: TIMKEN_REVENUE,
         products: ["Tapered roller bearings", "Precision drives"],
         url: "https://www.timken.com/",
     },
@@ -303,4 +305,5 @@ export const COMPANIES: Company[] = [
     ...ALT_COMPANIES,
     ...CHINA_COMPANIES,
     ...PRECISION_COMPANIES,
+    ...US_COMPANIES,
 ];
