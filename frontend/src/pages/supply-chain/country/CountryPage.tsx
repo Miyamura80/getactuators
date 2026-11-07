@@ -21,6 +21,7 @@ import { CompanyDrawer } from "../../../components/supply-chain/CompanyDrawer";
 import { CompanyTable } from "../../../components/supply-chain/CompanyTable";
 import { FootnotesProvider } from "../../../components/supply-chain/footnotes";
 import { SourcesSection } from "../../../components/supply-chain/SourcesSection";
+import { RegionPicker } from "./RegionPicker";
 import { StageStrip } from "./StageStrip";
 import { useCountryState } from "./url-state";
 import "../../tools.css";
@@ -32,11 +33,15 @@ import "./country.css";
 // supply arcs (those leaving the country end in a chip that links to that
 // country's page once live), named clusters to zoom to, the company card in
 // a drawer (a bottom sheet on phones) and the company table. Segment,
-// company, site and cluster live in the URL.
+// company, site, cluster and region live in the URL.
 //
-// A busy country (more links or sites than below) opens calm: links draw
-// once a company or site is chosen, and single sites are named
-// once the map is zoomed in; group and cluster names always show.
+// A busy country (more links or sites than below) opens calm: its sites
+// gather into regional hubs (when the page names them) until the map is
+// zoomed in, single sites are named once zoomed, and links draw once a
+// company, site or region is chosen.
+//
+// A page with regions (/us: states) zooms to one when its outline or its
+// entry in the picker is chosen: the map, links and table narrow to it.
 const BUSY_LINKS = 45;
 const BUSY_SITES = 100;
 export function CountryPage({ page, menuOpen = false, topology }: {
@@ -64,8 +69,11 @@ export function CountryPage({ page, menuOpen = false, topology }: {
     }, [page.code]);
     const segment = state.segment;
     const pins = segment ? data.pins.filter((p) => p.segment === segment) : data.pins;
-    const companies = segment ? data.companies.filter((c) => c.segment === segment) : data.companies;
-    const siteCount = (id: string) => data.sites.filter((s) => s.companyId === id).length;
+    const region = page.regions?.list.find((r) => r.code === state.region) ?? null;
+    const shown = region ? pins.filter((p) => p.admin1 === region.name) : pins;
+    const inRegion = region ? new Set(shown.flatMap((p) => p.companyId ?? [])) : null;
+    const companies = data.companies.filter((c) => (!segment || c.segment === segment) && (!inRegion || inRegion.has(c.id)));
+    const siteCount = (id: string) => data.sites.filter((s) => s.companyId === id && (!region || s.admin1 === region.name)).length;
     const inCountry = (id: string | null) => id !== null && data.companies.some((c) => c.id === id);
     // Only this country's companies open a drawer; their sites may be abroad
     // (the drawer lists every site of the company).
@@ -77,17 +85,36 @@ export function CountryPage({ page, menuOpen = false, topology }: {
         : null;
     const companyId = site?.companyId ?? company;
     const busy = data.arcs.length > BUSY_LINKS || data.sites.length > BUSY_SITES;
-    const arcs = busy && !companyId
-        ? []
-        : companyId
-        ? data.arcs.filter((a) => a.from.id === companyId || a.to.id === companyId)
-        : segment
-            ? data.arcs.filter((a) => [a.from.id, a.to.id].some((id) => getCompany(id)?.segment === segment))
-            : data.arcs;
-    const selectedPin = pins.find((p) => p.id === site?.id)?.id ?? pins.find((p) => p.companyId === companyId)?.id ?? null;
+    const touches = (ids: (id: string) => boolean) => data.arcs.filter((a) => ids(a.from.id) || ids(a.to.id));
+    const arcs = companyId ? touches((id) => id === companyId)
+        : inRegion ? touches((id) => inRegion.has(id))
+            : busy ? []
+                : segment ? touches((id) => getCompany(id)?.segment === segment)
+                    : data.arcs;
+    const selectedPin = shown.find((p) => p.id === site?.id)?.id ?? shown.find((p) => p.companyId === companyId)?.id ?? null;
     const onMap = (id: string) => data.sites.some((s) => s.companyId === id);
     const cluster = page.clusters.find((c) => c.id === state.cluster) ?? null;
     const members = cluster ? [...new Set(clusterSites(cluster, data.sites).map((s) => s.companyId))] : [];
+    const hubs = busy && !region && page.hubs
+        ? page.hubs.map((h) => ({ id: h.id, label: h.label, has: (p: { admin1?: string }) => h.regions.includes(p.admin1 ?? "") }))
+        : undefined;
+    const regions = page.regions;
+    // Outline ids ("US-TX") of the regions holding a shown site.
+    const regionIds = new Set(pins.flatMap((p) => {
+        const r = regions?.list.find((x) => x.name === p.admin1);
+        return r ? [`${page.code}-${r.code}`] : [];
+    }));
+    const set = state.set;
+    const toRegion = (code: string | null) => state.set({ region: code, cluster: null, company: null, site: null });
+    // Escape steps back out of a region once no company card is open (the
+    // card takes the first Escape).
+    useEffect(() => {
+        if (!region || companyId) return;
+        const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") set({ region: null }); };
+        window.addEventListener("keydown", onKey);
+        return () => window.removeEventListener("keydown", onKey);
+    }, [region, companyId, set]);
+    const where = region ? region.name : page.name;
     return <div className="tool-page cp-page">
         <PublicHeader path={page.path} initialOpen={menuOpen} />
         <FootnotesProvider>
@@ -101,26 +128,42 @@ export function CountryPage({ page, menuOpen = false, topology }: {
 
                 <StageStrip page={page} />
 
-                <div className="cp-filter" role="radiogroup" aria-label="Segment">
-                    <button type="button" role="radio" aria-checked={!segment} onClick={() => state.set({ segment: null })}>All <b>{data.companies.length}</b></button>
-                    {SEGMENTS.map((s) => <button key={s} type="button" role="radio" aria-checked={segment === s} title={SEGMENT_LABEL[s]}
-                        onClick={() => state.set({ segment: s, company: null, site: null })}>
-                        <SegmentTile segment={s} size={14} />{SEGMENT_SHORT[s]} <b>{data.companies.filter((c) => c.segment === s).length}</b>
-                    </button>)}
+                <div className="cp-controls">
+                    <div className="cp-filter" role="radiogroup" aria-label="Segment">
+                        <button type="button" role="radio" aria-checked={!segment} onClick={() => state.set({ segment: null })}>All <b>{data.companies.length}</b></button>
+                        {SEGMENTS.map((s) => <button key={s} type="button" role="radio" aria-checked={segment === s} title={SEGMENT_LABEL[s]}
+                            onClick={() => state.set({ segment: s, company: null, site: null })}>
+                            <SegmentTile segment={s} size={14} />{SEGMENT_SHORT[s]} <b>{data.companies.filter((c) => c.segment === s).length}</b>
+                        </button>)}
+                    </div>
+                    {regions ? <RegionPicker regions={regions} pins={pins} selected={region?.code ?? null} onSelect={toRegion} /> : null}
                 </div>
 
                 <section ref={mapRef} className="cp-mapwrap" aria-label={`Map of ${page.name}`}>
-                    <CountryMap code={page.code} label={`${page.name}: company headquarters and plants`} sites={pins} topology={topology}>
+                    <CountryMap code={page.code} label={`${where}: company headquarters and plants`} sites={pins} topology={topology}
+                        regions={regions ? {
+                            selected: region ? `${page.code}-${region.code}` : null,
+                            selectable: (id) => regionIds.has(id),
+                            onSelect: (id) => {
+                                const code = id ? id.slice(page.code.length + 1) : null;
+                                toRegion(code === region?.code ? null : code);
+                            },
+                            keepZoom: !!state.cluster,
+                        } : undefined}
+                        toggle={region ? <button type="button" className="cp-back" onClick={() => toRegion(null)}>
+                            <svg viewBox="0 0 10 10" aria-hidden="true"><path d="M8 5H2M5 2 2 5l3 3" /></svg>All {regions?.plural}
+                        </button> : undefined}>
                         <Arcs arcs={arcs} />
                         <ClusterZoom
-                            pins={pins}
+                            pins={shown}
                             clusters={page.clusters}
                             activeCluster={state.cluster}
-                            onCluster={(id) => state.set({ cluster: id })}
+                            onCluster={(id) => state.set({ cluster: id, region: null })}
                             selectedId={selectedPin}
                             onSelect={(p) => state.set({ site: p.id, company: p.companyId ?? null })}
-                            table={`${page.name} sites`}
-                            labels={busy ? "zoomed" : true}
+                            table={`${where} sites`}
+                            labels={busy && !region ? "zoomed" : true}
+                            hubs={hubs}
                         />
                     </CountryMap>
                     {companyId ? <CompanyDrawer
@@ -146,13 +189,15 @@ export function CountryPage({ page, menuOpen = false, topology }: {
                 <CompanyTable
                     companies={companies}
                     sitesOf={siteCount}
-                    sitesLabel={`Sites in ${page.name}`}
+                    sitesLabel={`Sites in ${where}`}
                     selectedId={companyId}
                     onSelect={(id) => {
                         state.set({ company: id, site: null });
                         mapRef.current?.scrollIntoView?.({ block: "nearest", behavior: "smooth" });
                     }}
-                    caption={`${companies.length} companies${segment ? `: ${SEGMENT_LABEL[segment]}` : ""}, headquartered in ${page.name} or with a site there`}
+                    caption={region
+                        ? `${companies.length} companies${segment ? `: ${SEGMENT_LABEL[segment]}` : ""} with a site in ${region.name}`
+                        : `${companies.length} companies${segment ? `: ${SEGMENT_LABEL[segment]}` : ""}, headquartered in ${page.name} or with a site there`}
                 />
 
                 <SourcesSection />

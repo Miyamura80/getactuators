@@ -33,13 +33,14 @@ export function insideCluster(c: NamedCluster, p: LonLat): boolean {
 // What a group of markers has in common, most telling first: the named
 // cluster holding all of them, their one company, or their one region.
 // Null when they share none of these (the count alone then speaks).
-export function groupName(members: readonly MapPin[], clusters: readonly NamedCluster[]): string | null {
+// `region` false skips the shared region (every pin on the map is in it).
+export function groupName(members: readonly MapPin[], clusters: readonly NamedCluster[], region = true): string | null {
     const first = members[0];
     if (!first) return null;
     const cluster = clusters.find((c) => members.every((m) => insideCluster(c, m)));
     if (cluster) return cluster.label;
     if (first.company && members.every((m) => m.company === first.company)) return first.company;
-    if (first.admin1 && members.every((m) => m.admin1 === first.admin1)) return first.admin1;
+    if (region && first.admin1 && members.every((m) => m.admin1 === first.admin1)) return first.admin1;
     return null;
 }
 

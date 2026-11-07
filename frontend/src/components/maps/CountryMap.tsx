@@ -1,4 +1,4 @@
-import { type ReactNode, useId, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useId, useMemo, useRef, useState } from "react";
 import { geoPath } from "d3-geo";
 import { merge } from "topojson-client";
 import type { MultiPolygon, Polygon } from "topojson-specification";
@@ -8,7 +8,7 @@ import { ChoroplethLegend, choroplethScale, type ValueMap } from "./choropleth";
 import { countByRegion } from "./density";
 import { type GeoFeature, type MapTopology, topoFeatures, useTopology } from "./geo";
 import { GeoLayer } from "./GeoLayer";
-import { inView, toScreen, useMap } from "./map-context";
+import { type Box, inView, toScreen, useMap } from "./map-context";
 import { useMapLabels } from "./MapLabels";
 import { MapFrame } from "./MapFrame";
 import { MapTable } from "./MapTable";
@@ -31,6 +31,42 @@ export interface CountryMapProps {
     toggle?: ReactNode;
     // Pins, Arcs, ClusterZoom.
     children?: ReactNode;
+    // Zoom by region: outlines that hold sites become buttons; the selected
+    // one is fitted to the frame and the rest dim.
+    regions?: RegionZoom;
+}
+
+export interface RegionZoom {
+    // Outline id ("US-TX") or null for the whole country.
+    selected: string | null;
+    selectable: (id: string) => boolean;
+    onSelect: (id: string) => void;
+    // Leaving a region keeps the zoom (another view, a cluster, takes over).
+    keepZoom?: boolean;
+}
+
+// Deepest zoom for a region: enough for the smallest Northeast states.
+const REGION_MAX_K = 14;
+
+// Fits the frame to the selected region's outline, and back out when the
+// region is cleared.
+function RegionFocus({ box, keepZoom }: { box: Box | null; keepZoom: boolean }) {
+    const { zoomTo, reset, svgLayer } = useMap();
+    const had = useRef(false);
+    const key = box ? box.flat().map((v) => v.toFixed(1)).join(",") : "";
+    useEffect(() => {
+        if (!svgLayer) return;
+        if (box) {
+            zoomTo(box, REGION_MAX_K);
+            had.current = true;
+        } else if (had.current) {
+            had.current = false;
+            if (!keepZoom) reset();
+        }
+        // Zoom when the region changes, not on every render.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [key, svgLayer]);
+    return null;
 }
 
 const codeOf = (f: GeoFeature) => f.properties?.code ?? "";
@@ -64,7 +100,7 @@ function CityLabels({ cities }: { cities: readonly RefCity[] }) {
 // One country's admin-1 outlines (prefectures, provinces, states), fitted to
 // its bounds, with a coastline, orientation cities and a scale bar. Holds its
 // frame until the outlines load, then fits.
-export function CountryMap({ code, label, values, format, valueLabel, sites, cities, topology, toggle, children }: CountryMapProps) {
+export function CountryMap({ code, label, values, format, valueLabel, sites, cities, topology, toggle, children, regions }: CountryMapProps) {
     const topo = useTopology(admin1File(code), topology);
     const features = useMemo(() => (topo ? topoFeatures(topo) : []), [topo]);
     const view = useMemo(() => (features.length ? countryView(code, features) : null), [code, features]);
@@ -76,6 +112,10 @@ export function CountryMap({ code, label, values, format, valueLabel, sites, cit
     const [active, setActive] = useState<string | null>(null);
     const step = useMemo(() => (shade ? choroplethScale(shade) : undefined), [shade]);
     const name = countryName(code);
+    const regionBox = useMemo((): Box | null => {
+        const f = regions?.selected ? features.find((x) => codeOf(x) === regions.selected) : undefined;
+        return f && view ? geoPath(view.projection).bounds(f) as Box : null;
+    }, [regions?.selected, features, view]);
     const title = label ?? `${name} by region`;
     if (!view) return <figure className="mk-map mk-country is-loading" aria-label={title}><div className="mk-stage" style={{ aspectRatio: "4 / 3" }} /></figure>;
     const regionName = (id: string) => nameOf(features.find((f) => codeOf(f) === id) ?? ({ properties: { code: id } } as GeoFeature));
@@ -85,7 +125,7 @@ export function CountryMap({ code, label, values, format, valueLabel, sites, cit
         view={view}
         label={title}
         toggle={toggle}
-        className="mk-country"
+        className={`mk-country${regions?.selected ? " has-region" : ""}`}
         scaleBar
         readout={active ? <>
             <span className="mk-readout-name">{regionName(active)}</span>
@@ -104,11 +144,15 @@ export function CountryMap({ code, label, values, format, valueLabel, sites, cit
                 stepOf={step ? (id) => step(shade?.[id]) : undefined}
                 activeId={active}
                 onHover={setActive}
+                selectedId={regions?.selected ?? null}
+                selectable={regions?.selectable}
+                onSelect={regions?.onSelect}
             />
             {coast ? <path className="mk-coast" d={coast} /> : null}
         </>}
         table={shade ? <MapTable caption={density ? `${title}: sites per region` : title} head={["Region", what]} rows={ranked.map(([id, v]) => [regionName(id), fmt(v)])} /> : null}
     >
+        {regions ? <RegionFocus box={regionBox} keepZoom={!!regions.keepZoom} /> : null}
         {cities === false ? null : <CityLabels cities={cities ?? REFERENCE_CITIES[code]} />}
         {children}
     </MapFrame>;

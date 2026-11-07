@@ -17,7 +17,7 @@ const ldNodes = (html: string) =>
 
 // Data rows of the twin's Sites table (header and rule excluded).
 const siteRows = (md: string) =>
-    (md.split("\n## Sites")[1]?.split("\n## Links")[0] ?? "")
+    (md.split("\n## Sites\n")[1]?.split("\n## Links")[0] ?? "")
         .split("\n")
         .filter(
             (l) =>
@@ -234,6 +234,11 @@ describe("/us page and twin", () => {
         expect(siteRows(md)).toHaveLength(countrySites("US").length);
         expect(md).toContain("**Texas magnets and humanoids**");
         expect(md).toContain("/policy#measure=");
+        // Sites by state, each a deep link that zooms the map to it.
+        expect(md).toContain("## Sites by state");
+        expect(md).toContain("[Texas](https://actuatorlist.com/us?region=TX)");
+        expect(md).toContain("| State |");
+        expect(md).not.toContain("| Prefecture |");
         expect(md).not.toContain(String.fromCharCode(0x2014));
     });
 

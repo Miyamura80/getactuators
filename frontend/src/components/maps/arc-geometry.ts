@@ -96,7 +96,7 @@ const CHIP_GAP = 4;
 // slides along it, in order, until it clears its neighbours; chips on the
 // left and right edges also drop below (or rise above) any top or bottom
 // chip in their column. Returns each chip's new centre.
-export function spreadChips(chips: readonly EdgeChip[], width: number, height: number): Map<string, Point> {
+export function spreadChips(chips: readonly EdgeChip[], width: number, height: number, reserved: readonly [number, number, number, number][] = []): Map<string, Point> {
     const out = new Map<string, Point>();
     const clamp = (c: EdgeChip): Point => [
         Math.min(width - c.w / 2 - 2, Math.max(c.w / 2 + 2, c.at[0])),
@@ -136,8 +136,24 @@ export function spreadChips(chips: readonly EdgeChip[], width: number, height: n
         }
     };
     const on = (e: Edge) => placed.filter((p) => p.edge === e);
-    sweep(on("top"), 0, 1, () => 2, width - 2);
-    sweep(on("bottom"), 0, -1, () => 2, width - 2);
+    // HUD boxes in a corner shorten the edges they touch: [lo, hi] along
+    // the edge that chips may use.
+    const NEAR = 12;
+    const span = (touches: (r: (typeof reserved)[number]) => boolean, a: 0 | 1, len: number): [number, number] => {
+        let lo = 2;
+        let hi = len - 2;
+        for (const r of reserved.filter(touches)) {
+            if (r[a] + r[a + 2] < len) lo = Math.max(lo, r[a + 2] + CHIP_GAP);
+            else hi = Math.min(hi, r[a] - CHIP_GAP);
+        }
+        return [lo, hi];
+    };
+    const [topLo, topHi] = span((r) => r[1] < NEAR, 0, width);
+    const [bottomLo, bottomHi] = span((r) => r[3] > height - NEAR, 0, width);
+    const [leftLo, leftHi] = span((r) => r[0] < NEAR, 1, height);
+    const [rightLo, rightHi] = span((r) => r[2] > width - NEAR, 1, height);
+    sweep(on("top"), 0, 1, () => topLo, topHi);
+    sweep(on("bottom"), 0, -1, () => bottomLo, bottomHi);
     // A side chip starts below the lowest top chip it would touch.
     const across = (side: (typeof placed)[number], other: (typeof placed)[number]) =>
         Math.abs(side.at[0] - other.at[0]) < (side.c.w + other.c.w) / 2 + CHIP_GAP;
@@ -146,10 +162,10 @@ export function spreadChips(chips: readonly EdgeChip[], width: number, height: n
         const below = (c: EdgeChip) => {
             const p = row.find((r) => r.c === c);
             const tops = p ? on("top").filter((t) => across(p, t)) : [];
-            return Math.max(2, ...tops.map((t) => t.at[1] + t.c.h / 2 + CHIP_GAP));
+            return Math.max(e === "left" ? leftLo : rightLo, ...tops.map((t) => t.at[1] + t.c.h / 2 + CHIP_GAP));
         };
         const bottoms = row.flatMap((p) => on("bottom").filter((b) => across(p, b)));
-        sweep(row, 1, e === "left" ? 1 : -1, below, Math.min(height - 2, ...bottoms.map((b) => b.at[1] - b.c.h / 2 - CHIP_GAP)));
+        sweep(row, 1, e === "left" ? 1 : -1, below, Math.min(e === "left" ? leftHi : rightHi, ...bottoms.map((b) => b.at[1] - b.c.h / 2 - CHIP_GAP)));
     }
     for (const p of placed) out.set(p.c.key, p.at);
     return out;

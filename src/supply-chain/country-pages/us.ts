@@ -2,6 +2,7 @@ import type { Shares } from "../concentration";
 import { REE_MINING_2025 } from "../metals/stage-shares";
 import type { Sourced } from "../sourced";
 import type { CountryContent } from "./types";
+import { US_HUBS, US_REGIONS } from "./us-regions";
 
 // /us: stage shares and the named clusters the map zooms to. The mining
 // share reuses the /metals source; later stages have no public US split, so
@@ -97,4 +98,6 @@ export const US_PAGE: CountryContent = {
             blurb: "The Mountain Pass mine and separation plant, the White Mesa Mill in Utah and Cyclic Materials' recycling plant in Mesa.",
         },
     ],
+    regions: US_REGIONS,
+    hubs: US_HUBS,
 };

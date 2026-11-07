@@ -258,7 +258,10 @@ share one template, so a new country is data only:
    when no source splits the stage by country) and the named `clusters`
    (`[minLat, minLon, maxLat, maxLon]`, each with a one-line `blurb`; the
    tests require each box inside the country and holding at least two
-   sites).
+   sites). Optionally add `regions` (the admin-1 regions the map can
+   zoom to, by ISO 3166-2 code and the name sites record in `admin1`; see
+   `us-regions.ts`) and `hubs` (regional hubs a busy map shows while zoomed
+   out, each a list of region names).
 2. **Companies.** Add a `companies/<country>.ts` list, typed from
    `companies/types.ts`, and spread it at the end of `COMPANIES`. Revenue is
    the latest fiscal year in USD with the conversion rate in `note`
@@ -306,4 +309,7 @@ role, revenue, gross margin, ownership, supply links),
 `<SiteDetail>` (what a plant makes, capacity, year opened, status, pin
 precision, source) and `<CompanyTable>` (sortable, row click selects), all
 in `frontend/src/components/supply-chain/`. URL state is `?segment=`,
-`?company=`, `?site=` and `?cluster=`.
+`?company=`, `?site=`, `?cluster=` and, on a page with `regions`,
+`?region=` (`/us?region=TX`; `?state=` is read as the same). A region
+narrows the map, links and company table to it, and the markdown twin lists
+sites by region with those links.

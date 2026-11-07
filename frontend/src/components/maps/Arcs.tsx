@@ -24,12 +24,17 @@ export interface ArcsProps {
     table?: string | false;
 }
 
+// Below this frame width (CSS pixels) chips shrink to a flag.
+const COMPACT_PX = 600;
+
 interface Chip {
     key: string;
     country: string;
     dir: "in" | "out";
     at: Point;
     arcs: MapArc[];
+    // Links leave in both directions (compact chips only).
+    mixed?: boolean;
 }
 
 // Great-circle supply arcs, seller to buyer. Estimated links draw dashed;
@@ -40,7 +45,7 @@ const KIND_LABEL = { supply: "Supply", investment: "Investment", partnership: "P
 // An arc whose other end is off this map stops at the frame edge with a
 // country chip that links to that country's page.
 export function Arcs({ arcs, hrefFor = liveCountryPage, selectedId, table = "Supply links" }: ArcsProps) {
-    const { width, height, project, zoom, scale, svgLayer } = useMap();
+    const { width, height, project, zoom, scale, svgLayer, reserved } = useMap();
     const marker = useId().replace(/:/g, "");
     const [active, setActive] = useState<string | null>(null);
     const projected = useMemo(() => arcs.map((a) => ({
@@ -51,17 +56,22 @@ export function Arcs({ arcs, hrefFor = liveCountryPage, selectedId, table = "Sup
         arc,
         clip: clipArc(base.map((p) => (p ? toScreen(p, zoom) : null)), width, height),
     }));
+    // On a phone-width map a chip is just its flag (and count), one per
+    // country whichever way its links run; the full wording stays in its
+    // accessible name.
+    const compact = width * scale < COMPACT_PX;
     const chips = new Map<string, Chip>();
     for (const { arc, clip } of drawn) {
         if (!clip.exit) continue;
         const end = clip.exit.end === "to" ? arc.to : arc.from;
         const dir = clip.exit.end === "to" ? "out" : "in";
-        const key = `${dir}-${end.country}`;
+        const key = compact ? end.country : `${dir}-${end.country}`;
         const chip = chips.get(key) ?? { key, country: end.country, dir, at: clip.exit.at, arcs: [] };
+        if (chip.dir !== dir) chip.mixed = true;
         chip.arcs.push(arc);
         chips.set(key, chip);
     }
-    const sizeOf = (c: Chip): [number, number] => [60 + (c.arcs.length > 1 ? 4 + 7 * String(c.arcs.length).length : 0), 20];
+    const sizeOf = (c: Chip): [number, number] => [(compact ? 30 : 60) + (c.arcs.length > 1 ? 4 + 7 * String(c.arcs.length).length : 0), 20];
     // Chips spread along the frame edge so none covers another (CSS pixels:
     // arrow, flag and code, plus the count when there is one).
     const spread = spreadChips([...chips.values()].map((c) => ({
@@ -69,7 +79,7 @@ export function Arcs({ arcs, hrefFor = liveCountryPage, selectedId, table = "Sup
         at: [c.at[0] * scale, c.at[1] * scale] as Point,
         w: sizeOf(c)[0],
         h: sizeOf(c)[1],
-    })), width * scale, height * scale);
+    })), width * scale, height * scale, reserved);
     // Chips keep site and group labels off them.
     useMapLabels(`chips${useId()}`, [...chips.values()].map((c): LabelItem => {
         const at = spread.get(c.key) ?? c.at;
@@ -107,14 +117,15 @@ export function Arcs({ arcs, hrefFor = liveCountryPage, selectedId, table = "Sup
             // Wording and icon follow the link kind: partnerships run both ways.
             const both = c.arcs.every((a) => a.kind === "partnership");
             const invest = c.arcs.every((a) => a.kind === "investment");
-            const relation = both ? "Partners with"
+            const relation = c.mixed ? "Linked with"
+                : both ? "Partners with"
                 : invest ? (c.dir === "out" ? "Invests in" : "Invested in from")
                     : c.dir === "out" ? "Supplies to" : "Supplied from";
             const label = `${relation} ${name}: ${what}${href ? `. Open ${name}` : ""}`;
             const body = <>
-                <svg viewBox="0 0 10 10" aria-hidden="true" className={`mk-chip-dir is-${both ? "both" : c.dir}`}><path d={both ? "M2 5h6M4 3 2 5l2 2M6 3l2 2-2 2" : "M2 5h6M5 2l3 3-3 3"} /></svg>
+                {compact ? null : <svg viewBox="0 0 10 10" aria-hidden="true" className={`mk-chip-dir is-${both ? "both" : c.dir}`}><path d={both ? "M2 5h6M4 3 2 5l2 2M6 3l2 2-2 2" : "M2 5h6M5 2l3 3-3 3"} /></svg>}
                 <Flag code={c.country} decorative />
-                <span>{c.country}</span>
+                {compact ? null : <span>{c.country}</span>}
                 {c.arcs.length > 1 ? <b>{c.arcs.length}</b> : null}
             </>;
             const at = spread.get(c.key) ?? c.at;

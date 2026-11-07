@@ -9,6 +9,7 @@ import {
     countryCompanies,
     countryLinks,
     countrySites,
+    regionSites,
     worldShares,
 } from "@/supply-chain/country-pages";
 import { percent } from "@/supply-chain/format";
@@ -103,6 +104,30 @@ function companyTable(p: CountryPage, fn: Footnotes): string {
     );
 }
 
+// What the admin-1 column is called: the page's own word when it zooms by
+// region (/us: state), else by country.
+const ADMIN1_WORD: Record<CountryPage["code"], string> = {
+    JP: "Prefecture",
+    CN: "Province",
+    KR: "Province",
+    US: "State",
+};
+const admin1Word = (p: CountryPage) => {
+    const w = p.regions?.word;
+    return w ? `${w[0]?.toUpperCase()}${w.slice(1)}` : ADMIN1_WORD[p.code];
+};
+
+// Sites per region with a deep link that zooms the map to it, for pages
+// with regions (/us).
+function regionList(p: CountryPage): string {
+    return regionSites(p)
+        .map(({ region, sites }) => {
+            const names = [...new Set(sites.map((s) => companyName(s.companyId)))];
+            return `- [${mdText(region.name)}](${absoluteUrl(`${p.path}?region=${region.code}`)}) (${sites.length} site${sites.length === 1 ? "" : "s"}): ${mdText(names.join(", "))}`;
+        })
+        .join("\n");
+}
+
 function siteTable(p: CountryPage, fn: Footnotes): string {
     const rows = countrySites(p.code).map((s) => [
         mdText(s.name),
@@ -120,7 +145,7 @@ function siteTable(p: CountryPage, fn: Footnotes): string {
         [
             "Site",
             "Company",
-            "Prefecture",
+            admin1Word(p),
             "Kind",
             "Makes",
             "Status",
@@ -172,13 +197,23 @@ All measures with their status history: ${absoluteUrl("/policy")}.
 
 ${clusterList(p)}
 
-## Companies
+${
+    p.regions
+        ? `## Sites by ${p.regions.word}
+
+Each link opens the map zoomed to that ${p.regions.word}.
+
+${regionList(p)}
+
+`
+        : ""
+}## Companies
 
 ${companyTable(p, fn)}
 
 ## Sites
 
-Pins marked "city" are the city centre, "region" the prefecture; "site" is the plant itself.
+Pins marked "city" are the city centre, "region" the ${admin1Word(p).toLowerCase()}; "site" is the plant itself.
 
 ${siteTable(p, fn)}
 
