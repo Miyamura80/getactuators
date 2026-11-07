@@ -5,7 +5,10 @@ import { CHINA_PLANTS } from "./china-plants";
 import { JAPAN_SITES } from "./japan";
 import { JAPAN_PLANTS } from "./japan-plants";
 import { KOREA_SITES } from "./korea";
+import { PRECISION_SITES } from "./precision";
 import { type Site, hq } from "./types";
+import { US_PARTNER_SITES, US_SITES } from "./us";
+import { US_PLANTS } from "./us-plants";
 
 // Physical places: headquarters, plants, mines and refineries. `precision`
 // says how exact the pin is; "city" means the city centre, not the gate.
@@ -262,6 +265,17 @@ export const SITES: Site[] = [
         lon: -81.4,
         sources: ["timken-site"],
     }),
+    // Schaeffler's own headquarters (sourced in /china), so its arcs to
+    // Chinese partners start in Germany, not at its first plant (in Korea).
+    hq("schaeffler-herzogenaurach", {
+        companyId: "schaeffler",
+        name: "Schaeffler headquarters",
+        country: "DE",
+        admin1: "Bavaria",
+        lat: 49.57,
+        lon: 10.88,
+        sources: ["wiki-schaeffler"],
+    }),
     // Robot and actuator makers
     hq("tesla-austin", {
         companyId: "tesla",
@@ -360,4 +374,8 @@ export const SITES: Site[] = [
     ...BOM_SITES,
     ...CHINA_SITES,
     ...CHINA_PLANTS,
+    ...PRECISION_SITES,
+    ...US_SITES,
+    ...US_PLANTS,
+    ...US_PARTNER_SITES,
 ];

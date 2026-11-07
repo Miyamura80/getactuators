@@ -179,13 +179,6 @@ export const BOM_SOURCES: BomSource[] = [
         "https://app.dealroom.co/companies/cmsemicon",
         "reference",
     ),
-    src(
-        "renishaw-encoders",
-        "Renishaw",
-        "Renishaw plc final results: position encoders drove manufacturing technologies growth",
-        "https://www.lse.co.uk/rns/final-results-kxc3s13ouxmwkzg.html",
-        "filing",
-    ),
     // Gross margins (latest fiscal year)
     src(
         "stockanalysis-sanhua",

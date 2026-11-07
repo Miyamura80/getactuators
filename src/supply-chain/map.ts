@@ -183,6 +183,8 @@ export interface MapArcEnd extends LonLat {
     id: string;
     label: string;
     country: CountryCode;
+    // The anchor site's admin-1 region ("Texas"), when recorded.
+    admin1?: string;
 }
 
 // A great-circle supply arc, seller to buyer.
@@ -233,6 +235,7 @@ function arcEnd(companyId: string): MapArcEnd | null {
         id: companyId,
         label: company.name,
         country: at.country,
+        ...(at.admin1 ? { admin1: at.admin1 } : {}),
         lon: at.lon,
         lat: at.lat,
     };

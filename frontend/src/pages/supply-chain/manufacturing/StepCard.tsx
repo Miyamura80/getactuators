@@ -91,7 +91,7 @@ export function StepCard({ chain, stepId, onClose, onStep, onCompany, mode }: St
         return <aside ref={ref} tabIndex={-1} className={`mf-card is-${mode}`} aria-label="Product">
             <header className="mf-card-head">
                 <span className="mf-card-kicker">Product</span>
-                <h3>Rotor segment</h3>
+                <h3>{chain.productLabel}</h3>
                 <button type="button" className="mf-card-close" aria-label="Close" title="Close" onClick={onClose}><CloseIcon /></button>
             </header>
             {chain.productScene ? <ExplodeScene {...chain.productScene} className="mf-card-3d" defaultExplode={0.6} /> : null}
@@ -106,7 +106,7 @@ export function StepCard({ chain, stepId, onClose, onStep, onCompany, mode }: St
     // neighbours() lists main-line steps first; the last step leads to the product.
     const prevId = prev[0];
     const nextId = next[0] ?? PRODUCT_ID;
-    const label = (id: string | undefined) => (id === PRODUCT_ID ? "Rotor segment" : chain.steps.find((s) => s.id === id)?.label);
+    const label = (id: string | undefined) => (id === PRODUCT_ID ? chain.productLabel : chain.steps.find((s) => s.id === id)?.label);
     return <aside ref={ref} tabIndex={-1} className={`mf-card is-${mode}`} aria-label={step.label} data-step={step.id}>
         <header className="mf-card-head">
             <span className="mf-card-kicker">{cluster ? <><StageIconSvg stage={cluster.stage} className="mf-stage-svg is-kicker" />{STAGE_LABEL[cluster.stage]}</> : ""} · {index + 1}/{ordered.length}</span>

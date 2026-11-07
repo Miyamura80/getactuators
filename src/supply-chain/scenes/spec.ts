@@ -254,6 +254,58 @@ export interface CoilProps {
     crossed?: boolean;
 }
 
+// Cutting and finishing tools for the /manufacturing precision chain.
+
+// A grinding wheel about Z. With `ribs`, that many ridges stand on the rim:
+// the form of a multi-rib thread-grinding wheel.
+export interface GrindingWheelProps {
+    radius: number;
+    width: number;
+    bore?: number;
+    ribs?: number;
+}
+
+// A gear hob about Z: a cylinder cut by `gashes` flutes, with cutting
+// teeth wound on it as a single-start helix of pitch `lead`.
+export interface HobProps {
+    radius: number;
+    length: number;
+    gashes: number;
+    lead: number;
+}
+
+// An internal broach about Z: `teeth` rings along the bar, each a little
+// larger than the last (`rise` in radius per tooth), so one pull cuts the
+// whole tooth depth.
+export interface BroachProps {
+    radius: number;
+    length: number;
+    teeth: number;
+    rise: number;
+    // Spline teeth around each ring.
+    splines?: number;
+}
+
+// A superfinishing stone: a bar of `width` (X) by `height` (Y) by `depth`
+// (Z) whose -Y face is hollowed to `radius`, the curve of the raceway it
+// rubs.
+export interface FinishingStoneProps {
+    width: number;
+    height: number;
+    depth: number;
+    radius: number;
+}
+
+// A graduated encoder disc in the XY plane: `lines` radial graduations on
+// the outer track, plus `tracks - 1` inner code tracks.
+export interface GratingDiscProps {
+    radius: number;
+    thickness: number;
+    lines: number;
+    tracks?: number;
+    hub?: number;
+}
+
 export interface PartPropsByKind {
     cylinder: CylinderProps;
     ring: RingProps;
@@ -277,6 +329,11 @@ export interface PartPropsByKind {
     "arc-segment": ArcSegmentProps;
     "rotor-core": RotorCoreProps;
     coil: CoilProps;
+    "grinding-wheel": GrindingWheelProps;
+    hob: HobProps;
+    broach: BroachProps;
+    "finishing-stone": FinishingStoneProps;
+    "grating-disc": GratingDiscProps;
 }
 
 export type PartKind = keyof PartPropsByKind;
@@ -304,6 +361,11 @@ export const PART_KINDS = [
     "arc-segment",
     "rotor-core",
     "coil",
+    "grinding-wheel",
+    "hob",
+    "broach",
+    "finishing-stone",
+    "grating-disc",
 ] as const satisfies readonly PartKind[];
 
 // A part's shape: which procedural component, with which parameters.

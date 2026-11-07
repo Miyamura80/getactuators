@@ -43,7 +43,7 @@ import {
     NDFEB_PER_HUMANOID,
 } from "./perspective";
 import { POLICY_MEASURES, policyErrors } from "./policy";
-import { PROCESS_CHAINS, processErrors } from "./processes";
+import { PROCESS_CHAINS, PROCESS_OWN_SHARES, processErrors } from "./processes";
 import { unopenedSourceErrors } from "./processes/sources";
 import {
     companySchema,
@@ -92,11 +92,13 @@ const DATASETS: Record<string, unknown> = {
     "metals-reserves": RESERVES,
     "metals-prices": [PRICE_SERIES, NDPR_PRICE_FLOOR],
     policy: POLICY_MEASURES,
-    // Key numbers only: map positions and 3D vignette geometry are layout,
-    // and country shares are the /metals records above.
+    // Key numbers only: map positions and 3D vignette geometry are layout.
+    // The magnet chain's country shares are the /metals records above; the
+    // precision chain's are its own.
     processes: PROCESS_CHAINS.flatMap((c) =>
         c.steps.map((s) => ({ id: `${c.id}/${s.id}`, keyNumbers: s.keyNumbers })),
     ),
+    "process-shares": PROCESS_OWN_SHARES,
     "country-stage-shares": countryStageRecords(),
     "alts-techs": altTechRecords(),
     "alts-market": MARKET_SLICES,

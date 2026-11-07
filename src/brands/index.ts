@@ -215,6 +215,7 @@ const SUPPLY_CHAIN: Row[] = [
     ["angel-robotics", "Angel Robotics", "angel-robotics.com"],
     ["bear-robotics", "Bear Robotics", "bearrobotics.ai"],
     ["onexia", "ONExia", null],
+    ["kimm", "Korea Institute of Machinery & Materials (KIMM)", "kimm.re.kr", ["KIMM"]],
     // /alts (#78): makers of the alternative actuator technologies.
     ["renault-group", "Renault Group", "renaultgroup.com", ["Renault"]],
     ["bmw-group", "BMW Group", "bmwgroup.com", ["BMW"]],
@@ -231,7 +232,6 @@ const SUPPLY_CHAIN: Row[] = [
     ["barrett-technology", "Barrett Technology", "barrett.com", ["Barrett"]],
     ["magnomatics", "Magnomatics", "magnomatics.com"],
     // /bom (#76): part makers the teardowns add.
-    ["renishaw", "Renishaw", "renishaw.com"],
     ["cmsemicon", "Cmsemicon", null],
     // /china (#80): Chinese companies and partners. Domains only where a
     // source in the dataset is the company's own site; the rest stay null.
@@ -277,6 +277,69 @@ const SUPPLY_CHAIN: Row[] = [
     ["dobot", "Dobot", null],
     ["leju", "Leju Robotics", null, ["Leju"]],
     ["joyson", "Ningbo Joyson Electronic", null, ["Joyson"]],
+    // Precision chain makers on /manufacturing?chain=precision (Schaeffler
+    // is listed with the Korea makers above). GSA's own domain is unverified.
+    ["rollvis", "Rollvis", "rollvis.com"],
+    ["gsa", "GSA", null],
+    ["ewellix", "Ewellix", "ewellix.com"],
+    ["renishaw", "Renishaw", "renishaw.com"],
+    ["rls", "RLS", "rls.si"],
+    ["heidenhain", "HEIDENHAIN", "heidenhain.com"],
+    ["ic-haus", "iC-Haus", "ichaus.de"],
+    // /us (#82): US companies and their partners. Domains only where a source
+    // in the dataset is the company's own site; the rest stay null.
+    ["phoenix-tailings", "Phoenix Tailings", null],
+    ["ramaco", "Ramaco Resources", null, ["Ramaco"]],
+    ["niocorp", "NioCorp Developments", null, ["NioCorp"]],
+    ["rare-element-resources", "Rare Element Resources", "rareelementresources.com"],
+    ["texas-mineral-resources", "Texas Mineral Resources", null, ["TMRC"]],
+    ["ucore", "Ucore Rare Metals", "ucore.com", ["Ucore"]],
+    ["aclara-resources", "Aclara Resources", null, ["Aclara"]],
+    ["american-rare-earths", "American Rare Earths", null],
+    ["cyclic-materials", "Cyclic Materials", null],
+    ["less-common-metals", "Less Common Metals", null, ["LCM"]],
+    ["solvay", "Solvay", "solvay.com"],
+    ["maaden", "Maaden", null, ["Ma'aden"]],
+    ["meteoric-resources", "Meteoric Resources", null],
+    ["sumitomo-corp", "Sumitomo Corporation", "sumitomocorp.com"],
+    ["magna", "Magna International", null, ["Magna"]],
+    ["usa-rare-earth", "USA Rare Earth", null, ["USAR"]],
+    ["vulcan-elements", "Vulcan Elements", null],
+    [
+        "arnold-magnetic",
+        "Arnold Magnetic Technologies",
+        "arnoldmagnetics.com",
+        ["Arnold"],
+    ],
+    ["electron-energy", "Electron Energy Corporation", "electronenergy.com"],
+    ["regal-rexnord", "Regal Rexnord", "regalrexnord.com", ["Kollmorgen"]],
+    ["mercedes-benz", "Mercedes-Benz", null, ["Mercedes-Benz Group"]],
+    ["stellantis", "Stellantis", null],
+    ["rbc-bearings", "RBC Bearings", "rbcbearings.com"],
+    ["moog", "Moog", "moog.com"],
+    ["curtiss-wright", "Curtiss-Wright", null, ["Exlar"]],
+    ["allison-transmission", "Allison Transmission", null],
+    ["skf", "SKF", null, ["Kaydon"]],
+    ["foundation", "Foundation", null, ["Foundation Robotics"]],
+    ["palladyne-ai", "Palladyne AI", "palladyneai.com", ["Sarcos"]],
+    ["intuitive", "Intuitive Surgical", null, ["Intuitive"]],
+    ["rockwell", "Rockwell Automation", null],
+    ["teradyne", "Teradyne", "teradyne.com"],
+    ["jabil", "Jabil", null],
+    ["hd-hyundai", "HD Hyundai", null],
+    // /china second batch (#80). jaka.com is cited directly; aubo-robotics.cn,
+    // engineai.com.cn and guohuaintel.com are the sites named by the company's
+    // EtherCAT listing or press release in the dataset. The rest stay null.
+    ["jaka", "JAKA Robotics", "jaka.com", ["JAKA"]],
+    ["aubo", "AUBO Robotics", "aubo-robotics.cn", ["AUBO"]],
+    ["rokae", "ROKAE", null],
+    ["engineai", "EngineAI", "engineai.com.cn", ["ENGINEAI"]],
+    ["deep-robotics", "Deep Robotics", null, ["DEEP Robotics"]],
+    ["wuzhou-xinchun", "Wuzhou Xinchun", null],
+    ["guohua", "Guohua Intelligent", "guohuaintel.com", ["Guohua Intelligence"]],
+    ["byd", "BYD", null],
+    ["geely", "Geely Holding", null, ["Geely"]],
+    ["dongfeng-liuzhou", "Dongfeng Liuzhou Motor", null],
 ];
 
 // Companies behind the /investors deals (src/investors.ts COMPANIES).

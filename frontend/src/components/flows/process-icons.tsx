@@ -24,6 +24,17 @@ export const PROCESS_ICON_PATHS: Record<ProcessIcon, string[]> = {
     coil: ["M7 6a5 6 0 1 0 0 12", "M17 6a5 6 0 1 1 0 12", "M7 6h10M7 18h10", "M12 9v6"],
     gauge: ["M4 16a8 8 0 1 1 16 0", "M12 16l4-5", "M4 20h16"],
     recycle: ["M7 7l3-4 3 4", "M10 3v8a4 4 0 0 0 4 4h4", "M18 12l3 3-3 3", "M17 21H8a4 4 0 0 1-4-4v-3"],
+    // Precision chain: chuck and bar under a tool, hob, wheel on a bar,
+    // shot onto a surface, two parts joining, light through a mask, a chip,
+    // a sealed cover.
+    lathe: ["M2 8h4v8H2z", "M6 10h14v4H6z", "M13 3l3 7h-4z"],
+    hob: ["M4 7h16v10H4z", "M7 7l3 10M11 7l3 10M15 7l3 10", "M2 12h2M20 12h2"],
+    grind: ["M6 9a6 6 0 1 0 12 0a6 6 0 1 0-12 0", "M11 9a1 1 0 1 0 2 0a1 1 0 1 0-2 0", "M2 18h20v3H2z"],
+    peen: ["M9 2h6v5l-3 3-3-3z", "M8 13h.1M12 14h.1M16 13h.1M10 16h.1M14 16h.1", "M3 20h18"],
+    assemble: ["M3 8h7v8H3z", "M14 8h7v8h-7z", "M10 12h4", "M12 10l2 2-2 2"],
+    laser: ["M12 2v5", "M9 7h6l-1 3h-4z", "M3 13h18", "M6 13v2M9 13v2M12 13v2M15 13v2M18 13v2", "M3 19h18v2H3z"],
+    chip: ["M7 7h10v10H7z", "M10 3v4M14 3v4M10 17v4M14 17v4M3 10h4M3 14h4M17 10h4M17 14h4", "M10 10h4v4h-4z"],
+    seal: ["M4 10h16v10H4z", "M4 10a8 5 0 0 1 16 0", "M9 15h6"],
 };
 
 // Product state at the end of a chain: a rotor with magnet segments.

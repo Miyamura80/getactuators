@@ -21,9 +21,10 @@ import { linkKind } from "@/supply-chain/links";
 import { getCompany } from "@/supply-chain/registry";
 
 describe("coverage gate", () => {
-    test("Japan, China and Korea pass; the US waits for its data", () => {
-        expect(LIVE_COUNTRY_PATHS).toEqual(["/japan", "/china", "/korea"]);
-        for (const code of ["JP", "CN"] as const) {
+    test("Japan, China, Korea and the US pass", () => {
+        expect(LIVE_COUNTRY_PATHS).toEqual(["/japan", "/china", "/korea", "/us"]);
+        // Korea clears its own lower gate (tested below).
+        for (const code of ["JP", "CN", "US"] as const) {
             const c = coverage(code);
             expect(c.companies).toBeGreaterThanOrEqual(COVERAGE_TARGET.companies);
             expect(c.sites).toBeGreaterThanOrEqual(COVERAGE_TARGET.sites);
@@ -55,10 +56,11 @@ describe("coverage gate", () => {
             investment: count("investment"),
             partnership: count("partnership"),
         }).toEqual({
-            supply: 20,
+            // JAKA's cobots to Toyota (from /china) and one /us link are among these.
+            supply: 22,
             // THK's stake in Samick THK (from /korea) is one of these.
-            investment: 8,
-            partnership: 7,
+            investment: 9,
+            partnership: 8,
         });
         expect(coverage("JP").supplyLinks).toBeGreaterThanOrEqual(
             COVERAGE_TARGET.supplyLinks,
@@ -75,6 +77,8 @@ describe("coverage gate", () => {
         expect(kr.companies).toBeGreaterThanOrEqual(30);
         expect(kr.sites).toBeGreaterThanOrEqual(50);
         expect(kr.links).toBeGreaterThanOrEqual(20);
+        // Headroom: losing a few supply links must not take the page offline.
+        expect(kr.supplyLinks).toBeGreaterThanOrEqual(gate.supplyLinks + 3);
         // Japan has no gate of its own and keeps the shared target.
         const jp = getCountryPage("japan");
         expect(jp ? gateOf(jp) : null).toEqual(COVERAGE_TARGET);
@@ -190,12 +194,74 @@ describe("country filter", () => {
         for (const id of ["fanuc", "kuka", "proterial"]) expect(ids).toContain(id);
     });
 
+    test("China grows toward the #80 target with the robot and joint makers it lacked", () => {
+        const cn = coverage("CN");
+        expect(cn.companies).toBeGreaterThanOrEqual(80);
+        expect(cn.sites).toBeGreaterThanOrEqual(122);
+        expect(cn.links).toBeGreaterThanOrEqual(46);
+        expect(cn.supplyLinks).toBeGreaterThanOrEqual(31);
+        const ids = countryCompanies("CN").map((c) => c.id);
+        for (const id of [
+            "kepler",
+            "booster",
+            "agilex",
+            "cubemars",
+            "damiao",
+            "jaka",
+            "aubo",
+        ])
+            expect(ids).toContain(id);
+        // Foreign plants in China put ABB, Schaeffler and Neo on the map too.
+        for (const id of ["abb", "schaeffler", "neo-performance"])
+            expect(ids).toContain(id);
+    });
+
     test("every Chinese site has a precision, a source and a point inside China", () => {
         for (const s of countrySites("CN")) {
             expect(["site", "city", "region"]).toContain(s.precision);
             expect(s.sources.length).toBeGreaterThan(0);
             expect(insideCountry("CN", s.lat, s.lon)).toBe(true);
         }
+    });
+
+    test("the US meets the issue's stricter gate across all four segments", () => {
+        // #82 asks for 60 companies, 100 sites and 40 links, above the default.
+        const c = coverage("US");
+        expect(c.companies).toBeGreaterThanOrEqual(60);
+        expect(c.sites).toBeGreaterThanOrEqual(100);
+        expect(c.links).toBeGreaterThanOrEqual(40);
+        expect(c.supplyLinks).toBeGreaterThanOrEqual(COVERAGE_TARGET.supplyLinks);
+        const companies = countryCompanies("US");
+        for (const s of SEGMENTS)
+            expect(
+                companies.filter((co) => co.segment === s).length,
+            ).toBeGreaterThanOrEqual(8);
+        const ids = companies.map((co) => co.id);
+        expect(new Set(ids).size).toBe(ids.length);
+        // Foreign-owned plants in the US put their owners on the map.
+        for (const id of ["vac", "schaeffler", "skf", "lynas", "fanuc"])
+            expect(ids).toContain(id);
+        const abroad = countryLinks("US").filter(
+            (l) =>
+                getCompany(l.from)?.hqCountry !== "US" ||
+                getCompany(l.to)?.hqCountry !== "US",
+        );
+        expect(abroad.length).toBeGreaterThanOrEqual(10);
+    });
+
+    test("every US site has a precision, a source, a status and a point inside the US", () => {
+        for (const s of countrySites("US")) {
+            expect(["site", "city", "region"]).toContain(s.precision);
+            expect(s.sources.length).toBeGreaterThan(0);
+            expect(s.status).toBeDefined();
+            expect(insideCountry("US", s.lat, s.lon)).toBe(true);
+        }
+        // Plants still being built are not shown as running.
+        const status = (id: string) =>
+            countrySites("US").find((s) => s.id === id)?.status;
+        expect(status("mp-northlake")).toBe("construction");
+        expect(status("vulcan-benson")).toBe("announced");
+        expect(status("lynas-seadrift")).toBe("announced");
     });
 
     test("every Japanese site has a precision and a source", () => {

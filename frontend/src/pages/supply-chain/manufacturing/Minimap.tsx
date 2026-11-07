@@ -1,7 +1,10 @@
 import { type MouseEvent, useRef } from "react";
 import type { ChainLayout, ZoomTransform } from "../../../../../src/supply-chain/processes/layout";
 
-const W = 168;
+const MAX_W = 168;
+// Tall chains (side-by-side sub-chains) are capped by height, so the
+// minimap covers as little of the map as it can.
+const MAX_H = 96;
 
 // The whole chain in miniature, bottom right of the map, with the visible
 // area as a frame. It is a button: a click centres the map on the point
@@ -15,7 +18,8 @@ export function Minimap({ layout, transform, viewW, viewH, onCenter, focusId }: 
     focusId: string | null;
 }) {
     const svgRef = useRef<SVGSVGElement>(null);
-    const s = W / layout.width;
+    const s = Math.min(MAX_W / layout.width, MAX_H / layout.height);
+    const W = Math.round(layout.width * s);
     const h = Math.round(layout.height * s);
     const vx = -transform.x / transform.k;
     const vy = -transform.y / transform.k;

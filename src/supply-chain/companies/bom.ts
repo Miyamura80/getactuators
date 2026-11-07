@@ -3,7 +3,7 @@ import type { Company } from "./types";
 
 // Companies the /bom teardowns reach that are not in the registry yet, and
 // the latest gross margins /bom's margin capture reads for companies that
-// are (attached to their records in ./index and ./china).
+// are (attached to their records in ./index, ./china and ./precision).
 
 export function margin(
     value: number,
@@ -78,18 +78,6 @@ export const BOM_MARGINS = {
 } as const;
 
 export const BOM_COMPANIES: Company[] = [
-    {
-        id: "renishaw",
-        name: "Renishaw",
-        hqCountry: "GB",
-        stages: ["electronics"],
-        segment: "magnets-motors",
-        ownership: { kind: "listed", ticker: "LSE: RSW" },
-        grossMargin: BOM_MARGINS.renishaw,
-        products: ["Absolute and incremental position encoders", "Metrology systems"],
-        url: "https://www.renishaw.com/",
-        sources: ["renishaw-encoders"],
-    },
     {
         id: "cmsemicon",
         name: "Cmsemicon",

@@ -4,7 +4,7 @@ import { type ZoomBehavior, zoom, zoomIdentity, zoomTransform } from "d3-zoom";
 import { type KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { TIER_LABEL, concentrationTier } from "../../../../../src/supply-chain/concentration-tier";
 import { countryFlag } from "../../../../../src/country-flag";
-import { percent } from "../../../../../src/supply-chain/format";
+import { sharePercent } from "../../../../../src/supply-chain/format";
 import {
     type ProcessChain,
     type ProcessStep,
@@ -18,7 +18,10 @@ import {
     PRODUCT_ID,
     type ZoomTransform,
     chainLayout,
+    STEP_DETAIL_OVER_FIT,
+    STEP_DETAIL_SCALE,
     detailFor,
+    busPath,
     edgePath,
     fitTransform,
 } from "../../../../../src/supply-chain/processes/layout";
@@ -55,6 +58,20 @@ import { Minimap } from "./Minimap";
 
 type Behavior = ZoomBehavior<SVGSVGElement, unknown>;
 
+// One axis of a pan over content spanning [lo, hi] in map space at scale k:
+// content larger than the view stays flush with both edges (less the pads);
+// smaller content keeps the requested offset, kept inside the view.
+function clampAxis(offset: number, view: number, lo: number, hi: number, k: number, padLo: number, padHi: number): number {
+    const min = view - padHi - hi * k;
+    const max = padLo - lo * k;
+    if (min <= max) return Math.min(max, Math.max(min, offset));
+    return Math.min(min, Math.max(max, offset));
+}
+
+// Room the zoom buttons take on the map's left edge.
+const HUD_W = 52;
+const EDGE_PAD = 16;
+
 const MIN_K = 0.18;
 const MAX_K = 3;
 const FOCUS_K = 1.25;
@@ -81,8 +98,7 @@ function tierText(step: { shares?: ProcessStep["shares"] }): { text: string; tie
     const s = sharesOf(step.shares);
     const c = s ? concentrationTier(s.value) : null;
     if (!s || !c) return null;
-    const est = s.confidence === "estimated" ? "~" : "";
-    return { text: `${TIER_LABEL[c.tier].toUpperCase()} ${countryFlag(c.top.country)} ${est}${percent(c.top.share)}`, tier: c.tier };
+    return { text: `${TIER_LABEL[c.tier].toUpperCase()} ${countryFlag(c.top.country)} ${sharePercent(c.top.share, s.confidence)}`, tier: c.tier };
 }
 
 export interface ProcessMapProps {
@@ -106,7 +122,8 @@ export function ProcessMap({ chain, focusId, onFocus, height = 600 }: ProcessMap
     const [hover, setHover] = useState<string | null>(null);
     const reduced = useReducedMotion();
     const whole: Box = useMemo(() => ({ x: 0, y: 0, w: layout.width, h: layout.height }), [layout]);
-    const fitK = fitTransform(width, height, whole, 16).k;
+    // The overview fits right of the zoom buttons.
+    const fitK = fitTransform(width - HUD_W, height, whole, 16).k;
     const detail = detailFor(t.k, fitK);
 
     useEffect(() => {
@@ -119,12 +136,18 @@ export function ProcessMap({ chain, focusId, onFocus, height = 600 }: ProcessMap
         return () => ro.disconnect();
     }, []);
 
+    // The latest pan limits, read by d3 on every drag, wheel and scaleBy.
+    const clampRef = useRef<(t: ZoomTransform) => ZoomTransform>((t) => t);
     useEffect(() => {
         const svg = svgRef.current;
         if (!svg) return;
         const b = zoom<SVGSVGElement, unknown>()
             .scaleExtent([MIN_K, MAX_K])
             .filter(allowGesture)
+            .constrain((tr) => {
+                const c = clampRef.current({ k: tr.k, x: tr.x, y: tr.y });
+                return zoomIdentity.translate(c.x, c.y).scale(c.k);
+            })
             .on("zoom", (e: { transform: ZoomTransform }) => setT({ k: e.transform.k, x: e.transform.x, y: e.transform.y }));
         const sel = select(svg).call(b);
         behavior.current = b;
@@ -144,19 +167,56 @@ export function ProcessMap({ chain, focusId, onFocus, height = 600 }: ProcessMap
         },
         [reduced],
     );
-    const fit = useCallback((animate = true) => apply(fitTransform(width, height, whole, 16), animate), [apply, width, height, whole]);
+    const fit = useCallback(
+        (animate = true) => {
+            const f = fitTransform(width - HUD_W, height, whole, 16);
+            apply({ ...f, x: f.x + HUD_W }, animate);
+        },
+        [apply, width, height, whole],
+    );
     const cardOpen = focusId !== null && width > 760;
     const viewW = cardOpen ? width - CARD_W : width;
 
-    // Zoom to the focused step (and its neighbours), left of the card.
+    // Keep the map filling the view: centring a step near an edge of the
+    // map would otherwise leave an empty band of canvas beside it.
+    const bounds = useMemo(() => {
+        const boxes = [...layout.nodes.values(), ...layout.clusters];
+        return {
+            x0: Math.min(...boxes.map((b) => b.x)),
+            y0: Math.min(...boxes.map((b) => b.y)),
+            x1: Math.max(...boxes.map((b) => b.x + b.w)),
+            y1: Math.max(...boxes.map((b) => b.y + b.h)),
+        };
+    }, [layout]);
+    const clampT = useCallback(
+        (next: ZoomTransform): ZoomTransform => ({
+            k: next.k,
+            x: clampAxis(next.x, viewW, bounds.x0, bounds.x1, next.k, HUD_W, EDGE_PAD),
+            y: clampAxis(next.y, height, bounds.y0, bounds.y1, next.k, EDGE_PAD, EDGE_PAD),
+        }),
+        [bounds, viewW, height],
+    );
+    useEffect(() => {
+        clampRef.current = clampT;
+    }, [clampT]);
+    // Zoom to the focused step, centred between the zoom buttons and the card.
     const zoomTo = useCallback(
         (id: string, animate = true) => {
             const box = layout.nodes.get(id);
             if (!box) return;
             const k = Math.max(FOCUS_K, zoomTransform(svgRef.current as SVGSVGElement).k);
-            apply({ k, x: viewW / 2 - (box.x + box.w / 2) * k, y: height / 2 - (box.y + box.h / 2) * k }, animate);
+            let x = (HUD_W + viewW) / 2 - (box.x + box.w / 2) * k;
+            // A neighbour in the same row cut by the zoom buttons slides
+            // fully into view, while the focused step still fits.
+            const cut = [...layout.nodes.values()].find((n) => n.y === box.y && n.x < box.x
+                && n.x * k + x < HUD_W && (n.x + n.w) * k + x > 0);
+            if (cut) {
+                const shift = HUD_W + EDGE_PAD / 2 - (cut.x * k + x);
+                if ((box.x + box.w) * k + x + shift <= viewW - EDGE_PAD) x += shift;
+            }
+            apply(clampT({ k, x, y: height / 2 - (box.y + box.h / 2) * k }), animate);
         },
-        [layout, apply, viewW, height],
+        [layout, apply, clampT, viewW, height],
     );
 
     const first = useRef(true);
@@ -178,7 +238,7 @@ export function ProcessMap({ chain, focusId, onFocus, height = 600 }: ProcessMap
     };
     const centerOn = (x: number, y: number) => {
         const k = t.k;
-        apply({ k, x: viewW / 2 - x * k, y: height / 2 - y * k });
+        apply(clampT({ k, x: viewW / 2 - x * k, y: height / 2 - y * k }));
     };
 
     // Zoom from the stage overview into one stage's steps. From the
@@ -186,8 +246,11 @@ export function ProcessMap({ chain, focusId, onFocus, height = 600 }: ProcessMap
     const pendingFocus = useRef<string | null>(null);
     const openCluster = (c: ClusterFrame, fromKey = false) => {
         if (fromKey) pendingFocus.current = chain.steps.find((s) => s.cluster === c.id)?.id ?? null;
-        const k = Math.max(1, fitK * 1.4);
-        apply({ k, x: viewW / 2 - (c.x + c.w / 2) * k, y: height / 2 - (c.y + c.h / 2) * k });
+        // Fit the whole stage between the zoom buttons and the right edge,
+        // never so far out that the map drops back to the stage overview.
+        const fitC = Math.min((viewW - HUD_W - EDGE_PAD) / c.w, (height - 2 * EDGE_PAD) / c.h);
+        const k = Math.max(Math.max(STEP_DETAIL_SCALE, fitK * STEP_DETAIL_OVER_FIT) * 1.02, Math.min(1, fitC));
+        apply(clampT({ k, x: (HUD_W + viewW - EDGE_PAD) / 2 - (c.x + c.w / 2) * k, y: height / 2 - (c.y + c.h / 2) * k }));
     };
 
     const lit = useMemo(() => {
@@ -219,15 +282,24 @@ export function ProcessMap({ chain, focusId, onFocus, height = 600 }: ProcessMap
         else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onFocus(id); }
     };
 
+    // Stages in sequence get an arrow from each to the next; side-by-side
+    // sub-chains each get one into the product, along a shared trunk.
     const clusterEdges = useMemo(() => {
         const out: { key: string; d: string }[] = [];
+        const product = layout.nodes.get(PRODUCT_ID) as Box;
+        if (chain.parallel) {
+            const right = Math.max(...layout.clusters.map((c) => c.x + c.w));
+            const trunk = right + (product.x - right) / 2;
+            layout.clusters.forEach((c, i) => out.push({ key: `c${i}`, d: busPath(c, product, trunk).d }));
+            return out;
+        }
         for (let i = 1; i < layout.clusters.length; i++) {
             const a = layout.clusters[i - 1] as Box;
             const b = layout.clusters[i] as Box;
             out.push({ key: `c${i}`, d: edgePath(a, b).d });
         }
         return out;
-    }, [layout]);
+    }, [layout, chain.parallel]);
     const showSteps = detail === "steps";
     useEffect(() => {
         if (!showSteps || !pendingFocus.current) return;
@@ -235,12 +307,12 @@ export function ProcessMap({ chain, focusId, onFocus, height = 600 }: ProcessMap
         pendingFocus.current = null;
     }, [showSteps]);
 
-    const node = (id: string, label: string, icon: string[], box: Box, extra?: { animated?: boolean; branch?: string }) => {
+    const node = (id: string, label: string, icon: string[], box: Box, extra?: { animated?: boolean; branch?: string; focusable?: boolean }) => {
         const dim = lit !== null && !lit.has(id);
         const ls = lines(label);
         return <g key={id} ref={(el) => { if (el) nodeRefs.current.set(id, el); else nodeRefs.current.delete(id); }}
             className={`mf-node${focusId === id ? " is-focus" : ""}${dim ? " is-dim" : ""}${extra?.branch ? ` is-${extra.branch}` : ""}`}
-            transform={`translate(${box.x},${box.y})`} role="button" tabIndex={showSteps ? 0 : -1}
+            transform={`translate(${box.x},${box.y})`} role="button" tabIndex={showSteps || extra?.focusable ? 0 : -1}
             aria-label={`${label}${extra?.animated ? ", 3D animation" : ""}`} aria-pressed={focusId === id}
             data-step={id}
             onClick={() => onFocus(id)} onKeyDown={onKey(id)}
@@ -296,6 +368,7 @@ export function ProcessMap({ chain, focusId, onFocus, height = 600 }: ProcessMap
                     </g>;
                 })}
                 {!showSteps ? clusterEdges.map((e) => <path key={e.key} className="mf-cluster-edge" d={e.d} markerEnd="url(#mf-arrow)" />) : null}
+                {!showSteps && chain.parallel ? node(PRODUCT_ID, chain.productLabel, PRODUCT_ICON_PATHS, layout.nodes.get(PRODUCT_ID) as Box, { animated: Boolean(chain.productScene), focusable: true }) : null}
                 {showSteps ? <>
                     <g className="mf-edges">
                         {layout.edges.map((e) => {
@@ -304,12 +377,10 @@ export function ProcessMap({ chain, focusId, onFocus, height = 600 }: ProcessMap
                         })}
                     </g>
                     {chain.steps.map((s) => node(s.id, s.label, PROCESS_ICON_PATHS[s.icon], layout.nodes.get(s.id) as Box, { animated: Boolean(s.animation), branch: s.branch }))}
-                    {node(PRODUCT_ID, "Rotor segment", PRODUCT_ICON_PATHS, layout.nodes.get(PRODUCT_ID) as Box, { animated: Boolean(chain.productScene) })}
+                    {node(PRODUCT_ID, chain.productLabel, PRODUCT_ICON_PATHS, layout.nodes.get(PRODUCT_ID) as Box, { animated: Boolean(chain.productScene) })}
                     <g className="mf-edge-labels" aria-hidden="true">
-                        {layout.edges.filter((e) => lit && (e.from === (hover ?? focusId) || e.to === (hover ?? focusId))).map((e) => {
-                            const label = chain.edges.find((x) => x.from === e.from && x.to === e.to)?.label;
-                            return label ? <text key={`${e.from}->${e.to}`} x={e.mid[0]} y={e.mid[1] - 6} textAnchor="middle">{label}</text> : null;
-                        })}
+                        {layout.edges.filter((e) => e.label && lit && (e.from === (hover ?? focusId) || e.to === (hover ?? focusId))).map((e) =>
+                            <text key={`${e.from}->${e.to}`} x={e.label?.x} y={e.label?.y} textAnchor="middle">{e.label?.text}</text>)}
                     </g>
                 </> : null}
             </g>
@@ -325,7 +396,7 @@ export function ProcessMap({ chain, focusId, onFocus, height = 600 }: ProcessMap
                 <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M8 3v10" /></svg>
             </button>
         </div>
-        <p className="mf-level" aria-live="polite">{focusId ? "Step" : showSteps ? "Steps" : "Stages"}</p>
+        {focusId ? null : <p className="mf-level" aria-live="polite">{showSteps ? "Steps" : chain.parallel ? "Parts" : "Stages"}</p>}
         <Minimap layout={layout} transform={t} viewW={viewW} viewH={height} onCenter={centerOn} focusId={focusId} />
     </div>;
 }

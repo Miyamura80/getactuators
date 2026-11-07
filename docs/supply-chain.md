@@ -1,7 +1,7 @@
 # Supply-chain atlas: data and page recipe
 
 The supply-chain pages (`/metals`, `/policy`, `/bom`, `/manufacturing`, `/alts`,
-`/japan`, `/china` and `/korea` are live; `/us` is planned; `/lab/supply-chain`
+`/japan`, `/china`, `/korea` and `/us` are live; `/lab/supply-chain`
 is the hidden kit page) share one cited registry and one set of components.
 Pages hold content; numbers live in the registry and are referenced by id.
 
@@ -159,19 +159,43 @@ the URL hash (`#step=` on /manufacturing, `#node=` on /bom):
  +-- types.ts     ProcessChain: clusters, steps (label <= 4 words, caption <= 12),
  |                edges (main | branch | loop), product scene
  +-- magnet.ts    the NdFeB chain, ore to rotor segment; step ids are the /bom contract
- +-- sources.ts   the documents behind the chain's key numbers (spread into SOURCES)
+ +-- precision.ts strain-wave gear, roller screw, precision bearing, encoder:
+ |                four side-by-side sub-chains (parallel: true), bar stock to tested part;
+ |                gear and screw steps in precision-drive-steps.ts
+ +-- key-number.ts num() / range() builders shared by every chain
+ +-- sources.ts   the documents behind the magnet chain's key numbers (spread into SOURCES)
+ +-- precision-sources.ts  the precision chain's documents (none opened: no accessed date)
+ +-- precision-shares.ts   modeled country shares per precision sub-chain, with method notes
+ +-- step-index.ts step id -> chain for chains after the first, without loading them
  +-- path.ts      MANUFACTURING_PATH, the /manufacturing route
- +-- layout.ts    grid -> map boxes, cluster frames, edge curves, zoom detail
+ +-- layout.ts    grid -> map boxes, cluster frames, edge curves, bus to the product, zoom detail
  +-- index.ts     PROCESS_CHAINS, getChain, isProcessStepId, processErrors
  +-- views.ts     REST / MCP wire shape (server only)
- src/supply-chain/scenes/magnet-loops.ts   the ProcessLoop vignettes + rotor explode
+ src/supply-chain/scenes/magnet-loops.ts     the magnet ProcessLoop vignettes + rotor explode
+ src/supply-chain/scenes/precision-loops.ts  21 precision vignettes + the joint explode
+                                             (gear and screw loops in precision-drive-loops.ts,
+                                             shared tracks in precision-kit.ts)
 ```
 
-A new chain (#83) is a new file with the same schema appended to
-`PROCESS_CHAINS`; the switcher, map, twin, REST and MCP pick it up. Country
-shares on steps are keys into the /metals stage shares (`PROCESS_SHARES`), so
-they are cited once. Posters: `bun frontend/scripts/capture-posters.ts <base>
-[ids]` captures every animated step from `/manufacturing#step=<id>`.
+```
+ parallel chain on the map:
+
+ [strain-wave gear  ...  test ]--+
+ [roller screw      ...  test ]--+
+ [precision bearing ...  test ]--+--> [Precision set]
+ [encoder           ... seal  ]--+
+```
+
+A new chain is a new file with the same schema appended to `PROCESS_CHAINS`;
+the switcher, map, twin, REST and MCP pick it up. Add its step ids to
+`step-index.ts` (a test checks) so /bom chips link with `?chain=`. Magnet
+country shares are keys into the /metals stage shares (`PROCESS_SHARES`), so
+they are cited once; the precision chain's are its own modeled records,
+audited as `process-shares`. Precision parts use the shared tool parts
+(`grinding-wheel`, `hob`, `broach`, `finishing-stone`, `grating-disc` in
+`frontend/src/three/parts/tools.ts`). Posters: `bun
+frontend/scripts/capture-posters.ts <base> [ids]` captures every animated
+step from its chain's URL (`/manufacturing?chain=<id>#step=<id>`).
 
 ## The kit page
 
@@ -238,7 +262,7 @@ source references.
 
 ## Adding a country
 
-Country pages (`/japan`, `/china` and `/korea` are live; `/us` is planned)
+Country pages (`/japan`, `/china`, `/korea` and `/us` are live)
 share one template, so a new country is data only:
 
 ```
@@ -260,7 +284,11 @@ share one template, so a new country is data only:
    when no source splits the stage by country) and the named `clusters`
    (`[minLat, minLon, maxLat, maxLon]`, each with a one-line `blurb`; the
    tests require each box inside the country and holding at least two
-   sites).
+   sites). Optionally add `regions` (the admin-1 regions the map can
+   zoom to, by the ISO 3166-2 subdivision code without the country prefix,
+   `TX` for `US-TX`, and the name sites record in `admin1`; see
+   `us-regions.ts`) and `hubs` (regional hubs a busy map shows while zoomed
+   out, each a list of region names).
 2. **Companies.** Add a `companies/<country>.ts` list, typed from
    `companies/types.ts`, and spread it at the end of `COMPANIES`. Revenue is
    the latest fiscal year in USD with the conversion rate in `note`
@@ -308,4 +336,12 @@ role, revenue, gross margin, ownership, supply links),
 `<SiteDetail>` (what a plant makes, capacity, year opened, status, pin
 precision, source) and `<CompanyTable>` (sortable, row click selects), all
 in `frontend/src/components/supply-chain/`. URL state is `?segment=`,
-`?company=`, `?site=` and `?cluster=`.
+`?company=`, `?site=`, `?cluster=` and, on a page with `regions`,
+`?region=` (`/us?region=TX`; `?state=` is read as the same). A region
+narrows the map and company table to it and opens on its sites alone: the
+links in and out of the region (those with an end at a head office there)
+are listed under the map by partner country or region, and draw on hover or
+click, or once a company is picked. Arcs whose far end is off the map run to
+one chip per country (or, for a domestic partner, its region code, which
+zooms there), bundled per site. The markdown twin lists sites by region with
+deep links.
