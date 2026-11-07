@@ -32,4 +32,30 @@ export interface CountryContent {
     // The counts this country must reach to go live, when its data issue sets
     // a lower bar than the shared COVERAGE_TARGET.
     gate?: { companies: number; sites: number; links: number; supplyLinks: number };
+    // Admin-1 regions the map can zoom to (?region=TX), when the page offers it.
+    regions?: CountryRegions;
+    // Hubs a busy map collapses to while zoomed out.
+    hubs?: CountryHub[];
+}
+
+// One admin-1 region: its code in the URL ("TX", the ISO 3166-2 code
+// without the country) and its name as sites record it ("Texas").
+export interface CountryRegion {
+    code: string;
+    name: string;
+}
+
+export interface CountryRegions {
+    // What a region is called on this page: "state" / "states".
+    word: string;
+    plural: string;
+    list: CountryRegion[];
+}
+
+// A regional hub on the zoomed-out map: every site in these regions (by
+// name), drawn as one marker that zooms to them.
+export interface CountryHub {
+    id: string;
+    label: string;
+    regions: string[];
 }

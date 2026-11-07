@@ -5,8 +5,9 @@ import { navigate, useLocationKey } from "../../../lib/router";
 // A country page keeps its view in the URL, so any view is a shareable link
 // and the back button steps through selections:
 // ?segment=magnets-motors&company=tdk&site=tdk-tokyo&cluster=kanto-hq
+// A page with regions adds ?region=TX (?state=TX is read as the same).
 
-const KEYS = ["segment", "company", "site", "cluster"] as const;
+const KEYS = ["segment", "company", "site", "cluster", "region"] as const;
 type Key = (typeof KEYS)[number];
 
 export interface CountryState {
@@ -14,6 +15,7 @@ export interface CountryState {
     company: string | null;
     site: string | null;
     cluster: string | null;
+    region: string | null;
 }
 
 export function readCountryState(search: string): CountryState {
@@ -24,6 +26,7 @@ export function readCountryState(search: string): CountryState {
         company: q.get("company"),
         site: q.get("site"),
         cluster: q.get("cluster"),
+        region: (q.get("region") ?? q.get("state"))?.toUpperCase() || null,
     };
 }
 
@@ -36,6 +39,7 @@ export function withCountryState(href: string, patch: Partial<CountryState>): st
         const v = patch[k as Key];
         if (v) url.searchParams.set(k, v);
         else url.searchParams.delete(k);
+        if (k === "region") url.searchParams.delete("state");
     }
     return `${url.pathname}${url.search}${url.hash}`;
 }
