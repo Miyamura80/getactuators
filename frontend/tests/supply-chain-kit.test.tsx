@@ -82,9 +82,9 @@ test("legend shows all three confidence styles", () => {
 
 test("supply-chain menu lists live pages only", () => {
     // Country pages join once their dataset passes the coverage gate.
-    expect([...SUPPLY_CHAIN_PAGES_LIVE]).toEqual(["/metals", "/policy", "/manufacturing", "/alts", "/japan", "/china", "/korea"]);
+    expect([...SUPPLY_CHAIN_PAGES_LIVE]).toEqual(["/metals", "/policy", "/manufacturing", "/alts", "/japan", "/china", "/korea", "/us"]);
     const view = render(<PublicHeader path="/" />);
-    expect([...view.container.querySelectorAll(".site-sub-panel a")].map((a) => a.getAttribute("href"))).toEqual(["/metals", "/policy", "/manufacturing", "/alts", "/japan", "/china", "/korea"]);
+    expect([...view.container.querySelectorAll(".site-sub-panel a")].map((a) => a.getAttribute("href"))).toEqual(["/metals", "/policy", "/manufacturing", "/alts", "/japan", "/china", "/korea", "/us"]);
     cleanup();
     expect(supplyChainMenu(false, new Set())).toEqual([]);
     expect(supplyChainMenu(false, new Set(["/metals"]))).toEqual([

@@ -56,8 +56,10 @@ describe("/japan page and twin", () => {
         expect(persistent).toContain("jp-espa-hds-reducers-2023");
     });
 
-    test("countries without a dataset past the gate are not routed", async () => {
-        for (const path of ["/us"]) expect((await get(path)).status).toBe(404);
+    test("every planned country passes the gate and is routed", async () => {
+        for (const path of ["/japan", "/china", "/korea", "/us"])
+            expect((await get(path)).status).toBe(200);
+        expect((await get("/germany")).status).toBe(404);
     });
 
     test("markdown twin: overview, policies, clusters, companies, sites, links, sources", async () => {
@@ -202,12 +204,69 @@ describe("/china page and twin", () => {
     });
 });
 
+describe("/us page and twin", () => {
+    test("is routed, linked site-wide, in the sitemap and in llms.txt", async () => {
+        const res = await get("/us");
+        expect(res.status).toBe(200);
+        const html = await res.text();
+        expect(html).toContain("<title>United States: actuator supply chain");
+        expect(ldNodes(html)).toContain('"name":"MP Materials"');
+        expect(html).toContain('<a href="/us"');
+        expect(await (await get("/sitemap.xml")).text()).toContain("/us<");
+        const llms = await (await get("/llms.txt")).text();
+        expect(llms).toContain("/us.md");
+        expect(llms).toContain('get_country("US")');
+    });
+
+    test("markdown twin lists every company and site, with sources", async () => {
+        const md = await (await get("/us.md")).text();
+        for (const h of [
+            "## Share of each stage",
+            "## Policies",
+            "## Clusters",
+            "## Companies",
+            "## Sites",
+            "## Links",
+            "## Sources",
+        ])
+            expect(md).toContain(h);
+        for (const c of countryCompanies("US")) expect(md).toContain(`\`${c.id}\``);
+        expect(siteRows(md)).toHaveLength(countrySites("US").length);
+        expect(md).toContain("**Texas magnets and humanoids**");
+        expect(md).toContain("/policy#measure=");
+        expect(md).not.toContain(String.fromCharCode(0x2014));
+    });
+
+    test("REST and MCP return the US filtered registry", async () => {
+        const res = await get("/api/v1/countries/us");
+        expect(res.status).toBe(200);
+        const body = CountrySchema.parse(await res.json());
+        expect(body.code).toBe("US");
+        expect(body.sites.map((s) => s.id)).toEqual(
+            countrySites("US").map((s) => s.id),
+        );
+        expect(body.links.length).toBe(countryLinks("US").length);
+        expect(body.policies.length).toBeGreaterThan(5);
+        const texas = body.clusters.find((c) => c.id === "texas-corridor");
+        expect(texas?.site_ids).toContain("mp-northlake");
+        const out = CountrySchema.parse(
+            (await callTool("get_country", { code: "US" })).structuredContent,
+        );
+        expect(out.name).toBe("United States");
+        expect(
+            out.links.some(
+                (l) => l.from === "mp-materials" && l.to === "general-motors",
+            ),
+        ).toBe(true);
+    });
+});
+
 describe("REST /api/v1/countries", () => {
     test("lists live countries with coverage", async () => {
         const res = await get("/api/v1/countries");
         expect(res.status).toBe(200);
         const body = CountryListSchema.parse(await res.json());
-        expect(body.results.map((r) => r.code)).toEqual(["JP", "CN", "KR"]);
+        expect(body.results.map((r) => r.code)).toEqual(["JP", "CN", "KR", "US"]);
         const cov = body.results[0]?.coverage;
         expect(cov?.companies).toBeGreaterThanOrEqual(COVERAGE_TARGET.companies);
         expect(cov?.sites).toBeGreaterThanOrEqual(COVERAGE_TARGET.sites);
@@ -242,9 +301,9 @@ describe("REST /api/v1/countries", () => {
     });
 
     test("404s for a country that is not live, and is in the OpenAPI document", async () => {
-        const res = await get("/api/v1/countries/US");
+        const res = await get("/api/v1/countries/DE");
         expect(res.status).toBe(404);
-        expect((await get("/api/v1/countries/US.md")).status).toBe(404);
+        expect((await get("/api/v1/countries/DE.md")).status).toBe(404);
         expect(res.headers.get("content-type")).toContain("application/problem+json");
         const openapi = await (await get("/openapi.json")).json();
         expect(Object.keys(openapi.paths)).toContain("/api/v1/countries/{code}");

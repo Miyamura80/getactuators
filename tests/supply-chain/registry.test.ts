@@ -113,13 +113,17 @@ describe("accessors", () => {
             findSites({ company: "nabtesco" })
                 .map((s) => s.country)
                 .sort(),
-        ).toEqual(["CN", "JP", "JP"]);
+        ).toEqual(["CN", "JP", "JP", "US"]);
         expect(findSites({ kind: "mine" }).map((s) => s.id)).toEqual([
             "arafura-nolans",
             "baotou-steel-bayan-obo",
+            "halleck-creek",
             "lynas-mt-weld",
             "maoniuping-mine",
             "mp-mountain-pass",
+            "niocorp-elk-creek",
+            "ramaco-brook-mine",
+            "round-top",
         ]);
     });
 });

@@ -5,6 +5,8 @@ import { JAPAN_SITES } from "./japan";
 import { JAPAN_PLANTS } from "./japan-plants";
 import { KOREA_SITES } from "./korea";
 import { type Site, hq } from "./types";
+import { US_PARTNER_SITES, US_SITES } from "./us";
+import { US_PLANTS } from "./us-plants";
 
 // Physical places: headquarters, plants, mines and refineries. `precision`
 // says how exact the pin is; "city" means the city centre, not the gate.
@@ -358,4 +360,7 @@ export const SITES: Site[] = [
     ...ALT_SITES,
     ...CHINA_SITES,
     ...CHINA_PLANTS,
+    ...US_SITES,
+    ...US_PLANTS,
+    ...US_PARTNER_SITES,
 ];

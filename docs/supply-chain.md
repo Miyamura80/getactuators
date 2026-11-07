@@ -1,7 +1,7 @@
 # Supply-chain atlas: data and page recipe
 
 The supply-chain pages (`/metals`, `/policy`, `/manufacturing`, `/alts`, `/japan`,
-`/china` and `/korea` are live; `/bom` and `/us` are planned; `/lab/supply-chain`
+`/china`, `/korea` and `/us` are live; `/bom` is planned; `/lab/supply-chain`
 is the hidden kit page) share one cited registry and one set of components.
 Pages hold content; numbers live in the registry and are referenced by id.
 
@@ -236,7 +236,7 @@ source references.
 
 ## Adding a country
 
-Country pages (`/japan`, `/china` and `/korea` are live; `/us` is planned)
+Country pages (`/japan`, `/china`, `/korea` and `/us` are live)
 share one template, so a new country is data only:
 
 ```

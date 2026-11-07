@@ -10,6 +10,7 @@ import { CHINA_PAGE } from "./china";
 import { JAPAN_PAGE } from "./japan";
 import { KOREA_PAGE } from "./korea";
 import type { CountryContent, CountryStage } from "./types";
+import { US_PAGE } from "./us";
 
 // The country page template's data: one entry per planned country, the
 // registry filtered to it, and the coverage gate that decides whether a
@@ -34,6 +35,7 @@ const CONTENT: Partial<Record<CountrySlug, CountryContent>> = {
     japan: JAPAN_PAGE,
     korea: KOREA_PAGE,
     china: CHINA_PAGE,
+    us: US_PAGE,
 };
 
 // A country page ships once its dataset reaches these counts. `links` counts

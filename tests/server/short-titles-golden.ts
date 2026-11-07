@@ -123,6 +123,7 @@ test("the full catalog has distinct reviewed metadata", async () => {
         "/sdk",
         "/people",
         "/china",
+        "/us",
     ]);
     const pages = registered.filter((page) => !added.has(page.path));
     expect(ACTUATORS).toHaveLength(68);
