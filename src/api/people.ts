@@ -159,12 +159,11 @@ export function peopleList(domain?: PeopleDomain): z.infer<typeof PeopleListSche
     };
 }
 
-export function listPeopleHandler({ url }: ApiContext): Response {
-    const { domain } = parseQuery(PeopleListParams, url);
-    return json(peopleList(domain));
+export function peopleQuery({ url }: ApiContext) {
+    return peopleList(parseQuery(PeopleListParams, url).domain);
 }
 
-export function getPersonHandler({ params }: ApiContext): Response {
+export function findPerson({ params }: ApiContext): z.infer<typeof PersonSchema> {
     const id = params.id ?? "";
     const p = getDirectoryPerson(id);
     if (!p)
@@ -172,5 +171,8 @@ export function getPersonHandler({ params }: ApiContext): Response {
             detail: `No person with id "${id}".`,
             hint: "List valid ids with GET /api/v1/people.",
         });
-    return json(serializePerson(p));
+    return serializePerson(p);
 }
+
+export const listPeopleHandler = (ctx: ApiContext): Response => json(peopleQuery(ctx));
+export const getPersonHandler = (ctx: ApiContext): Response => json(findPerson(ctx));
