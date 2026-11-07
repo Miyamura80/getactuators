@@ -91,8 +91,8 @@ test("supply-chain menu lists live pages only", () => {
         { label: "Chain", links: [{ href: "/metals", label: "Metals", live: true }] },
     ]);
     const preview = render(<PublicHeader path="/lab/supply-chain" supplyChainPreview />);
-    expect(preview.container.querySelectorAll(".site-sub-soon")).toHaveLength(2);
-    expect(preview.container.querySelectorAll(".site-sub-panel a")).toHaveLength(7);
+    expect(preview.container.querySelectorAll(".site-sub-soon")).toHaveLength(1);
+    expect(preview.container.querySelectorAll(".site-sub-panel a")).toHaveLength(8);
 });
 
 test("lab page renders every kit component", () => {
