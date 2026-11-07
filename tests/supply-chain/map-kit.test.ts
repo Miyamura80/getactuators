@@ -95,6 +95,7 @@ describe("map data", () => {
         ).toEqual(
             [
                 "arafura--hyundai-motor",
+                "asm--neo-performance",
                 "asm--noveon-magnetics",
                 "boston-dynamics--hyundai-motor",
                 "doosan-robotics--onexia",

@@ -55,6 +55,7 @@ export const KOREA_LINKS: KoreaLink[] = [
         from: "lynas",
         to: "ls-eco-energy",
         what: "Rare earth oxides for LS Eco Energy's metal plant in Vietnam",
+        kind: "partnership",
         sources: ["miningweekly-lynas-ls-2026"],
         confidence: "estimated",
         note: "Framework agreement of March 2026; definitive contracts are still to be negotiated.",
@@ -65,6 +66,14 @@ export const KOREA_LINKS: KoreaLink[] = [
         what: "NdFeB alloy from the Korean Metals Plant (100 t agreement)",
         sources: ["miningweekly-asm-noveon-2023"],
         confidence: "reported",
+    },
+    {
+        from: "asm",
+        to: "neo-performance",
+        what: "NdPr metal from the Korean Metals Plant for Neo's Magnequench magnet business",
+        sources: ["australianmining-asm-2025", "miningcomau-asm-neo-2025"],
+        confidence: "reported",
+        note: "About 19 t delivered by June 2025 and another 10 t sold in July 2025, with first kilogram lots of terbium and dysprosium sent to Neo's Estonia magnet plant.",
     },
     {
         from: "komir",
@@ -102,6 +111,7 @@ export const KOREA_LINKS: KoreaLink[] = [
         from: "lg-innotek",
         to: "boston-dynamics",
         what: "Vision sensing and camera modules for the Atlas humanoid",
+        kind: "partnership",
         sources: ["bd-lg-innotek-2025", "daum-lg-innotek-robots-2026"],
         confidence: "estimated",
         note: "The two agreed in 2025 to co-develop Atlas's vision module; a March 2026 press report says shipments have started, which neither company has confirmed.",
@@ -112,7 +122,7 @@ export const KOREA_LINKS: KoreaLink[] = [
         to: "rainbow-robotics",
         what: "Precision reducers for Rainbow's cobot, dual-arm and quadruped robots",
         sources: ["asiae-spg-rainbow-2026"],
-        confidence: "reported",
+        confidence: "estimated",
         note: "One report calls SPG the exclusive reducer supplier; no second source confirms exclusivity.",
     },
     {
@@ -174,6 +184,6 @@ export const KOREA_LINKS: KoreaLink[] = [
         kind: "investment",
         sources: ["thk-annual-report-2007"],
         confidence: "reported",
-        note: "The latest share THK has published that we found; it may have changed.",
+        note: "The 33.34% figure is from THK's 2007 annual report, the latest share it has published that we found; it may have changed since.",
     },
 ];

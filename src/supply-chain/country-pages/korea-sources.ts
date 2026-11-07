@@ -137,6 +137,18 @@ export const KOREA_SOURCES: KoreaSource[] = [
         "https://www.miningweekly.com/article/asm-signs-offtake-deal-with-us-noveon-2023-05-16",
     ),
     press(
+        "australianmining-asm-2025",
+        "Australian Mining",
+        "ASM builds rare earths momentum",
+        "https://www.australianmining.com.au/asm-builds-rare-earths-momentum/",
+    ),
+    press(
+        "miningcomau-asm-neo-2025",
+        "Mining.com.au",
+        "Australian Strategic marks maiden rare earths sale",
+        "https://mining.com.au/australian-strategic-marks-maiden-rare-earths-sale/",
+    ),
+    press(
         "koreaherald-posco-intl-hq",
         "The Korea Herald",
         "Posco International's headquarters in Songdo, Incheon",
