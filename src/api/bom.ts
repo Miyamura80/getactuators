@@ -1,4 +1,4 @@
-import { BOM_SLUGS, getBomCase } from "@/supply-chain/bom";
+import { BOM_SLUGS, type BomCase, getBomCase } from "@/supply-chain/bom";
 import {
     bomCaseOut,
     bomCaseView,
@@ -25,20 +25,30 @@ export function bomResult(
     slug: string,
 ): { view: ReturnType<typeof bomCaseView> } | { error: string } {
     const c = getBomCase(slug);
-    if (!c) return { error: `No BOM case "${slug}". Slugs: ${BOM_SLUGS.join(", ")}.` };
+    if (!c) return { error: missing(slug) };
     return { view: bomCaseView(c) };
+}
+
+const missing = (slug: string) =>
+    `No BOM case "${slug}". Slugs: ${BOM_SLUGS.join(", ")}.`;
+
+// The case a /api/v1/bom/{slug} request names; shared by the JSON handler and
+// its markdown twin.
+export function findBomCase({ params }: ApiContext): BomCase {
+    const slug = params.slug ?? "";
+    const c = getBomCase(slug);
+    if (!c)
+        throw new ApiError("not_found", {
+            detail: missing(slug),
+            hint: "List cases with GET /api/v1/bom.",
+        });
+    return c;
 }
 
 export function listBomHandler(_: ApiContext): Response {
     return json(bomListView());
 }
 
-export function getBomHandler({ params }: ApiContext): Response {
-    const r = bomResult(params.slug ?? "");
-    if ("error" in r)
-        throw new ApiError("not_found", {
-            detail: r.error,
-            hint: "List cases with GET /api/v1/bom.",
-        });
-    return json(r.view);
+export function getBomHandler(ctx: ApiContext): Response {
+    return json(bomCaseView(findBomCase(ctx)));
 }
