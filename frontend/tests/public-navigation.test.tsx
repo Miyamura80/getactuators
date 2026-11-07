@@ -101,8 +101,9 @@ test("footer GitHub link leads with one decorative GitHub mark", () => {
     cleanup();
 });
 
-test("the full dataset table keeps its datasheet warning", () => {
+test("the full dataset page ends at the site footer, with no disclaimer strip", () => {
     const view = render(<ActuatorsPage />);
-    expect(view.container.textContent).toContain("verify against datasheets before engineering use.");
+    expect(view.container.querySelector("p.foot")).toBeNull();
+    expect(view.container.textContent).not.toContain("Community dataset");
     cleanup();
 });
