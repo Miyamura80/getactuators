@@ -332,12 +332,17 @@ const SUPPLY_CHAIN: Row[] = [
     ["aubo", "AUBO Robotics", "aubo-robotics.cn", ["AUBO"]],
     ["rokae", "ROKAE", null],
     ["engineai", "EngineAI", "engineai.com.cn", ["ENGINEAI"]],
-    ["deep-robotics", "Deep Robotics", null, ["DEEP Robotics"]],
+    ["deep-robotics", "Deep Robotics", "deeprobotics.cn", ["DEEP Robotics"]],
     ["wuzhou-xinchun", "Wuzhou Xinchun", null],
     ["guohua", "Guohua Intelligent", "guohuaintel.com", ["Guohua Intelligence"]],
     ["byd", "BYD", null],
     ["geely", "Geely Holding", null, ["Geely"]],
     ["dongfeng-liuzhou", "Dongfeng Liuzhou Motor", null],
+    // Legged-robot makers (companies/legged). ghostrobotics.io and lignex1.com
+    // are the sites named by search results and Wikipedia (Nov 2026);
+    // deeprobotics.cn above is DEEP Robotics' own site, cited in the registry.
+    ["ghost-robotics", "Ghost Robotics", "ghostrobotics.io"],
+    ["lig-nex1", "LIG Nex1", "lignex1.com", ["LIG Defense & Aerospace"]],
 ];
 
 // Companies behind the /investors deals (src/investors.ts COMPANIES).

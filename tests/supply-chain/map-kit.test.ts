@@ -110,6 +110,7 @@ describe("map data", () => {
                 "lg-electronics--bear-robotics",
                 "lg-innotek--boston-dynamics",
                 "lg-innotek--figure",
+                "lig-nex1--ghost-robotics",
                 "lynas--ls-eco-energy",
                 "persona-ai--hd-hyundai",
                 "posco-international--hyundai-motor",

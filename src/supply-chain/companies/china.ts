@@ -359,9 +359,13 @@ export const CHINA_COMPANIES: Company[] = [
     cn("xiaomi", "Xiaomi", "小米", OEM, {
         stages: ["actuator", "robot"],
         ownership: { kind: "listed", ticker: "HKEX: 1810" },
-        products: ["CyberGear micro-actuator", "CyberDog quadrupeds"],
+        products: [
+            "CyberGear micro-actuator",
+            "CyberDog quadrupeds",
+            "CyberOne humanoid prototype",
+        ],
         url: "https://technode.com/2023/08/15/xiaomi-releases-the-cyberdog-2-a-smart-quadruped-bio-robot/",
-        sources: ["technode-cyberdog2-2023"],
+        sources: ["technode-cyberdog2-2023", "engadget-cyberone-2022"],
     }),
     cn("xpeng", "XPeng", "小鹏", OEM, {
         stages: ["robot"],
