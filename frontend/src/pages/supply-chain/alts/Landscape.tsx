@@ -27,7 +27,9 @@ export function Landscape({ geo, hidden, hover, focus, onHover, onPick }: {
         {bands.map(({ band, y, h }, i) => <g key={band.id} className={`al-band${i % 2 ? " is-alt" : ""}`}>
             <rect x={GUTTER} y={y} width={W - GUTTER} height={h} />
             <text className="al-band-label" x={GUTTER - 10} y={y + h / 2 - 2}>{band.label}</text>
-            <text className="al-band-sub" x={GUTTER - 10} y={y + h / 2 + 11}>{band.sub}</text>
+            <text className="al-band-sub" x={GUTTER - 10} y={y + h / 2 + 11}>
+                {band.sub.split("\n").map((l, j) => <tspan key={l} x={GUTTER - 10} dy={j ? 11 : 0}>{l}</tspan>)}
+            </text>
         </g>)}
         <g className="al-yaxis" aria-hidden="true">
             <text x={GUTTER - 10} y={bands[0].y - 8}>More rare earth</text>
