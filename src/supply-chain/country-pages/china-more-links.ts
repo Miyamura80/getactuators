@@ -7,7 +7,7 @@ import type { Confidence } from "../sourced";
 // framework agreements are partnerships, not supply.
 
 // Structural copy of SupplyLink, as in ./china-links (import cycle).
-interface ChinaLink {
+export interface ChinaLink {
     from: string;
     to: string;
     what: string;

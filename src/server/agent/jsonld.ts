@@ -17,7 +17,7 @@ import { productSummary } from "./product-content";
 
 // schema.org JSON-LD builders. Pages combine these into one @graph.
 
-type Node = Record<string, unknown>;
+export type Node = Record<string, unknown>;
 
 const ORG_ID = `${SITE_URL}/#organization`;
 const SITE_ID = `${SITE_URL}/#website`;

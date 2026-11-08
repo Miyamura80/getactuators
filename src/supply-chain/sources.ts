@@ -1,6 +1,7 @@
 import { PEOPLE_SOURCES } from "../people/sources";
 import { SDK_SOURCES } from "../sdk/sources";
 import { ALT_SOURCES } from "./alts/sources";
+import { BOM_SOURCES } from "./bom/sources";
 import { LEGGED_SOURCES } from "./companies/legged-sources";
 import { CHINA_SOURCES } from "./country-pages/china-sources";
 import { JAPAN_SOURCES } from "./country-pages/japan-sources";
@@ -621,6 +622,7 @@ export const SOURCES: SourceRef[] = [
     ...PEOPLE_SOURCES,
     ...ALT_SOURCES,
     ...LEGGED_SOURCES,
+    ...BOM_SOURCES,
 ];
 
 // Facts sources allowed to back more than FACTS_MAX_RECORDS records (see
@@ -636,6 +638,18 @@ export const FACTS_ALLOWLIST: ReuseAllowlist<SourceId> = {
         "A few Dy-by-grade figures from one white paper, reused as inputs to our own modeled grades and element notes.",
     "nus-eai-rare-earths-2025":
         "Background brief cited once per dated event or price driver in our own words; no table is taken.",
+    "jda-ndfeb-composition":
+        "The boron share of NdFeB, one figure reused in /metals grades and in each modeled /bom magnet recipe.",
+    "civils-metal-density":
+        "Three textbook densities (steel, copper, aluminium) reused to weigh our own modeled /bom part volumes; no table is copied.",
+    "alliance-magnet-properties":
+        "One NdFeB density reused to weigh each modeled /bom magnet; no table is copied.",
+    "optimusk-actuators":
+        "One list of the Optimus linear actuator's components, cited by each /bom node it names; costs and geometry are ours.",
+    "simplexity-go2-motor":
+        "One teardown's layout of the Go2 joint motor, cited by each /bom node it describes; sizes and masses are our model.",
+    "rcdrone-erob80":
+        "One shop listing for the eRob 80 joint (price, brake, encoder), cited by each /bom node of that joint; geometry is ours.",
 };
 
 const byId = new Map(SOURCES.map((s) => [s.id, s]));

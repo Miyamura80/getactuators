@@ -196,10 +196,10 @@ describe("country filter", () => {
 
     test("China grows toward the #80 target with the robot and joint makers it lacked", () => {
         const cn = coverage("CN");
-        expect(cn.companies).toBeGreaterThanOrEqual(80);
-        expect(cn.sites).toBeGreaterThanOrEqual(122);
-        expect(cn.links).toBeGreaterThanOrEqual(46);
-        expect(cn.supplyLinks).toBeGreaterThanOrEqual(31);
+        expect(cn.companies).toBeGreaterThanOrEqual(84);
+        expect(cn.sites).toBeGreaterThanOrEqual(142);
+        expect(cn.links).toBeGreaterThanOrEqual(58);
+        expect(cn.supplyLinks).toBeGreaterThanOrEqual(36);
         const ids = countryCompanies("CN").map((c) => c.id);
         for (const id of [
             "kepler",
@@ -214,6 +214,10 @@ describe("country filter", () => {
         // Foreign plants in China put ABB, Schaeffler and Neo on the map too.
         for (const id of ["abb", "schaeffler", "neo-performance"])
             expect(ids).toContain(id);
+        // The third batch adds the factories behind UBTech, AgiBot and Galbot.
+        const siteIds = countrySites("CN").map((s) => s.id);
+        for (const id of ["ubtech-liuzhou", "agibot-chengdu", "catl-ningde-hx"])
+            expect(siteIds).toContain(id);
     });
 
     test("every Chinese site has a precision, a source and a point inside China", () => {

@@ -1,4 +1,6 @@
 import type { SourceId, Sourced } from "../sourced";
+import { BOM_MARGINS } from "./bom";
+import { CHINA_EXTRA_COMPANIES } from "./china-extra";
 import { CHINA_MORE_COMPANIES } from "./china-more";
 import type { Company } from "./types";
 
@@ -7,7 +9,9 @@ import type { Company } from "./types";
 // (Midea's KUKA is already there). Records already in the seed list
 // (Northern Rare Earth, JL MAG, Leaderdrive, Unitree, UBTech, AgiBot, Tuopu)
 // are reused, not repeated. Many robot makers are private: revenue and
-// margin are left out unless a filing or IPO report gives them.
+// margin are left out unless a filing or IPO report gives them. Listed
+// part makers' gross margins (for /bom) come from ./bom, some from an
+// aggregator's statements page, with the confidence set to match.
 
 // Yuan to dollars for calendar 2025.
 const CNY_PER_USD = 7.2;
@@ -210,6 +214,7 @@ export const CHINA_COMPANIES: Company[] = [
         stages: ["motor", "actuator"],
         ownership: { kind: "listed", ticker: "SZSE: 002979" },
         products: ["Servo and stepper systems", "Frameless motors", "Joint modules"],
+        grossMargin: BOM_MARGINS.leadshine,
         url: "https://en.leadshine.com/abouts/about_corporate_overview.html",
         sources: ["leadshine-about", "prnasia-leadshine-ces-2026"],
     }),
@@ -247,6 +252,7 @@ export const CHINA_COMPANIES: Company[] = [
         stages: ["screw"],
         ownership: { kind: "listed", ticker: "SHA: 603009" },
         products: ["Planetary roller screws", "Automotive chassis parts"],
+        grossMargin: BOM_MARGINS.beite,
         url: "https://itiger.com/news/2475595965",
         sources: ["itiger-beite-prs-2024"],
     }),
@@ -402,6 +408,7 @@ export const CHINA_COMPANIES: Company[] = [
             "Robot joint actuators (in development)",
             "Thermal management parts",
         ],
+        grossMargin: BOM_MARGINS.sanhua,
         url: "https://uk.finance.yahoo.com/quote/002050.SZ/profile",
         sources: ["yahoo-sanhua", "yicai-sanhua-base"],
     }),
@@ -441,6 +448,7 @@ export const CHINA_COMPANIES: Company[] = [
         sources: ["cnevpost-optimus-audits-2026"],
     }),
     ...CHINA_MORE_COMPANIES,
+    ...CHINA_EXTRA_COMPANIES,
 ];
 
 // Unitree's IPO figures, attached to the seed record in ./index.ts.

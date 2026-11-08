@@ -44,6 +44,8 @@ const EXPECTED_TOOLS = [
     "list_people",
     "list_alt_technologies",
     "get_alt_technology",
+    "list_bom_cases",
+    "get_bom",
 ];
 
 const usedActuator = ACTUATORS.find((a) => robotsUsingActuator(a.id).length > 0);

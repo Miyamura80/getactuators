@@ -231,6 +231,8 @@ const SUPPLY_CHAIN: Row[] = [
     ["festo", "Festo", "festo.com"],
     ["barrett-technology", "Barrett Technology", "barrett.com", ["Barrett"]],
     ["magnomatics", "Magnomatics", "magnomatics.com"],
+    // /bom (#76): part makers the teardowns add.
+    ["cmsemicon", "Cmsemicon", null],
     // /china (#80): Chinese companies and partners. Domains only where a
     // source in the dataset is the company's own site; the rest stay null.
     ["baotou-steel", "Baotou Steel", null],
@@ -343,6 +345,10 @@ const SUPPLY_CHAIN: Row[] = [
     // deeprobotics.cn above is DEEP Robotics' own site, cited in the registry.
     ["ghost-robotics", "Ghost Robotics", "ghostrobotics.io"],
     ["lig-nex1", "LIG Nex1", "lignex1.com", ["LIG Defense & Aerospace"]],
+    ["ly-itech", "LY iTech", null, ["Lingyi iTech"]],
+    ["minth", "Minth Group", "minthgroup.com", ["Minth"]],
+    ["catl", "CATL", null],
+    ["faw-volkswagen", "FAW-Volkswagen", null],
 ];
 
 // Companies behind the /investors deals (src/investors.ts COMPANIES).

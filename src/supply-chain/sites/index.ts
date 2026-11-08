@@ -1,4 +1,5 @@
 import { ALT_SITES } from "./alts";
+import { BOM_SITES } from "./bom";
 import { CHINA_SITES } from "./china";
 import { CHINA_PLANTS } from "./china-plants";
 import { JAPAN_SITES } from "./japan";
@@ -367,10 +368,20 @@ export const SITES: Site[] = [
         lon: 121.84,
         sources: ["tuopu-annual-report-2024"],
     }),
+    // Minth's group headquarters; its Asia-Pacific one is in ./china-extra.
+    hq("minth-taipei", {
+        companyId: "minth",
+        name: "Minth Group headquarters",
+        country: "TW",
+        lat: 25.08,
+        lon: 121.57,
+        sources: ["minth-annual-report-2025"],
+    }),
     ...JAPAN_SITES,
     ...JAPAN_PLANTS,
     ...KOREA_SITES,
     ...ALT_SITES,
+    ...BOM_SITES,
     ...CHINA_SITES,
     ...CHINA_PLANTS,
     ...PRECISION_SITES,
