@@ -10,7 +10,7 @@ const CYBERONE_SRC = ["cyberone-engadget", "cyberone-qviro"];
 const CYBERONE_TYPE =
     "Xiaomi's in-house electric joint actuators; reducer types not published";
 const CYBERONE_LAYOUT =
-    "21 DOF reported as neck 1, arms 4 each, legs 5 each, grippers 1 each; which axes the 4 arm and 5 leg DOF are is assumed";
+    "21 DOF reported as neck 1, arms 4 each, legs 5 each, grippers 1 each; the axes of the 4 arm and 5 leg DOF are assumed";
 
 const cyberone = robot({
     id: "xiaomi-cyberone",
@@ -28,7 +28,7 @@ const cyberone = robot({
     sources: [...CYBERONE_SRC, "cyberone-primetel"],
     joints: [
         {
-            at: ["hip-pitch", "knee"],
+            at: ["hip-pitch"],
             type: "other",
             inferredFrom: `${CYBERONE_TYPE}; ${CYBERONE_LAYOUT}`,
             torque: 300,
@@ -36,6 +36,14 @@ const cyberone = robot({
             figureNote:
                 "Xiaomi's quoted peak for its largest joint actuator; which joints use it is not published",
             src: [...CYBERONE_SRC, "cyberone-primetel"],
+        },
+        {
+            at: ["knee"],
+            type: "other",
+            inferredFrom: `${CYBERONE_TYPE}; ${CYBERONE_LAYOUT}`,
+            size: "l",
+            sizeFrom: "52 kg robot, knee (class estimated; no torque published)",
+            src: CYBERONE_SRC,
         },
         {
             at: ["hip-roll", "hip-yaw", "ankle-pitch"],

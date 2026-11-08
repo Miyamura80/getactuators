@@ -190,8 +190,8 @@ export const KOREA_LINKS: KoreaLink[] = [
         what: "60% controlling stake, bought for US$240 m",
         kind: "investment",
         sources: ["trr-lig-ghost-2024", "prn-ghost-lig-close-2024"],
-        confidence: "reported",
-        note: "Announced December 2023 and closed July 2024, valuing Ghost at about US$400 m. Ghost keeps its Philadelphia headquarters and management.",
+        confidence: "estimated",
+        note: "Closed July 2024. Taken from search summaries of the two sources; the pages were not opened.",
     },
     {
         from: "samsung-electronics",

@@ -84,12 +84,7 @@ export const CHINA_MORE_COMPANIES: Company[] = [
     cn("deep-robotics", "Deep Robotics", OEM, {
         stages: ["actuator", "robot"],
         ownership: PRIVATE,
-        products: [
-            "Jueying X30 and Lite3 quadrupeds",
-            "LYNX M20 quadruped",
-            "DR02 humanoid",
-            "J-series joint modules",
-        ],
+        products: ["Jueying X30 quadruped", "DR02 humanoid", "Joint modules"],
         url: "https://www.deeprobotics.cn/en",
         sources: [
             "yicai-deep-robotics-2025",

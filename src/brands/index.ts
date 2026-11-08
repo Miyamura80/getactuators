@@ -340,11 +340,11 @@ const SUPPLY_CHAIN: Row[] = [
     ["byd", "BYD", null],
     ["geely", "Geely Holding", null, ["Geely"]],
     ["dongfeng-liuzhou", "Dongfeng Liuzhou Motor", null],
-    // Legged-robot makers (companies/legged). ghostrobotics.io and lignex1.com
-    // are the sites named by search results and Wikipedia (Nov 2026);
+    // Legged-robot makers (companies/legged). Neither domain is backed by a
+    // company-site source in the dataset yet, so both stay null (monogram);
     // deeprobotics.cn above is DEEP Robotics' own site, cited in the registry.
-    ["ghost-robotics", "Ghost Robotics", "ghostrobotics.io"],
-    ["lig-nex1", "LIG Nex1", "lignex1.com", ["LIG Defense & Aerospace"]],
+    ["ghost-robotics", "Ghost Robotics", null],
+    ["lig-nex1", "LIG Nex1", null, ["LIG Defense & Aerospace"]],
     ["ly-itech", "LY iTech", null, ["Lingyi iTech"]],
     ["minth", "Minth Group", "minthgroup.com", ["Minth"]],
     ["catl", "CATL", null],

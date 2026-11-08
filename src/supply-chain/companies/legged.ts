@@ -34,6 +34,10 @@ export const LEGGED_COMPANIES: Company[] = [
         url: "https://www.anybotics.com/",
         sources: ["siliconcanals-anybotics", "venturelab-anybotics-2025"],
     },
+    // A defence group, not a robot maker: its only robot exposure is the
+    // Ghost Robotics stake (see the link in country-pages/korea-links). The
+    // schema needs at least one stage, so it sits at "robot" like the other
+    // owner records (Samsung Electronics, Hyundai Motor).
     {
         id: "lig-nex1",
         name: "LIG Nex1",
@@ -42,10 +46,7 @@ export const LEGGED_COMPANIES: Company[] = [
         stages: ["robot"],
         segment: "robot-actuator-oem",
         ownership: { kind: "listed", ticker: "KRX: 079550" },
-        products: [
-            "Guided weapons and defence electronics",
-            "Controlling owner of Ghost Robotics",
-        ],
+        products: ["Guided weapons and defence electronics"],
         url: "https://www.lignex1.com/",
         sources: ["wiki-lig-nex1", "trr-lig-ghost-2024"],
     },

@@ -92,7 +92,7 @@ test("the fleet paginates 10 rows a page and sorts across every page", () => {
     act(() => {
         fireEvent.click(view.getByRole("button", { name: "Page 3" }));
     });
-    expect(rowNames(root)).toHaveLength(HUMANOIDS.length - 20);
+    expect(rowNames(root)).toHaveLength(Math.min(10, HUMANOIDS.length - 20));
     expect(new URLSearchParams(window.location.search).get("page")).toBe("3");
     // Sorting by name resets to page 1 and orders the whole fleet, not the page.
     act(() => {
