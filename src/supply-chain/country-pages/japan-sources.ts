@@ -30,7 +30,7 @@ const ACCESSED = "2026-11-03";
 // MinebeaMitsumi and Mabuchi Motor were read through search results only,
 // because the session could not reach those hosts. They carry no `accessed`
 // date; open each and move it out of this set when checked.
-const UNOPENED: ReadonlySet<string> = new Set([
+export const JAPAN_UNOPENED: ReadonlySet<string> = new Set([
     "nsk-robotics-actuators-2025",
     "nsk-actuators-review-2026",
     "response-nsk-actuators-2025",
@@ -51,7 +51,7 @@ function src(
     reuse: SourceReuse = "facts",
 ): JapanSource {
     const s: JapanSource = { id, publisher, title, url, kind, reuse };
-    return UNOPENED.has(id) ? s : { ...s, accessed: ACCESSED };
+    return JAPAN_UNOPENED.has(id) ? s : { ...s, accessed: ACCESSED };
 }
 
 const site = (id: string, publisher: string, url: string, title = publisher) =>
@@ -459,3 +459,14 @@ export const JAPAN_SOURCES: JapanSource[] = [
         "press",
     ),
 ];
+
+// An UNOPENED id that names no source (a typo, or a renamed source) would
+// leave a search-result-only document dated as opened.
+export function japanUnopenedSourceErrors(
+    sources: readonly JapanSource[] = JAPAN_SOURCES,
+): string[] {
+    const ids = new Set(sources.map((s) => s.id));
+    return [...JAPAN_UNOPENED]
+        .filter((id) => !ids.has(id))
+        .map((id) => `japan sources: unopened id "${id}" names no source`);
+}

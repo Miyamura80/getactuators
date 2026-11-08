@@ -13,6 +13,7 @@ import { bomErrors, bomNodeRecords, bomRecords } from "./bom";
 import { COMPANIES } from "./companies";
 import { insideCountry } from "./countries";
 import { countryStageRecords } from "./country-pages";
+import { japanUnopenedSourceErrors } from "./country-pages/japan-sources";
 import { LAB_MINING_HHI, LAB_STAGE_SHARES } from "./lab-fixtures";
 import { LAB_TESLA_MARGIN, labNdStep } from "./lab-kit";
 import { humanoidLicenceErrors, licenceErrors } from "./licence";
@@ -281,6 +282,7 @@ export function auditRegistry(
         ...policyErrors(today),
         ...processErrors(),
         ...unopenedSourceErrors(),
+        ...japanUnopenedSourceErrors(),
         ...sdkErrors(today),
         ...altErrors(),
         ...bomErrors(),
