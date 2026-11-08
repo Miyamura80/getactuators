@@ -7,7 +7,8 @@ import { colorAt } from "./scale";
 type Measure = "usd" | "per-nm";
 
 // One chart: title and question, the SVG, a legend that highlights a series,
-// notes on gaps, and the data with numbered sources behind a disclosure.
+// and, behind two disclosures, the data with numbered sources and the notes
+// on gaps with the licence.
 export function TrendFigure({ chart }: { chart: TrendChart }) {
     const [focus, setFocus] = useState<string | null>(null);
     const [measure, setMeasure] = useState<Measure>("usd");
@@ -105,6 +106,18 @@ export function TrendFigure({ chart }: { chart: TrendChart }) {
                 </ol>
             </details>
             <figcaption className="tr-notes">
+                <details className="tr-data">
+                    <summary>Notes and licence</summary>
+                    <Notes chart={chart} />
+                </details>
+            </figcaption>
+        </figure>
+    );
+}
+
+function Notes({ chart }: { chart: TrendChart }) {
+    return (
+        <>
                 <p>
                     {chart.kind === "bars" ? `Unit: ${chart.unit}. ` : ""}
                     {chart.notes[0]}
@@ -133,7 +146,6 @@ export function TrendFigure({ chart }: { chart: TrendChart }) {
                     )}{" "}
                     Hollow marks are estimated or modeled.
                 </p>
-            </figcaption>
-        </figure>
+        </>
     );
 }
