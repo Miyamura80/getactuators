@@ -3,6 +3,24 @@ const leader = "https://www.leaderdrive.com";
 const nidec = "https://www.nidec-dtc.com";
 const flex = `${nidec}/wp-content/uploads/downloads/catalogs/nidec-flexwave-strain-wave-gear-reducer-catalog.pdf`;
 const smart = `${nidec}/wp-content/uploads/downloads/catalogs/nidec-smart-flexwave-strain-wave-gear-reducer-catalog.pdf`;
+const robStrideDocs =
+    "https://github.com/RobStride/Product_Information/blob/b05095a98d5a586092d4011c3dbb6b7fb719a63b";
+
+export const rs01RatedPoint = {
+    torqueNm: 6,
+    rpm: 100,
+    cooling: "260 × 280 mm aluminum-alloy heat sink",
+};
+
+// Product-page notes supplement the raw catalog and its derived rankings.
+export const productSelectionNotes: Record<string, string> = {
+    "robstride-01": `The RS01 CAN2.0 module combines the motor, planetary reducer, magnetic encoder and drive. The joint still needs DC power, a CAN host and a mounting surface that can carry heat away.
+
+The [RS01 manual 260713](${robStrideDocs}/Product%20Literature/CAN2.0/RS01/RS01User%20Manual260713.pdf) lists **6 N·m at 100 rpm** with a ${rs01RatedPoint.cooling} and reports a 25°C thermal test. The [October 9, 2026 series specification](${robStrideDocs}/%E7%81%B5%E8%B6%B3%E6%97%B6%E4%BB%A3RS%E7%B3%BB%E5%88%97%E4%BA%A7%E5%93%81%E8%A7%84%E6%A0%BC%E4%BB%8B%E7%BB%8D%282026.010.09%29.pdf) separately lists **7 N·m at 100 rpm** with a 150 × 150 mm aluminum plate. The reason for the different ratings is unresolved. Neither document establishes sustained torque on your mounting surface. Use 17 N·m as a peak rating and check the applicable overload curve for repeated moves. For a compact or enclosed joint, validate the required duty cycle on the installed mount.`,
+    "cubemars-ak70-10": `The AK70-10 KV100 combines a motor, a 10:1 planetary reducer and a motor-side magnetic encoder. The [CubeMars store](https://store.cubemars.com/products/ak70-10) sells it with or without the driver board. Confirm the board option before planning CAN control, power and cabling. The no-board option requires a separate compatible drive.
+
+The [CubeMars brochure, printed page 7](https://www.cubemars.com/images/file/20230703/1688352405877552.pdf) lists **521 g and 0.12° backlash (7.2 arcmin)**. The [current CubeMars model table](https://www.cubemars.com/product/ak70-10-kv100-robotic-actuator.html) lists **621 g and 0.2° (12 arcmin)**. The catalog retains 521 g and 8 arcmin. The source documents do not map the conflicting values to a specific shipped revision or board option. Confirm the assembled mass before using it for a moving link or calculating torque density. For a joint that must reverse accurately under load, measure output repeatability under representative load. Motor-side encoder resolution and gearbox backlash describe different properties and do not establish loaded output repeatability.`,
+};
 
 interface ProductContent {
     summary: string;
