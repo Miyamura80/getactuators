@@ -18,6 +18,9 @@ function readChart(): string {
     return [q, hash].find((id) => id && getTrendChart(id)) ?? TREND_CHARTS[0]?.id ?? "";
 }
 
+// Matches the trends.css breakpoint where the panel stacks under the list.
+const stacked = () => Boolean(window.matchMedia?.("(max-width: 900px)").matches);
+
 // Thumbnails (title, one headline number, sparkline) beside a sticky panel
 // with the selected chart in full.
 export function Trends({ menuOpen = false }: { menuOpen?: boolean }) {
@@ -27,6 +30,10 @@ export function Trends({ menuOpen = false }: { menuOpen?: boolean }) {
     useEffect(() => {
         const prev = document.title;
         document.title = TITLE;
+        // A deep link on the stacked layout lands below the thumbnails, so
+        // bring the opened chart into view.
+        const linked = new URLSearchParams(window.location.search).has("chart") || window.location.hash.length > 1;
+        if (linked && stacked()) requestAnimationFrame(() => panel.current?.scrollIntoView({ block: "start" }));
         return () => {
             document.title = prev;
         };
@@ -37,7 +44,7 @@ export function Trends({ menuOpen = false }: { menuOpen?: boolean }) {
         q.set("chart", id);
         window.history.replaceState(window.history.state, "", `${TRENDS_PATH}?${q.toString()}`);
         // Stacked layout: bring the panel into view.
-        if (window.matchMedia?.("(max-width: 900px)").matches) panel.current?.scrollIntoView({ block: "start" });
+        if (stacked()) panel.current?.scrollIntoView({ block: "start" });
     };
     return (
         <div className="tool-page tr-page">
@@ -53,7 +60,7 @@ export function Trends({ menuOpen = false }: { menuOpen?: boolean }) {
                     <div className="tr-list">
                         {TREND_SECTIONS.map((s) => (
                             <section key={s} aria-labelledby={`tr-${s}`}>
-                                <h2 className="tr-label" id={`tr-${s}`}>
+                                <h2 className="tr-section-label" id={`tr-${s}`}>
                                     {TREND_SECTION_LABEL[s]}
                                 </h2>
                                 <div className="tr-thumbs">

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { type TrendChart, type TrendPoint, chartSources, formatValue, perNm, sourceOf, yearSpan } from "../../../../src/trends";
+import { type TrendChart, type TrendPoint, allPoints, chartSources, formatValue, perNm, sourceOf, yearSpan } from "../../../../src/trends";
 import { BarChart } from "./BarChart";
 import { LineChart } from "./LineChart";
 import { colorAt } from "./scale";
@@ -41,6 +41,14 @@ export function TrendFigure({ chart }: { chart: TrendChart }) {
                 </div>
             )}
             {chart.kind === "bars" ? <BarChart chart={chart} /> : <LineChart chart={chart} value={value} unit={unit} focus={focus} />}
+            {allPoints(chart).some((p) => p.confidence !== "reported") && (
+                <p className="tr-key">
+                    <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
+                        <circle cx="5" cy="5" r="3.5" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                    </svg>
+                    Hollow: estimated or modeled
+                </p>
+            )}
             {chart.kind === "line" && chart.series.length > 1 && (
                 <ul className="tr-legend" aria-label="Series">
                     {chart.series.map((s, i) => (
@@ -143,8 +151,7 @@ function Notes({ chart }: { chart: TrendChart }) {
                             </a>
                             .
                         </>
-                    )}{" "}
-                    Hollow marks are estimated or modeled.
+                    )}
                 </p>
         </>
     );

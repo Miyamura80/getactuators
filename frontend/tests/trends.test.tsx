@@ -4,9 +4,14 @@ import { act, cleanup, fireEvent, render } from "@testing-library/react";
 import { mountApp } from "../src/startup";
 import { Trends } from "../src/pages/trends/Trends";
 import { headline } from "../src/pages/trends/headline";
-import { TREND_CHARTS, TREND_SECTIONS, getTrendChart } from "../../src/trends";
+import { TREND_CHARTS, TREND_SECTIONS, allPoints, chartSources, getTrendChart } from "../../src/trends";
 
 afterEach(cleanup);
+
+const realMatchMedia = window.matchMedia;
+afterEach(() => {
+    window.matchMedia = realMatchMedia;
+});
 
 function setUrl(url: string) {
     (window as unknown as { happyDOM: { setURL: (url: string) => void } }).happyDOM.setURL(url);
@@ -103,4 +108,55 @@ test("the price chart switches to $/N·m and the legend highlights a series", ()
     fireEvent.click(first);
     expect(first.getAttribute("aria-pressed")).toBe("true");
     expect(prices.querySelectorAll(".tr-series.is-dim").length).toBeGreaterThan(0);
+});
+
+test("every chart opens in the panel with its licence, sources, key and caption last", () => {
+    setUrl("http://localhost:1/trends");
+    const view = render(<Trends />);
+    for (const c of TREND_CHARTS) {
+        fireEvent.click(view.container.querySelector(`.tr-thumb[data-chart="${c.id}"]`) as HTMLElement);
+        const fig = panel(view.container).querySelector(".tr-figure") as HTMLElement;
+        expect(fig.querySelector("h3")?.textContent).toBe(c.title);
+        expect(fig.querySelector("svg.tr-svg")).toBeTruthy();
+        expect(fig.lastElementChild?.tagName).toBe("FIGCAPTION");
+        expect(fig.querySelector("figcaption .tr-licence")?.textContent).toContain(c.licence);
+        expect(fig.querySelectorAll(".tr-sources li")).toHaveLength(chartSources(c).length);
+        const estimated = allPoints(c).some((p) => p.confidence !== "reported");
+        // The hollow-mark key stays outside the toggles whenever it applies.
+        const key = fig.querySelector(".tr-key");
+        expect(Boolean(key)).toBe(estimated);
+        if (key) expect(key.closest("details")).toBeNull();
+    }
+});
+
+test("a headline resting on an estimated point says so", () => {
+    const screws = headline(getTrendChart("roller-screw-cost")!);
+    expect(screws.estimated).toBe(true);
+    expect(screws.value.startsWith("~")).toBe(true);
+    expect(screws.label).toContain("est. baseline");
+    const prices = headline(getTrendChart("actuator-prices")!);
+    expect(prices.estimated).toBe(false);
+    expect(prices.value.startsWith("~")).toBe(false);
+    setUrl("http://localhost:1/trends");
+    const view = render(<Trends />);
+    expect(view.container.querySelector('.tr-thumb[data-chart="roller-screw-cost"] .tr-thumb-num')?.textContent).toContain("est. baseline");
+});
+
+test("a deep link on the stacked layout scrolls the panel into view", async () => {
+    window.matchMedia = ((q: string) => ({ matches: true, media: q }) as MediaQueryList) as typeof window.matchMedia;
+    const seen: Element[] = [];
+    const real = Element.prototype.scrollIntoView;
+    Element.prototype.scrollIntoView = function (this: Element) {
+        seen.push(this);
+    };
+    try {
+        setUrl("http://localhost:1/trends?chart=price-of-ai");
+        await act(async () => {
+            render(<Trends />);
+            await new Promise((r) => setTimeout(r, 30));
+        });
+        expect(seen.some((el) => el.id === "tr-panel")).toBe(true);
+    } finally {
+        Element.prototype.scrollIntoView = real;
+    }
 });
