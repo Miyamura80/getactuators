@@ -52,7 +52,10 @@ describe("robot kind filter", () => {
         expect(bar).not.toBeNull();
         fireEvent.click(bar as Element);
         expect(window.location.search).toBe("?kind=quadruped");
-        expect(window.location.hash).not.toBe("");
+        // The hash names a quadruped shown in the filtered view, and its card exists.
+        const id = window.location.hash.slice(1);
+        expect(quadrupeds.map((r) => r.id)).toContain(id);
+        expect(container.querySelector(`#robot-${id}`)).not.toBeNull();
     });
 
     test("unnamed joint motors read as such, with role and count", () => {
