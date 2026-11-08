@@ -9,7 +9,9 @@ import { bullets, humanize, mdLink, mdTable, mdText, num, usd } from "./md";
 import {
     engineeringNotes,
     engineeringSources,
+    productSelectionNotes,
     productSummary,
+    rs01RatedPoint,
 } from "./product-content";
 import { sizeAJointSection } from "./size-a-joint";
 
@@ -96,7 +98,23 @@ function specRows(a: Actuator): string[][] {
         };
         const field = fields[k];
         const caveat = field ? fieldCaveat(a, field) : undefined;
-        return [k, mdText(`${v}${caveat ? `: ${caveat}` : ""}`)];
+        let selectionCaveat: string | undefined;
+        if (a.id === "robstride-01" && k === "Rated torque") {
+            selectionCaveat = `at ${rs01RatedPoint.rpm} rpm with a ${rs01RatedPoint.cooling}. See Selection notes for the separate 7 N·m rating.`;
+        }
+        if (
+            a.id === "cubemars-ak70-10" &&
+            ["Weight", "Backlash", "Torque density", "Integrated driver"].includes(k)
+        ) {
+            selectionCaveat =
+                "catalog value. Confirm shipped configuration (see Selection notes).";
+        }
+        return [
+            k,
+            mdText(
+                `${v}${caveat ? `: ${caveat}` : ""}${selectionCaveat ? `: ${selectionCaveat}` : ""}`,
+            ),
+        ];
     });
 }
 
@@ -118,14 +136,16 @@ export function actuatorBody(a: Actuator): string {
         `## Specifications\n\n${mdTable(["Spec", "Value"], specRows(a))}${a.id === "cubemars-ak80-9" ? "\n\n**Legacy catalog / revision conflict:** retained catalog fields are not revalidated by this editorial review. Catalog mass is 485 g and motor-side encoder is 14-bit; the [reviewed V3.0 KV100 model page](https://www.cubemars.com/product/ak80-9-v3-0-robotic-actuator.html) lists 490 g and 16-bit inner sensing, while the [AK family manual V3.2.0](https://www.cubemars.com/data/cms/202602/ak-series-prodcut-manual-v3-2-0-for-ak-3-0-robotic-actuator.pdf) lists 21-bit. Confirm the installed revision before using these values or derived torque density; the documentation discrepancy is unresolved." : ""}`,
         `## Use cases\n\n${bullets(a.use_cases.map(humanize))}`,
     ];
+    const selection = productSelectionNotes[a.id];
     const sizing = sizeAJointSection(a);
     if (sizing) sections.splice(3, 0, sizing);
+    if (selection) sections.splice(3, 0, `## Selection notes\n\n${selection}`);
     if (robots.length > 0) {
         sections.push(
             `## Robots that use it\n\n${bullets(robots.map((r) => `${mdLink(r.name, absoluteUrl(`/robots#${encodeURIComponent(r.id)}`))} by ${mdText(r.brand)}: ${mdText(r.summary)}`))}`,
         );
     }
-    if (a.notes && !productSummary(a.id))
+    if (a.notes && !productSummary(a.id) && !selection)
         sections.push(`## Notes\n\n${mdText(a.notes)}`);
     const engineering = engineeringNotes(a.id);
     if (engineering) sections.push(engineering);
