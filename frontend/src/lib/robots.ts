@@ -67,3 +67,9 @@ export function totalPeakTorque(r: Robot): number | null {
     }
     return total;
 }
+
+// Link to a robot's card that keeps the page's query (such as ?kind=), so a
+// chart click inside a filtered view stays filtered.
+export function robotCardHref(id: string): string {
+    return `${window.location.pathname}${window.location.search}#${id}`;
+}

@@ -45,6 +45,16 @@ describe("robot kind filter", () => {
         expect(container.querySelectorAll(".robot-card").length).toBe(ROBOTS.length);
     });
 
+    test("a chart bar jumps to the card and keeps the kind filter", () => {
+        window.history.replaceState({}, "", "/robots?kind=quadruped");
+        const { container } = render(<RobotShowcase />);
+        const bar = container.querySelector(".bar-g");
+        expect(bar).not.toBeNull();
+        fireEvent.click(bar as Element);
+        expect(window.location.search).toBe("?kind=quadruped");
+        expect(window.location.hash).not.toBe("");
+    });
+
     test("unnamed joint motors read as such, with role and count", () => {
         window.history.replaceState({}, "", "/robots?kind=quadruped");
         const { container } = render(<RobotShowcase />);

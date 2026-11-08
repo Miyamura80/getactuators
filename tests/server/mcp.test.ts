@@ -265,6 +265,7 @@ describe("MCP tools/call", () => {
         const list = (await callTool("list_robots", { kind: "quadruped", limit: 100 }))
             .structuredContent as { total: number; results: { kind: string }[] };
         expect(list.total).toBe(ROBOTS.filter((r) => r.kind === "quadruped").length);
+        expect(list.results).toHaveLength(list.total);
         expect(list.results.every((r) => r.kind === "quadruped")).toBe(true);
         const spot = (await callTool("get_robot", { id: "boston-dynamics-spot" }))
             .structuredContent as {

@@ -134,7 +134,8 @@ export const ROBOT_SOURCES = {
     "janes-vision60-jsdf": {
         title: "Janes: Ghost Robotics to supply Vision 60 UGVs to the JSDF (about 50 kg)",
         url: "https://www.janes.com/defence-news/news-detail/dsei-japan-2023-ghost-robotics-to-supply-vision-60-ugvs-to-jsdf",
-        reuse: "facts",
+        // Janes is subscription defence intelligence: cite, never redistribute.
+        reuse: "restricted",
         opened: false,
     },
     "umbc-vision60": {

@@ -40,6 +40,10 @@ test("jointRows keeps unnamed motors as null with their role and count", () => {
     const spot = ROBOTS.find((r) => r.id === "boston-dynamics-spot");
     if (!spot) throw new Error("missing spot");
     const rows = jointRows(spot);
-    expect(rows.map((j) => j.count)).toEqual([4, 4, 4]);
+    expect(rows.map((j) => [j.role, j.count])).toEqual([
+        ["Hip x (abduction)", 4],
+        ["Hip y (flexion)", 4],
+        ["Knee", 4],
+    ]);
     expect(rows.every((j) => j.motor === null)).toBe(true);
 });

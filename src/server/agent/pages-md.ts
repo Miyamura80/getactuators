@@ -137,7 +137,7 @@ export function actuatorsBody(): string {
 export function robotsBody(): string {
     return [
         "# Robots and the actuators inside them",
-        `${ROBOTS.length} robots (${robotKindCounts(ROBOTS)}) with the motor used in each joint, linked to the actuator spec sheet where the catalog has one. A joint whose motor no source names is listed with its role and count only. Use it to see which parts real builds rely on.`,
+        `${ROBOTS.length} robots (${robotKindCounts(ROBOTS)}) with the motor used in each joint, linked to the actuator spec sheet where the catalog has one. A joint whose motor is not named by a source is listed without an actuator link. Use it to see which parts real builds rely on.`,
         ...ROBOTS.map((r) => robotSection(r)),
     ].join("\n\n");
 }

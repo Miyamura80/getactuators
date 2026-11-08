@@ -1,6 +1,6 @@
 import type { Robot, RobotKind } from "../../types";
 import { hours, usdShort } from "../../lib/format";
-import { KIND_COLOR, liftRatio, runtimeHours } from "../../lib/robots";
+import { KIND_COLOR, liftRatio, robotCardHref, runtimeHours } from "../../lib/robots";
 import { navigate } from "../../lib/router";
 import { BarChart } from "../BarChart";
 import type { BarItem } from "../BarChart";
@@ -129,7 +129,7 @@ export function RobotCharts({ robots }: { robots: readonly Robot[] }) {
                                 <BarChart
                                     items={c.items}
                                     log={c.log}
-                                    onSelect={(id) => navigate(`/robots#${id}`)}
+                                    onSelect={(id) => navigate(robotCardHref(id))}
                                 />
                             ) : (
                                 <p className="robot-chart-empty">No robot here publishes this yet.</p>

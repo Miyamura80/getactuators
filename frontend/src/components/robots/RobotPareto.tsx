@@ -1,7 +1,7 @@
 import type { Robot } from "../../types";
 import { hours, usdShort } from "../../lib/format";
 import { frontierPath, paretoFront } from "../../lib/pareto";
-import { KIND_COLOR, runtimeHours, totalPeakTorque } from "../../lib/robots";
+import { KIND_COLOR, robotCardHref, runtimeHours, totalPeakTorque } from "../../lib/robots";
 import { navigate } from "../../lib/router";
 import { activation } from "../../lib/svg-link";
 import { BrandGlyph } from "../BrandGlyph";
@@ -107,7 +107,7 @@ function ParetoPlot({ pts, yLabel, yLog, fmtY }: Props) {
             ))}
             {path && <path d={path} className="pareto" />}
             {pts.map((p, i) => (
-                <g key={p.r.id} {...activation(p.r.name, () => navigate(`/robots#${p.r.id}`))}>
+                <g key={p.r.id} {...activation(p.r.name, () => navigate(robotCardHref(p.r.id)))}>
                     <title>{`${p.r.name}: ${usdShort(p.price)}, ${fmtY(p.y)}`}</title>
                     <circle
                         cx={sx(p.price)}
