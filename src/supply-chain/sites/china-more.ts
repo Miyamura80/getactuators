@@ -12,7 +12,7 @@ const BEIJING: [number, number] = [39.9, 116.41];
 const SHENZHEN: [number, number] = [22.54, 114.06];
 const HANGZHOU: [number, number] = [30.27, 120.15];
 
-const head = (
+export const head = (
     companyId: string,
     name: string,
     admin1: string,
@@ -35,12 +35,12 @@ const head = (
 type P = Parameters<typeof plant>[1];
 
 // A plant with no status unless the record gives one.
-const cnPlant = (id: string, p: Omit<P, "country">): Site => {
+export const cnPlant = (id: string, p: Omit<P, "country">): Site => {
     const { status: _default, ...site } = plant(id, { country: "CN", ...p });
     return p.status ? { ...site, status: p.status } : site;
 };
 
-const opened = (year: number, sources: SourceId[]): Sourced<number> => ({
+export const opened = (year: number, sources: SourceId[]): Sourced<number> => ({
     value: year,
     unit: "year",
     sources,

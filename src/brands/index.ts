@@ -340,6 +340,10 @@ const SUPPLY_CHAIN: Row[] = [
     ["byd", "BYD", null],
     ["geely", "Geely Holding", null, ["Geely"]],
     ["dongfeng-liuzhou", "Dongfeng Liuzhou Motor", null],
+    ["ly-itech", "LY iTech", null, ["Lingyi iTech"]],
+    ["minth", "Minth Group", "minthgroup.com", ["Minth"]],
+    ["catl", "CATL", null],
+    ["faw-volkswagen", "FAW-Volkswagen", null],
 ];
 
 // Companies behind the /investors deals (src/investors.ts COMPANIES).
