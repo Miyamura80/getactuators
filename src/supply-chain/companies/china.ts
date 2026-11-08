@@ -1,5 +1,6 @@
 import type { SourceId, Sourced } from "../sourced";
 import { BOM_MARGINS } from "./bom";
+import { CHINA_EXTRA_COMPANIES } from "./china-extra";
 import { CHINA_MORE_COMPANIES } from "./china-more";
 import type { Company } from "./types";
 
@@ -443,6 +444,7 @@ export const CHINA_COMPANIES: Company[] = [
         sources: ["cnevpost-optimus-audits-2026"],
     }),
     ...CHINA_MORE_COMPANIES,
+    ...CHINA_EXTRA_COMPANIES,
 ];
 
 // Unitree's IPO figures, attached to the seed record in ./index.ts.
