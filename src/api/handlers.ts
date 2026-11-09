@@ -124,6 +124,7 @@ export function robotPage({ url }: ApiContext): Page<Robot> {
     const brand = filters.brand?.toLowerCase();
     const items = ROBOTS.filter((r) => {
         if (brand && r.brand.toLowerCase() !== brand) return false;
+        if (filters.kind && r.kind !== filters.kind) return false;
         const hay = [r.id, r.name, r.brand, r.summary].join(" ").toLowerCase();
         return q.every((t) => hay.includes(t));
     }).sort((a, b) => a.id.localeCompare(b.id));

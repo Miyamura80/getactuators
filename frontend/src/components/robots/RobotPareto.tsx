@@ -1,7 +1,7 @@
 import type { Robot } from "../../types";
 import { hours, usdShort } from "../../lib/format";
 import { frontierPath, paretoFront } from "../../lib/pareto";
-import { KIND_COLOR, ROBOTS, runtimeHours, totalPeakTorque } from "../../lib/robots";
+import { KIND_COLOR, robotCardHref, runtimeHours, totalPeakTorque } from "../../lib/robots";
 import { navigate } from "../../lib/router";
 import { activation } from "../../lib/svg-link";
 import { BrandGlyph } from "../BrandGlyph";
@@ -107,7 +107,7 @@ function ParetoPlot({ pts, yLabel, yLog, fmtY }: Props) {
             ))}
             {path && <path d={path} className="pareto" />}
             {pts.map((p, i) => (
-                <g key={p.r.id} {...activation(p.r.name, () => navigate(`/robots#${p.r.id}`))}>
+                <g key={p.r.id} {...activation(p.r.name, () => navigate(robotCardHref(p.r.id)))}>
                     <title>{`${p.r.name}: ${usdShort(p.price)}, ${fmtY(p.y)}`}</title>
                     <circle
                         cx={sx(p.price)}
@@ -139,14 +139,14 @@ function ParetoPlot({ pts, yLabel, yLog, fmtY }: Props) {
     );
 }
 
-function points(metric: (r: Robot) => number | null): Pt[] {
-    return ROBOTS.flatMap((r) => {
+function points(robots: readonly Robot[], metric: (r: Robot) => number | null): Pt[] {
+    return robots.flatMap((r) => {
         const y = metric(r);
         return r.price_usd != null && y != null && y > 0 ? [{ r, price: r.price_usd, y }] : [];
     });
 }
 
-const PLOTS = [
+const plots = (robots: readonly Robot[]) => [
     {
         key: "torque",
         title: "Price vs total joint torque",
@@ -154,7 +154,7 @@ const PLOTS = [
         yLabel: "Total peak torque (N·m, log)",
         yLog: true,
         fmtY: (v: number) => (v >= 1000 ? `${(v / 1000).toFixed(v >= 10_000 ? 0 : 1)}k` : `${Math.round(v)}`),
-        pts: points(totalPeakTorque),
+        pts: points(robots, totalPeakTorque),
     },
     {
         key: "dof",
@@ -163,7 +163,7 @@ const PLOTS = [
         yLabel: "Degrees of freedom",
         yLog: false,
         fmtY: (v: number) => `${Math.round(v)}`,
-        pts: points((r) => r.dof),
+        pts: points(robots, (r) => r.dof),
     },
     {
         key: "runtime",
@@ -172,16 +172,19 @@ const PLOTS = [
         yLabel: "Runtime per charge (h)",
         yLog: false,
         fmtY: hours,
-        pts: points(runtimeHours),
+        pts: points(robots, runtimeHours),
     },
 ];
 
 // Price trade-off scatters with the Pareto frontier drawn through the robots
 // nothing else beats on both price and the metric.
-export function RobotPareto() {
+// A frontier needs at least two priced robots; plots with fewer are left out.
+export function RobotPareto({ robots }: { robots: readonly Robot[] }) {
+    const shown = plots(robots).filter((p) => p.pts.length >= 2);
+    if (shown.length === 0) return null;
     return (
         <div className="robot-paretos">
-            {PLOTS.map((p) => (
+            {shown.map((p) => (
                 <section className="hi-card" key={p.key}>
                     <div className="hi-head">
                         <BrandGlyph className="hi-tag" />

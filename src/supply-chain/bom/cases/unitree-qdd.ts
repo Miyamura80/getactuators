@@ -471,16 +471,8 @@ export const UNITREE_QDD: BomCase = {
         "No supplier margin sits between the metal and the shelf: the bought-in chips come to about $4, and almost everything else is Unitree's own step.",
     uses: {
         actuators: [{ id: "unitree-go-m8010-6", relation: "this" }],
-        other: [
-            {
-                name: "Go1",
-                brand: "Unitree",
-                count: 12,
-                relation: "this",
-                how: "The Go1 quadruped's joint motor, three per leg, per the catalog entry and Unitree's motor page.",
-                sources: LISTING,
-            },
-        ],
+        // Go1 is in the robots catalog with twelve of these joints.
+        robotMotorIds: ["unitree-go-m8010-6"],
         humanoids: { actuatorType: "qdd" },
     },
     root: {

@@ -1,3 +1,4 @@
+import { robotLicenceErrors } from "../catalog/robot-licence";
 import { openSourceLicenceErrors } from "../open-source/licence";
 import { DIRECTORY_RECORDS } from "../people/records";
 import { sdkErrors } from "../sdk/audit";
@@ -306,6 +307,7 @@ export function auditRegistry(
         }),
         ...humanoidLicenceErrors(),
         ...openSourceLicenceErrors(),
+        ...robotLicenceErrors(),
         ...trendsLicenceErrors(today),
     );
     const values = sourcedValueIssues(today);

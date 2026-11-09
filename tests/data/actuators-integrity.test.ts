@@ -229,7 +229,7 @@ interface RobotMotorRow {
 }
 
 interface RobotJointRow {
-    motor: string;
+    motor: string | null;
 }
 
 interface RobotRow {
@@ -272,11 +272,12 @@ describe("robots dataset integrity", () => {
         }
     });
 
-    test("every robot joint references a known motor", () => {
+    // A null motor means no cited source names it; any key must resolve.
+    test("every robot joint references a known motor or null", () => {
         const motorKeys = new Set(Object.keys(robotData.motors));
         for (const robot of robotData.robots) {
             for (const joint of robot.joints) {
-                expect(motorKeys.has(joint.motor)).toBe(true);
+                if (joint.motor !== null) expect(motorKeys.has(joint.motor)).toBe(true);
             }
         }
     });

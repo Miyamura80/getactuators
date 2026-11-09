@@ -1,4 +1,4 @@
-import { CATEGORIES, type CategorySlug } from "@/catalog";
+import { CATEGORIES, type CategorySlug, ROBOT_KINDS } from "@/catalog";
 import { SORTABLE_FIELDS } from "@/catalog/query";
 import { z } from "zod";
 
@@ -103,11 +103,13 @@ export const robotRefSchema = z.object({
 });
 
 export const robotSummarySchema = robotRefSchema.extend({
+    kind: z.enum(ROBOT_KINDS).describe("humanoid, robot_arm or quadruped."),
     country: str,
     dof: z.number().nullable(),
     payload_kg: num,
     reach_mm: num,
     weight_kg: num,
+    top_speed_mps: num.describe("Top speed in m/s (quadrupeds)."),
     price_usd: num,
     price_max_usd: num,
     product_url: str,
@@ -136,5 +138,7 @@ export const motorSchema = z.object({
 export const jointSchema = z.object({
     role: z.string(),
     count: z.number(),
-    motor: motorSchema,
+    motor: motorSchema
+        .nullable()
+        .describe("Null when no cited source names the motor."),
 });

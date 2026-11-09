@@ -19,7 +19,7 @@ export interface ResolvedJoint {
 export function resolveJoints(robot: Robot): ResolvedJoint[] {
     const out: ResolvedJoint[] = [];
     for (const j of robot.joints) {
-        const motor = ROBOT_MOTORS[j.motor];
+        const motor = j.motor ? ROBOT_MOTORS[j.motor] : undefined;
         if (motor) out.push({ role: j.role, count: j.count, motor });
     }
     return out;
@@ -40,6 +40,7 @@ export function motorCount(robot: Robot): number {
 export const KIND_COLOR: Record<RobotKind, string> = {
     humanoid: "hsl(262 60% 66%)",
     robot_arm: "hsl(210 70% 62%)",
+    quadruped: "hsl(152 55% 52%)",
 };
 
 // Runtime per charge for battery robots, or null for mains power and for
@@ -65,4 +66,10 @@ export function totalPeakTorque(r: Robot): number | null {
         total += j.count * j.motor.peak_torque_nm;
     }
     return total;
+}
+
+// Link to a robot's card that keeps the page's query (such as ?kind=), so a
+// chart click inside a filtered view stays filtered.
+export function robotCardHref(id: string): string {
+    return `${window.location.pathname}${window.location.search}#${id}`;
 }

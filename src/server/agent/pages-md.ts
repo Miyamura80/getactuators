@@ -2,7 +2,13 @@ import { ACTUATORS, type Actuator, CATEGORIES, ROBOTS } from "@/catalog";
 import { isRankable } from "@/catalog/evidence";
 import { listBrands, queryActuators } from "@/catalog/query";
 import { LICENSE_SPLIT, REPO_URL, absoluteUrl } from "../site";
-import { actuatorLabel, actuatorPath, actuatorTable, robotSection } from "./catalog-md";
+import {
+    actuatorLabel,
+    actuatorPath,
+    actuatorTable,
+    robotKindCounts,
+    robotSection,
+} from "./catalog-md";
 import { PATHS } from "./links";
 import { bullets, dofText, mdLink, mdText, num, usd } from "./md";
 
@@ -131,7 +137,7 @@ export function actuatorsBody(): string {
 export function robotsBody(): string {
     return [
         "# Robots and the actuators inside them",
-        `${ROBOTS.length} robots with the motor used in each joint, linked to the actuator spec sheet where the catalog has one. Use it to see which parts real builds rely on.`,
+        `${ROBOTS.length} robots (${robotKindCounts(ROBOTS)}) with the motor used in each joint, linked to the actuator spec sheet where the catalog has one. A joint whose motor is not named by a source is listed without an actuator link. Use it to see which parts real builds rely on.`,
         ...ROBOTS.map((r) => robotSection(r)),
     ].join("\n\n");
 }

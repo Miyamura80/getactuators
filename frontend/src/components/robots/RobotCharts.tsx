@@ -1,6 +1,6 @@
-import type { Robot } from "../../types";
+import type { Robot, RobotKind } from "../../types";
 import { hours, usdShort } from "../../lib/format";
-import { KIND_COLOR, liftRatio, ROBOTS, runtimeHours } from "../../lib/robots";
+import { KIND_COLOR, liftRatio, robotCardHref, runtimeHours } from "../../lib/robots";
 import { navigate } from "../../lib/router";
 import { BarChart } from "../BarChart";
 import type { BarItem } from "../BarChart";
@@ -18,8 +18,8 @@ interface BarSpec {
 
 // Bars for every robot the metric covers, sorted by value; the robots it
 // skips are named under the chart instead of silently dropped.
-function bars({ metric, fmt, dir, label = (r) => r.name }: BarSpec): { items: BarItem[]; skipped: Robot[] } {
-    const rows = ROBOTS.map((r) => ({ r, v: metric(r) }));
+function bars(robots: readonly Robot[], { metric, fmt, dir, label = (r) => r.name }: BarSpec): { items: BarItem[]; skipped: Robot[] } {
+    const rows = robots.map((r) => ({ r, v: metric(r) }));
     const items = rows
         .filter((x): x is { r: Robot; v: number } => x.v != null)
         .sort((a, b) => (dir === "asc" ? a.v - b.v : b.v - a.v))
@@ -51,14 +51,14 @@ function skipNotes(groups: SkipGroup[], skipped: Robot[]): string[] {
 }
 
 // Ranged prices use the low end, the cheapest way into the robot.
-const CARDS = [
+const cards = (robots: readonly Robot[]) => [
     {
         key: "price",
         title: "Price",
         sub: "Entry USD · log scale · lower is cheaper",
         log: true,
         skip: [{ label: "Price not published" }],
-        ...bars({ metric: (r) => r.price_usd, fmt: usdShort, dir: "asc" }),
+        ...bars(robots, { metric: (r) => r.price_usd, fmt: usdShort, dir: "asc" }),
     },
     {
         key: "per-dof",
@@ -66,7 +66,7 @@ const CARDS = [
         sub: "Entry USD per degree of freedom · log scale",
         log: true,
         skip: [{ label: "Price not published" }],
-        ...bars({ metric: (r) => (r.price_usd == null || !r.dof ? null : r.price_usd / r.dof), fmt: usdShort, dir: "asc" }),
+        ...bars(robots, { metric: (r) => (r.price_usd == null || !r.dof ? null : r.price_usd / r.dof), fmt: usdShort, dir: "asc" }),
     },
     {
         key: "runtime",
@@ -77,7 +77,7 @@ const CARDS = [
             { label: "Mains-powered, no runtime", has: (r: Robot) => r.power === "mains" },
             { label: "Runtime not published" },
         ],
-        ...bars({ metric: runtimeHours, fmt: hours, dir: "desc" }),
+        ...bars(robots, { metric: runtimeHours, fmt: hours, dir: "desc" }),
     },
     {
         key: "lift",
@@ -85,26 +85,37 @@ const CARDS = [
         sub: "How much it lifts per kg of robot · higher is better",
         log: false,
         skip: [{ label: "Payload or weight not published" }],
-        ...bars({
+        ...bars(robots, {
             metric: liftRatio,
             fmt: (v) => v.toFixed(2),
             dir: "desc",
-            label: (r) => (r.payload_basis === "whole_body" ? `${r.name} (whole body)` : r.name),
+            // Legged robots always carry on the whole body, so only the
+            // exceptions among arms and humanoids are marked.
+            label: (r) =>
+                r.payload_basis === "whole_body" && r.kind !== "quadruped" ? `${r.name} (whole body)` : r.name,
         }),
     },
 ];
 
-export function RobotCharts() {
+const LEGEND: { kind: RobotKind; name: string }[] = [
+    { kind: "humanoid", name: "Humanoid" },
+    { kind: "robot_arm", name: "Robot arm" },
+    { kind: "quadruped", name: "Quadruped" },
+];
+
+// Charts over the robots on show (all of them, or one kind when filtered).
+export function RobotCharts({ robots }: { robots: readonly Robot[] }) {
+    const kinds = new Set(robots.map((r) => r.kind));
     return (
         <>
             <Legend
-                entries={[
-                    { name: "Humanoid", color: KIND_COLOR.humanoid },
-                    { name: "Robot arm", color: KIND_COLOR.robot_arm },
-                ]}
+                entries={LEGEND.filter((l) => kinds.has(l.kind)).map((l) => ({
+                    name: l.name,
+                    color: KIND_COLOR[l.kind],
+                }))}
             />
             <div className="highlights robot-costs">
-                {CARDS.map((c) => (
+                {cards(robots).map((c) => (
                     <section className="hi-card" key={c.key}>
                         <div className="hi-head">
                             <BrandGlyph className="hi-tag" />
@@ -114,11 +125,15 @@ export function RobotCharts() {
                             </div>
                         </div>
                         <div className="hi-chart">
-                            <BarChart
-                                items={c.items}
-                                log={c.log}
-                                onSelect={(id) => navigate(`/robots#${id}`)}
-                            />
+                            {c.items.length > 0 ? (
+                                <BarChart
+                                    items={c.items}
+                                    log={c.log}
+                                    onSelect={(id) => navigate(robotCardHref(id))}
+                                />
+                            ) : (
+                                <p className="robot-chart-empty">No robot here publishes this yet.</p>
+                            )}
                         </div>
                         {c.skipped.length > 0 && (
                             <div className="robot-costs-note">
@@ -130,7 +145,7 @@ export function RobotCharts() {
                     </section>
                 ))}
             </div>
-            <RobotPareto />
+            <RobotPareto robots={robots} />
         </>
     );
 }

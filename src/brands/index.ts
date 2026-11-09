@@ -346,7 +346,7 @@ const SUPPLY_CHAIN: Row[] = [
     // Legged-robot makers (companies/legged). Neither domain is backed by a
     // company-site source in the dataset yet, so both stay null (monogram);
     // deeprobotics.cn above is DEEP Robotics' own site, cited in the registry.
-    ["ghost-robotics", "Ghost Robotics", null],
+    ["ghost-robotics", "Ghost Robotics", null, ["Ghost"]],
     ["lig-nex1", "LIG Nex1", null, ["LIG Defense & Aerospace"]],
     ["ly-itech", "LY iTech", null, ["Lingyi iTech"]],
     ["minth", "Minth Group", "minthgroup.com", ["Minth"]],

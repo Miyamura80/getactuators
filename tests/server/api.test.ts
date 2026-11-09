@@ -123,12 +123,34 @@ describe("single resources", () => {
         const res = await call("/api/v1/robots/i2rt-yam");
         const body = RobotDetailSchema.parse(await res.json());
         expect(body.joints.length).toBeGreaterThan(0);
-        expect(body.joints[0]?.motor.name).toBeTruthy();
+        expect(body.joints[0]?.motor?.name).toBeTruthy();
+    });
+
+    test("robot detail keeps joints whose motor is unnamed", async () => {
+        const res = await call("/api/v1/robots/boston-dynamics-spot");
+        const body = RobotDetailSchema.parse(await res.json());
+        expect(body.kind).toBe("quadruped");
+        expect(body.joints.reduce((n, j) => n + j.count, 0)).toBe(12);
+        expect(body.joints.every((j) => j.motor === null)).toBe(true);
     });
 
     test("robots list paginates", async () => {
         const body = RobotListSchema.parse(await (await call("/api/v1/robots")).json());
         expect(body.pagination.total).toBe(ROBOTS.length);
+    });
+
+    test("robots list filters by kind", async () => {
+        const url = "/api/v1/robots?kind=quadruped&limit=100";
+        const body = RobotListSchema.parse(await (await call(url)).json());
+        const want = ROBOTS.filter((r) => r.kind === "quadruped").length;
+        expect(want).toBeGreaterThan(0);
+        expect(body.pagination.total).toBe(want);
+        expect(body.data.every((r) => r.kind === "quadruped")).toBe(true);
+        await expectProblem(
+            await call("/api/v1/robots?kind=dog"),
+            400,
+            "invalid_parameter",
+        );
     });
 
     test("unknown ids are 404 problems", async () => {

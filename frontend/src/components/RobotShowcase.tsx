@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import type { Robot, RobotKind } from "../types";
-import { ROBOTS, ROBOT_CREDIT, liftRatio, motorCount, resolveJoints, runtimeHours } from "../lib/robots";
+import { ROBOTS, ROBOT_CREDIT, ROBOT_MOTORS, liftRatio, motorCount, runtimeHours } from "../lib/robots";
 import { hours, num, price } from "../lib/format";
-import { useLocationKey } from "../lib/router";
+import { navigate, useLocationKey } from "../lib/router";
 import { BrandGlyph } from "./BrandGlyph";
 import { CopyLinkButton } from "./CopyLinkButton";
 import { RobotArt } from "./RobotArt";
@@ -13,7 +13,7 @@ import { RobotFacts } from "./robots/RobotFacts";
 
 // Price shown as a single value or a range when the product has variants.
 function priceLabel(r: Robot): string {
-    if (r.price_usd == null) return r.kind === "humanoid" ? "Quote" : "–";
+    if (r.price_usd == null) return r.kind === "humanoid" || r.availability === "quote_only" ? "Quote" : "–";
     if (r.price_max_usd && r.price_max_usd !== r.price_usd) {
         return `${price(r.price_usd)}–${price(r.price_max_usd)}`;
     }
@@ -37,13 +37,43 @@ function runtimeLabel(r: Robot): string {
 const KIND_LABEL: Record<RobotKind, string> = {
     humanoid: "humanoid robot",
     robot_arm: "robot arm",
+    quadruped: "quadruped robot",
 };
 
 // Section order and headings for the grouped grid.
 const GROUPS: { kind: RobotKind; title: string }[] = [
     { kind: "humanoid", title: "Humanoids" },
     { kind: "robot_arm", title: "Robot arms" },
+    { kind: "quadruped", title: "Quadrupeds" },
 ];
+
+// Size stat by body plan: height for humanoids, top speed for quadrupeds,
+// reach for arms.
+function SizeStat({ robot }: { robot: Robot }) {
+    if (robot.kind === "humanoid")
+        return (
+            <div>
+                <dt>Height</dt>
+                <dd>
+                    {robot.height_m == null ? "–" : `${num(robot.height_m, 2)} m`}
+                    {robot.reach_mm != null && <small className="robot-stat-note">{num(robot.reach_mm)} mm arm</small>}
+                </dd>
+            </div>
+        );
+    if (robot.kind === "quadruped")
+        return (
+            <div>
+                <dt>Top speed</dt>
+                <dd>{robot.top_speed_mps == null ? "–" : `${num(robot.top_speed_mps, 1)} m/s`}</dd>
+            </div>
+        );
+    return (
+        <div>
+            <dt>Reach</dt>
+            <dd>{robot.reach_mm == null ? "–" : `${num(robot.reach_mm)} mm`}</dd>
+        </div>
+    );
+}
 
 // Thumbnail: prefer the real product photo, but fall back to the 3D
 // render if the (hotlinked) image is missing or fails to load, so a rotated
@@ -75,7 +105,7 @@ function RobotThumb({ robot }: { robot: Robot }) {
 }
 
 function RobotCard({ robot, active }: { robot: Robot; active: boolean }) {
-    const joints = resolveJoints(robot);
+    const joints = robot.joints.map((j) => ({ ...j, motor: j.motor ? ROBOT_MOTORS[j.motor] : undefined }));
     const total = motorCount(robot);
     const lift = liftRatio(robot);
     return (
@@ -105,23 +135,12 @@ function RobotCard({ robot, active }: { robot: Robot; active: boolean }) {
                         <dt>Payload</dt>
                         <dd>
                             {robot.payload_kg == null ? "–" : `${num(robot.payload_kg, 1)} kg`}
-                            {robot.payload_basis === "whole_body" && <small className="robot-stat-note">whole body</small>}
+                            {robot.payload_basis === "whole_body" && robot.kind !== "quadruped" && (
+                                <small className="robot-stat-note">whole body</small>
+                            )}
                         </dd>
                     </div>
-                    {robot.kind === "humanoid" ? (
-                        <div>
-                            <dt>Height</dt>
-                            <dd>
-                                {robot.height_m == null ? "–" : `${num(robot.height_m, 2)} m`}
-                                {robot.reach_mm != null && <small className="robot-stat-note">{num(robot.reach_mm)} mm arm</small>}
-                            </dd>
-                        </div>
-                    ) : (
-                        <div>
-                            <dt>Reach</dt>
-                            <dd>{robot.reach_mm == null ? "–" : `${num(robot.reach_mm)} mm`}</dd>
-                        </div>
-                    )}
+                    <SizeStat robot={robot} />
                     <div>
                         <dt>Weight</dt>
                         <dd>{robot.weight_kg == null ? "–" : `${num(robot.weight_kg, 2)} kg`}</dd>
@@ -150,7 +169,11 @@ function RobotCard({ robot, active }: { robot: Robot; active: boolean }) {
                         <ul className="motor-list">
                             {joints.map((j) => (
                                 <li key={j.role} className="motor-row">
-                                    {j.motor.actuator_id ? (
+                                    {!j.motor ? (
+                                        <span className="motor-name" data-unnamed="true">
+                                            {j.count}× motor not named
+                                        </span>
+                                    ) : j.motor.actuator_id ? (
                                         <a
                                             className="motor-name"
                                             data-catalog="true"
@@ -170,10 +193,12 @@ function RobotCard({ robot, active }: { robot: Robot; active: boolean }) {
                                         </a>
                                     )}
                                     <span className="motor-role">{j.role}</span>
-                                    <span className="motor-torque">
-                                        {torque(j.motor.rated_torque_nm)}/{torque(j.motor.peak_torque_nm)} N·m
-                                        {j.motor.gear_ratio ? ` · ${j.motor.gear_ratio}` : ""}
-                                    </span>
+                                    {j.motor && (
+                                        <span className="motor-torque">
+                                            {torque(j.motor.rated_torque_nm)}/{torque(j.motor.peak_torque_nm)} N·m
+                                            {j.motor.gear_ratio ? ` · ${j.motor.gear_ratio}` : ""}
+                                        </span>
+                                    )}
                                 </li>
                             ))}
                         </ul>
@@ -183,6 +208,13 @@ function RobotCard({ robot, active }: { robot: Robot; active: boolean }) {
                         </p>
                     )}
                 </div>
+
+                {robot.notes && (
+                    <details className="robot-notes">
+                        <summary>Data notes</summary>
+                        <p>{robot.notes}</p>
+                    </details>
+                )}
 
                 {robot.product_url && (
                     <a
@@ -214,8 +246,52 @@ function hashRobotId(): string | null {
     return ROBOTS.some((r) => r.id === id) ? id : null;
 }
 
+// The ?kind= filter, when it names a known kind.
+function kindParam(): RobotKind | null {
+    const k = new URLSearchParams(window.location.search).get("kind");
+    return GROUPS.some((g) => g.kind === k) ? (k as RobotKind) : null;
+}
+
+// /robots with the kind filter set (or cleared), keeping the rest of the query.
+function kindHref(kind: RobotKind | null): string {
+    const q = new URLSearchParams(window.location.search);
+    if (kind) q.set("kind", kind);
+    else q.delete("kind");
+    const qs = q.toString();
+    return `${window.location.pathname}${qs ? `?${qs}` : ""}`;
+}
+
+function KindFilter({ kind }: { kind: RobotKind | null }) {
+    const options: { kind: RobotKind | null; title: string; n: number }[] = [
+        { kind: null, title: "All", n: ROBOTS.length },
+        ...GROUPS.map((g) => ({ ...g, n: ROBOTS.filter((r) => r.kind === g.kind).length })),
+    ];
+    return (
+        <div className="chips robot-kind-filter" role="group" aria-label="Robot type">
+            {options.map((o) => (
+                <button
+                    type="button"
+                    key={o.kind ?? "all"}
+                    className="chip"
+                    aria-pressed={o.kind === kind}
+                    data-on={o.kind === kind}
+                    onClick={() => navigate(kindHref(o.kind), { keepScroll: true })}
+                >
+                    {o.title} <span className="chip-count">{o.n}</span>
+                </button>
+            ))}
+        </div>
+    );
+}
+
 export function RobotShowcase() {
     const locKey = useLocationKey();
+    // A hash jump to a robot outside the filter shows every kind, so the
+    // targeted card always exists.
+    const hashed = ROBOTS.find((r) => r.id === hashRobotId());
+    const param = kindParam();
+    const kind = hashed && param && hashed.kind !== param ? null : param;
+    const shown = kind ? ROBOTS.filter((r) => r.kind === kind) : ROBOTS;
     // The card the current hash points at, briefly highlighted after a jump.
     const [active, setActive] = useState<string | null>(null);
 
@@ -246,10 +322,12 @@ export function RobotShowcase() {
                 the actuator that drives it.
             </p>
 
-            <RobotCharts />
+            <KindFilter kind={kind} />
+
+            <RobotCharts robots={shown} />
 
             {GROUPS.map((g) => {
-                const robots = ROBOTS.filter((r) => r.kind === g.kind);
+                const robots = shown.filter((r) => r.kind === g.kind);
                 if (robots.length === 0) return null;
                 return (
                     <div key={g.kind} className="robot-group">
@@ -276,7 +354,9 @@ export function RobotShowcase() {
                 <a href="https://humanoids.fyi/" target="_blank" rel="noopener noreferrer">
                     humanoids.fyi
                 </a>
-                , specs from each maker's own pages.
+                , specs from each maker's own pages. Quadruped specs from maker pages,
+                spec sheets, launch coverage and retailer listings; a joint reads
+                "motor not named" when no source names its motor.
             </p>
         </section>
     );

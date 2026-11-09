@@ -7,7 +7,13 @@ import {
     SITE_DESCRIPTION,
     absoluteUrl,
 } from "../site";
-import { actuatorPath, categoryLabel, robotSection } from "./catalog-md";
+import {
+    ROBOT_KIND_LABEL,
+    actuatorPath,
+    categoryLabel,
+    robotKindCounts,
+    robotSection,
+} from "./catalog-md";
 import { CATALOG_UPDATED_DATE } from "./freshness";
 import { MCP_TOOLS, PATHS, RATE_LIMIT_PER_MINUTE, REST_ENDPOINTS } from "./links";
 import { whenToUse } from "./manifests";
@@ -71,7 +77,7 @@ ${link("llms-full.txt", PATHS.llmsFull, "the whole catalog as text in one fetch"
 ${link("agents.md", PATHS.agentsMd, "agent guide: when to use, MCP, REST, limits")}
 ${link("pricing.md", PATHS.pricingMd, "free plan, rate limit and license")}
 ${link("Actuators section", "/actuators/llms.txt", "one line per actuator with its markdown spec sheet")}
-${link("Robots section", "/robots/llms.txt", "robots and the motors in each joint")}
+${link("Robots section", "/robots/llms.txt", "humanoids, robot arms and quadrupeds with the motors in each joint")}
 ${link("API docs section", "/docs/llms.txt", "REST endpoints and discovery documents")}
 ${link("Agent skill", PATHS.skill, "SKILL.md teaching an agent to use the API and MCP server")}
 
@@ -79,7 +85,7 @@ ${link("Agent skill", PATHS.skill, "SKILL.md teaching an agent to use the API an
 
 ${link("Home", "/index.md", "overview, top actuators by torque density, FAQ")}
 ${link("Actuators", "/actuators.md", "every actuator in one table, plus categories")}
-${link("Robots", "/robots.md", "robots with per-joint motors")}
+${link("Robots", "/robots.md", "humanoids, robot arms and quadrupeds with per-joint motors")}
 ${link("Trends", "/trends.md", "actuator list prices and $/N·m over time, humanoid shipments by company, roller screw cost, the price of AI against electricity and batteries (Epoch AI, Tadepalli) and humanoid battery runtime, every point dated and cited; MCP get_trends, REST /api/v1/trends")}
 ${link("Open-source robots", "/open-source.md", "robots you can build from published designs: openness matrix with links, licences, BOM cost, actuators per joint and lineage; MCP list_open_robots, REST /api/v1/open-robots")}
 
@@ -180,14 +186,14 @@ ${lines.join("\n")}
 export function robotsLlmsTxt(): string {
     return `# actuatorlist: robots
 
-> ${ROBOTS.length} robots with the motor used in each joint. Use it to answer which actuators a robot uses, or which robots use an actuator.
+> ${ROBOTS.length} robots (${robotKindCounts(ROBOTS)}) with the motor used in each joint. Use it to answer which actuators a robot uses, or which robots use an actuator. Many quadruped makers do not name their joint motors, so those joints carry a role and count with a null motor.
 
 - ${mdLink("Robots page (markdown)", u("/robots.md"))}: every robot with specs and a joint table
-- ${mdLink("Robots API", u("/api/v1/robots"))}: the same data as JSON
+- ${mdLink("Robots API", u("/api/v1/robots"))}: the same data as JSON; filter with \`?kind=humanoid\`, \`robot_arm\` or \`quadruped\` (MCP: list_robots with kind)
 
 ## Robots
 
-${ROBOTS.map((r) => `- ${mdText(r.name)} by ${mdText(r.brand)}: ${dofText(r.dof)}, ${usd(r.price_usd)}. ${mdText(r.summary)}`).join("\n")}
+${ROBOTS.map((r) => `- ${mdText(r.name)} by ${mdText(r.brand)} (${ROBOT_KIND_LABEL[r.kind].toLowerCase()}): ${dofText(r.dof)}, ${usd(r.price_usd)}. ${mdText(r.summary)}`).join("\n")}
 `;
 }
 
