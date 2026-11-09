@@ -2,6 +2,7 @@ import { openSourceLicenceErrors } from "../open-source/licence";
 import { DIRECTORY_RECORDS } from "../people/records";
 import { sdkErrors } from "../sdk/audit";
 import { SDK_CHECKS } from "../sdk/checks";
+import { trendsLicenceErrors } from "../trends/licence";
 import {
     ALT_TECHS,
     DEPLOYMENTS,
@@ -305,6 +306,7 @@ export function auditRegistry(
         }),
         ...humanoidLicenceErrors(),
         ...openSourceLicenceErrors(),
+        ...trendsLicenceErrors(today),
     );
     const values = sourcedValueIssues(today);
     const orphans = SOURCES.filter((s) => !used.has(s.id)).map(

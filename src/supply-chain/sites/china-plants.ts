@@ -1,4 +1,5 @@
 import type { SourceId, Sourced } from "../sourced";
+import { CHINA_EXTRA_PLANTS } from "./china-extra";
 import { CHINA_MORE_PLANTS } from "./china-more";
 import { type Site, plant } from "./types";
 
@@ -426,4 +427,5 @@ export const CHINA_PLANTS: Site[] = [
         sources: ["mikekalil-leju-factory"],
     }),
     ...CHINA_MORE_PLANTS,
+    ...CHINA_EXTRA_PLANTS,
 ];

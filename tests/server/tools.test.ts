@@ -158,3 +158,29 @@ test("actuator pages link each tool at that part's own numbers", async () => {
     const guide = await (await get("/guides/robot-actuator-selection")).text();
     expect(guide).toContain('href="/tools/robot-arm-torque-calculator"');
 });
+
+test("pilot product pages qualify conflicting specs in HTML and Markdown", async () => {
+    const rs01 = "/actuators/robstride-01";
+    const ak70 = "/actuators/cubemars-ak70-10";
+    for (const fetchPage of [get, getMarkdown]) {
+        const robstride = await fetchPage(rs01);
+        const cubemars = await fetchPage(ak70);
+        expect(robstride.status).toBe(200);
+        expect(cubemars.status).toBe(200);
+        const rs01Body = await robstride.text();
+        expect(rs01Body).toContain("260 × 280 mm aluminum-alloy heat sink");
+        expect(rs01Body).toContain("7 N·m at 100 rpm");
+        expect(rs01Body).toContain("150 × 150 mm aluminum plate");
+        expect(rs01Body).toContain("63 W");
+        expect(rs01Body).not.toContain("n=315");
+        const ak70Body = await cubemars.text();
+        expect(ak70Body).toContain("521 g and 0.12° backlash (7.2 arcmin)");
+        expect(ak70Body).toContain("621 g and 0.2° (12 arcmin)");
+        expect(ak70Body).toContain("with or without the driver board");
+        expect(ak70Body).toContain("loaded output repeatability");
+    }
+    const rs01Html = await (await get(rs01)).text();
+    expect(rs01Html).toContain("solve=power&amp;t=6&amp;n=100");
+    const rs01Markdown = await (await getMarkdown(rs01)).text();
+    expect(rs01Markdown).toContain("solve=power&t=6&n=100");
+});

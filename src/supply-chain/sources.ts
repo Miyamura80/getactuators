@@ -2,6 +2,7 @@ import { PEOPLE_SOURCES } from "../people/sources";
 import { SDK_SOURCES } from "../sdk/sources";
 import { ALT_SOURCES } from "./alts/sources";
 import { BOM_SOURCES } from "./bom/sources";
+import { LEGGED_SOURCES } from "./companies/legged-sources";
 import { CHINA_SOURCES } from "./country-pages/china-sources";
 import { JAPAN_SOURCES } from "./country-pages/japan-sources";
 import { KOREA_SOURCES } from "./country-pages/korea-sources";
@@ -620,6 +621,7 @@ export const SOURCES: SourceRef[] = [
     ...KOREA_SOURCES,
     ...PEOPLE_SOURCES,
     ...ALT_SOURCES,
+    ...LEGGED_SOURCES,
     ...BOM_SOURCES,
 ];
 

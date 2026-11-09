@@ -3,6 +3,7 @@
 // only: the browser bundle reuses this module.
 
 import { HUMANOIDS_AS_OF } from "./build";
+import { ASIA_FLEET } from "./fleet-asia";
 import { CHINA_FLEET } from "./fleet-china";
 import { OPEN_FLEET } from "./fleet-open";
 import { URDF_FLEET } from "./fleet-urdf";
@@ -59,6 +60,7 @@ export const HUMANOIDS: readonly Humanoid[] = [
     ...OPEN_FLEET.slice(0, 2),
     ...URDF_FLEET,
     ...CHINA_FLEET,
+    ...ASIA_FLEET,
     ...OPEN_FLEET.slice(2),
 ];
 

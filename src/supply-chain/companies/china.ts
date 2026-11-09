@@ -1,5 +1,6 @@
 import type { SourceId, Sourced } from "../sourced";
 import { BOM_MARGINS } from "./bom";
+import { CHINA_EXTRA_COMPANIES } from "./china-extra";
 import { CHINA_MORE_COMPANIES } from "./china-more";
 import type { Company } from "./types";
 
@@ -364,9 +365,13 @@ export const CHINA_COMPANIES: Company[] = [
     cn("xiaomi", "Xiaomi", "小米", OEM, {
         stages: ["actuator", "robot"],
         ownership: { kind: "listed", ticker: "HKEX: 1810" },
-        products: ["CyberGear micro-actuator", "CyberDog quadrupeds"],
+        products: [
+            "CyberGear micro-actuator",
+            "CyberDog quadrupeds",
+            "CyberOne humanoid prototype",
+        ],
         url: "https://technode.com/2023/08/15/xiaomi-releases-the-cyberdog-2-a-smart-quadruped-bio-robot/",
-        sources: ["technode-cyberdog2-2023"],
+        sources: ["technode-cyberdog2-2023", "engadget-cyberone-2022"],
     }),
     cn("xpeng", "XPeng", "小鹏", OEM, {
         stages: ["robot"],
@@ -443,6 +448,7 @@ export const CHINA_COMPANIES: Company[] = [
         sources: ["cnevpost-optimus-audits-2026"],
     }),
     ...CHINA_MORE_COMPANIES,
+    ...CHINA_EXTRA_COMPANIES,
 ];
 
 // Unitree's IPO figures, attached to the seed record in ./index.ts.

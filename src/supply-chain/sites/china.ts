@@ -1,3 +1,4 @@
+import { CHINA_EXTRA_SITES } from "./china-extra";
 import { CHINA_MORE_SITES } from "./china-more";
 import { type Site, hq } from "./types";
 
@@ -212,4 +213,5 @@ export const CHINA_SITES: Site[] = [
         "cnevpost-optimus-audits-2026",
     ]),
     ...CHINA_MORE_SITES,
+    ...CHINA_EXTRA_SITES,
 ];
