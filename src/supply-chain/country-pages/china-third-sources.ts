@@ -56,13 +56,6 @@ export const CHINA_THIRD_SOURCES: ChinaSource[] = [
         "company-site",
     ),
     src(
-        "thk-overseas-plants",
-        "THK",
-        "Overseas production bases",
-        "https://www.thk.com/jp/ja/company/overseas_production_base",
-        "company-site",
-    ),
-    src(
         "wuxi-thk-base-2023",
         "Wuxi Municipal People's Government",
         "Investment memorandum signed for THK's new manufacturing base in Wuxi",

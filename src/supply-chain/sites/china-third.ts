@@ -7,14 +7,15 @@ import type { Site } from "./types";
 // in the named district ("city"). A plant carries a status only when a
 // source states one. Spread into CHINA_PLANTS.
 
-const THK = ["thk-overseas-plants"];
+const THK = ["thk-overseas-bases"];
 const SHI_TANGSHAN = ["shi-tangshan"];
 const TIMKEN = ["timken-xemc-xiangtan-2010"];
 const SKF = ["skf-dalian-2011"];
 const YASKAWA = ["yaskawa-shenyang-2018"];
 
 // A THK manufacturing subsidiary in China, as listed among THK's overseas
-// production bases (no products or dates given there).
+// production bases. That page gives no products or dates, so no `makes` is
+// set; `stages` follows the THK company record (screws and bearings).
 const thkPlant = (
     id: string,
     unit: string,
@@ -29,7 +30,6 @@ const thkPlant = (
         lat,
         lon,
         precision: "city",
-        makes: ["Linear motion components"],
         stages: ["bearing", "screw"],
         status: "operating",
         sources,
