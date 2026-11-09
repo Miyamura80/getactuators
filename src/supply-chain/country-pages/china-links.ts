@@ -1,6 +1,7 @@
 import type { Confidence } from "../sourced";
 import { CHINA_EXTRA_LINKS } from "./china-extra-links";
 import { CHINA_MORE_LINKS } from "./china-more-links";
+import { CHINA_THIRD_LINKS } from "./china-third-links";
 
 // Links that touch the /china companies: ore to separator, magnets to
 // carmakers and appliance makers, reported Optimus parts, and the equity
@@ -138,4 +139,5 @@ export const CHINA_LINKS: ChinaLink[] = [
     },
     ...CHINA_MORE_LINKS,
     ...CHINA_EXTRA_LINKS,
+    ...CHINA_THIRD_LINKS,
 ];

@@ -1,6 +1,7 @@
 import type { SourceId, Sourced } from "../sourced";
 import { CHINA_EXTRA_PLANTS } from "./china-extra";
 import { CHINA_MORE_PLANTS } from "./china-more";
+import { CHINA_THIRD_PLANTS } from "./china-third";
 import { type Site, plant } from "./types";
 
 // Mines, plants and works in China for /china, including foreign-owned ones
@@ -428,4 +429,5 @@ export const CHINA_PLANTS: Site[] = [
     }),
     ...CHINA_MORE_PLANTS,
     ...CHINA_EXTRA_PLANTS,
+    ...CHINA_THIRD_PLANTS,
 ];
