@@ -19,12 +19,28 @@ interface JapanSource {
     title: string;
     publisher: string;
     url: string;
-    accessed: string;
+    accessed?: string;
     kind: Kind;
     reuse: SourceReuse;
 }
 
 const ACCESSED = "2026-11-03";
+
+// Never opened: the robot-joint actuator releases from NSK, Nidec,
+// MinebeaMitsumi and Mabuchi Motor were read through search results only,
+// because the session could not reach those hosts. They carry no `accessed`
+// date; open each and move it out of this set when checked.
+export const JAPAN_UNOPENED: ReadonlySet<string> = new Set([
+    "nsk-robotics-actuators-2025",
+    "nsk-actuators-review-2026",
+    "response-nsk-actuators-2025",
+    "nidec-physical-ai",
+    "minebea-ces-2026",
+    "minebea-humanoid-page",
+    "mabuchi-site",
+    "mabuchi-iaib-series",
+    "mabuchi-iaib-release-2022",
+]);
 
 function src(
     id: string,
@@ -34,7 +50,8 @@ function src(
     kind: Kind,
     reuse: SourceReuse = "facts",
 ): JapanSource {
-    return { id, publisher, title, url, kind, reuse, accessed: ACCESSED };
+    const s: JapanSource = { id, publisher, title, url, kind, reuse };
+    return JAPAN_UNOPENED.has(id) ? s : { ...s, accessed: ACCESSED };
 }
 
 const site = (id: string, publisher: string, url: string, title = publisher) =>
@@ -219,6 +236,64 @@ export const JAPAN_SOURCES: JapanSource[] = [
     site("jtekt-site", "JTEKT", "https://www.jtekt.co.jp/e/"),
     site("iko-site", "Nippon Thompson", "https://www.ikont.co.jp/eg/", "IKO"),
     site("minebea-site", "MinebeaMitsumi", "https://www.minebeamitsumi.com/english/"),
+    site("mabuchi-site", "Mabuchi Motor", "https://www.mabuchi-motor.com/"),
+    // Robot-joint actuator releases (Nov 2026), read through search results
+    src(
+        "nsk-robotics-actuators-2025",
+        "NSK",
+        "Development of actuators for the robotics field (Japanese release, November 6, 2025)",
+        "https://www.nsk.com/jp-ja/company/news/2025/robotics-actuators/",
+        "press",
+    ),
+    src(
+        "nsk-actuators-review-2026",
+        "NSK",
+        "NSK Technical Review 2026: actuators for robots",
+        "https://www.nsk.com/tools-resources/research-and-development/technical-review/2026/actuators-for-robots/",
+        "company-site",
+    ),
+    src(
+        "response-nsk-actuators-2025",
+        "Response",
+        "NSK develops actuators for humanoid robots, targets 2028 market entry",
+        "https://response.jp/article/2025/11/10/403251.html",
+        "press",
+    ),
+    src(
+        "nidec-physical-ai",
+        "Nidec",
+        "Nidec's comprehensive capabilities powering humanoids",
+        "https://www.nidec.com/en/technology/physical-ai/",
+        "company-site",
+    ),
+    src(
+        "minebea-ces-2026",
+        "MinebeaMitsumi",
+        "MinebeaMitsumi to exhibit at CES 2026 for the first time",
+        "https://www.minebeamitsumi.com/english/news/press/2025/1210639_20344.html",
+        "press",
+    ),
+    src(
+        "minebea-humanoid-page",
+        "MinebeaMitsumi",
+        "Precision technology powering the evolution of humanoid robots",
+        "https://product.minebeamitsumi.com/en/pickup/humanoidrobot/index.html",
+        "company-site",
+    ),
+    src(
+        "mabuchi-iaib-series",
+        "Mabuchi Motor",
+        "Hollow frameless motors IA/IB series",
+        "https://solution.mabuchi-motor.com/en/products/iaib_series",
+        "company-site",
+    ),
+    src(
+        "mabuchi-iaib-release-2022",
+        "Mabuchi Motor via Nikkan Kogyo Shimbun",
+        "Sales start for the hollow IA/IB motor module series",
+        "https://www.nikkan.co.jp/releases/view/137521",
+        "press",
+    ),
     site("tsubaki-site", "Tsubakimoto Chain", "https://www.tsubakimoto.com/"),
     site("khi-site", "Kawasaki Heavy Industries", "https://global.kawasaki.com/"),
     site("denso-wave-site", "Denso Wave", "https://www.denso-wave.com/en/"),
@@ -384,3 +459,14 @@ export const JAPAN_SOURCES: JapanSource[] = [
         "press",
     ),
 ];
+
+// An UNOPENED id that names no source (a typo, or a renamed source) would
+// leave a search-result-only document dated as opened.
+export function japanUnopenedSourceErrors(
+    sources: readonly JapanSource[] = JAPAN_SOURCES,
+): string[] {
+    const ids = new Set(sources.map((s) => s.id));
+    return [...JAPAN_UNOPENED]
+        .filter((id) => !ids.has(id))
+        .map((id) => `japan sources: unopened id "${id}" names no source`);
+}

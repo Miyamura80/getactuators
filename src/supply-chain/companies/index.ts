@@ -120,8 +120,14 @@ export const COMPANIES: Company[] = [
         revenue: yenRevenue(2708700, "year to March 2026", "2026-03", [
             "nidec-results-fy2025",
         ]),
-        products: ["Precision motors", "Traction motors", "Reducers"],
+        products: [
+            "Precision motors",
+            "Traction motors",
+            "Reducers",
+            "Frameless motors and sensor-embedded strain-wave reducers for humanoid joints",
+        ],
         url: "https://www.nidec.com/en/",
+        sources: ["nidec-physical-ai"],
     },
     // Gears, screws and bearings
     {

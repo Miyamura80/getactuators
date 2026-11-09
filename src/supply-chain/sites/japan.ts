@@ -89,6 +89,9 @@ export const JAPAN_SITES: Site[] = [
         makes: ["Stepper motors", "Brushless DC motors"],
         stages: ["motor"],
     },
+    jp("mabuchi-matsudo", "mabuchi-motor", "Mabuchi Motor", "Chiba", 35.8, 139.95, [
+        "mabuchi-site",
+    ]),
     // Gears, screws and bearings
     jp("nabtesco-tokyo", "nabtesco", "Nabtesco", "Tokyo", 35.684, 139.744, [
         "nabtesco-site",
