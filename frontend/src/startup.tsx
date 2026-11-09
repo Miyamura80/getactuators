@@ -29,6 +29,8 @@ import { METALS_PATH } from "../../src/supply-chain/metals";
 import { Policy } from "./pages/supply-chain/policy/Policy";
 import { POLICY_PATH } from "../../src/supply-chain/policy";
 import { OpenSource } from "./pages/open-source/OpenSource";
+import { Trends } from "./pages/trends/Trends";
+import { TRENDS_PATH } from "../../src/trends";
 import { OPEN_SOURCE_PATH } from "../../src/open-source";
 import { Benchmarks } from "./pages/benchmarks/Benchmarks";
 import { BENCHMARKS_PATH } from "../../src/benchmarks";
@@ -121,6 +123,7 @@ function Page({ menuOpen }: { menuOpen: boolean }) {
     if (path === METALS_PATH) return <Metals menuOpen={menuOpen} />;
     if (path === POLICY_PATH) return <Policy menuOpen={menuOpen} />;
     if (path === OPEN_SOURCE_PATH) return <OpenSource menuOpen={menuOpen} />;
+    if (path === TRENDS_PATH) return <Trends menuOpen={menuOpen} />;
     if (path === BENCHMARKS_PATH) return <Benchmarks menuOpen={menuOpen} />;
     if (path === MANUFACTURING_PATH) return <Suspense fallback={<ManufacturingLoading menuOpen={menuOpen} />}><Manufacturing menuOpen={menuOpen} /></Suspense>;
     if (path === BOM_PATH || path.startsWith(`${BOM_PATH}/`)) return <Suspense fallback={<BomLoading menuOpen={menuOpen} />}><Bom menuOpen={menuOpen} /></Suspense>;

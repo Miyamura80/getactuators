@@ -145,6 +145,7 @@ function tagFor(path: string): string {
     )
         return "supply-chain";
     if (path.includes("/benchmarks")) return "actuators";
+    if (path.includes("/trends")) return "trends";
     if (path.includes("/actuators")) return "actuators";
     if (path.includes("/sdk")) return "actuators";
     if (path.includes("/people")) return "people";
@@ -234,6 +235,11 @@ export function buildOpenApi(operations: readonly Operation[]): Json {
                 description: "Categories, brands and use cases for filters.",
             },
             { name: "meta", description: "Discovery: index and this document." },
+            {
+                name: "trends",
+                description:
+                    "Dated, cited points over time: actuator list prices, strain-wave gear rated life, humanoid and industrial robot market shares, the rotary and linear actuator split, roller screw cost, how fast AI and other technologies get cheaper, and humanoid battery runtime.",
+            },
             {
                 name: "people",
                 description:
