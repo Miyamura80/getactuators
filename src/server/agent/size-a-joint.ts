@@ -7,6 +7,7 @@ import {
     jointLoads,
 } from "@/engineering/arm-torque";
 import { HUMANOID_GUIDE_PATH, HUMANOID_USE_CASES, JOINTS } from "./humanoid-joints";
+import { rs01RatedPoint } from "./product-content";
 
 // "Size a joint" on each actuator page: the three engineering tools, opened
 // at this part's own numbers. Each line states the number the link leads to,
@@ -19,6 +20,11 @@ function round(v: number): string {
 }
 
 function motorLine(a: Actuator): string | null {
+    if (a.id === "robstride-01") {
+        const { torqueNm, rpm, cooling } = rs01RatedPoint;
+        const watts = (torqueNm * rpm * 2 * Math.PI) / 60;
+        return `- [Motor torque calculator](${MOTOR_TORQUE_PATH}?solve=power&t=${torqueNm}&n=${rpm}): **${Math.round(watts)} W** calculated shaft power at ${torqueNm} N·m and ${rpm} rpm with a ${cooling}.`;
+    }
     const torque = a.rated_torque_nm ?? a.peak_torque_nm;
     if (torque == null) return null;
     const which = a.rated_torque_nm != null ? "rated" : "peak";
@@ -62,8 +68,10 @@ function humanoidLine(a: Actuator): string | null {
 }
 
 export function sizeAJointSection(a: Actuator): string | null {
-    const lines = [motorLine(a), armLine(a), humanoidLine(a)].filter(
-        (l): l is string => l !== null,
-    );
+    const lines = [
+        motorLine(a),
+        a.id === "cubemars-ak70-10" ? null : armLine(a),
+        a.id === "robstride-01" ? null : humanoidLine(a),
+    ].filter((l): l is string => l !== null);
     return lines.length > 0 ? `## Size a joint\n\n${lines.join("\n")}` : null;
 }

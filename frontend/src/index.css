@@ -902,17 +902,6 @@ table.board {
     font-family: var(--mono);
 }
 
-/* ---- Footer ------------------------------------------------------------ */
-.foot {
-    margin-top: 30px;
-    padding-top: 18px;
-    border-top: 1px solid var(--line);
-    color: var(--muted);
-    font-size: 11.5px;
-    line-height: 1.6;
-    font-family: var(--mono);
-}
-
 /* ---- Responsive -------------------------------------------------------- */
 @media (max-width: 860px) {
     .shell {
@@ -2032,13 +2021,13 @@ table.board {
 .all-cta {
     all: unset;
     cursor: pointer;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 14px;
-    margin-top: 24px;
-    padding: 14px 18px;
+    gap: 8px;
+    margin-top: 20px;
+    padding: 7px 14px;
     border: 1px solid var(--line-strong);
-    border-radius: 8px;
+    border-radius: 999px;
     background: var(--panel);
     transition:
         border-color 0.15s ease,
@@ -2052,23 +2041,14 @@ table.board {
     outline: 2px solid var(--cyan);
     outline-offset: 2px;
 }
-.all-cta-kicker {
-    font-family: var(--mono);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-    white-space: nowrap;
-}
 .all-cta-title {
-    flex: 1;
-    font-size: 15px;
-    font-weight: 700;
+    font-size: 13px;
+    font-weight: 600;
     color: var(--text);
 }
 .all-cta-go {
     color: var(--cyan);
-    font-size: 16px;
+    font-size: 13px;
     transition: transform 0.15s ease;
 }
 .all-cta:hover .all-cta-go {

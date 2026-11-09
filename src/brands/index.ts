@@ -66,6 +66,9 @@ const MAKERS: Row[] = [
     // Asimov 1 joint motors (#100). encos.cn is 南京因克斯智能科技 (Nov 2026).
     ["encos", "ENCOS", "encos.cn"],
     ["atar", "ATAR", "atarrobot.com", ["ATAR Robot"]],
+    // Japanese motor makers added with their robot-joint motors (Nov 2026).
+    // MinebeaMitsumi's row sits with the /japan registry companies below.
+    ["mabuchi-motor", "Mabuchi Motor", "mabuchi-motor.com", ["Mabuchi"]],
 ];
 
 // Robot makers and the people behind the robot data (robots.json).
@@ -85,9 +88,6 @@ const ROBOT_MAKERS: Row[] = [
     ["franka", "Franka Robotics", "franka.de", ["Franka"]],
     // Domain from its own product page (yor.manmaruai.co.jp) in robots.json.
     ["manmaru", "ManmaruAI", "manmaruai.co.jp", ["Manmaru"]],
-    // Quadruped makers in robots.json not listed elsewhere; domain from its
-    // own product page (ghostrobotics.io/vision-60).
-    ["ghost-robotics", "Ghost Robotics", "ghostrobotics.io", ["Ghost"]],
     // The Asimov 1 bill of materials, not a company: always a monogram.
     ["asimov-bom", "Asimov BOM", null],
 ];
@@ -337,12 +337,21 @@ const SUPPLY_CHAIN: Row[] = [
     ["aubo", "AUBO Robotics", "aubo-robotics.cn", ["AUBO"]],
     ["rokae", "ROKAE", null],
     ["engineai", "EngineAI", "engineai.com.cn", ["ENGINEAI"]],
-    ["deep-robotics", "Deep Robotics", null, ["DEEP Robotics"]],
+    ["deep-robotics", "Deep Robotics", "deeprobotics.cn", ["DEEP Robotics"]],
     ["wuzhou-xinchun", "Wuzhou Xinchun", null],
     ["guohua", "Guohua Intelligent", "guohuaintel.com", ["Guohua Intelligence"]],
     ["byd", "BYD", null],
     ["geely", "Geely Holding", null, ["Geely"]],
     ["dongfeng-liuzhou", "Dongfeng Liuzhou Motor", null],
+    // Legged-robot makers (companies/legged). Neither domain is backed by a
+    // company-site source in the dataset yet, so both stay null (monogram);
+    // deeprobotics.cn above is DEEP Robotics' own site, cited in the registry.
+    ["ghost-robotics", "Ghost Robotics", null, ["Ghost"]],
+    ["lig-nex1", "LIG Nex1", null, ["LIG Defense & Aerospace"]],
+    ["ly-itech", "LY iTech", null, ["Lingyi iTech"]],
+    ["minth", "Minth Group", "minthgroup.com", ["Minth"]],
+    ["catl", "CATL", null],
+    ["faw-volkswagen", "FAW-Volkswagen", null],
 ];
 
 // Companies behind the /investors deals (src/investors.ts COMPANIES).

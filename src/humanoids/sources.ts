@@ -466,6 +466,33 @@ export const SOURCES = {
         url: "https://docs.menlo.ai/asimov/1/overview/system-tour/mechanical",
         reuse: "facts",
     },
+    // Xiaomi
+    "cyberone-engadget": {
+        title: "Engadget: Xiaomi's CyberOne humanoid (177 cm, 52 kg, 21 DOF)",
+        url: "https://www.engadget.com/xiaomi-cyberone-robot-143545207.html",
+        reuse: "facts",
+    },
+    "cyberone-qviro": {
+        title: "Qviro: Xiaomi CyberOne specifications (DOF by limb)",
+        url: "https://qviro.com/product/xiaomi-technology/cyberone/specifications",
+        reuse: "facts",
+    },
+    "cyberone-primetel": {
+        title: "Primetel: CyberOne, Xiaomi's first humanoid (300 N·m peak joint torque)",
+        url: "https://primetel.com.cy/cyberone-is-the-first-humanoid-robot-by-xiaomi-3492",
+        reuse: "facts",
+    },
+    // Kawasaki
+    "kaleido9-mynavi": {
+        title: "Mynavi TECH+: Kawasaki Kaleido 9 at iREX 2025 (190 cm, 99 kg, 30 axes)",
+        url: "https://news.mynavi.jp/techplus/article/20251205-3764371/",
+        reuse: "facts",
+    },
+    "kaleido9-kalil": {
+        title: "Mike Kalil: Kawasaki's Kaleido 9 humanoid robot",
+        url: "https://mikekalil.com/blog/kawasaki-kaleido-9-humanoid-robot/",
+        reuse: "facts",
+    },
 } satisfies Record<string, Source>;
 
 export type SourceId = keyof typeof SOURCES;

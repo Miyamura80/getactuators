@@ -186,12 +186,6 @@ export function ActuatorsPage({ menuOpen = false, prerendered = false }: { menuO
                     </section>
                 )}
             </div>
-
-            <p className="foot">
-                Community dataset {"·"} sourced from manufacturer pages {"·"} every
-                row links its source {"·"} verify against datasheets before engineering use.
-                Gallery renders without a photo are schematic, drawn from the category.
-            </p>
             <CompareTray rows={selection.rows} remove={selection.toggle} clear={() => selection.update([])} />
             <noscript>Picking requires JavaScript. Open product links for specifications, or use a shared /compare?compare=id,id URL.</noscript>
             <PublicFooter />

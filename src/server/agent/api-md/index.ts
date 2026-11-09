@@ -40,6 +40,7 @@ import {
     listPolicy,
     listSites,
 } from "./supply-chain";
+import { listTrends } from "./trends";
 
 export { apiMarkdownPath };
 
@@ -125,6 +126,7 @@ const RENDERERS: Record<string, Renderer> = {
     list_bom_cases: bomIndexBody,
     get_bom: (ctx) => bomCaseBody(findBomCase(ctx)),
     list_people: listPeople,
+    list_trends: listTrends,
     get_person: getPerson,
 };
 

@@ -42,6 +42,7 @@ import { METALS_PAGE } from "./supply-chain/metals";
 import { HIDDEN_PAGES } from "./supply-chain/pages";
 import { POLICY_PAGE } from "./supply-chain/policy";
 import { TOOL_PAGES } from "./tools";
+import { TRENDS_PAGE } from "./trends/page";
 import { aboutBody, contactBody, privacyBody } from "./trust";
 
 // Every HTML page the site serves, with the metadata and markdown body shared
@@ -166,6 +167,7 @@ const STATIC_PAGES: Page[] = [
     ...COUNTRY_PAGE_ENTRIES,
     SDK_PAGE,
     PEOPLE_PAGE,
+    TRENDS_PAGE,
     sub(
         PATHS.agentsPage,
         "spa",

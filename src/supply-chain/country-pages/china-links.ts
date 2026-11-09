@@ -1,4 +1,5 @@
 import type { Confidence } from "../sourced";
+import { CHINA_EXTRA_LINKS } from "./china-extra-links";
 import { CHINA_MORE_LINKS } from "./china-more-links";
 
 // Links that touch the /china companies: ore to separator, magnets to
@@ -136,4 +137,5 @@ export const CHINA_LINKS: ChinaLink[] = [
         note: "Reported as a strategic investment; the size of the stake is not public.",
     },
     ...CHINA_MORE_LINKS,
+    ...CHINA_EXTRA_LINKS,
 ];

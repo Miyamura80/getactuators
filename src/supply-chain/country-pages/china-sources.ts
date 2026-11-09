@@ -1,10 +1,14 @@
 import type { SourceReuse } from "../reuse";
+import { CHINA_EXTRA_SOURCES } from "./china-extra-sources";
 import { CHINA_MORE_SOURCES } from "./china-more-sources";
 
 // Sources behind the /china dataset: trade press (Asian Metal, SMM, Yicai,
 // Gasgoo), exchange and market-data profiles for headquarters, and company
-// pages. The facts were taken from search results on the day the dataset was
-// built, so no source carries an `accessed` date (see SourceRef).
+// pages. The facts in this first batch were taken from search results on the
+// day the dataset was built, so its sources carry no `accessed` date (see
+// SourceRef). The later batches (./china-more-sources, ./china-extra-sources)
+// carry one on every page that was opened; only their Wikipedia
+// headquarters entries, read from search results, go without.
 
 // Structural copy of SourceRef: importing the type from ../sources would make
 // an import cycle, since ../sources spreads this list into SOURCES.
@@ -582,4 +586,5 @@ export const CHINA_SOURCES: ChinaSource[] = [
         "https://www2.yicaiglobal.com/news/china-jl-mag-rare-earth-hits-limit-up-on-tesla-permanent-magnet-deal",
     ),
     ...CHINA_MORE_SOURCES,
+    ...CHINA_EXTRA_SOURCES,
 ];

@@ -103,6 +103,7 @@ import {
     listCompaniesHandler,
     listSitesHandler,
 } from "./supply-chain";
+import { TrendListSchema, TrendParams, listTrendsHandler } from "./trends";
 
 // The API surface as data. Routes, the /api index, the OpenAPI document and the
 // developer docs are all generated from this list, so they cannot disagree.
@@ -455,6 +456,19 @@ export const OPERATIONS: Operation[] = [
         errors: [404],
         example: "/api/v1/alts/switched-reluctance",
         handler: getAltHandler,
+    },
+    {
+        operationId: "list_trends",
+        method: "GET",
+        path: "/api/v1/trends",
+        summary: "List the /trends charts",
+        description:
+            "Every /trends chart as dated, cited points: actuator list prices and $/N·m, rated life, humanoid and industrial robot market shares, the rotary/linear split, roller screw cost, the price of AI against earlier technologies (Epoch AI, Karthik Tadepalli) and humanoid battery runtime. Each point has a confidence and its sources with reuse terms. Filter with `section` or `chart`.",
+        query: TrendParams,
+        response: TrendListSchema,
+        errors: [400, 404],
+        example: "/api/v1/trends?section=ai",
+        handler: listTrendsHandler,
     },
     {
         operationId: "list_humanoids",

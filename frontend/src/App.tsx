@@ -122,7 +122,6 @@ export default function App({ menuOpen = false }: { menuOpen?: boolean }) {
                 </section>
 
                 <Link to="/actuators?view=list" className="all-cta">
-                    <span className="all-cta-kicker">Full dataset</span>
                     <span className="all-cta-title">Browse all {ACTUATORS.length} actuators</span>
                     <span className="all-cta-go" aria-hidden="true">→</span>
                 </Link>

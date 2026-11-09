@@ -14,6 +14,7 @@ import { processTools } from "./tools/processes";
 import { robotTools } from "./tools/robots";
 import { sdkTools } from "./tools/sdk";
 import { supplyChainTools } from "./tools/supply-chain";
+import { trendTools } from "./tools/trends";
 
 // The public catalog MCP server: anonymous, read-only, stateless. A fresh
 // instance is built per HTTP request (see ./http.ts), which is cheap because
@@ -40,6 +41,7 @@ export const CATALOG_TOOLS: readonly ToolDef[] = [
     ...peopleTools,
     ...altTools,
     ...bomTools,
+    ...trendTools,
 ];
 
 export const INSTRUCTIONS = `actuatorlist is an open, read-only catalog of robot actuators and the robots that use them. No account or key is needed and no tool changes anything.
@@ -61,6 +63,7 @@ Which tool to use:
 - Measured performance (dyno and bench tests, not datasheet claims): get_benchmarks gives torque-speed curves, thermal derating, backlash and friction per run with its rig, data method, uncertainty, source and the measured over datasheet ratio. Say whether a figure was digitised from a plot or is vendor data.
 - Which actuator brand has the best SDK (drivers, ROS 2, docs, firmware, support), with linked developer posts: get_sdk_score. get_actuator also returns the brand's SDK score as sdk.
 - Who matters in actuators and rare-earth magnet supply (researchers, founders, magnet and rare earth executives, analysts, policy leads) with affiliation, key works and sources: list_people, optionally by domain.
+- How prices, market shares and runtimes have moved over time (actuator list prices and $/N·m, humanoid shipments by company, roller screw cost, the price of AI against electricity and batteries, humanoid battery runtime), every point dated and cited: get_trends.
 Bulk snapshots are also exposed as resources (catalog://actuators, catalog://robots, catalog://categories, actuator://{id}, robot://{id}). Website: ${SITE_URL}.`;
 
 export function createCatalogServer(): McpServer {
