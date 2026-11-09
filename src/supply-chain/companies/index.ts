@@ -3,6 +3,7 @@ import { BOM_COMPANIES, BOM_MARGINS } from "./bom";
 import { CHINA_COMPANIES, UNITREE_REVENUE } from "./china";
 import { JAPAN_COMPANIES, grossMargin, yenRevenue } from "./japan";
 import { KOREA_COMPANIES } from "./korea";
+import { LEGGED_COMPANIES } from "./legged";
 import { PRECISION_COMPANIES } from "./precision";
 import type { Company } from "./types";
 import { TIMKEN_REVENUE, US_COMPANIES } from "./us";
@@ -199,6 +200,7 @@ export const COMPANIES: Company[] = [
         ownership: { kind: "subsidiary", parent: "Hyundai Motor Group" },
         products: ["Atlas humanoid", "Spot quadruped", "Stretch"],
         url: "https://bostondynamics.com/",
+        sources: ["bostondynamics-site", "softbank-bd-2021"],
     },
     {
         id: "hyundai-mobis",
@@ -223,9 +225,17 @@ export const COMPANIES: Company[] = [
             ticker: "KOSDAQ: 277810",
             parent: "Samsung Electronics",
         },
-        products: ["Collaborative arms", "Bimanual mobile robots"],
+        products: [
+            "Collaborative arms",
+            "RB-Y1 bimanual mobile manipulator",
+            "RBQ-10 quadruped",
+        ],
         url: "https://www.rainbow-robotics.com/",
-        sources: ["samsung-rainbow-2024"],
+        sources: [
+            "samsung-rainbow-2024",
+            "prn-rainbow-rby1-2024",
+            "prn-rainbow-icra-2024",
+        ],
     },
     {
         id: "fanuc",
@@ -313,4 +323,5 @@ export const COMPANIES: Company[] = [
     ...BOM_COMPANIES,
     ...PRECISION_COMPANIES,
     ...US_COMPANIES,
+    ...LEGGED_COMPANIES,
 ];

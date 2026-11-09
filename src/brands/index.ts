@@ -334,12 +334,17 @@ const SUPPLY_CHAIN: Row[] = [
     ["aubo", "AUBO Robotics", "aubo-robotics.cn", ["AUBO"]],
     ["rokae", "ROKAE", null],
     ["engineai", "EngineAI", "engineai.com.cn", ["ENGINEAI"]],
-    ["deep-robotics", "Deep Robotics", null, ["DEEP Robotics"]],
+    ["deep-robotics", "Deep Robotics", "deeprobotics.cn", ["DEEP Robotics"]],
     ["wuzhou-xinchun", "Wuzhou Xinchun", null],
     ["guohua", "Guohua Intelligent", "guohuaintel.com", ["Guohua Intelligence"]],
     ["byd", "BYD", null],
     ["geely", "Geely Holding", null, ["Geely"]],
     ["dongfeng-liuzhou", "Dongfeng Liuzhou Motor", null],
+    // Legged-robot makers (companies/legged). Neither domain is backed by a
+    // company-site source in the dataset yet, so both stay null (monogram);
+    // deeprobotics.cn above is DEEP Robotics' own site, cited in the registry.
+    ["ghost-robotics", "Ghost Robotics", null],
+    ["lig-nex1", "LIG Nex1", null, ["LIG Defense & Aerospace"]],
     ["ly-itech", "LY iTech", null, ["Lingyi iTech"]],
     ["minth", "Minth Group", "minthgroup.com", ["Minth"]],
     ["catl", "CATL", null],

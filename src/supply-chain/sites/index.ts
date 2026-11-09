@@ -5,6 +5,7 @@ import { CHINA_PLANTS } from "./china-plants";
 import { JAPAN_SITES } from "./japan";
 import { JAPAN_PLANTS } from "./japan-plants";
 import { KOREA_SITES } from "./korea";
+import { LEGGED_SITES } from "./legged";
 import { PRECISION_SITES } from "./precision";
 import { type Site, hq } from "./types";
 import { US_PARTNER_SITES, US_SITES } from "./us";
@@ -387,4 +388,5 @@ export const SITES: Site[] = [
     ...US_SITES,
     ...US_PLANTS,
     ...US_PARTNER_SITES,
+    ...LEGGED_SITES,
 ];

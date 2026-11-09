@@ -444,9 +444,9 @@ export const JAPAN_COMPANIES: Company[] = [
         stages: ["robot"],
         segment: "robot-actuator-oem",
         ownership: { kind: "listed", ticker: "TYO: 7012" },
-        products: ["Industrial robots", "Kaleido humanoid"],
+        products: ["Industrial robots", "Kaleido humanoid", "Bex quadruped robot"],
         url: "https://global.kawasaki.com/",
-        sources: ["khi-site"],
+        sources: ["khi-site", "techxplore-bex-2022"],
     },
     {
         id: "denso-wave",

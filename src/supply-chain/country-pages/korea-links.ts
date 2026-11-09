@@ -185,6 +185,15 @@ export const KOREA_LINKS: KoreaLink[] = [
         note: "Hyundai plans to deploy Atlas at Metaplant from 2028.",
     },
     {
+        from: "lig-nex1",
+        to: "ghost-robotics",
+        what: "60% controlling stake, bought for US$240 m",
+        kind: "investment",
+        sources: ["trr-lig-ghost-2024", "prn-ghost-lig-close-2024"],
+        confidence: "estimated",
+        note: "Closed July 2024. Taken from search summaries of the two sources; the pages were not opened.",
+    },
+    {
         from: "samsung-electronics",
         to: "rainbow-robotics",
         what: "Largest shareholding",

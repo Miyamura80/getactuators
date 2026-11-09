@@ -82,11 +82,15 @@ export const CHINA_MORE_COMPANIES: Company[] = [
         sources: ["prn-engineai-2025", "ie-engineai-factory"],
     }),
     cn("deep-robotics", "Deep Robotics", OEM, {
-        stages: ["robot"],
+        stages: ["actuator", "robot"],
         ownership: PRIVATE,
-        products: ["Quadruped robots", "DR02 humanoid"],
-        url: "https://www.yicaiglobal.com/news/chinas-deep-robotics-raises-usd707-million-to-speed-rd-of-embodied-ai-robot-adoption",
-        sources: ["yicai-deep-robotics-2025"],
+        products: ["Jueying X30 quadruped", "DR02 humanoid", "Joint modules"],
+        url: "https://www.deeprobotics.cn/en",
+        sources: [
+            "yicai-deep-robotics-2025",
+            "deeprobotics-site",
+            "deeprobotics-x30-2023",
+        ],
     }),
     cn("agilex", "AgileX Robotics", OEM, {
         stages: ["robot"],

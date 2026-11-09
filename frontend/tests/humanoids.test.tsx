@@ -76,7 +76,7 @@ test("the fleet folds by default with a count and a one-line hint", () => {
     const view = render(<Humanoids />);
     const fleet = view.container.querySelector<HTMLDetailsElement>("details.hm-fleet")!;
     expect(fleet.open).toBe(false);
-    expect(fleet.querySelector("summary")?.textContent).toBe("Fleet (21)Most magnet: X1, 2.60 kg");
+    expect(fleet.querySelector("summary")?.textContent).toBe(`Fleet (${HUMANOIDS.length})Most magnet: X1, 2.60 kg`);
     cleanup();
     setURL("/humanoids?page=2");
     const deep = render(<Humanoids />);
@@ -92,7 +92,7 @@ test("the fleet paginates 10 rows a page and sorts across every page", () => {
     act(() => {
         fireEvent.click(view.getByRole("button", { name: "Page 3" }));
     });
-    expect(rowNames(root)).toHaveLength(1);
+    expect(rowNames(root)).toHaveLength(Math.min(10, HUMANOIDS.length - 20));
     expect(new URLSearchParams(window.location.search).get("page")).toBe("3");
     // Sorting by name resets to page 1 and orders the whole fleet, not the page.
     act(() => {
