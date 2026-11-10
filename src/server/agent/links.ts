@@ -82,6 +82,12 @@ interface DataSurface {
     rest: string;
 }
 
+// MCP call and REST path for one live country page, shared by llms.txt and
+// agents.md so the two documents cannot drift.
+export function countryDataAccess(code: string): { mcp: string; rest: string } {
+    return { mcp: `get_country("${code}")`, rest: `/api/v1/countries/${code}` };
+}
+
 // Supply-chain atlas and market-data pages, each with the MCP tools and REST
 // endpoint that serve the same dataset. Country pages are added from the live
 // country list where this is rendered.
@@ -90,7 +96,7 @@ export const DATA_SURFACES: readonly DataSurface[] = [
         label: "Magnet metals",
         page: "/metals",
         mcp: "get_metal_supply, get_metal_prices",
-        rest: "/api/v1/metals, /api/v1/metal-prices/{id}",
+        rest: "/api/v1/metals, /api/v1/metals/{element}, /api/v1/metal-prices/{series}",
     },
     {
         label: "Actuator chain policy",

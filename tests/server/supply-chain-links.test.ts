@@ -170,10 +170,12 @@ describe("agent docs cover the atlas", () => {
                 agents: true,
             });
         }
-        for (const path of [...DATASETS, "/api/v1/companies", "/api/v1/sites"])
+        for (const path of [...DATASETS, "/api/v1/companies", "/api/v1/sites"]) {
+            expect({ path, llms: llms.includes(path) }).toEqual({ path, llms: true });
             expect({ path, agents: agents.includes(path) }).toEqual({
                 path,
                 agents: true,
             });
+        }
     });
 });

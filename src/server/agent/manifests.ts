@@ -13,6 +13,7 @@ import {
     PATHS,
     RATE_LIMIT_PER_MINUTE,
     REST_ENDPOINTS,
+    countryDataAccess,
 } from "./links";
 import { bullets, mdLink, mdTable } from "./md";
 import { catalogStats } from "./pages-md";
@@ -32,8 +33,7 @@ function dataSurfaceTable(): string {
     const countries = LIVE_COUNTRY_PAGES.map((p) => ({
         label: `${p.name} supply chain`,
         page: p.path,
-        mcp: `get_country("${p.code}")`,
-        rest: `/api/v1/countries/${p.code}`,
+        ...countryDataAccess(p.code),
     }));
     return mdTable(
         ["Page", "Markdown", "MCP", "REST"],
