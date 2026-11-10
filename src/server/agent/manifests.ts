@@ -1,3 +1,4 @@
+import { LIVE_COUNTRY_PAGES } from "@/supply-chain/country-pages";
 import {
     CODE_LICENSE,
     DATA_LICENSE,
@@ -6,8 +7,14 @@ import {
     REPO_URL,
     absoluteUrl,
 } from "../site";
-import { MCP_TOOLS, PATHS, RATE_LIMIT_PER_MINUTE, REST_ENDPOINTS } from "./links";
-import { bullets, mdTable } from "./md";
+import {
+    DATA_SURFACES,
+    MCP_TOOLS,
+    PATHS,
+    RATE_LIMIT_PER_MINUTE,
+    REST_ENDPOINTS,
+} from "./links";
+import { bullets, mdLink, mdTable } from "./md";
 import { catalogStats } from "./pages-md";
 
 // Standalone agent documents: agents.md, auth.md and pricing.md.
@@ -18,6 +25,24 @@ function endpointTable(): string {
     return mdTable(
         ["Method", "Path", "Returns"],
         REST_ENDPOINTS.map((e) => [e.method, `\`${e.path}\``, e.what]),
+    );
+}
+
+function dataSurfaceTable(): string {
+    const countries = LIVE_COUNTRY_PAGES.map((p) => ({
+        label: `${p.name} supply chain`,
+        page: p.path,
+        mcp: `get_country("${p.code}")`,
+        rest: `/api/v1/countries/${p.code}`,
+    }));
+    return mdTable(
+        ["Page", "Markdown", "MCP", "REST"],
+        [...DATA_SURFACES, ...countries].map((s) => [
+            mdLink(s.label, u(s.page)),
+            u(`${s.page}.md`),
+            s.mcp,
+            `\`${s.rest}\``,
+        ]),
     );
 }
 
@@ -55,6 +80,7 @@ export function agentsBody(): string {
             `Docs server: ${u(PATHS.mcpDocs)} answers questions about the site and API over MCP.`,
         ])}`,
         `## REST API\n\nBase URL ${u("/api/v1")}. JSON responses, anonymous access, OpenAPI description at ${u(PATHS.openapi)}, human reference at ${u(PATHS.apiDocs)}.\n\n${endpointTable()}`,
+        `## Supply chain and market data\n\nEach page has a markdown twin and the same data over MCP and REST. Companies, plants and supply links behind the atlas: MCP list_companies, get_company and list_sites, REST \`/api/v1/companies\` and \`/api/v1/sites\`.\n\n${dataSurfaceTable()}`,
         `## Markdown and discovery\n\n${bullets([
             `Index: ${u(PATHS.llms)}; full catalog in one file: ${u(PATHS.llmsFull)}`,
             `Every page has a markdown twin: append .md (for example ${u("/index.md")}) or send Accept: text/markdown.`,

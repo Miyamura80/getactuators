@@ -74,6 +74,68 @@ export const REST_ENDPOINTS: readonly Endpoint[] = [
     { method: "GET", path: "/api/v1/brands", what: "Brands in the catalog" },
 ];
 
+interface DataSurface {
+    label: string;
+    // The page; its markdown twin is the same path plus ".md".
+    page: string;
+    mcp: string;
+    rest: string;
+}
+
+// Supply-chain atlas and market-data pages, each with the MCP tools and REST
+// endpoint that serve the same dataset. Country pages are added from the live
+// country list where this is rendered.
+export const DATA_SURFACES: readonly DataSurface[] = [
+    {
+        label: "Magnet metals",
+        page: "/metals",
+        mcp: "get_metal_supply, get_metal_prices",
+        rest: "/api/v1/metals, /api/v1/metal-prices/{id}",
+    },
+    {
+        label: "Actuator chain policy",
+        page: "/policy",
+        mcp: "list_policy_measures",
+        rest: "/api/v1/policy",
+    },
+    {
+        label: "Bills of materials",
+        page: "/bom",
+        mcp: "list_bom_cases, get_bom",
+        rest: "/api/v1/bom",
+    },
+    {
+        label: "Manufacturing processes",
+        page: "/manufacturing",
+        mcp: "get_process",
+        rest: "/api/v1/processes",
+    },
+    {
+        label: "Rare-earth-free alternatives",
+        page: "/alts",
+        mcp: "list_alt_technologies, get_alt_technology",
+        rest: "/api/v1/alts",
+    },
+    {
+        label: "Humanoid joint map",
+        page: "/humanoids",
+        mcp: "get_humanoid_joints",
+        rest: "/api/v1/humanoids",
+    },
+    {
+        label: "Measured benchmarks",
+        page: "/benchmarks",
+        mcp: "get_benchmarks",
+        rest: "/api/v1/benchmarks",
+    },
+    {
+        label: "Trends over time",
+        page: "/trends",
+        mcp: "get_trends",
+        rest: "/api/v1/trends",
+    },
+];
+
 // Tools exposed by the catalog MCP server (routes/mcp.ts), read from the
 // registered tool definitions so every manifest stays in sync with /mcp.
 export const MCP_TOOLS: readonly string[] = CATALOG_TOOLS.map((t) => t.name);
