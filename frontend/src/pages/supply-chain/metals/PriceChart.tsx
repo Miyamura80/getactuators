@@ -134,7 +134,7 @@ export function PriceChart() {
                 <title>{`${e.date}: ${e.title}`}</title>
             </g>)}
         </svg>
-        <p className="mt-note">Solid: export (FOB China) or LME. Dashed: China domestic. Points: USGS annual averages and year-end ranges, 2026 monthly SMM readings.</p>
+        <p className="mt-note">Solid: export (FOB China) or LME. Dashed: China domestic. Points: USGS annual averages and year-end ranges, a few cited 2026 SMM readings.</p>
         <details className="mt-events" open={link.event !== null && METAL_EVENTS.some((e) => e.id === link.event)}>
             <summary>Events ({METAL_EVENTS.length})</summary>
             <ol>

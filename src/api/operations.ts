@@ -325,7 +325,7 @@ export const OPERATIONS: Operation[] = [
         path: "/api/v1/metal-prices/:series",
         summary: "Price history of a magnet metal",
         description:
-            "Cited price points for one series in US$/kg (USGS annual averages and year-end ranges, monthly SMM readings in 2026) with the events that touched the element. `from` and `to` take YYYY-MM.",
+            "Cited price points for one series in US$/kg (USGS annual averages and year-end ranges, a few cited SMM readings in 2026) with the events that touched the element. `from` and `to` take YYYY-MM.",
         pathParam: {
             name: "series",
             description:
