@@ -2,8 +2,15 @@ import { describe, expect, test } from "bun:test";
 import { PriceHistorySchema } from "@/api/prices";
 import { ActuatorSchema } from "@/api/schemas";
 import { actuatorsWithHistory, historyFor } from "@/prices";
-import { get, getMarkdown } from "./agent-helpers";
+import { get as getShared } from "./agent-helpers";
 import { callTool } from "./mcp-helpers";
+
+// A client key of its own keeps these requests out of the shared API
+// rate-limit window the rest of the server suite runs in.
+const KEY = { "x-forwarded-for": "prices-test" };
+const get = (path: string) => getShared(path, KEY);
+const getMarkdown = (path: string) =>
+    getShared(path, { ...KEY, accept: "text/markdown" });
 
 function jsonLd(html: string): { "@graph": Record<string, unknown>[] } {
     const m = /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(html);
