@@ -7,13 +7,13 @@ import type { PricePoint } from "./types";
 // Index method (chain-linked repeat prices): for each actuator, the log
 // change between consecutive priced points is spread evenly over the time
 // between them. Each year's move (mid-year to mid-year) is the mean of those
-// per-year rates over the actuators whose prices span any of it; the moves
-// are chained from 100. $/N·m is used
+// per-year rates over the actuators whose prices span any of it, each
+// weighted by how much of the year it spans; the moves are chained from 100. $/N·m is used
 // when both points have a torque, so a re-rated version is not a price move.
 // A year no actuator spans breaks the chain, and later years stay empty.
 
 export const INDEX_METHOD =
-    "Chain-linked repeat-price index: each actuator's change between consecutive prices is spread evenly over the years between them; each year's move is the mean over the actuators spanning it, chained from 100.";
+    "Chain-linked repeat-price index: each actuator's change between consecutive prices is spread evenly over the years between them; each year's move is the mean over the actuators spanning it, weighted by the share of the year each spans, chained from 100.";
 
 export const METAL_SERIES_ID = "ndpr-oxide";
 
@@ -46,7 +46,10 @@ function segments(points: readonly PricePoint[]): Map<string, Segment[]> {
     const by = new Map<string, PricePoint[]>();
     for (const p of points.filter(isPriced))
         by.set(p.actuatorId, [...(by.get(p.actuatorId) ?? []), p]);
-    for (const [id, ps] of by) {
+    for (const [id, unsorted] of by) {
+        const ps = [...unsorted].sort(
+            (a, b) => yearFraction(a.date) - yearFraction(b.date),
+        );
         const segs: Segment[] = [];
         for (let i = 1; i < ps.length; i++) {
             const a = ps[i - 1] as PricePoint;
@@ -74,6 +77,7 @@ export function priceIndex(points: readonly PricePoint[] = PRICE_POINTS): IndexY
         const a = y - 0.5;
         const b = y + 0.5;
         let sum = 0;
+        let weight = 0;
         let n = 0;
         for (const list of segs.values()) {
             let w = 0;
@@ -83,12 +87,15 @@ export function priceIndex(points: readonly PricePoint[] = PRICE_POINTS): IndexY
                 w += overlap;
                 s += g.rate * overlap;
             }
+            // An actuator spanning a quarter of the year counts a quarter as
+            // much as one spanning all of it.
             if (w > 0) {
-                sum += s / w;
+                sum += s;
+                weight += w;
                 n++;
             }
         }
-        level = n === 0 || level === null ? null : level * Math.exp(sum / n);
+        level = n === 0 || level === null ? null : level * Math.exp(sum / weight);
         out.push({ year: y, value: level, actuators: n });
     }
     return out;

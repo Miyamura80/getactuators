@@ -1,4 +1,4 @@
-import { type CategorySlug, getActuator } from "../catalog";
+import { CATEGORIES, type CategorySlug, getActuator } from "../catalog";
 import { PRICE_POINTS, isPriced, yearFraction } from "./history";
 import type { PricePoint } from "./types";
 
@@ -8,20 +8,15 @@ import type { PricePoint } from "./types";
 // intercept per actuator (a within, or fixed-effects, fit). Each actuator is
 // compared only with itself, so a class whose newer models are cheaper per
 // N·m does not read as a price fall. Actuators with a single dated price add
-// nothing to the slope; they are drawn but not fitted. R² is the share of the
-// within-actuator variance the line explains.
+// nothing to the slope; they are drawn but not fitted. A class needs two
+// fitted actuators for a line. R² is the share of the within-actuator
+// variance the line explains.
 
 export const FIT_METHOD =
-    "Least squares on log10($/N·m) vs year, one intercept per actuator (within fit); R² is within-actuator. Actuators with one price are drawn, not fitted.";
+    "Least squares on log10($/N·m) vs year, one intercept per actuator (within fit); R² is within-actuator. Actuators with one price are drawn, not fitted; a class needs two fitted actuators.";
 
-export const CLASS_ORDER: readonly CategorySlug[] = [
-    "qdd_proprioceptive",
-    "integrated_joint",
-    "smart_servo",
-    "harmonic_precision",
-    "cycloidal_premium",
-    "frameless_driver",
-];
+// The site's category order (src/catalog).
+export const CLASS_ORDER: readonly CategorySlug[] = CATEGORIES.map((c) => c.slug);
 
 export const CLASS_LABEL: Record<CategorySlug, string> = {
     qdd_proprioceptive: "QDD",
@@ -55,7 +50,8 @@ export interface ClassTrend {
     category: CategorySlug;
     label: string;
     points: ClassPoint[];
-    // Null when fewer than 3 points from actuators with 2+ dated prices.
+    // Null when fewer than 3 points, or fewer than 2 actuators, with 2+
+    // dated prices.
     fit: ClassFit | null;
 }
 
@@ -91,7 +87,8 @@ export function withinFit(points: ClassPoint[]): ClassFit | null {
         return g.map((p) => ({ x: p.year - mx, y: Math.log10(p.usdPerNm) - my, p }));
     });
     const sxx = rows.reduce((s, r) => s + r.x * r.x, 0);
-    if (rows.length < 3 || sxx === 0) return null;
+    // One actuator is one product's history, not a class trend.
+    if (used.length < 2 || rows.length < 3 || sxx === 0) return null;
     const slope = rows.reduce((s, r) => s + r.x * r.y, 0) / sxx;
     const sst = rows.reduce((s, r) => s + r.y * r.y, 0);
     const sse = rows.reduce((s, r) => s + (r.y - slope * r.x) ** 2, 0);

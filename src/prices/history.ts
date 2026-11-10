@@ -96,16 +96,23 @@ function catalogPoints(covered: Set<string>): PricePoint[] {
     );
 }
 
+// Sorted by effective date: "YYYY-MM" is mid-month (yearFraction), so it
+// sorts after "YYYY-MM-01". An out-of-stock snapshot does not stand in for
+// the catalog price of its month.
 function build(): PricePoint[] {
     const snaps = snapshotPoints();
     const covered = new Set(
-        snaps.map(
-            (p) => `${p.actuatorId}@${p.date.slice(0, CATALOG_PRICE_DATE.length)}`,
-        ),
+        snaps
+            .filter((p) => !p.outOfStock)
+            .map(
+                (p) => `${p.actuatorId}@${p.date.slice(0, CATALOG_PRICE_DATE.length)}`,
+            ),
     );
     return [...trendPoints(), ...snaps, ...catalogPoints(covered)].sort(
         (a, b) =>
-            a.actuatorId.localeCompare(b.actuatorId) || a.date.localeCompare(b.date),
+            a.actuatorId.localeCompare(b.actuatorId) ||
+            yearFraction(a.date) - yearFraction(b.date) ||
+            a.date.localeCompare(b.date),
     );
 }
 

@@ -89,10 +89,35 @@ export function MetalsView() {
             </table>
             <p className="pr-caution">{CAUSATION_NOTE}</p>
             <details className="tr-data">
-                <summary>Method</summary>
+                <summary>Method and data</summary>
                 <p className="tr-notes">
-                    {INDEX_METHOD} NdPr oxide is the /metals series, read with priceAt() for June of each year; hollow points carry an earlier year forward and are left out of the correlation.
+                    {INDEX_METHOD} NdPr oxide is the /metals series: for each year, the reading for June, or the latest earlier reading when June has none. Hollow points carry an earlier year forward and are left out of the correlation.
                 </p>
+                <div className="tr-table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Year</th>
+                                <th>Index</th>
+                                <th>Actuators</th>
+                                <th>NdPr US$/kg</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {index.map((i) => {
+                                const m = metalBy.get(i.year);
+                                return (
+                                    <tr key={i.year}>
+                                        <th scope="row">{i.year}</th>
+                                        <td>{i.value === null ? "n/a" : i.value.toFixed(1)}</td>
+                                        <td>{i.actuators}</td>
+                                        <td>{m ? `${m.usdPerKg}${m.carried ? ` (from ${m.date})` : ""}` : "n/a"}</td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
             </details>
         </section>
     );

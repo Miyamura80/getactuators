@@ -50,11 +50,13 @@ The deployed site (actuatorlist.com) is built for AI agents as well as people. I
 
 ## Data sourcing and licences
 
-The dataset is published under CC BY 4.0 (`LICENSE-DATA`). Facts are not copyrightable, so citing single facts is fine; copying a source's table, prose or paid data is not. Sources live in a `sources.ts` registry next to the data they back (`src/supply-chain/` and its subfolders, `src/humanoids/`, `src/people/`, `src/open-source/`, `src/sdk/`, `src/benchmarks/`, `src/trends/`), and every one has a required `reuse` value. Weekly price snapshots in `data/prices/history.json` cite the product page they were read from (a `facts` source, audited by `src/prices/licence.ts`):
+The dataset is published under CC BY 4.0 (`LICENSE-DATA`). Facts are not copyrightable, so citing single facts is fine; copying a source's table, prose or paid data is not. Sources live in a `sources.ts` registry next to the data they back (`src/supply-chain/` and its subfolders, `src/humanoids/`, `src/people/`, `src/open-source/`, `src/sdk/`, `src/benchmarks/`, `src/trends/`), and every one has a required `reuse` value:
 
 - `open`: public domain or openly licensed (USGS and other government statistics, CC-licensed papers, our own catalog paths). Use it only when the licence is clear; arXiv papers carry per-paper licences, so they default to `facts`.
 - `facts`: a copyrighted page we take individual facts from (news, datasheets, retailers, vendor sites, blogs). This is the default when unsure.
 - `restricted`: may be cited, but its data must not be redistributed (paywalled reports, analyst research, licensed price feeds). It may back at most 3 records.
+
+Price points in `data/prices/history.json` have no `sources.ts` entry: each cites the product page it was read from, and `src/prices/licence.ts` treats every page as `facts` (hardcoded there, not set in a registry) when it audits them.
 
 Rules when adding data:
 

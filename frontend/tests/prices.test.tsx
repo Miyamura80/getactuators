@@ -5,6 +5,8 @@ import { mountApp } from "../src/startup";
 import { PRICE_VIEWS, Prices } from "../src/pages/prices/Prices";
 import { PriceSparkline } from "../src/components/prices/PriceSparkline";
 import { ExplodedView } from "../src/pages/ExplodedView";
+import { money } from "../src/pages/prices/chart";
+import { ACTUATORS } from "../../src/catalog";
 import { actuatorsWithHistory, classTrends, historyFor, metalsOverlay } from "../../src/prices";
 
 afterEach(cleanup);
@@ -83,7 +85,7 @@ test("?actuator=<id> opens that actuator's step chart and data table", () => {
     expect(select.value).toBe("dynamixel-xm430-w350-t");
     const rows = view.container.querySelectorAll(".tr-data tbody tr");
     expect(rows).toHaveLength(historyFor("dynamixel-xm430-w350-t").length);
-    expect(rows[0]?.textContent).toContain("wayback");
+    expect(rows[0]?.textContent).toContain("Wayback Machine snapshot");
     expect(view.container.querySelectorAll(".pr-step-dot")).toHaveLength(rows.length);
     fireEvent.change(select, { target: { value: "robstride-04" } });
     expect(window.location.search).toBe("?actuator=robstride-04");
@@ -91,10 +93,26 @@ test("?actuator=<id> opens that actuator's step chart and data table", () => {
 });
 
 test("an actuator without a price says so", () => {
-    setUrl("http://localhost:1/prices?actuator=odrive-s1");
-    const priced = historyFor("odrive-s1").length > 0;
+    const id = ACTUATORS.find((a) => historyFor(a.id).length === 0)?.id as string;
+    expect(id).toBeTruthy();
+    setUrl(`http://localhost:1/prices?actuator=${id}`);
     const view = render(<Prices />);
-    expect(Boolean(view.container.querySelector(".pr-stats"))).toBe(priced);
+    expect(view.container.querySelector(".pr-stats")).toBeNull();
+    expect(view.container.textContent).toContain("No dated price for this actuator yet.");
+});
+
+test("view changes keep unrelated URL parameters", () => {
+    setUrl("http://localhost:1/prices?utm_source=x");
+    const view = render(<Prices />);
+    fireEvent.click(button(view.container, "vs NdPr"));
+    expect(new URLSearchParams(window.location.search).get("utm_source")).toBe("x");
+    expect(new URLSearchParams(window.location.search).get("view")).toBe("metals");
+});
+
+test("money rounds before picking a format", () => {
+    expect(money(999.6)).toBe("$1,000");
+    expect(money(1234.5)).toBe("$1,235");
+    expect(money(99.5)).toBe("$99.50");
 });
 
 test("actuator pages show a sparkline linking to the history", () => {

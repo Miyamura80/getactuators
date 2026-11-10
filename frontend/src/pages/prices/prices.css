@@ -1,5 +1,19 @@
-/* /prices: builds on the /trends tokens (trends.css). Cyan only marks the
-   pressed control; series take the data palette. */
+/* /prices: builds on the /trends tokens (trends.css). Cyan marks the pressed
+   control and the single-series marks (the one-actuator step line and the
+   box plots); multi-series charts take the data palette. */
+
+/* Announces the view after a tab or actuator change; visually hidden. */
+.pr-status {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+}
 
 .pr-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 18px 0 0; }
 .pr-tabs button {

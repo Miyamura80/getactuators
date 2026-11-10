@@ -20,15 +20,20 @@ export function TrendView() {
     const all = trends.flatMap((t) => t.points);
     const xs = all.map((p) => p.year);
     const vs = all.map((p) => p.usdPerNm);
-    const f = frame({
-        width,
-        height: H,
-        x0: Math.floor(Math.min(...xs)) - 0.2,
-        x1: Math.max(...xs) + 0.3,
-        y0: Math.min(...vs),
-        y1: Math.max(...vs),
-        log: true,
-    });
+    // No priced points: legend and table only (min/max of nothing is
+    // Infinity, which the scale cannot take).
+    const f =
+        all.length === 0
+            ? null
+            : frame({
+                  width,
+                  height: H,
+                  x0: Math.floor(Math.min(...xs)) - 0.2,
+                  x1: Math.max(...xs) + 0.3,
+                  y0: Math.min(...vs),
+                  y1: Math.max(...vs),
+                  log: true,
+              });
     return (
         <section className="pr-view" aria-labelledby="pr-trend-title">
             <h2 id="pr-trend-title" className="pr-view-title">
@@ -52,6 +57,7 @@ export function TrendView() {
             </ul>
             <p className="pr-unit">US$ per N·m peak, log scale</p>
             <div ref={ref} className="pr-chart">
+                {f && (
                 <svg width={f.w} height={f.h} className="pr-svg" role="img" aria-label="Price per newton metre of peak torque by year, coloured by actuator class">
                     <Axes f={f} />
                     {trends.map((t, i) => {
@@ -97,9 +103,10 @@ export function TrendView() {
                         );
                     })}
                 </svg>
+                )}
             </div>
             <details className="tr-data">
-                <summary>Fit method</summary>
+                <summary>Fit method and data</summary>
                 <p className="tr-notes">{FIT_METHOD}</p>
                 <div className="tr-table-wrap">
                     <table>
@@ -122,6 +129,30 @@ export function TrendView() {
                                     <td>{t.fit ? t.fit.r2.toFixed(2) : "n/a"}</td>
                                 </tr>
                             ))}
+                        </tbody>
+                    </table>
+                </div>
+                <div className="tr-table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Actuator</th>
+                                <th>Class</th>
+                                <th>Date</th>
+                                <th>$/N·m</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {trends.flatMap((t) =>
+                                t.points.map((p) => (
+                                    <tr key={`${p.point.actuatorId}${p.point.date}${p.point.method}`}>
+                                        <th scope="row">{getActuator(p.point.actuatorId)?.name ?? p.point.actuatorId}</th>
+                                        <td>{t.label}</td>
+                                        <td>{p.point.date}</td>
+                                        <td>{formatValue(p.usdPerNm)}</td>
+                                    </tr>
+                                )),
+                            )}
                         </tbody>
                     </table>
                 </div>

@@ -1,4 +1,5 @@
 import { getActuator } from "../catalog";
+import { canonicalBrand } from "../catalog/brands";
 import { PRICE_POINTS, isPriced } from "./history";
 
 // $/N·m spread by country or brand in one calendar year. Each actuator counts
@@ -57,7 +58,12 @@ export function groupStats(by: GroupBy, year: number): GroupStats[] {
     const groups = new Map<string, GroupValue[]>();
     for (const v of yearValues(year)) {
         const a = getActuator(v.actuatorId);
-        const key = (by === "country" ? a?.country : a?.brand) ?? "Unknown";
+        const key =
+            (by === "country"
+                ? a?.country
+                : a?.brand === undefined
+                  ? undefined
+                  : canonicalBrand(a.brand)) ?? "Unknown";
         groups.set(key, [...(groups.get(key) ?? []), v]);
     }
     return [...groups.entries()]

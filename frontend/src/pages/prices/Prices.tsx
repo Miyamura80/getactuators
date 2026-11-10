@@ -46,7 +46,10 @@ export function Prices({ menuOpen = false }: { menuOpen?: boolean }) {
     }, []);
     const update = (next: { view: PriceView; actuator: string }) => {
         setState(next);
-        const q = new URLSearchParams();
+        // Keep unrelated parameters (tracking and the like); set only ours.
+        const q = new URLSearchParams(window.location.search);
+        q.delete("actuator");
+        q.delete("view");
         if (next.view === "actuator") q.set("actuator", next.actuator);
         else if (next.view !== "trend") q.set("view", next.view);
         const qs = q.toString();
@@ -70,7 +73,11 @@ export function Prices({ menuOpen = false }: { menuOpen?: boolean }) {
                         </button>
                     ))}
                 </div>
-                <div className="pr-panel" aria-live="polite">
+                <p className="pr-status" aria-live="polite">
+                    {PRICE_VIEWS.find(([v]) => v === state.view)?.[1]}
+                    {state.view === "actuator" && state.actuator ? `: ${getActuator(state.actuator)?.name ?? state.actuator}` : ""}
+                </p>
+                <div className="pr-panel">
                     {state.view === "trend" && <TrendView />}
                     {state.view === "compare" && <CompareView />}
                     {state.view === "actuator" && (

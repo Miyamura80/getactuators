@@ -1,4 +1,5 @@
 import { historyFor, isPriced, pricesUrl, yearFraction } from "../../../../src/prices";
+import { money } from "../../pages/prices/chart";
 import "./price-sparkline.css";
 
 const W = 72;
@@ -25,7 +26,7 @@ export function PriceSparkline({ id }: { id: string }) {
     const last = points.at(-1);
     const label =
         points.length > 1 && first && last
-            ? `Price history: $${first.priceUsd} in ${first.date.slice(0, 4)} to $${last.priceUsd} in ${last.date.slice(0, 4)}`
+            ? `Price history: ${money(first.priceUsd)} in ${first.date.slice(0, 4)} to ${money(last.priceUsd)} in ${last.date.slice(0, 4)}`
             : "Price history";
     return (
         <a className="pr-spark-link" href={pricesUrl(id)} aria-label={label}>

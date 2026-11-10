@@ -15,10 +15,14 @@ import { Axes, frame, money, pct, useWidth } from "./chart";
 
 const H = 260;
 
-function sourceLink(id: string): { title: string; url: string } {
-    if (id.startsWith("url:")) return { title: "Product page", url: id.slice(4) };
+function sourceLink(id: string): { title: string; url: string; label: string } {
+    if (id.startsWith("url:")) return { title: "Product page", url: id.slice(4), label: "page" };
+    if (id.startsWith("catalog:")) {
+        const s = sourceOf(id);
+        return { title: s.title, url: s.url, label: "catalog" };
+    }
     const s = sourceOf(id);
-    return { title: s.title, url: s.url };
+    return { title: s.title, url: s.url, label: id.startsWith("wb-") ? "archive" : "source" };
 }
 
 // Step chart: a listed price holds until the next one. Out-of-stock listings
@@ -74,6 +78,8 @@ export function ActuatorView({ id, onPick }: { id: string; onPick: (id: string) 
     const a = getActuator(id);
     const points = historyFor(id);
     const last = latestPoint(id);
+    // Shown when every listing is out of stock.
+    const listed = points.at(-1);
     const yc = yearChange(id);
     const note = seriesNote(id);
     return (
@@ -94,16 +100,16 @@ export function ActuatorView({ id, onPick }: { id: string; onPick: (id: string) 
                     })}
                 </select>
             </label>
-            {a && last ? (
+            {a && listed ? (
                 <>
                     <dl className="pr-stats">
                         <div>
                             <dt>Latest</dt>
-                            <dd>{money(last.priceUsd)}</dd>
+                            <dd>{last ? money(last.priceUsd) : `${money(listed.priceUsd)} (out of stock)`}</dd>
                         </div>
                         <div>
                             <dt>$/N·m</dt>
-                            <dd>{last.usdPerNm === null ? "n/a" : `$${formatValue(last.usdPerNm)}`}</dd>
+                            <dd>{last?.usdPerNm == null ? "n/a" : `$${formatValue(last.usdPerNm)}`}</dd>
                         </div>
                         <div>
                             <dt>1 year</dt>
@@ -139,13 +145,16 @@ export function ActuatorView({ id, onPick }: { id: string; onPick: (id: string) 
                                                 {p.outOfStock ? " (out of stock)" : ""}
                                             </td>
                                             <td>{p.currency === "USD" ? "USD" : `${p.originalPrice} ${p.currency} × ${p.fxRate}`}</td>
-                                            <td>{p.method}</td>
+                                            <td>{METHOD_LABEL[p.method]}</td>
                                             <td>
-                                                {p.sources.map((s) => (
-                                                    <a key={s} href={sourceLink(s).url} title={sourceLink(s).title} className="pr-src">
-                                                        {s.startsWith("catalog:") ? "catalog" : s.startsWith("url:") ? "page" : s}
-                                                    </a>
-                                                ))}
+                                                {p.sources.map((s) => {
+                                                    const link = sourceLink(s);
+                                                    return (
+                                                        <a key={s} href={link.url} title={link.title} className="pr-src">
+                                                            {link.label}
+                                                        </a>
+                                                    );
+                                                })}
                                             </td>
                                         </tr>
                                     ))}

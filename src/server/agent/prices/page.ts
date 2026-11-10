@@ -9,10 +9,12 @@ import {
     PRICE_POINTS,
     actuatorsWithHistory,
     classTrends,
+    groupStats,
     historyFor,
     latestPoint,
     metalsOverlay,
     priceHistoryApiPath,
+    priceYears,
     seriesNote,
     yearChange,
 } from "@/prices";
@@ -20,7 +22,7 @@ import { formatValue, isOwnSource, sourceOf } from "@/trends";
 import { DATA_LICENSE, absoluteUrl } from "../../site";
 import * as ld from "../jsonld";
 import { toAbsolute } from "../jsonld";
-import { bullets, mdLink, mdTable } from "../md";
+import { bullets, mdLink, mdTable, mdText, usd } from "../md";
 import type { Page } from "../page-types";
 
 // Markdown twin and JSON-LD of /prices: class trends with their fit, latest
@@ -48,6 +50,29 @@ function classSection(): string {
     ].join("\n\n");
 }
 
+// $/N·m spread by country and by brand in the latest year with prices.
+function groupSection(): string {
+    const year = priceYears().at(-1);
+    if (year === undefined) return "";
+    const table = (by: "country" | "brand", head: string) =>
+        mdTable(
+            [head, "Actuators", "Min", "Median", "Max"],
+            groupStats(by, year).map((g) => [
+                mdText(g.group),
+                String(g.n),
+                formatValue(g.min),
+                formatValue(g.median),
+                formatValue(g.max),
+            ]),
+        );
+    return [
+        `## $/N·m by country and brand (${year})`,
+        "Each actuator counts once: its last priced point that year. Cheapest median first.",
+        table("country", "Country"),
+        table("brand", "Brand"),
+    ].join("\n\n");
+}
+
 function actuatorSection(): string {
     const rows = actuatorsWithHistory().map((id) => {
         const a = getActuator(id);
@@ -59,7 +84,7 @@ function actuatorSection(): string {
             mdLink(a?.name ?? id, `/actuators/${id}`),
             String(pts.length),
             pts[0]?.date ?? "",
-            last ? `$${formatValue(last.priceUsd)} (${last.date})` : "n/a",
+            last ? `${usd(last.priceUsd)} (${last.date})` : "n/a",
             last?.usdPerNm != null ? formatValue(last.usdPerNm) : "n/a",
             yc ? `${pct(yc.change)} since ${yc.from.date}` : "n/a",
             methods,
@@ -108,7 +133,7 @@ function metalsSection(): string {
     return [
         "## Price index vs NdPr oxide",
         mdTable(["Year", "Actuator index", "Actuators", "NdPr oxide (US$/kg)"], rows),
-        `Index: ${INDEX_METHOD} NdPr oxide is the FOB China series on ${mdLink("/metals", absoluteUrl("/metals"))}, read with priceAt() for June of each year.`,
+        `Index: ${INDEX_METHOD} NdPr oxide is the FOB China series on ${mdLink("/metals", absoluteUrl("/metals"))}: for each year, the reading for June, or the latest earlier reading when June has none.`,
         bullets(
             lags.map(
                 (l) =>
@@ -153,6 +178,8 @@ Methods: ${Object.entries(METHOD_LABEL)
 Per actuator as JSON: ${mdLink("/api/v1/prices/{actuatorId}", absoluteUrl("/api/v1/prices/dynamixel-xm430-w350-t"))}, or MCP get_price_history. The curated sample also appears on ${mdLink("/trends", absoluteUrl("/trends"))}.
 
 ${classSection()}
+
+${groupSection()}
 
 ${actuatorSection()}
 

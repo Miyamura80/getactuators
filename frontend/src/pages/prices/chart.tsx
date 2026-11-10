@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { type Scale, makeScale, tickLabel, yearTicks } from "../trends/scale";
 
 // Shared frame for the /prices charts. Charts draw at their container's real
@@ -8,7 +8,8 @@ import { type Scale, makeScale, tickLabel, yearTicks } from "../trends/scale";
 export function useWidth(fallback = 640): [React.RefObject<HTMLDivElement | null>, number] {
     const ref = useRef<HTMLDivElement>(null);
     const [width, setWidth] = useState(fallback);
-    useEffect(() => {
+    // Layout effect: the measured width applies before the first paint.
+    useLayoutEffect(() => {
         const el = ref.current;
         if (!el) return;
         const read = () => {
@@ -79,7 +80,11 @@ export function Axes({ f, yLabel = tickLabel }: { f: Frame; yLabel?: (v: number)
     );
 }
 
-export const money = (v: number): string =>
-    v >= 1000 ? `$${Math.round(v).toLocaleString("en-US")}` : v >= 100 ? `$${Math.round(v)}` : `$${v.toFixed(2)}`;
+// Whole dollars from $100 with thousands separators, cents below; 999.6
+// prints as "$1,000", not "$1000".
+export const money = (v: number): string => {
+    const whole = Math.round(v);
+    return v >= 100 ? `$${whole.toLocaleString("en-US")}` : `$${v.toFixed(2)}`;
+};
 
 export const pct = (v: number): string => `${v >= 0 ? "+" : ""}${(v * 100).toFixed(1)}%`;

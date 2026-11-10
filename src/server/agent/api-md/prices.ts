@@ -1,7 +1,7 @@
 import type { ApiContext } from "@/api/http";
 import { priceHistory } from "@/api/prices";
 import { formatValue } from "@/trends";
-import { mdLink, mdTable, mdText } from "../md";
+import { mdLink, mdTable, mdText, usd } from "../md";
 
 // Markdown twin of /api/v1/prices/{id}: one actuator's dated prices.
 
@@ -13,7 +13,7 @@ export function getPriceHistoryMd(ctx: ApiContext): string {
     const ref = (id: string) => `[${sources.findIndex((s) => s.id === id) + 1}]`;
     const rows = h.points.map((p) => [
         p.date,
-        `$${formatValue(p.price_usd)}`,
+        usd(p.price_usd),
         p.currency === "USD"
             ? "USD"
             : `${formatValue(p.original_price)} ${p.currency} at ${p.fx_rate}`,
@@ -25,14 +25,14 @@ export function getPriceHistoryMd(ctx: ApiContext): string {
         mdText(p.note ?? ""),
     ]);
     const change = h.change_1y
-        ? `1-year change: ${(h.change_1y.change * 100).toFixed(1)}% since ${h.change_1y.from_date} ($${formatValue(h.change_1y.from_price_usd)}).`
+        ? `1-year change: ${(h.change_1y.change * 100).toFixed(1)}% since ${h.change_1y.from_date} (${usd(h.change_1y.from_price_usd)}).`
         : "1-year change: n/a (no price a year before the latest).";
     return [
         `# Price history: ${mdText(h.name)}`,
         `${h.count} ${h.count === 1 ? "point" : "points"} for ${mdText(h.brand)} ${mdText(h.name)} (\`${h.actuator_id}\`), as of ${h.as_of}. Chart: ${mdLink("/prices", h.url)}.`,
         h.note ? `Note: ${mdText(h.note)}` : "",
         h.latest
-            ? `Latest: $${formatValue(h.latest.price_usd)} on ${h.latest.date}. ${change}`
+            ? `Latest: ${usd(h.latest.price_usd)} on ${h.latest.date}. ${change}`
             : "No price on file.",
         rows.length
             ? mdTable(
