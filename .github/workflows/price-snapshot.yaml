@@ -1,0 +1,90 @@
+name: Price snapshot
+
+# Weekly (and on demand): reads each catalog actuator's product page,
+# appends one dated price per actuator to data/prices/history.json and opens
+# a bot pull request with the points, the ones held for review and every
+# failure in its body. It never pushes to main. Run it by hand with
+# mode "wayback" for the one-off Wayback Machine back-fill (at most one
+# capture per month per product).
+#
+# Opening the PR needs "Allow GitHub Actions to create and approve pull
+# requests" (Settings, Actions, General). PRs opened with GITHUB_TOKEN do not
+# start other workflows; close and reopen the PR to run CI on it.
+on:
+  schedule:
+    # Mondays 05:17 UTC.
+    - cron: "17 5 * * 1"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "snapshot (this week's prices) or wayback (back-fill)"
+        type: choice
+        options: [snapshot, wayback]
+        default: snapshot
+      only:
+        description: "Comma-separated actuator ids (empty for all)"
+        type: string
+        default: ""
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: price-snapshot
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: 1.4.4
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Read prices
+        env:
+          MODE: ${{ inputs.mode || 'snapshot' }}
+          ONLY: ${{ inputs.only }}
+        run: |
+          args=(--report=price-report.md)
+          if [ -n "$ONLY" ]; then args+=("--only=$ONLY"); fi
+          if [ "$MODE" = "wayback" ]; then
+            bun run scripts/price-snapshot/wayback.ts "${args[@]}"
+          else
+            bun run scripts/price-snapshot/snapshot.ts "${args[@]}"
+          fi
+
+      - name: Check the new points pass the citation audit
+        run: bun run scripts/citation-audit.ts
+
+      - name: Open a pull request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MODE: ${{ inputs.mode || 'snapshot' }}
+        run: |
+          if git diff --quiet -- data/prices/history.json; then
+            echo "No new price points."
+            cat price-report.md >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          branch="bot/price-${MODE}-$(date -u +%Y-%m-%d)-${GITHUB_RUN_ID}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git add data/prices/history.json
+          git commit -m "🔨 Price ${MODE}: $(date -u +%Y-%m-%d)"
+          git push origin "$branch"
+          gh pr create --base main --head "$branch" \
+            --title "Price ${MODE}: $(date -u +%Y-%m-%d)" \
+            --body-file price-report.md

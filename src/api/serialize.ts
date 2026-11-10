@@ -1,6 +1,7 @@
 import type { Actuator, Robot } from "@/catalog";
 import { getActuator } from "@/catalog";
 import { jointRows, robotsUsingActuator } from "@/catalog/query";
+import { priceHistoryApiPath } from "@/prices";
 import { sdkLookupView } from "@/sdk/views";
 import { absoluteUrl } from "@/server/site";
 import type {
@@ -24,6 +25,7 @@ export function serializeActuator(a: Actuator): ApiActuator {
         image_url: a.image_url ?? null,
         url: absoluteUrl(`/actuators/${encodeURIComponent(a.id)}`),
         api_url: actuatorApiUrl(a.id),
+        price_history_url: absoluteUrl(priceHistoryApiPath(a.id)),
     };
 }
 

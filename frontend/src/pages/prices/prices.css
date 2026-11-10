@@ -1,0 +1,78 @@
+/* /prices: builds on the /trends tokens (trends.css). Cyan only marks the
+   pressed control; series take the data palette. */
+
+.pr-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 18px 0 0; }
+.pr-tabs button {
+    min-height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: 2px;
+    background: var(--panel);
+    color: var(--muted);
+    font: 500 13px var(--sans);
+    cursor: pointer;
+}
+.pr-tabs button[aria-pressed="true"] { color: var(--cyan); border-color: var(--cyan); }
+.pr-tabs button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+
+.pr-panel { margin-top: 14px; border: 1px solid var(--line); }
+.pr-view { padding: 16px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.pr-view-title { margin: 0; font-size: 16px; }
+.pr-unit { margin: 0; font: 11px var(--mono); color: var(--tr-faint); }
+.pr-chart { width: 100%; min-width: 0; }
+.pr-svg { display: block; overflow: visible; }
+.pr-fit { color: var(--tr-faint); font: 11px var(--mono); }
+.pr-fit-line { stroke-width: 2; stroke-dasharray: 6 4; }
+.pr-controls { display: flex; flex-wrap: wrap; gap: 8px 16px; }
+.pr-years { flex-wrap: wrap; }
+
+/* Box plots: HTML label column, SVG box column, shared axis strip. */
+.pr-box-grid { display: grid; grid-template-columns: minmax(96px, max-content) minmax(0, 1fr); column-gap: 10px; row-gap: 2px; }
+.pr-box-row { display: contents; }
+.pr-box-label { font-size: 12px; line-height: 26px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
+.pr-n { font: 10px var(--mono); color: var(--tr-faint); }
+.pr-box-svg { display: block; width: 100%; }
+.pr-box { fill: color-mix(in oklab, var(--cyan-dim) 18%, transparent); stroke: var(--cyan-dim); stroke-width: 1; }
+.pr-median { stroke: var(--text); stroke-width: 2; }
+.pr-whisker { stroke: var(--line-strong); stroke-width: 1; }
+.pr-box-dot { fill: var(--muted); fill-opacity: 0.8; }
+.pr-axis-strip { position: relative; height: 18px; border-top: 1px solid var(--line); }
+.pr-axis-strip span { position: absolute; top: 3px; transform: translateX(-50%); font: 10px var(--mono); color: var(--tr-faint); white-space: nowrap; }
+.pr-axis-strip span:first-child { transform: none; }
+.pr-axis-strip span:last-child { transform: translateX(-100%); }
+
+/* One actuator */
+.pr-pick { display: flex; flex-direction: column; gap: 4px; max-width: 420px; }
+.pr-pick-label { font: 600 10px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.pr-pick select {
+    min-height: 34px;
+    padding: 0 8px;
+    border: 1px solid var(--line-strong);
+    border-radius: 2px;
+    background: var(--panel);
+    color: var(--text);
+    font: 13px var(--sans);
+}
+.pr-pick select:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.pr-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 0; }
+.pr-stats div { border: 1px solid var(--line); padding: 8px 10px; min-width: 0; }
+.pr-stats dt { font: 10px var(--mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.pr-stats dd { margin: 2px 0 0; font: 600 16px var(--mono); }
+.pr-step-dot { stroke-width: 1.5; color: var(--cyan-dim); }
+.pr-src { margin-right: 6px; color: var(--text); }
+.pr-detail-link { font-size: 13px; color: var(--muted); }
+
+/* vs NdPr */
+.pr-key { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; }
+.pr-key li { display: inline-flex; align-items: center; gap: 6px; }
+.pr-lags { border-collapse: collapse; font-size: 12px; max-width: 360px; }
+.pr-lags caption { text-align: left; font: 600 10px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding-bottom: 4px; }
+.pr-lags th, .pr-lags td { padding: 4px 10px 4px 0; border-bottom: 1px solid var(--line); text-align: left; font-family: var(--mono); }
+.pr-lags thead th { font-size: 10px; color: var(--muted); }
+.pr-caution { margin: 0; padding: 8px 10px; border-left: 2px solid var(--red); font-size: 12px; line-height: 1.45; color: var(--muted); }
+
+@media (max-width: 640px) {
+    .pr-view { padding: 12px; }
+    .pr-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .pr-box-label { max-width: 120px; }
+}

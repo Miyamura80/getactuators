@@ -24,6 +24,9 @@ COPY src/supply-chain ./src/supply-chain
 COPY src/open-source ./src/open-source
 # Dated, cited trend points (/trends).
 COPY src/trends ./src/trends
+# Price history (/prices): analysis code and the weekly snapshot points.
+COPY src/prices ./src/prices
+COPY data/prices ./data/prices
 # Measured benchmark runs (/benchmarks, Measured panel, /compare overlay).
 COPY src/benchmarks ./src/benchmarks
 COPY data/benchmarks ./data/benchmarks
@@ -44,6 +47,7 @@ COPY --from=build /app/frontend/dist ./frontend/dist
 COPY frontend/src/data ./frontend/src/data
 COPY src ./src
 COPY data/benchmarks ./data/benchmarks
+COPY data/prices ./data/prices
 # Served as-is by src/server/routes: the agent skill and the og:images.
 COPY skills ./skills
 COPY media/og-image.png media/og-startups.png media/og-investors.png ./media/

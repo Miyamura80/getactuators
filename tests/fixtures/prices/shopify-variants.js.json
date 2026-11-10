@@ -1,0 +1,24 @@
+{
+    "id": 7012345678902,
+    "title": "AK80-9 KV100",
+    "handle": "ak80-9",
+    "price": 10000,
+    "variants": [
+        {
+            "id": 42000000000001,
+            "title": "Without driver board",
+            "public_title": "Without driver board",
+            "sku": "AK80-9-BARE",
+            "price": 10000,
+            "available": true
+        },
+        {
+            "id": 42000000000002,
+            "title": "With driver board",
+            "public_title": "With driver board",
+            "sku": "AK80-9-DRV",
+            "price": 15000,
+            "available": false
+        }
+    ]
+}

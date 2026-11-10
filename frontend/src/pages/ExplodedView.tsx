@@ -2,13 +2,14 @@ import { PublicHeader } from "../components/PublicHeader";
 import { EngineeringEvidencePanel } from "../components/EngineeringEvidencePanel";
 import { MeasuredPanel } from "../components/benchmarks/MeasuredPanel";
 import { evidenceFor, fieldCaveat, isReducerFamily } from "../../../src/catalog/evidence";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { ACTUATORS } from "../lib/data";
 import { num, price } from "../lib/format";
 import { Link } from "../lib/router";
 import { CompanyLogo } from "../components/CompanyLogo";
 import { CountryFlag } from "../components/CountryFlag";
 import { SdkBadge } from "./sdk/SdkBadge";
+import { PriceSparkline } from "../components/prices/PriceSparkline";
 
 interface Props {
     id: string;
@@ -151,7 +152,9 @@ export function ExplodedView({ id, menuOpen = false }: Props) {
                         />
                         <Spec label="Reduction" value={actuator.gear_ratio ?? "–"} caveat={fieldCaveat(actuator, "gear_ratio")} />
                         <Spec label="Weight" value={`${num(actuator.weight_g)} g`} caveat={fieldCaveat(actuator, "weight_g")} />
-                        <Spec label="Price" value={price(actuator.price_usd)} caveat={fieldCaveat(actuator, "price_usd")} />
+                        <Spec label="Price" value={price(actuator.price_usd)} caveat={fieldCaveat(actuator, "price_usd")}>
+                            <PriceSparkline id={actuator.id} />
+                        </Spec>
                     </div>
                 </div>
             </div>
@@ -161,12 +164,13 @@ export function ExplodedView({ id, menuOpen = false }: Props) {
     );
 }
 
-function Spec({ label, value, caveat }: { label: string; value: string; caveat?: string }) {
+function Spec({ label, value, caveat, children }: { label: string; value: string; caveat?: string; children?: ReactNode }) {
     return (
         <div className="xp-spec">
             <span className="xp-spec-label">{label}</span>
             <span className="xp-spec-value">{value}</span>
             {caveat && <small>{caveat}</small>}
+            {children}
         </div>
     );
 }

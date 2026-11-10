@@ -1,6 +1,7 @@
 import { robotLicenceErrors } from "../catalog/robot-licence";
 import { openSourceLicenceErrors } from "../open-source/licence";
 import { DIRECTORY_RECORDS } from "../people/records";
+import { pricesLicenceErrors } from "../prices/licence";
 import { sdkErrors } from "../sdk/audit";
 import { SDK_CHECKS } from "../sdk/checks";
 import { trendsLicenceErrors } from "../trends/licence";
@@ -309,6 +310,7 @@ export function auditRegistry(
         ...openSourceLicenceErrors(),
         ...robotLicenceErrors(),
         ...trendsLicenceErrors(today),
+        ...pricesLicenceErrors(today),
     );
     const values = sourcedValueIssues(today);
     const orphans = SOURCES.filter((s) => !used.has(s.id)).map(
