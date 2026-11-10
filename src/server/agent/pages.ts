@@ -31,6 +31,7 @@ import {
     topBy,
 } from "./pages-md";
 import { PEOPLE_PAGE } from "./people/page";
+import { PRICES_PAGE } from "./prices/page";
 import { SDK_PAGE } from "./sdk";
 import { actuatorSeoTitle } from "./seo-titles";
 import { startupsBody } from "./startups";
@@ -168,6 +169,7 @@ const STATIC_PAGES: Page[] = [
     SDK_PAGE,
     PEOPLE_PAGE,
     TRENDS_PAGE,
+    PRICES_PAGE,
     sub(
         PATHS.agentsPage,
         "spa",

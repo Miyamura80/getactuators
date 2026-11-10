@@ -1,0 +1,18 @@
+{
+    "id": 7012345678901,
+    "title": "GO-M8010-6 Motor",
+    "handle": "go1-motor",
+    "vendor": "Unitree",
+    "price": 12345,
+    "available": true,
+    "variants": [
+        {
+            "id": 41000000000001,
+            "title": "Default Title",
+            "public_title": null,
+            "sku": "GO-M8010-6",
+            "price": 12345,
+            "available": true
+        }
+    ]
+}

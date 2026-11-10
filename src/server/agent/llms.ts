@@ -94,6 +94,7 @@ ${link("Actuators", "/actuators.md", "every actuator in one table, plus categori
 ${link("Robots", "/robots.md", "humanoids, robot arms and quadrupeds with per-joint motors")}
 ${link("Humanoid joint map", "/humanoids.md", "humanoids mapped joint by joint onto one canonical joint set: actuator type, motor, peak torque or force, and estimated magnet and rare-earth content per robot; MCP get_humanoid_joints, REST /api/v1/humanoids")}
 ${link("Trends", "/trends.md", "actuator list prices and $/N·m over time, humanoid shipments by company, roller screw cost, the price of AI against electricity and batteries (Epoch AI, Tadepalli) and humanoid battery runtime, every point dated and cited; MCP get_trends, REST /api/v1/trends")}
+${link("Actuator prices", "/prices.md", "dated list prices per actuator (weekly snapshots, Wayback, curated), $/N·m by class with a fitted trend, latest price and 1-year change, and a price index against NdPr oxide; MCP get_price_history, REST /api/v1/prices/{actuatorId}")}
 ${link("Open-source robots", "/open-source.md", "robots you can build from published designs: openness matrix with links, licences, BOM cost, actuators per joint and lineage; MCP list_open_robots, REST /api/v1/open-robots")}
 
 ## Engineering guides and tools (markdown)

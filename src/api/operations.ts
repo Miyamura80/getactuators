@@ -69,6 +69,7 @@ import {
     getPolicyHandler,
     listPolicyHandler,
 } from "./policy";
+import { PriceHistorySchema, priceHistoryHandler } from "./prices";
 import {
     ProcessChainListSchema,
     ProcessChainSchema,
@@ -469,6 +470,23 @@ export const OPERATIONS: Operation[] = [
         errors: [400, 404],
         example: "/api/v1/trends?section=ai",
         handler: listTrendsHandler,
+    },
+    {
+        operationId: "get_price_history",
+        method: "GET",
+        path: "/api/v1/prices/:id",
+        summary: "Price history for one actuator",
+        description:
+            "Every dated list price on file for one catalog actuator, oldest first: weekly product page snapshots, Wayback Machine snapshots, curated points and the current catalog price. Each point has its US$ price, the listed currency and price, the FX rate used, the page URL, the method (jsonld, shopify, woocommerce, selector, wayback, manual), an out-of-stock flag, $/N·m and sources. Also the latest price and the change over one year. 404 for an unknown actuator; count 0 when it has no price yet.",
+        pathParam: {
+            name: "id",
+            description: "Catalog actuator id.",
+            example: "dynamixel-xm430-w350-t",
+        },
+        response: PriceHistorySchema,
+        errors: [404],
+        example: "/api/v1/prices/dynamixel-xm430-w350-t",
+        handler: priceHistoryHandler,
     },
     {
         operationId: "list_humanoids",

@@ -1,0 +1,19 @@
+[
+    {
+        "id": 1234,
+        "name": "VESC 6 MkVI",
+        "slug": "vesc6-mk6",
+        "sku": "VESC6-MK6",
+        "type": "simple",
+        "prices": {
+            "price": "9999",
+            "regular_price": "9999",
+            "sale_price": "9999",
+            "currency_code": "GBP",
+            "currency_symbol": "£",
+            "currency_minor_unit": 2
+        },
+        "is_in_stock": true,
+        "variations": []
+    }
+]

@@ -10,6 +10,7 @@ import { bomTools } from "./tools/bom";
 import { compareTools } from "./tools/compare";
 import { engineeringTools } from "./tools/engineering";
 import { peopleTools } from "./tools/people";
+import { priceTools } from "./tools/prices";
 import { processTools } from "./tools/processes";
 import { robotTools } from "./tools/robots";
 import { sdkTools } from "./tools/sdk";
@@ -42,6 +43,7 @@ export const CATALOG_TOOLS: readonly ToolDef[] = [
     ...altTools,
     ...bomTools,
     ...trendTools,
+    ...priceTools,
 ];
 
 export const INSTRUCTIONS = `actuatorlist is an open, read-only catalog of robot actuators and the robots that use them. No account or key is needed and no tool changes anything.
@@ -64,6 +66,7 @@ Which tool to use:
 - Which actuator brand has the best SDK (drivers, ROS 2, docs, firmware, support), with linked developer posts: get_sdk_score. get_actuator also returns the brand's SDK score as sdk.
 - Who matters in actuators and rare-earth magnet supply (researchers, founders, magnet and rare earth executives, analysts, policy leads) with affiliation, key works and sources: list_people, optionally by domain.
 - How prices, market shares and runtimes have moved over time (actuator list prices and $/N·m, humanoid shipments by company, roller screw cost, the price of AI against electricity and batteries, humanoid battery runtime), every point dated and cited: get_trends.
+- One actuator's dated list prices (weekly snapshots, Wayback, curated and catalog points, each with method, page URL and FX rate), latest price and 1-year change: get_price_history.
 Bulk snapshots are also exposed as resources (catalog://actuators, catalog://robots, catalog://categories, actuator://{id}, robot://{id}). Website: ${SITE_URL}.`;
 
 export function createCatalogServer(): McpServer {

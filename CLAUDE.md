@@ -56,12 +56,14 @@ The dataset is published under CC BY 4.0 (`LICENSE-DATA`). Facts are not copyrig
 - `facts`: a copyrighted page we take individual facts from (news, datasheets, retailers, vendor sites, blogs). This is the default when unsure.
 - `restricted`: may be cited, but its data must not be redistributed (paywalled reports, analyst research, licensed price feeds). It may back at most 3 records.
 
+Price points in `data/prices/history.json` have no `sources.ts` entry: each cites the product page it was read from, and `src/prices/licence.ts` treats every page as `facts` (hardcoded there, not set in a registry) when it audits them.
+
 Rules when adding data:
 
 - Record a source for every new figure, and add the source with its `reuse` value.
 - Never copy a source's prose; write notes and summaries in your own words.
 - Never import a whole third-party table or dataset. A `facts` source backing more than 10 records fails the audit unless it is in that registry's allowlist (`FACTS_ALLOWLIST` or `HUMANOID_FACTS_ALLOWLIST`) with a one-line reason; prefer citing a second source.
-- `make citation_audit` (also in `make ci` and a prek hook on `src/supply-chain/`, `src/humanoids/`, `src/sdk/`, `src/people/`, `src/open-source/` and `src/trends/`) enforces these rules; the logic is in `src/supply-chain/licence.ts`.
+- `make citation_audit` (also in `make ci` and a prek hook on `src/supply-chain/`, `src/humanoids/`, `src/sdk/`, `src/people/`, `src/open-source/`, `src/trends/`, `src/prices/` and `data/prices/`) enforces these rules; the logic is in `src/supply-chain/licence.ts`.
 - Measured runs under `data/benchmarks/` cite sources from `src/benchmarks/sources.ts` (allowlist `BENCHMARK_FACTS_ALLOWLIST`); `make validate_benchmarks` (in `make ci`) applies the same licence rules plus the test protocol in `docs/benchmarks/protocol.md`.
 
 ## Code Style

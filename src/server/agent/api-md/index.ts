@@ -32,6 +32,7 @@ import {
     listMetals,
     listProcesses,
 } from "./materials";
+import { getPriceHistoryMd } from "./prices";
 import { apiMarkdownPath, filterSummary } from "./shared";
 import {
     getCompany,
@@ -127,6 +128,7 @@ const RENDERERS: Record<string, Renderer> = {
     get_bom: (ctx) => bomCaseBody(findBomCase(ctx)),
     list_people: listPeople,
     list_trends: listTrends,
+    get_price_history: getPriceHistoryMd,
     get_person: getPerson,
 };
 

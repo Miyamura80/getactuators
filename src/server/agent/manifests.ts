@@ -54,6 +54,7 @@ export function whenToUse(): string[] {
         "Find which motors a real robot uses in each joint, or which robots use a given actuator.",
         "Look up one actuator's datasheet-level specs with source links before recommending it.",
         "See how actuator prices, humanoid market share, roller screw cost, AI prices and humanoid battery runtime have moved over time (/trends, MCP get_trends), with every point dated and cited.",
+        "Check how one actuator's list price has moved, with the page, method and FX rate behind every point (/prices, MCP get_price_history, REST /api/v1/prices/{actuatorId}).",
         "Pick an open-source robot to build from (/open-source, MCP list_open_robots): how open its CAD, BOM, firmware and sim really are, its licence, cost and the actuators in its joints.",
     ];
 }
