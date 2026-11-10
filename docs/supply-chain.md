@@ -320,8 +320,11 @@ share one template, so a new country is data only:
    `kind: "investment"` and a research or integration tie
    `kind: "partnership"`; untagged links are supply. Until
    then nothing is routed, so the data can merge in steps. When a country's
-   data issue sets a lower bar, put it in the page's `gate` field
-   (`/korea` uses 30 companies, 50 sites and 20 links, 10 of them supply).
+   data issue sets a different bar, put it in the page's `gate` field
+   (`/korea` uses a lower one: 30 companies, 50 sites and 20 links, 10 of
+   them supply; `/china` a higher one: 150 sites and 60 links, with the
+   shared floor for companies and supply links). Keep a raised gate at or
+   below the measured counts so the page stays live.
 7. **Check.** `make citation_audit`, `bun test tests/supply-chain` and
    `bun test tests/server/country.test.ts`; update the page count in
    `tests/server/short-titles-golden.ts` and the live-page list in

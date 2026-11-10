@@ -84,6 +84,22 @@ describe("coverage gate", () => {
         expect(jp ? gateOf(jp) : null).toEqual(COVERAGE_TARGET);
     });
 
+    test("China clears the higher gate its issue sets (#80: 150 sites, 60 links)", () => {
+        const page = getCountryPage("china");
+        expect(page?.code).toBe("CN");
+        const gate = page ? gateOf(page) : COVERAGE_TARGET;
+        expect(gate).toEqual({ companies: 40, sites: 150, links: 60, supplyLinks: 15 });
+        // Never below the shared target on any count.
+        expect(gate.companies).toBeGreaterThanOrEqual(COVERAGE_TARGET.companies);
+        expect(gate.sites).toBeGreaterThanOrEqual(COVERAGE_TARGET.sites);
+        expect(gate.links).toBeGreaterThanOrEqual(COVERAGE_TARGET.links);
+        expect(gate.supplyLinks).toBeGreaterThanOrEqual(COVERAGE_TARGET.supplyLinks);
+        const cn = coverage("CN");
+        expect(passesGate(cn, gate)).toBe(true);
+        expect(passesGate({ ...cn, sites: 149 }, gate)).toBe(false);
+        expect(passesGate({ ...cn, links: 59 }, gate)).toBe(false);
+    });
+
     test("pages resolve by slug or code, any case", () => {
         expect(getCountryPage("japan")?.code).toBe("JP");
         expect(getCountryPage("jp")?.path).toBe("/japan");

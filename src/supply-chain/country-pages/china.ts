@@ -30,6 +30,9 @@ export const CHINA_PAGE: CountryContent = {
     code: "CN",
     name: "China",
     lede: "China mines most of the world's rare earths, refines and magnetises nearly all of them, and is building its own reducers, roller screws and humanoids.",
+    // Issue #80 sets China's gate above the shared target: 150 sites and 60
+    // links. Companies and supply links keep the shared floor.
+    gate: { companies: 40, sites: 150, links: 60, supplyLinks: 15 },
     stages: [
         {
             stage: "mining",

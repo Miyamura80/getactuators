@@ -30,7 +30,7 @@ export interface CountryContent {
     stages: CountryStage[];
     clusters: CountryCluster[];
     // The counts this country must reach to go live, when its data issue sets
-    // a lower bar than the shared COVERAGE_TARGET.
+    // a bar other than the shared COVERAGE_TARGET.
     gate?: { companies: number; sites: number; links: number; supplyLinks: number };
     // Admin-1 regions the map can zoom to (?region=TX), when the page offers it.
     regions?: CountryRegions;
