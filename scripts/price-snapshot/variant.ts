@@ -4,7 +4,8 @@ import type { Offer } from "./extract/types";
 // (driver board or not, KV rating, cable length). Order: an explicit variant
 // hint from targets.ts, then the most catalog-name tokens in the offer
 // title, then the price closest to the reference price (last recorded or
-// catalog). A tie on tokens between differently priced offers is flagged.
+// catalog). A tie on tokens between differently priced offers is flagged, and
+// so is a variant hint that matches no offer.
 
 export interface PricedOffer extends Offer {
     priceUsd: number;
@@ -15,15 +16,16 @@ export interface Pick {
     ambiguous: boolean;
 }
 
+// Lowercase words, trailing dots dropped; a hyphenated model ("ak80-9")
+// counts whole and as its parts, so "GIM6010-8-Motor" still has "gim6010".
 export function tokens(s: string): string[] {
+    const words = s
+        .toLowerCase()
+        .split(/[^a-z0-9.-]+/)
+        .map((w) => w.replace(/^[.-]+|[.-]+$/g, ""));
     return [
-        ...new Set(
-            s
-                .toLowerCase()
-                .split(/[^a-z0-9.-]+/)
-                .filter((t) => t.length >= 2),
-        ),
-    ];
+        ...new Set(words.flatMap((w) => [w, ...(w.includes("-") ? w.split("-") : [])])),
+    ].filter((t) => t.length >= 2);
 }
 
 export function pickOffer(
@@ -52,5 +54,8 @@ export function pickOffer(
         (o) =>
             score(o) === score(best) && Math.abs(o.priceUsd / best.priceUsd - 1) > 0.05,
     );
-    return { offer: best, ambiguous: !pool.length && tied.length > 0 };
+    return {
+        offer: best,
+        ambiguous: (hint !== undefined && !pool.length) || tied.length > 0,
+    };
 }

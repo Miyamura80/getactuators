@@ -3,7 +3,9 @@ name: Price snapshot
 # Weekly (and on demand): reads each catalog actuator's product page,
 # appends one dated price per actuator to data/prices/history.json and opens
 # a bot pull request with the points, the ones held for review and every
-# failure in its body. It never pushes to main. Run it by hand with
+# failure in its body. A run that adds no point opens no PR; its report
+# (review items and failures included) goes to the run summary instead. It
+# never pushes to main. Run it by hand with
 # mode "wayback" for the one-off Wayback Machine back-fill (at most one
 # capture per month per product).
 #

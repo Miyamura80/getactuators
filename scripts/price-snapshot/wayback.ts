@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+import { historyFor, yearFraction } from "../../src/prices/history";
 import type { PriceRecord } from "../../src/prices/types";
 import { type FxTable, fetchFx } from "./currency";
 import { extractFromHtml } from "./extract";
@@ -7,12 +8,16 @@ import { PoliteFetcher } from "./fetch";
 import { mergePoints, readHistory, writeHistory } from "./history-file";
 import { toOutcome } from "./record";
 import { type RunReport, renderReport } from "./report";
+import { argOf, limitArg } from "./snapshot";
 import { type Target, targets } from "./targets";
 
 // One-off Wayback Machine back-fill: lists archived copies of each product
 // URL (and its old URLs) with the CDX API, keeps at most one per month, runs
 // the HTML extractors on each and appends method "wayback" points with that
-// day's FX rate. Points that need a person go to the review list.
+// day's FX rate. Points that need a person go to the review list. Each
+// capture is checked against the known price nearest its date, not today's,
+// and history.json is written after every actuator, so a killed run keeps
+// what it read.
 //
 //   bun run scripts/price-snapshot/wayback.ts [--only=id,id] [--since=2018]
 //       [--limit=N] [--dry-run] [--report=path]
@@ -73,7 +78,8 @@ async function captures(
     const rows: CdxRow[] = [];
     for (const url of [t.url, ...(t.override.oldUrls ?? [])]) {
         const res = await fetcher.get(cdxUrl(url, since), "application/json");
-        if (res.ok) rows.push(...parseCdx((await res.json()) as string[][]));
+        if (!res.ok) throw new Error(`CDX lookup for ${url}: HTTP ${res.status}`);
+        rows.push(...parseCdx((await res.json()) as string[][]));
     }
     return monthly(rows);
 }
@@ -85,6 +91,55 @@ async function fxOn(cache: Map<string, FxTable>, date: string): Promise<FxTable>
         cache.set(date, fx);
     }
     return fx;
+}
+
+// The priced point nearest a date (curated, snapshot, catalog or read earlier
+// in this run): the reference for the review check on an old capture.
+export function referenceAt(
+    t: Target,
+    date: string,
+    added: readonly PriceRecord[],
+): number | null {
+    const at = yearFraction(date);
+    const known = [...historyFor(t.actuatorId), ...added]
+        .filter((p) => p.actuatorId === t.actuatorId && !p.outOfStock)
+        .sort(
+            (a, b) =>
+                Math.abs(yearFraction(a.date) - at) -
+                Math.abs(yearFraction(b.date) - at),
+        );
+    return known[0]?.priceUsd ?? t.catalogUsd;
+}
+
+async function readCapture(
+    fetcher: PoliteFetcher,
+    t: Target,
+    row: CdxRow,
+    fxCache: Map<string, FxTable>,
+    report: RunReport,
+): Promise<void> {
+    const date = captureDate(row.timestamp);
+    const res = await fetcher.get(rawArchivedUrl(row));
+    const html = res.ok ? await res.text() : "";
+    const out = toOutcome({
+        target: t,
+        extraction: html ? extractFromHtml(html, t.override.selector) : null,
+        pageCurrency: html ? shopifyCurrency(html) : null,
+        error: res.ok ? "no price in the capture" : `capture HTTP ${res.status}`,
+        fx: await fxOn(fxCache, date),
+        date,
+        url: archivedUrl(row),
+        method: "wayback",
+        referenceUsd: referenceAt(t, date, report.added),
+    });
+    if (out.kind === "point") report.added.push(out.record);
+    else if (out.kind === "review") report.review.push(out);
+    else
+        report.failures.push({
+            actuatorId: t.actuatorId,
+            url: archivedUrl(row),
+            reason: out.reason,
+        });
 }
 
 async function backfillTarget(
@@ -107,29 +162,17 @@ async function backfillTarget(
             url: t.url,
             reason: "no new monthly captures",
         });
+    // One capture failing (Wayback timeouts are common) skips only that one.
     for (const row of rows) {
-        const date = captureDate(row.timestamp);
-        const res = await fetcher.get(rawArchivedUrl(row));
-        const html = res.ok ? await res.text() : "";
-        const out = toOutcome({
-            target: t,
-            extraction: html ? extractFromHtml(html, t.override.selector) : null,
-            pageCurrency: html ? shopifyCurrency(html) : null,
-            error: res.ok ? "no price in the capture" : `capture HTTP ${res.status}`,
-            fx: await fxOn(fxCache, date),
-            date,
-            url: archivedUrl(row),
-            method: "wayback",
-            referenceUsd: t.catalogUsd,
-        });
-        if (out.kind === "point") report.added.push(out.record);
-        else if (out.kind === "review") report.review.push(out);
-        else
+        try {
+            await readCapture(fetcher, t, row, fxCache, report);
+        } catch (e) {
             report.failures.push({
                 actuatorId: t.actuatorId,
                 url: archivedUrl(row),
-                reason: out.reason,
+                reason: String(e),
             });
+        }
     }
 }
 
@@ -137,9 +180,12 @@ export async function runBackfill(
     argv: string[],
     fetcher = new PoliteFetcher({ delayMs: 3000 }),
 ): Promise<RunReport> {
-    const get = (k: string) => argv.find((a) => a.startsWith(`--${k}=`))?.split("=")[1];
+    const get = (k: string) => argOf(argv, k);
     const since = get("since") ?? "2018";
-    const history = await readHistory();
+    const limit = limitArg(argv);
+    const only = get("only")?.split(",").filter(Boolean);
+    const list = targets(only?.length ? only : undefined).slice(0, limit);
+    let history = await readHistory();
     const have = new Set(
         history.points.map((p: PriceRecord) => `${p.actuatorId}@${p.date.slice(0, 7)}`),
     );
@@ -152,8 +198,12 @@ export async function runBackfill(
         skipped: [],
     };
     const fxCache = new Map<string, FxTable>();
-    const limit = get("limit") ? Number(get("limit")) : undefined;
-    for (const t of targets(get("only")?.split(",")).slice(0, limit)) {
+    for (const t of list) {
+        if (t.override.skip) {
+            report.skipped.push({ actuatorId: t.actuatorId, reason: t.override.skip });
+            continue;
+        }
+        const before = report.added.length;
         try {
             await backfillTarget(fetcher, t, since, have, fxCache, report);
         } catch (e) {
@@ -163,18 +213,18 @@ export async function runBackfill(
                 reason: String(e),
             });
         }
+        if (!argv.includes("--dry-run") && report.added.length > before) {
+            history = mergePoints(history, report.added.slice(before));
+            await writeHistory(history);
+        }
     }
-    if (!argv.includes("--dry-run"))
-        await writeHistory(mergePoints(history, report.added));
     return report;
 }
 
 if (import.meta.main) {
     const argv = process.argv.slice(2);
     const report = await runBackfill(argv);
-    const path =
-        argv.find((a) => a.startsWith("--report="))?.split("=")[1] ??
-        "price-backfill-report.md";
+    const path = argOf(argv, "report") ?? "price-backfill-report.md";
     await Bun.write(path, renderReport(report));
     console.log(
         `${report.added.length} added, ${report.review.length} for review. Report: ${path}`,

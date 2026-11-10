@@ -23,8 +23,13 @@ export { extractJsonLd, extractSelector, extractShopify, extractWooCommerce };
 // snapshot prefers them: JSON-LD, then the price element. Used for Wayback
 // snapshots, where the shop's JSON endpoints were not archived.
 export function extractFromHtml(html: string, selector?: string): Extraction | null {
-    for (const e of [extractJsonLd(html), extractSelector(html, selector)])
+    for (const extract of [
+        () => extractJsonLd(html),
+        () => extractSelector(html, selector),
+    ]) {
+        const e = extract();
         if (e.offers.length) return e;
+    }
     return null;
 }
 
@@ -44,13 +49,32 @@ async function woo(fetcher: PoliteFetcher, url: string): Promise<Extraction | nu
     const res = await fetcher.get(api, "application/json");
     if (!res.ok) return null;
     const products = (await res.json()) as WooProduct[];
+    const listed = products[0]?.variations ?? [];
     const variations: WooProduct[] = [];
-    for (const v of (products[0]?.variations ?? []).slice(0, MAX_VARIATIONS)) {
+    for (const v of listed.slice(0, MAX_VARIATIONS)) {
         const r = await fetcher.get(wooVariationUrl(url, v.id), "application/json");
         if (r.ok) variations.push((await r.json()) as WooProduct);
     }
     const e = extractWooCommerce(variations.length ? variations : products);
-    return e.offers.length ? e : null;
+    if (!e.offers.length) return null;
+    return variations.length < listed.length
+        ? {
+              ...e,
+              incomplete: `read ${variations.length} of ${listed.length} variations`,
+          }
+        : e;
+}
+
+// The shop JSON is optional: any error there (timeout, not JSON, robots
+// block on the API path) falls back on the page's HTML.
+async function optional(
+    read: () => Promise<Extraction | null>,
+): Promise<Extraction | null> {
+    try {
+        return await read();
+    } catch {
+        return null;
+    }
 }
 
 async function shopify(
@@ -83,11 +107,11 @@ export async function readPage(
     const html = await res.text();
     const pageCurrency = shopifyCurrency(html);
     if (isShopifyPage(html)) {
-        const e = await shopify(fetcher, url, html);
+        const e = await optional(() => shopify(fetcher, url, html));
         if (e) return { extraction: e, pageCurrency };
     }
     if (isWooCommercePage(html)) {
-        const e = await woo(fetcher, url);
+        const e = await optional(() => woo(fetcher, url));
         if (e) return { extraction: e, pageCurrency };
     }
     const e = extractFromHtml(html, selector);

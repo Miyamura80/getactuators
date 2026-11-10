@@ -29,24 +29,21 @@ export interface ReadInput {
     referenceUsd: number | null;
 }
 
+// Every offer in US dollars, or why not. One offer without a currency or a
+// rate fails the page: picking among the rest could record the wrong
+// variant as a clear match.
 function priced(input: ReadInput): PricedOffer[] | string {
     const offers = input.extraction?.offers ?? [];
     const out: PricedOffer[] = [];
-    let missing: string | null = null;
     for (const o of offers) {
-        const currency = o.currency ?? input.pageCurrency;
-        if (!currency) {
-            missing = "no currency on the page";
-            continue;
-        }
+        const { currencyHint, ...offer } = o;
+        const currency = o.currency ?? input.pageCurrency ?? currencyHint;
+        if (!currency) return "no currency on the page";
         const usd = toUsd(o.price, currency, input.fx);
-        if (!usd) {
-            missing = `no FX rate for ${currency}`;
-            continue;
-        }
-        out.push({ ...o, currency, priceUsd: usd.priceUsd });
+        if (!usd) return `no FX rate for ${currency}`;
+        out.push({ ...offer, currency, priceUsd: usd.priceUsd });
     }
-    return out.length ? out : (missing ?? "no offers");
+    return out.length ? out : "no offers";
 }
 
 export function toOutcome(input: ReadInput): Outcome {
@@ -74,6 +71,8 @@ export function toOutcome(input: ReadInput): Outcome {
         ...(o.inStock === false ? { outOfStock: true } : {}),
         ...(offers.length > 1 && o.title ? { variant: o.title } : {}),
     };
+    if (input.extraction.incomplete)
+        return { kind: "review", record, reason: input.extraction.incomplete };
     if (pick.ambiguous)
         return {
             kind: "review",

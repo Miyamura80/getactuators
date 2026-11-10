@@ -17,33 +17,42 @@ const ENTITIES: Record<string, string> = {
 // HTMLRewriter hands text over with entities still encoded.
 export function decodeEntities(s: string): string {
     return s.replace(/&(#x?[0-9a-f]+|[a-z]+);/gi, (m, e: string) => {
-        if (e[0] !== "#") return ENTITIES[e.toLowerCase()] ?? m;
+        if (e[0] !== "#") {
+            const name = e.toLowerCase();
+            return Object.hasOwn(ENTITIES, name) ? (ENTITIES[name] as string) : m;
+        }
         const code =
             e[1]?.toLowerCase() === "x"
                 ? Number.parseInt(e.slice(2), 16)
                 : Number(e.slice(1));
-        return Number.isFinite(code) ? String.fromCodePoint(code) : m;
+        return Number.isInteger(code) && code >= 0 && code <= 0x10ffff
+            ? String.fromCodePoint(code)
+            : m;
     });
 }
 
-// Text content of every element matching a selector, in document order.
-export function texts(html: string, selector: string): string[] {
+// Text content of every element matching a selector, in start-tag order.
+// A nested match keeps its own text and adds it to every open ancestor.
+// raw skips entity decoding (script content is not entity-encoded).
+export function texts(html: string, selector: string, raw = false): string[] {
     const out: string[] = [];
-    let buf = "";
+    const open: number[] = [];
     new HTMLRewriter()
         .on(selector, {
             element(el) {
-                buf = "";
+                out.push("");
+                if (el.selfClosing || !el.canHaveContent) return;
+                open.push(out.length - 1);
                 el.onEndTag(() => {
-                    out.push(decodeEntities(buf));
+                    open.pop();
                 });
             },
             text(t) {
-                buf += t.text;
+                for (const i of open) out[i] += t.text;
             },
         })
         .transform(html);
-    return out;
+    return raw ? out : out.map(decodeEntities);
 }
 
 // One attribute of every element matching a selector.
@@ -62,7 +71,7 @@ export function attrs(html: string, selector: string, name: string): string[] {
 
 // Parsed <script type="application/ld+json"> blocks; malformed ones skipped.
 export function jsonLdBlocks(html: string): unknown[] {
-    return texts(html, 'script[type="application/ld+json"]').flatMap((raw) => {
+    return texts(html, 'script[type="application/ld+json"]', true).flatMap((raw) => {
         try {
             return [JSON.parse(raw.trim())];
         } catch {

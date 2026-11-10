@@ -2,25 +2,64 @@
 // "US$ 229.90", "¥ 1 280" or "1299"; FX rates are ECB reference rates via
 // the Frankfurter API (no key), stored with each point as US$ per unit.
 
+// A code only counts as a whole word, so "neural" is not EUR. Bare "$" and
+// "¥" name no single currency (US, Canadian, Australian dollars; yuan or
+// yen), so they are only a hint, used when the page states no currency.
+const code = (c: string) => new RegExp(`(?<![A-Za-z])${c}(?![A-Za-z])`, "i");
+
 const SYMBOLS: [RegExp, string][] = [
-    [/US\$|USD/i, "USD"],
-    [/CA\$|C\$|CAD/i, "CAD"],
-    [/A\$|AUD/i, "AUD"],
-    [/HK\$|HKD/i, "HKD"],
-    [/S\$|SGD/i, "SGD"],
-    [/€|EUR/i, "EUR"],
-    [/£|GBP/i, "GBP"],
-    [/CN¥|RMB|CNY|元/i, "CNY"],
-    [/JP¥|JPY|円/i, "JPY"],
-    [/₩|KRW/i, "KRW"],
-    [/CHF/i, "CHF"],
-    [/₹|INR/i, "INR"],
-    [/\$/, "USD"],
-    [/¥/, "CNY"],
+    [/US\$/, "USD"],
+    [code("USD"), "USD"],
+    [/CA\$|C\$/, "CAD"],
+    [code("CAD"), "CAD"],
+    [/A\$/, "AUD"],
+    [code("AUD"), "AUD"],
+    [/HK\$/, "HKD"],
+    [code("HKD"), "HKD"],
+    [/S\$/, "SGD"],
+    [code("SGD"), "SGD"],
+    [/€/, "EUR"],
+    [code("EUR"), "EUR"],
+    [/£/, "GBP"],
+    [code("GBP"), "GBP"],
+    [/CN¥|元/, "CNY"],
+    [code("RMB"), "CNY"],
+    [code("CNY"), "CNY"],
+    [/JP¥|円/, "JPY"],
+    [code("JPY"), "JPY"],
+    [/₩/, "KRW"],
+    [code("KRW"), "KRW"],
+    [code("CHF"), "CHF"],
+    [/₹/, "INR"],
+    [code("INR"), "INR"],
 ];
 
+// The currency a price string names, or null when it names none or only a
+// bare "$" or "¥".
 export function detectCurrency(text: string): string | null {
-    for (const [re, code] of SYMBOLS) if (re.test(text)) return code;
+    for (const [re, c] of SYMBOLS) if (re.test(text)) return c;
+    return null;
+}
+
+// What a bare "$" or "¥" most likely means when nothing else says, from the
+// page language (<html lang>): "¥" is yuan on a Chinese page and yen on a
+// Japanese one, with no guess otherwise (they differ about twentyfold); "$"
+// follows the region (en-CA is CAD) and is otherwise US dollars.
+const DOLLAR_REGION: Record<string, string> = {
+    CA: "CAD",
+    AU: "AUD",
+    NZ: "NZD",
+    SG: "SGD",
+    HK: "HKD",
+};
+
+export function currencyHint(text: string, lang = ""): string | null {
+    const stated = detectCurrency(text);
+    if (stated) return stated;
+    const [language = "", region = ""] = lang.toLowerCase().split(/[-_]/);
+    if (/¥/.test(text))
+        return language === "zh" ? "CNY" : language === "ja" ? "JPY" : null;
+    if (/\$/.test(text)) return DOLLAR_REGION[region.toUpperCase()] ?? "USD";
     return null;
 }
 
@@ -41,18 +80,26 @@ function normalise(s: string): string {
     return parts.length > 2 || tail.length === 3 ? parts.join("") : parts.join(".");
 }
 
+// Digits, then thousands groups (a mark or a space followed by exactly three
+// digits), then decimals. "$299 2 in stock" is 299.
+const AMOUNT = /\d+(?:[.,\s\u00a0']\d{3}(?!\d))*(?:[.,]\d+)?/;
+
 export function parseAmount(text: string): number | null {
-    const m = /\d[\d.,\s\u00a0']*/.exec(text);
+    const m = AMOUNT.exec(text);
     if (!m) return null;
     const v = Number(normalise(m[0].replace(/[\s\u00a0']/g, "").replace(/[.,]+$/, "")));
     return Number.isFinite(v) && v > 0 ? v : null;
 }
 
+// currency is what the string states; hint adds the bare "$" guess.
 export function parsePrice(
     text: string,
-): { amount: number; currency: string | null } | null {
+    lang = "",
+): { amount: number; currency: string | null; hint: string | null } | null {
     const amount = parseAmount(text);
-    return amount === null ? null : { amount, currency: detectCurrency(text) };
+    return amount === null
+        ? null
+        : { amount, currency: detectCurrency(text), hint: currencyHint(text, lang) };
 }
 
 export const round2 = (v: number): number => Math.round(v * 100) / 100;

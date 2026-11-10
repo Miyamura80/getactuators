@@ -25,7 +25,17 @@ export interface Target {
     override: Override;
 }
 
+// Every target, or those named in only; an id that names no actuator with a
+// product page is an error, so a typo does not run nothing.
 export function targets(only?: string[]): Target[] {
+    if (only) {
+        const known = new Set(ACTUATORS.filter((a) => a.product_url).map((a) => a.id));
+        const unknown = only.filter((id) => !known.has(id));
+        if (unknown.length)
+            throw new Error(
+                `no catalog actuator with a product page: ${unknown.join(", ")}`,
+            );
+    }
     return ACTUATORS.filter((a) => a.product_url && (!only || only.includes(a.id))).map(
         (a) => {
             const override = OVERRIDES[a.id] ?? {};

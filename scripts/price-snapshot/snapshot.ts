@@ -22,11 +22,23 @@ export interface CliArgs {
     report: string;
 }
 
+export const argOf = (argv: string[], k: string) =>
+    argv.find((a) => a.startsWith(`--${k}=`))?.slice(k.length + 3);
+
+// --limit as a count; anything else is an error, not a run of nothing.
+export function limitArg(argv: string[]): number | undefined {
+    const v = argOf(argv, "limit");
+    if (v === undefined) return undefined;
+    if (!/^\d+$/.test(v)) throw new Error(`--limit must be a whole number, got "${v}"`);
+    return Number(v);
+}
+
 export function parseArgs(argv: string[]): CliArgs {
-    const get = (k: string) => argv.find((a) => a.startsWith(`--${k}=`))?.split("=")[1];
+    const get = (k: string) => argOf(argv, k);
+    const only = get("only")?.split(",").filter(Boolean);
     return {
-        only: get("only")?.split(","),
-        limit: get("limit") ? Number(get("limit")) : undefined,
+        only: only?.length ? only : undefined,
+        limit: limitArg(argv),
         dryRun: argv.includes("--dry-run"),
         report: get("report") ?? "price-snapshot-report.md",
     };
@@ -59,11 +71,13 @@ async function readTarget(
 export async function runSnapshot(
     args: CliArgs,
     fetcher = new PoliteFetcher(),
+    // Rates for the run; fetched from the ECB feed when not given (tests).
+    rates?: FxTable,
 ): Promise<RunReport> {
     const date = new Date().toISOString().slice(0, 10);
     const history = await readHistory();
     const refs = lastPrices(history);
-    const fx = await fetchFx("latest");
+    const fx = rates ?? (await fetchFx("latest"));
     const report: RunReport = {
         title: "Weekly price snapshot",
         date,

@@ -26,11 +26,14 @@ function table(head: string[], rows: string[][]): string {
     ].join("\n");
 }
 
+const count = (n: number, one: string, many = `${one}s`) =>
+    `${n} ${n === 1 ? one : many}`;
+
 export function renderReport(r: RunReport): string {
     const oos = r.added.filter((p) => p.outOfStock).length;
     const parts = [
         `## ${r.title} (${r.date})`,
-        `${r.added.length} points added (${oos} flagged out of stock), ${r.review.length} held for review, ${r.failures.length} failures, ${r.skipped.length} skipped.`,
+        `${count(r.added.length, "point")} added (${oos} flagged out of stock), ${r.review.length} held for review, ${count(r.failures.length, "failure")}, ${r.skipped.length} skipped.`,
     ];
     if (r.added.length)
         parts.push(

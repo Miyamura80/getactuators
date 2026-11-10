@@ -8,6 +8,9 @@ export interface Offer {
     // ISO 4217; null when the page gives no currency and the caller must
     // fall back on the shop's default.
     currency: string | null;
+    // A guess from a bare "$" in the price text, used only when neither the
+    // offer nor the page states a currency.
+    currencyHint?: string;
     // Variant or offer title, for matching against the catalog name.
     title?: string;
     sku?: string;
@@ -19,4 +22,7 @@ export interface Offer {
 export interface Extraction {
     method: PriceMethod;
     offers: Offer[];
+    // Set when some offers could not be read (a variation request failed or
+    // was over the cap); the point is then held for review.
+    incomplete?: string;
 }

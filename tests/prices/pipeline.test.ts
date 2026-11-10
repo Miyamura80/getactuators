@@ -9,8 +9,8 @@ import {
 import { lastPrices, mergePoints } from "../../scripts/price-snapshot/history-file";
 import { toOutcome } from "../../scripts/price-snapshot/record";
 import { renderReport } from "../../scripts/price-snapshot/report";
-import { parseArgs } from "../../scripts/price-snapshot/snapshot";
-import { type Target, targets } from "../../scripts/price-snapshot/targets";
+import { parseArgs, runSnapshot } from "../../scripts/price-snapshot/snapshot";
+import { OVERRIDES, type Target, targets } from "../../scripts/price-snapshot/targets";
 import {
     archivedUrl,
     captureDate,
@@ -18,14 +18,18 @@ import {
     monthly,
     parseCdx,
     rawArchivedUrl,
+    referenceAt,
+    runBackfill,
 } from "../../scripts/price-snapshot/wayback";
+import { ACTUATORS } from "../../src/catalog";
 import { pricesLicenceErrors } from "../../src/prices/licence";
 import type { PriceRecord } from "../../src/prices/types";
 
 const fixture = (name: string) => Bun.file(`tests/fixtures/prices/${name}`).text();
 
-// A fetcher over a URL -> body map, recording what was asked.
-function fakeFetcher(pages: Record<string, string | number>) {
+// A fetcher over a URL -> body map, recording what was asked. A Response
+// value is returned as is (for redirects).
+function fakeFetcher(pages: Record<string, string | number | (() => Response)>) {
     const seen: { url: string; ua: string | null }[] = [];
     const fetcher = new PoliteFetcher({
         delayMs: 0,
@@ -35,6 +39,7 @@ function fakeFetcher(pages: Record<string, string | number>) {
             const body = pages[url];
             if (body === undefined) return new Response("not found", { status: 404 });
             if (typeof body === "number") return new Response("", { status: body });
+            if (typeof body === "function") return body();
             return new Response(body, { status: 200 });
         },
     });
@@ -239,7 +244,7 @@ describe("history file and report", () => {
             skipped: [{ actuatorId: "z", reason: "quote only" }],
         });
         expect(md).toContain(
-            "2 points added (1 flagged out of stock), 1 held for review, 1 failures, 1 skipped.",
+            "2 points added (1 flagged out of stock), 1 held for review, 1 failure, 1 skipped.",
         );
         expect(md).toContain("### Needs review (not added)");
         expect(md).toContain("product removed (HTTP 404)");
@@ -307,5 +312,174 @@ describe("Wayback back-fill", () => {
         );
         expect(rawArchivedUrl(m[0]!)).toContain("20240203000000id_/");
         expect(parseCdx([])).toEqual([]);
+    });
+});
+
+describe("review fixes", () => {
+    const SHOP = "https://shop.example.com/products/go1-motor";
+
+    test("a redirect is followed hop by hop, each hop checked against robots.txt", async () => {
+        const { fetcher, seen } = fakeFetcher({
+            "https://a.example.com/robots.txt": "",
+            "https://a.example.com/p": () =>
+                new Response("", {
+                    status: 301,
+                    headers: { location: "https://b.example.com/private/p" },
+                }),
+            "https://b.example.com/robots.txt": "User-agent: *\nDisallow: /private/\n",
+        });
+        await expect(fetcher.get("https://a.example.com/p")).rejects.toBeInstanceOf(
+            RobotsDenied,
+        );
+        expect(seen.map((s) => s.url)).toEqual([
+            "https://a.example.com/robots.txt",
+            "https://a.example.com/p",
+            "https://b.example.com/robots.txt",
+        ]);
+    });
+
+    test("a failing shop JSON call falls back on the page HTML", async () => {
+        const { fetcher } = fakeFetcher({
+            "https://shop.example.com/robots.txt": "User-agent: *\nDisallow: /*.js$\n",
+            [SHOP]: await fixture("shopify-product.html"),
+        });
+        const read = await readPage(fetcher, SHOP);
+        expect(read.extraction?.method).not.toBe("shopify");
+        expect(read.extraction?.offers.length).toBeGreaterThan(0);
+    });
+
+    test("WooCommerce variations that fail to load hold the point for review", async () => {
+        const base = "https://shop.example.co.uk";
+        const store = JSON.parse(await fixture("woocommerce-store.json"));
+        store[0].variations = [{ id: 1 }, { id: 2 }];
+        const { fetcher } = fakeFetcher({
+            [`${base}/robots.txt`]: "",
+            [`${base}/product/vesc6-mk6/`]: await fixture("woocommerce-product.html"),
+            [`${base}/wp-json/wc/store/v1/products?slug=vesc6-mk6`]:
+                JSON.stringify(store),
+            [`${base}/wp-json/wc/store/v1/products/1`]: JSON.stringify(store[0]),
+        });
+        const read = await readPage(fetcher, `${base}/product/vesc6-mk6/`);
+        expect(read.extraction?.incomplete).toBe("read 1 of 2 variations");
+        const out = toOutcome({
+            target: target(),
+            ...read,
+            fx: FX,
+            date: "2026-11-09",
+            url: `${base}/product/vesc6-mk6/`,
+            referenceUsd: null,
+        });
+        expect(out.kind).toBe("review");
+    });
+
+    test("one offer without a currency fails the page", () => {
+        const out = toOutcome({
+            target: target(),
+            extraction: {
+                method: "jsonld",
+                offers: [
+                    { price: 100, currency: "USD", title: "a" },
+                    { price: 90, currency: null, title: "b" },
+                ],
+            },
+            pageCurrency: null,
+            fx: FX,
+            date: "2026-11-09",
+            url: SHOP,
+            referenceUsd: 100,
+        });
+        expect(out).toEqual({ kind: "failure", reason: "no currency on the page" });
+    });
+
+    test("lastPrices breaks a same-day tie by method, not by name", () => {
+        const r = (method: PriceRecord["method"], priceUsd: number): PriceRecord => ({
+            actuatorId: "a",
+            date: "2026-11-09",
+            priceUsd,
+            currency: "USD",
+            originalPrice: priceUsd,
+            fxRate: 1,
+            url: SHOP,
+            method,
+        });
+        const file = mergePoints({ points: [] }, [
+            r("shopify", 100),
+            r("selector", 80),
+        ]);
+        expect(lastPrices(file).get("a")).toBe(100);
+    });
+
+    test("bad --limit and unknown --only ids are errors", () => {
+        expect(() => parseArgs(["--limit=abc"])).toThrow("--limit");
+        expect(parseArgs(["--only="]).only).toBeUndefined();
+        expect(() => targets(["no-such-actuator"])).toThrow("no-such-actuator");
+    });
+
+    test("every override names a catalog actuator", () => {
+        const ids = new Set(ACTUATORS.map((a) => a.id));
+        expect(Object.keys(OVERRIDES).filter((id) => !ids.has(id))).toEqual([]);
+    });
+
+    test("runSnapshot reports skips and failures without writing (dry run)", async () => {
+        const { fetcher } = fakeFetcher({
+            "https://www.seeedstudio.com/robots.txt": "",
+        });
+        OVERRIDES["unitree-go-m8010-6"] = { skip: "quote only" };
+        try {
+            const report = await runSnapshot(
+                {
+                    only: ["robstride-04", "unitree-go-m8010-6"],
+                    dryRun: true,
+                    report: "unused.md",
+                },
+                fetcher,
+                FX,
+            );
+            expect(report.skipped).toEqual([
+                { actuatorId: "unitree-go-m8010-6", reason: "quote only" },
+            ]);
+            expect(report.failures.map((f) => [f.actuatorId, f.reason])).toEqual([
+                ["robstride-04", "product removed (HTTP 404)"],
+            ]);
+            expect(report.added).toEqual([]);
+        } finally {
+            Reflect.deleteProperty(OVERRIDES, "unitree-go-m8010-6");
+        }
+    });
+
+    test("back-fill: a failed CDX call is a failure with its status", async () => {
+        const { fetcher } = fakeFetcher({ "https://web.archive.org/robots.txt": "" });
+        const report = await runBackfill(["--only=robstride-04", "--dry-run"], fetcher);
+        expect(report.failures[0]?.reason).toContain("HTTP 404");
+    });
+
+    test("the audit rejects impossible days and a missing url without throwing", () => {
+        const bad = {
+            actuatorId: "robstride-04",
+            date: "2026-02-31",
+            priceUsd: 1,
+            currency: "USD",
+            originalPrice: 1,
+            fxRate: 1,
+            method: "manual",
+        } as unknown as PriceRecord;
+        const errors = pricesLicenceErrors("2026-11-10", [bad]);
+        expect(errors.some((e) => e.includes("date must be YYYY-MM-DD"))).toBe(true);
+        expect(errors.some((e) => e.includes("url must be http(s)"))).toBe(true);
+    });
+
+    test("back-fill reference is the known price nearest the capture", () => {
+        const t = targets(["robstride-04"])[0] as Target;
+        const old: PriceRecord = {
+            actuatorId: t.actuatorId,
+            date: "2019-01-05",
+            priceUsd: 900,
+            currency: "USD",
+            originalPrice: 900,
+            fxRate: 1,
+            url: "https://web.archive.org/web/20190105/x",
+            method: "wayback",
+        };
+        expect(referenceAt(t, "2019-02-01", [old])).toBe(900);
     });
 });

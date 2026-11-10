@@ -1,6 +1,8 @@
 // robots.txt (RFC 9309): the group for our product token, else "*"; the
 // longest matching rule wins and Allow wins a tie; "*" and "$" wildcards.
-// Crawl-delay, when given, raises the per-host delay.
+// Crawl-delay, when given, raises the per-host delay. Paths and patterns are
+// compared with percent-encoded unreserved characters decoded, so
+// "/%70rivate" meets "Disallow: /private".
 
 interface Rule {
     allow: boolean;
@@ -10,6 +12,14 @@ interface Rule {
 export interface Robots {
     allowed(path: string): boolean;
     crawlDelayMs: number | null;
+}
+
+// %XX for an unreserved character (RFC 3986) is the character itself.
+export function normalisePath(path: string): string {
+    return path.replace(/%([0-9a-f]{2})/gi, (m, hex: string) => {
+        const c = String.fromCharCode(Number.parseInt(hex, 16));
+        return /[A-Za-z0-9\-._~]/.test(c) ? c : m.toUpperCase();
+    });
 }
 
 function matcher(pattern: string): RegExp {
@@ -48,9 +58,10 @@ function groupsOf(text: string): Group[] {
 }
 
 function addLine(g: Group, key: string, value: string): void {
-    if (key === "user-agent") g.agents.push(value.toLowerCase());
-    else if ((key === "allow" || key === "disallow") && value)
-        g.rules.push({ allow: key === "allow", pattern: value });
+    if (key === "user-agent") {
+        if (value) g.agents.push(value.toLowerCase());
+    } else if ((key === "allow" || key === "disallow") && value)
+        g.rules.push({ allow: key === "allow", pattern: normalisePath(value) });
     else if (key === "crawl-delay" && Number(value) > 0) g.delay = Number(value);
 }
 
@@ -76,7 +87,7 @@ export function parseRobots(text: string, agent: string): Robots {
     const rules = chosen.flatMap((g) => g.rules);
     const delay = chosen.map((g) => g.delay).find((d) => d !== null) ?? null;
     return {
-        allowed: (path: string) => decide(rules, path),
+        allowed: (path: string) => decide(rules, normalisePath(path)),
         crawlDelayMs: delay === null ? null : delay * 1000,
     };
 }

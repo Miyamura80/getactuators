@@ -3,8 +3,11 @@ import { jsonLdBlocks } from "./html";
 import type { Extraction, Offer } from "./types";
 
 // schema.org Product / Offer structured data. Handles a bare Product, an
-// array, an @graph, ProductGroup.hasVariant, offers as one Offer, an array
-// or an AggregateOffer (lowPrice), and priceSpecification.
+// array, an @graph, a WebPage mainEntity, ProductGroup.hasVariant, offers as
+// one Offer, an array or an AggregateOffer (lowPrice), and
+// priceSpecification. Only the page's own products count: products nested in
+// another product (isRelatedTo, isSimilarTo, accessories) or in an ItemList
+// (related and recently viewed carousels) are not read.
 
 type Node = Record<string, unknown>;
 
@@ -18,14 +21,25 @@ function types(n: Node): string[] {
     );
 }
 
-// Every node in a JSON-LD value, depth first.
-function walk(v: unknown, out: Node[] = []): Node[] {
-    if (Array.isArray(v)) for (const x of v) walk(x, out);
-    else if (isObj(v)) {
-        out.push(v);
-        for (const x of Object.values(v)) if (typeof x === "object") walk(x, out);
-    }
-    return out;
+const isProduct = (n: Node) =>
+    types(n).some((t) => t === "Product" || t === "ProductGroup");
+
+// A product and its hasVariant children.
+function withVariants(p: Node): Node[] {
+    return [
+        p,
+        ...list(p.hasVariant).filter((x): x is Node => isObj(x) && isProduct(x)),
+    ];
+}
+
+// The page's products, depth first: found anywhere outside another product
+// or an ItemList.
+function walk(v: unknown): Node[] {
+    if (Array.isArray(v)) return v.flatMap(walk);
+    if (!isObj(v)) return [];
+    if (isProduct(v)) return withVariants(v);
+    if (types(v).includes("ItemList")) return [];
+    return Object.values(v).flatMap(walk);
 }
 
 function inStock(availability: unknown): boolean | undefined {
@@ -42,37 +56,44 @@ function num(v: unknown): number | null {
     return null;
 }
 
-function offerOf(o: Node, product: Node): Offer | null {
+// One offer; an offer nested in an AggregateOffer falls back on the
+// aggregate's currency, name, sku and availability.
+function offerOf(o: Node, product: Node, parent: Node = {}): Offer | null {
     const spec = list(o.priceSpecification).find(isObj);
     const price = num(o.price) ?? num(spec?.price) ?? num(o.lowPrice);
     if (price === null) return null;
-    const currency = (o.priceCurrency ?? spec?.priceCurrency ?? null) as string | null;
-    const title = [product.name, o.name].filter((x) => typeof x === "string").join(" ");
-    const sku = (o.sku ?? product.sku) as string | undefined;
+    const currency = (o.priceCurrency ??
+        spec?.priceCurrency ??
+        parent.priceCurrency ??
+        null) as string | null;
+    const title = [product.name, o.name ?? parent.name]
+        .filter((x) => typeof x === "string")
+        .join(" ");
+    const sku = (o.sku ?? parent.sku ?? product.sku) as string | undefined;
+    const stock = inStock(o.availability ?? parent.availability);
     return {
         price,
         currency: currency ? String(currency).toUpperCase() : null,
         ...(title ? { title } : {}),
         ...(sku ? { sku: String(sku) } : {}),
-        ...(inStock(o.availability) === undefined
-            ? {}
-            : { inStock: inStock(o.availability) }),
+        ...(stock === undefined ? {} : { inStock: stock }),
     };
 }
 
-export function extractJsonLd(html: string): Extraction {
-    const nodes = jsonLdBlocks(html).flatMap((b) => walk(b));
-    const products = nodes.filter((n) =>
-        types(n).some((t) => t === "Product" || t === "ProductGroup"),
-    );
-    const offers: Offer[] = [];
-    for (const p of products)
-        for (const o of list(p.offers).filter(isObj)) {
+// Offers of one product: each Offer, or each offer inside an AggregateOffer.
+function productOffers(p: Node): Offer[] {
+    return list(p.offers)
+        .filter(isObj)
+        .flatMap((o) => {
             const nested = list(o.offers).filter(isObj);
-            for (const x of nested.length ? nested : [o]) {
-                const offer = offerOf(x, p);
-                if (offer) offers.push(offer);
-            }
-        }
-    return { method: "jsonld", offers };
+            const found = nested.length
+                ? nested.map((x) => offerOf(x, p, o))
+                : [offerOf(o, p)];
+            return found.filter((x): x is Offer => x !== null);
+        });
+}
+
+export function extractJsonLd(html: string): Extraction {
+    const products = jsonLdBlocks(html).flatMap(walk);
+    return { method: "jsonld", offers: products.flatMap(productOffers) };
 }

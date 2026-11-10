@@ -1,11 +1,13 @@
 import { describe, expect, test } from "bun:test";
 import {
+    currencyHint,
     detectCurrency,
     fxFromUsdRates,
     parseAmount,
     toUsd,
 } from "../../scripts/price-snapshot/currency";
 import { extractFromHtml } from "../../scripts/price-snapshot/extract";
+import { decodeEntities, texts } from "../../scripts/price-snapshot/extract/html";
 import { extractJsonLd } from "../../scripts/price-snapshot/extract/jsonld";
 import { extractSelector } from "../../scripts/price-snapshot/extract/selector";
 import {
@@ -42,11 +44,12 @@ describe("currency", () => {
     });
 
     test("detects currencies from symbols and codes", () => {
-        expect(detectCurrency("$12")).toBe("USD");
+        expect(detectCurrency("$12")).toBeNull();
         expect(detectCurrency("US$12")).toBe("USD");
         expect(detectCurrency("CA$12")).toBe("CAD");
         expect(detectCurrency("£12")).toBe("GBP");
-        expect(detectCurrency("¥ 1.234,56")).toBe("CNY");
+        expect(detectCurrency("¥ 1.234,56")).toBeNull();
+        expect(detectCurrency("CN¥ 1.234,56")).toBe("CNY");
         expect(detectCurrency("12 EUR")).toBe("EUR");
         expect(detectCurrency("12")).toBeNull();
     });
@@ -149,7 +152,10 @@ describe("selector fallback", () => {
 
     test("reads a theme price element and the availability meta", async () => {
         const e = extractSelector(await fixture("selector-plain.html"));
-        expect(e.offers).toEqual([{ price: 1234.56, currency: "CNY", inStock: false }]);
+        // A bare "¥" is only a hint, from the page language (zh-CN).
+        expect(e.offers).toEqual([
+            { price: 1234.56, currency: null, currencyHint: "CNY", inStock: false },
+        ]);
     });
 
     test("a per-vendor selector wins", async () => {
@@ -251,5 +257,137 @@ describe("variant matching", () => {
         );
         expect(p?.offer.title).toBe("GIM6010-8");
         expect(p?.ambiguous).toBe(false);
+    });
+});
+
+describe("review fixes", () => {
+    const ld = (data: unknown, extra = "") =>
+        `<html${extra}><head><script type="application/ld+json">${JSON.stringify(data)}</script></head></html>`;
+
+    test("JSON-LD reads only the page's product, not related ones or carousels", () => {
+        const e = extractJsonLd(
+            ld({
+                "@context": "https://schema.org",
+                "@graph": [
+                    {
+                        "@type": "Product",
+                        name: "Main",
+                        offers: { "@type": "Offer", price: 100, priceCurrency: "USD" },
+                        isRelatedTo: {
+                            "@type": "Product",
+                            name: "Other",
+                            offers: {
+                                "@type": "Offer",
+                                price: 9,
+                                priceCurrency: "USD",
+                            },
+                        },
+                    },
+                    {
+                        "@type": "ItemList",
+                        itemListElement: [
+                            {
+                                "@type": "ListItem",
+                                item: {
+                                    "@type": "Product",
+                                    name: "Carousel",
+                                    offers: { price: 5, priceCurrency: "USD" },
+                                },
+                            },
+                        ],
+                    },
+                ],
+            }),
+        );
+        expect(e.offers.map((o) => o.price)).toEqual([100]);
+    });
+
+    test("JSON-LD offers in an AggregateOffer inherit its currency and stock", () => {
+        const e = extractJsonLd(
+            ld({
+                "@type": "Product",
+                name: "P",
+                offers: {
+                    "@type": "AggregateOffer",
+                    priceCurrency: "eur",
+                    availability: "https://schema.org/OutOfStock",
+                    offers: [{ price: 10 }, { price: 12, priceCurrency: "USD" }],
+                },
+            }),
+        );
+        expect(e.offers.map((o) => [o.price, o.currency, o.inStock])).toEqual([
+            [10, "EUR", false],
+            [12, "USD", false],
+        ]);
+    });
+
+    test("JSON-LD with an entity in a string still parses", () => {
+        const html = `<script type="application/ld+json">{"@type":"Product","name":"5&quot; hub","offers":{"price":7,"priceCurrency":"USD"}}</script>`;
+        expect(extractJsonLd(html).offers[0]?.price).toBe(7);
+    });
+
+    test("bare $ and ¥ do not override stated currency; codes need word edges", () => {
+        expect(detectCurrency("neural joint 12")).toBeNull();
+        expect(detectCurrency("USD12")).toBe("USD");
+        expect(currencyHint("$12")).toBe("USD");
+        expect(currencyHint("$12", "en-CA")).toBe("CAD");
+        expect(currencyHint("¥12", "ja-JP")).toBe("JPY");
+        expect(currencyHint("¥12", "en")).toBeNull();
+        const cad = `<html lang="en"><head><meta property="og:price:currency" content="cad"></head><body><span class="price">$120</span></body></html>`;
+        expect(extractSelector(cad).offers).toEqual([{ price: 120, currency: "CAD" }]);
+    });
+
+    test("an amount stops at a gap that is not a thousands group", () => {
+        expect(parseAmount("$299 2 in stock")).toBe(299);
+        expect(parseAmount("1 280 ₽")).toBe(1280);
+        expect(parseAmount("1.299.999,50")).toBe(1299999.5);
+    });
+
+    test("selector: sale price first, more out-of-stock words", () => {
+        const html = `<html><head><meta property="product:availability" content="discontinued"><meta property="og:price:currency" content="USD"></head><body><p class="price"><del>$200</del> <ins>$150</ins></p></body></html>`;
+        expect(extractSelector(html).offers).toEqual([
+            { price: 150, currency: "USD", inStock: false },
+        ]);
+    });
+
+    test("HTML text: nested matches keep their own text, entities are bounded", () => {
+        expect(texts("<b class=a>x <b class=a>y</b> z</b>", ".a")).toEqual([
+            "x y z",
+            "y",
+        ]);
+        expect(decodeEntities("&#x110000; &constructor; &#65;")).toBe(
+            "&#x110000; &constructor; A",
+        );
+    });
+
+    test("robots: empty user-agent lines and percent-encoded paths", () => {
+        const r = parseRobots(
+            "User-agent:\nDisallow: /\n\nUser-agent: *\nDisallow: /private\n",
+            "actuatorlist-price-bot/1.0",
+        );
+        expect(r.allowed("/products/x")).toBe(true);
+        expect(r.allowed("/%70rivate")).toBe(false);
+    });
+
+    test("variant: hyphenated titles match; a missed or tied pin is flagged", () => {
+        const offers = [
+            { price: 90, currency: "USD", title: "GIM6010-8-Motor", priceUsd: 90 },
+            { price: 200, currency: "USD", title: "Other board.", priceUsd: 200 },
+        ];
+        const p = pickOffer(offers, { name: "Steadywin GIM6010-8", referenceUsd: 200 });
+        expect(p?.offer.priceUsd).toBe(90);
+        expect(p?.ambiguous).toBe(false);
+        expect(
+            pickOffer(offers, { name: "X", referenceUsd: null, variant: "nope" })
+                ?.ambiguous,
+        ).toBe(true);
+        const twins = [
+            { price: 90, currency: "USD", title: "A pin", priceUsd: 90 },
+            { price: 200, currency: "USD", title: "A pin", priceUsd: 200 },
+        ];
+        expect(
+            pickOffer(twins, { name: "X", referenceUsd: 100, variant: "pin" })
+                ?.ambiguous,
+        ).toBe(true);
     });
 });

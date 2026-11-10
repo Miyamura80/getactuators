@@ -25,8 +25,8 @@ export const METHOD_LABEL: Record<PriceMethod, string> = {
 // One record in data/prices/history.json, as the snapshot scripts write it.
 export interface PriceRecord {
     actuatorId: string;
-    // YYYY-MM-DD the page was read (the snapshot day for Wayback points);
-    // curated points may be YYYY-MM.
+    // YYYY-MM-DD the page was read (the capture day for Wayback points).
+    // Only curated /trends points (PricePoint) may be YYYY-MM.
     date: string;
     // Listed price in US dollars: originalPrice x fxRate, rounded to cents.
     priceUsd: number;
@@ -45,6 +45,11 @@ export interface PriceRecord {
     variant?: string;
     note?: string;
 }
+
+// A record's identity in history.json: one point per actuator, day and
+// method. The merge and the audit both use it.
+export const pointKey = (r: Pick<PriceRecord, "actuatorId" | "date" | "method">) =>
+    `${r.actuatorId}@${r.date}/${r.method}`;
 
 export interface HistoryFile {
     // Written by scripts/price-snapshot; edit by hand only to remove a point.

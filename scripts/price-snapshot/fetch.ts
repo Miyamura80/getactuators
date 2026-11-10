@@ -3,7 +3,8 @@ import { type Robots, parseRobots } from "./robots";
 // Polite HTTP: a generic User-Agent naming the repo, robots.txt checked per
 // origin (unreachable robots.txt with a 5xx means "disallow", a 4xx means
 // "allow", as RFC 9309 says), one request per host at a time with a minimum
-// delay between them, and a timeout.
+// delay between them, and a timeout. Redirects are followed by hand, so each
+// hop gets its own robots.txt check and host delay.
 
 export const USER_AGENT =
     "actuatorlist-price-bot/1.0 (+https://github.com/miyamura80/getactuators)";
@@ -24,6 +25,8 @@ export interface FetcherOptions {
     sleep?: (ms: number) => Promise<void>;
 }
 
+const MAX_REDIRECTS = 5;
+
 export class PoliteFetcher {
     private robots = new Map<string, Promise<Robots>>();
     private nextAt = new Map<string, number>();
@@ -41,12 +44,15 @@ export class PoliteFetcher {
 
     private async raw(url: string, accept: string): Promise<Response> {
         const host = new URL(url).host;
-        const wait = (this.nextAt.get(host) ?? 0) - Date.now();
-        if (wait > 0) await this.sleep(wait);
-        this.nextAt.set(host, Date.now() + this.delayMs);
+        // Claim the slot before sleeping, so callers that wait at the same
+        // time get successive slots instead of firing together.
+        const now = Date.now();
+        const start = Math.max(this.nextAt.get(host) ?? 0, now);
+        this.nextAt.set(host, start + this.delayMs);
+        if (start > now) await this.sleep(start - now);
         return this.fetchImpl(url, {
             headers: { "user-agent": USER_AGENT, accept },
-            redirect: "follow",
+            redirect: "manual",
             signal: AbortSignal.timeout(this.timeoutMs),
         });
     }
@@ -68,6 +74,17 @@ export class PoliteFetcher {
     }
 
     async get(url: string, accept = "text/html,application/json"): Promise<Response> {
+        let current = url;
+        for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
+            const res = await this.once(current, accept);
+            const location = res.headers.get("location");
+            if (res.status < 300 || res.status >= 400 || !location) return res;
+            current = new URL(location, current).toString();
+        }
+        throw new Error(`more than ${MAX_REDIRECTS} redirects from ${url}`);
+    }
+
+    private async once(url: string, accept: string): Promise<Response> {
         const u = new URL(url);
         const robots = await this.robotsFor(u.origin);
         if (!robots.allowed(u.pathname + u.search)) throw new RobotsDenied(url);
