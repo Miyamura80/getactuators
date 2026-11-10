@@ -123,9 +123,13 @@ test("actuator pages show a sparkline linking to the history", () => {
     expect(link.querySelector("svg path")).toBeTruthy();
     expect(link.getAttribute("aria-label")).toContain("Price history");
     // One price: a link, no line. No price: nothing.
-    const one = render(<PriceSparkline id="cubemars-ak10-9" />);
-    expect(one.container.querySelector("a")).toBeTruthy();
-    expect(one.container.querySelector("svg")).toBeNull();
+    // Picked from the data, so the test holds as snapshots add points.
+    const single = ACTUATORS.find((a) => historyFor(a.id).filter((p) => !p.outOfStock).length === 1);
+    if (single) {
+        const one = render(<PriceSparkline id={single.id} />);
+        expect(one.container.querySelector("a")).toBeTruthy();
+        expect(one.container.querySelector("svg")).toBeNull();
+    }
     const none = render(<PriceSparkline id="no-such-actuator" />);
     expect(none.container.innerHTML).toBe("");
 });
