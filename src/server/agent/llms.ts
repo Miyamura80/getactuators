@@ -15,7 +15,13 @@ import {
     robotSection,
 } from "./catalog-md";
 import { CATALOG_UPDATED_DATE } from "./freshness";
-import { MCP_TOOLS, PATHS, RATE_LIMIT_PER_MINUTE, REST_ENDPOINTS } from "./links";
+import {
+    MCP_TOOLS,
+    PATHS,
+    RATE_LIMIT_PER_MINUTE,
+    REST_ENDPOINTS,
+    countryDataAccess,
+} from "./links";
 import { whenToUse } from "./manifests";
 import { bullets, dofText, humanize, mdLink, mdText, num, usd } from "./md";
 import { catalogStats } from "./pages-md";
@@ -28,7 +34,7 @@ const u = absoluteUrl;
 function countryLinks(): string {
     return LIVE_COUNTRY_PAGES.map(
         (p) =>
-            `${link(`${p.name}: actuator supply chain`, `${p.path}.md`, `map of rare earth, magnet and motor, gear and bearing, and robot companies with plants, supply links and stage shares; MCP get_country("${p.code}"), REST /api/v1/countries/${p.code}`)}\n`,
+            `${link(`${p.name}: actuator supply chain`, `${p.path}.md`, `map of rare earth, magnet and motor, gear and bearing, and robot companies with plants, supply links and stage shares; MCP ${countryDataAccess(p.code).mcp}, REST ${countryDataAccess(p.code).rest}`)}\n`,
     ).join("");
 }
 
@@ -86,6 +92,7 @@ ${link("Agent skill", PATHS.skill, "SKILL.md teaching an agent to use the API an
 ${link("Home", "/index.md", "overview, top actuators by torque density, FAQ")}
 ${link("Actuators", "/actuators.md", "every actuator in one table, plus categories")}
 ${link("Robots", "/robots.md", "humanoids, robot arms and quadrupeds with per-joint motors")}
+${link("Humanoid joint map", "/humanoids.md", "humanoids mapped joint by joint onto one canonical joint set: actuator type, motor, peak torque or force, and estimated magnet and rare-earth content per robot; MCP get_humanoid_joints, REST /api/v1/humanoids")}
 ${link("Trends", "/trends.md", "actuator list prices and $/N·m over time, humanoid shipments by company, roller screw cost, the price of AI against electricity and batteries (Epoch AI, Tadepalli) and humanoid battery runtime, every point dated and cited; MCP get_trends, REST /api/v1/trends")}
 ${link("Open-source robots", "/open-source.md", "robots you can build from published designs: openness matrix with links, licences, BOM cost, actuators per joint and lineage; MCP list_open_robots, REST /api/v1/open-robots")}
 
@@ -101,13 +108,17 @@ ${link("Leading people", "/people.md", "researched directory of leading voices i
 
 ## Supply chain (markdown)
 
-${link("Magnet metals", "/metals.md", "Nd, Pr, Dy, Tb, Sm and Co: country share at each stage from mine to magnet, USGS reserves and years of supply, cited price history and the events behind it; same data from the MCP tools get_metal_supply and get_metal_prices")}
+${link("Magnet metals", "/metals.md", "Nd, Pr, Dy, Tb, Sm and Co: country share at each stage from mine to magnet, USGS reserves and years of supply, cited price history and the events behind it; MCP get_metal_supply and get_metal_prices, REST /api/v1/metals, /api/v1/metals/{element} and /api/v1/metal-prices/{series}")}
 ${link("Actuator chain policy", "/policy.md", "export controls, tariffs, subsidies and standards from mine to robot with status history and primary sources; MCP list_policy_measures, REST /api/v1/policy, Atom feed /policy/feed.xml")}
 ${link("How actuator magnets and precision parts are made", "/manufacturing.md", "every step from rare earth ore to a magnetised NdFeB rotor segment, and from bar stock to tested strain-wave gears, planetary roller screws, precision bearings and encoders, with cited tolerances, temperatures and yields, who runs it and the country concentration; MCP get_process, REST /api/v1/processes/magnet and /api/v1/processes/precision")}
 ${link("Actuator bills of materials", "/bom.md", "three teardowns (Optimus roller-screw linear actuator, Unitree QDD motor, strain-wave cobot joint): every part with its cited or modeled cost, raw material, idiot index, maker and gross margin, and who keeps the price; MCP list_bom_cases and get_bom, REST /api/v1/bom")}
 ${link("Alternatives to rare-earth actuators", "/alts.md", "rare-earth-free motors, artificial muscles, hydraulic drives and transmissions with cited TRL, milestones (announced targets flagged), market size and growth, dated deployments and how each works; MCP list_alt_technologies and get_alt_technology, REST /api/v1/alts")}
 
 ${countryLinks()}
+## Supply chain data (JSON)
+
+${link("Companies and plants", "/api/v1/companies", "the companies, plants and supply links behind the atlas maps, every figure cited; MCP list_companies, get_company and list_sites, REST /api/v1/companies and /api/v1/sites")}
+
 ## About
 
 ${link("About", "/about.md", "who runs the catalog and how data is verified")}
