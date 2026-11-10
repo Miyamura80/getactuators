@@ -32,6 +32,7 @@ const PAGES = [
     "/humanoids",
     "/benchmarks",
     "/trends",
+    "/prices",
 ];
 
 const DATASETS = [

@@ -135,6 +135,12 @@ export const DATA_SURFACES: readonly DataSurface[] = [
         rest: "/api/v1/benchmarks",
     },
     {
+        label: "Actuator price history",
+        page: "/prices",
+        mcp: "get_price_history",
+        rest: "/api/v1/prices/{actuatorId}",
+    },
+    {
         label: "Trends over time",
         page: "/trends",
         mcp: "get_trends",
