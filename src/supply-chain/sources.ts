@@ -69,6 +69,25 @@ function metals(
     return { ...src(id, publisher, title, url, kind, reuse), accessed: "2026-10-26" };
 }
 
+// One USGS Mineral Commodity Summaries rare-earths chapter per edition, read
+// for the /metals oxide price history. US federal work, public domain.
+function mcsRee(edition: number, url: string): SourceRef {
+    return {
+        ...src(
+            `usgs-mcs-${edition}-ree`,
+            "USGS",
+            `Mineral Commodity Summaries ${edition}: Rare Earths`,
+            url,
+            "government",
+            "open",
+        ),
+        accessed: "2026-11-11",
+    };
+}
+
+const MCS_ASSETS =
+    "https://d9-wret.s3.us-west-2.amazonaws.com/assets/palladium/production";
+
 export const SOURCES: SourceRef[] = [
     // Statistics and intergovernmental reports
     src(
@@ -520,6 +539,12 @@ export const SOURCES: SourceRef[] = [
         "government",
         "open",
     ),
+    mcsRee(2024, "https://pubs.usgs.gov/periodicals/mcs2024/mcs2024-rare-earths.pdf"),
+    mcsRee(2023, "https://pubs.usgs.gov/periodicals/mcs2023/mcs2023-rare-earths.pdf"),
+    mcsRee(2022, "https://pubs.usgs.gov/periodicals/mcs2022/mcs2022-rare-earths.pdf"),
+    mcsRee(2020, "https://pubs.usgs.gov/periodicals/mcs2020/mcs2020-rare-earths.pdf"),
+    mcsRee(2019, `${MCS_ASSETS}/atoms/files/mcs-2019-raree.pdf`),
+    mcsRee(2018, `${MCS_ASSETS}/mineral-pubs/rare-earth/mcs-2018-raree.pdf`),
     metals(
         "usgs-mcs-2016-ree",
         "USGS",
