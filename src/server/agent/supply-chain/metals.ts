@@ -182,7 +182,7 @@ function prices(fn: Footnotes): string {
     );
     return `## Prices
 
-US$ per kg. Long-run points are USGS annual averages and year-end ranges; 2026 points are monthly Shanghai Metals Market readings. Full series: ${absoluteUrl("/api/v1/metal-prices/dy-oxide")} (swap the series id).
+US$ per kg. Long-run points are USGS annual averages and year-end ranges; 2026 points are a few cited Shanghai Metals Market readings. Full series: ${absoluteUrl("/api/v1/metal-prices/dy-oxide")} (swap the series id).
 
 ${latest}
 

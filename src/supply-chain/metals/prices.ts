@@ -3,9 +3,10 @@ import type { Sourced } from "../sourced";
 // Cited price history of the magnet metals, US$ per kg. This is the single
 // source of commodity prices for the site: /metals draws it and /bom costs
 // raw material with priceAt(). Long-run points are USGS annual averages and
-// year-end ranges; 2026 points are monthly Shanghai Metals Market (SMM)
-// readings. No point is interpolated: a month without a reading carries the
-// last one forward and says so.
+// year-end ranges (public domain). SMM is a paid feed, so 2026 metal prices
+// are only a few cited SMM readings (1 March and 30 September), not its
+// monthly history. No point is interpolated: a month without a reading
+// carries the last one forward and says so.
 
 export type PriceMarket = "cn-domestic" | "fob-china" | "lme";
 export type PriceBasis = "annual-average" | "year-end" | "spot";
@@ -125,8 +126,9 @@ const ND = ["rem-nd-price-2026"];
 const DY = ["rem-dy-price-2026"];
 const TB = ["rem-tb-price-2026"];
 
-// One reading per month where published; 1 May 2026 is left out for Nd, NdPr
-// and Dy because the source repeats the 1 April figure exactly.
+// A few SMM readings per series, read off a page that republishes the paid
+// feed: the latest (30 September 2026) for every series, plus 1 March for
+// Dy and Tb to show the 2026 rise. The source backs at most 10 records.
 export const PRICE_SERIES: PriceSeries[] = [
     {
         id: "ndpr-oxide",
@@ -264,19 +266,7 @@ export const PRICE_SERIES: PriceSeries[] = [
         form: "metal",
         market: "cn-domestic",
         unit: UNIT,
-        points: smm(
-            [
-                ["2026-03-01", 117.27],
-                ["2026-04-01", 124.87],
-                ["2026-06-01", 121.95],
-                ["2026-07-01", 145.88],
-                ["2026-08-03", 145.48],
-                ["2026-09-03", 141.79],
-                ["2026-09-30", 140.88],
-            ],
-            ND,
-            SMM_CN,
-        ),
+        points: smm([["2026-09-30", 140.88]], ND, SMM_CN),
     },
     {
         id: "nd-metal-fob",
@@ -294,19 +284,7 @@ export const PRICE_SERIES: PriceSeries[] = [
         form: "alloy",
         market: "cn-domestic",
         unit: UNIT,
-        points: smm(
-            [
-                ["2026-03-01", 108.64],
-                ["2026-04-01", 126.16],
-                ["2026-06-01", 109.55],
-                ["2026-07-01", 133.02],
-                ["2026-08-03", 133.67],
-                ["2026-09-03", 131.02],
-                ["2026-09-30", 133.44],
-            ],
-            ND,
-            SMM_CN,
-        ),
+        points: smm([["2026-09-30", 133.44]], ND, SMM_CN),
     },
     {
         id: "pr-metal-cn",
@@ -336,11 +314,6 @@ export const PRICE_SERIES: PriceSeries[] = [
         points: smm(
             [
                 ["2026-03-01", 191.08],
-                ["2026-04-01", 220.93],
-                ["2026-06-01", 208.68],
-                ["2026-07-01", 261.63],
-                ["2026-08-03", 231.35],
-                ["2026-09-03", 239.12],
                 ["2026-09-30", 233.55],
             ],
             DY,
@@ -357,12 +330,6 @@ export const PRICE_SERIES: PriceSeries[] = [
         points: smm(
             [
                 ["2026-03-01", 803.96],
-                ["2026-04-01", 970.18],
-                ["2026-05-01", 789.79],
-                ["2026-06-01", 969.69],
-                ["2026-07-01", 1179.54],
-                ["2026-08-03", 1094.68],
-                ["2026-09-03", 1097.08],
                 ["2026-09-30", 1074.34],
             ],
             TB,

@@ -32,7 +32,7 @@ describe("priceAt", () => {
 
     test("carries the last point forward and says so", () => {
         const p = priceAt("dy-metal-cn", "2026-05");
-        expect(p?.value.value).toBe(220.93);
+        expect(p?.value.value).toBe(191.08);
         expect(p?.carried).toBe(true);
         expect(priceAt("ndpr-oxide", "2026-10")?.carried).toBe(true);
     });

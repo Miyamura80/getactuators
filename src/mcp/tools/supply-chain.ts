@@ -145,7 +145,7 @@ const getMetalPrices = defineTool({
     name: "get_metal_prices",
     title: "Get magnet metal prices",
     description:
-        "Cited price history in US$/kg for one series (USGS annual averages and year-end ranges back to 2011, monthly SMM readings in 2026, China domestic and FOB China export) with the events that moved it. Filter with from and to (YYYY-MM).",
+        "Cited price history in US$/kg for one series (USGS annual averages and year-end ranges back to 2011, a few cited SMM readings in 2026, China domestic and FOB China export) with the events that moved it. Filter with from and to (YYYY-MM).",
     input: z.object({
         series: z.enum(PRICE_SERIES_IDS).describe("Price series id."),
         from: month.describe("First month, YYYY-MM."),

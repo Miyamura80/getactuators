@@ -585,7 +585,8 @@ export const SOURCES: SourceRef[] = [
         "filing",
         "facts",
     ),
-    // Monthly 2026 prices: Shanghai Metals Market benchmarks as republished
+    // A few 2026 Shanghai Metals Market readings as republished; SMM is a paid
+    // feed, so each page backs at most 10 records and its history is not kept.
     metals(
         "rem-nd-price-2026",
         "Rare Earth Mining (SMM data)",
@@ -630,10 +631,6 @@ export const SOURCES: SourceRef[] = [
 export const FACTS_ALLOWLIST: ReuseAllowlist<SourceId> = {
     "iea-rare-earths-2025":
         "Two headline country shares (refining and magnets) reused by each page that shows those stages; no table is copied.",
-    "rem-nd-price-2026":
-        "One public spot quote per month for Nd metal and NdPr oxide in 2026, read off the live price page; no history table is copied.",
-    "rem-tb-price-2026":
-        "One public spot quote per month for Tb metal in 2026, read off the live price page; no history table is copied.",
     "arnold-dysprosium-2015":
         "A few Dy-by-grade figures from one white paper, reused as inputs to our own modeled grades and element notes.",
     "nus-eai-rare-earths-2025":
