@@ -326,7 +326,13 @@ async function cmdHooks(): Promise<boolean> {
     }
 
     p.log.info("Installing prek and hooks...");
-    const installOk = runCommand(["bun", "install", "-g", "@j178/prek"]);
+    if (!Bun.which("uv")) {
+        p.log.error(
+            "uv is not installed. Install it (https://docs.astral.sh/uv/) and re-run this step.",
+        );
+        return false;
+    }
+    const installOk = runCommand(["uv", "tool", "install", "prek"]);
     if (!installOk) {
         p.log.error("Failed to install prek globally");
         return false;
