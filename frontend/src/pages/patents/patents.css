@@ -24,7 +24,6 @@
 .pt-sec { margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--line); min-width: 0; }
 .pt-sec-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin-bottom: 12px; }
 .pt-sec-head h2 { margin: 0; font-size: 18px; }
-.pt-toggles { display: flex; flex-wrap: wrap; gap: 8px 12px; }
 .pt-aside { font: 11px var(--mono); color: var(--tr-faint); }
 
 /* Filings stream */
@@ -35,8 +34,10 @@
 .pt-chart { position: relative; width: 100%; min-width: 0; }
 .pt-chart svg { display: block; overflow: visible; touch-action: pan-y; }
 .pt-band { stroke: var(--bg, #000); stroke-width: 1; }
-.pt-lag { fill: color-mix(in oklab, var(--text) 7%, transparent); }
-.pt-lag-text { fill: var(--tr-faint); font: 10px var(--mono); }
+.pt-band-tbd { fill: color-mix(in oklab, var(--text) 18%, transparent); }
+.pt-cutoff { stroke: var(--text); stroke-width: 1.5; stroke-dasharray: 5 4; pointer-events: none; }
+.pt-cutoff-text { fill: var(--text); font: 10px var(--mono); }
+.pt-cutoff-tbd { fill: var(--tr-faint); }
 .pt-cross { stroke: var(--text); stroke-width: 1; stroke-dasharray: 2 3; pointer-events: none; }
 .pt-tip {
     position: absolute;

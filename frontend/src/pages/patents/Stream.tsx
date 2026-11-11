@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import { countryName } from "../../../../src/country-flag";
 import {
     LANDSCAPE,
@@ -15,16 +15,9 @@ import { Axes, frame, useWidth } from "../prices/chart";
 // technology, the selected one lifted). The publication-lag window is shaded.
 
 export type StackBy = "country" | "technology";
-// "complete" ends at the last fully published priority year; "all" adds the
-// years that are still publishing.
-export type YearRange = "complete" | "all";
-
+// Last fully published priority year. Years after it are drawn greyed out
+// behind a cutoff line: their filings are still publishing.
 export const COMPLETE_THROUGH = LANDSCAPE.completeThrough;
-export const LAST_YEAR = PATENT_YEARS.at(-1) ?? COMPLETE_THROUGH;
-
-export function yearsFor(range: YearRange): number[] {
-    return range === "complete" ? PATENT_YEARS.filter((y) => y <= COMPLETE_THROUGH) : [...PATENT_YEARS];
-}
 
 // The site's data palette, reordered so neighbouring bands stay apart under
 // colour-vision deficiency (validated: adjacent CVD delta E >= 15).
@@ -55,13 +48,12 @@ export function bandsFor(scope: LandscapeScope, by: StackBy): Series[] {
 const colorOf = (s: Series, i: number) => (s.key === "other" ? OTHER : (BAND_COLORS[i] ?? OTHER));
 const nameOf = (s: Series, by: StackBy) => (by === "country" && s.key !== "other" ? countryName(s.key) : s.label);
 
-export function Stream({ scope, by, range = "complete" }: { scope: LandscapeScope; by: StackBy; range?: YearRange }) {
+export function Stream({ scope, by }: { scope: LandscapeScope; by: StackBy }) {
     const [ref, width] = useWidth(720);
     const [hover, setHover] = useState<number | null>(null);
     const [focus, setFocus] = useState<string | null>(null);
     const bands = useMemo(() => bandsFor(scope, by), [scope, by]);
-    // Years start at PATENT_YEARS[0], so index i lines up with band values.
-    const years = yearsFor(range);
+    const years = PATENT_YEARS;
     const lifted = by === "technology" && scope !== "all" ? scope : focus;
     const totals = years.map((_, i) => bands.reduce((s, b) => s + (b.values[i] ?? 0), 0));
     const max = Math.max(1, ...totals);
@@ -76,10 +68,13 @@ export function Stream({ scope, by, range = "complete" }: { scope: LandscapeScop
         const bottom = years.map((y, i) => `${f.x(y)},${f.y.at(b === 0 ? 0 : (stacks[b - 1]?.[i] ?? 0))}`).reverse();
         return `M${top.join("L")}L${bottom.join("L")}Z`;
     };
-    // Shade everything after the last complete year, shown only when the
-    // still-publishing years are on the chart.
+    // Cutoff at the last complete year: bands left of it in colour, right of
+    // it greyed out.
     const showLag = x1 > COMPLETE_THROUGH;
     const lagX = f.x(COMPLETE_THROUGH);
+    const top = f.pad.t;
+    const bottom = f.h - f.pad.b;
+    const clipId = useId();
     const pick = (clientX: number, el: SVGSVGElement) => {
         const px = clientX - el.getBoundingClientRect().left;
         let best = 0;
@@ -102,16 +97,26 @@ export function Stream({ scope, by, range = "complete" }: { scope: LandscapeScop
         <div ref={ref} className="pt-chart">
             <svg width={f.w} height={f.h} role="img" aria-label={`Patent families per priority year, stacked by ${by}`}
                 onPointerMove={(e) => pick(e.clientX, e.currentTarget)} onPointerLeave={() => setHover(null)}>
-                {showLag ? <>
-                    <rect className="pt-lag" x={lagX} y={f.pad.t} width={Math.max(0, f.w - f.pad.r - lagX)} height={f.h - f.pad.t - f.pad.b} />
-                    <text className="pt-lag-text" x={Math.min(lagX + 4, f.w - f.pad.r - 4)} y={f.pad.t + 12} textAnchor={lagX > f.w - 90 ? "end" : "start"}>still publishing</text>
-                </> : null}
+                <defs>
+                    <clipPath id={`${clipId}-done`}><rect x={0} y={0} width={lagX} height={f.h} /></clipPath>
+                    <clipPath id={`${clipId}-tbd`}><rect x={lagX} y={0} width={Math.max(0, f.w - lagX)} height={f.h} /></clipPath>
+                </defs>
                 <Axes f={f} />
-                {bands.map((s, b) => <path key={s.key} d={path(b)} fill={colorOf(s, b)} className={`pt-band tr-series${lifted && lifted !== s.key ? " is-dim" : ""}`} />)}
+                <g clipPath={showLag ? `url(#${clipId}-done)` : undefined}>
+                    {bands.map((s, b) => <path key={s.key} d={path(b)} fill={colorOf(s, b)} className={`pt-band tr-series${lifted && lifted !== s.key ? " is-dim" : ""}`} />)}
+                </g>
+                {showLag ? <>
+                    <g clipPath={`url(#${clipId}-tbd)`} className="pt-tbd">
+                        {bands.map((s, b) => <path key={s.key} d={path(b)} className="pt-band pt-band-tbd" />)}
+                    </g>
+                    <line className="pt-cutoff" x1={lagX} x2={lagX} y1={top} y2={bottom} />
+                    <text className="pt-cutoff-text" x={lagX - 6} y={top + 12} textAnchor="end">complete through {COMPLETE_THROUGH}</text>
+                    <text className="pt-cutoff-text pt-cutoff-tbd" x={lagX + 6} y={top + 12}>TBD</text>
+                </> : null}
                 {hy !== undefined ? <line className="pt-cross" x1={f.x(hy)} x2={f.x(hy)} y1={f.pad.t} y2={f.h - f.pad.b} /> : null}
             </svg>
             {hover !== null && hy !== undefined ? <div className="pt-tip" style={{ left: `${Math.min(f.x(hy), f.w - 170)}px` }}>
-                <b>{hy}{hy > COMPLETE_THROUGH ? " (incomplete)" : ""}</b>
+                <b>{hy}{hy > COMPLETE_THROUGH ? " (still publishing)" : ""}</b>
                 <span className="pt-tip-total">{totals[hover]?.toLocaleString("en-US")} families</span>
                 {[...bands].reverse().filter((s) => (s.values[hover] ?? 0) > 0).map((s) => <span key={s.key}>
                     <i className="pt-swatch" style={{ background: colorOf(s, bands.indexOf(s)) }} aria-hidden="true" />{nameOf(s, by)}<em>{s.values[hover]}</em>
