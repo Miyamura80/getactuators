@@ -214,3 +214,15 @@
 .pt-index-label text { fill: var(--tc); font: 10px var(--mono); }
 .pt-index-label.is-on text { font-weight: 700; }
 .pt-index-label.is-dim { opacity: 0.35; }
+.pt-pick { display: flex; flex-wrap: wrap; gap: 6px; }
+.pt-pick button {
+    display: inline-flex; align-items: center; gap: 6px; min-height: 28px; padding: 0 9px;
+    border: 1px solid var(--line); border-radius: 2px; background: transparent;
+    color: var(--tr-faint); font: 12px var(--sans); cursor: pointer;
+}
+.pt-pick button i { width: 10px; height: 10px; border-radius: 2px; border: 1.5px solid var(--tc); }
+.pt-pick button[aria-pressed="true"] { color: var(--text); border-color: var(--line-strong); background: var(--panel); }
+.pt-pick button[aria-pressed="true"] i { background: var(--tc); }
+.pt-pick button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.pt-pick .pt-pick-all { color: var(--muted); border-style: dashed; }
+.pt-empty { margin: 0; padding: 24px 0; color: var(--muted); font-size: 13px; }

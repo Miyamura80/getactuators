@@ -43,13 +43,15 @@ interface State {
     areas: AreasView | null;
     trend: MomentumView;
     applicants: Applicants;
+    // Technologies hidden from the momentum view.
+    hide: string[];
 }
 
 const narrowScreen = () => typeof window.matchMedia === "function" && window.matchMedia("(max-width: 560px)").matches;
 
 // ?technology=<id> picks the scope; ?stack=technology stacks by technology;
 // ?filter=granted|intl|triadic filters the stream; ?areas=flow|grid picks
-// the application view; ?trend=index and ?applicants=ex-cn set momentum.
+// the application view; ?trend=index, ?applicants=ex-cn and ?hide=<ids> set momentum.
 function readState(): State {
     const q = new URLSearchParams(window.location.search);
     const t = q.get("technology") ?? "";
@@ -62,6 +64,7 @@ function readState(): State {
         areas: a === "flow" || a === "grid" ? a : null,
         trend: q.get("trend") === "index" ? "index" : "tiles",
         applicants: q.get("applicants") === "ex-cn" ? "ex-cn" : "all",
+        hide: (q.get("hide") ?? "").split(",").filter((id) => TECHNOLOGIES.some((t) => t.id === id)),
     };
 }
 
@@ -92,12 +95,13 @@ export function Patents({ menuOpen = false }: { menuOpen?: boolean }) {
         setState(next);
         if (next.scope !== state.scope) setCountry(null);
         const q = new URLSearchParams(window.location.search);
-        for (const k of ["technology", "stack", "filter", "trend", "applicants", "areas"]) q.delete(k);
+        for (const k of ["technology", "stack", "filter", "trend", "applicants", "hide", "areas"]) q.delete(k);
         if (next.scope !== "all") q.set("technology", next.scope);
         if (next.by === "technology") q.set("stack", "technology");
         if (next.filter !== "all") q.set("filter", next.filter);
         if (next.trend === "index") q.set("trend", "index");
         if (next.applicants === "ex-cn") q.set("applicants", "ex-cn");
+        if (next.hide.length) q.set("hide", next.hide.join(","));
         if (next.areas) q.set("areas", next.areas);
         const qs = q.toString();
         window.history.replaceState(window.history.state, "", `${PATENTS_PATH}${qs ? `?${qs}` : ""}`);
@@ -134,7 +138,8 @@ export function Patents({ menuOpen = false }: { menuOpen?: boolean }) {
                     <Toggle label="Applicants" value={state.applicants} onChange={(applicants) => update({ ...state, applicants })}
                         options={[{ id: "all", label: "All" }, { id: "ex-cn", label: "Outside China" }]} />
                 </div>}>
-                <Momentum scope={state.scope} view={state.trend} applicants={state.applicants} onPick={(scope) => update({ ...state, scope })} />
+                <Momentum scope={state.scope} view={state.trend} applicants={state.applicants}
+                    hidden={state.hide} onHidden={(hide) => update({ ...state, hide })} onPick={(scope) => update({ ...state, scope })} />
             </Section>
 
             <Section id="pt-leaders" title="Top assignees" aside={<span className="pt-aside">{l.assignees.toLocaleString("en-US")} assignees</span>}>

@@ -236,3 +236,28 @@ test("end labels never overlap and stay in bounds", () => {
     expect(Math.min(...ys)).toBeGreaterThanOrEqual(10);
     expect(Math.max(...ys)).toBeLessThanOrEqual(300);
 });
+
+test("technologies can be hidden and shown, kept in ?hide", () => {
+    setUrl("http://localhost:1/patents?trend=index");
+    const view = render(<Patents />);
+    const c = view.container;
+    const chip = (label: string) => [...c.querySelectorAll(".pt-pick button")].find((b) => b.textContent === label) as HTMLButtonElement;
+    expect(c.querySelectorAll(".pt-pick button[aria-pressed]")).toHaveLength(TECHNOLOGIES.length);
+    fireEvent.click(chip("RE-free magnets"));
+    fireEvent.click(chip("Robot joints"));
+    expect(chip("RE-free magnets").getAttribute("aria-pressed")).toBe("false");
+    expect(new URLSearchParams(window.location.search).get("hide")).toBe("re-free-magnets,robot-joints");
+    expect(c.querySelectorAll(".pt-index-line")).toHaveLength(TECHNOLOGIES.length - 2);
+    fireEvent.click(toggle(c, "Momentum view", "Tiles"));
+    expect(c.querySelectorAll(".pt-tile")).toHaveLength(TECHNOLOGIES.length - 2);
+    fireEvent.click(chip("Show all"));
+    expect(new URLSearchParams(window.location.search).get("hide")).toBeNull();
+    fireEvent.click(chip("Hide all"));
+    expect(c.querySelector(".pt-empty")).toBeTruthy();
+});
+
+test("reads ?hide on load and ignores unknown ids", () => {
+    setUrl("http://localhost:1/patents?hide=ndfeb,nope");
+    const view = render(<Patents />);
+    expect(view.container.querySelectorAll(".pt-tile")).toHaveLength(TECHNOLOGIES.length - 1);
+});

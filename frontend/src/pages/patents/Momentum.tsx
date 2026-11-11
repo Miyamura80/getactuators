@@ -135,12 +135,37 @@ function IndexChart({ rows, scope, onPick }: { rows: MomentumRow[]; scope: Lands
     </div>;
 }
 
-export function Momentum({ scope, view, applicants, onPick }: { scope: LandscapeScope; view: MomentumView; applicants: Applicants; onPick: (s: LandscapeScope) => void }) {
-    const rows = useMemo(() => momentum(applicants), [applicants]);
+// Show or hide technologies: a chip per technology in its colour, plus All.
+function Picker({ hidden, onHidden }: { hidden: readonly string[]; onHidden: (h: string[]) => void }) {
+    const toggle = (id: string) => onHidden(hidden.includes(id) ? hidden.filter((h) => h !== id) : [...hidden, id]);
+    return <div className="pt-pick" role="group" aria-label="Show technologies">
+        {TECHNOLOGIES.map((t) => {
+            const on = !hidden.includes(t.id);
+            return <button key={t.id} type="button" aria-pressed={on} onClick={() => toggle(t.id)} style={{ "--tc": techColor(t.id) } as React.CSSProperties}>
+                <i aria-hidden="true" />{t.short}
+            </button>;
+        })}
+        <button type="button" className="pt-pick-all" onClick={() => onHidden(hidden.length ? [] : TECHNOLOGIES.map((t) => t.id))}>{hidden.length ? "Show all" : "Hide all"}</button>
+    </div>;
+}
+
+export function Momentum({ scope, view, applicants, hidden = [], onHidden = () => {}, onPick }: {
+    scope: LandscapeScope;
+    view: MomentumView;
+    applicants: Applicants;
+    hidden?: readonly string[];
+    onHidden?: (h: string[]) => void;
+    onPick: (s: LandscapeScope) => void;
+}) {
+    const all = useMemo(() => momentum(applicants), [applicants]);
+    const rows = useMemo(() => all.filter((r) => !hidden.includes(r.id)), [all, hidden]);
     const total = (k: "early" | "late") => rows.reduce((s, r) => s + r[k], 0);
     const up = rows.filter((r) => r.change !== null && r.change >= 0.05).length;
     return <div className="pt-momentum">
-        {view === "tiles"
+        <Picker hidden={hidden} onHidden={onHidden} />
+        {rows.length === 0
+            ? <p className="pt-empty">Every technology is hidden. Pick one above.</p>
+            : view === "tiles"
             ? <ul className="pt-tiles" aria-label="Technologies by change">
                 {rows.map((r) => <Tile key={r.id} row={r} on={scope === r.id} onPick={() => onPick(scope === r.id ? "all" : r.id)} />)}
             </ul>
