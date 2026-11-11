@@ -6,6 +6,8 @@ import {
     LANDSCAPE,
     type LandscapeScope,
     METHODOLOGY,
+    MOMENTUM_EARLY,
+    MOMENTUM_LATE,
     PATENTS_AS_OF,
     PATENTS_PATH,
     PATENT_SOURCES,
@@ -20,6 +22,7 @@ import {
     intlShares,
     landscapeOf,
     leaderboard,
+    momentum,
     patentsApiPath,
     scopeLabel,
     seriesByCountry,
@@ -173,6 +176,30 @@ function techSection(scope: Exclude<LandscapeScope, "all">): string {
         .join("\n\n");
 }
 
+// Families per technology in the early and late momentum windows, with every
+// applicant and outside China.
+function momentumTable(): string {
+    const w = (r: readonly [number, number]) => r.join("-");
+    const ex = new Map(momentum("ex-cn").map((r) => [r.id, r]));
+    const change = (c: number | null) => (c === null ? "new" : signed(c));
+    return mdTable(
+        [
+            "Technology",
+            w(MOMENTUM_EARLY),
+            w(MOMENTUM_LATE),
+            "Change",
+            "Change outside China",
+        ],
+        momentum().map((r) => [
+            r.label,
+            String(r.early),
+            String(r.late),
+            change(r.change),
+            change(ex.get(r.id)?.change ?? null),
+        ]),
+    );
+}
+
 function patentsBody(): string {
     const e = LANDSCAPE.extract;
     const totals = mdTable(
@@ -202,6 +229,10 @@ ${scopeLabel("all")}: ${LANDSCAPE.all.families} families counted once; the top f
 ${yearTable("all")}
 
 ${assigneeTable("all")}
+
+### Momentum
+
+${momentumTable()}
 
 ### Quality filters
 

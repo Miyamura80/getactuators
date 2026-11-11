@@ -178,3 +178,44 @@
 .pt-grid tr.is-dim td, .pt-grid tr.is-dim th { opacity: 0.35; }
 .pt-grid tr.is-on th { color: var(--cyan); }
 .pt-grid tr.is-on td { box-shadow: inset 0 1px 0 var(--cyan), inset 0 -1px 0 var(--cyan); }
+
+/* Momentum */
+.pt-momentum { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.pt-tiles { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; }
+.pt-tile {
+    display: flex; flex-direction: column; gap: 6px; width: 100%; padding: 10px;
+    border: 1px solid var(--line); border-radius: 2px; background: var(--panel);
+    color: var(--text); text-align: left; cursor: pointer; font: inherit;
+}
+.pt-tile:hover { border-color: var(--line-strong); }
+.pt-tile.is-on { border-color: var(--cyan); }
+.pt-tile:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.pt-tile-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.pt-tile-head b { font: 600 12px var(--sans); }
+.pt-tile-head em { font: normal 600 13px var(--mono); }
+.pt-tile-foot { display: flex; justify-content: space-between; font: 10px var(--mono); color: var(--tr-faint); }
+.pt-tile svg { display: block; overflow: visible; }
+.pt-tile-area { fill: color-mix(in oklab, var(--cyan) 18%, transparent); }
+.pt-tile-line { fill: none; stroke: var(--cyan); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+.pt-tile-tbd { fill: none; stroke: var(--tr-faint); stroke-width: 1.5; stroke-dasharray: 3 3; vector-effect: non-scaling-stroke; }
+.pt-tile-late { fill: color-mix(in oklab, var(--text) 6%, transparent); }
+.pt-tile-head .is-up { color: var(--green); }
+.pt-tile-head .is-down { color: var(--red); }
+.pt-tile-head .is-flat { color: var(--muted); }
+.pt-index-base { fill: color-mix(in oklab, var(--text) 6%, transparent); }
+.pt-index-100 { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 2 3; }
+.pt-index-note { fill: var(--tr-faint); }
+.pt-index-line { fill: none; stroke: color-mix(in oklab, var(--text) 45%, transparent); stroke-width: 1.5; }
+.pt-index-line.is-up { stroke: color-mix(in oklab, var(--green) 70%, transparent); }
+.pt-index-line.is-down { stroke: color-mix(in oklab, var(--red) 70%, transparent); }
+.pt-index-label.is-up circle { fill: var(--green); }
+.pt-index-label.is-down circle { fill: var(--red); }
+.pt-index-line.is-on { stroke: var(--cyan); stroke-width: 2.5; }
+.pt-index-line.is-dim { stroke: color-mix(in oklab, var(--text) 18%, transparent); }
+.pt-index-hit { fill: none; stroke: transparent; stroke-width: 12; }
+.pt-index-label { cursor: pointer; outline: none; }
+.pt-index-label circle { fill: color-mix(in oklab, var(--text) 55%, transparent); }
+.pt-index-label text { fill: var(--muted); font: 10px var(--mono); }
+.pt-index-label.is-on text { fill: var(--cyan); font-weight: 600; }
+.pt-index-label.is-on circle { fill: var(--cyan); }
+.pt-index-label.is-dim text { fill: var(--tr-faint); }

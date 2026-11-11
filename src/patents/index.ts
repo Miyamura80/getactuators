@@ -282,6 +282,63 @@ export function searchFamilies(scope: LandscapeScope, query: string): FamilyRow[
     );
 }
 
+// Momentum: each technology's families per priority year, with every
+// applicant or only those outside China, and the change from the early to
+// the late window (the last two runs of MOMENTUM_SPAN complete years).
+export type Applicants = "all" | "ex-cn";
+export const MOMENTUM_SPAN = 5;
+export const MOMENTUM_LATE = [
+    LANDSCAPE.completeThrough - MOMENTUM_SPAN + 1,
+    LANDSCAPE.completeThrough,
+] as const;
+export const MOMENTUM_EARLY = [
+    MOMENTUM_LATE[0] - MOMENTUM_SPAN,
+    MOMENTUM_LATE[0] - 1,
+] as const;
+
+export interface MomentumRow {
+    id: TechnologyId;
+    label: string;
+    values: number[];
+    early: number;
+    late: number;
+    // late / early - 1; null when the early window has none.
+    change: number | null;
+}
+
+const windowSum = (values: readonly number[], [from, to]: readonly [number, number]) =>
+    sum(
+        values.filter(
+            (_, i) => (PATENT_YEARS[i] ?? 0) >= from && (PATENT_YEARS[i] ?? 0) <= to,
+        ),
+    );
+
+// Largest change first; technologies with no early families last.
+export function momentum(applicants: Applicants = "all"): MomentumRow[] {
+    return TECHNOLOGIES.map((t) => {
+        const counts = Object.entries(landscapeOf(t.id).counts).filter(
+            ([c]) => applicants === "all" || c !== "CN",
+        );
+        const values = PATENT_YEARS.map((_, i) =>
+            sum(counts.map(([, v]) => v[i] ?? 0)),
+        );
+        const early = windowSum(values, MOMENTUM_EARLY);
+        const late = windowSum(values, MOMENTUM_LATE);
+        return {
+            id: t.id as TechnologyId,
+            label: t.short,
+            values,
+            early,
+            late,
+            change: early ? late / early - 1 : null,
+        };
+    }).sort(
+        (a, b) =>
+            (b.change ?? Number.NEGATIVE_INFINITY) -
+            (a.change ?? Number.NEGATIVE_INFINITY),
+    );
+}
+
 export const METHODOLOGY = {
     scope: "Patent families with a priority date from 1 January 2010, from Google Patents Public Datasets on BigQuery. Each technology is a reviewed set of CPC codes, some with a title keyword filter; families matching none are dropped, and a family can belong to several technologies.",
     family: "Publications are grouped by DOCDB family_id and each family counts once. Its priority date is the earliest priority date of any publication in the family.",
@@ -297,6 +354,7 @@ export const METHODOLOGY = {
         "Quality filters: granted means some publication in the family is a grant (kind code B or C; utility models, kind U, never count). 2+ offices means the family was published by at least two offices other than WO (EP counts as one office), so the applicant paid for protection outside one market. US+EP+JP means published by all three of the US, European and Japanese offices (triadic).",
     value: `Value vs volume counts families with priority years ${PATENT_YEARS[0]} to ${LANDSCAPE.completeThrough}. Chinese means applicant country CN; everyone else, including unknown, is non-Chinese.`,
     areas: `Application areas come from CPC co-classification: a family is in an area when any of its codes matches the area's list in src/patents/application-areas.ts. It is a proxy for where a technology is used until citation data is added. The shift compares the share of families in ${LANDSCAPE.areaWindows.early.join("-")} with ${LANDSCAPE.areaWindows.late.join("-")}.`,
+    momentum: `Momentum compares families with priority years ${MOMENTUM_EARLY.join("-")} against ${MOMENTUM_LATE.join("-")}. Indexed sets each technology's yearly average over ${MOMENTUM_EARLY.join("-")} to 100. Outside China drops families whose applicant country is CN.`,
     crossCheck:
         "Not yet cross-checked against Lens.org: the build environment had no route to it. A count comparison per technology is still to do.",
 } as const;

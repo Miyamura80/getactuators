@@ -8,6 +8,7 @@ import {
     PATENTS_AS_OF,
     PATENTS_PATH,
     STREAM_FILTERS,
+    type Applicants,
     type StreamFilter,
     TECHNOLOGIES,
     isLandscapeScope,
@@ -20,6 +21,7 @@ import { Areas, type AreasView } from "./Areas";
 import { AssigneeMap } from "./AssigneeMap";
 import { FamilyList } from "./FamilyList";
 import { Leaders } from "./Leaders";
+import { Momentum, type MomentumView, WINDOWS } from "./Momentum";
 import { type StackBy, Stream } from "./Stream";
 import { Value } from "./Value";
 import "../tools.css";
@@ -39,13 +41,15 @@ interface State {
     filter: StreamFilter;
     // null: the device default (grid on a phone, flow otherwise).
     areas: AreasView | null;
+    trend: MomentumView;
+    applicants: Applicants;
 }
 
 const narrowScreen = () => typeof window.matchMedia === "function" && window.matchMedia("(max-width: 560px)").matches;
 
 // ?technology=<id> picks the scope; ?stack=technology stacks by technology;
 // ?filter=granted|intl|triadic filters the stream; ?areas=flow|grid picks
-// the application view.
+// the application view; ?trend=index and ?applicants=ex-cn set momentum.
 function readState(): State {
     const q = new URLSearchParams(window.location.search);
     const t = q.get("technology") ?? "";
@@ -56,6 +60,8 @@ function readState(): State {
         by: q.get("stack") === "technology" ? "technology" : "country",
         filter: isStreamFilter(f) ? f : "all",
         areas: a === "flow" || a === "grid" ? a : null,
+        trend: q.get("trend") === "index" ? "index" : "tiles",
+        applicants: q.get("applicants") === "ex-cn" ? "ex-cn" : "all",
     };
 }
 
@@ -86,10 +92,12 @@ export function Patents({ menuOpen = false }: { menuOpen?: boolean }) {
         setState(next);
         if (next.scope !== state.scope) setCountry(null);
         const q = new URLSearchParams(window.location.search);
-        for (const k of ["technology", "stack", "filter", "areas"]) q.delete(k);
+        for (const k of ["technology", "stack", "filter", "trend", "applicants", "areas"]) q.delete(k);
         if (next.scope !== "all") q.set("technology", next.scope);
         if (next.by === "technology") q.set("stack", "technology");
         if (next.filter !== "all") q.set("filter", next.filter);
+        if (next.trend === "index") q.set("trend", "index");
+        if (next.applicants === "ex-cn") q.set("applicants", "ex-cn");
         if (next.areas) q.set("areas", next.areas);
         const qs = q.toString();
         window.history.replaceState(window.history.state, "", `${PATENTS_PATH}${qs ? `?${qs}` : ""}`);
@@ -118,6 +126,15 @@ export function Patents({ menuOpen = false }: { menuOpen?: boolean }) {
                     <Toggle label="Quality filter" value={state.filter} onChange={(filter) => update({ ...state, filter })} options={STREAM_FILTERS} />
                 </div>}>
                 <Stream scope={state.scope} by={state.by} filter={state.filter} />
+            </Section>
+
+            <Section id="pt-momentum" title={`Momentum ${WINDOWS}`} aside={<div className="pt-toggles">
+                    <Toggle label="Momentum view" value={state.trend} onChange={(trend) => update({ ...state, trend })}
+                        options={[{ id: "tiles", label: "Tiles" }, { id: "index", label: "Indexed" }]} />
+                    <Toggle label="Applicants" value={state.applicants} onChange={(applicants) => update({ ...state, applicants })}
+                        options={[{ id: "all", label: "All" }, { id: "ex-cn", label: "Outside China" }]} />
+                </div>}>
+                <Momentum scope={state.scope} view={state.trend} applicants={state.applicants} onPick={(scope) => update({ ...state, scope })} />
             </Section>
 
             <Section id="pt-leaders" title="Top assignees" aside={<span className="pt-aside">{l.assignees.toLocaleString("en-US")} assignees</span>}>

@@ -7,7 +7,8 @@ import { BAND_COLORS, bandsFor, COMPLETE_THROUGH, filterLine } from "../src/page
 import { placeLabels } from "../src/pages/patents/Value";
 import { MIN_RIBBON, ribbons } from "../src/pages/patents/Areas";
 import { hqBubbles } from "../src/pages/patents/AssigneeMap";
-import { LANDSCAPE, TECHNOLOGIES, familiesFor, leaderboard, valueRows } from "../../src/patents";
+import { indexed, spreadLabels } from "../src/pages/patents/Momentum";
+import { LANDSCAPE, MOMENTUM_EARLY, TECHNOLOGIES, familiesFor, leaderboard, momentum, valueRows } from "../../src/patents";
 
 afterEach(cleanup);
 
@@ -187,4 +188,51 @@ test("the Flow / Grid toggle is kept in the URL and the grid marks the scope's r
     fireEvent.click(toggle(c, "Application view", "Flow"));
     expect(window.location.search).toBe("?technology=screws&areas=flow");
     expect(c.querySelector(".pt-flow")).toBeTruthy();
+});
+
+test("momentum tiles sort by change and a tile picks the technology", () => {
+    setUrl("http://localhost:1/patents");
+    const view = render(<Patents />);
+    const c = view.container;
+    const tiles = c.querySelectorAll(".pt-tile");
+    expect(tiles).toHaveLength(TECHNOLOGIES.length);
+    const rows = momentum();
+    expect(tiles[0]?.textContent).toContain(rows[0]?.label ?? "missing");
+    for (const [i, r] of rows.slice(1).entries()) expect(r.change ?? -1).toBeLessThanOrEqual(rows[i]?.change ?? 1);
+    fireEvent.click(tiles[0] as Element);
+    expect(window.location.search).toBe(`?technology=${rows[0]?.id}`);
+    expect(c.querySelector(".pt-tile.is-on")).toBeTruthy();
+});
+
+test("outside China drops CN applicants and is kept in the URL with the indexed view", () => {
+    setUrl("http://localhost:1/patents");
+    const view = render(<Patents />);
+    const c = view.container;
+    fireEvent.click(toggle(c, "Applicants", "Outside China"));
+    fireEvent.click(toggle(c, "Momentum view", "Indexed"));
+    expect(window.location.search).toBe("?trend=index&applicants=ex-cn");
+    expect(c.querySelectorAll(".pt-index-line")).toHaveLength(TECHNOLOGIES.length);
+    const all = momentum("all");
+    const ex = momentum("ex-cn");
+    for (const r of ex) expect(r.late).toBeLessThanOrEqual(all.find((a) => a.id === r.id)?.late ?? 0);
+});
+
+test("indexing puts each technology's early-window average at 100", () => {
+    const span = MOMENTUM_EARLY[1] - MOMENTUM_EARLY[0] + 1;
+    for (const r of momentum()) {
+        const v = indexed(r);
+        expect(v.at(-1)).toBeDefined();
+        expect(v.length).toBe(LANDSCAPE.years.indexOf(LANDSCAPE.completeThrough) + 1);
+        const from = LANDSCAPE.years.indexOf(MOMENTUM_EARLY[0]);
+        const mean = v.slice(from, from + span).reduce((s, x) => s + x, 0) / span;
+        expect(Math.round(mean)).toBe(100);
+    }
+});
+
+test("end labels never overlap and stay in bounds", () => {
+    const ys = spreadLabels([50, 50, 51, 52, 300, 299], 13, 10, 300);
+    const sorted = [...ys].sort((a, b) => a - b);
+    for (const [i, y] of sorted.slice(1).entries()) expect(y - (sorted[i] ?? 0)).toBeGreaterThanOrEqual(13);
+    expect(Math.min(...ys)).toBeGreaterThanOrEqual(10);
+    expect(Math.max(...ys)).toBeLessThanOrEqual(300);
 });
