@@ -63,7 +63,11 @@ setup: check_bun ## Install dependencies
 setup_githooks: ## Set up git hooks with prek
 	@echo "$(YELLOW)🔨 Setting up githooks with prek...$(RESET)"
 	@git config --unset-all core.hooksPath || true
-	@bun install -g @j178/prek
+	@if ! command -v uv > /dev/null 2>&1; then \
+		echo "$(RED)uv is not installed. Install it (https://docs.astral.sh/uv/) and re-run make setup_githooks.$(RESET)"; \
+		exit 1; \
+	fi
+	@uv tool install prek
 	@prek install
 
 .PHONY: sync-agent-config
