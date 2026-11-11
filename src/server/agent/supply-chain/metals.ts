@@ -182,7 +182,7 @@ function prices(fn: Footnotes): string {
     );
     return `## Prices
 
-US$ per kg. Long-run points are USGS oxide prices: year-end ranges for 2011 to 2015, annual averages from 2014 for Nd, Dy and Tb oxide and from 2021 for NdPr, Pr and Sm oxide. 2026 metal points are a few cited Shanghai Metals Market readings. Full series: ${absoluteUrl("/api/v1/metal-prices/dy-oxide")} (swap the series id).
+US$ per kg. Long-run points are USGS oxide prices: year-end ranges for 2011 to 2015, annual averages from 2014 for Nd, Pr, Dy, Tb and Sm oxide (Pr and Sm to 2020 from the USGS Minerals Yearbook) and from 2021 for NdPr oxide. 2026 metal points are a few cited Shanghai Metals Market readings. Full series: ${absoluteUrl("/api/v1/metal-prices/dy-oxide")} (swap the series id).
 
 ${latest}
 

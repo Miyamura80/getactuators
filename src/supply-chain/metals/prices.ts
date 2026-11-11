@@ -143,6 +143,25 @@ function settled(
     );
 }
 
+// Pr and Sm annual averages 2014-2020 from the Minerals Yearbook oxide price
+// table, each year from the latest yearbook that prints it. The 2015 yearbook
+// quotes Metal-Pages at 99% purity; later ones quote Argus at 99.5%. Neither
+// states the price basis, and Sm is printed to the whole dollar.
+function yearbook(
+    rows: [year: number, value: number, edition: number][],
+): PricePoint[] {
+    return rows.map(([year, v, edition]) => {
+        const by = edition === 2015 ? "99% min (Metal-Pages)" : "99.5% min (Argus)";
+        return point(
+            String(year),
+            "annual-average",
+            v,
+            [`usgs-myb-${edition}-ree`],
+            `Annual average, ${by}, USGS Minerals Yearbook ${edition}; price basis not stated.`,
+        );
+    });
+}
+
 const fob = (grade: string) => `Annual average, ${grade}, free on board China (Argus).`;
 const fobHeavy = (grade: string) =>
     `Annual average, ${grade}, free on board China (Argus, Asian Metal).`;
@@ -174,7 +193,8 @@ export const PRICE_SERIES: PriceSeries[] = [
         form: "oxide",
         market: "fob-china",
         unit: UNIT,
-        // NdPr oxide first appears in the 2026 edition.
+        // NdPr oxide first appears in the 2026 edition; no earlier USGS
+        // publication prints it.
         points: averages(2021, [92, 124, 75, 55, 69], MCS26, fob("99% min")),
     },
     {
@@ -221,7 +241,19 @@ export const PRICE_SERIES: PriceSeries[] = [
         form: "oxide",
         market: "fob-china",
         unit: UNIT,
-        points: averages(2021, [93, 128, 76, 56, 74], MCS26, fob("99.99% min")),
+        points: [
+            ...yearbook([
+                [2014, 121, 2015],
+                [2015, 76, 2016],
+                [2016, 52, 2017],
+                [2017, 65, 2018],
+                [2018, 63, 2019],
+                [2019, 54, 2020],
+                [2020, 47, 2020],
+            ]),
+            // From 2021 the grade quoted is 99.99%, not 99.5%.
+            ...averages(2021, [93, 128, 76, 56, 74], MCS26, fob("99.99% min")),
+        ],
     },
     {
         id: "dy-oxide",
@@ -300,7 +332,18 @@ export const PRICE_SERIES: PriceSeries[] = [
         form: "oxide",
         market: "fob-china",
         unit: UNIT,
-        points: averages(2021, [2.03, 3.34, 2.17, 2.01, 2.82], MCS26, fob("99.5% min")),
+        points: [
+            ...yearbook([
+                [2014, 7, 2015],
+                [2015, 3, 2016],
+                [2016, 2, 2017],
+                [2017, 2, 2018],
+                [2018, 2, 2019],
+                [2019, 2, 2020],
+                [2020, 2, 2020],
+            ]),
+            ...averages(2021, [2.03, 3.34, 2.17, 2.01, 2.82], MCS26, fob("99.5% min")),
+        ],
     },
     {
         id: "co-metal",

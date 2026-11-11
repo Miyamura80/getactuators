@@ -88,6 +88,22 @@ function mcsRee(edition: number, url: string): SourceRef {
 const MCS_ASSETS =
     "https://d9-wret.s3.us-west-2.amazonaws.com/assets/palladium/production";
 
+// One USGS Minerals Yearbook rare-earths chapter per year. Its oxide price
+// table carries Pr and Sm, which the Commodity Summaries only add in 2026.
+function mybRee(year: number, url: string): SourceRef {
+    return {
+        ...src(
+            `usgs-myb-${year}-ree`,
+            "USGS",
+            `Minerals Yearbook ${year}: Rare Earths`,
+            url,
+            "government",
+            "open",
+        ),
+        accessed: "2026-11-11",
+    };
+}
+
 export const SOURCES: SourceRef[] = [
     // Statistics and intergovernmental reports
     src(
@@ -545,6 +561,12 @@ export const SOURCES: SourceRef[] = [
     mcsRee(2020, "https://pubs.usgs.gov/periodicals/mcs2020/mcs2020-rare-earths.pdf"),
     mcsRee(2019, `${MCS_ASSETS}/atoms/files/mcs-2019-raree.pdf`),
     mcsRee(2018, `${MCS_ASSETS}/mineral-pubs/rare-earth/mcs-2018-raree.pdf`),
+    mybRee(2020, "https://pubs.usgs.gov/myb/vol1/2020/myb1-2020-rare-earths.pdf"),
+    mybRee(2019, "https://pubs.usgs.gov/myb/vol1/2019/myb1-2019-rare-earths.pdf"),
+    mybRee(2018, "https://pubs.usgs.gov/myb/vol1/2018/myb1-2018-rare-earths.pdf"),
+    mybRee(2017, `${MCS_ASSETS}/atoms/files/myb1-2017-raree.pdf`),
+    mybRee(2016, `${MCS_ASSETS}/atoms/files/myb1-2016-raree.pdf`),
+    mybRee(2015, `${MCS_ASSETS}/mineral-pubs/rare-earth/myb1-2015-raree.pdf`),
     metals(
         "usgs-mcs-2016-ree",
         "USGS",
