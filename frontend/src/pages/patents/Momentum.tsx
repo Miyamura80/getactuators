@@ -6,6 +6,7 @@ import {
     MOMENTUM_LATE,
     type MomentumRow,
     PATENT_YEARS,
+    TECHNOLOGIES,
     momentum,
 } from "../../../../src/patents";
 import { Axes, frame, useWidth } from "../prices/chart";
@@ -25,6 +26,11 @@ const tone = (c: number | null) => (c === null || c >= 0.05 ? "is-up" : c <= -0.
 
 const lastComplete = PATENT_YEARS.indexOf(COMPLETE_THROUGH);
 
+// One fixed colour per technology (catalogue order), shared by tiles and the
+// indexed chart, so a technology keeps its colour as the sort changes.
+export const TECH_COLORS = ["#4dabf7", "#ff922b", "#51cf66", "#e599f7", "#ffe066", "#9775fa", "#66d9e8", "#ff6b9a", "#c08552", "#ced4da"];
+export const techColor = (id: string) => TECH_COLORS[TECHNOLOGIES.findIndex((t) => t.id === id)] ?? "#ced4da";
+
 // Each technology indexed to its early-window yearly average = 100, complete
 // years only (later years would read as a collapse).
 export function indexed(row: MomentumRow): number[] {
@@ -43,7 +49,7 @@ function Tile({ row, on, onPick }: { row: MomentumRow; on: boolean; onPick: () =
     const end = PATENT_YEARS.length - 1;
     const lateFrom = PATENT_YEARS.indexOf(MOMENTUM_LATE[0]);
     return <li>
-        <button type="button" className={`pt-tile${on ? " is-on" : ""}`} aria-pressed={on} onClick={onPick}
+        <button type="button" className={`pt-tile${on ? " is-on" : ""}`} aria-pressed={on} onClick={onPick} style={{ "--tc": techColor(row.id) } as React.CSSProperties}
             aria-label={`${row.label}: ${row.early} families ${span(MOMENTUM_EARLY)}, ${row.late} in ${span(MOMENTUM_LATE)}, ${changeText(row.change)}`}>
             <span className="pt-tile-head"><b>{row.label}</b><em className={tone(row.change)}>{changeText(row.change)}</em></span>
             <svg width="100%" height={h} viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" aria-hidden="true">
@@ -105,11 +111,11 @@ function IndexChart({ rows, scope, onPick }: { rows: MomentumRow[]; scope: Lands
             <text className="pt-cutoff-text pt-index-note" x={((earlyX[0] ?? 0) + (earlyX[1] ?? 0)) / 2} y={f.pad.t + 12} textAnchor="middle">{span(MOMENTUM_EARLY)} avg = 100</text>
             <g clipPath={`url(#${clip})`}>
                 {series.map(({ row, v }) => <path key={row.id} d={line(v)}
-                    className={`pt-index-line ${tone(row.change)}${lit === row.id ? " is-on" : lit ? " is-dim" : ""}`} />)}
+                    stroke={techColor(row.id)} className={`pt-index-line${lit === row.id ? " is-on" : lit ? " is-dim" : ""}`} />)}
             </g>
             {series.map(({ row, v }, i) => {
                 const show = !narrow || lit === row.id;
-                return <g key={row.id} className={`pt-index-label ${tone(row.change)}${lit === row.id ? " is-on" : lit ? " is-dim" : ""}`}
+                return <g key={row.id} style={{ "--tc": techColor(row.id) } as React.CSSProperties} className={`pt-index-label${lit === row.id ? " is-on" : lit ? " is-dim" : ""}`}
                     tabIndex={0} role="button" aria-pressed={scope === row.id} aria-label={`${row.label}, ${Math.round(v.at(-1) ?? 0)} in ${COMPLETE_THROUGH}`}
                     onPointerEnter={() => setHover(row.id)} onPointerLeave={() => setHover(null)}
                     onFocus={() => setHover(row.id)} onBlur={() => setHover(null)}
