@@ -12,7 +12,7 @@ const getPatentLandscape = defineTool({
     name: "get_patent_landscape",
     title: "Get a technology's patent landscape",
     description:
-        'Patent families since 2010 for one actuator technology from /patents, deduplicated by DOCDB family, from Google Patents Public Datasets on BigQuery. Returns the reviewed CPC codes with their rationale and keyword filters, families per priority year (years from incomplete_from on are still being published, so do not read their drop as a decline), families per applicant country per year, the top 15 first assignees with family count, share and 3-year CAGR (company_id links to get_company), the top-five share, and the largest families with Google Patents links. Use technology "all" for every family once.',
+        'Patent families since 2010 for one actuator technology from /patents, deduplicated by DOCDB family, from Google Patents Public Datasets on BigQuery. Returns the reviewed CPC codes with their rationale and keyword filters, families per priority year (years from incomplete_from on are still being published, so do not read their drop as a decline), families per applicant country per year, the top 15 first assignees with family count, share and 3-year CAGR (company_id links to get_company), the top-five share, per-year counts of granted, 2+ office and US+EP+JP families, a value view (top 40 assignees with the share filed in 2+ offices and granted families; Chinese vs other applicants filed abroad), application areas by CPC co-classification with early and late shares, and the largest families with Google Patents links. Use technology "all" for every family once.',
     input: z.object({
         technology: z
             .enum(PATENT_SCOPES)

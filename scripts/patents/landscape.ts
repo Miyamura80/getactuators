@@ -1,3 +1,8 @@
+import {
+    APPLICATION_AREA_IDS,
+    type ApplicationAreaId,
+    classifyAreas,
+} from "../../src/patents/application-areas";
 import { normaliseAssignee } from "../../src/patents/assignees";
 import {
     TECHNOLOGY_IDS,
@@ -9,7 +14,11 @@ import type {
     FamiliesFile,
     FamilyRow,
     LandscapeFile,
+    QualityFilter,
+    TechAreas,
     TechLandscape,
+    TechValue,
+    ValueRow,
 } from "../../src/patents/types";
 import { COMPANIES } from "../../src/supply-chain/companies";
 
@@ -39,11 +48,22 @@ export interface Family {
     jurisdictions: number;
     publications: number;
     techs: TechnologyId[];
+    // Distinct publishing offices (countries, EP, WO).
+    offices: string[];
+    // Some publication is a grant (see isGrant).
+    granted: boolean;
+    areas: ApplicationAreaId[];
 }
 
 export const FIRST_YEAR = 2010;
 export const TOP_ASSIGNEES = 15;
 export const TOP_FAMILIES = 200;
+// Assignees on the value-vs-volume scatter.
+export const TOP_VALUE = 40;
+// First window of the application-area shift; the late window is the five
+// years ending at the last complete year.
+export const EARLY_WINDOW: [number, number] = [2010, 2017];
+export const LATE_YEARS = 5;
 // Publication lag: most applications publish 18 months after priority.
 export const LAG_MONTHS = 18;
 const TITLE_MAX = 160;
@@ -78,6 +98,25 @@ export function cleanTitle(raw: string): string {
         .replace(/\s+/g, " ")
         .trim();
 }
+
+// A grant: kind code B or C (B1, B2, C, C1...). Utility models (kind U, and
+// Y for older Chinese ones) never count, whatever the office.
+export const isGrant = (kind: string | undefined): boolean => /^[BC]/.test(kind ?? "");
+
+// Filed in two or more offices, not counting the PCT (WO) publication: the
+// applicant paid for protection outside one market.
+export const isInternational = (offices: readonly string[]): boolean =>
+    offices.filter((o) => o !== "WO").length >= 2;
+
+// Published by the US, European and Japanese offices.
+export const isTriadic = (offices: readonly string[]): boolean =>
+    ["US", "EP", "JP"].every((o) => offices.includes(o));
+
+export const QUALITY: Record<QualityFilter, (f: Family) => boolean> = {
+    granted: (f) => f.granted,
+    intl: (f) => isInternational(f.offices),
+    triadic: (f) => isTriadic(f.offices),
+};
 
 const byPublication = (a: PublicationRow, b: PublicationRow) =>
     (day(a.publication_date) || "9999").localeCompare(
@@ -114,6 +153,7 @@ export function toFamily(rows: readonly PublicationRow[]): Family | null {
         titled[0] ??
         first;
     const title = cleanTitle(rep.title_en ?? titles[0] ?? "");
+    const offices = [...new Set(sorted.map((r) => r.country_code))].sort();
     return {
         id: first.family_id,
         priority,
@@ -121,9 +161,12 @@ export function toFamily(rows: readonly PublicationRow[]): Family | null {
         title: title.length > TITLE_MAX ? `${title.slice(0, TITLE_MAX - 1)}…` : title,
         assigneeRaw,
         country,
-        jurisdictions: new Set(sorted.map((r) => r.country_code)).size,
+        jurisdictions: offices.length,
         publications: sorted.length,
         techs,
+        offices,
+        granted: sorted.some((r) => isGrant(r.kind_code)),
+        areas: classifyAreas(cpc),
     };
 }
 
@@ -161,12 +204,123 @@ export function publicationLag(asOf: string): {
     return { incompleteFrom, completeThrough: d.getUTCFullYear() - 1 };
 }
 
+interface Windows {
+    completeThrough: number;
+    early: [number, number];
+    late: [number, number];
+}
+
+const yearOf = (f: Family) => Number(f.priority.slice(0, 4));
+const within = (y: number, [a, b]: [number, number]) => y >= a && y <= b;
+
+// A registry company sits at its headquarters; anyone else at the applicant
+// country most of its families give.
+function hqCountry(
+    company: string | undefined,
+    countries: Map<string, number>,
+): string {
+    return (
+        COMPANIES.find((c) => c.id === company)?.hqCountry ??
+        [...countries.entries()]
+            .filter(([c]) => c !== "XX")
+            .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0]?.[0] ??
+        "XX"
+    );
+}
+
+const tally = (m: Map<string, number>, k: string) => m.set(k, (m.get(k) ?? 0) + 1);
+
+function countsBy(
+    families: readonly Family[],
+    years: readonly number[],
+): Record<string, number[]> {
+    const counts: Record<string, number[]> = {};
+    for (const f of families) {
+        const i = years.indexOf(yearOf(f));
+        if (i < 0) continue;
+        const row = counts[f.country] ?? years.map(() => 0);
+        row[i] = (row[i] ?? 0) + 1;
+        counts[f.country] = row;
+    }
+    return counts;
+}
+
+// Value view: families in the complete years, per first assignee and for
+// Chinese against other applicants, with how many were filed abroad.
+function valueView(families: readonly Family[], w: Windows): TechValue {
+    const done = families.filter((f) => yearOf(f) <= w.completeThrough);
+    const intl = (fs: readonly Family[]) => fs.filter(QUALITY.intl).length;
+    const cn = done.filter((f) => f.country === "CN");
+    const rest = done.filter((f) => f.country !== "CN");
+    const by = new Map<
+        string,
+        { a: ReturnType<typeof normaliseAssignee>; fs: Family[] }
+    >();
+    for (const f of done) {
+        if (!f.assigneeRaw) continue;
+        const a = normaliseAssignee(f.assigneeRaw);
+        const g = by.get(a.key) ?? { a, fs: [] };
+        g.fs.push(f);
+        by.set(a.key, g);
+    }
+    const assignees: ValueRow[] = [...by.values()]
+        .sort((x, y) => y.fs.length - x.fs.length || x.a.name.localeCompare(y.a.name))
+        .slice(0, TOP_VALUE)
+        .map(({ a, fs }) => {
+            const countries = new Map<string, number>();
+            for (const f of fs) tally(countries, f.country);
+            return {
+                key: a.key,
+                name: a.name,
+                ...(a.company ? { company: a.company } : {}),
+                country: hqCountry(a.company, countries),
+                families: fs.length,
+                intl: intl(fs),
+                granted: fs.filter(QUALITY.granted).length,
+                triadic: fs.filter(QUALITY.triadic).length,
+            };
+        });
+    return {
+        cn: { families: cn.length, intl: intl(cn) },
+        rest: { families: rest.length, intl: intl(rest) },
+        assignees,
+    };
+}
+
+function areasOf(families: readonly Family[], w: Windows): TechAreas {
+    const done = families.filter((f) => yearOf(f) <= w.completeThrough);
+    const early = done.filter((f) => within(yearOf(f), w.early));
+    const late = done.filter((f) => within(yearOf(f), w.late));
+    const n = (fs: readonly Family[], id: ApplicationAreaId) =>
+        fs.filter((f) => f.areas.includes(id)).length;
+    return {
+        families: done.length,
+        early: early.length,
+        late: late.length,
+        counts: Object.fromEntries(
+            APPLICATION_AREA_IDS.map((id) => [
+                id,
+                [n(done, id), n(early, id), n(late, id)],
+            ]),
+        ) as TechAreas["counts"],
+    };
+}
+
+const byTotal = (counts: Record<string, number[]>) =>
+    Object.fromEntries(
+        Object.entries(counts).sort(
+            (a, b) =>
+                b[1].reduce((s, v) => s + v, 0) - a[1].reduce((s, v) => s + v, 0) ||
+                a[0].localeCompare(b[0]),
+        ),
+    );
+
 function aggregate(
     families: readonly Family[],
     years: readonly number[],
+    w: Windows,
 ): TechLandscape {
     const at = (date: string) => years.indexOf(Number(date.slice(0, 4)));
-    const counts: Record<string, number[]> = {};
     const assignees = new Map<
         string,
         AssigneeRow & { countries: Map<string, number> }
@@ -174,9 +328,6 @@ function aggregate(
     for (const f of families) {
         const i = at(f.priority);
         if (i < 0) continue;
-        const row0 = counts[f.country] ?? years.map(() => 0);
-        row0[i] = (row0[i] ?? 0) + 1;
-        counts[f.country] = row0;
         if (!f.assigneeRaw) continue;
         const a = normaliseAssignee(f.assigneeRaw);
         let row = assignees.get(a.key);
@@ -194,34 +345,29 @@ function aggregate(
         }
         row.families++;
         (row.years as number[])[i] = (row.years[i] ?? 0) + 1;
-        row.countries.set(f.country, (row.countries.get(f.country) ?? 0) + 1);
+        tally(row.countries, f.country);
     }
     const top = [...assignees.values()]
         .sort((a, b) => b.families - a.families || a.name.localeCompare(b.name))
         .slice(0, TOP_ASSIGNEES)
         .map(({ countries, ...row }) => ({
             ...row,
-            // A registry company sits at its headquarters; anyone else at the
-            // applicant country most of its families give.
-            country:
-                COMPANIES.find((c) => c.id === row.company)?.hqCountry ??
-                [...countries.entries()]
-                    .filter(([c]) => c !== "XX")
-                    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0]?.[0] ??
-                "XX",
+            country: hqCountry(row.company, countries),
         }));
-    const sortedCounts = Object.fromEntries(
-        Object.entries(counts).sort(
-            (a, b) =>
-                b[1].reduce((s, v) => s + v, 0) - a[1].reduce((s, v) => s + v, 0) ||
-                a[0].localeCompare(b[0]),
-        ),
-    );
+    const quality = Object.fromEntries(
+        (Object.keys(QUALITY) as QualityFilter[]).map((q) => [
+            q,
+            byTotal(countsBy(families.filter(QUALITY[q]), years)),
+        ]),
+    ) as TechLandscape["quality"];
     return {
         families: families.length,
         assignees: assignees.size,
-        counts: sortedCounts,
+        counts: byTotal(countsBy(families, years)),
+        quality,
         top,
+        value: valueView(families, w),
+        areas: areasOf(families, w),
     };
 }
 
@@ -235,12 +381,19 @@ export function buildLandscape(
         { length: lastYear - FIRST_YEAR + 1 },
         (_, i) => FIRST_YEAR + i,
     );
+    const lag = publicationLag(asOf);
+    const w: Windows = {
+        completeThrough: lag.completeThrough,
+        early: EARLY_WINDOW,
+        late: [lag.completeThrough - LATE_YEARS + 1, lag.completeThrough],
+    };
     const technologies = Object.fromEntries(
         TECHNOLOGY_IDS.map((id) => [
             id,
             aggregate(
                 matched.filter((f) => f.techs.includes(id)),
                 years,
+                w,
             ),
         ]),
     ) as Record<TechnologyId, TechLandscape>;
@@ -275,14 +428,15 @@ export function buildLandscape(
         landscape: {
             asOf,
             years,
-            ...publicationLag(asOf),
+            ...lag,
             extract: {
                 publications: input.publications,
                 families: input.total,
                 matched: matched.length,
             },
+            areaWindows: { early: w.early, late: w.late },
             technologies,
-            all: aggregate(matched, years),
+            all: aggregate(matched, years, w),
         },
         families: { asOf, perTechnology: TOP_FAMILIES, families: rows },
     };

@@ -48,6 +48,12 @@ describe("/patents", () => {
             expect(md).toContain("| # | Assignee | Country | Families | Share | CAGR");
             expect(md).toContain(`${LANDSCAPE.completeThrough + 1} (incomplete)`);
             expect(md).toContain("Lens.org");
+            expect(md).toContain("### Quality filters");
+            expect(md).toContain("| 2+ offices |");
+            expect(md).toContain("### Value vs volume");
+            expect(md).toMatch(/\d+% of non-Chinese and \d+% of Chinese families/);
+            expect(md).toContain("### Where it ends up");
+            expect(md).toContain("| Technology | Vehicles & EVs |");
             expect(md).toContain("patents.google.com/patent/");
             expect(md).not.toContain(String.fromCharCode(0x2014));
         }
@@ -77,6 +83,15 @@ describe("REST /api/v1/patents/{technology}", () => {
             body.top_assignees.some((a) => a.company_id === "harmonic-drive-systems"),
         ).toBe(true);
         expect(body.top_families).toHaveLength(50);
+        for (const y of body.per_year) {
+            expect(y.granted).toBeLessThanOrEqual(y.families);
+            expect(y.triadic).toBeLessThanOrEqual(y.intl);
+        }
+        expect(body.value.assignees.length).toBeLessThanOrEqual(40);
+        expect(body.value.cn_intl_share).toBeLessThan(body.value.rest_intl_share);
+        expect(body.value.years).toEqual([2010, LANDSCAPE.completeThrough]);
+        expect(body.application_areas.map((a) => a.id)).toContain("robots");
+        expect(body.area_windows.early).toEqual([2010, 2017]);
         expect(body.top_families[0]?.url).toMatch(
             /^https:\/\/patents\.google\.com\/patent\/[A-Z]{2}\d/,
         );
@@ -99,10 +114,15 @@ describe("REST /api/v1/patents/{technology}", () => {
         const md = await (await get("/api/v1/patents/ndfeb.md")).text();
         expect(md).toContain("# Patent landscape: NdFeB magnets");
         expect(md).toContain("`H01F41/0293`");
+        expect(md).toContain("| Year | Families | Granted | 2+ offices | US+EP+JP |");
+        expect(md).toContain("| Area | Families | Share | Early | Late |");
         const spec = (await (await get("/openapi.json")).json()) as {
             paths: Record<string, unknown>;
         };
         expect(Object.keys(spec.paths)).toContain("/api/v1/patents/{technology}");
+        const schema = JSON.stringify(spec);
+        expect(schema).toContain("application_areas");
+        expect(schema).toContain("rest_intl_share");
     });
 });
 
@@ -115,6 +135,8 @@ describe("MCP get_patent_landscape", () => {
         const view = PatentLandscapeSchema.parse(r.structuredContent);
         expect(view.technology).toBe("eha");
         expect(view.top_families).toHaveLength(3);
+        expect(view.value.assignees.length).toBeGreaterThan(0);
+        expect(view.application_areas).toHaveLength(9);
         const rest = PatentLandscapeSchema.parse(
             await (await get("/api/v1/patents/eha?limit=3")).json(),
         );

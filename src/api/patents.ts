@@ -1,4 +1,5 @@
 import {
+    APPLICATION_AREAS,
     CAGR_END,
     CAGR_START,
     LANDSCAPE,
@@ -9,11 +10,13 @@ import {
     PATENT_YEARS,
     TECHNOLOGIES,
     TECHNOLOGY_IDS,
+    areaCells,
     countryTotals,
     familiesFor,
     familiesPerYear,
     getTechnology,
     googlePatentsUrl,
+    intlShares,
     isLandscapeScope,
     landscapeOf,
     leaderboard,
@@ -22,6 +25,7 @@ import {
     scopeLabel,
     seriesByCountry,
     top5Share,
+    valueRows,
 } from "@/patents";
 import { absoluteUrl } from "@/server/site";
 import { type Shares, concentration } from "@/supply-chain/concentration";
@@ -90,9 +94,67 @@ const landscapeOut = z.object({
         z.object({
             year: z.number().int(),
             families: z.number().int(),
+            granted: z
+                .number()
+                .int()
+                .describe("Families with a grant (kind B or C, not utility models)."),
+            intl: z
+                .number()
+                .int()
+                .describe("Families published by 2+ offices other than WO."),
+            triadic: z.number().int().describe("Families published by US, EP and JP."),
             incomplete: z.boolean(),
         }),
     ),
+    value: z
+        .object({
+            years: z
+                .array(z.number().int())
+                .describe("First and last priority year counted (complete years)."),
+            cn_families: z.number().int().describe("Applicant country CN."),
+            cn_intl_share: z
+                .number()
+                .describe("Share of CN families filed in 2+ offices."),
+            rest_families: z.number().int().describe("Every other applicant country."),
+            rest_intl_share: z
+                .number()
+                .describe("Share of non-CN families filed in 2+ offices."),
+            assignees: z.array(
+                z.object({
+                    name: z.string(),
+                    company_id: z.string().nullable(),
+                    country: z.string(),
+                    families: z.number().int(),
+                    intl_share: z.number().describe("Share filed in 2+ offices."),
+                    granted: z.number().int(),
+                    triadic: z.number().int(),
+                }),
+            ),
+        })
+        .describe(
+            "Value vs volume: the 40 largest first assignees by families in the complete years, with how much they protect abroad.",
+        ),
+    application_areas: z
+        .array(
+            z.object({
+                id: z.string(),
+                label: z.string(),
+                cpc: z
+                    .string()
+                    .describe("Regular expression matched against CPC codes."),
+                families: z.number().int(),
+                share: z.number(),
+                share_early: z.number(),
+                share_late: z.number(),
+            }),
+        )
+        .describe(
+            "Application areas by CPC co-classification (complete years), a proxy for use; share_early and share_late compare the area_windows.",
+        ),
+    area_windows: z.object({
+        early: z.array(z.number().int()),
+        late: z.array(z.number().int()),
+    }),
     by_country: z.array(
         z.object({
             country: z.string().describe("ISO alpha-2, or other."),
@@ -156,6 +218,11 @@ export function patentLandscapeView(
     const c = concentration(totals as Shares);
     const incompleteYear = Number(LANDSCAPE.incompleteFrom.slice(0, 4));
     const perYear = familiesPerYear(scope);
+    const granted = familiesPerYear(scope, "granted");
+    const intl = familiesPerYear(scope, "intl");
+    const triadic = familiesPerYear(scope, "triadic");
+    const v = landscapeOf(scope).value;
+    const shares = intlShares(scope);
     return {
         technology: scope,
         label: scopeLabel(scope),
@@ -183,8 +250,40 @@ export function patentLandscapeView(
         per_year: PATENT_YEARS.map((year, i) => ({
             year,
             families: perYear[i] ?? 0,
+            granted: granted[i] ?? 0,
+            intl: intl[i] ?? 0,
+            triadic: triadic[i] ?? 0,
             incomplete: year >= incompleteYear,
         })),
+        value: {
+            years: [PATENT_YEARS[0] ?? 2010, LANDSCAPE.completeThrough],
+            cn_families: v.cn.families,
+            cn_intl_share: round(shares.cn),
+            rest_families: v.rest.families,
+            rest_intl_share: round(shares.rest),
+            assignees: valueRows(scope).map((a) => ({
+                name: a.name,
+                company_id: a.company ?? null,
+                country: a.country,
+                families: a.families,
+                intl_share: round(a.families ? a.intl / a.families : 0),
+                granted: a.granted,
+                triadic: a.triadic,
+            })),
+        },
+        application_areas: areaCells(scope).map((c) => ({
+            id: c.area,
+            label: c.label,
+            cpc: APPLICATION_AREAS.find((a) => a.id === c.area)?.cpc ?? "",
+            families: c.families,
+            share: round(c.share),
+            share_early: round(c.early),
+            share_late: round(c.late),
+        })),
+        area_windows: {
+            early: LANDSCAPE.areaWindows.early,
+            late: LANDSCAPE.areaWindows.late,
+        },
         by_country: seriesByCountry(scope, 10).map((s) => ({
             country: s.key,
             families: s.values.reduce((a, b) => a + b, 0),

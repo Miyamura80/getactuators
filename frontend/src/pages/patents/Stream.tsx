@@ -4,7 +4,10 @@ import {
     LANDSCAPE,
     type LandscapeScope,
     PATENT_YEARS,
+    STREAM_FILTERS,
     type Series,
+    type StreamFilter,
+    filterSummary,
     seriesByCountry,
     seriesByTechnology,
 } from "../../../../src/patents";
@@ -22,7 +25,8 @@ export const COMPLETE_THROUGH = LANDSCAPE.completeThrough;
 // The site's data palette, reordered so neighbouring bands stay apart under
 // colour-vision deficiency (validated: adjacent CVD delta E >= 15).
 export const BAND_COLORS = ["#4dabf7", "#51cf66", "#9775fa", "#ff6b9a", "#ffb547", "#66d9e8", "#ff922b"];
-const OTHER = "#5c6366";
+export const OTHER_COLOR = "#5c6366";
+const OTHER = OTHER_COLOR;
 const MAX_BANDS = BAND_COLORS.length;
 
 // Technologies take colours by overall size, fixed for every view, so a
@@ -32,8 +36,8 @@ const TECH_ORDER = seriesByTechnology()
     .sort((a, b) => b.total - a.total)
     .map((s) => s.key);
 
-function techBands(): Series[] {
-    const all = seriesByTechnology();
+function techBands(filter: StreamFilter): Series[] {
+    const all = seriesByTechnology(filter);
     const head = TECH_ORDER.slice(0, MAX_BANDS - 1).map((k) => all.find((s) => s.key === k) as Series);
     const rest = all.filter((s) => !head.includes(s));
     if (rest.length === 0) return head;
@@ -41,22 +45,45 @@ function techBands(): Series[] {
     return [...head, { key: "other", label: `Other (${rest.length})`, values: other }];
 }
 
-export function bandsFor(scope: LandscapeScope, by: StackBy): Series[] {
-    return by === "technology" ? techBands() : seriesByCountry(scope, MAX_BANDS - 1);
+export function bandsFor(scope: LandscapeScope, by: StackBy, filter: StreamFilter = "all"): Series[] {
+    return by === "technology" ? techBands(filter) : seriesByCountry(scope, MAX_BANDS - 1, filter);
 }
 
-const colorOf = (s: Series, i: number) => (s.key === "other" ? OTHER : (BAND_COLORS[i] ?? OTHER));
+export const colorOf = (s: { key: string }, i: number) => (s.key === "other" ? OTHER : (BAND_COLORS[i] ?? OTHER));
+
+// The colour a country takes in the scope's stream (grey outside its bands),
+// so the scatter and the stream agree.
+export function countryColor(scope: LandscapeScope, country: string): string {
+    const i = seriesByCountry(scope, MAX_BANDS - 1).findIndex((s) => s.key === country);
+    return i < 0 ? OTHER : (BAND_COLORS[i] ?? OTHER);
+}
+
+const n = (v: number) => v.toLocaleString("en-US");
+const share = (v: number) => `${Math.round(v * 100)}%`;
+
+// "8,814 of 26,167 families 2010-24 (34%) · China 11%"
+export function filterLine(scope: LandscapeScope, filter: StreamFilter): string {
+    const s = filterSummary(scope, filter);
+    const span = `${PATENT_YEARS[0]}-${String(COMPLETE_THROUGH).slice(2)}`;
+    const head = filter === "all" ? `${n(s.of)} families ${span}` : `${n(s.families)} of ${n(s.of)} families ${span} (${share(s.share)})`;
+    return `${head} · China ${share(s.china)}`;
+}
 const nameOf = (s: Series, by: StackBy) => (by === "country" && s.key !== "other" ? countryName(s.key) : s.label);
 
-export function Stream({ scope, by }: { scope: LandscapeScope; by: StackBy }) {
+export function Stream({ scope, by, filter = "all" }: { scope: LandscapeScope; by: StackBy; filter?: StreamFilter }) {
     const [ref, width] = useWidth(720);
     const [hover, setHover] = useState<number | null>(null);
     const [focus, setFocus] = useState<string | null>(null);
-    const bands = useMemo(() => bandsFor(scope, by), [scope, by]);
+    const bands = useMemo(() => bandsFor(scope, by, filter), [scope, by, filter]);
     const years = PATENT_YEARS;
     const lifted = by === "technology" && scope !== "all" ? scope : focus;
     const totals = years.map((_, i) => bands.reduce((s, b) => s + (b.values[i] ?? 0), 0));
-    const max = Math.max(1, ...totals);
+    // The y axis stays at the unfiltered maximum, so a filter shows as shrinkage.
+    const max = useMemo(() => {
+        const all = bandsFor(scope, by);
+        return Math.max(1, ...years.map((_, i) => all.reduce((s, b) => s + (b.values[i] ?? 0), 0)));
+    }, [scope, by, years]);
+    const label = STREAM_FILTERS.find((x) => x.id === filter)?.long ?? "all families";
     const height = width < 480 ? 220 : 280;
     const x0 = years[0] ?? 2010;
     const x1 = years.at(-1) ?? COMPLETE_THROUGH;
@@ -95,7 +122,7 @@ export function Stream({ scope, by }: { scope: LandscapeScope; by: StackBy }) {
             })}
         </ul>
         <div ref={ref} className="pt-chart">
-            <svg width={f.w} height={f.h} role="img" aria-label={`Patent families per priority year, stacked by ${by}`}
+            <svg width={f.w} height={f.h} role="img" aria-label={`Patent families per priority year, ${label}, stacked by ${by}`}
                 onPointerMove={(e) => pick(e.clientX, e.currentTarget)} onPointerLeave={() => setHover(null)}>
                 <defs>
                     <clipPath id={`${clipId}-done`}><rect x={0} y={0} width={lagX} height={f.h} /></clipPath>
@@ -123,8 +150,9 @@ export function Stream({ scope, by }: { scope: LandscapeScope; by: StackBy }) {
                 </span>)}
             </div> : null}
         </div>
+        <p className="pt-filter-line" aria-live="polite">{filterLine(scope, filter)}</p>
         <div className="sr-only"><table>
-            <caption>Families per priority year by {by}</caption>
+            <caption>Families per priority year by {by}, {label}</caption>
             <thead><tr><th scope="col">Year</th>{bands.map((s) => <th key={s.key} scope="col">{nameOf(s, by)}</th>)}</tr></thead>
             <tbody>{years.map((y, i) => <tr key={y}><th scope="row">{y}</th>{bands.map((s) => <td key={s.key}>{s.values[i]}</td>)}</tr>)}</tbody>
         </table></div>

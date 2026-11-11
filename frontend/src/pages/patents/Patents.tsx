@@ -7,16 +7,21 @@ import {
     METHODOLOGY,
     PATENTS_AS_OF,
     PATENTS_PATH,
+    STREAM_FILTERS,
+    type StreamFilter,
     TECHNOLOGIES,
     isLandscapeScope,
+    isStreamFilter,
     landscapeOf,
     patentsApiPath,
     scopeLabel,
 } from "../../../../src/patents";
+import { Areas, type AreasView } from "./Areas";
 import { AssigneeMap } from "./AssigneeMap";
 import { FamilyList } from "./FamilyList";
 import { Leaders } from "./Leaders";
 import { type StackBy, Stream } from "./Stream";
+import { Value } from "./Value";
 import "../tools.css";
 import "../trends/trends.css";
 import "./patents.css";
@@ -31,13 +36,33 @@ export const SCOPES: { id: LandscapeScope; label: string }[] = [
 interface State {
     scope: LandscapeScope;
     by: StackBy;
+    filter: StreamFilter;
+    // null: the device default (grid on a phone, flow otherwise).
+    areas: AreasView | null;
 }
 
-// ?technology=<id> picks the scope; ?stack=technology stacks by technology.
+const narrowScreen = () => typeof window.matchMedia === "function" && window.matchMedia("(max-width: 560px)").matches;
+
+// ?technology=<id> picks the scope; ?stack=technology stacks by technology;
+// ?filter=granted|intl|triadic filters the stream; ?areas=flow|grid picks
+// the application view.
 function readState(): State {
     const q = new URLSearchParams(window.location.search);
     const t = q.get("technology") ?? "";
-    return { scope: isLandscapeScope(t) ? t : "all", by: q.get("stack") === "technology" ? "technology" : "country" };
+    const f = q.get("filter") ?? "";
+    const a = q.get("areas");
+    return {
+        scope: isLandscapeScope(t) ? t : "all",
+        by: q.get("stack") === "technology" ? "technology" : "country",
+        filter: isStreamFilter(f) ? f : "all",
+        areas: a === "flow" || a === "grid" ? a : null,
+    };
+}
+
+function Toggle<T extends string>({ label, options, value, onChange }: { label: string; options: { id: T; label: string }[]; value: T; onChange: (v: T) => void }) {
+    return <div className="tr-toggle" role="group" aria-label={label}>
+        {options.map((o) => <button key={o.id} type="button" aria-pressed={value === o.id} onClick={() => onChange(o.id)}>{o.label}</button>)}
+    </div>;
 }
 
 function Section({ id, title, children, aside }: { id: string; title: string; children: ReactNode; aside?: ReactNode }) {
@@ -61,14 +86,17 @@ export function Patents({ menuOpen = false }: { menuOpen?: boolean }) {
         setState(next);
         if (next.scope !== state.scope) setCountry(null);
         const q = new URLSearchParams(window.location.search);
-        q.delete("technology");
-        q.delete("stack");
+        for (const k of ["technology", "stack", "filter", "areas"]) q.delete(k);
         if (next.scope !== "all") q.set("technology", next.scope);
         if (next.by === "technology") q.set("stack", "technology");
+        if (next.filter !== "all") q.set("filter", next.filter);
+        if (next.areas) q.set("areas", next.areas);
         const qs = q.toString();
         window.history.replaceState(window.history.state, "", `${PATENTS_PATH}${qs ? `?${qs}` : ""}`);
     };
     const tech = TECHNOLOGIES.find((t) => t.id === state.scope);
+    const [defaultAreas] = useState<AreasView>(() => (narrowScreen() ? "grid" : "flow"));
+    const areasView = state.areas ?? defaultAreas;
     const l = landscapeOf(state.scope);
     return <div className="tool-page tr-page pt-page">
         <PublicHeader path={PATENTS_PATH} initialOpen={menuOpen} />
@@ -84,16 +112,25 @@ export function Patents({ menuOpen = false }: { menuOpen?: boolean }) {
             </div>
             <p className="pt-scope-line" aria-live="polite"><b>{scopeLabel(state.scope)}</b>{tech ? ` · ${tech.scope}` : ""}</p>
 
-            <Section id="pt-stream" title="Families per priority year" aside={<div className="tr-toggle" role="group" aria-label="Stack by">
-                    {(["country", "technology"] as const).map((b) => <button key={b} type="button" aria-pressed={state.by === b} onClick={() => update({ ...state, by: b })}>
-                        By {b}
-                    </button>)}
+            <Section id="pt-stream" title="Families per priority year" aside={<div className="pt-toggles">
+                    <Toggle label="Stack by" value={state.by} onChange={(by) => update({ ...state, by })}
+                        options={[{ id: "country", label: "By country" }, { id: "technology", label: "By technology" }]} />
+                    <Toggle label="Quality filter" value={state.filter} onChange={(filter) => update({ ...state, filter })} options={STREAM_FILTERS} />
                 </div>}>
-                <Stream scope={state.scope} by={state.by} />
+                <Stream scope={state.scope} by={state.by} filter={state.filter} />
             </Section>
 
             <Section id="pt-leaders" title="Top assignees" aside={<span className="pt-aside">{l.assignees.toLocaleString("en-US")} assignees</span>}>
                 <Leaders scope={state.scope} />
+            </Section>
+
+            <Section id="pt-value" title="Value vs volume">
+                <Value scope={state.scope} />
+            </Section>
+
+            <Section id="pt-areas" title="Where it ends up" aside={<Toggle label="Application view" value={areasView} onChange={(areas) => update({ ...state, areas })}
+                options={[{ id: "flow", label: "Flow" }, { id: "grid", label: "Grid" }]} />}>
+                <Areas scope={state.scope} view={areasView} />
             </Section>
 
             <Section id="pt-map" title="Where they file from">

@@ -21,11 +21,36 @@ export function getPatentLandscapeMd(ctx: ApiContext): string {
             ? `Title filter: ${v.title_filter.map((s) => `\`${s}\``).join(", ")}${v.co_codes.length ? `; or co-code ${v.co_codes.join(", ")}` : ""}.`
             : "",
         mdTable(
-            ["Year", "Families", ""],
+            ["Year", "Families", "Granted", "2+ offices", "US+EP+JP", ""],
             v.per_year.map((y) => [
                 String(y.year),
                 String(y.families),
+                String(y.granted),
+                String(y.intl),
+                String(y.triadic),
                 y.incomplete ? "incomplete" : "",
+            ]),
+        ),
+        `Value vs volume, priority ${v.value.years.join("-")}: ${pct(v.value.rest_intl_share)} of non-Chinese and ${pct(v.value.cn_intl_share)} of Chinese families filed in 2+ offices.`,
+        mdTable(
+            ["Assignee", "Country", "Families", "2+ offices", "Granted"],
+            v.value.assignees.map((a) => [
+                mdText(a.name),
+                a.country,
+                String(a.families),
+                pct(a.intl_share),
+                String(a.granted),
+            ]),
+        ),
+        `Application areas (CPC co-classification, a proxy for use), share of families; early ${v.area_windows.early.join("-")}, late ${v.area_windows.late.join("-")}:`,
+        mdTable(
+            ["Area", "Families", "Share", "Early", "Late"],
+            v.application_areas.map((a) => [
+                a.label,
+                String(a.families),
+                pct(a.share),
+                pct(a.share_early),
+                pct(a.share_late),
             ]),
         ),
         mdTable(

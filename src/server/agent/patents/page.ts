@@ -1,4 +1,5 @@
 import {
+    APPLICATION_AREAS,
     CAGR_END,
     CAGR_START,
     FAMILIES,
@@ -9,15 +10,21 @@ import {
     PATENTS_PATH,
     PATENT_SOURCES,
     PATENT_YEARS,
+    STREAM_FILTERS,
     TECHNOLOGIES,
+    areaCells,
+    areaShift,
     familiesFor,
+    filterSummary,
     googlePatentsUrl,
+    intlShares,
     landscapeOf,
     leaderboard,
     patentsApiPath,
     scopeLabel,
     seriesByCountry,
     top5Share,
+    valueRows,
 } from "@/patents";
 import { DATA_LICENSE, absoluteUrl } from "../../site";
 import * as ld from "../jsonld";
@@ -67,6 +74,57 @@ function assigneeTable(scope: LandscapeScope): string {
     );
 }
 
+const SPAN = `${PATENT_YEARS[0]}-${LANDSCAPE.completeThrough}`;
+const pct0 = (v: number) => `${Math.round(v * 100)}%`;
+const windowLabel = ([a, b]: [number, number]) => `${a}-${b}`;
+
+function qualityTable(scope: LandscapeScope): string {
+    return mdTable(
+        ["Filter", `Families ${SPAN}`, "Share of all", "China share"],
+        STREAM_FILTERS.map((f) => {
+            const q = filterSummary(scope, f.id);
+            return [f.label, String(q.families), pct0(q.share), pct0(q.china)];
+        }),
+    );
+}
+
+function intlLine(scope: LandscapeScope): string {
+    const s = intlShares(scope);
+    return `${pct0(s.rest)} of non-Chinese and ${pct0(s.cn)} of Chinese families (priority ${SPAN}) were filed in 2+ offices.`;
+}
+
+function valueSection(scope: LandscapeScope, top = 12): string {
+    return `${intlLine(scope)}\n\n${mdTable(
+        ["Assignee", "Country", "Families", "2+ offices", "Granted"],
+        valueRows(scope)
+            .slice(0, top)
+            .map((a) => [
+                mdText(a.name),
+                a.country,
+                String(a.families),
+                pct0(a.families ? a.intl / a.families : 0),
+                String(a.granted),
+            ]),
+    )}`;
+}
+
+const cellPct = (v: number) =>
+    v === 0 ? "0%" : v < 0.001 ? "<0.1%" : `${(v * 100).toFixed(v < 0.1 ? 1 : 0)}%`;
+
+function areaGrid(): string {
+    const arrow = (c: Parameters<typeof areaShift>[0]) => {
+        const d = areaShift(c);
+        return d ? ` (${d})` : "";
+    };
+    return mdTable(
+        ["Technology", ...APPLICATION_AREAS.map((a) => a.label)],
+        TECHNOLOGIES.map((t) => [
+            t.short,
+            ...areaCells(t.id).map((c) => `${cellPct(c.share)}${arrow(c)}`),
+        ]),
+    );
+}
+
 function techSection(scope: Exclude<LandscapeScope, "all">): string {
     const t = TECHNOLOGIES.find((x) => x.id === scope);
     if (!t) return "";
@@ -95,6 +153,20 @@ function techSection(scope: Exclude<LandscapeScope, "all">): string {
         yearTable(scope),
         "### Top assignees",
         assigneeTable(scope),
+        `Quality: ${STREAM_FILTERS.slice(1)
+            .map((f) => {
+                const q = filterSummary(scope, f.id);
+                return `${q.families} ${f.long} (${pct0(q.share)})`;
+            })
+            .join(
+                ", ",
+            )}, priority ${SPAN}. ${intlLine(scope)} Top application areas: ${areaCells(
+            scope,
+        )
+            .sort((a, b) => b.families - a.families)
+            .slice(0, 3)
+            .map((c) => `${c.label} ${cellPct(c.share)}`)
+            .join(", ")}.`,
         `### Largest families\n\n${bullets(top)}`,
     ]
         .filter(Boolean)
@@ -130,6 +202,22 @@ ${scopeLabel("all")}: ${LANDSCAPE.all.families} families counted once; the top f
 ${yearTable("all")}
 
 ${assigneeTable("all")}
+
+### Quality filters
+
+Families that cleared a costlier bar: granted, filed in 2+ offices (not counting WO), or filed at the US, EP and JP offices.
+
+${qualityTable("all")}
+
+### Value vs volume
+
+${valueSection("all")}
+
+### Where it ends up
+
+Share of each technology's families (priority ${SPAN}) by application area, from CPC co-classification: a proxy for use until citation data is added. (up) or (down): the share moved 1 point or more from ${windowLabel(LANDSCAPE.areaWindows.early)} to ${windowLabel(LANDSCAPE.areaWindows.late)}.
+
+${areaGrid()}
 
 ${TECHNOLOGIES.map((t) => techSection(t.id)).join("\n\n")}
 
