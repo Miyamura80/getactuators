@@ -60,7 +60,7 @@ describe("metals dataset", () => {
             }
     });
 
-    test("USGS oxide series cover 2014-2025 with open, per-edition sources", () => {
+    test("USGS Nd, Pr, Dy, Tb and Sm oxide series cover 2014-2025 with open, per-edition sources", () => {
         const years = Array.from({ length: 12 }, (_, i) => String(2014 + i));
         const avg = (id: string) =>
             new Map(
@@ -71,7 +71,9 @@ describe("metals dataset", () => {
         const nd = avg("nd-oxide");
         const dy = avg("dy-oxide");
         const tb = avg("tb-oxide");
-        for (const series of [nd, dy, tb]) {
+        const pr = avg("pr-oxide");
+        const sm = avg("sm-oxide");
+        for (const series of [nd, dy, tb, pr, sm]) {
             expect([...series.keys()].sort()).toEqual(years);
             for (const p of series.values()) {
                 expect(p.value.sources).toHaveLength(1);
@@ -95,6 +97,24 @@ describe("metals dataset", () => {
             expect(n).toBeLessThan(200);
             expect(d).toBeGreaterThan(n);
             expect(t).toBeGreaterThan(d);
+        }
+    });
+
+    test("Pr and Sm oxide before 2021 come from the Minerals Yearbook", () => {
+        const value = (id: string, year: string) =>
+            PRICE_SERIES.find((s) => s.id === id)?.points.find(
+                (p) => p.basis === "annual-average" && p.date === year,
+            )?.value;
+        expect(value("pr-oxide", "2014")?.value).toBe(121);
+        expect(value("sm-oxide", "2014")?.value).toBe(7);
+        expect(value("pr-oxide", "2020")?.sources).toEqual(["usgs-myb-2020-ree"]);
+        // Pr tracks Nd within a factor of two; Sm is a cheap light oxide.
+        for (let y = 2014; y <= 2025; y++) {
+            const pr = value("pr-oxide", String(y))?.value ?? 0;
+            const nd = value("nd-oxide", String(y))?.value ?? 1;
+            expect(pr / nd).toBeGreaterThan(0.5);
+            expect(pr / nd).toBeLessThan(2);
+            expect(value("sm-oxide", String(y))?.value ?? 99).toBeLessThan(10);
         }
     });
 
