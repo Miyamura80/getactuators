@@ -87,6 +87,17 @@ jobs:
           git add data/prices/history.json
           git commit -m "🔨 Price ${MODE}: $(date -u +%Y-%m-%d)"
           git push origin "$branch"
+          # A PR body is capped at 65,536 characters; a back-fill report can be
+          # longer. The full report always goes to the run summary, and the PR
+          # body is cut at a line boundary with a link to it.
+          cat price-report.md >> "$GITHUB_STEP_SUMMARY"
+          run_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          if [ "$(wc -c < price-report.md)" -gt 60000 ]; then
+            head -c 60000 price-report.md | sed '$d' > pr-body.md
+            printf '\n\n_Report truncated. Full report: %s_\n' "$run_url" >> pr-body.md
+          else
+            cp price-report.md pr-body.md
+          fi
           gh pr create --base main --head "$branch" \
             --title "Price ${MODE}: $(date -u +%Y-%m-%d)" \
-            --body-file price-report.md
+            --body-file pr-body.md
