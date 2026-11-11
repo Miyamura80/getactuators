@@ -2,6 +2,7 @@ import { type ReactNode, useEffect, useState } from "react";
 import { PublicFooter } from "../../components/PublicFooter";
 import { PublicHeader } from "../../components/PublicHeader";
 import {
+    FIRST_YEAR,
     LANDSCAPE,
     type LandscapeScope,
     METHODOLOGY,
@@ -10,9 +11,12 @@ import {
     STREAM_FILTERS,
     type Applicants,
     type StreamFilter,
-    TECHNOLOGIES,
+    TECHNOLOGY_LIST,
+    type TechnologyId,
+    getTechnology,
     isLandscapeScope,
     isStreamFilter,
+    isTechnologyId,
     landscapeOf,
     patentsApiPath,
     scopeLabel,
@@ -32,7 +36,7 @@ const TITLE = "Actuator patents";
 
 export const SCOPES: { id: LandscapeScope; label: string }[] = [
     { id: "all", label: "All" },
-    ...TECHNOLOGIES.map((t) => ({ id: t.id as LandscapeScope, label: t.short })),
+    ...TECHNOLOGY_LIST.map((t) => ({ id: t.id, label: t.short })),
 ];
 
 interface State {
@@ -44,28 +48,61 @@ interface State {
     trend: MomentumView;
     applicants: Applicants;
     // Technologies hidden from the momentum view.
-    hide: string[];
+    hide: TechnologyId[];
 }
 
 const narrowScreen = () => typeof window.matchMedia === "function" && window.matchMedia("(max-width: 560px)").matches;
 
-// ?technology=<id> picks the scope; ?stack=technology stacks by technology;
-// ?filter=granted|intl|triadic filters the stream; ?areas=flow|grid picks
-// the application view; ?trend=index, ?applicants=ex-cn and ?hide=<ids> set momentum.
+// URL state, one query parameter per field: ?technology=<id> picks the
+// scope; ?stack=technology stacks by technology; ?filter=granted|intl|triadic
+// filters the stream; ?areas=flow|grid picks the application view;
+// ?trend=index, ?applicants=ex-cn and ?hide=<ids> set momentum. A field at
+// its default is left out of the URL. Table order is URL order.
+interface Param<T> {
+    key: string;
+    fallback: T;
+    // The value a query string gives, or undefined to fall back.
+    parse: (raw: string) => T | undefined;
+    // "" leaves the parameter out.
+    format: (v: T) => string;
+}
+
+const oneOf = <T extends string>(ids: readonly T[]) => (raw: string) => ids.find((id) => id === raw);
+const omitting = <T extends string>(fallback: T) => (v: T) => (v === fallback ? "" : v);
+
+const PARAMS: { [K in keyof State]: Param<State[K]> } = {
+    scope: { key: "technology", fallback: "all", parse: (raw) => (isLandscapeScope(raw) ? raw : undefined), format: omitting<LandscapeScope>("all") },
+    by: { key: "stack", fallback: "country", parse: oneOf<StackBy>(["country", "technology"]), format: omitting<StackBy>("country") },
+    filter: { key: "filter", fallback: "all", parse: (raw) => (isStreamFilter(raw) ? raw : undefined), format: omitting<StreamFilter>("all") },
+    trend: { key: "trend", fallback: "tiles", parse: oneOf<MomentumView>(["tiles", "index"]), format: omitting<MomentumView>("tiles") },
+    applicants: { key: "applicants", fallback: "all", parse: oneOf<Applicants>(["all", "ex-cn"]), format: omitting<Applicants>("all") },
+    hide: { key: "hide", fallback: [], parse: (raw) => raw.split(",").filter(isTechnologyId), format: (v) => v.join(",") },
+    areas: { key: "areas", fallback: null, parse: oneOf<AreasView>(["flow", "grid"]), format: (v) => v ?? "" },
+};
+const FIELDS = Object.keys(PARAMS) as (keyof State)[];
+
+function readParam<T>(q: URLSearchParams, p: Param<T>): T {
+    const raw = q.get(p.key);
+    return raw === null ? p.fallback : (p.parse(raw) ?? p.fallback);
+}
+
 function readState(): State {
     const q = new URLSearchParams(window.location.search);
-    const t = q.get("technology") ?? "";
-    const f = q.get("filter") ?? "";
-    const a = q.get("areas");
-    return {
-        scope: isLandscapeScope(t) ? t : "all",
-        by: q.get("stack") === "technology" ? "technology" : "country",
-        filter: isStreamFilter(f) ? f : "all",
-        areas: a === "flow" || a === "grid" ? a : null,
-        trend: q.get("trend") === "index" ? "index" : "tiles",
-        applicants: q.get("applicants") === "ex-cn" ? "ex-cn" : "all",
-        hide: (q.get("hide") ?? "").split(",").filter((id) => TECHNOLOGIES.some((t) => t.id === id)),
+    const read = <K extends keyof State>(k: K): State[K] => readParam(q, PARAMS[k]);
+    return { scope: read("scope"), by: read("by"), filter: read("filter"), areas: read("areas"), trend: read("trend"), applicants: read("applicants"), hide: read("hide") };
+}
+
+// The page URL for a state, keeping any other query parameters.
+function stateUrl(next: State): string {
+    const q = new URLSearchParams(window.location.search);
+    for (const k of FIELDS) q.delete(PARAMS[k].key);
+    const put = <K extends keyof State>(k: K) => {
+        const v = PARAMS[k].format(next[k]);
+        if (v) q.set(PARAMS[k].key, v);
     };
+    for (const k of FIELDS) put(k);
+    const qs = q.toString();
+    return `${PATENTS_PATH}${qs ? `?${qs}` : ""}`;
 }
 
 function Toggle<T extends string>({ label, options, value, onChange }: { label: string; options: { id: T; label: string }[]; value: T; onChange: (v: T) => void }) {
@@ -94,19 +131,9 @@ export function Patents({ menuOpen = false }: { menuOpen?: boolean }) {
     const update = (next: State) => {
         setState(next);
         if (next.scope !== state.scope) setCountry(null);
-        const q = new URLSearchParams(window.location.search);
-        for (const k of ["technology", "stack", "filter", "trend", "applicants", "hide", "areas"]) q.delete(k);
-        if (next.scope !== "all") q.set("technology", next.scope);
-        if (next.by === "technology") q.set("stack", "technology");
-        if (next.filter !== "all") q.set("filter", next.filter);
-        if (next.trend === "index") q.set("trend", "index");
-        if (next.applicants === "ex-cn") q.set("applicants", "ex-cn");
-        if (next.hide.length) q.set("hide", next.hide.join(","));
-        if (next.areas) q.set("areas", next.areas);
-        const qs = q.toString();
-        window.history.replaceState(window.history.state, "", `${PATENTS_PATH}${qs ? `?${qs}` : ""}`);
+        window.history.replaceState(window.history.state, "", stateUrl(next));
     };
-    const tech = TECHNOLOGIES.find((t) => t.id === state.scope);
+    const tech = state.scope === "all" ? undefined : getTechnology(state.scope);
     const [defaultAreas] = useState<AreasView>(() => (narrowScreen() ? "grid" : "flow"));
     const areasView = state.areas ?? defaultAreas;
     const l = landscapeOf(state.scope);
@@ -115,7 +142,7 @@ export function Patents({ menuOpen = false }: { menuOpen?: boolean }) {
         <main className="tool-main">
             <header className="tr-head">
                 <h1>Who patents actuator technology</h1>
-                <p>{LANDSCAPE.all.families.toLocaleString("en-US")} patent families · {TECHNOLOGIES.length} technologies · priority 2010 on · {PATENTS_AS_OF}</p>
+                <p>{LANDSCAPE.all.families.toLocaleString("en-US")} patent families · {TECHNOLOGY_LIST.length} technologies · priority {FIRST_YEAR} on · {PATENTS_AS_OF}</p>
             </header>
             <div className="pt-scopes" role="group" aria-label="Technology">
                 {SCOPES.map((s) => <button key={s.id} type="button" aria-pressed={state.scope === s.id} onClick={() => update({ ...state, scope: s.id })}>
@@ -169,7 +196,7 @@ export function Patents({ menuOpen = false }: { menuOpen?: boolean }) {
                     <ul>{Object.entries(METHODOLOGY).map(([k, v]) => <li key={k}>{v}</li>)}</ul>
                     {tech ? <>
                         <h3>CPC codes: {tech.label}</h3>
-                        <ul className="pt-codes">{tech.codes.map((c) => <li key={c.code}><code>{c.code}</code>{"filtered" in c && c.filtered ? <em>filtered</em> : null} {c.why}</li>)}</ul>
+                        <ul className="pt-codes">{tech.codes.map((c) => <li key={c.code}><code>{c.code}</code>{c.filtered ? <em>filtered</em> : null} {c.why}</li>)}</ul>
                     </> : null}
                 </details>
                 <p className="pt-links">

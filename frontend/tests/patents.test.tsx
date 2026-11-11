@@ -3,12 +3,13 @@ import { afterEach, expect, test } from "bun:test";
 import { act, cleanup, fireEvent, render } from "@testing-library/react";
 import { mountApp } from "../src/startup";
 import { Patents, SCOPES } from "../src/pages/patents/Patents";
-import { BAND_COLORS, bandsFor, COMPLETE_THROUGH, filterLine } from "../src/pages/patents/Stream";
-import { placeLabels } from "../src/pages/patents/Value";
+import { bandsFor, filterLine } from "../src/pages/patents/Stream";
+import { BAND_COLORS } from "../src/pages/patents/palette";
+import { placeLabels, spreadLabels } from "../src/pages/patents/label-layout";
 import { MIN_RIBBON, ribbons } from "../src/pages/patents/Areas";
 import { hqBubbles } from "../src/pages/patents/AssigneeMap";
-import { indexed, spreadLabels } from "../src/pages/patents/Momentum";
-import { LANDSCAPE, MOMENTUM_EARLY, TECHNOLOGIES, familiesFor, leaderboard, momentum, valueRows } from "../../src/patents";
+import { indexed } from "../src/pages/patents/Momentum";
+import { COMPLETE_THROUGH, LANDSCAPE, MOMENTUM_EARLY, TECHNOLOGY_LIST, familiesFor, leaderboard, momentum, valueRows } from "../../src/patents";
 
 afterEach(cleanup);
 
@@ -42,7 +43,7 @@ test("renders the stream with a lag shade, the leaderboard and the family list",
     const view = render(<Patents />);
     const c = view.container;
     expect(c.querySelectorAll(".pt-scopes button")).toHaveLength(SCOPES.length);
-    expect(SCOPES).toHaveLength(TECHNOLOGIES.length + 1);
+    expect(SCOPES).toHaveLength(TECHNOLOGY_LIST.length + 1);
     // A cutoff line after the last complete year, with the later years greyed out.
     const bands = bandsFor("all", "country").length;
     expect(c.querySelector(".pt-cutoff")).toBeTruthy();
@@ -182,9 +183,9 @@ test("the Flow / Grid toggle is kept in the URL and the grid marks the scope's r
     fireEvent.click(toggle(c, "Application view", "Grid"));
     expect(window.location.search).toBe("?technology=screws&areas=grid");
     expect(c.querySelector(".pt-flow")).toBeNull();
-    expect(c.querySelectorAll(".pt-grid tbody tr")).toHaveLength(TECHNOLOGIES.length);
+    expect(c.querySelectorAll(".pt-grid tbody tr")).toHaveLength(TECHNOLOGY_LIST.length);
     expect(c.querySelector(".pt-grid tr.is-on th")?.textContent).toBe("Roller & ball screws");
-    expect(c.querySelectorAll(".pt-grid tr.is-dim")).toHaveLength(TECHNOLOGIES.length - 1);
+    expect(c.querySelectorAll(".pt-grid tr.is-dim")).toHaveLength(TECHNOLOGY_LIST.length - 1);
     fireEvent.click(toggle(c, "Application view", "Flow"));
     expect(window.location.search).toBe("?technology=screws&areas=flow");
     expect(c.querySelector(".pt-flow")).toBeTruthy();
@@ -195,7 +196,7 @@ test("momentum tiles sort by change and a tile picks the technology", () => {
     const view = render(<Patents />);
     const c = view.container;
     const tiles = c.querySelectorAll(".pt-tile");
-    expect(tiles).toHaveLength(TECHNOLOGIES.length);
+    expect(tiles).toHaveLength(TECHNOLOGY_LIST.length);
     const rows = momentum();
     expect(tiles[0]?.textContent).toContain(rows[0]?.label ?? "missing");
     for (const [i, r] of rows.slice(1).entries()) expect(r.change ?? -1).toBeLessThanOrEqual(rows[i]?.change ?? 1);
@@ -211,7 +212,7 @@ test("outside China drops CN applicants and is kept in the URL with the indexed 
     fireEvent.click(toggle(c, "Applicants", "Outside China"));
     fireEvent.click(toggle(c, "Momentum view", "Indexed"));
     expect(window.location.search).toBe("?trend=index&applicants=ex-cn");
-    expect(c.querySelectorAll(".pt-index-line")).toHaveLength(TECHNOLOGIES.length);
+    expect(c.querySelectorAll(".pt-index-line")).toHaveLength(TECHNOLOGY_LIST.length);
     const all = momentum("all");
     const ex = momentum("ex-cn");
     for (const r of ex) expect(r.late).toBeLessThanOrEqual(all.find((a) => a.id === r.id)?.late ?? 0);
@@ -242,16 +243,16 @@ test("technologies can be hidden and shown, kept in ?hide", () => {
     const view = render(<Patents />);
     const c = view.container;
     const chip = (label: string) => [...c.querySelectorAll(".pt-pick button")].find((b) => b.textContent === label) as HTMLButtonElement;
-    expect(c.querySelector(".pt-adv summary")?.textContent).toContain(`${TECHNOLOGIES.length} of ${TECHNOLOGIES.length} shown`);
-    expect(c.querySelectorAll(".pt-pick button[aria-pressed]")).toHaveLength(TECHNOLOGIES.length);
+    expect(c.querySelector(".pt-adv summary")?.textContent).toContain(`${TECHNOLOGY_LIST.length} of ${TECHNOLOGY_LIST.length} shown`);
+    expect(c.querySelectorAll(".pt-pick button[aria-pressed]")).toHaveLength(TECHNOLOGY_LIST.length);
     fireEvent.click(chip("RE-free magnets"));
     fireEvent.click(chip("Robot joints"));
     expect(chip("RE-free magnets").getAttribute("aria-pressed")).toBe("false");
     expect(new URLSearchParams(window.location.search).get("hide")).toBe("re-free-magnets,robot-joints");
-    expect(c.querySelectorAll(".pt-index-line")).toHaveLength(TECHNOLOGIES.length - 2);
-    expect(c.querySelector(".pt-adv summary")?.textContent).toContain(`${TECHNOLOGIES.length - 2} of ${TECHNOLOGIES.length} shown`);
+    expect(c.querySelectorAll(".pt-index-line")).toHaveLength(TECHNOLOGY_LIST.length - 2);
+    expect(c.querySelector(".pt-adv summary")?.textContent).toContain(`${TECHNOLOGY_LIST.length - 2} of ${TECHNOLOGY_LIST.length} shown`);
     fireEvent.click(toggle(c, "Momentum view", "Tiles"));
-    expect(c.querySelectorAll(".pt-tile")).toHaveLength(TECHNOLOGIES.length - 2);
+    expect(c.querySelectorAll(".pt-tile")).toHaveLength(TECHNOLOGY_LIST.length - 2);
     fireEvent.click(chip("Show all"));
     expect(new URLSearchParams(window.location.search).get("hide")).toBeNull();
     fireEvent.click(chip("Hide all"));
@@ -261,5 +262,5 @@ test("technologies can be hidden and shown, kept in ?hide", () => {
 test("reads ?hide on load and ignores unknown ids", () => {
     setUrl("http://localhost:1/patents?hide=ndfeb,nope");
     const view = render(<Patents />);
-    expect(view.container.querySelectorAll(".pt-tile")).toHaveLength(TECHNOLOGIES.length - 1);
+    expect(view.container.querySelectorAll(".pt-tile")).toHaveLength(TECHNOLOGY_LIST.length - 1);
 });

@@ -1,16 +1,22 @@
 import { useId, useMemo, useState } from "react";
 import {
     type Applicants,
+    COMPLETE_THROUGH,
+    FIRST_YEAR,
     type LandscapeScope,
     MOMENTUM_EARLY,
     MOMENTUM_LATE,
     type MomentumRow,
     PATENT_YEARS,
-    TECHNOLOGIES,
+    TECHNOLOGY_LIST,
+    type TechnologyId,
     momentum,
+    signedPct,
+    yearSpan,
 } from "../../../../src/patents";
 import { Axes, frame, useWidth } from "../prices/chart";
-import { COMPLETE_THROUGH } from "./Stream";
+import { spreadLabels } from "./label-layout";
+import { techColor } from "./palette";
 
 // Momentum: how interest in each technology moved over the years. Tiles are
 // small multiples on their own scale (shape); Indexed puts every technology
@@ -18,18 +24,13 @@ import { COMPLETE_THROUGH } from "./Stream";
 
 export type MomentumView = "tiles" | "index";
 
-const span = ([a, b]: readonly [number, number]) => `${a}-${String(b).slice(2)}`;
+const span = (w: readonly [number, number]) => yearSpan(w, { short: true });
 export const WINDOWS = `${span(MOMENTUM_EARLY)} → ${span(MOMENTUM_LATE)}`;
 
-export const changeText = (c: number | null) => (c === null ? "new" : `${c >= 0 ? "+" : "−"}${Math.abs(Math.round(c * 100))}%`);
+export const changeText = (c: number | null) => (c === null ? "new" : signedPct(c));
 const tone = (c: number | null) => (c === null || c >= 0.05 ? "is-up" : c <= -0.05 ? "is-down" : "is-flat");
 
 const lastComplete = PATENT_YEARS.indexOf(COMPLETE_THROUGH);
-
-// One fixed colour per technology (catalogue order), shared by tiles and the
-// indexed chart, so a technology keeps its colour as the sort changes.
-export const TECH_COLORS = ["#4dabf7", "#ff922b", "#51cf66", "#e599f7", "#ffe066", "#9775fa", "#66d9e8", "#ff6b9a", "#c08552", "#ced4da"];
-export const techColor = (id: string) => TECH_COLORS[TECHNOLOGIES.findIndex((t) => t.id === id)] ?? "#ced4da";
 
 // Each technology indexed to its early-window yearly average = 100, complete
 // years only (later years would read as a collapse).
@@ -63,28 +64,6 @@ function Tile({ row, on, onPick }: { row: MomentumRow; on: boolean; onPick: () =
     </li>;
 }
 
-// Push end labels apart so none overlap, keeping them inside [top, bottom].
-export function spreadLabels(ys: number[], gap: number, top: number, bottom: number): number[] {
-    const order = ys.map((y, i) => ({ y, i })).sort((a, b) => a.y - b.y);
-    for (let k = 1; k < order.length; k++) {
-        const prev = order[k - 1] as { y: number };
-        const cur = order[k] as { y: number };
-        cur.y = Math.max(cur.y, prev.y + gap);
-    }
-    const overflow = (order.at(-1)?.y ?? bottom) - bottom;
-    if (overflow > 0) for (const o of order) o.y -= overflow;
-    for (let k = order.length - 2; k >= 0; k--) {
-        const next = order[k + 1] as { y: number };
-        const cur = order[k] as { y: number };
-        cur.y = Math.min(cur.y, next.y - gap);
-    }
-    const under = top - (order[0]?.y ?? top);
-    if (under > 0) for (const o of order) o.y += under;
-    const out = new Array<number>(ys.length);
-    for (const o of order) out[o.i] = o.y;
-    return out;
-}
-
 function IndexChart({ rows, scope, onPick }: { rows: MomentumRow[]; scope: LandscapeScope; onPick: (s: LandscapeScope) => void }) {
     const [ref, width] = useWidth(720);
     const [hover, setHover] = useState<string | null>(null);
@@ -95,7 +74,7 @@ function IndexChart({ rows, scope, onPick }: { rows: MomentumRow[]; scope: Lands
     const height = narrow ? 260 : 320;
     // Room on the right for direct labels.
     const labelRoom = narrow ? 32 : 176;
-    const f = frame({ width: width - labelRoom, height, x0: years[0] ?? 2010, x1: COMPLETE_THROUGH, y0: 0, y1: max, log: false });
+    const f = frame({ width: width - labelRoom, height, x0: years[0] ?? FIRST_YEAR, x1: COMPLETE_THROUGH, y0: 0, y1: max, log: false });
     const lit = hover ?? (scope === "all" ? null : scope);
     const line = (v: number[]) => `M${v.map((y, i) => `${f.x(years[i] ?? 0)},${f.y.at(y)}`).join("L")}`;
     const endX = f.x(COMPLETE_THROUGH);
@@ -137,19 +116,19 @@ function IndexChart({ rows, scope, onPick }: { rows: MomentumRow[]; scope: Lands
 
 // Show or hide technologies, folded under an Advanced disclosure: a chip per
 // technology in its colour, plus Show all / Hide all.
-function Picker({ hidden, onHidden }: { hidden: readonly string[]; onHidden: (h: string[]) => void }) {
-    const toggle = (id: string) => onHidden(hidden.includes(id) ? hidden.filter((h) => h !== id) : [...hidden, id]);
-    const shown = TECHNOLOGIES.length - hidden.length;
+function Picker({ hidden, onHidden }: { hidden: readonly TechnologyId[]; onHidden: (h: TechnologyId[]) => void }) {
+    const toggle = (id: TechnologyId) => onHidden(hidden.includes(id) ? hidden.filter((h) => h !== id) : [...hidden, id]);
+    const shown = TECHNOLOGY_LIST.length - hidden.length;
     return <details className="pt-adv">
-        <summary>Advanced: pick technologies <span>{shown} of {TECHNOLOGIES.length} shown</span></summary>
+        <summary>Advanced: pick technologies <span>{shown} of {TECHNOLOGY_LIST.length} shown</span></summary>
         <div className="pt-pick" role="group" aria-label="Show technologies">
-        {TECHNOLOGIES.map((t) => {
+        {TECHNOLOGY_LIST.map((t) => {
             const on = !hidden.includes(t.id);
             return <button key={t.id} type="button" aria-pressed={on} onClick={() => toggle(t.id)} style={{ "--tc": techColor(t.id) } as React.CSSProperties}>
                 <i aria-hidden="true" />{t.short}
             </button>;
         })}
-        <button type="button" className="pt-pick-all" onClick={() => onHidden(hidden.length ? [] : TECHNOLOGIES.map((t) => t.id))}>{hidden.length ? "Show all" : "Hide all"}</button>
+        <button type="button" className="pt-pick-all" onClick={() => onHidden(hidden.length ? [] : TECHNOLOGY_LIST.map((t) => t.id))}>{hidden.length ? "Show all" : "Hide all"}</button>
         </div>
     </details>;
 }
@@ -158,8 +137,8 @@ export function Momentum({ scope, view, applicants, hidden = [], onHidden = () =
     scope: LandscapeScope;
     view: MomentumView;
     applicants: Applicants;
-    hidden?: readonly string[];
-    onHidden?: (h: string[]) => void;
+    hidden?: readonly TechnologyId[];
+    onHidden?: (h: TechnologyId[]) => void;
     onPick: (s: LandscapeScope) => void;
 }) {
     const all = useMemo(() => momentum(applicants), [applicants]);

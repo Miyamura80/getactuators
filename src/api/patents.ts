@@ -1,15 +1,21 @@
 import {
-    APPLICATION_AREAS,
     CAGR_END,
     CAGR_START,
+    COMPLETE_THROUGH,
+    FIRST_YEAR,
+    LAG_MONTHS,
     LANDSCAPE,
     type LandscapeScope,
     METHODOLOGY,
     PATENTS_AS_OF,
+    PATENT_LIMIT,
     PATENT_SOURCES,
     PATENT_YEARS,
-    TECHNOLOGIES,
     TECHNOLOGY_IDS,
+    TECHNOLOGY_LIST,
+    TOP_FAMILIES,
+    TOP_VALUE,
+    UNKNOWN_COUNTRY,
     areaCells,
     countryTotals,
     familiesFor,
@@ -28,7 +34,7 @@ import {
     valueRows,
 } from "@/patents";
 import { absoluteUrl } from "@/server/site";
-import { type Shares, concentration } from "@/supply-chain/concentration";
+import { concentration } from "@/supply-chain/concentration";
 import { SOURCE_REUSE } from "@/supply-chain/reuse";
 import { z } from "zod";
 import { type ApiContext, json } from "./http";
@@ -49,7 +55,9 @@ const familyOut = z.object({
     title: z.string(),
     assignee: z.string().describe("First assignee, normalised."),
     company_id: z.string().nullable().describe("Supply-chain company id, when listed."),
-    country: z.string().describe("Applicant country (ISO alpha-2, XX unknown)."),
+    country: z
+        .string()
+        .describe(`Applicant country (ISO alpha-2, ${UNKNOWN_COUNTRY} unknown).`),
     priority_date: z.string(),
     jurisdictions: z.number().int().describe("Distinct publishing offices."),
     technologies: z.array(z.string()),
@@ -66,7 +74,7 @@ const landscapeOut = z.object({
     incomplete_from: z
         .string()
         .describe(
-            "Priority dates from here on are still being published (18-month lag).",
+            `Priority dates from here on are still being published (${LAG_MONTHS}-month lag).`,
         ),
     cpc_codes: z.array(
         z.object({
@@ -132,7 +140,7 @@ const landscapeOut = z.object({
             ),
         })
         .describe(
-            "Value vs volume: the 40 largest first assignees by families in the complete years, with how much they protect abroad.",
+            `Value vs volume: the ${TOP_VALUE} largest first assignees by families in the complete years, with how much they protect abroad.`,
         ),
     application_areas: z
         .array(
@@ -198,40 +206,44 @@ schemaRegistry.add(PatentLandscapeSchema, { id: "PatentLandscape" });
 
 export type PatentLandscapeView = z.infer<typeof landscapeOut>;
 
-export const PatentParams = z.object({
-    limit: z.coerce
-        .number()
+// Top families to return: the same bounds for REST (coerced from the query)
+// and MCP (a JSON number).
+export const patentLimit = (n: z.ZodNumber) =>
+    n
         .int()
         .min(0)
-        .max(200)
-        .default(50)
-        .describe("Top families to return, 0 to 200 (default 50)."),
+        .max(TOP_FAMILIES)
+        .describe(
+            `Top families to return, 0 to ${TOP_FAMILIES} (default ${PATENT_LIMIT}).`,
+        );
+
+export const PatentParams = z.object({
+    limit: patentLimit(z.coerce.number()).default(PATENT_LIMIT),
 });
 
 export function patentLandscapeView(
     scope: LandscapeScope,
-    limit = 50,
+    limit = PATENT_LIMIT,
 ): PatentLandscapeView {
     const tech = scope === "all" ? undefined : getTechnology(scope);
     const l = landscapeOf(scope);
-    const totals = countryTotals(scope);
-    const c = concentration(totals as Shares);
+    const c = concentration(countryTotals(scope));
     const incompleteYear = Number(LANDSCAPE.incompleteFrom.slice(0, 4));
     const perYear = familiesPerYear(scope);
     const granted = familiesPerYear(scope, "granted");
     const intl = familiesPerYear(scope, "intl");
     const triadic = familiesPerYear(scope, "triadic");
-    const v = landscapeOf(scope).value;
+    const v = l.value;
     const shares = intlShares(scope);
     return {
         technology: scope,
         label: scopeLabel(scope),
         scope:
             tech?.scope ??
-            `Every family in at least one of the ${TECHNOLOGIES.length} technologies, counted once.`,
+            `Every family in at least one of the ${TECHNOLOGY_LIST.length} technologies, counted once.`,
         as_of: PATENTS_AS_OF,
         years: PATENT_YEARS,
-        complete_through: LANDSCAPE.completeThrough,
+        complete_through: COMPLETE_THROUGH,
         incomplete_from: LANDSCAPE.incompleteFrom,
         cpc_codes: (tech?.codes ?? []).map((r) => ({
             code: r.code,
@@ -256,7 +268,7 @@ export function patentLandscapeView(
             incomplete: year >= incompleteYear,
         })),
         value: {
-            years: [PATENT_YEARS[0] ?? 2010, LANDSCAPE.completeThrough],
+            years: [FIRST_YEAR, COMPLETE_THROUGH],
             cn_families: v.cn.families,
             cn_intl_share: round(shares.cn),
             rest_families: v.rest.families,
@@ -274,7 +286,7 @@ export function patentLandscapeView(
         application_areas: areaCells(scope).map((c) => ({
             id: c.area,
             label: c.label,
-            cpc: APPLICATION_AREAS.find((a) => a.id === c.area)?.cpc ?? "",
+            cpc: c.cpc,
             families: c.families,
             share: round(c.share),
             share_early: round(c.early),

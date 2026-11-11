@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { countryName } from "../../../../src/country-flag";
-import { type LandscapeScope, TECHNOLOGIES, googlePatentsUrl, searchFamilies } from "../../../../src/patents";
+import { type LandscapeScope, TECHNOLOGY_LIST, UNKNOWN_COUNTRY, googlePatentsUrl, searchFamilies } from "../../../../src/patents";
 import { Flag } from "../../components/Flag";
 
 // Searchable list of the largest families (most publishing offices first),
 // each linking to Google Patents.
 
 const PAGE = 25;
-const SHORT = Object.fromEntries(TECHNOLOGIES.map((t) => [t.id, t.short]));
+const SHORT = Object.fromEntries(TECHNOLOGY_LIST.map((t) => [t.id, t.short]));
 
 export function FamilyList({ scope, country, onClearCountry }: { scope: LandscapeScope; country: string | null; onClearCountry: () => void }) {
     const [query, setQuery] = useState("");
@@ -26,7 +26,7 @@ export function FamilyList({ scope, country, onClearCountry }: { scope: Landscap
             {rows.slice(0, shown).map((f) => <li key={f.id}>
                 <a href={googlePatentsUrl(f.pub)} target="_blank" rel="noopener noreferrer">{f.title || f.pub}</a>
                 <span className="pt-meta">
-                    {f.country !== "XX" ? <Flag code={f.country} /> : null}
+                    {f.country !== UNKNOWN_COUNTRY ? <Flag code={f.country} /> : null}
                     <span>{f.assignee || "Unknown assignee"}</span>
                     <span>{f.priority.slice(0, 4)}</span>
                     <span title="Publishing offices">{f.jurisdictions} offices</span>

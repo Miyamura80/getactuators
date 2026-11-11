@@ -99,6 +99,9 @@ Where it ends up     technology -> application area (Flow, or Grid with the
   families that leaves out. The grid marks a cell with an arrow when the
   share moved by 1 point or more between 2010-2017 and the five years ending
   at the last complete year (`areaWindows` in `landscape.json`).
+- Momentum compares the five complete years ending at the last complete year
+  with the five before them (`momentumWindows` in `landscape.json`). Sizes
+  and windows live in `src/patents/constants.ts`.
 - Chinese means applicant country CN; unknown (`XX`) counts with the rest.
 
 ## Open items

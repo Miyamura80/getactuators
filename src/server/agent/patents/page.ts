@@ -1,8 +1,13 @@
+import { patentLandscapeView } from "@/api/patents";
 import {
     APPLICATION_AREAS,
+    type AreaCell,
     CAGR_END,
     CAGR_START,
+    COMPLETE_THROUGH,
     FAMILIES,
+    FIRST_YEAR,
+    LAG_MONTHS,
     LANDSCAPE,
     type LandscapeScope,
     METHODOLOGY,
@@ -13,25 +18,28 @@ import {
     PATENT_SOURCES,
     PATENT_YEARS,
     STREAM_FILTERS,
-    TECHNOLOGIES,
+    TECHNOLOGY_LIST,
+    type TechnologyId,
     areaCells,
     areaShift,
-    familiesFor,
+    cellPct,
     filterSummary,
-    googlePatentsUrl,
     intlShares,
     landscapeOf,
     leaderboard,
     momentum,
     patentsApiPath,
+    pctText,
     scopeLabel,
     seriesByCountry,
+    signedPct,
     top5Share,
     valueRows,
+    yearSpan,
 } from "@/patents";
 import { DATA_LICENSE, absoluteUrl } from "../../site";
 import * as ld from "../jsonld";
-import { bullets, mdLink, mdTable, mdText } from "../md";
+import { bullets, mdLink, mdTable, mdText, sourcesList } from "../md";
 import type { Page } from "../page-types";
 
 // Markdown twin and JSON-LD of /patents: per technology, families per
@@ -39,9 +47,9 @@ import type { Page } from "../page-types";
 
 const TITLE = "Actuator patents";
 
-const pct = (v: number) => `${(v * 100).toFixed(1)}%`;
-const signed = (v: number | null) =>
-    v === null ? "n/a" : `${v >= 0 ? "+" : ""}${(v * 100).toFixed(0)}%`;
+const pct = (v: number) => pctText(v, 1);
+const pct0 = (v: number) => pctText(v, 0);
+const signed = (v: number | null) => (v === null ? "n/a" : signedPct(v));
 const incompleteYear = Number(LANDSCAPE.incompleteFrom.slice(0, 4));
 const yearLabel = (y: number) =>
     y >= incompleteYear ? `${y} (incomplete)` : String(y);
@@ -77,9 +85,7 @@ function assigneeTable(scope: LandscapeScope): string {
     );
 }
 
-const SPAN = `${PATENT_YEARS[0]}-${LANDSCAPE.completeThrough}`;
-const pct0 = (v: number) => `${Math.round(v * 100)}%`;
-const windowLabel = ([a, b]: [number, number]) => `${a}-${b}`;
+const SPAN = yearSpan([FIRST_YEAR, COMPLETE_THROUGH]);
 
 function qualityTable(scope: LandscapeScope): string {
     return mdTable(
@@ -111,65 +117,66 @@ function valueSection(scope: LandscapeScope, top = 12): string {
     )}`;
 }
 
-const cellPct = (v: number) =>
-    v === 0 ? "0%" : v < 0.001 ? "<0.1%" : `${(v * 100).toFixed(v < 0.1 ? 1 : 0)}%`;
-
 function areaGrid(): string {
-    const arrow = (c: Parameters<typeof areaShift>[0]) => {
+    const arrow = (c: AreaCell) => {
         const d = areaShift(c);
         return d ? ` (${d})` : "";
     };
     return mdTable(
         ["Technology", ...APPLICATION_AREAS.map((a) => a.label)],
-        TECHNOLOGIES.map((t) => [
+        TECHNOLOGY_LIST.map((t) => [
             t.short,
             ...areaCells(t.id).map((c) => `${cellPct(c.share)}${arrow(c)}`),
         ]),
     );
 }
 
-function techSection(scope: Exclude<LandscapeScope, "all">): string {
-    const t = TECHNOLOGIES.find((x) => x.id === scope);
-    if (!t) return "";
-    const l = landscapeOf(scope);
-    const codes = t.codes.map(
-        (c) =>
-            `\`${c.code}\`${"filtered" in c && c.filtered ? " (filtered)" : ""}: ${c.why}`,
+// "Quality: 1,234 granted families (40%), ..., priority 2010-2024."
+function qualityLine(scope: LandscapeScope): string {
+    const parts = STREAM_FILTERS.slice(1).map((f) => {
+        const q = filterSummary(scope, f.id);
+        return `${q.families} ${f.long} (${pct0(q.share)})`;
+    });
+    return `Quality: ${parts.join(", ")}, priority ${SPAN}.`;
+}
+
+// The scope's three largest application areas by families.
+function topAreasLine(scope: LandscapeScope): string {
+    const top = areaCells(scope)
+        .sort((a, b) => b.families - a.families)
+        .slice(0, 3)
+        .map((c) => `${c.label} ${cellPct(c.share)}`);
+    return `Top application areas: ${top.join(", ")}.`;
+}
+
+const codeList = (codes: readonly string[]) => codes.map((s) => `\`${s}\``).join(", ");
+
+function techSection(scope: TechnologyId): string {
+    const v = patentLandscapeView(scope);
+    const codes = v.cpc_codes.map(
+        (c) => `\`${c.code}\`${c.filtered ? " (filtered)" : ""}: ${c.rationale}`,
     );
-    const top = familiesFor(scope)
+    const top = v.top_families
         .slice(0, 5)
         .map(
             (f) =>
-                `${mdLink(mdText(f.title || f.pub), googlePatentsUrl(f.pub))}, ${mdText(f.assignee || "unknown assignee")}, priority ${f.priority}, ${f.jurisdictions} offices`,
+                `${mdLink(mdText(f.title || f.publication_number), f.url)}, ${mdText(f.assignee || "unknown assignee")}, priority ${f.priority_date}, ${f.jurisdictions} offices`,
         );
     return [
-        `## ${t.label}`,
-        `${t.scope} ${l.families} families, ${l.assignees} distinct first assignees; the top five hold ${pct(top5Share(scope))}. JSON: \`${patentsApiPath(scope)}\`.`,
+        `## ${v.label}`,
+        `${v.scope} ${v.families} families, ${v.assignees} distinct first assignees; the top five hold ${pct(top5Share(scope))}. JSON: \`${patentsApiPath(scope)}\`.`,
         `CPC codes:\n\n${bullets(codes)}`,
-        "filter" in t && t.filter
-            ? `Filter for codes marked filtered: title matches one of ${t.filter.title.map((s) => `\`${s}\``).join(", ")}${"coCodes" in t.filter && t.filter.coCodes ? `, or the family also has ${t.filter.coCodes.map((s) => `\`${s}\``).join(", ")}` : ""}.`
+        v.title_filter.length
+            ? `Filter for codes marked filtered: title matches one of ${codeList(v.title_filter)}${v.co_codes.length ? `, or the family also has ${codeList(v.co_codes)}` : ""}.`
             : "",
-        "exclude" in t && t.exclude
-            ? `Titles matching ${t.exclude.map((s) => `\`${s}\``).join(", ")} are left out.`
+        v.title_exclude.length
+            ? `Titles matching ${codeList(v.title_exclude)} are left out.`
             : "",
         "### Families per priority year by applicant country",
         yearTable(scope),
         "### Top assignees",
         assigneeTable(scope),
-        `Quality: ${STREAM_FILTERS.slice(1)
-            .map((f) => {
-                const q = filterSummary(scope, f.id);
-                return `${q.families} ${f.long} (${pct0(q.share)})`;
-            })
-            .join(
-                ", ",
-            )}, priority ${SPAN}. ${intlLine(scope)} Top application areas: ${areaCells(
-            scope,
-        )
-            .sort((a, b) => b.families - a.families)
-            .slice(0, 3)
-            .map((c) => `${c.label} ${cellPct(c.share)}`)
-            .join(", ")}.`,
+        `${qualityLine(scope)} ${intlLine(scope)} ${topAreasLine(scope)}`,
         `### Largest families\n\n${bullets(top)}`,
     ]
         .filter(Boolean)
@@ -179,14 +186,13 @@ function techSection(scope: Exclude<LandscapeScope, "all">): string {
 // Families per technology in the early and late momentum windows, with every
 // applicant and outside China.
 function momentumTable(): string {
-    const w = (r: readonly [number, number]) => r.join("-");
     const ex = new Map(momentum("ex-cn").map((r) => [r.id, r]));
     const change = (c: number | null) => (c === null ? "new" : signed(c));
     return mdTable(
         [
             "Technology",
-            w(MOMENTUM_EARLY),
-            w(MOMENTUM_LATE),
+            yearSpan(MOMENTUM_EARLY),
+            yearSpan(MOMENTUM_LATE),
             "Change",
             "Change outside China",
         ],
@@ -204,7 +210,7 @@ function patentsBody(): string {
     const e = LANDSCAPE.extract;
     const totals = mdTable(
         ["Technology", "Families", "Assignees", "Top-5 share", "Id"],
-        TECHNOLOGIES.map((t) => [
+        TECHNOLOGY_LIST.map((t) => [
             t.label,
             String(landscapeOf(t.id).families),
             String(landscapeOf(t.id).assignees),
@@ -212,7 +218,7 @@ function patentsBody(): string {
             `\`${t.id}\``,
         ]),
     );
-    return `Patent families with a priority date from 2010 in ${TECHNOLOGIES.length} actuator technologies, as of ${PATENTS_AS_OF}: ${e.matched} families from an extract of ${e.publications} publications in ${e.families} families. Priority years from ${incompleteYear} are incomplete: applications publish about 18 months after priority.
+    return `Patent families with a priority date from ${FIRST_YEAR} in ${TECHNOLOGY_LIST.length} actuator technologies, as of ${PATENTS_AS_OF}: ${e.matched} families from an extract of ${e.publications} publications in ${e.families} families. Priority years from ${incompleteYear} are incomplete: applications publish about ${LAG_MONTHS} months after priority.
 
 Per technology as JSON: ${mdLink("/api/v1/patents/{technology}", absoluteUrl(patentsApiPath("strain-wave")))} (or \`all\`), or MCP get_patent_landscape.
 
@@ -220,7 +226,7 @@ ${totals}
 
 ## Method
 
-${bullets(Object.values(METHODOLOGY).map((v) => v))}
+${bullets(Object.values(METHODOLOGY))}
 
 ## All technologies
 
@@ -246,17 +252,15 @@ ${valueSection("all")}
 
 ### Where it ends up
 
-Share of each technology's families (priority ${SPAN}) by application area, from CPC co-classification: a proxy for use until citation data is added. (up) or (down): the share moved 1 point or more from ${windowLabel(LANDSCAPE.areaWindows.early)} to ${windowLabel(LANDSCAPE.areaWindows.late)}.
+Share of each technology's families (priority ${SPAN}) by application area, from CPC co-classification: a proxy for use until citation data is added. (up) or (down): the share moved 1 point or more from ${yearSpan(LANDSCAPE.areaWindows.early)} to ${yearSpan(LANDSCAPE.areaWindows.late)}.
 
 ${areaGrid()}
 
-${TECHNOLOGIES.map((t) => techSection(t.id)).join("\n\n")}
+${TECHNOLOGY_LIST.map((t) => techSection(t.id)).join("\n\n")}
 
 ## Sources
 
-${Object.values(PATENT_SOURCES)
-    .map((s, i) => `${i + 1}. ${mdLink(s.title, s.url)} (${s.reuse})`)
-    .join("\n")}
+${sourcesList(Object.values(PATENT_SOURCES))}
 
 Family titles, assignees and dates are from Google Patents Public Datasets (CC BY 4.0); ${FAMILIES.length} families are listed on the page.`;
 }
@@ -280,7 +284,7 @@ function patentsDataset(): Record<string, unknown> {
             "Top assignee families and 3-year CAGR",
         ],
         isBasedOn: Object.values(PATENT_SOURCES).map((s) => s.url),
-        distribution: TECHNOLOGIES.map((t) => ({
+        distribution: TECHNOLOGY_LIST.map((t) => ({
             "@type": "DataDownload",
             name: t.label,
             encodingFormat: "application/json",

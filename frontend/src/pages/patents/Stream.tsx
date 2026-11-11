@@ -1,36 +1,32 @@
 import { useId, useMemo, useState } from "react";
 import { countryName } from "../../../../src/country-flag";
 import {
-    LANDSCAPE,
+    COMPLETE_THROUGH,
+    FIRST_YEAR,
     type LandscapeScope,
     PATENT_YEARS,
     STREAM_FILTERS,
     type Series,
     type StreamFilter,
     filterSummary,
+    pctText,
     seriesByCountry,
     seriesByTechnology,
+    yearSpan,
 } from "../../../../src/patents";
 import { Axes, frame, useWidth } from "../prices/chart";
+import { BAND_COLORS, MAX_BANDS, OTHER_COLOR, techColor } from "./palette";
 
 // Filings stream: families per priority year as a stacked area, stacked by
 // applicant country (the selected scope) or by technology (every
 // technology, the selected one lifted). The publication-lag window is shaded.
 
 export type StackBy = "country" | "technology";
-// Last fully published priority year. Years after it are drawn greyed out
-// behind a cutoff line: their filings are still publishing.
-export const COMPLETE_THROUGH = LANDSCAPE.completeThrough;
+// Years after COMPLETE_THROUGH are drawn greyed out behind a cutoff line:
+// their filings are still publishing.
 
-// The site's data palette, reordered so neighbouring bands stay apart under
-// colour-vision deficiency (validated: adjacent CVD delta E >= 15).
-export const BAND_COLORS = ["#4dabf7", "#51cf66", "#9775fa", "#ff6b9a", "#ffb547", "#66d9e8", "#ff922b"];
-export const OTHER_COLOR = "#5c6366";
-const OTHER = OTHER_COLOR;
-const MAX_BANDS = BAND_COLORS.length;
-
-// Technologies take colours by overall size, fixed for every view, so a
-// band keeps its colour whichever technology is selected.
+// The largest technologies overall get their own band, in the same order in
+// every view; each band takes its technology's fixed colour (techColor).
 const TECH_ORDER = seriesByTechnology()
     .map((s) => ({ key: s.key, total: s.values.reduce((a, b) => a + b, 0) }))
     .sort((a, b) => b.total - a.total)
@@ -49,22 +45,18 @@ export function bandsFor(scope: LandscapeScope, by: StackBy, filter: StreamFilte
     return by === "technology" ? techBands(filter) : seriesByCountry(scope, MAX_BANDS - 1, filter);
 }
 
-export const colorOf = (s: { key: string }, i: number) => (s.key === "other" ? OTHER : (BAND_COLORS[i] ?? OTHER));
-
-// The colour a country takes in the scope's stream (grey outside its bands),
-// so the scatter and the stream agree.
-export function countryColor(scope: LandscapeScope, country: string): string {
-    const i = seriesByCountry(scope, MAX_BANDS - 1).findIndex((s) => s.key === country);
-    return i < 0 ? OTHER : (BAND_COLORS[i] ?? OTHER);
-}
+// Country bands take the band palette by position; technology bands their
+// technology's colour.
+const colorOf = (s: { key: string }, i: number, by: StackBy) =>
+    s.key === "other" ? OTHER_COLOR : by === "technology" ? techColor(s.key) : (BAND_COLORS[i] ?? OTHER_COLOR);
 
 const n = (v: number) => v.toLocaleString("en-US");
-const share = (v: number) => `${Math.round(v * 100)}%`;
+const share = (v: number) => pctText(v, 0);
 
 // "8,814 of 26,167 families 2010-24 (34%) · China 11%"
 export function filterLine(scope: LandscapeScope, filter: StreamFilter): string {
     const s = filterSummary(scope, filter);
-    const span = `${PATENT_YEARS[0]}-${String(COMPLETE_THROUGH).slice(2)}`;
+    const span = yearSpan([FIRST_YEAR, COMPLETE_THROUGH], { short: true });
     const head = filter === "all" ? `${n(s.of)} families ${span}` : `${n(s.families)} of ${n(s.of)} families ${span} (${share(s.share)})`;
     return `${head} · China ${share(s.china)}`;
 }
@@ -85,7 +77,7 @@ export function Stream({ scope, by, filter = "all" }: { scope: LandscapeScope; b
     }, [scope, by, years]);
     const label = STREAM_FILTERS.find((x) => x.id === filter)?.long ?? "all families";
     const height = width < 480 ? 220 : 280;
-    const x0 = years[0] ?? 2010;
+    const x0 = years[0] ?? FIRST_YEAR;
     const x1 = years.at(-1) ?? COMPLETE_THROUGH;
     const f = frame({ width, height, x0, x1, y0: 0, y1: max, log: false });
     // Cumulative tops per band, bottom band first.
@@ -115,7 +107,7 @@ export function Stream({ scope, by, filter = "all" }: { scope: LandscapeScope; b
                 const i = bands.indexOf(s);
                 return <li key={s.key}>
                     <button type="button" aria-pressed={lifted === s.key} disabled={by === "technology" && scope !== "all"} onClick={() => setFocus(focus === s.key ? null : s.key)}>
-                        <i className="pt-swatch" style={{ background: colorOf(s, i) }} aria-hidden="true" />
+                        <i className="pt-swatch" style={{ background: colorOf(s, i, by) }} aria-hidden="true" />
                         <span className="tr-legend-text">{nameOf(s, by)}</span>
                     </button>
                 </li>;
@@ -130,7 +122,7 @@ export function Stream({ scope, by, filter = "all" }: { scope: LandscapeScope; b
                 </defs>
                 <Axes f={f} />
                 <g clipPath={showLag ? `url(#${clipId}-done)` : undefined}>
-                    {bands.map((s, b) => <path key={s.key} d={path(b)} fill={colorOf(s, b)} className={`pt-band tr-series${lifted && lifted !== s.key ? " is-dim" : ""}`} />)}
+                    {bands.map((s, b) => <path key={s.key} d={path(b)} fill={colorOf(s, b, by)} className={`pt-band tr-series${lifted && lifted !== s.key ? " is-dim" : ""}`} />)}
                 </g>
                 {showLag ? <>
                     <g clipPath={`url(#${clipId}-tbd)`} className="pt-tbd">
@@ -146,7 +138,7 @@ export function Stream({ scope, by, filter = "all" }: { scope: LandscapeScope; b
                 <b>{hy}{hy > COMPLETE_THROUGH ? " (still publishing)" : ""}</b>
                 <span className="pt-tip-total">{totals[hover]?.toLocaleString("en-US")} families</span>
                 {[...bands].reverse().filter((s) => (s.values[hover] ?? 0) > 0).map((s) => <span key={s.key}>
-                    <i className="pt-swatch" style={{ background: colorOf(s, bands.indexOf(s)) }} aria-hidden="true" />{nameOf(s, by)}<em>{s.values[hover]}</em>
+                    <i className="pt-swatch" style={{ background: colorOf(s, bands.indexOf(s), by) }} aria-hidden="true" />{nameOf(s, by)}<em>{s.values[hover]}</em>
                 </span>)}
             </div> : null}
         </div>

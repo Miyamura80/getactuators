@@ -1,7 +1,7 @@
 import type { ApiContext } from "@/api/http";
 import { priceHistory } from "@/api/prices";
 import { formatValue } from "@/trends";
-import { mdLink, mdTable, mdText, usd } from "../md";
+import { mdLink, mdTable, mdText, sourcesList, usd } from "../md";
 
 // Markdown twin of /api/v1/prices/{id}: one actuator's dated prices.
 
@@ -50,9 +50,7 @@ export function getPriceHistoryMd(ctx: ApiContext): string {
                   rows,
               )
             : "",
-        sources.length
-            ? `Sources:\n\n${sources.map((s, i) => `${i + 1}. ${mdLink(s.title, s.url)} (${s.reuse})`).join("\n")}`
-            : "",
+        sources.length ? `Sources:\n\n${sourcesList(sources)}` : "",
     ]
         .filter(Boolean)
         .join("\n\n");

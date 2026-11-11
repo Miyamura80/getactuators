@@ -1,10 +1,11 @@
 import type { ApiContext } from "@/api/http";
 import { patentLandscape } from "@/api/patents";
-import { mdLink, mdTable, mdText } from "../md";
+import { pctText } from "@/patents/format";
+import { mdLink, mdTable, mdText, sourcesList } from "../md";
 
 // Markdown twin of /api/v1/patents/{technology}.
 
-const pct = (v: number) => `${(v * 100).toFixed(1)}%`;
+const pct = (v: number) => pctText(v, 1);
 
 export function getPatentLandscapeMd(ctx: ApiContext): string {
     const v = patentLandscape(ctx);
@@ -80,7 +81,7 @@ export function getPatentLandscapeMd(ctx: ApiContext): string {
                   ]),
               )
             : "",
-        `Sources:\n\n${v.sources.map((s, i) => `${i + 1}. ${mdLink(s.title, s.url)} (${s.reuse})`).join("\n")}`,
+        `Sources:\n\n${sourcesList(v.sources)}`,
     ]
         .filter(Boolean)
         .join("\n\n");

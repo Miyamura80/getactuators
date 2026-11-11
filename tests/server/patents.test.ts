@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { PatentLandscapeSchema } from "@/api/patents";
-import { LANDSCAPE, TECHNOLOGIES } from "@/patents";
+import { LANDSCAPE, TECHNOLOGY_LIST } from "@/patents";
 import { get as getShared } from "./agent-helpers";
 import { callTool } from "./mcp-helpers";
 
@@ -32,7 +32,7 @@ describe("/patents", () => {
         expect(ds.temporalCoverage).toBe("2010/2026");
         expect(ds.measurementTechnique).toContain("family_id");
         expect(ds.measurementTechnique).toContain("first assignee");
-        expect(ds.distribution).toHaveLength(TECHNOLOGIES.length);
+        expect(ds.distribution).toHaveLength(TECHNOLOGY_LIST.length);
         expect((await get("/patents?technology=ndfeb")).status).toBe(200);
     });
 
@@ -43,7 +43,7 @@ describe("/patents", () => {
             );
             const md = await res.text();
             expect(md).toContain('title: "Actuator patents"');
-            for (const t of TECHNOLOGIES) expect(md).toContain(`## ${t.label}`);
+            for (const t of TECHNOLOGY_LIST) expect(md).toContain(`## ${t.label}`);
             expect(md).toMatch(/\| Priority year \| CN \| JP \|/);
             expect(md).toContain("| # | Assignee | Country | Families | Share | CAGR");
             expect(md).toContain(`${LANDSCAPE.completeThrough + 1} (incomplete)`);

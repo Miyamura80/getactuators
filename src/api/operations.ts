@@ -1,3 +1,4 @@
+import { CAGR_YEARS, FIRST_YEAR, LAG_MONTHS, TOP_ASSIGNEES } from "@/patents/constants";
 import type { z } from "zod";
 import {
     AltListParams,
@@ -499,8 +500,7 @@ export const OPERATIONS: Operation[] = [
         method: "GET",
         path: "/api/v1/patents/:technology",
         summary: "Patent landscape for one actuator technology",
-        description:
-            "Patent families since 2010 for one technology on /patents (or all of them): its reviewed CPC codes with rationale and keyword filters, families per priority year (the last 18 months flagged incomplete for publication lag), families per applicant country per year, the top 15 first assignees with their family count, share and 3-year CAGR, the share held by the top five, and the largest families with Google Patents links. Families are deduplicated by DOCDB family; data from Google Patents Public Datasets on BigQuery (CC BY 4.0).",
+        description: `Patent families since ${FIRST_YEAR} for one technology on /patents (or all of them): its reviewed CPC codes with rationale and keyword filters, families per priority year (the last ${LAG_MONTHS} months flagged incomplete for publication lag), families per applicant country per year, the top ${TOP_ASSIGNEES} first assignees with their family count, share and ${CAGR_YEARS}-year CAGR, the share held by the top five, and the largest families with Google Patents links. Families are deduplicated by DOCDB family; data from Google Patents Public Datasets on BigQuery (CC BY 4.0).`,
         pathParam: {
             name: "technology",
             description: `Technology id: ${PATENT_SCOPES.join(", ")}.`,

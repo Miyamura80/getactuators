@@ -19,8 +19,6 @@ import {
 } from "@/patents";
 import {
     type PublicationRow,
-    TOP_FAMILIES,
-    TOP_VALUE,
     buildLandscape,
     cleanTitle,
     isGrant,
@@ -30,6 +28,7 @@ import {
     toFamilies,
     toFamily,
 } from "../../scripts/patents/landscape";
+import { TOP_FAMILIES, TOP_VALUE } from "../../src/patents/constants";
 
 const pub = (
     p: Partial<PublicationRow> & { publication_number: string },
@@ -70,7 +69,8 @@ describe("families from publications", () => {
             }),
         ]);
         expect(f?.priority).toBe("2015-02-01");
-        expect(f?.assigneeRaw).toBe("SEIKO EPSON CORP");
+        // Normalised once, at the family.
+        expect(f?.assignee?.key).toBe("seiko-epson");
         // Country from the same assignee on another publication.
         expect(f?.country).toBe("JP");
         // US preferred as the representative publication; its own title.
@@ -93,7 +93,7 @@ describe("families from publications", () => {
         expect(national?.country).toBe("CN");
         const none = toFamily([pub({ publication_number: "WO-1-A1" })]);
         expect(none?.country).toBe("XX");
-        expect(none?.assigneeRaw).toBe("");
+        expect(none?.assignee).toBeNull();
     });
 
     test("drops families without a priority date and keeps 2010 onward", () => {
@@ -212,6 +212,10 @@ describe("families from publications", () => {
             early: [2010, 2017],
             late: [2020, 2024],
         });
+        expect(landscape.momentumWindows).toEqual({
+            early: [2015, 2019],
+            late: [2020, 2024],
+        });
         expect(sw.areas).toMatchObject({ families: 3, early: 3, late: 0 });
         // Family 1 has two offices, so it ranks first.
         expect(families.families.map((f) => f.id)).toEqual(["1", "2", "3"]);
@@ -271,26 +275,8 @@ describe("committed landscape", () => {
         // The headline gap the value view is built on.
         const s = intlShares("all");
         expect(s.cn).toBeLessThan(s.rest);
-        expect(
-            areaShift({
-                area: "vehicles",
-                label: "",
-                families: 1,
-                share: 0.1,
-                early: 0.1,
-                late: 0.115,
-            }),
-        ).toBe("up");
-        expect(
-            areaShift({
-                area: "vehicles",
-                label: "",
-                families: 1,
-                share: 0.1,
-                early: 0.1,
-                late: 0.095,
-            }),
-        ).toBeNull();
+        expect(areaShift({ early: 0.1, late: 0.115 })).toBe("up");
+        expect(areaShift({ early: 0.1, late: 0.095 })).toBeNull();
     });
 
     test("stays small and never carries the raw extract", async () => {

@@ -4,9 +4,20 @@ import type { TechnologyId } from "./technologies";
 // Shapes of the committed /patents data (data/patents/*.json), written by
 // scripts/patents/build-landscape.ts from the BigQuery extract.
 
-// ISO alpha-2 applicant country, or "XX" when neither the assignee nor any
+// ISO alpha-2 applicant country, or UNKNOWN_COUNTRY ("XX") when neither the assignee nor any
 // national publication in the family gives one.
 export type ApplicantCountry = string;
+
+export const UNKNOWN_COUNTRY: ApplicantCountry = "XX";
+
+const total = (v: readonly number[]) => v.reduce((s, x) => s + x, 0);
+
+// Order of a counts record's countries: most families first, then by code.
+// The pipeline writes counts in this order and readers sort by it again.
+export const byCountryTotal = (
+    [a, x]: readonly [string, readonly number[]],
+    [b, y]: readonly [string, readonly number[]],
+): number => total(y) - total(x) || a.localeCompare(b);
 
 export interface AssigneeRow {
     // Grouping key: a supply-chain company id, "alias:<name>" or the cleaned name.
@@ -86,6 +97,9 @@ export interface LandscapeFile {
     extract: { publications: number; families: number; matched: number };
     // Priority-year windows the application-area shift compares.
     areaWindows: { early: [number, number]; late: [number, number] };
+    // Priority-year windows the momentum view compares (MOMENTUM_SPAN years
+    // each, the late one ending at completeThrough).
+    momentumWindows: { early: [number, number]; late: [number, number] };
     technologies: Record<TechnologyId, TechLandscape>;
     // Every matched family once, whatever its technologies.
     all: TechLandscape;

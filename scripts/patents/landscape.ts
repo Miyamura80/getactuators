@@ -3,22 +3,36 @@ import {
     type ApplicationAreaId,
     classifyAreas,
 } from "../../src/patents/application-areas";
-import { normaliseAssignee } from "../../src/patents/assignees";
+import {
+    type NormalisedAssignee,
+    normaliseAssignee,
+} from "../../src/patents/assignees";
+import {
+    EARLY_WINDOW,
+    FIRST_YEAR,
+    LAG_MONTHS,
+    MOMENTUM_SPAN,
+    TOP_ASSIGNEES,
+    TOP_FAMILIES,
+    TOP_VALUE,
+} from "../../src/patents/constants";
 import {
     TECHNOLOGY_IDS,
     type TechnologyId,
     classifyFamily,
 } from "../../src/patents/technologies";
-import type {
-    AssigneeRow,
-    FamiliesFile,
-    FamilyRow,
-    LandscapeFile,
-    QualityFilter,
-    TechAreas,
-    TechLandscape,
-    TechValue,
-    ValueRow,
+import {
+    type AssigneeRow,
+    type FamiliesFile,
+    type FamilyRow,
+    type LandscapeFile,
+    type QualityFilter,
+    type TechAreas,
+    type TechLandscape,
+    type TechValue,
+    UNKNOWN_COUNTRY,
+    type ValueRow,
+    byCountryTotal,
 } from "../../src/patents/types";
 import { COMPANIES } from "../../src/supply-chain/companies";
 
@@ -43,7 +57,8 @@ export interface Family {
     priority: string;
     pub: string;
     title: string;
-    assigneeRaw: string;
+    // First assignee, normalised; null when no publication lists one.
+    assignee: NormalisedAssignee | null;
     country: string;
     jurisdictions: number;
     publications: number;
@@ -55,17 +70,8 @@ export interface Family {
     areas: ApplicationAreaId[];
 }
 
-export const FIRST_YEAR = 2010;
-export const TOP_ASSIGNEES = 15;
-export const TOP_FAMILIES = 200;
-// Assignees on the value-vs-volume scatter.
-export const TOP_VALUE = 40;
-// First window of the application-area shift; the late window is the five
-// years ending at the last complete year.
-export const EARLY_WINDOW: [number, number] = [2010, 2017];
-export const LATE_YEARS = 5;
-// Publication lag: most applications publish 18 months after priority.
-export const LAG_MONTHS = 18;
+// Sizes and windows (FIRST_YEAR, TOP_ASSIGNEES, EARLY_WINDOW...) live in
+// src/patents/constants.ts, shared with the readers.
 const TITLE_MAX = 160;
 
 // Regional and international offices: not an applicant country.
@@ -127,7 +133,7 @@ const byPublication = (a: PublicationRow, b: PublicationRow) =>
 // in the family. First assignee: the first listed on the earliest
 // publication that lists any. Applicant country: that assignee's country on
 // any publication in the family, else the office of the earliest national
-// (non-EP, non-WO) publication, else "XX".
+// (non-EP, non-WO) publication, else UNKNOWN_COUNTRY.
 export function toFamily(rows: readonly PublicationRow[]): Family | null {
     const sorted = [...rows].sort(byPublication);
     const first = sorted[0];
@@ -146,7 +152,7 @@ export function toFamily(rows: readonly PublicationRow[]): Family | null {
         .flatMap((r) => r.assignees ?? [])
         .find((a) => a.name?.trim() === assigneeRaw && a.country_code)?.country_code;
     const national = sorted.find((r) => !REGIONAL.has(r.country_code))?.country_code;
-    const country = (assigneeCountry || national || "XX").toUpperCase();
+    const country = (assigneeCountry || national || UNKNOWN_COUNTRY).toUpperCase();
     const titled = sorted.filter((r) => r.title_en);
     const rep =
         PREFERRED.map((c) => titled.find((r) => r.country_code === c)).find(Boolean) ??
@@ -159,7 +165,7 @@ export function toFamily(rows: readonly PublicationRow[]): Family | null {
         priority,
         pub: rep.publication_number,
         title: title.length > TITLE_MAX ? `${title.slice(0, TITLE_MAX - 1)}…` : title,
-        assigneeRaw,
+        assignee: assigneeRaw ? normaliseAssignee(assigneeRaw) : null,
         country,
         jurisdictions: offices.length,
         publications: sorted.length,
@@ -206,6 +212,7 @@ export function publicationLag(asOf: string): {
 
 interface Windows {
     completeThrough: number;
+    // Application-area shift windows.
     early: [number, number];
     late: [number, number];
 }
@@ -222,13 +229,47 @@ function hqCountry(
     return (
         COMPANIES.find((c) => c.id === company)?.hqCountry ??
         [...countries.entries()]
-            .filter(([c]) => c !== "XX")
+            .filter(([c]) => c !== UNKNOWN_COUNTRY)
             .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0]?.[0] ??
-        "XX"
+        UNKNOWN_COUNTRY
     );
 }
 
 const tally = (m: Map<string, number>, k: string) => m.set(k, (m.get(k) ?? 0) + 1);
+
+interface AssigneeGroup {
+    assignee: NormalisedAssignee;
+    families: Family[];
+}
+
+// Families per normalised first assignee (families without one left out),
+// largest first, ties by name.
+function groupByAssignee(families: readonly Family[]): AssigneeGroup[] {
+    const by = new Map<string, AssigneeGroup>();
+    for (const f of families) {
+        if (!f.assignee) continue;
+        const g = by.get(f.assignee.key) ?? { assignee: f.assignee, families: [] };
+        g.families.push(f);
+        by.set(f.assignee.key, g);
+    }
+    return [...by.values()].sort(
+        (x, y) =>
+            y.families.length - x.families.length ||
+            x.assignee.name.localeCompare(y.assignee.name),
+    );
+}
+
+// Who a group is, and where: registry HQ, else its main applicant country.
+function assigneeOf({ assignee: a, families }: AssigneeGroup) {
+    const countries = new Map<string, number>();
+    for (const f of families) tally(countries, f.country);
+    return {
+        key: a.key,
+        name: a.name,
+        ...(a.company ? { company: a.company } : {}),
+        country: hqCountry(a.company, countries),
+    };
+}
 
 function countsBy(
     families: readonly Family[],
@@ -252,34 +293,15 @@ function valueView(families: readonly Family[], w: Windows): TechValue {
     const intl = (fs: readonly Family[]) => fs.filter(QUALITY.intl).length;
     const cn = done.filter((f) => f.country === "CN");
     const rest = done.filter((f) => f.country !== "CN");
-    const by = new Map<
-        string,
-        { a: ReturnType<typeof normaliseAssignee>; fs: Family[] }
-    >();
-    for (const f of done) {
-        if (!f.assigneeRaw) continue;
-        const a = normaliseAssignee(f.assigneeRaw);
-        const g = by.get(a.key) ?? { a, fs: [] };
-        g.fs.push(f);
-        by.set(a.key, g);
-    }
-    const assignees: ValueRow[] = [...by.values()]
-        .sort((x, y) => y.fs.length - x.fs.length || x.a.name.localeCompare(y.a.name))
+    const assignees: ValueRow[] = groupByAssignee(done)
         .slice(0, TOP_VALUE)
-        .map(({ a, fs }) => {
-            const countries = new Map<string, number>();
-            for (const f of fs) tally(countries, f.country);
-            return {
-                key: a.key,
-                name: a.name,
-                ...(a.company ? { company: a.company } : {}),
-                country: hqCountry(a.company, countries),
-                families: fs.length,
-                intl: intl(fs),
-                granted: fs.filter(QUALITY.granted).length,
-                triadic: fs.filter(QUALITY.triadic).length,
-            };
-        });
+        .map((g) => ({
+            ...assigneeOf(g),
+            families: g.families.length,
+            intl: intl(g.families),
+            granted: g.families.filter(QUALITY.granted).length,
+            triadic: g.families.filter(QUALITY.triadic).length,
+        }));
     return {
         cn: { families: cn.length, intl: intl(cn) },
         rest: { families: rest.length, intl: intl(rest) },
@@ -307,53 +329,19 @@ function areasOf(families: readonly Family[], w: Windows): TechAreas {
 }
 
 const byTotal = (counts: Record<string, number[]>) =>
-    Object.fromEntries(
-        Object.entries(counts).sort(
-            (a, b) =>
-                b[1].reduce((s, v) => s + v, 0) - a[1].reduce((s, v) => s + v, 0) ||
-                a[0].localeCompare(b[0]),
-        ),
-    );
+    Object.fromEntries(Object.entries(counts).sort(byCountryTotal));
 
 function aggregate(
     families: readonly Family[],
     years: readonly number[],
     w: Windows,
 ): TechLandscape {
-    const at = (date: string) => years.indexOf(Number(date.slice(0, 4)));
-    const assignees = new Map<
-        string,
-        AssigneeRow & { countries: Map<string, number> }
-    >();
-    for (const f of families) {
-        const i = at(f.priority);
-        if (i < 0) continue;
-        if (!f.assigneeRaw) continue;
-        const a = normaliseAssignee(f.assigneeRaw);
-        let row = assignees.get(a.key);
-        if (!row) {
-            row = {
-                key: a.key,
-                name: a.name,
-                ...(a.company ? { company: a.company } : {}),
-                country: "",
-                families: 0,
-                years: years.map(() => 0),
-                countries: new Map(),
-            };
-            assignees.set(a.key, row);
-        }
-        row.families++;
-        (row.years as number[])[i] = (row.years[i] ?? 0) + 1;
-        tally(row.countries, f.country);
-    }
-    const top = [...assignees.values()]
-        .sort((a, b) => b.families - a.families || a.name.localeCompare(b.name))
-        .slice(0, TOP_ASSIGNEES)
-        .map(({ countries, ...row }) => ({
-            ...row,
-            country: hqCountry(row.company, countries),
-        }));
+    const groups = groupByAssignee(families.filter((f) => years.includes(yearOf(f))));
+    const top: AssigneeRow[] = groups.slice(0, TOP_ASSIGNEES).map((g) => ({
+        ...assigneeOf(g),
+        families: g.families.length,
+        years: years.map((y) => g.families.filter((f) => yearOf(f) === y).length),
+    }));
     const quality = Object.fromEntries(
         (Object.keys(QUALITY) as QualityFilter[]).map((q) => [
             q,
@@ -362,7 +350,7 @@ function aggregate(
     ) as TechLandscape["quality"];
     return {
         families: families.length,
-        assignees: assignees.size,
+        assignees: groups.length,
         counts: byTotal(countsBy(families, years)),
         quality,
         top,
@@ -382,11 +370,14 @@ export function buildLandscape(
         (_, i) => FIRST_YEAR + i,
     );
     const lag = publicationLag(asOf);
+    // The area shift's late window doubles as the momentum late window;
+    // momentum's early window is the MOMENTUM_SPAN years before it.
     const w: Windows = {
         completeThrough: lag.completeThrough,
         early: EARLY_WINDOW,
-        late: [lag.completeThrough - LATE_YEARS + 1, lag.completeThrough],
+        late: [lag.completeThrough - MOMENTUM_SPAN + 1, lag.completeThrough],
     };
+    const momentumEarly: [number, number] = [w.late[0] - MOMENTUM_SPAN, w.late[0] - 1];
     const technologies = Object.fromEntries(
         TECHNOLOGY_IDS.map((id) => [
             id,
@@ -410,20 +401,17 @@ export function buildLandscape(
             .slice(0, TOP_FAMILIES))
             kept.set(f.id, f);
     }
-    const rows: FamilyRow[] = [...kept.values()].sort(rank).map((f) => {
-        const a = f.assigneeRaw ? normaliseAssignee(f.assigneeRaw) : null;
-        return {
-            id: f.id,
-            pub: f.pub,
-            title: f.title,
-            assignee: a?.name ?? "",
-            ...(a?.company ? { company: a.company } : {}),
-            country: f.country,
-            priority: f.priority,
-            jurisdictions: f.jurisdictions,
-            techs: f.techs,
-        };
-    });
+    const rows: FamilyRow[] = [...kept.values()].sort(rank).map((f) => ({
+        id: f.id,
+        pub: f.pub,
+        title: f.title,
+        assignee: f.assignee?.name ?? "",
+        ...(f.assignee?.company ? { company: f.assignee.company } : {}),
+        country: f.country,
+        priority: f.priority,
+        jurisdictions: f.jurisdictions,
+        techs: f.techs,
+    }));
     return {
         landscape: {
             asOf,
@@ -435,6 +423,7 @@ export function buildLandscape(
                 matched: matched.length,
             },
             areaWindows: { early: w.early, late: w.late },
+            momentumWindows: { early: momentumEarly, late: w.late },
             technologies,
             all: aggregate(matched, years, w),
         },

@@ -2,21 +2,23 @@ import {
     CAGR_END,
     CAGR_START,
     type LandscapeScope,
+    UNKNOWN_COUNTRY,
     countryTotals,
     leaderboard,
+    pctText,
+    signedPct,
     top5Share,
 } from "../../../../src/patents";
-import type { Shares } from "../../../../src/supply-chain/concentration";
 import { getCompany } from "../../../../src/supply-chain/registry";
 import { ConcentrationBadge } from "../../components/flows/ConcentrationBadge";
 import { Flag } from "../../components/Flag";
 import { liveCountryPage } from "../../components/maps/Arcs";
 
-// Top 15 first assignees for the scope: families as a bar, share, and
-// growth over the last three fully published years.
+// Top TOP_ASSIGNEES first assignees for the scope: families as a bar,
+// share, and growth over the last CAGR_YEARS fully published years.
 
-const pct = (v: number) => `${(v * 100).toFixed(1)}%`;
-const growth = (v: number | null) => (v === null ? "n/a" : `${v >= 0 ? "+" : ""}${(v * 100).toFixed(0)}%`);
+const pct = (v: number) => pctText(v, 1);
+const growth = (v: number | null) => (v === null ? "n/a" : signedPct(v));
 
 function AssigneeName({ name, company }: { name: string; company?: string }) {
     const c = company ? getCompany(company) : undefined;
@@ -30,7 +32,7 @@ export function Leaders({ scope }: { scope: LandscapeScope }) {
     return <div className="pt-leaders">
         <div className="pt-stats">
             <span><b>{pct(top5Share(scope))}</b> held by the top 5</span>
-            <ConcentrationBadge shares={countryTotals(scope) as Shares} />
+            <ConcentrationBadge shares={countryTotals(scope)} />
         </div>
         <div className="pt-table-wrap">
             <table className="pt-table">
@@ -44,7 +46,7 @@ export function Leaders({ scope }: { scope: LandscapeScope }) {
                 <tbody>{rows.map((r) => <tr key={r.key}>
                     <td className="pt-rank">{r.rank}</td>
                     <td className="pt-who">
-                        {r.country !== "XX" ? <Flag code={r.country} /> : null}
+                        {r.country !== UNKNOWN_COUNTRY ? <Flag code={r.country} /> : null}
                         <AssigneeName name={r.name} company={r.company} />
                     </td>
                     <td className="pt-num">

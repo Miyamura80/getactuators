@@ -55,7 +55,7 @@ const ROBOT_TITLE = [
 ];
 const ROBOT_CO = ["B25J", "B62D57/032", "A61H3/00", "A61H1/02"];
 
-export const TECHNOLOGIES = [
+const CATALOGUE = [
     {
         id: "robot-joints",
         label: "Robot joints and integrated actuators",
@@ -466,9 +466,15 @@ export const TECHNOLOGIES = [
     },
 ] as const satisfies readonly Technology[];
 
-export type TechnologyId = (typeof TECHNOLOGIES)[number]["id"];
+export type TechnologyId = (typeof CATALOGUE)[number]["id"];
 
-export const TECHNOLOGY_IDS = TECHNOLOGIES.map((t) => t.id) as TechnologyId[];
+// A technology with its id narrowed: the catalogue as plain Technology
+// records, so optional fields (filter, exclude, filtered) read directly.
+export type TechnologyDef = Technology & { id: TechnologyId };
+
+export const TECHNOLOGY_LIST: readonly TechnologyDef[] = CATALOGUE;
+
+export const TECHNOLOGY_IDS: TechnologyId[] = TECHNOLOGY_LIST.map((t) => t.id);
 
 // Codes deliberately shared or nested across technologies, each with the
 // reason. Any other overlap fails tests/patents/technologies.test.ts.
@@ -479,12 +485,14 @@ export const SHARED_CODES: Record<string, string> = {
         "Permanent magnet manufacturing serves both magnet sets; their title filters split rare-earth from rare-earth-free.",
 };
 
-export function getTechnology(id: string): Technology | undefined {
-    return TECHNOLOGIES.find((t) => t.id === id);
+export function getTechnology(id: TechnologyId): TechnologyDef;
+export function getTechnology(id: string): TechnologyDef | undefined;
+export function getTechnology(id: string): TechnologyDef | undefined {
+    return TECHNOLOGY_LIST.find((t) => t.id === id);
 }
 
 export function isTechnologyId(id: string): id is TechnologyId {
-    return TECHNOLOGIES.some((t) => t.id === id);
+    return TECHNOLOGY_LIST.some((t) => t.id === id);
 }
 
 interface Compiled {
@@ -498,8 +506,8 @@ interface Compiled {
 let compiled: Compiled[] | null = null;
 
 function compile(): Compiled[] {
-    compiled ??= TECHNOLOGIES.map((t: Technology) => ({
-        id: t.id as TechnologyId,
+    compiled ??= TECHNOLOGY_LIST.map((t) => ({
+        id: t.id,
         rules: t.codes,
         title: t.filter ? new RegExp(t.filter.title.join("|"), "i") : null,
         coCodes: t.filter?.coCodes ?? [],

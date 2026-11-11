@@ -6,15 +6,15 @@ import {
     normaliseAssignee,
 } from "@/patents/assignees";
 import { patentsLicenceErrors } from "@/patents/licence";
-import { SHARED_CODES, TECHNOLOGIES, classifyFamily } from "@/patents/technologies";
+import { SHARED_CODES, TECHNOLOGY_LIST, classifyFamily } from "@/patents/technologies";
 import { COMPANIES } from "@/supply-chain/companies";
 
 const nested = (a: string, b: string) => a.startsWith(b) || b.startsWith(a);
 
 describe("technology code sets", () => {
     test("every technology has at least one code, each with a rationale", () => {
-        expect(TECHNOLOGIES.length).toBeGreaterThanOrEqual(10);
-        for (const t of TECHNOLOGIES) {
+        expect(TECHNOLOGY_LIST.length).toBeGreaterThanOrEqual(10);
+        for (const t of TECHNOLOGY_LIST) {
             expect(t.codes.length, t.id).toBeGreaterThan(0);
             for (const c of t.codes) {
                 expect(c.code, t.id).toMatch(/^[A-H]\d{2}[A-Z]\d{1,4}\/\d{2,6}$/);
@@ -28,16 +28,18 @@ describe("technology code sets", () => {
     });
 
     test("ids are unique and no code repeats inside a technology", () => {
-        expect(new Set(TECHNOLOGIES.map((t) => t.id)).size).toBe(TECHNOLOGIES.length);
-        for (const t of TECHNOLOGIES) {
+        expect(new Set(TECHNOLOGY_LIST.map((t) => t.id)).size).toBe(
+            TECHNOLOGY_LIST.length,
+        );
+        for (const t of TECHNOLOGY_LIST) {
             const codes = t.codes.map((c) => c.code);
             expect(new Set(codes).size, t.id).toBe(codes.length);
         }
     });
 
     test("code sets only overlap across technologies where SHARED_CODES says so", () => {
-        const pairs = TECHNOLOGIES.flatMap((a, i) =>
-            TECHNOLOGIES.slice(i + 1).flatMap((b) =>
+        const pairs = TECHNOLOGY_LIST.flatMap((a, i) =>
+            TECHNOLOGY_LIST.slice(i + 1).flatMap((b) =>
                 a.codes.flatMap((ca) =>
                     b.codes
                         .filter((cb) => nested(ca.code, cb.code))

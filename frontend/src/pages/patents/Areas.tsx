@@ -2,16 +2,21 @@ import { useState } from "react";
 import {
     APPLICATION_AREAS,
     type ApplicationAreaId,
+    COMPLETE_THROUGH,
+    FIRST_YEAR,
     LANDSCAPE,
     type LandscapeScope,
-    PATENT_YEARS,
-    TECHNOLOGIES,
+    TECHNOLOGY_LIST,
     type TechnologyId,
     areaCells,
     areaShift,
+    cellPct as cellShare,
+    getTechnology,
     landscapeOf,
+    yearSpan,
 } from "../../../../src/patents";
 import { useWidth } from "../prices/chart";
+import { spreadLabels } from "./label-layout";
 
 // Where it ends up: technology -> application area, by CPC
 // co-classification. Flow draws ribbons (a ranked bar list on a phone);
@@ -22,11 +27,12 @@ export type AreasView = "flow" | "grid";
 // Links under this many families are not drawn.
 export const MIN_RIBBON = 15;
 
-const SPAN = `${PATENT_YEARS[0]}-${String(LANDSCAPE.completeThrough).slice(2)}`;
+const windowLabel = (w: readonly [number, number]) => yearSpan(w, { short: true });
+const SPAN = windowLabel([FIRST_YEAR, COMPLETE_THROUGH]);
 const W = LANDSCAPE.areaWindows;
-const windowLabel = ([a, b]: [number, number]) => `${a}-${String(b).slice(2)}`;
 const n = (v: number) => v.toLocaleString("en-US");
-const cellPct = (v: number) => (v < 0.001 ? "·" : `${(v * 100).toFixed(v < 0.1 ? 1 : 0)}%`);
+// Shares under 0.1% stay a quiet dot in the chart cells.
+const cellPct = (v: number) => cellShare(v, { tiny: "·" });
 
 export interface Ribbon {
     tech: TechnologyId;
@@ -37,21 +43,11 @@ export interface Ribbon {
 // Technology x area links (complete years) at or above MIN_RIBBON, and the
 // families in the links left out.
 export function ribbons(): { shown: Ribbon[]; hidden: number } {
-    const all = TECHNOLOGIES.flatMap((t) =>
-        APPLICATION_AREAS.map((a) => ({ tech: t.id as TechnologyId, area: a.id as ApplicationAreaId, families: landscapeOf(t.id).areas.counts[a.id][0] })),
+    const all = TECHNOLOGY_LIST.flatMap((t) =>
+        APPLICATION_AREAS.map((a) => ({ tech: t.id, area: a.id, families: landscapeOf(t.id).areas.counts[a.id][0] })),
     );
     const shown = all.filter((r) => r.families >= MIN_RIBBON);
     return { shown, hidden: all.filter((r) => r.families > 0 && r.families < MIN_RIBBON).reduce((s, r) => s + r.families, 0) };
-}
-
-// Label centres pushed apart to at least `gap`, kept inside [lo, hi].
-function spread(ys: number[], gap: number, lo: number, hi: number): number[] {
-    const out = [...ys];
-    for (let i = 1; i < out.length; i++) out[i] = Math.max(out[i] ?? 0, (out[i - 1] ?? 0) + gap);
-    const over = (out.at(-1) ?? 0) - hi;
-    if (over > 0) for (let i = out.length - 1; i >= 0; i--) out[i] = Math.min(out[i] ?? 0, hi - (out.length - 1 - i) * gap);
-    if ((out[0] ?? 0) < lo) for (let i = 0; i < out.length; i++) out[i] = Math.max(out[i] ?? 0, lo + i * gap);
-    return out;
 }
 
 type Hl = { kind: "tech"; id: TechnologyId } | { kind: "area"; id: ApplicationAreaId } | null;
@@ -63,13 +59,13 @@ function Flow({ scope, width }: { scope: LandscapeScope; width: number }) {
     const H = 460;
     const top = 6;
     // Mono 11px: ~6.6px a glyph, plus the gap to the node bar.
-    const lw = Math.max(...TECHNOLOGIES.map((t) => t.short.length)) * 6.6 + 22;
+    const lw = Math.max(...TECHNOLOGY_LIST.map((t) => t.short.length)) * 6.6 + 22;
     const rw = 220;
     const xl = lw;
     const xr = width - rw;
-    const techs = TECHNOLOGIES.map((t) => t.id as TechnologyId);
+    const techs = TECHNOLOGY_LIST.map((t) => t.id);
     const areaTotal = (a: ApplicationAreaId) => shown.filter((r) => r.area === a).reduce((s, r) => s + r.families, 0);
-    const areas = APPLICATION_AREAS.map((a) => a.id as ApplicationAreaId).sort((a, b) => areaTotal(b) - areaTotal(a));
+    const areas = APPLICATION_AREAS.map((a) => a.id).sort((a, b) => areaTotal(b) - areaTotal(a));
     const techTotal = (t: TechnologyId) => shown.filter((r) => r.tech === t).reduce((s, r) => s + r.families, 0);
     const total = shown.reduce((s, r) => s + r.families, 0);
     const gap = 6;
@@ -109,8 +105,8 @@ function Flow({ scope, width }: { scope: LandscapeScope; width: number }) {
         `M${xl},${y0}C${mid},${y0} ${mid},${y1} ${xr},${y1}L${xr},${y1 + h}C${mid},${y1 + h} ${mid},${y0 + h} ${xl},${y0 + h}Z`;
     const lit = (r: Ribbon) =>
         selected ? r.tech === selected : hl ? (hl.kind === "tech" ? r.tech === hl.id : r.area === hl.id) : null;
-    const leftLabels = spread(techs.map((t) => (leftY.get(t) ?? 0) + (techTotal(t) * k) / 2), 13, top + 5, H - top - 5);
-    const rightLabels = spread(areas.map((a) => (rightY.get(a) ?? 0) + (areaTotal(a) * k) / 2), 13, top + 5, H - top - 5);
+    const leftLabels = spreadLabels(techs.map((t) => (leftY.get(t) ?? 0) + (techTotal(t) * k) / 2), 13, top + 5, H - top - 5);
+    const rightLabels = spreadLabels(areas.map((a) => (rightY.get(a) ?? 0) + (areaTotal(a) * k) / 2), 13, top + 5, H - top - 5);
     // Right-hand labels: distinct families in the area (the scope's, or all).
     const selCount = (a: ApplicationAreaId) => landscapeOf(selected ?? "all").areas.counts[a][0];
     const nodeProps = (h: Exclude<Hl, null>, label: string) => ({
@@ -122,7 +118,7 @@ function Flow({ scope, width }: { scope: LandscapeScope; width: number }) {
         onFocus: () => setHl(h),
         onBlur: () => setHl(null),
     });
-    const techLabel = (t: TechnologyId) => TECHNOLOGIES.find((x) => x.id === t)?.short ?? t;
+    const techLabel = (t: TechnologyId) => getTechnology(t).short;
     const areaLabel = (a: ApplicationAreaId) => APPLICATION_AREAS.find((x) => x.id === a)?.label ?? a;
     const dimTech = (t: TechnologyId) => (selected ? t !== selected : hl?.kind === "tech" ? hl.id !== t : false);
     const dimArea = (a: ApplicationAreaId) =>
@@ -171,7 +167,7 @@ function AreaBars({ scope }: { scope: LandscapeScope }) {
 }
 
 function Grid({ scope }: { scope: LandscapeScope }) {
-    const rows = TECHNOLOGIES.map((t) => ({ id: t.id as TechnologyId, label: t.short, cells: areaCells(t.id) }));
+    const rows = TECHNOLOGY_LIST.map((t) => ({ id: t.id, label: t.short, cells: areaCells(t.id) }));
     const max = Math.max(0.0001, ...rows.flatMap((r) => r.cells.map((c) => c.share)));
     return <div className="pt-grid-wrap" tabIndex={0} role="region" aria-label="Application share by technology">
         <table className="pt-grid">

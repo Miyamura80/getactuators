@@ -1,21 +1,32 @@
 import familiesFile from "../../data/patents/families.json";
 import landscapeFile from "../../data/patents/landscape.json";
+import type { Shares } from "../supply-chain/concentration";
 import { APPLICATION_AREAS, type ApplicationAreaId } from "./application-areas";
+import {
+    CAGR_YEARS,
+    FIRST_YEAR,
+    LAG_MONTHS,
+    TOP_ASSIGNEES,
+    TOP_FAMILIES,
+} from "./constants";
+import { yearSpan } from "./format";
 import { PATENTS_PATH } from "./path";
 import {
-    TECHNOLOGIES,
+    TECHNOLOGY_LIST,
     type TechnologyId,
     getTechnology,
     isTechnologyId,
 } from "./technologies";
-import type {
-    AssigneeRow,
-    FamiliesFile,
-    FamilyRow,
-    LandscapeFile,
-    QualityFilter,
-    TechLandscape,
-    ValueRow,
+import {
+    type AssigneeRow,
+    type FamiliesFile,
+    type FamilyRow,
+    type LandscapeFile,
+    type QualityFilter,
+    type TechLandscape,
+    UNKNOWN_COUNTRY,
+    type ValueRow,
+    byCountryTotal,
 } from "./types";
 
 // /patents: patent families since 2010 for actuator, gear, screw, magnet and
@@ -23,6 +34,8 @@ import type {
 // Relative imports only: the browser bundle reuses this module.
 
 export * from "./application-areas";
+export * from "./constants";
+export * from "./format";
 export * from "./technologies";
 export * from "./types";
 export { PATENT_SOURCES } from "./sources";
@@ -36,6 +49,9 @@ export const FAMILIES = (familiesFile as unknown as FamiliesFile).families;
 export const PATENTS_AS_OF = LANDSCAPE.asOf;
 export const PATENT_YEARS = LANDSCAPE.years;
 
+// Last fully published priority year. Later years are still publishing.
+export const COMPLETE_THROUGH = LANDSCAPE.completeThrough;
+
 // A technology id, or every matched family once.
 export type LandscapeScope = TechnologyId | "all";
 
@@ -43,9 +59,7 @@ export const isLandscapeScope = (v: string): v is LandscapeScope =>
     v === "all" || isTechnologyId(v);
 
 export function scopeLabel(scope: LandscapeScope): string {
-    return scope === "all"
-        ? "All technologies"
-        : (getTechnology(scope)?.label ?? scope);
+    return scope === "all" ? "All technologies" : getTechnology(scope).label;
 }
 
 export function landscapeOf(scope: LandscapeScope): TechLandscape {
@@ -65,8 +79,6 @@ export const googlePatentsUrl = (publication: string): string =>
     `https://patents.google.com/patent/${publication.replace(/-/g, "")}`;
 
 const sum = (xs: readonly number[]) => xs.reduce((s, v) => s + v, 0);
-
-export const UNKNOWN_COUNTRY = "XX";
 
 // The stream's quality filters: every family, or only those that cleared a
 // costlier bar. Definitions in METHODOLOGY.quality.
@@ -104,7 +116,7 @@ export function familiesPerYear(
     return PATENT_YEARS.map((_, i) => sum(counts.map((c) => c[i] ?? 0)));
 }
 
-const completeIndex = () => PATENT_YEARS.indexOf(LANDSCAPE.completeThrough);
+const completeIndex = () => PATENT_YEARS.indexOf(COMPLETE_THROUGH);
 
 // Families in the complete years that pass the filter, against all of them,
 // and China's share of the ones that pass.
@@ -144,7 +156,10 @@ export function seriesByCountry(
     const all = countsOf(scope);
     const kept = countsOf(scope, filter);
     const zeros = PATENT_YEARS.map(() => 0);
-    const keys = Object.keys(all).filter((c) => c !== UNKNOWN_COUNTRY);
+    const keys = Object.entries(all)
+        .sort(byCountryTotal)
+        .map(([c]) => c)
+        .filter((c) => c !== UNKNOWN_COUNTRY);
     const head = keys
         .slice(0, top)
         .map((key) => ({ key, label: key, values: kept[key] ?? zeros }));
@@ -159,7 +174,7 @@ export function seriesByCountry(
 
 // One series per technology. A family in two technologies counts in both.
 export function seriesByTechnology(filter: StreamFilter = "all"): Series[] {
-    return TECHNOLOGIES.map((t) => ({
+    return TECHNOLOGY_LIST.map((t) => ({
         key: t.id,
         label: t.short,
         values: familiesPerYear(t.id, filter),
@@ -184,6 +199,8 @@ export function intlShares(scope: LandscapeScope): { cn: number; rest: number } 
 export interface AreaCell {
     area: ApplicationAreaId;
     label: string;
+    // The area's CPC pattern (APPLICATION_AREAS).
+    cpc: string;
     // Families in the area, complete years.
     families: number;
     // Of the scope's families: whole span, early window, late window.
@@ -200,6 +217,7 @@ export function areaCells(scope: LandscapeScope): AreaCell[] {
         return {
             area: x.id,
             label: x.label,
+            cpc: x.cpc,
             families: n,
             share: a.families ? n / a.families : 0,
             early: a.early ? e / a.early : 0,
@@ -212,22 +230,22 @@ export function areaCells(scope: LandscapeScope): AreaCell[] {
 // arrow on the grid.
 export const AREA_SHIFT_MIN = 0.01;
 
-export function areaShift(c: AreaCell): "up" | "down" | null {
+export function areaShift(c: Pick<AreaCell, "early" | "late">): "up" | "down" | null {
     const d = c.late - c.early;
     return Math.abs(d) < AREA_SHIFT_MIN ? null : d > 0 ? "up" : "down";
 }
 
-// Families per applicant country over every year.
-export function countryTotals(scope: LandscapeScope): Record<string, number> {
+// Families per applicant country over every year, unknown left out.
+export function countryTotals(scope: LandscapeScope): Shares {
+    // Applicant countries are ISO alpha-2 codes once UNKNOWN_COUNTRY is out.
     return Object.fromEntries(
         Object.entries(landscapeOf(scope).counts)
             .filter(([c]) => c !== UNKNOWN_COUNTRY)
             .map(([c, v]) => [c, sum(v)]),
-    );
+    ) as Shares;
 }
 
-// Years of the growth window: three years ending at the last complete year.
-export const CAGR_YEARS = 3;
+// The growth window: CAGR_YEARS years ending at the last complete year.
 export const CAGR_END = LANDSCAPE.completeThrough;
 export const CAGR_START = CAGR_END - CAGR_YEARS;
 
@@ -248,11 +266,9 @@ export interface LeaderRow extends AssigneeRow {
     cagr: number | null;
 }
 
-export const LEADERBOARD_SIZE = 15;
-
 export function leaderboard(scope: LandscapeScope): LeaderRow[] {
     const l = landscapeOf(scope);
-    return l.top.slice(0, LEADERBOARD_SIZE).map((a, i) => ({
+    return l.top.slice(0, TOP_ASSIGNEES).map((a, i) => ({
         ...a,
         rank: i + 1,
         share: l.families ? a.families / l.families : 0,
@@ -286,15 +302,10 @@ export function searchFamilies(scope: LandscapeScope, query: string): FamilyRow[
 // applicant or only those outside China, and the change from the early to
 // the late window (the last two runs of MOMENTUM_SPAN complete years).
 export type Applicants = "all" | "ex-cn";
-export const MOMENTUM_SPAN = 5;
-export const MOMENTUM_LATE = [
-    LANDSCAPE.completeThrough - MOMENTUM_SPAN + 1,
-    LANDSCAPE.completeThrough,
-] as const;
-export const MOMENTUM_EARLY = [
-    MOMENTUM_LATE[0] - MOMENTUM_SPAN,
-    MOMENTUM_LATE[0] - 1,
-] as const;
+// The windows are written by the pipeline (MOMENTUM_SPAN years each).
+export const MOMENTUM_LATE: readonly [number, number] = LANDSCAPE.momentumWindows.late;
+export const MOMENTUM_EARLY: readonly [number, number] =
+    LANDSCAPE.momentumWindows.early;
 
 export interface MomentumRow {
     id: TechnologyId;
@@ -315,7 +326,7 @@ const windowSum = (values: readonly number[], [from, to]: readonly [number, numb
 
 // Largest change first; technologies with no early families last.
 export function momentum(applicants: Applicants = "all"): MomentumRow[] {
-    return TECHNOLOGIES.map((t) => {
+    return TECHNOLOGY_LIST.map((t) => {
         const counts = Object.entries(landscapeOf(t.id).counts).filter(
             ([c]) => applicants === "all" || c !== "CN",
         );
@@ -325,7 +336,7 @@ export function momentum(applicants: Applicants = "all"): MomentumRow[] {
         const early = windowSum(values, MOMENTUM_EARLY);
         const late = windowSum(values, MOMENTUM_LATE);
         return {
-            id: t.id as TechnologyId,
+            id: t.id,
             label: t.short,
             values,
             early,
@@ -340,21 +351,20 @@ export function momentum(applicants: Applicants = "all"): MomentumRow[] {
 }
 
 export const METHODOLOGY = {
-    scope: "Patent families with a priority date from 1 January 2010, from Google Patents Public Datasets on BigQuery. Each technology is a reviewed set of CPC codes, some with a title keyword filter; families matching none are dropped, and a family can belong to several technologies.",
+    scope: `Patent families with a priority date from 1 January ${FIRST_YEAR}, from Google Patents Public Datasets on BigQuery. Each technology is a reviewed set of CPC codes, some with a title keyword filter; families matching none are dropped, and a family can belong to several technologies.`,
     family: "Publications are grouped by DOCDB family_id and each family counts once. Its priority date is the earliest priority date of any publication in the family.",
     country:
         "Applicant country is the country of the first assignee on the family's earliest publication that lists one, taken from any publication in the family that gives it; failing that, the office of the earliest national (not EP or WO) publication; failing that, unknown.",
     assignee:
         "Assignees are Google's harmonised names, cleaned of case and legal-form suffixes (CO LTD, INC, GMBH, KK) and grouped under a parent by the alias table in src/patents/assignees.ts. Only the first assignee counts, so shares add up to at most 100%.",
-    lag: `Applications publish about 18 months after priority, so families with a priority date from ${LANDSCAPE.incompleteFrom} are still arriving and the last bars undercount.`,
-    growth: `3-year CAGR compares families with priority years ${CAGR_START} and ${CAGR_END}, the last year with every month published.`,
-    ranking:
-        "The family list keeps the 200 largest families per technology by number of publishing offices (countries, EP, WO), then by number of publications.",
+    lag: `Applications publish about ${LAG_MONTHS} months after priority, so families with a priority date from ${LANDSCAPE.incompleteFrom} are still arriving and the last bars undercount.`,
+    growth: `${CAGR_YEARS}-year CAGR compares families with priority years ${CAGR_START} and ${CAGR_END}, the last year with every month published.`,
+    ranking: `The family list keeps the ${TOP_FAMILIES} largest families per technology by number of publishing offices (countries, EP, WO), then by number of publications.`,
     quality:
         "Quality filters: granted means some publication in the family is a grant (kind code B or C; utility models, kind U, never count). 2+ offices means the family was published by at least two offices other than WO (EP counts as one office), so the applicant paid for protection outside one market. US+EP+JP means published by all three of the US, European and Japanese offices (triadic).",
-    value: `Value vs volume counts families with priority years ${PATENT_YEARS[0]} to ${LANDSCAPE.completeThrough}. Chinese means applicant country CN; everyone else, including unknown, is non-Chinese.`,
-    areas: `Application areas come from CPC co-classification: a family is in an area when any of its codes matches the area's list in src/patents/application-areas.ts. It is a proxy for where a technology is used until citation data is added. The shift compares the share of families in ${LANDSCAPE.areaWindows.early.join("-")} with ${LANDSCAPE.areaWindows.late.join("-")}.`,
-    momentum: `Momentum compares families with priority years ${MOMENTUM_EARLY.join("-")} against ${MOMENTUM_LATE.join("-")}. Indexed sets each technology's yearly average over ${MOMENTUM_EARLY.join("-")} to 100. Outside China drops families whose applicant country is CN.`,
+    value: `Value vs volume counts families with priority years ${FIRST_YEAR} to ${COMPLETE_THROUGH}. Chinese means applicant country CN; everyone else, including unknown, is non-Chinese.`,
+    areas: `Application areas come from CPC co-classification: a family is in an area when any of its codes matches the area's list in src/patents/application-areas.ts. It is a proxy for where a technology is used until citation data is added. The shift compares the share of families in ${yearSpan(LANDSCAPE.areaWindows.early)} with ${yearSpan(LANDSCAPE.areaWindows.late)}.`,
+    momentum: `Momentum compares families with priority years ${yearSpan(MOMENTUM_EARLY)} against ${yearSpan(MOMENTUM_LATE)}. Indexed sets each technology's yearly average over ${yearSpan(MOMENTUM_EARLY)} to 100. Outside China drops families whose applicant country is CN.`,
     crossCheck:
         "Not yet cross-checked against Lens.org: the build environment had no route to it. A count comparison per technology is still to do.",
 } as const;
