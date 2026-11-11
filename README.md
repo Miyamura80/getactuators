@@ -137,7 +137,7 @@ Requires [Bun](https://bun.sh).
 
 ```bash
 make setup                        # install root dependencies
-bun add -g prek && prek install   # enable the git hooks in prek.toml
+uv tool install prek && prek install  # enable the git hooks in prek.toml
 
 # Run the site locally: build the frontend, then start the Bun server
 cd frontend && bun install && bun run build && cd ..
