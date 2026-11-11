@@ -33,6 +33,7 @@ const PAGES = [
     "/benchmarks",
     "/trends",
     "/prices",
+    "/patents",
 ];
 
 const DATASETS = [

@@ -141,6 +141,12 @@ export const DATA_SURFACES: readonly DataSurface[] = [
         rest: "/api/v1/prices/{actuatorId}",
     },
     {
+        label: "Actuator patent landscape",
+        page: "/patents",
+        mcp: "get_patent_landscape",
+        rest: "/api/v1/patents/{technology}",
+    },
+    {
         label: "Trends over time",
         page: "/trends",
         mcp: "get_trends",

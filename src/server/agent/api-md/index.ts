@@ -32,6 +32,7 @@ import {
     listMetals,
     listProcesses,
 } from "./materials";
+import { getPatentLandscapeMd } from "./patents";
 import { getPriceHistoryMd } from "./prices";
 import { apiMarkdownPath, filterSummary } from "./shared";
 import {
@@ -129,6 +130,7 @@ const RENDERERS: Record<string, Renderer> = {
     list_people: listPeople,
     list_trends: listTrends,
     get_price_history: getPriceHistoryMd,
+    get_patent_landscape: getPatentLandscapeMd,
     get_person: getPerson,
 };
 

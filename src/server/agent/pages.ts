@@ -30,6 +30,7 @@ import {
     robotsBody,
     topBy,
 } from "./pages-md";
+import { PATENTS_PAGE } from "./patents/page";
 import { PEOPLE_PAGE } from "./people/page";
 import { PRICES_PAGE } from "./prices/page";
 import { SDK_PAGE } from "./sdk";
@@ -170,6 +171,7 @@ const STATIC_PAGES: Page[] = [
     PEOPLE_PAGE,
     TRENDS_PAGE,
     PRICES_PAGE,
+    PATENTS_PAGE,
     sub(
         PATHS.agentsPage,
         "spa",

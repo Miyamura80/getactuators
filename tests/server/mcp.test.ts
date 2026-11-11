@@ -48,6 +48,7 @@ const EXPECTED_TOOLS = [
     "get_bom",
     "get_trends",
     "get_price_history",
+    "get_patent_landscape",
 ];
 
 const usedActuator = ACTUATORS.find((a) => robotsUsingActuator(a.id).length > 0);

@@ -33,6 +33,7 @@ import { Trends } from "./pages/trends/Trends";
 import { TRENDS_PATH } from "../../src/trends";
 import { Prices } from "./pages/prices/Prices";
 import { PRICES_PATH } from "../../src/prices";
+import { PATENTS_PATH } from "../../src/patents/path";
 import { OPEN_SOURCE_PATH } from "../../src/open-source";
 import { Benchmarks } from "./pages/benchmarks/Benchmarks";
 import { BENCHMARKS_PATH } from "../../src/benchmarks";
@@ -96,6 +97,7 @@ function SdkLoading({ menuOpen }: { menuOpen: boolean }) {
 
 // /people carries the directory, its network layout and the map, so it
 // loads in its own chunk.
+const Patents = lazy(() => import("./pages/patents/Patents").then((m) => ({ default: m.Patents })));
 const People = lazy(() => import("./pages/people/People").then((m) => ({ default: m.People })));
 
 function PeopleLoading({ menuOpen }: { menuOpen: boolean }) {
@@ -103,6 +105,15 @@ function PeopleLoading({ menuOpen }: { menuOpen: boolean }) {
         <PublicHeader path={PEOPLE_PATH} initialOpen={menuOpen} />
         <main className="tool-main" aria-busy="true">
             <p role="status">Loading people</p>
+        </main>
+    </div>;
+}
+
+function PatentsLoading({ menuOpen }: { menuOpen: boolean }) {
+    return <div className="tool-page">
+        <PublicHeader path={PATENTS_PATH} initialOpen={menuOpen} />
+        <main className="tool-main" aria-busy="true">
+            <p role="status">Loading patents</p>
         </main>
     </div>;
 }
@@ -127,6 +138,7 @@ function Page({ menuOpen }: { menuOpen: boolean }) {
     if (path === OPEN_SOURCE_PATH) return <OpenSource menuOpen={menuOpen} />;
     if (path === TRENDS_PATH) return <Trends menuOpen={menuOpen} />;
     if (path === PRICES_PATH) return <Prices menuOpen={menuOpen} />;
+    if (path === PATENTS_PATH) return <Suspense fallback={<PatentsLoading menuOpen={menuOpen} />}><Patents menuOpen={menuOpen} /></Suspense>;
     if (path === BENCHMARKS_PATH) return <Benchmarks menuOpen={menuOpen} />;
     if (path === MANUFACTURING_PATH) return <Suspense fallback={<ManufacturingLoading menuOpen={menuOpen} />}><Manufacturing menuOpen={menuOpen} /></Suspense>;
     if (path === BOM_PATH || path.startsWith(`${BOM_PATH}/`)) return <Suspense fallback={<BomLoading menuOpen={menuOpen} />}><Bom menuOpen={menuOpen} /></Suspense>;

@@ -56,6 +56,12 @@ import {
 } from "./open-robots";
 import { ActuatorListParams, CompareQueryParams, RobotListParams } from "./params";
 import {
+    PATENT_SCOPES,
+    PatentLandscapeSchema,
+    PatentParams,
+    patentLandscapeHandler,
+} from "./patents";
+import {
     PeopleListParams,
     PeopleListSchema,
     PersonSchema,
@@ -487,6 +493,24 @@ export const OPERATIONS: Operation[] = [
         errors: [404],
         example: "/api/v1/prices/dynamixel-xm430-w350-t",
         handler: priceHistoryHandler,
+    },
+    {
+        operationId: "get_patent_landscape",
+        method: "GET",
+        path: "/api/v1/patents/:technology",
+        summary: "Patent landscape for one actuator technology",
+        description:
+            "Patent families since 2010 for one technology on /patents (or all of them): its reviewed CPC codes with rationale and keyword filters, families per priority year (the last 18 months flagged incomplete for publication lag), families per applicant country per year, the top 15 first assignees with their family count, share and 3-year CAGR, the share held by the top five, and the largest families with Google Patents links. Families are deduplicated by DOCDB family; data from Google Patents Public Datasets on BigQuery (CC BY 4.0).",
+        pathParam: {
+            name: "technology",
+            description: `Technology id: ${PATENT_SCOPES.join(", ")}.`,
+            example: "strain-wave",
+        },
+        query: PatentParams,
+        response: PatentLandscapeSchema,
+        errors: [400, 404],
+        example: "/api/v1/patents/strain-wave",
+        handler: patentLandscapeHandler,
     },
     {
         operationId: "list_humanoids",

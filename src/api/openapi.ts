@@ -145,7 +145,12 @@ function tagFor(path: string): string {
     )
         return "supply-chain";
     if (path.includes("/benchmarks")) return "actuators";
-    if (path.includes("/trends") || path.includes("/prices")) return "trends";
+    if (
+        path.includes("/trends") ||
+        path.includes("/prices") ||
+        path.includes("/patents")
+    )
+        return "trends";
     if (path.includes("/actuators")) return "actuators";
     if (path.includes("/sdk")) return "actuators";
     if (path.includes("/people")) return "people";
@@ -238,7 +243,7 @@ export function buildOpenApi(operations: readonly Operation[]): Json {
             {
                 name: "trends",
                 description:
-                    "Dated, cited points over time: per-actuator price history (/prices), actuator list prices, strain-wave gear rated life, humanoid and industrial robot market shares, the rotary and linear actuator split, roller screw cost, how fast AI and other technologies get cheaper, and humanoid battery runtime.",
+                    "Dated, cited points over time: per-actuator price history (/prices), patent families per technology and year (/patents), actuator list prices, strain-wave gear rated life, humanoid and industrial robot market shares, the rotary and linear actuator split, roller screw cost, how fast AI and other technologies get cheaper, and humanoid battery runtime.",
             },
             {
                 name: "people",
