@@ -16,7 +16,7 @@ import {
 import { AssigneeMap } from "./AssigneeMap";
 import { FamilyList } from "./FamilyList";
 import { Leaders } from "./Leaders";
-import { type StackBy, Stream } from "./Stream";
+import { COMPLETE_THROUGH, LAST_YEAR, type StackBy, Stream, type YearRange } from "./Stream";
 import "../tools.css";
 import "../trends/trends.css";
 import "./patents.css";
@@ -28,16 +28,25 @@ export const SCOPES: { id: LandscapeScope; label: string }[] = [
     ...TECHNOLOGIES.map((t) => ({ id: t.id as LandscapeScope, label: t.short })),
 ];
 
+const RANGES: { id: YearRange; label: string; title: string }[] = [
+    { id: "complete", label: `To ${COMPLETE_THROUGH}`, title: "Fully published priority years only" },
+    { id: "all", label: `To ${LAST_YEAR}`, title: "Include priority years that are still publishing" },
+];
+
 interface State {
     scope: LandscapeScope;
     by: StackBy;
+    range: YearRange;
 }
 
-// ?technology=<id> picks the scope; ?stack=technology stacks by technology.
+// ?technology=<id> picks the scope; ?stack=technology stacks by technology;
+// ?years=all adds the priority years that are still publishing.
 function readState(): State {
     const q = new URLSearchParams(window.location.search);
     const t = q.get("technology") ?? "";
-    return { scope: isLandscapeScope(t) ? t : "all", by: q.get("stack") === "technology" ? "technology" : "country" };
+    return { scope: isLandscapeScope(t) ? t : "all", by: q.get("stack") === "technology" ? "technology" : "country",
+        range: q.get("years") === "all" ? "all" : "complete",
+    };
 }
 
 function Section({ id, title, children, aside }: { id: string; title: string; children: ReactNode; aside?: ReactNode }) {
@@ -63,8 +72,10 @@ export function Patents({ menuOpen = false }: { menuOpen?: boolean }) {
         const q = new URLSearchParams(window.location.search);
         q.delete("technology");
         q.delete("stack");
+        q.delete("years");
         if (next.scope !== "all") q.set("technology", next.scope);
         if (next.by === "technology") q.set("stack", "technology");
+        if (next.range === "all") q.set("years", "all");
         const qs = q.toString();
         window.history.replaceState(window.history.state, "", `${PATENTS_PATH}${qs ? `?${qs}` : ""}`);
     };
@@ -84,12 +95,19 @@ export function Patents({ menuOpen = false }: { menuOpen?: boolean }) {
             </div>
             <p className="pt-scope-line" aria-live="polite"><b>{scopeLabel(state.scope)}</b>{tech ? ` · ${tech.scope}` : ""}</p>
 
-            <Section id="pt-stream" title="Families per priority year" aside={<div className="tr-toggle" role="group" aria-label="Stack by">
-                {(["country", "technology"] as const).map((b) => <button key={b} type="button" aria-pressed={state.by === b} onClick={() => update({ ...state, by: b })}>
-                    By {b}
-                </button>)}
+            <Section id="pt-stream" title="Families per priority year" aside={<div className="pt-toggles">
+                <div className="tr-toggle" role="group" aria-label="Years">
+                    {RANGES.map((r) => <button key={r.id} type="button" aria-pressed={state.range === r.id} title={r.title} onClick={() => update({ ...state, range: r.id })}>
+                        {r.label}
+                    </button>)}
+                </div>
+                <div className="tr-toggle" role="group" aria-label="Stack by">
+                    {(["country", "technology"] as const).map((b) => <button key={b} type="button" aria-pressed={state.by === b} onClick={() => update({ ...state, by: b })}>
+                        By {b}
+                    </button>)}
+                </div>
             </div>}>
-                <Stream scope={state.scope} by={state.by} />
+                <Stream scope={state.scope} by={state.by} range={state.range} />
             </Section>
 
             <Section id="pt-leaders" title="Top assignees" aside={<span className="pt-aside">{l.assignees.toLocaleString("en-US")} assignees</span>}>

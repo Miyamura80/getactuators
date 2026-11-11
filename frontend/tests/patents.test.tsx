@@ -3,7 +3,7 @@ import { afterEach, expect, test } from "bun:test";
 import { act, cleanup, fireEvent, render } from "@testing-library/react";
 import { mountApp } from "../src/startup";
 import { Patents, SCOPES } from "../src/pages/patents/Patents";
-import { BAND_COLORS, bandsFor } from "../src/pages/patents/Stream";
+import { BAND_COLORS, bandsFor, COMPLETE_THROUGH, LAST_YEAR, yearsFor } from "../src/pages/patents/Stream";
 import { hqBubbles } from "../src/pages/patents/AssigneeMap";
 import { LANDSCAPE, TECHNOLOGIES, familiesFor, leaderboard } from "../../src/patents";
 
@@ -40,7 +40,8 @@ test("renders the stream with a lag shade, the leaderboard and the family list",
     const c = view.container;
     expect(c.querySelectorAll(".pt-scopes button")).toHaveLength(SCOPES.length);
     expect(SCOPES).toHaveLength(TECHNOLOGIES.length + 1);
-    expect(c.querySelector(".pt-lag")).toBeTruthy();
+    // Defaults to fully published years only, so no lag shade.
+    expect(c.querySelector(".pt-lag")).toBeNull();
     expect(c.querySelectorAll(".pt-band")).toHaveLength(bandsFor("all", "country").length);
     expect(c.querySelectorAll(".pt-table tbody tr")).toHaveLength(15);
     expect(c.querySelector(".fk-tier")).toBeTruthy();
@@ -62,6 +63,23 @@ test("picking a technology and stacking by technology is kept in the URL", () =>
     expect(view.container.querySelectorAll(".pt-band").length).toBeLessThanOrEqual(BAND_COLORS.length);
     // The selected technology stays lit; the rest dim.
     expect(view.container.querySelectorAll(".pt-band.is-dim").length).toBe(bandsFor("strain-wave", "technology").length - 1);
+});
+
+test("the year toggle adds the still-publishing years and keeps it in the URL", () => {
+    setUrl("http://localhost:1/patents");
+    const view = render(<Patents />);
+    const rows = () => view.container.querySelectorAll(".pt-stream .sr-only tbody tr");
+    expect(rows()).toHaveLength(yearsFor("complete").length);
+    expect(yearsFor("complete").at(-1)).toBe(COMPLETE_THROUGH);
+    const toAll = [...view.container.querySelectorAll(".tr-toggle button")].find((b) => b.textContent === `To ${LAST_YEAR}`) as HTMLButtonElement;
+    fireEvent.click(toAll);
+    expect(window.location.search).toBe("?years=all");
+    expect(rows()).toHaveLength(yearsFor("all").length);
+    expect(view.container.querySelector(".pt-lag")).toBeTruthy();
+    view.unmount();
+    setUrl("http://localhost:1/patents?years=all");
+    const again = render(<Patents />);
+    expect(again.container.querySelector(".pt-lag")).toBeTruthy();
 });
 
 test("search filters the families and reads ?technology on load", () => {

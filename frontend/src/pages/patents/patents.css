@@ -24,6 +24,7 @@
 .pt-sec { margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--line); min-width: 0; }
 .pt-sec-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin-bottom: 12px; }
 .pt-sec-head h2 { margin: 0; font-size: 18px; }
+.pt-toggles { display: flex; flex-wrap: wrap; gap: 8px 12px; }
 .pt-aside { font: 11px var(--mono); color: var(--tr-faint); }
 
 /* Filings stream */
