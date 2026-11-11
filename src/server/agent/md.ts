@@ -75,6 +75,15 @@ export function bullets(items: string[]): string {
     return items.map((i) => `- ${i}`).join("\n");
 }
 
+// A numbered source list: "1. [title](url) (reuse)".
+export function sourcesList(
+    sources: readonly { title: string; url: string; reuse: string }[],
+): string {
+    return sources
+        .map((s, i) => `${i + 1}. ${mdLink(s.title, s.url)} (${s.reuse})`)
+        .join("\n");
+}
+
 // Number with unit, or "n/a" for unknown values.
 export function num(value: number | null | undefined, unit = "", digits = 1): string {
     if (value === null || value === undefined) return "n/a";

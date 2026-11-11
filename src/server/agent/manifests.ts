@@ -55,6 +55,7 @@ export function whenToUse(): string[] {
         "Look up one actuator's datasheet-level specs with source links before recommending it.",
         "See how actuator prices, humanoid market share, roller screw cost, AI prices and humanoid battery runtime have moved over time (/trends, MCP get_trends), with every point dated and cited.",
         "Check how one actuator's list price has moved, with the page, method and FX rate behind every point (/prices, MCP get_price_history, REST /api/v1/prices/{actuatorId}).",
+        "See who files patents in an actuator technology and where, deduplicated by patent family (/patents, MCP get_patent_landscape, REST /api/v1/patents/{technology}).",
         "Pick an open-source robot to build from (/open-source, MCP list_open_robots): how open its CAD, BOM, firmware and sim really are, its licence, cost and the actuators in its joints.",
     ];
 }

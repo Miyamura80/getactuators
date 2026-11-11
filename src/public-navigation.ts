@@ -95,6 +95,7 @@ export const FOOTER_GROUPS = [
             ["/people", "Leading people"],
             ["/trends", "Trends over time"],
             ["/prices", "Actuator price history"],
+            ["/patents", "Actuator patents"],
         ],
     },
     {

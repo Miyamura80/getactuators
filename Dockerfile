@@ -27,6 +27,9 @@ COPY src/trends ./src/trends
 # Price history (/prices): analysis code and the weekly snapshot points.
 COPY src/prices ./src/prices
 COPY data/prices ./data/prices
+# Patent landscape (/patents): technology code sets and the committed aggregates.
+COPY src/patents ./src/patents
+COPY data/patents ./data/patents
 # Measured benchmark runs (/benchmarks, Measured panel, /compare overlay).
 COPY src/benchmarks ./src/benchmarks
 COPY data/benchmarks ./data/benchmarks
@@ -48,6 +51,7 @@ COPY frontend/src/data ./frontend/src/data
 COPY src ./src
 COPY data/benchmarks ./data/benchmarks
 COPY data/prices ./data/prices
+COPY data/patents ./data/patents
 # Served as-is by src/server/routes: the agent skill and the og:images.
 COPY skills ./skills
 COPY media/og-image.png media/og-startups.png media/og-investors.png ./media/
