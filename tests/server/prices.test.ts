@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { PriceHistorySchema } from "@/api/prices";
 import { ActuatorSchema } from "@/api/schemas";
-import { actuatorsWithHistory, historyFor } from "@/prices";
+import { actuatorsWithHistory, historyFor, yearChange } from "@/prices";
 import { get as getShared } from "./agent-helpers";
 import { callTool } from "./mcp-helpers";
 
@@ -78,7 +78,9 @@ describe("REST /api/v1/prices/{actuatorId}", () => {
             /^https:\/\/.+\/actuators\/dynamixel-xm430-w350-t$/,
         );
         expect(h.latest?.price_usd).toBeGreaterThan(0);
-        expect(h.change_1y?.from_date).toBe("2024-02");
+        expect(h.change_1y?.from_date).toBe(
+            yearChange("dynamixel-xm430-w350-t")?.from.date,
+        );
         expect(h.url).toMatch(/\/prices\?actuator=dynamixel-xm430-w350-t$/);
     });
 

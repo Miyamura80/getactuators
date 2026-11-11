@@ -85,10 +85,26 @@ describe("merged history", () => {
     });
 
     test("1-year change carries the last earlier price forward", () => {
-        const yc = yearChange("dynamixel-xm430-w350-t");
-        expect(yc?.from.date).toBe("2024-02");
-        expect(yc?.change).toBeCloseTo(290 / 269.9 - 1, 6);
-        expect(yearChange("cubemars-ak10-9")).toBeNull();
+        // Expected values come from the history itself, so the test holds as
+        // weekly snapshots and back-fills add points.
+        for (const id of actuatorsWithHistory()) {
+            const priced = historyFor(id).filter((p) => !p.outOfStock);
+            const to = priced.at(-1);
+            const yc = yearChange(id);
+            if (!to) {
+                expect(yc).toBeNull();
+                continue;
+            }
+            const cutoff = yearFraction(to.date) - 1 + 1e-9;
+            const from = priced.filter((p) => yearFraction(p.date) <= cutoff).at(-1);
+            if (!from) {
+                expect({ id, yc }).toEqual({ id, yc: null });
+                continue;
+            }
+            expect({ id, from: yc?.from.date }).toEqual({ id, from: from.date });
+            expect(yc?.change).toBeCloseTo(to.priceUsd / from.priceUsd - 1, 6);
+        }
+        expect(yearChange("dynamixel-xm430-w350-t")).not.toBeNull();
     });
 
     test("fractional years", () => {
