@@ -135,10 +135,14 @@ function IndexChart({ rows, scope, onPick }: { rows: MomentumRow[]; scope: Lands
     </div>;
 }
 
-// Show or hide technologies: a chip per technology in its colour, plus All.
+// Show or hide technologies, folded under an Advanced disclosure: a chip per
+// technology in its colour, plus Show all / Hide all.
 function Picker({ hidden, onHidden }: { hidden: readonly string[]; onHidden: (h: string[]) => void }) {
     const toggle = (id: string) => onHidden(hidden.includes(id) ? hidden.filter((h) => h !== id) : [...hidden, id]);
-    return <div className="pt-pick" role="group" aria-label="Show technologies">
+    const shown = TECHNOLOGIES.length - hidden.length;
+    return <details className="pt-adv">
+        <summary>Advanced: pick technologies <span>{shown} of {TECHNOLOGIES.length} shown</span></summary>
+        <div className="pt-pick" role="group" aria-label="Show technologies">
         {TECHNOLOGIES.map((t) => {
             const on = !hidden.includes(t.id);
             return <button key={t.id} type="button" aria-pressed={on} onClick={() => toggle(t.id)} style={{ "--tc": techColor(t.id) } as React.CSSProperties}>
@@ -146,7 +150,8 @@ function Picker({ hidden, onHidden }: { hidden: readonly string[]; onHidden: (h:
             </button>;
         })}
         <button type="button" className="pt-pick-all" onClick={() => onHidden(hidden.length ? [] : TECHNOLOGIES.map((t) => t.id))}>{hidden.length ? "Show all" : "Hide all"}</button>
-    </div>;
+        </div>
+    </details>;
 }
 
 export function Momentum({ scope, view, applicants, hidden = [], onHidden = () => {}, onPick }: {

@@ -242,12 +242,14 @@ test("technologies can be hidden and shown, kept in ?hide", () => {
     const view = render(<Patents />);
     const c = view.container;
     const chip = (label: string) => [...c.querySelectorAll(".pt-pick button")].find((b) => b.textContent === label) as HTMLButtonElement;
+    expect(c.querySelector(".pt-adv summary")?.textContent).toContain(`${TECHNOLOGIES.length} of ${TECHNOLOGIES.length} shown`);
     expect(c.querySelectorAll(".pt-pick button[aria-pressed]")).toHaveLength(TECHNOLOGIES.length);
     fireEvent.click(chip("RE-free magnets"));
     fireEvent.click(chip("Robot joints"));
     expect(chip("RE-free magnets").getAttribute("aria-pressed")).toBe("false");
     expect(new URLSearchParams(window.location.search).get("hide")).toBe("re-free-magnets,robot-joints");
     expect(c.querySelectorAll(".pt-index-line")).toHaveLength(TECHNOLOGIES.length - 2);
+    expect(c.querySelector(".pt-adv summary")?.textContent).toContain(`${TECHNOLOGIES.length - 2} of ${TECHNOLOGIES.length} shown`);
     fireEvent.click(toggle(c, "Momentum view", "Tiles"));
     expect(c.querySelectorAll(".pt-tile")).toHaveLength(TECHNOLOGIES.length - 2);
     fireEvent.click(chip("Show all"));
