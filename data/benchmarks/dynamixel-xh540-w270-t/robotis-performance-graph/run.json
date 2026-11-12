@@ -11,7 +11,7 @@
     "dataMethod": "digitised",
     "independence": "vendor",
     "independenceNote": "Speed-torque graph from ROBOTIS's own e-Manual.",
-    "methodNote": "Speed and efficiency read off the e-Manual's N-T graph (about 0.1 N·m reading error). The graph does not print its voltage; the 12 V rating is assumed. The reading error is stated for torque only; our reading errors for speed and efficiency are not quantified.",
+    "methodNote": "Speed and efficiency read off the e-Manual's N-T graph, which ROBOTIS measures under a gradually increasing load. Re-read in November 2026 by pixel position from the graph image the e-Manual page shows: about 0.1 N·m on torque, ±0.5 rpm on speed and ±1 point on efficiency. The graph does not print its voltage; the 12 V rating is assumed.",
     "rig": {
         "torqueSensor": "not stated",
         "accuracyPct": null,
@@ -22,53 +22,54 @@
     },
     "torqueSpeed": [
         {
-            "rpm": 4.5,
+            "rpm": 3.1,
             "torqueNm": 8.1,
-            "efficiency": 0.07
+            "efficiency": 0.04
         },
         {
-            "rpm": 7.7,
+            "rpm": 8,
             "torqueNm": 7.2,
-            "efficiency": 0.12
+            "efficiency": 0.13
         },
         {
-            "rpm": 11.5,
+            "rpm": 12.5,
             "torqueNm": 6.3,
-            "efficiency": 0.2
+            "efficiency": 0.21
         },
         {
-            "rpm": 16.5,
+            "rpm": 16.8,
             "torqueNm": 5.4,
             "efficiency": 0.29
         },
         {
-            "rpm": 21.5,
+            "rpm": 20.7,
             "torqueNm": 4.5,
             "efficiency": 0.37
         },
         {
-            "rpm": 24.8,
+            "rpm": 24.5,
             "torqueNm": 3.6,
             "efficiency": 0.43
         },
         {
-            "rpm": 28.3,
+            "rpm": 28.1,
             "torqueNm": 2.7,
             "efficiency": 0.48
         },
         {
             "rpm": 31.4,
             "torqueNm": 1.8,
-            "efficiency": 0.47
+            "efficiency": 0.46
         },
         {
             "rpm": 36.3,
             "torqueNm": 0.36,
-            "efficiency": 0.26
+            "efficiency": 0.27
         }
     ],
     "uncertainty": {
-        "torqueSpeed": 0.1
+        "torqueSpeed": 0.1,
+        "efficiency": 0.01
     },
     "note": "Same frame as the XM540-W270 with a different motor; the graph reaches 8.1 N·m against a 9.9 N·m stall figure."
 }

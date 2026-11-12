@@ -11,7 +11,7 @@
     "dataMethod": "digitised",
     "independence": "vendor",
     "independenceNote": "Speed-torque graph from ROBOTIS's own e-Manual.",
-    "methodNote": "Speed and efficiency read off the e-Manual's N-T graph (about 0.1 N·m reading error). The graph does not print its voltage; the 12 V rating is assumed. The reading error is stated for torque only; our reading errors for speed and efficiency are not quantified.",
+    "methodNote": "Speed and efficiency read off the e-Manual's N-T graph, which ROBOTIS measures under a gradually increasing load. Re-read in November 2026 by pixel position from the graph image the e-Manual page shows: about 0.1 N·m on torque, ±0.5 rpm on speed and ±1 point on efficiency. The graph does not print its voltage; the 12 V rating is assumed.",
     "rig": {
         "torqueSensor": "not stated",
         "accuracyPct": null,
@@ -22,58 +22,59 @@
     },
     "torqueSpeed": [
         {
-            "rpm": 1.5,
+            "rpm": 2.2,
             "torqueNm": 8.6,
-            "efficiency": 0.06
+            "efficiency": 0.05
         },
         {
-            "rpm": 4.5,
+            "rpm": 5,
             "torqueNm": 8,
             "efficiency": 0.12
         },
         {
-            "rpm": 9.5,
+            "rpm": 9,
             "torqueNm": 7,
             "efficiency": 0.21
         },
         {
-            "rpm": 13.5,
+            "rpm": 12.6,
             "torqueNm": 6,
-            "efficiency": 0.29
+            "efficiency": 0.28
         },
         {
-            "rpm": 17,
+            "rpm": 16,
             "torqueNm": 5,
-            "efficiency": 0.36
+            "efficiency": 0.35
         },
         {
-            "rpm": 20.5,
+            "rpm": 19,
             "torqueNm": 4,
-            "efficiency": 0.41
+            "efficiency": 0.4
         },
         {
-            "rpm": 23.5,
+            "rpm": 21.9,
             "torqueNm": 3,
-            "efficiency": 0.45
+            "efficiency": 0.44
         },
         {
-            "rpm": 26,
+            "rpm": 24.7,
             "torqueNm": 2,
             "efficiency": 0.46
         },
         {
-            "rpm": 28,
+            "rpm": 27.3,
             "torqueNm": 1,
             "efficiency": 0.4
         },
         {
-            "rpm": 29.5,
+            "rpm": 28.8,
             "torqueNm": 0.4,
-            "efficiency": 0.28
+            "efficiency": 0.29
         }
     ],
     "uncertainty": {
-        "torqueSpeed": 0.1
+        "torqueSpeed": 0.1,
+        "efficiency": 0.01
     },
-    "note": "Peak efficiency is about 46% near 2 N·m and falls under 10% at the top of the curve. Efficiency near stall reads unreliably: the 0.06 at 1.5 rpm implies less electrical input than the 4.5 rpm point at lower torque, which is unlikely. We could not re-check the graph, so treat the lowest-speed efficiencies as approximate."
+    "note": "Peak efficiency is about 46% near 2 N·m and falls to about 5% at the top of the curve."
 }

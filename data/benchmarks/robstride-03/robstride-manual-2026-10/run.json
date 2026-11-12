@@ -42,11 +42,11 @@
             "torqueNm": 28.5
         },
         {
-            "rpm": 186,
+            "rpm": 187,
             "torqueNm": 20
         },
         {
-            "rpm": 187,
+            "rpm": 188,
             "torqueNm": 10
         }
     ],
@@ -80,5 +80,5 @@
         "torqueSpeed": 1,
         "thermal": 0.5
     },
-    "note": "Vendor test data. The chart stops near 187 rpm at 10 N·m, short of the 200 rpm no-load speed the same manual states. The last two points drop 10 N·m within 1 rpm; we could not re-check that against the chart, so treat the end of the curve as approximate."
+    "note": "Vendor test data. The chart ends at about 188 rpm, short of the 200 rpm no-load speed the same manual states: below about 18 N·m the curve drops straight down at that speed to the chart's 10 N·m floor."
 }

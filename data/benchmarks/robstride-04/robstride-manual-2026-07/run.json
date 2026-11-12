@@ -15,7 +15,7 @@
     "rig": {
         "torqueSensor": "not stated",
         "accuracyPct": null,
-        "encoder": "actuator's own dual 14-bit magnetic encoders",
+        "encoder": "actuator's own 14-bit absolute magnetic encoder",
         "ambientC": 25,
         "busV": 48,
         "controller": "built-in RobStride driver"
@@ -31,27 +31,27 @@
         },
         {
             "rpm": 130,
-            "torqueNm": 96
+            "torqueNm": 95
         },
         {
             "rpm": 150,
-            "torqueNm": 79
+            "torqueNm": 78
         },
         {
             "rpm": 155,
-            "torqueNm": 70
+            "torqueNm": 68.5
         },
         {
             "rpm": 170,
-            "torqueNm": 53
+            "torqueNm": 52.5
         },
         {
             "rpm": 180,
-            "torqueNm": 47
+            "torqueNm": 45
         },
         {
             "rpm": 186,
-            "torqueNm": 38
+            "torqueNm": 35.5
         },
         {
             "rpm": 190,
