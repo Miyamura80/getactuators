@@ -1,0 +1,37 @@
+{
+    "actuatorId": "myactuator-rmd-x8-pro-v2",
+    "runId": "sea-retrofit-2026",
+    "date": "2026-05",
+    "origin": "published",
+    "sourceKind": "paper",
+    "source": {
+        "url": "https://arxiv.org/abs/2605.24127",
+        "title": "arXiv 2605.24127: Investigating the effect of a series elastic actuation retrofit to black-box actuators"
+    },
+    "dataMethod": "tabulated",
+    "independence": "independent",
+    "independenceNote": "Academic paper by Tregear, Aktas and Rodriguez y Baena (Rodriguez y Baena leads a robotics lab at Imperial College London); the actuator is treated as a bought-in black box and no MyActuator tie was found. Funding and any competing-interest statement were not checked because the full text was unreachable when this run was added.",
+    "revision": "RMD X8-V2 with 9:1 reduction as the paper names it; its quoted 2.09 N·m/A torque constant matches retail listings for the plain X8 V2, not the X8 Pro V2 manual (2.60 N·m/A)",
+    "otherRevision": true,
+    "methodNote": "Backlash from the paper's specification table (measured 0.3336°, rounded to 0.334° in the text), entered as 20.0 arcmin. The motor was locked under holding torque and the output turned by hand while an AS5311 magnetic encoder (about 1.1e-5 rad per pulse) logged the travel. The paper states no uncertainty for the figure: ±2 arcmin is our estimate for a hand-loaded reading on one unit.",
+    "rig": {
+        "torqueSensor": "not stated (output turned by hand; no torque reading for the backlash test)",
+        "accuracyPct": null,
+        "encoder": "AS5311 magnetic encoder on the output",
+        "ambientC": null,
+        "busV": null,
+        "controller": "RMD X8-V2 built-in driver"
+    },
+    "backlashArcmin": 20,
+    "claims": [
+        {
+            "metric": "backlashArcmin",
+            "value": 5,
+            "source": "MyActuator figure of 0.083° (about 5 arcmin) as quoted in the paper's specification table; the maker's own document was not checked for this run"
+        }
+    ],
+    "uncertainty": {
+        "backlashArcmin": 2
+    },
+    "note": "About four times the advertised backlash. The authors put it down to fretting of the gear teeth from vibration, likely in shipping, and leave backlash out of their later analysis. The paper also re-measured the torque constant at 1.393 N·m/A against 2.09 N·m/A quoted."
+}

@@ -481,7 +481,7 @@ describe("benchmark validator", () => {
 });
 
 describe("seeded benchmark data", () => {
-    test("16 catalog actuators, every published run linked to a registered source", () => {
+    test("17 catalog actuators, every published run linked to a registered source", () => {
         expect(benchmarkedIds().sort()).toEqual([
             "cubemars-ak80-9",
             "dynamixel-xc430-w150-t",
@@ -492,6 +492,7 @@ describe("seeded benchmark data", () => {
             "feetech-sts3215",
             "feetech-sts3250",
             "mjbots-qdd100",
+            "myactuator-rmd-x8-pro-v2",
             "robstride-00",
             "robstride-01",
             "robstride-02",
@@ -517,7 +518,7 @@ describe("seeded benchmark data", () => {
             count("vendor"),
             count("vendor-affiliated"),
             count("independent"),
-        ]).toEqual([14, 4, 3]);
+        ]).toEqual([14, 4, 4]);
         for (const r of BENCHMARK_RUNS)
             expect(r.independenceNote.length, runKeyOf(r)).toBeGreaterThan(20);
         for (const r of BENCHMARK_RUNS.filter((x) =>

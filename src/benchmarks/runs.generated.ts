@@ -15,13 +15,14 @@ import r10 from "../../data/benchmarks/feetech-sts3250/robonine-servo-test/run.j
 import r11 from "../../data/benchmarks/mjbots-qdd100/mjbots-beta3-spec/run.json";
 import r12 from "../../data/benchmarks/mjbots-qdd100/mjbots-blog-2020-03/run.json";
 import r13 from "../../data/benchmarks/mjbots-qdd100/mjbots-blog-2020-08/run.json";
-import r14 from "../../data/benchmarks/robstride-00/robstride-manual-2026-07/run.json";
-import r15 from "../../data/benchmarks/robstride-01/robstride-manual-2026-07/run.json";
-import r16 from "../../data/benchmarks/robstride-02/robstride-manual-2026-07/run.json";
-import r17 from "../../data/benchmarks/robstride-03/robstride-manual-2026-10/run.json";
-import r18 from "../../data/benchmarks/robstride-04/robstride-manual-2026-07/run.json";
-import r19 from "../../data/benchmarks/steadywin-gim6010-8/hackaday-spider-bot-2025/run.json";
-import r20 from "../../data/benchmarks/xiaomi-cybergear/xiaomi-manual-2023/run.json";
+import r14 from "../../data/benchmarks/myactuator-rmd-x8-pro-v2/sea-retrofit-2026/run.json";
+import r15 from "../../data/benchmarks/robstride-00/robstride-manual-2026-07/run.json";
+import r16 from "../../data/benchmarks/robstride-01/robstride-manual-2026-07/run.json";
+import r17 from "../../data/benchmarks/robstride-02/robstride-manual-2026-07/run.json";
+import r18 from "../../data/benchmarks/robstride-03/robstride-manual-2026-10/run.json";
+import r19 from "../../data/benchmarks/robstride-04/robstride-manual-2026-07/run.json";
+import r20 from "../../data/benchmarks/steadywin-gim6010-8/hackaday-spider-bot-2025/run.json";
+import r21 from "../../data/benchmarks/xiaomi-cybergear/xiaomi-manual-2023/run.json";
 import type { BenchmarkRun } from "./types";
 
 export const RUNS = [
@@ -46,4 +47,5 @@ export const RUNS = [
     r18,
     r19,
     r20,
+    r21,
 ] as unknown as BenchmarkRun[];
