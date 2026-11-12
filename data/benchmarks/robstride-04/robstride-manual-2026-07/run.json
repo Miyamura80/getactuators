@@ -11,7 +11,7 @@
     "dataMethod": "digitised",
     "independence": "vendor",
     "independenceNote": "RobStride's own user manual (official GitHub org).",
-    "methodNote": "T-N points read off the manual's chart (about 2 N·m reading error). Overload times are the manual's table at 50 rpm on a 345 x 345 mm aluminium plate (GB/T 30549-2014), 145 °C winding limit. Thermal torques are the table's whole-N·m figures and the manual states no measurement uncertainty, so the ±0.5 N·m is that rounding only. windingRiseC is the rise from 25 °C ambient to the winding limit, entered only for points that reached it.",
+    "methodNote": "T-N points read off the manual's chart (about 2 N·m reading error). Overload times are the manual's table at 50 rpm on a 345 x 345 mm aluminium plate (GB/T 30549-2014), 145 °C winding limit. Thermal torques are the table's whole-N·m figures and the manual states no measurement uncertainty, so the ±0.5 N·m is that rounding only. windingRiseC is the rise from 25 °C ambient to the winding limit, entered only for points that reached it. Points re-checked in November 2026 by pixel analysis of the source chart image.",
     "rig": {
         "torqueSensor": "not stated",
         "accuracyPct": null,
@@ -31,31 +31,35 @@
         },
         {
             "rpm": 130,
-            "torqueNm": 96
+            "torqueNm": 95
         },
         {
             "rpm": 150,
-            "torqueNm": 79
+            "torqueNm": 78
         },
         {
             "rpm": 155,
-            "torqueNm": 70
+            "torqueNm": 68
         },
         {
             "rpm": 170,
-            "torqueNm": 53
+            "torqueNm": 52.5
         },
         {
             "rpm": 180,
-            "torqueNm": 47
+            "torqueNm": 45
         },
         {
             "rpm": 186,
-            "torqueNm": 38
+            "torqueNm": 35.5
+        },
+        {
+            "rpm": 188,
+            "torqueNm": 24
         },
         {
             "rpm": 190,
-            "torqueNm": 10
+            "torqueNm": 11
         }
     ],
     "thermal": [

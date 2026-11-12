@@ -11,7 +11,7 @@
     "dataMethod": "digitised",
     "independence": "vendor",
     "independenceNote": "Speed-torque graph from ROBOTIS's own e-Manual.",
-    "methodNote": "Speed and efficiency read off the e-Manual's N-T graph (about 0.02 N·m reading error). The graph does not print its voltage; the 12 V rating is assumed. The reading error is stated for torque only; our reading errors for speed and efficiency are not quantified.",
+    "methodNote": "Speed and efficiency read off the e-Manual's N-T graph (about 0.02 N·m reading error). The graph does not print its voltage; the 12 V rating is assumed. The reading error is stated for torque only; our reading errors for speed and efficiency are not quantified. Points re-checked in November 2026 by pixel analysis of the source chart image.",
     "rig": {
         "torqueSensor": "not stated",
         "accuracyPct": null,
@@ -22,42 +22,42 @@
     },
     "torqueSpeed": [
         {
-            "rpm": 7,
+            "rpm": 8.3,
             "torqueNm": 0.74,
-            "efficiency": 0.05
+            "efficiency": 0.06
         },
         {
-            "rpm": 22,
+            "rpm": 18.4,
             "torqueNm": 0.7,
-            "efficiency": 0.1
+            "efficiency": 0.11
         },
         {
-            "rpm": 40.5,
+            "rpm": 38.1,
             "torqueNm": 0.6,
-            "efficiency": 0.21
+            "efficiency": 0.22
         },
         {
-            "rpm": 52,
+            "rpm": 54.1,
             "torqueNm": 0.5,
-            "efficiency": 0.3
+            "efficiency": 0.31
         },
         {
-            "rpm": 61.5,
+            "rpm": 67.3,
             "torqueNm": 0.4,
             "efficiency": 0.38
         },
         {
-            "rpm": 72.5,
+            "rpm": 78.9,
             "torqueNm": 0.3,
-            "efficiency": 0.44
+            "efficiency": 0.43
         },
         {
-            "rpm": 82,
+            "rpm": 89.7,
             "torqueNm": 0.2,
             "efficiency": 0.46
         },
         {
-            "rpm": 91,
+            "rpm": 99.7,
             "torqueNm": 0.09,
             "efficiency": 0.37
         }
