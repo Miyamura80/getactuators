@@ -10,6 +10,7 @@ import { CompanyLogo } from "../components/CompanyLogo";
 import { CountryFlag } from "../components/CountryFlag";
 import { SdkBadge } from "./sdk/SdkBadge";
 import { PriceSparkline } from "../components/prices/PriceSparkline";
+import { RelatedPanel } from "../components/related/RelatedPanel";
 
 interface Props {
     id: string;
@@ -160,6 +161,7 @@ export function ExplodedView({ id, menuOpen = false }: Props) {
             </div>
             <EngineeringEvidencePanel id={id} />
             <MeasuredPanel id={id} />
+            <RelatedPanel actuator={actuator} />
         </div>
     );
 }
