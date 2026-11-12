@@ -48,6 +48,29 @@
     color: #aaa;
     font-size: 13px;
 }
+/* Narrow desktops: tighter links keep the nav and both dropdowns on one row. */
+@media (min-width: 861px) and (max-width: 1120px) {
+    .site-header {
+        gap: 16px;
+    }
+    .site-menu > nav {
+        gap: 0;
+    }
+    .site-menu > nav > a,
+    .site-sub > summary {
+        padding-inline: 7px;
+    }
+}
+@media (min-width: 861px) and (max-width: 1000px) {
+    .site-header .alpha-tag {
+        display: none;
+    }
+    .site-menu > nav > a,
+    .site-sub > summary {
+        padding-inline: 5px;
+        font-size: 12px;
+    }
+}
 .site-menu a:hover,
 .site-menu a[aria-current="page"] {
     background: #242424;

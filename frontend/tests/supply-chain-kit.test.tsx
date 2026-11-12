@@ -84,7 +84,7 @@ test("supply-chain menu lists live pages only", () => {
     // Country pages join once their dataset passes the coverage gate.
     expect([...SUPPLY_CHAIN_PAGES_LIVE]).toEqual(["/metals", "/policy", "/manufacturing", "/alts", "/bom", "/japan", "/china", "/korea", "/us"]);
     const view = render(<PublicHeader path="/" />);
-    expect([...view.container.querySelectorAll(".site-sub-panel a")].map((a) => a.getAttribute("href"))).toEqual(["/metals", "/policy", "/bom", "/manufacturing", "/alts", "/japan", "/china", "/korea", "/us"]);
+    expect([...view.container.querySelectorAll("[data-menu=supply-chain] .site-sub-panel a")].map((a) => a.getAttribute("href"))).toEqual(["/metals", "/policy", "/bom", "/manufacturing", "/alts", "/japan", "/china", "/korea", "/us"]);
     cleanup();
     expect(supplyChainMenu(false, new Set())).toEqual([]);
     expect(supplyChainMenu(false, new Set(["/metals"]))).toEqual([
@@ -92,7 +92,7 @@ test("supply-chain menu lists live pages only", () => {
     ]);
     const preview = render(<PublicHeader path="/lab/supply-chain" supplyChainPreview />);
     expect(preview.container.querySelectorAll(".site-sub-soon")).toHaveLength(0);
-    expect(preview.container.querySelectorAll(".site-sub-panel a")).toHaveLength(9);
+    expect(preview.container.querySelectorAll("[data-menu=supply-chain] .site-sub-panel a")).toHaveLength(9);
 });
 
 test("lab page renders every kit component", () => {
