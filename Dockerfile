@@ -35,6 +35,8 @@ COPY src/benchmarks ./src/benchmarks
 COPY data/benchmarks ./data/benchmarks
 # The /sdk scores, checks and evidence (page, badge and shared sources).
 COPY src/sdk ./src/sdk
+# Actuator page Related panel (humanoid and patent links).
+COPY src/related ./src/related
 # Logo.dev publishable key (public), baked into the bundle; unset draws monograms.
 ARG VITE_LOGO_DEV_TOKEN=""
 ENV VITE_LOGO_DEV_TOKEN=$VITE_LOGO_DEV_TOKEN
