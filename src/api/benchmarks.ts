@@ -1,4 +1,4 @@
-import { BENCHMARK_ORIGINS, runsFor } from "@/benchmarks";
+import { BENCHMARK_INDEPENDENCE, BENCHMARK_ORIGINS, runsFor } from "@/benchmarks";
 import { benchmarkListOut, benchmarkListView } from "@/benchmarks/views";
 import { ACTUATORS } from "@/catalog";
 import { z } from "zod";
@@ -23,6 +23,10 @@ export const BenchmarkListParams = z.object({
         .enum(BENCHMARK_ORIGINS)
         .optional()
         .describe("published, lab or community."),
+    independence: z
+        .enum(BENCHMARK_INDEPENDENCE)
+        .optional()
+        .describe("vendor, vendor-affiliated or independent."),
 });
 
 // Data behind each endpoint, shared with its markdown twin (api-md.ts).
@@ -31,6 +35,7 @@ export function benchmarkList({ url }: ApiContext) {
     return benchmarkListView(ACTUATORS, {
         actuatorId: q.actuator_id,
         origin: q.origin,
+        independence: q.independence,
     });
 }
 

@@ -577,7 +577,7 @@ export const OPERATIONS: Operation[] = [
         path: "/api/v1/benchmarks",
         summary: "List measured actuator runs",
         description:
-            "Measured performance from /benchmarks: torque-speed curves, thermal derating, backlash, friction and control figures from published tests (papers, vendor test reports, blogs) and community runs submitted by pull request. Each run carries its rig, data method (raw, tabulated, digitised or reported), uncertainty per metric, source and the gap to the datasheet. Filter by actuator_id or origin.",
+            "Measured performance from /benchmarks: torque-speed curves, thermal derating, backlash, friction and control figures from published tests (papers, vendor test reports, blogs) and community runs submitted by pull request. Each run carries its rig, data method (raw, tabulated, digitised or reported), uncertainty per metric, source, independence (vendor, vendor-affiliated or independent) and the gap to the datasheet; only independent runs get a verdict. Filter by actuator_id, origin or independence.",
         query: BenchmarkListParams,
         response: BenchmarkListSchema,
         errors: [400],

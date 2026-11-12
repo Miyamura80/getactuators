@@ -19,6 +19,42 @@ export type BenchmarkSourceKind = (typeof SOURCE_KINDS)[number];
 export const DATA_METHODS = ["raw", "tabulated", "digitised", "reported"] as const;
 export type DataMethod = (typeof DATA_METHODS)[number];
 
+// Who stands behind the numbers. Only independent runs get a verdict against
+// the datasheet: the maker's own test (vendor) or a test by someone who sells
+// products built on the actuator (vendor-affiliated) is shown without one.
+export const BENCHMARK_INDEPENDENCE = [
+    "vendor",
+    "vendor-affiliated",
+    "independent",
+] as const;
+export type BenchmarkIndependence = (typeof BENCHMARK_INDEPENDENCE)[number];
+
+export const INDEPENDENCE_LABEL: Record<BenchmarkIndependence, string> = {
+    vendor: "Vendor",
+    "vendor-affiliated": "Vendor-affiliated",
+    independent: "Independent",
+};
+
+// How a datasheet value is meant: a typical figure, or an upper limit
+// ("0.5° or less") that a measurement can only stay within or exceed.
+export const CLAIM_BOUNDS = ["typical", "max"] as const;
+export type ClaimBound = (typeof CLAIM_BOUNDS)[number];
+
+// Run metrics a datasheet claim in run.json can be set against.
+export const CLAIM_METRICS = ["peakTorqueNm", "noLoadRpm", "backlashArcmin"] as const;
+export type ClaimMetric = (typeof CLAIM_METRICS)[number];
+
+// A datasheet value the catalog does not carry, as the run's source quotes it.
+export interface DatasheetClaim {
+    metric: ClaimMetric;
+    value: number;
+    // Where the value comes from, and whether the maker's own document was
+    // checked.
+    source: string;
+    // Omitted means "typical".
+    bound?: ClaimBound;
+}
+
 export interface BenchmarkRig {
     torqueSensor: string;
     // Accuracy class of the torque transducer, % of full scale. Null when a
@@ -59,6 +95,10 @@ export interface BenchmarkRun {
     // GitHub handle, community runs only.
     submitter?: string;
     dataMethod: DataMethod;
+    independence: BenchmarkIndependence;
+    // The evidence for `independence`: who ran the test and any tie to the
+    // maker or a seller.
+    independenceNote: string;
     // How the numbers were taken or read, in our own words.
     methodNote?: string;
     // Hardware revision or variant tested, when it differs from the catalog
@@ -87,6 +127,9 @@ export interface BenchmarkRun {
     // thermal curves), keyed by metric name, plus `efficiency` (a fraction)
     // when the T-N points carry efficiency.
     uncertainty: Record<string, number>;
+    // Datasheet values to compare against when the catalog has none; a
+    // catalog value wins when both exist.
+    claims?: DatasheetClaim[];
     // Why a result outside the plausibility band is still right.
     plausibilityNote?: string;
     note?: string;

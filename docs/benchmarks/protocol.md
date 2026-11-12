@@ -63,6 +63,27 @@ Continuous torque on /benchmarks is the highest torque held for 600 s or without
 - The uncertainty combines the sensor's accuracy class at the reading and the spread of the repeats (2 standard deviations).
 - The raw readings go in `torque-speed.csv` (`rpm,torque_nm,efficiency`) and `thermal.csv` (`torque_nm,t_to_limit_s,winding_rise_c`), one row per reading, within the same bounds as `run.json`: speed, T-N torque and efficiency may be zero, thermal torque, time and winding rise must be above zero (**checked**). Every `run.json` point needs rows at its speed (within 0.5 rpm) or torque (within the thermal uncertainty): a T-N torque must be within its uncertainty of the rows' mean, and a thermal time and winding rise must lie within the rows' range, with blank times exactly for a continuous point (**checked**).
 
+## Independence
+
+Every run states who stands behind the numbers in `independence`, with the evidence in `independenceNote`: the author, employer, funding and any declared competing interest (**checked**: both required).
+
+| `independence` | Meaning | Datasheet vs measured |
+| --- | --- | --- |
+| `vendor` | The maker's own test: product page, manual, vendor blog or test report | No verdict; shown as "Maker-reported" |
+| `vendor-affiliated` | Run by a company or person with a commercial tie to the actuator, such as a reseller or a company selling a kit built on it | No verdict; shown as "Affiliated test" |
+| `independent` | No known tie to the maker or a seller | Verdict against the datasheet |
+
+When in doubt, pick the less independent label and say why in the note.
+
+## Datasheet claims and verdicts
+
+A run is set against the catalog's datasheet value for peak torque, continuous (rated) torque, no-load speed and backlash. When the catalog has none, `claims` can carry the value the run's source quotes: `{ "metric": "backlashArcmin", "value": 30, "source": "...", "bound": "max" }`, where `metric` is `peakTorqueNm`, `noLoadRpm` or `backlashArcmin` and must be a figure the run reports, once per metric (**checked**). Say in `source` where the value comes from and whether the maker's own document was checked. The catalog value wins when both exist.
+
+Only `independent` runs get a verdict. How it is set depends on the claim:
+
+- Typical value (`bound` omitted or `"typical"`): within 10% of the claim is "matches"; worse than that is "below datasheet"; better is "beats". For backlash, lower is better.
+- Maximum (`bound: "max"`, for any "or less" or "<=" figure): a measurement at or under the limit is "within spec", above it "over limit". A maximum is never "beaten".
+
 ## Plausibility
 
 The validator compares the highest torque anywhere in the run (the stated `peakTorqueNm` or any curve point, whichever is higher) with the catalog's datasheet peak. A ratio outside 0.3x to 1.5x usually means a unit slip (kg·cm for N·m) or a current limit set too low, and fails CI (**checked**) unless `plausibilityNote` explains why the result is real.
@@ -77,4 +98,4 @@ A published run cites a source registered in `src/benchmarks/sources.ts` with it
 
 When a source states no uncertainty, `methodNote` says so and gives the basis of the value entered: a reading error, the rounding of the printed figures, or our own estimate.
 
-Vendor test reports are the maker's own measurements. They are badged as vendor data and kept apart from independent tests in the text, though they are ranked alongside them. A run on hardware other than the catalog entry's revision sets `otherRevision` and is shown but not ranked. A run on the catalog revision that still should not stand for it (a driver limit rather than the actuator, or data the source appears to have copied from another model) sets `notRanked` to the reason, with the same effect.
+Vendor test reports are the maker's own measurements: they are labelled `vendor` (see Independence) and get no verdict, though they are ranked alongside other runs on the leaderboard, badged. A run on hardware other than the catalog entry's revision sets `otherRevision` and is shown but not ranked. A run on the catalog revision that still should not stand for it (a driver limit rather than the actuator, or data the source appears to have copied from another model) sets `notRanked` to the reason, with the same effect.

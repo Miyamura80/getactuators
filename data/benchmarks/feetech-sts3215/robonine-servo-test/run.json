@@ -9,6 +9,8 @@
         "title": "Robonine: Testing of Feetech STS3215 servomotor: backlash, repeatability and torque"
     },
     "dataMethod": "reported",
+    "independence": "vendor-affiliated",
+    "independenceNote": "Robonine blog test; Robonine sells Feetech-based arm kits.",
     "revision": "12 V, 1:345 (C018)",
     "methodNote": "Static load of about 3.5 kg on a 10 cm lever read on a scale, and repeated cycles to a fixed position read on the lever. The post carries no date, so the run is dated when it was read. The post states no uncertainties: ±0.2 N·m and ±2 arcmin are our estimates, not figures from the post.",
     "rig": {

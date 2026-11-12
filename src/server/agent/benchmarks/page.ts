@@ -4,7 +4,9 @@ import {
     BENCHMARK_ORIGINS,
     BENCHMARK_RUNS,
     type BenchmarkRun,
+    DELTA_METRICS,
     GROUP_LABEL,
+    INDEPENDENCE_LABEL,
     METRICS,
     PROTOCOL_URL,
     SUBMIT_URL,
@@ -44,32 +46,48 @@ function deltaTable(): string {
     return mdTable(
         [
             "Actuator",
-            "Datasheet peak",
-            "Measured peak",
+            "Metric",
+            "Datasheet",
+            "Measured",
             "Measured vs datasheet",
+            "Independence",
+            "Verdict",
             "Run",
-            "Origin",
         ],
-        rows.map((d) => [
-            actuatorLink(d.actuator.id),
-            fmt(d.peak?.datasheet, "N·m"),
-            fmt(d.peak?.measured, "N·m"),
-            d.peak ? formatRatio(d.peak.ratio) : "n/a",
-            runLink(d.run),
-            badge(d.run),
-        ]),
+        rows.map((d) => {
+            const m = DELTA_METRICS[d.metric];
+            return [
+                actuatorLink(d.actuator.id),
+                m.label,
+                `${d.bound === "max" ? "max " : ""}${fmt(d.datasheet, m.unit)}`,
+                fmt(d.measured, m.unit),
+                formatRatio(d.ratio),
+                INDEPENDENCE_LABEL[d.run.independence],
+                d.status,
+                runLink(d.run),
+            ];
+        }),
     );
 }
 
 function leaderboardTable(): string {
     return mdTable(
-        ["Rank", "Actuator", "Continuous torque", "Weight", "Measured N·m/kg", "Run"],
+        [
+            "Rank",
+            "Actuator",
+            "Continuous torque",
+            "Weight",
+            "Measured N·m/kg",
+            "Independence",
+            "Run",
+        ],
         measuredLeaderboard(ACTUATORS).map((row, i) => [
             String(i + 1),
             actuatorLink(row.actuator.id),
             fmt(row.continuousNm, "N·m"),
             `${row.weightG} g`,
             fmt(row.densityNmPerKg, "", 3),
+            INDEPENDENCE_LABEL[row.run.independence],
             runLink(row.run),
         ]),
     );
@@ -137,7 +155,12 @@ function runNotes(): string {
         const lines = [
             `Measured: ${mdText(metricLine(r).join("; "))}.`,
             r.methodNote ? `Method: ${mdText(r.methodNote)}` : "",
+            `Independence: ${INDEPENDENCE_LABEL[r.independence]}. ${mdText(r.independenceNote)}`,
             r.revision ? `Revision: ${mdText(r.revision)}` : "",
+            ...(r.claims ?? []).map(
+                (c) =>
+                    `Datasheet claim: ${METRICS[c.metric].label} ${c.bound === "max" ? "at most " : ""}${fmt(c.value, METRICS[c.metric].unit)} (${mdText(c.source)})`,
+            ),
             r.notRanked ? `Not ranked: ${mdText(r.notRanked)}` : "",
             r.plausibilityNote ? `Flagged: ${mdText(r.plausibilityNote)}` : "",
             r.note ? `Note: ${mdText(r.note)}` : "",
@@ -148,12 +171,22 @@ function runNotes(): string {
 
 function runsTable(): string {
     return mdTable(
-        ["Run", "Actuator", "Date", "Origin", "Method", "Groups", "Source"],
+        [
+            "Run",
+            "Actuator",
+            "Date",
+            "Origin",
+            "Independence",
+            "Method",
+            "Groups",
+            "Source",
+        ],
         BENCHMARK_RUNS.map((r) => [
             `\`${r.actuatorId}/${r.runId}\``,
             actuatorLink(r.actuatorId),
             r.date,
             badge(r),
+            INDEPENDENCE_LABEL[r.independence],
             r.dataMethod,
             groupsCovered(r)
                 .map((g) => GROUP_LABEL[g])
@@ -169,17 +202,17 @@ export function benchmarksBody(): string {
     ).join(", ");
     return `# ${TITLE}
 
-Datasheets are claims; these are measurements. ${BENCHMARK_RUNS.length} runs on ${benchmarkedIds().length} catalog actuators (${byOrigin}), as of ${BENCHMARKS_AS_OF}. Each run states its rig, how the numbers were taken (raw rig data, a table, a plot digitised by us, or figures quoted in the text) and an uncertainty per metric. A digitised plot is never raw data, and vendor test reports are the maker's own measurements, not independent ones. Interactive charts: ${absoluteUrl(BENCHMARKS_PATH)}. JSON: ${absoluteUrl("/api/v1/benchmarks")}. MCP tool: get_benchmarks.
+Datasheets are claims; these are measurements. ${BENCHMARK_RUNS.length} runs on ${benchmarkedIds().length} catalog actuators (${byOrigin}), as of ${BENCHMARKS_AS_OF}. Each run states its rig, how the numbers were taken (raw rig data, a table, a plot digitised by us, or figures quoted in the text) and an uncertainty per metric. A digitised plot is never raw data. Each run is also labelled by who ran it: **Vendor** (the maker's own test), **Vendor-affiliated** (someone who sells products built on the actuator) or **Independent**. Interactive charts: ${absoluteUrl(BENCHMARKS_PATH)}. JSON: ${absoluteUrl("/api/v1/benchmarks")}. MCP tool: get_benchmarks.
 
 ## Datasheet vs measured
 
-Highest measured peak torque per actuator against the catalog's datasheet peak, biggest shortfall first. A curve that stops below the stall rating counts as a shortfall: the run never saw more.
+Measured figures against the datasheet: peak and continuous torque (the best run per actuator, since a curve that stops below the stall rating is a lower bound), no-load speed and backlash (every ranked run). The datasheet value is the catalog's, or a claim the run's source quotes. Only independent runs get a verdict; vendor rows read "Maker-reported" and vendor-affiliated rows "Affiliated test". For a typical value, within 10% is a match, otherwise below datasheet or beats (lower is better for backlash). For a maximum ("or less"), the result is within spec or over limit. Independent runs come first.
 
 ${deltaTable()}
 
 ## Measured leaderboard
 
-Continuous torque density: the highest torque a run held for 10 minutes or without reaching the thermal limit, per kg of catalog weight. Heat sinks and ambient differ between runs; read the run before ranking two close entries.
+Continuous torque density: the highest torque a run held for 10 minutes or without reaching the thermal limit, per kg of catalog weight. Heat sinks and ambient differ between runs; read the run before ranking two close entries. The Independence column says when a row rests on the maker's own data.
 
 ${leaderboardTable()}
 

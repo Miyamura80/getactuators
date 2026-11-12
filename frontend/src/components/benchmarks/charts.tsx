@@ -1,6 +1,7 @@
 import {
     BENCHMARKS_PATH,
     type BenchmarkRun,
+    INDEPENDENCE_LABEL,
     ORIGIN_LABEL,
     measuredPeak,
 } from "../../../../src/benchmarks";
@@ -42,6 +43,10 @@ export function OriginBadge({ run }: { run: BenchmarkRun }) {
     return <span className={`bm-badge bm-badge-${run.origin}`} title={run.sourceKind ? `${ORIGIN_LABEL[run.origin]}: ${run.sourceKind}` : ORIGIN_LABEL[run.origin]}>
         {ORIGIN_LABEL[run.origin]}{run.sourceKind ? <small>{run.sourceKind}</small> : null}
     </span>;
+}
+
+export function IndependenceBadge({ run }: { run: BenchmarkRun }) {
+    return <span className={`bm-badge bm-indep bm-indep-${run.independence}`} title={run.independenceNote}>{INDEPENDENCE_LABEL[run.independence]}</span>;
 }
 
 const W = 640;

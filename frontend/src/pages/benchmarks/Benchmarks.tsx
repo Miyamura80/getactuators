@@ -1,13 +1,16 @@
 import { Fragment, type ReactNode, useEffect, useMemo, useState } from "react";
 import { PublicFooter } from "../../components/PublicFooter";
 import { PublicHeader } from "../../components/PublicHeader";
-import { MAX_OVERLAY, OriginBadge, type Series, ThermalChart, TnChart } from "../../components/benchmarks/charts";
+import { IndependenceBadge, MAX_OVERLAY, OriginBadge, type Series, ThermalChart, TnChart } from "../../components/benchmarks/charts";
 import {
     BENCHMARKS_AS_OF,
     BENCHMARKS_PATH,
     BENCHMARK_RUNS,
+    type BenchmarkIndependence,
     type BenchmarkRun,
+    DELTA_METRICS,
     GROUP_LABEL,
+    INDEPENDENCE_LABEL,
     METRICS,
     PROTOCOL_URL,
     SUBMIT_URL,
@@ -24,6 +27,7 @@ import {
     reportedMetrics,
     runKey,
     thermalRuns,
+    VERDICT_TONE,
 } from "../../../../src/benchmarks";
 import { ACTUATORS } from "../../lib/data";
 import { readOpenRun, readPicks, writePicks } from "./url-state";
@@ -46,28 +50,47 @@ function Section({ n, id, title, lede, children }: { n: string; id: string; titl
     </section>;
 }
 
-// Diverging bars: measured peak over datasheet peak, shortfall to the left.
+// Diverging bars: measured over datasheet, shortfall to the left. Grouped by
+// who ran the test; only independent runs carry a verdict, coloured by it.
+const GROUPS: { independence: BenchmarkIndependence; title: string }[] = [
+    { independence: "independent", title: "Independent tests" },
+    { independence: "vendor-affiliated", title: "Affiliated tests" },
+    { independence: "vendor", title: "Maker-reported" },
+];
+
 function DeltaBars() {
     const rows = datasheetDeltas(ACTUATORS);
     const lo = -1;
     const hi = 0.5;
     const pos = (v: number) => ((Math.max(lo, Math.min(hi, v)) - lo) / (hi - lo)) * 100;
     const zero = pos(0);
-    return <ol className="bm-delta" style={{ ["--zero" as string]: `${zero}%` }}>
-        {rows.map((d) => {
-            const r = (d.peak?.ratio ?? 1) - 1;
-            const cls = Math.abs(r) < 0.005 ? "is-even" : r < 0 ? "is-short" : "is-over";
-            const left = Math.min(pos(r), zero);
-            const width = Math.abs(pos(r) - zero);
-            return <li key={d.actuator.id} data-actuator={d.actuator.id}>
-                <a href={`/actuators/${d.actuator.id}`}>{d.actuator.name}</a>
-                <div className="bm-track" title={`${num(d.peak?.measured ?? 0)} N·m measured vs ${num(d.peak?.datasheet ?? 0)} N·m datasheet`}>
-                    <span className={`bm-bar ${cls}`} style={{ left: `${left}%`, width: `${width}%` }} />
-                </div>
-                <span className="bm-mono">{d.peak ? formatRatio(d.peak.ratio) : "n/a"}</span>
-            </li>;
+    return <div className="bm-delta-groups">
+        {GROUPS.map((g) => {
+            const group = rows.filter((d) => d.run.independence === g.independence);
+            if (group.length === 0) return null;
+            return <div key={g.independence} className="bm-delta-group" data-independence={g.independence}>
+                <h3>{g.title}</h3>
+                <ol className="bm-delta" style={{ ["--zero" as string]: `${zero}%` }}>
+                    {group.map((d) => {
+                        const m = DELTA_METRICS[d.metric];
+                        const r = d.ratio - 1;
+                        const tone = d.verdict ? VERDICT_TONE[d.verdict] : "none";
+                        const left = Math.min(pos(r), zero);
+                        const width = Math.abs(pos(r) - zero);
+                        const claim = `${d.bound === "max" ? "max " : ""}${num(d.datasheet)} ${m.unit}`;
+                        return <li key={`${runKey(d.run)}-${d.metric}`} data-actuator={d.actuator.id} data-metric={d.metric} data-verdict={d.verdict ?? "none"}>
+                            <span className="bm-delta-name"><a href={`/actuators/${d.actuator.id}`}>{d.actuator.name}</a><small>{m.label}</small></span>
+                            <div className="bm-track" title={`${num(d.measured)} ${m.unit} measured vs ${claim} datasheet (${d.claimSource})`}>
+                                <span className={`bm-bar is-${Math.abs(r) < 0.005 ? "even" : tone}`} style={{ left: `${left}%`, width: `${width}%` }} />
+                            </div>
+                            <span className="bm-mono">{formatRatio(d.ratio)}</span>
+                            <span className="bm-verdict">{d.status}</span>
+                        </li>;
+                    })}
+                </ol>
+            </div>;
         })}
-    </ol>;
+    </div>;
 }
 
 function Leaderboard() {
@@ -78,6 +101,7 @@ function Leaderboard() {
             <a href={`/actuators/${row.actuator.id}`}>{row.actuator.name}</a>
             <div className="bm-fill" style={{ width: `${(row.densityNmPerKg / top) * 100}%` }} title={`${num(row.continuousNm)} N·m continuous, ${row.weightG} g`} />
             <span className="bm-mono">{num(row.densityNmPerKg)} N·m/kg</span>
+            <span>{row.run.independence === "independent" ? null : <IndependenceBadge run={row.run} />}</span>
         </li>)}
     </ol>;
 }
@@ -95,6 +119,7 @@ function RunCard({ run, open }: { run: BenchmarkRun; open: boolean }) {
         <details className="bm-run" id={`run-${run.actuatorId}-${run.runId}`} open={open} data-run={runKey(run)}>
             <summary>
                 <OriginBadge run={run} />
+                <IndependenceBadge run={run} />
                 <b>{nameOf(run.actuatorId)}</b>
                 <span className="bm-mono">{run.runId} · {run.date} · {run.dataMethod}{rankCaveat(run) ? ` · ${rankCaveat(run)}` : ""}</span>
                 <span className="bm-mono">{groupsCovered(run).map((g) => GROUP_LABEL[g]).join(", ")}</span>
@@ -104,6 +129,9 @@ function RunCard({ run, open }: { run: BenchmarkRun; open: boolean }) {
                 {run.notRanked ? <p className="bm-flag">Not ranked: {run.notRanked}</p> : null}
                 {run.plausibilityNote ? <p className="bm-flag">Flagged: {run.plausibilityNote}</p> : null}
                 <dl>
+                    <dt>Independence</dt>
+                    <dd>{INDEPENDENCE_LABEL[run.independence]}: {run.independenceNote}</dd>
+                    {(run.claims ?? []).map((c) => <Fragment key={c.metric}><dt>Claim</dt><dd>{METRICS[c.metric].label} {c.bound === "max" ? "at most " : ""}{num(c.value)} {METRICS[c.metric].unit}: {c.source}</dd></Fragment>)}
                     {run.methodNote ? <><dt>Method</dt><dd>{run.methodNote}</dd></> : null}
                     {run.revision ? <><dt>Revision</dt><dd>{run.revision}</dd></> : null}
                     <dt>Rig</dt>
@@ -171,7 +199,7 @@ export function Benchmarks({ menuOpen = false }: { menuOpen?: boolean }) {
                 </div>
             </header>
 
-            <Section n="01" id="delta" title="Datasheet vs measured" lede="Highest measured peak torque over the datasheet peak. A curve that stops short of the stall rating counts as a shortfall.">
+            <Section n="01" id="delta" title="Datasheet vs measured" lede="Measured over the datasheet value, grouped by who ran the test. Only independent tests get a verdict; a datasheet maximum is either met or exceeded.">
                 <DeltaBars />
             </Section>
 
@@ -186,7 +214,7 @@ export function Benchmarks({ menuOpen = false }: { menuOpen?: boolean }) {
                 {thermalGroups.map((g, i) => <ThermalChart key={g.map(runKey).join()} series={g.map((run) => ({ label: nameOf(run.actuatorId), run }))} title={`Thermal derating, group ${i + 1}`} />)}
             </Section>
 
-            <Section n="04" id="leaderboard" title="Measured leaderboard" lede="Continuous torque density: the highest torque held 10 minutes or without reaching the limit, per kg.">
+            <Section n="04" id="leaderboard" title="Measured leaderboard" lede="Continuous torque density: the highest torque held 10 minutes or without reaching the limit, per kg. Rows on the maker's own data are badged.">
                 <Leaderboard />
             </Section>
 

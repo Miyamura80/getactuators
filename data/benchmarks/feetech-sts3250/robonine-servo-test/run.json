@@ -9,6 +9,8 @@
         "title": "Robonine: Feetech STS3250 smart actuator, evaluation of accuracy, torque and backlash"
     },
     "dataMethod": "reported",
+    "independence": "vendor-affiliated",
+    "independenceNote": "Robonine blog test; Robonine sells Feetech-based arm kits.",
     "methodNote": "Torque read on a lever: the peak held for a split second, and the highest load held before overload protection cut in. The post gives no lever length, scale accuracy or repeat count: ±0.5 N·m is our estimate, about 10% of the peak.",
     "rig": {
         "torqueSensor": "scale under a lever",

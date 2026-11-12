@@ -26,7 +26,10 @@ describe("/benchmarks page and twin", () => {
         expect(graphs).toContain("/api/v1/benchmarks");
         expect(html).toContain('<a href="/benchmarks"');
         expect(await (await get("/sitemap.xml")).text()).toContain("/benchmarks");
-        expect(await (await get("/llms.txt")).text()).toContain("/benchmarks.md");
+        const llms = await (await get("/llms.txt")).text();
+        expect(llms).toContain("/benchmarks.md");
+        expect(llms).toContain("vendor-affiliated");
+        expect(llms).not.toMatch(/over-promis/i);
     });
 
     test("markdown twin has the delta table, leaderboard, curves, thermal and every run", async () => {
@@ -47,11 +50,21 @@ describe("/benchmarks page and twin", () => {
                 expect(md).toContain(h);
             for (const r of BENCHMARK_RUNS)
                 expect(md).toContain(`\`${r.actuatorId}/${r.runId}\``);
-            // The biggest shortfall leads the delta table.
+            // Independent verdicts lead the delta table; maker and affiliated
+            // rows carry no verdict, and a max claim is labelled as one.
             const delta = md.slice(md.indexOf("## Datasheet vs measured"));
             const firstRow = delta.split("\n").find((l) => l.startsWith("| ["));
-            expect(firstRow).toContain("XC430-W150");
-            expect(firstRow).toContain("-54%");
+            expect(firstRow).toContain(
+                "| Backlash | 11.4 arcmin | 9 arcmin | -21% | Independent | Beats |",
+            );
+            expect(md).toContain(
+                "| Backlash | max 30 arcmin | 46.1 arcmin | +54% | Vendor-affiliated | Affiliated test |",
+            );
+            expect(md).toContain(
+                "| Peak torque | 1.6 N·m | 0.74 N·m | -54% | Vendor | Maker-reported |",
+            );
+            expect(md).not.toMatch(/over-promis/i);
+            for (const r of BENCHMARK_RUNS) expect(md).toContain(r.independenceNote);
             expect(md).toContain("Published (vendor)");
             // Unranked runs are badged, and every run's notes are in the twin.
             expect(md).toContain("Published (blog), not ranked");
@@ -124,6 +137,56 @@ describe("REST /api/v1/benchmarks", () => {
         ).toBeGreaterThan(0);
     });
 
+    test("filters by independence; verdicts only on independent runs", async () => {
+        const ind = BenchmarkListSchema.parse(
+            await (await get("/api/v1/benchmarks?independence=independent")).json(),
+        );
+        expect(ind.results.map((r) => `${r.actuator_id}/${r.run_id}`).sort()).toEqual([
+            "cubemars-ak80-9/orthosis-backdrive-2021",
+            "cubemars-ak80-9/staccatoe-2024",
+            "steadywin-gim6010-8/hackaday-spider-bot-2025",
+        ]);
+        const ak = ind.results.find((r) => r.run_id === "staccatoe-2024");
+        expect(ak?.vs_datasheet.backlash?.verdict).toBe("beats");
+        expect(ak?.independence_note).toContain("StaccaToe");
+        const sts = BenchmarkListSchema.parse(
+            await (
+                await get(
+                    "/api/v1/benchmarks?actuator_id=feetech-sts3215&independence=vendor-affiliated",
+                )
+            ).json(),
+        );
+        expect(sts.total).toBe(3);
+        const cmp = sts.results.find((r) => r.run_id === "robonine-servo-comparison");
+        expect(cmp?.claims).toEqual([
+            expect.objectContaining({
+                metric: "backlashArcmin",
+                value: 30,
+                bound: "max",
+            }),
+        ]);
+        expect(cmp?.vs_datasheet.backlash).toMatchObject({
+            claim_bound: "max",
+            verdict: null,
+            status: "Affiliated test",
+        });
+        const vendor = BenchmarkListSchema.parse(
+            await (await get("/api/v1/benchmarks?independence=vendor")).json(),
+        );
+        expect(vendor.total).toBe(14);
+        for (const r of vendor.results)
+            for (const p of Object.values(r.vs_datasheet))
+                if (p) expect([p.verdict, p.status]).toEqual([null, "Maker-reported"]);
+        const md = await (
+            await get("/api/v1/benchmarks.md?independence=vendor")
+        ).text();
+        expect(md).toContain("Maker-reported");
+        const spec = JSON.stringify(await (await get("/openapi.json")).json());
+        expect(spec).toContain("vendor-affiliated");
+        expect(spec).toContain("within-spec");
+        expect(spec).not.toMatch(/over-promis/i);
+    });
+
     test("per-actuator runs, 404s and bad filters", async () => {
         const res = await get("/api/v1/actuators/xiaomi-cybergear/benchmarks");
         expect(res.status).toBe(200);
@@ -135,6 +198,7 @@ describe("REST /api/v1/benchmarks", () => {
             404,
         );
         expect((await get("/api/v1/benchmarks?origin=rumour")).status).toBe(400);
+        expect((await get("/api/v1/benchmarks?independence=maybe")).status).toBe(400);
         // Markdown twins of both GET operations, with the same 404.
         const md = await get("/api/v1/benchmarks.md?actuator_id=robstride-02");
         expect(md.status).toBe(200);
@@ -176,6 +240,11 @@ describe("MCP get_benchmarks", () => {
         });
         expect(none.isError).toBeFalsy();
         expect(BenchmarkListSchema.parse(none.structuredContent).total).toBe(0);
+        const ind = BenchmarkListSchema.parse(
+            (await callTool("get_benchmarks", { independence: "independent" }))
+                .structuredContent,
+        );
+        expect(ind.total).toBe(3);
         const all = BenchmarkListSchema.parse(
             (await callTool("get_benchmarks")).structuredContent,
         );

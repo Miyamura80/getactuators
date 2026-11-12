@@ -9,6 +9,8 @@
         "title": "mjbots blog: Ground truth torque testing for qdd100"
     },
     "dataMethod": "reported",
+    "independence": "vendor",
+    "independenceNote": "mjbots' own blog for its own servo.",
     "revision": "original qdd100 beta, not beta 3",
     "otherRevision": true,
     "methodNote": "A 1 m pole on the output pressed on a digital scale. Peak torque landed between 12.5 and 15 N·m depending on the unit; the run enters the mid-point, 13.75 N·m, with half that range as its uncertainty.",
