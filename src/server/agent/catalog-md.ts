@@ -8,6 +8,7 @@ import {
 } from "@/catalog";
 import { evidenceFor, fieldCaveat } from "@/catalog/evidence";
 import { jointRows, robotsUsingActuator } from "@/catalog/query";
+import { humanoidLinks, patentLinks } from "@/related/actuator";
 import { absoluteUrl } from "../site";
 import { measuredSection } from "./benchmarks/markdown";
 import { catalogComparisonLinks } from "./comparison-links";
@@ -152,6 +153,15 @@ export function actuatorBody(a: Actuator): string {
             `## Robots that use it\n\n${bullets(robots.map((r) => `${mdLink(r.name, absoluteUrl(`/robots#${encodeURIComponent(r.id)}`))} by ${mdText(r.brand)}: ${mdText(r.summary)}`))}`,
         );
     }
+    const inHumanoids = humanoidLinks(a.id);
+    if (inHumanoids.length > 0) {
+        sections.push(
+            `## In humanoids\n\n${bullets(inHumanoids.map((l) => `${mdLink(l.label, absoluteUrl(l.href))}: ${mdText(l.detail ?? "")}`))}`,
+        );
+    }
+    sections.push(
+        `## Patent landscape\n\nPatent families since 2010 for this design:\n\n${bullets(patentLinks(a.category).map((l) => mdLink(l.label, absoluteUrl(l.href))))}`,
+    );
     if (a.notes && !productSummary(a.id) && !selection)
         sections.push(`## Notes\n\n${mdText(a.notes)}`);
     const engineering = engineeringNotes(a.id);
