@@ -117,6 +117,11 @@ export const BENCHMARK_SOURCES = {
         url: "https://arxiv.org/abs/2404.05039",
         reuse: "facts",
     },
+    "arxiv-2605-24127": {
+        title: "arXiv 2605.24127: Investigating the effect of a series elastic actuation retrofit to black-box actuators",
+        url: "https://arxiv.org/abs/2605.24127",
+        reuse: "facts",
+    },
     "hackaday-spider-bot": {
         title: "Hackaday.io: Steadywin GIM6010-8 vs Xiaomi CyberGear micromotor",
         url: "https://hackaday.io/project/202366-the-unnamed-spider-bot/log/239239-steadywin-gim6010-8-vs-xiaomi-cybergear-micromotor",

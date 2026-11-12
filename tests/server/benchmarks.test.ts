@@ -151,11 +151,16 @@ describe("REST /api/v1/benchmarks", () => {
         expect(ind.results.map((r) => `${r.actuator_id}/${r.run_id}`).sort()).toEqual([
             "cubemars-ak80-9/orthosis-backdrive-2021",
             "cubemars-ak80-9/staccatoe-2024",
+            "myactuator-rmd-x8-pro-v2/sea-retrofit-2026",
             "steadywin-gim6010-8/hackaday-spider-bot-2025",
         ]);
         const ak = ind.results.find((r) => r.run_id === "staccatoe-2024");
         expect(ak?.vs_datasheet.backlash?.verdict).toBe("beats");
         expect(ak?.independence_note).toContain("StaccaToe");
+        // An independent run on another revision is listed but gets no verdict.
+        const rmd = ind.results.find((r) => r.run_id === "sea-retrofit-2026");
+        expect(rmd?.other_revision).toBe(true);
+        expect(rmd?.vs_datasheet.backlash).toBeNull();
         const sts = BenchmarkListSchema.parse(
             await (
                 await get(
@@ -251,7 +256,7 @@ describe("MCP get_benchmarks", () => {
             (await callTool("get_benchmarks", { independence: "independent" }))
                 .structuredContent,
         );
-        expect(ind.total).toBe(3);
+        expect(ind.total).toBe(4);
         const all = BenchmarkListSchema.parse(
             (await callTool("get_benchmarks")).structuredContent,
         );

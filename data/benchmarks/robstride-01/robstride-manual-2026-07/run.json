@@ -12,7 +12,7 @@
     "independence": "vendor",
     "independenceNote": "RobStride's own user manual (official GitHub org).",
     "notRanked": "The curve and overload table match the RS02 manual entry for entry, so they may not have been measured on an RS01. Shown, but not ranked until RobStride confirms.",
-    "methodNote": "T-N points read off the manual's chart (about 0.3 N·m reading error). Overload times are the manual's table at 100 rpm on a 260 x 280 mm aluminium plate, 135 °C winding limit. Thermal torques are the table's whole-N·m figures and the manual states no measurement uncertainty, so the ±0.5 N·m is that rounding only. windingRiseC is the rise from 25 °C ambient to the winding limit, entered only for points that reached it.",
+    "methodNote": "T-N points read off the manual's chart (about 0.3 N·m reading error). Overload times are the manual's table at 100 rpm on a 260 x 280 mm aluminium plate, 135 °C winding limit. Thermal torques are the table's whole-N·m figures and the manual states no measurement uncertainty, so the ±0.5 N·m is that rounding only. windingRiseC is the rise from 25 °C ambient to the winding limit, entered only for points that reached it. Points re-checked in November 2026 by pixel analysis of the source chart image.",
     "rig": {
         "torqueSensor": "not stated",
         "accuracyPct": null,
@@ -48,14 +48,14 @@
         },
         {
             "rpm": 375,
-            "torqueNm": 4.6
+            "torqueNm": 4.8
         },
         {
             "rpm": 400,
-            "torqueNm": 1.4
+            "torqueNm": 1.5
         },
         {
-            "rpm": 407,
+            "rpm": 408,
             "torqueNm": 0.5
         }
     ],

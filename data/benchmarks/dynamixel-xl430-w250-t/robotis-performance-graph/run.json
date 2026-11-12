@@ -11,7 +11,7 @@
     "dataMethod": "digitised",
     "independence": "vendor",
     "independenceNote": "Speed-torque graph from ROBOTIS's own e-Manual.",
-    "methodNote": "Speed and efficiency read off the e-Manual's N-T graph (about 0.02 N·m reading error). The graph does not print its voltage; the 11.1 V rating is assumed. The reading error is stated for torque only; our reading errors for speed and efficiency are not quantified.",
+    "methodNote": "Speed and efficiency read off the e-Manual's N-T graph (about 0.02 N·m reading error). The graph does not print its voltage; the 11.1 V rating is assumed. The reading error is stated for torque only; our reading errors for speed and efficiency are not quantified. Points re-checked in November 2026 by pixel analysis of the source chart image.",
     "rig": {
         "torqueSensor": "not stated",
         "accuracyPct": null,
@@ -22,39 +22,39 @@
     },
     "torqueSpeed": [
         {
-            "rpm": 3,
-            "torqueNm": 0.84,
-            "efficiency": 0.05
+            "rpm": 3.7,
+            "torqueNm": 0.83,
+            "efficiency": 0.04
         },
         {
-            "rpm": 10,
+            "rpm": 10.7,
             "torqueNm": 0.72,
-            "efficiency": 0.11
+            "efficiency": 0.09
         },
         {
-            "rpm": 16.5,
+            "rpm": 18.3,
             "torqueNm": 0.6,
-            "efficiency": 0.15
+            "efficiency": 0.13
         },
         {
-            "rpm": 23.5,
+            "rpm": 25.7,
             "torqueNm": 0.48,
-            "efficiency": 0.19
+            "efficiency": 0.18
         },
         {
-            "rpm": 30,
+            "rpm": 32.9,
             "torqueNm": 0.36,
             "efficiency": 0.22
         },
         {
-            "rpm": 37,
+            "rpm": 40.2,
             "torqueNm": 0.24,
-            "efficiency": 0.23
+            "efficiency": 0.24
         },
         {
-            "rpm": 47,
+            "rpm": 49.8,
             "torqueNm": 0.06,
-            "efficiency": 0.14
+            "efficiency": 0.15
         }
     ],
     "uncertainty": {
