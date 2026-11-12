@@ -6,10 +6,6 @@ export const PUBLIC_LINKS = [
     ["/", "Leaderboard"],
     ["/robots", "Robot types"],
     ["/actuators", "Actuators"],
-    ["/compare", "Compare"],
-    ["/guides", "Guides"],
-    ["/agents", "Agents"],
-    ["/faq", "FAQ"],
 ] as const;
 
 // The "Supply chain" menu. Each page appears once its path is in
@@ -125,7 +121,10 @@ const liveSupplyChain = supplyChainMenu().flatMap((g) =>
 );
 
 export const FOOTER_GROUPS = [
-    { label: "Catalog", links: PUBLIC_LINKS.slice(0, 4) },
+    {
+        label: "Catalog",
+        links: [...PUBLIC_LINKS, ["/compare", "Compare"]],
+    },
     {
         label: "Resources",
         links: [

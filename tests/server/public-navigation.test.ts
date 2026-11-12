@@ -9,6 +9,7 @@ test("static and fallback public headers expose native mobile navigation and act
         "/agents",
         "/faq",
         "/guides",
+        "/patents",
         "/about",
     ]) {
         const html = await (await get(path)).text();
@@ -17,7 +18,8 @@ test("static and fallback public headers expose native mobile navigation and act
         expect(html).toContain(
             '<summary aria-label="Menu" aria-controls="public-navigation"><svg',
         );
-        if (path !== "/about")
+        // Pages linked from the header (or its dropdowns) mark themselves current.
+        if (["/", "/robots", "/actuators", "/patents"].includes(path))
             expect(html).toContain(`href="${path}" aria-current="page"`);
         expect(html).toContain('class="alpha-tag">alpha');
     }

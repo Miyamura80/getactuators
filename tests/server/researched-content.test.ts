@@ -147,7 +147,7 @@ test("editorial routes serve static indexed HTML, source links, matching JSONLD 
 
 test("editorial navigation and comparison links remain discoverable outside the SPA fallback", async () => {
     const guide = await (await get("/guides/robot-actuator-selection")).text();
-    expect(guide).toContain('<a href="/guides">Guides</a>');
+    expect(guide).toContain('<a href="/guides">Engineering guides</a>');
     const comparison = await (
         await get("/comparisons/cubemars-ak80-9-vs-xiaomi-cybergear")
     ).text();
