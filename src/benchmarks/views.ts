@@ -3,13 +3,18 @@ import { absoluteUrl } from "../server/site";
 import {
     BENCHMARKS_AS_OF,
     BENCHMARKS_PATH,
+    BENCHMARK_INDEPENDENCE,
     BENCHMARK_ORIGINS,
     BENCHMARK_RUNS,
+    CLAIM_BOUNDS,
+    CLAIM_METRICS,
     DATA_METHODS,
     type DatasheetRow,
+    type DeltaPair,
     METRIC_GROUPS,
     PROTOCOL_URL,
     SOURCE_KINDS,
+    VERDICTS,
     continuousTorque,
     datasheetDelta,
     groupsCovered,
@@ -30,8 +35,42 @@ const vsDatasheet = z
         measured: z.number(),
         datasheet: z.number(),
         ratio: z.number().describe("Measured over datasheet; 0.8 = 20% short."),
+        claim_bound: z
+            .enum(CLAIM_BOUNDS)
+            .describe(
+                'typical: a nominal figure. max: an upper limit ("0.5 deg or less"), judged within-spec or over-limit, never beats.',
+            ),
+        claim_source: z
+            .string()
+            .describe(
+                "Catalog datasheet value, or where the run's own claim comes from.",
+            ),
+        verdict: z
+            .enum(VERDICTS)
+            .nullable()
+            .describe(
+                "Only independent runs get a verdict; null for vendor and vendor-affiliated runs. Typical claims: within 10% is matches, otherwise below-datasheet or beats (lower is better for backlash). Max claims: within-spec or over-limit.",
+            ),
+        status: z
+            .string()
+            .describe(
+                "Display text: the verdict, or Maker-reported / Affiliated test when there is none.",
+            ),
     })
     .nullable();
+
+const pairView = (p: DeltaPair | undefined) =>
+    p
+        ? {
+              measured: p.measured,
+              datasheet: p.datasheet,
+              ratio: p.ratio,
+              claim_bound: p.bound,
+              claim_source: p.claimSource,
+              verdict: p.verdict,
+              status: p.status,
+          }
+        : null;
 
 export const benchmarkRunOut = z.object({
     actuator_id: z.string(),
@@ -41,6 +80,14 @@ export const benchmarkRunOut = z.object({
     origin: z
         .enum(BENCHMARK_ORIGINS)
         .describe("published (cited source), lab (our rig) or community (PR)."),
+    independence: z
+        .enum(BENCHMARK_INDEPENDENCE)
+        .describe(
+            "Who ran the test: vendor (the maker), vendor-affiliated (someone selling products built on it) or independent. Only independent runs get a verdict.",
+        ),
+    independence_note: z
+        .string()
+        .describe("Evidence for independence: who ran it and any tie to the maker."),
     source_kind: z.enum(SOURCE_KINDS).nullable(),
     source: z
         .object({
@@ -120,11 +167,24 @@ export const benchmarkRunOut = z.object({
     uncertainty: z
         .record(z.string(), z.number())
         .describe("Plus or minus per metric, in the metric's unit."),
+    claims: z
+        .array(
+            z.object({
+                metric: z.enum(CLAIM_METRICS),
+                value: z.number(),
+                source: z.string(),
+                bound: z.enum(CLAIM_BOUNDS),
+            }),
+        )
+        .describe(
+            "Datasheet values the run is compared against when the catalog has none.",
+        ),
     vs_datasheet: z
         .object({
             peak_torque: vsDatasheet,
             continuous_torque: vsDatasheet,
             no_load_speed: vsDatasheet,
+            backlash: vsDatasheet,
         })
         .describe(
             "Null pairs for runs that are not ranked (other revision or not_ranked).",
@@ -178,6 +238,8 @@ export function benchmarkRunView(
         url: runUrl(r),
         date: r.date,
         origin: r.origin,
+        independence: r.independence,
+        independence_note: r.independenceNote,
         source_kind: r.sourceKind ?? null,
         source: sourceView(r),
         submitter: r.submitter ?? null,
@@ -210,10 +272,17 @@ export function benchmarkRunView(
         latency_ms: n(r.latencyMs),
         repeatability_arcmin: n(r.repeatabilityArcmin),
         uncertainty: r.uncertainty,
+        claims: (r.claims ?? []).map((c) => ({
+            metric: c.metric,
+            value: c.value,
+            source: c.source,
+            bound: c.bound ?? "typical",
+        })),
         vs_datasheet: {
-            peak_torque: delta?.peak ?? null,
-            continuous_torque: delta?.continuous ?? null,
-            no_load_speed: delta?.noLoad ?? null,
+            peak_torque: pairView(delta?.peak),
+            continuous_torque: pairView(delta?.continuous),
+            no_load_speed: pairView(delta?.noLoad),
+            backlash: pairView(delta?.backlash),
         },
         plausibility_note: r.plausibilityNote ?? null,
         note: r.note ?? null,
@@ -222,11 +291,19 @@ export function benchmarkRunView(
 
 export function benchmarkListView(
     catalog: readonly DatasheetRow[],
-    filter: { actuatorId?: string; origin?: BenchmarkRun["origin"] } = {},
+    filter: {
+        actuatorId?: string;
+        origin?: BenchmarkRun["origin"];
+        independence?: BenchmarkRun["independence"];
+    } = {},
 ): z.infer<typeof benchmarkListOut> {
     const runs = (
         filter.actuatorId ? runsFor(filter.actuatorId) : BENCHMARK_RUNS
-    ).filter((r) => !filter.origin || r.origin === filter.origin);
+    ).filter(
+        (r) =>
+            (!filter.origin || r.origin === filter.origin) &&
+            (!filter.independence || r.independence === filter.independence),
+    );
     return {
         as_of: BENCHMARKS_AS_OF,
         total: runs.length,

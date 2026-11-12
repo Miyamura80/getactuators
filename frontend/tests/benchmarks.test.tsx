@@ -29,10 +29,29 @@ test("renders the five sections, one call to action and a row per actuator and r
     expect(c.querySelectorAll(".bm-delta li")).toHaveLength(datasheetDeltas(ACTUATORS).length);
     expect(c.querySelectorAll(".bm-leader li")).toHaveLength(measuredLeaderboard(ACTUATORS).length);
     expect(c.querySelectorAll(".bm-run")).toHaveLength(BENCHMARK_RUNS.length);
-    expect(c.querySelector(".bm-delta li")?.getAttribute("data-actuator")).toBe("dynamixel-xc430-w150-t");
+    // Independent tests lead and are the only rows with a verdict.
+    expect([...c.querySelectorAll(".bm-delta-group h3")].map((h) => h.textContent)).toEqual(["Independent tests", "Affiliated tests", "Maker-reported"]);
+    const first = c.querySelector(".bm-delta li");
+    expect([first?.getAttribute("data-actuator"), first?.getAttribute("data-metric"), first?.getAttribute("data-verdict")]).toEqual(["cubemars-ak80-9", "backlash", "beats"]);
+    for (const g of c.querySelectorAll(".bm-delta-group")) {
+        const verdicts = [...g.querySelectorAll(".bm-delta li")].map((li) => li.getAttribute("data-verdict"));
+        if (g.getAttribute("data-independence") === "independent") expect(verdicts).not.toContain("none");
+        else expect(verdicts.every((v) => v === "none")).toBe(true);
+    }
+    const stsMax = c.querySelector('.bm-delta-group[data-independence="vendor-affiliated"] li[data-metric="backlash"]');
+    expect(stsMax?.querySelector(".bm-verdict")?.textContent).toBe("Affiliated test");
+    expect(stsMax?.querySelector(".bm-track")?.getAttribute("title")).toContain("max 30 arcmin");
+    expect(c.querySelector('.bm-delta-group[data-independence="vendor"] .bm-verdict')?.textContent).toBe("Maker-reported");
+    // Every run carries an independence badge with its evidence; leaderboard
+    // rows on vendor data are badged.
+    const badges = [...c.querySelectorAll<HTMLElement>(".bm-runs .bm-indep")];
+    expect(badges).toHaveLength(BENCHMARK_RUNS.length);
+    expect(badges.every((b) => (b.getAttribute("title") ?? "").length > 0)).toBe(true);
+    expect(c.querySelectorAll(".bm-leader .bm-indep-vendor")).toHaveLength(measuredLeaderboard(ACTUATORS).filter((r) => r.run.independence === "vendor").length);
+    expect(c.textContent).not.toMatch(/over-promis/i);
     // The driver-limited GIM6010-8 stall is shown with its reason, not ranked.
     expect(c.querySelector('.bm-delta li[data-actuator="steadywin-gim6010-8"]')).toBeNull();
-    expect(c.querySelector(".bm-bar.is-short")).not.toBeNull();
+    expect(c.querySelector(".bm-bar.is-good")).not.toBeNull();
     expect(c.querySelectorAll(".bm-badge-published").length).toBeGreaterThan(0);
     expect([...c.querySelectorAll(".bm-flag")].map((f) => f.textContent).join(" ")).toContain("Not ranked: The log suspects the ODrive Micro");
 });

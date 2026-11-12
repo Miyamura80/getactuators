@@ -140,11 +140,13 @@ type BenchmarkList = ReturnType<typeof benchmarkList>;
 export function benchmarkRuns(title: string, list: BenchmarkList): string {
     const ratio = (
         v: BenchmarkList["results"][number]["vs_datasheet"]["peak_torque"],
-    ) => (v ? `${num(v.measured, "N·m")} (${v.ratio.toFixed(2)}x)` : "n/a");
+    ) =>
+        v ? `${num(v.measured, "N·m")} (${v.ratio.toFixed(2)}x, ${v.status})` : "n/a";
     const rows = list.results.map((r) => [
         mdLink(`${r.actuator_id}/${r.run_id}`, r.url),
         r.date,
         `${r.origin}${r.source_kind ? ` (${r.source_kind})` : ""}${r.other_revision ? ", other revision" : r.not_ranked ? ", not ranked" : ""}`,
+        r.independence,
         r.data_method,
         mdText(r.groups.join(", ")),
         ratio(r.vs_datasheet.peak_torque),
@@ -162,6 +164,7 @@ export function benchmarkRuns(title: string, list: BenchmarkList): string {
                       "Run",
                       "Date",
                       "Origin",
+                      "Independence",
                       "Method",
                       "Groups",
                       "Peak vs datasheet",

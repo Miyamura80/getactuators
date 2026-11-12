@@ -9,6 +9,8 @@
         "title": "Robonine: Practical comparison of smart serial servo motors for robotics"
     },
     "dataMethod": "reported",
+    "independence": "vendor-affiliated",
+    "independenceNote": "Robonine blog test; Robonine sells Feetech-based arm kits. Firmware dead zone may inflate encoder-count backlash.",
     "revision": "12 V, 1:345 (C018)",
     "methodNote": "Peak torque from a 3.3 kgf reading on a 10 cm lever at full load. Backlash is the post's mean of 8.75 encoder counts, converted by us at about 0.088° per count; the post does not say how many readings the mean uses. The post states no uncertainties: ±5.3 arcmin is one encoder count (reading resolution, not the spread of the readings) and ±0.2 N·m is our estimate for the scale reading.",
     "rig": {
@@ -21,6 +23,14 @@
     },
     "peakTorqueNm": 3.24,
     "backlashArcmin": 46.1,
+    "claims": [
+        {
+            "metric": "backlashArcmin",
+            "value": 30,
+            "bound": "max",
+            "source": "Feetech datasheet 0.5° or less, as quoted by Robonine; Feetech primary not verified"
+        }
+    ],
     "uncertainty": {
         "peakTorqueNm": 0.2,
         "backlashArcmin": 5.3
