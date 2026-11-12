@@ -4,8 +4,15 @@ import { BENCHMARK_RUNS, benchmarkedIds } from "@/benchmarks";
 import { ACTUATORS } from "@/catalog";
 import { actuatorBody } from "@/server/agent/catalog-md";
 import { SITE_URL } from "@/server/site";
-import { get, getMarkdown } from "./agent-helpers";
+import { get as getShared } from "./agent-helpers";
 import { callTool } from "./mcp-helpers";
+
+// A client key of its own keeps these requests out of the shared API
+// rate-limit window the rest of the server suite runs in.
+const KEY = { "x-forwarded-for": "benchmarks-test" };
+const get = (path: string) => getShared(path, KEY);
+const getMarkdown = (path: string) =>
+    getShared(path, { ...KEY, accept: "text/markdown" });
 
 const EM_DASH = String.fromCharCode(0x2014);
 
