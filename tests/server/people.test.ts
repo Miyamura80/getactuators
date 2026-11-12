@@ -101,6 +101,6 @@ test("MCP list_people returns the same records, optionally by domain", async () 
 test("llms.txt and the footer link /people", async () => {
     expect(await (await get("/llms.txt")).text()).toContain("/people.md");
     expect(await (await get("/about")).text()).toContain(
-        '<a href="/people">Leading people</a>',
+        '<a href="/people">People</a>',
     );
 });

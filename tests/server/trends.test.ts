@@ -50,9 +50,7 @@ describe("/trends", () => {
     test("is in llms.txt, the sitemap and the footer", async () => {
         expect(await (await get("/llms.txt")).text()).toContain("/trends.md");
         expect(await (await get("/sitemap.xml")).text()).toContain("/trends</loc>");
-        expect(await (await get("/")).text()).toContain(
-            '<a href="/trends">Trends over time</a>',
-        );
+        expect(await (await get("/")).text()).toContain('<a href="/trends">Trends</a>');
     });
 });
 

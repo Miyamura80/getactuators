@@ -125,6 +125,13 @@ export const FOOTER_GROUPS = [
         label: "Catalog",
         links: [...PUBLIC_LINKS, ["/compare", "Compare"]],
     },
+    // Same links as the header's "Market intel" menu.
+    {
+        label: "Market intel",
+        links: MARKET_INTEL_GROUPS.flatMap(
+            (g): readonly (readonly [string, string])[] => g.links,
+        ),
+    },
     {
         label: "Resources",
         links: [
@@ -133,21 +140,11 @@ export const FOOTER_GROUPS = [
             ["/guides/humanoid-robot-actuators", "Humanoid actuators"],
             ["/tools/motor-torque-calculator", "Motor torque calculator"],
             ["/tools/robot-arm-torque-calculator", "Arm torque calculator"],
-            ["/startups", "Actuator startups"],
-            ["/investors", "Actuator investors"],
-            ["/humanoids", "Humanoid joint map"],
-            ["/open-source", "Open-source robots"],
             ["/comparisons/cubemars-ak80-9-vs-xiaomi-cybergear", "AK80-9 vs CyberGear"],
             ["/faq", "FAQ"],
             ["/agents", "For AI agents"],
             ["/docs/api", "API documentation"],
             ["/llms.txt", "llms.txt"],
-            ["/benchmarks", "Measured benchmarks"],
-            ["/sdk", "Best actuator SDKs"],
-            ["/people", "Leading people"],
-            ["/trends", "Trends over time"],
-            ["/prices", "Actuator price history"],
-            ["/patents", "Actuator patents"],
         ],
     },
     {

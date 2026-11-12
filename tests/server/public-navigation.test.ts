@@ -51,7 +51,7 @@ test("public pages have one grouped footer with valid internal links", async () 
             ...html.matchAll(/<footer class="site-footer"[^>]*>([\s\S]*?)<\/footer>/g),
         ];
         expect(footers).toHaveLength(1);
-        for (const group of ["Catalog", "Resources", "Project"])
+        for (const group of ["Catalog", "Market intel", "Resources", "Project"])
             expect(footers[0]?.[1]).toContain(group);
         const footer = footers[0]?.[1];
         if (!footer) throw new Error(`Missing footer: ${path}`);
