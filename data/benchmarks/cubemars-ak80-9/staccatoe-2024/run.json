@@ -9,6 +9,8 @@
         "title": "arXiv 2404.05039: StaccaToe, a single-leg robot that mimics the human leg and toe"
     },
     "dataMethod": "reported",
+    "independence": "independent",
+    "independenceNote": "Academic StaccaToe leg paper; no CubeMars stake.",
     "revision": "not stated",
     "methodNote": "Backlash measured at the knee actuator output on the assembled leg; torque constants on the authors' dynamometer. The paper states no uncertainty for the backlash: ±1 arcmin is our estimate (rounding the quoted 0.15° alone accounts for ±0.3 arcmin).",
     "rig": {
@@ -20,6 +22,13 @@
         "controller": "AK80-9 built-in driver"
     },
     "backlashArcmin": 9,
+    "claims": [
+        {
+            "metric": "backlashArcmin",
+            "value": 11.4,
+            "source": "Manufacturer specification of 0.19° (11.4 arcmin) as quoted by the StaccaToe paper; the AK80-9 V2.0 figure, not confirmed for the V3.0 KV100 on cubemars.com"
+        }
+    ],
     "uncertainty": {
         "backlashArcmin": 1
     },

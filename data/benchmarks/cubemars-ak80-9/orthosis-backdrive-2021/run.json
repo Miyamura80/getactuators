@@ -9,16 +9,18 @@
         "title": "arXiv 2110.01562: Enhancing voluntary motion with modular, backdrivable, powered hip and knee orthoses"
     },
     "dataMethod": "reported",
+    "independence": "independent",
+    "independenceNote": "University of Michigan lab (Nesler, Thomas, Divekar, Rouse, Gregg), funded by NSF and NIH; actuator bought commercially; no CubeMars or T-Motor tie found.",
     "revision": "not stated; predates the V3.0 KV100 in the catalog",
     "otherRevision": true,
-    "methodNote": "Static backdrive: an analog torque wrench turns the unpowered output until it moves. Dynamic: the output driven by hand at 1 and 2 Hz over 70°.",
+    "methodNote": "Static backdrive: an analog torque wrench turns the output under zero current control until it moves. Dynamic: the output driven by hand at 1 and 2 Hz over 70° peak-to-peak, read on the FUTEK TRS605 load cell.",
     "rig": {
         "torqueSensor": "analog torque wrench (Neiko 03727A); rotary load cell bench for the friction model",
         "accuracyPct": null,
         "encoder": "actuator's own encoder",
         "ambientC": null,
         "busV": null,
-        "controller": "AK80-9 built-in driver"
+        "controller": "Dephy FASTER driver (current control)"
     },
     "frictionNm": 0.25,
     "uncertainty": {

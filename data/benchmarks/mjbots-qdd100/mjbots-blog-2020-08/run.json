@@ -9,6 +9,8 @@
         "title": "mjbots blog: Up-rating the qdd100 beta thermal bounds"
     },
     "dataMethod": "reported",
+    "independence": "vendor",
+    "independenceNote": "mjbots' own blog for its own servo.",
     "revision": "original qdd100 beta, not beta 3",
     "otherRevision": true,
     "methodNote": "Torque held until thermal throttling in a 20 °C lab with no forced airflow. The post gives the 12.5 N·m point as under 5 s; it is entered as 5 s. The post states no uncertainty: ±0.5 N·m is our estimate, not a figure from mjbots.",

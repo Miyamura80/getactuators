@@ -7,8 +7,11 @@ import {
     sourceIdForUrl,
 } from "./sources";
 import {
+    BENCHMARK_INDEPENDENCE,
     BENCHMARK_ORIGINS,
     type BenchmarkRun,
+    CLAIM_BOUNDS,
+    CLAIM_METRICS,
     DATA_METHODS,
     SOURCE_KINDS,
 } from "./types";
@@ -73,6 +76,8 @@ const runSchema = z
             .regex(/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})$/)
             .optional(),
         dataMethod: z.enum(DATA_METHODS),
+        independence: z.enum(BENCHMARK_INDEPENDENCE),
+        independenceNote: z.string().min(20),
         methodNote: z.string().min(10).optional(),
         revision: z.string().min(1).optional(),
         otherRevision: z.boolean().optional(),
@@ -112,6 +117,19 @@ const runSchema = z
         latencyMs: pos(1000).optional(),
         repeatabilityArcmin: nonNeg(600).optional(),
         uncertainty: z.record(z.string(), z.number().positive()),
+        claims: z
+            .array(
+                z
+                    .object({
+                        metric: z.enum(CLAIM_METRICS),
+                        value: z.number().positive(),
+                        source: z.string().min(20),
+                        bound: z.enum(CLAIM_BOUNDS).optional(),
+                    })
+                    .strict(),
+            )
+            .min(1)
+            .optional(),
         plausibilityNote: z.string().min(20).optional(),
         note: z.string().min(1).optional(),
     })
@@ -151,6 +169,20 @@ function parseRun(folder: RunFolder): Checked {
             ),
         };
     return { run: parsed.data as BenchmarkRun, errors: [] };
+}
+
+// A claim must be set against a figure the run reports, once per metric.
+function claimErrors(run: BenchmarkRun): string[] {
+    const claims = run.claims ?? [];
+    const reported: string[] = reportedMetrics(run);
+    return claims.flatMap((c, i) => [
+        ...(reported.includes(c.metric)
+            ? []
+            : [`claims[${i}]: the run does not report ${c.metric}`]),
+        ...(claims.findIndex((o) => o.metric === c.metric) === i
+            ? []
+            : [`claims[${i}]: ${c.metric} is claimed twice`]),
+    ]);
 }
 
 function dateErrors(date: string, today: string): string[] {
@@ -458,6 +490,7 @@ export function validateFolder(
     if (run.dataMethod === "digitised" && !run.methodNote)
         errors.push("digitised runs need methodNote saying how the plot was read");
     errors.push(...uncertaintyErrors(run));
+    errors.push(...claimErrors(run));
     errors.push(...curveErrors(run));
     if (actuator) errors.push(...plausibilityErrors(run, actuator));
     errors.push(...rawFileErrors(run, folder));

@@ -1,6 +1,7 @@
 import {
     BENCHMARKS_PATH,
     type BenchmarkRun,
+    INDEPENDENCE_LABEL,
     METRICS,
     ORIGIN_LABEL,
     continuousTorque,
@@ -56,14 +57,17 @@ export function measuredSection(a: Actuator): string | undefined {
         const d = datasheetDelta(r, a);
         const parts = [
             d.peak
-                ? `peak ${fmt(d.peak.measured, "N·m")} vs ${fmt(d.peak.datasheet, "N·m")} datasheet (${formatRatio(d.peak.ratio)})`
+                ? `peak ${fmt(d.peak.measured, "N·m")} vs ${fmt(d.peak.datasheet, "N·m")} datasheet (${formatRatio(d.peak.ratio)}, ${d.peak.status})`
+                : undefined,
+            d.backlash
+                ? `backlash ${fmt(d.backlash.measured, "arcmin")} vs ${d.backlash.bound === "max" ? "max " : ""}${fmt(d.backlash.datasheet, "arcmin")} datasheet (${d.backlash.status})`
                 : undefined,
             continuousTorque(r) !== undefined
                 ? `continuous ${fmt(continuousTorque(r), "N·m")}`
                 : undefined,
             ...metricLine(r),
         ].filter(Boolean);
-        return `**${runLink(r)}** (${badge(r)}, ${r.date}, ${r.dataMethod}): ${mdText(parts.join("; "))}. Source: ${sourceCell(r)}.`;
+        return `**${runLink(r)}** (${badge(r)}, ${INDEPENDENCE_LABEL[r.independence].toLowerCase()}, ${r.date}, ${r.dataMethod}): ${mdText(parts.join("; "))}. Source: ${sourceCell(r)}.`;
     });
     const peak = Math.max(...runs.map((r) => measuredPeak(r) ?? 0));
     return `## Measured\n\n${runs.length} measured run${runs.length === 1 ? "" : "s"} on file${peak > 0 ? `, highest measured torque ${fmt(peak, "N·m")}` : ""}. See [all benchmarks](${absoluteUrl(BENCHMARKS_PATH)}).\n\n${bullets(lines)}`;

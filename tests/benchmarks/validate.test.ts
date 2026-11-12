@@ -10,6 +10,7 @@ import {
     measuredLeaderboard,
     measuredNoLoad,
     runsFor,
+    verdictFor,
 } from "@/benchmarks";
 import { BENCHMARK_SOURCES, sourceIdForUrl } from "@/benchmarks/sources";
 import {
@@ -32,6 +33,8 @@ function communityRun(): Record<string, unknown> {
         origin: "community",
         submitter: "octocat",
         dataMethod: "raw",
+        independence: "independent",
+        independenceNote: "Hobbyist bench, no tie to Xiaomi or any reseller.",
         rig: {
             torqueSensor: "Example 20 N·m inline rotary transducer",
             accuracyPct: 0.2,
@@ -322,6 +325,71 @@ describe("benchmark validator", () => {
         expect(errorsFor(folder(hidden)).join("\n")).toContain("datasheet peak");
     });
 
+    test("independence and its evidence are required", () => {
+        const { independence: _i, ...noClass } = communityRun();
+        expect(errorsFor(folder(noClass)).join("\n")).toContain("independence");
+        const { independenceNote: _n, ...noNote } = communityRun();
+        expect(errorsFor(folder(noNote)).join("\n")).toContain("independenceNote");
+        const bad = { ...communityRun(), independence: "neutral" };
+        expect(errorsFor(folder(bad)).join("\n")).toContain("run.json independence");
+    });
+
+    test("claims take a max bound and must match a reported metric", () => {
+        const claim = {
+            metric: "backlashArcmin",
+            value: 30,
+            source: "Example datasheet, 0.5° or less",
+        };
+        const ok = { ...communityRun(), claims: [{ ...claim, bound: "max" }] };
+        expect(errorsFor(folder(ok))).toEqual([]);
+        const badBound = { ...communityRun(), claims: [{ ...claim, bound: "min" }] };
+        expect(errorsFor(folder(badBound)).join("\n")).toContain("claims.0.bound");
+        const unmeasured = {
+            ...communityRun(),
+            claims: [{ ...claim, metric: "noLoadRpm" }],
+        };
+        expect(errorsFor(folder(unmeasured)).join("\n")).toContain(
+            "claims[0]: the run does not report noLoadRpm",
+        );
+        const twice = { ...communityRun(), claims: [claim, claim] };
+        expect(errorsFor(folder(twice)).join("\n")).toContain("claimed twice");
+    });
+
+    test("a max claim is within spec or over limit, never beats", () => {
+        expect(verdictFor(0.2, "lower", "max")).toBe("within-spec");
+        expect(verdictFor(1, "lower", "max")).toBe("within-spec");
+        expect(verdictFor(1.05, "lower", "max")).toBe("over-limit");
+        expect(verdictFor(0.2, "lower")).toBe("beats");
+        expect(verdictFor(1.5, "lower")).toBe("below-datasheet");
+        expect(verdictFor(0.5, "higher")).toBe("below-datasheet");
+        expect(verdictFor(1.05, "higher")).toBe("matches");
+        // An independent run against a max claim, through the delta model.
+        const run = {
+            ...(communityRun() as unknown as BenchmarkRun),
+            claims: [
+                {
+                    metric: "backlashArcmin" as const,
+                    value: 30,
+                    source: "Example datasheet",
+                    bound: "max" as const,
+                },
+            ],
+        };
+        const cg = ACTUATORS.find((a) => a.id === "xiaomi-cybergear");
+        if (!cg) throw new Error("CyberGear missing");
+        const within = datasheetDelta(run, cg).backlash;
+        expect([within?.verdict, within?.status]).toEqual([
+            "within-spec",
+            "Within spec",
+        ]);
+        const over = datasheetDelta({ ...run, backlashArcmin: 45 }, cg).backlash;
+        expect(over?.verdict).toBe("over-limit");
+        const vendor = datasheetDelta({ ...run, independence: "vendor" }, cg).backlash;
+        expect([vendor?.verdict, vendor?.status]).toEqual([null, "Maker-reported"]);
+        for (const d of datasheetDeltas(ACTUATORS))
+            if (d.bound === "max") expect(d.verdict).not.toBe("beats");
+    });
+
     test("published runs need a registered source and a metric", () => {
         const pub = {
             actuatorId: "xiaomi-cybergear",
@@ -331,6 +399,8 @@ describe("benchmark validator", () => {
             sourceKind: "paper",
             source: { url: "https://example.org/unregistered", title: "Some paper" },
             dataMethod: "digitised",
+            independence: "independent",
+            independenceNote: "University lab paper, no tie to Xiaomi found.",
             rig: {
                 torqueSensor: "not stated",
                 accuracyPct: null,
@@ -440,6 +510,26 @@ describe("seeded benchmark data", () => {
         expect(benchmarkLicenceErrors(BENCHMARK_RUNS)).toEqual([]);
     });
 
+    test("every run says who ran it", () => {
+        const count = (c: string) =>
+            BENCHMARK_RUNS.filter((r) => r.independence === c).length;
+        expect([
+            count("vendor"),
+            count("vendor-affiliated"),
+            count("independent"),
+        ]).toEqual([14, 4, 3]);
+        for (const r of BENCHMARK_RUNS)
+            expect(r.independenceNote.length, runKeyOf(r)).toBeGreaterThan(20);
+        for (const r of BENCHMARK_RUNS.filter((x) =>
+            x.actuatorId.startsWith("feetech-"),
+        ))
+            expect(r.independence).toBe("vendor-affiliated");
+        const feetechMax = BENCHMARK_RUNS.flatMap((r) =>
+            (r.claims ?? []).filter((c) => c.bound === "max").map(() => r.runId),
+        );
+        expect(feetechMax).toEqual(["robonine-servo-comparison"]);
+    });
+
     test("digitised runs say so and carry an uncertainty for every curve", () => {
         for (const r of BENCHMARK_RUNS.filter((x) => x.dataMethod === "digitised")) {
             expect(r.methodNote).toBeTruthy();
@@ -452,12 +542,35 @@ describe("seeded benchmark data", () => {
 
     test("deltas, leaderboard and continuous torque", () => {
         const deltas = datasheetDeltas(ACTUATORS);
-        const ratios = deltas.map((d) => d.peak?.ratio ?? 0);
-        expect(ratios).toEqual([...ratios].sort((a, b) => a - b));
-        expect(deltas[0]?.actuator.id).toBe("dynamixel-xc430-w150-t");
+        // Independent runs lead; the table no longer opens on its biggest gap.
+        expect(deltas[0]?.run.independence).toBe("independent");
+        const order = { independent: 0, "vendor-affiliated": 1, vendor: 2 };
+        const ranks = deltas.map((d) => order[d.run.independence]);
+        expect(ranks).toEqual([...ranks].sort((a, b) => a - b));
         // Runs flagged notRanked or otherRevision get no datasheet delta.
         for (const id of ["steadywin-gim6010-8", "robstride-01"])
             expect(deltas.some((d) => d.actuator.id === id)).toBe(false);
+        // Only independent runs get a verdict; the others say why not.
+        for (const d of deltas) {
+            if (d.run.independence === "independent") expect(d.verdict).not.toBeNull();
+            else expect(d.verdict).toBeNull();
+        }
+        expect(
+            deltas
+                .filter((d) => d.run.independence === "vendor")
+                .every((d) => d.status === "Maker-reported"),
+        ).toBe(true);
+        const sts = deltas.filter((d) => d.actuator.id === "feetech-sts3215");
+        expect(sts.map((d) => [d.metric, d.bound, d.verdict, d.status])).toEqual([
+            ["peak", "typical", null, "Affiliated test"],
+            ["backlash", "max", null, "Affiliated test"],
+        ]);
+        const ak = deltas.find((d) => d.actuator.id === "cubemars-ak80-9");
+        expect([ak?.metric, ak?.datasheet, ak?.verdict]).toEqual([
+            "backlash",
+            11.4,
+            "beats",
+        ]);
         const gim = getRun("steadywin-gim6010-8", "hackaday-spider-bot-2025");
         const gimRow = ACTUATORS.find((a) => a.id === "steadywin-gim6010-8");
         if (!gim || !gimRow) throw new Error("GIM6010-8 fixture missing");

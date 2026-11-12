@@ -1,6 +1,6 @@
 /* Measured runs: /benchmarks, the Measured panel on actuator pages and the
    /compare overlay. Square, flat, monochrome per BRAND.md; red and green only
-   for the datasheet shortfall or surplus. */
+   for an independent verdict (bad or good against the datasheet). */
 
 .bm-mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 
@@ -31,6 +31,9 @@
 .bm-badge small { color: var(--muted); font: inherit; }
 .bm-badge-community { border-color: var(--cyan); color: var(--cyan); }
 .bm-badge-lab { border-color: var(--text); }
+.bm-indep { border-style: dashed; color: var(--muted); }
+.bm-indep-vendor-affiliated { border-color: #ffb547; color: #ffb547; }
+.bm-indep-independent { border-style: solid; border-color: var(--green); color: var(--green); }
 
 /* /benchmarks */
 .bm-head { position: relative; }
@@ -58,18 +61,31 @@
 .bm-sec h2 span { color: var(--muted); font: 600 12px var(--mono); }
 .bm-sec > p { max-width: 72ch; margin: 0 0 14px; color: var(--muted); line-height: 1.5; }
 
-/* Datasheet vs measured: one diverging bar per actuator. */
+/* Datasheet vs measured: one diverging bar per actuator and metric, grouped
+   by who ran the test. */
+.bm-delta-groups { display: grid; gap: 18px; }
+.bm-delta-group h3 { margin: 0 0 6px; color: var(--muted); font: 600 11px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }
 .bm-delta { display: grid; gap: 2px; margin: 0; padding: 0; list-style: none; }
-.bm-delta li { display: grid; grid-template-columns: minmax(120px, 220px) minmax(0, 1fr) 64px; align-items: center; gap: 12px; min-height: 30px; }
+.bm-delta li { display: grid; grid-template-columns: minmax(140px, 260px) minmax(0, 1fr) 64px 120px; align-items: center; gap: 12px; min-height: 30px; }
+.bm-delta-name { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.bm-delta-name small { flex: none; color: var(--muted); font: 600 10px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; }
 .bm-delta a { color: var(--text); text-decoration: none; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .bm-delta a:hover { color: var(--cyan); }
 .bm-track { position: relative; height: 14px; border-left: 1px solid transparent; }
 .bm-track::before { content: ""; position: absolute; top: -4px; bottom: -4px; left: var(--zero); border-left: 1px solid var(--line-strong); }
 .bm-bar { position: absolute; top: 0; bottom: 0; }
-.bm-bar.is-short { background: var(--red); opacity: 0.8; }
-.bm-bar.is-over { background: var(--green); opacity: 0.8; }
+.bm-bar.is-bad { background: var(--red); opacity: 0.8; }
+.bm-bar.is-good { background: var(--green); opacity: 0.8; }
+/* No verdict (vendor or vendor-affiliated run): neutral, not judged. */
+.bm-bar.is-none { background: var(--line-strong); }
 .bm-bar.is-even { width: 2px !important; background: var(--muted); }
 .bm-delta .bm-mono { text-align: right; font-size: 12px; color: var(--muted); }
+.bm-verdict { font: 600 11px var(--mono); letter-spacing: 0.04em; text-transform: uppercase; }
+.bm-delta li[data-verdict="none"] .bm-verdict { color: var(--muted); font-weight: 400; }
+.bm-delta li[data-verdict="below-datasheet"] .bm-verdict,
+.bm-delta li[data-verdict="over-limit"] .bm-verdict { color: var(--red); }
+.bm-delta li[data-verdict="beats"] .bm-verdict,
+.bm-delta li[data-verdict="within-spec"] .bm-verdict { color: var(--green); }
 
 /* T-N picker */
 .bm-picks { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px; }
@@ -88,7 +104,7 @@
 
 /* Leaderboard */
 .bm-leader { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; counter-reset: rank; }
-.bm-leader li { display: grid; grid-template-columns: 28px minmax(120px, 220px) minmax(0, 1fr) 88px; align-items: center; gap: 12px; min-height: 32px; }
+.bm-leader li { display: grid; grid-template-columns: 28px minmax(120px, 220px) minmax(0, 1fr) 88px 72px; align-items: center; gap: 12px; min-height: 32px; }
 .bm-leader li::before { counter-increment: rank; content: counter(rank, decimal-leading-zero); color: var(--muted); font: 600 12px var(--mono); }
 .bm-leader a { color: var(--text); text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .bm-leader .bm-fill { height: 10px; background: var(--cyan-dim); }
@@ -130,9 +146,13 @@
     .bm-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .bm-stats div:nth-child(3) { border-left: 0; }
     .bm-stats div:nth-child(n + 3) { border-top: 1px solid var(--line); }
-    .bm-delta li { grid-template-columns: minmax(0, 1fr) 56px; }
+    .bm-delta li { grid-template-columns: minmax(0, 1fr) 56px; padding: 4px 0; }
     .bm-delta .bm-track { grid-column: 1 / -1; grid-row: 2; }
+    .bm-delta .bm-verdict { grid-column: 1 / -1; grid-row: 3; }
+    /* The group heading already says why there is no verdict. */
+    .bm-delta li[data-verdict="none"] .bm-verdict { display: none; }
     .bm-leader li { grid-template-columns: 24px minmax(0, 1fr) 72px; }
+    .bm-leader li > span:last-child { grid-column: 2 / -1; grid-row: 3; }
     .bm-leader .bm-fill { grid-column: 2 / -1; grid-row: 2; }
     .measured-grid { grid-template-columns: minmax(0, 1fr); }
 }

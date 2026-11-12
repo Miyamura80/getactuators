@@ -9,6 +9,8 @@
         "title": "ROBOTIS e-Manual: XM430-W350 performance graph"
     },
     "dataMethod": "digitised",
+    "independence": "vendor",
+    "independenceNote": "Speed-torque graph from ROBOTIS's own e-Manual.",
     "methodNote": "Speed and efficiency read off the e-Manual's N-T graph, measured by ROBOTIS under a gradually increasing load (about 0.05 N·m reading error). The graph does not print its voltage; the 12 V rating is assumed. The reading error is stated for torque only; our reading errors for speed and efficiency are not quantified.",
     "rig": {
         "torqueSensor": "not stated",

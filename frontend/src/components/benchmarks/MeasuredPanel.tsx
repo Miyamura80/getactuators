@@ -12,7 +12,7 @@ import {
     runsFor,
 } from "../../../../src/benchmarks";
 import { ACTUATORS } from "../../lib/data";
-import { OriginBadge, TnChart, runHref } from "./charts";
+import { IndependenceBadge, OriginBadge, TnChart, runHref } from "./charts";
 
 type ExtraKey = Exclude<MetricKey, "torqueSpeed" | "thermal" | "peakTorqueNm">;
 const EXTRA_KEYS: readonly ExtraKey[] = ["noLoadRpm", "backlashArcmin", "stiffnessNmPerRad", "frictionNm", "ripplePct", "bandwidthHz", "latencyMs", "repeatabilityArcmin"];
@@ -46,13 +46,14 @@ export function MeasuredPanel({ id }: { id: string }) {
         <div className="measured-grid">
             <div>
                 <ul className="measured-kpis">
-                    {peak ? <li data-kpi="peak"><b>{num(peak.measured)} N·m</b><span>measured peak vs {num(peak.datasheet)} N·m datasheet ({formatRatio(peak.ratio)})</span></li> : null}
+                    {peak ? <li data-kpi="peak"><b>{num(peak.measured)} N·m</b><span>measured peak vs {num(peak.datasheet)} N·m datasheet ({formatRatio(peak.ratio)}, {peak.status})</span></li> : null}
                     {cont !== undefined ? <li data-kpi="continuous"><b>{num(cont)} N·m</b><span>held 10 min or without reaching the thermal limit{actuator.rated_torque_nm ? ` (rated ${num(actuator.rated_torque_nm)} N·m)` : ""}</span></li> : null}
                     {extras.map(([key, value, run]) => <li key={`${run}-${key}`} data-kpi={key}><b>{num(value)} {METRICS[key].unit}</b><span>{METRICS[key].label.toLowerCase()} ({run})</span></li>)}
                 </ul>
                 <ul className="measured-runs">
                     {runs.map((r) => <li key={r.runId}>
                         <OriginBadge run={r} />
+                        <IndependenceBadge run={r} />
                         <a href={runHref(r)}>{r.runId}</a>
                         <span className="bm-mono">{r.date} · {r.dataMethod}{rankCaveat(r) ? ` · ${rankCaveat(r)}` : ""}</span>
                     </li>)}
