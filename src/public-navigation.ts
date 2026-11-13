@@ -6,10 +6,6 @@ export const PUBLIC_LINKS = [
     ["/", "Leaderboard"],
     ["/robots", "Robot types"],
     ["/actuators", "Actuators"],
-    ["/compare", "Compare"],
-    ["/guides", "Guides"],
-    ["/agents", "Agents"],
-    ["/faq", "FAQ"],
 ] as const;
 
 // The "Supply chain" menu. Each page appears once its path is in
@@ -47,10 +43,46 @@ export const SUPPLY_CHAIN_PAGES_LIVE: ReadonlySet<string> = new Set<string>([
     ...LIVE_COUNTRY_PATHS,
 ]);
 
+// The "Market intel" menu: the datasets and directories about the market
+// around the catalog. Every page here is live.
+export const MARKET_INTEL_GROUPS = [
+    {
+        label: "Data",
+        links: [
+            ["/benchmarks", "Measured benchmarks"],
+            ["/prices", "Price history"],
+            ["/trends", "Trends"],
+            ["/patents", "Patents"],
+        ],
+    },
+    {
+        label: "Players",
+        links: [
+            ["/humanoids", "Humanoid joint map"],
+            ["/startups", "Startups"],
+            ["/investors", "Investors"],
+            ["/people", "People"],
+            ["/sdk", "SDKs"],
+            ["/open-source", "Open-source robots"],
+        ],
+    },
+] as const;
+
 export interface SupplyChainMenuLink {
     href: string;
     label: string;
     live: boolean;
+}
+
+export interface HeaderMenuGroup {
+    label: string;
+    links: SupplyChainMenuLink[];
+}
+
+export interface HeaderMenu {
+    id: string;
+    label: string;
+    groups: HeaderMenuGroup[];
 }
 
 // Menu groups with live links only, or every planned link (flagged) when
@@ -58,7 +90,7 @@ export interface SupplyChainMenuLink {
 export function supplyChainMenu(
     preview = false,
     live: ReadonlySet<string> = SUPPLY_CHAIN_PAGES_LIVE,
-): { label: string; links: SupplyChainMenuLink[] }[] {
+): HeaderMenuGroup[] {
     return SUPPLY_CHAIN_GROUPS.map((g) => ({
         label: g.label,
         links: g.links
@@ -67,12 +99,39 @@ export function supplyChainMenu(
     })).filter((g) => g.links.length > 0);
 }
 
+// Header dropdowns in display order; a menu with no links is dropped.
+// `supplyChainPreview` lists every planned atlas page (/lab/supply-chain).
+export function headerMenus(supplyChainPreview = false): HeaderMenu[] {
+    const marketIntel = MARKET_INTEL_GROUPS.map((g) => ({
+        label: g.label,
+        links: g.links.map(([href, label]) => ({ href, label, live: true })),
+    }));
+    return [
+        { id: "market-intel", label: "Market intel", groups: marketIntel },
+        {
+            id: "supply-chain",
+            label: "Supply chain",
+            groups: supplyChainMenu(supplyChainPreview),
+        },
+    ].filter((m) => m.groups.length > 0);
+}
+
 const liveSupplyChain = supplyChainMenu().flatMap((g) =>
     g.links.map((l) => [l.href, l.label] as const),
 );
 
 export const FOOTER_GROUPS = [
-    { label: "Catalog", links: PUBLIC_LINKS.slice(0, 4) },
+    {
+        label: "Catalog",
+        links: [...PUBLIC_LINKS, ["/compare", "Compare"]],
+    },
+    // Same links as the header's "Market intel" menu.
+    {
+        label: "Market intel",
+        links: MARKET_INTEL_GROUPS.flatMap(
+            (g): readonly (readonly [string, string])[] => g.links,
+        ),
+    },
     {
         label: "Resources",
         links: [
@@ -81,21 +140,11 @@ export const FOOTER_GROUPS = [
             ["/guides/humanoid-robot-actuators", "Humanoid actuators"],
             ["/tools/motor-torque-calculator", "Motor torque calculator"],
             ["/tools/robot-arm-torque-calculator", "Arm torque calculator"],
-            ["/startups", "Actuator startups"],
-            ["/investors", "Actuator investors"],
-            ["/humanoids", "Humanoid joint map"],
-            ["/open-source", "Open-source robots"],
             ["/comparisons/cubemars-ak80-9-vs-xiaomi-cybergear", "AK80-9 vs CyberGear"],
             ["/faq", "FAQ"],
             ["/agents", "For AI agents"],
             ["/docs/api", "API documentation"],
             ["/llms.txt", "llms.txt"],
-            ["/benchmarks", "Measured benchmarks"],
-            ["/sdk", "Best actuator SDKs"],
-            ["/people", "Leading people"],
-            ["/trends", "Trends over time"],
-            ["/prices", "Actuator price history"],
-            ["/patents", "Actuator patents"],
         ],
     },
     {
@@ -113,15 +162,15 @@ export const FOOTER_GROUPS = [
         : []),
 ] as const;
 
-function supplyChainHtml(path: string): string {
-    const groups = supplyChainMenu();
-    if (groups.length === 0) return "";
-    const current = groups.some((g) => g.links.some((l) => l.href === path));
-    return `<details class="site-sub"><summary${current ? ' class="is-current"' : ""}>Supply chain</summary><div class="site-sub-panel">${groups.map((g) => `<section><h3>${g.label}</h3>${g.links.map((l) => `<a href="${l.href}"${path === l.href ? ' aria-current="page"' : ""}>${l.label}</a>`).join("")}</section>`).join("")}</div></details>`;
+function menuHtml(menu: HeaderMenu, path: string): string {
+    const current = menu.groups.some((g) => g.links.some((l) => l.href === path));
+    return `<details class="site-sub" data-menu="${menu.id}"><summary${current ? ' class="is-current"' : ""}>${menu.label}</summary><div class="site-sub-panel">${menu.groups.map((g) => `<section><h3>${g.label}</h3>${g.links.map((l) => `<a href="${l.href}"${path === l.href ? ' aria-current="page"' : ""}>${l.label}</a>`).join("")}</section>`).join("")}</div></details>`;
 }
 
 export function publicHeader(path: string): string {
-    return `<header class="site-header"><a href="/" class="site-brand" aria-label="actuatorlist home"><span><b>actuator</b>list.com</span><span class="alpha-tag">alpha</span></a><details class="site-menu"><summary aria-label="Menu" aria-controls="public-navigation"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></summary><nav id="public-navigation" aria-label="Site">${PUBLIC_LINKS.map(([href, label]) => `<a href="${href}"${path === href ? ' aria-current="page"' : ""}>${label}</a>`).join("")}${supplyChainHtml(path)}</nav></details></header>`;
+    return `<header class="site-header"><a href="/" class="site-brand" aria-label="actuatorlist home"><span><b>actuator</b>list.com</span><span class="alpha-tag">alpha</span></a><details class="site-menu"><summary aria-label="Menu" aria-controls="public-navigation"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></summary><nav id="public-navigation" aria-label="Site">${PUBLIC_LINKS.map(([href, label]) => `<a href="${href}"${path === href ? ' aria-current="page"' : ""}>${label}</a>`).join("")}${headerMenus()
+        .map((m) => menuHtml(m, path))
+        .join("")}</nav></details></header>`;
 }
 
 export function publicFooter(): string {

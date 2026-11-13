@@ -63,7 +63,7 @@ describe("/patents", () => {
         expect(await (await get("/llms.txt")).text()).toContain("/patents.md");
         expect(await (await get("/sitemap.xml")).text()).toContain("/patents</loc>");
         expect(await (await get("/")).text()).toContain(
-            '<a href="/patents">Actuator patents</a>',
+            '<a href="/patents">Patents</a>',
         );
     });
 });

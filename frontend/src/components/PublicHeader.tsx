@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
-import { PUBLIC_LINKS } from "../../../src/public-navigation";
+import { PUBLIC_LINKS, headerMenus } from "../../../src/public-navigation";
 import { BrandMark } from "./BrandMark";
-import { SupplyChainMenu } from "./supply-chain/SupplyChainMenu";
+import { HeaderMenu } from "./nav/HeaderMenu";
 
 export function PublicHeader({ path, initialOpen = false, supplyChainPreview = false }: { path: string; initialOpen?: boolean; supplyChainPreview?: boolean }) {
     const ref = useRef<HTMLDetailsElement>(null);
@@ -34,7 +34,7 @@ export function PublicHeader({ path, initialOpen = false, supplyChainPreview = f
                     onClick={() => { if (ref.current) ref.current.open = false; }}>
                     {label}
                 </a>)}
-                <SupplyChainMenu path={path} preview={supplyChainPreview} onNavigate={() => { if (ref.current) ref.current.open = false; }} />
+                {headerMenus(supplyChainPreview).map((menu) => <HeaderMenu key={menu.id} menu={menu} path={path} onNavigate={() => { if (ref.current) ref.current.open = false; }} />)}
             </nav>
         </details>
     </header>;

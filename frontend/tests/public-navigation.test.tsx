@@ -68,7 +68,8 @@ test("public SPA headers share native mobile disclosure and active route links",
         expect(menu.querySelector("summary")?.textContent).toBe("");
         expect(menu.querySelector("summary")?.getAttribute("aria-label")).toBe("Menu");
         expect(Boolean(menu.querySelector('summary svg[aria-hidden="true"] path'))).toBe(true);
-        expect(header.querySelector(`a[href="${path}"][aria-current="page"]`)).not.toBeNull();
+        // /agents left the header; the pages still linked there mark themselves current.
+        if (path !== "/agents") expect(header.querySelector(`a[href="${path}"][aria-current="page"]`)).not.toBeNull();
         expect(header.querySelector(".alpha-tag")?.textContent).toBe("alpha");
         for (const link of header.querySelectorAll("nav a")) {
             const event = new MouseEvent("click", { bubbles: true, cancelable: true });

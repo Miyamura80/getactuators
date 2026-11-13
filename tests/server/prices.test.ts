@@ -60,7 +60,7 @@ describe("/prices", () => {
         expect(await (await get("/llms.txt")).text()).toContain("/prices.md");
         expect(await (await get("/sitemap.xml")).text()).toContain("/prices</loc>");
         expect(await (await get("/")).text()).toContain(
-            '<a href="/prices">Actuator price history</a>',
+            '<a href="/prices">Price history</a>',
         );
     });
 });
