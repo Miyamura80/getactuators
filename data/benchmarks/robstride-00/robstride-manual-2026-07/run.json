@@ -15,7 +15,7 @@
     "rig": {
         "torqueSensor": "not stated",
         "accuracyPct": null,
-        "encoder": "actuator's own 14-bit absolute magnetic encoder",
+        "encoder": "actuator's own dual 14-bit magnetic encoders",
         "ambientC": 25,
         "busV": 48,
         "controller": "built-in RobStride driver"
