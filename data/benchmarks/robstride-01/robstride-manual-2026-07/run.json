@@ -11,8 +11,8 @@
     "dataMethod": "digitised",
     "independence": "vendor",
     "independenceNote": "RobStride's own user manual (official GitHub org).",
-    "notRanked": "The T-N chart is the same image as the RS02 manual's and the overload table matches it entry for entry, so they may not have been measured on an RS01. Shown, but not ranked until RobStride confirms.",
-    "methodNote": "T-N points read off the manual's 48 V chart (about 0.3 N·m reading error); the manual also has a 36 V chart and gives 36 V as the rated voltage. Overload times are the manual's table at 100 rpm on a 260 x 280 mm aluminium plate, 135 °C winding limit. Thermal torques are the table's whole-N·m figures and the manual states no measurement uncertainty, so the ±0.5 N·m is that rounding only. windingRiseC is the rise from 25 °C ambient to the winding limit, entered only for points that reached it.",
+    "notRanked": "The curve and overload table match the RS02 manual entry for entry, so they may not have been measured on an RS01. Shown, but not ranked until RobStride confirms.",
+    "methodNote": "T-N points read off the manual's chart (about 0.3 N·m reading error). Overload times are the manual's table at 100 rpm on a 260 x 280 mm aluminium plate, 135 °C winding limit. Thermal torques are the table's whole-N·m figures and the manual states no measurement uncertainty, so the ±0.5 N·m is that rounding only. windingRiseC is the rise from 25 °C ambient to the winding limit, entered only for points that reached it. Points re-checked in November 2026 by pixel analysis of the source chart image.",
     "rig": {
         "torqueSensor": "not stated",
         "accuracyPct": null,
@@ -52,10 +52,10 @@
         },
         {
             "rpm": 400,
-            "torqueNm": 1.4
+            "torqueNm": 1.5
         },
         {
-            "rpm": 407,
+            "rpm": 408,
             "torqueNm": 0.5
         }
     ],
@@ -114,5 +114,5 @@
         "torqueSpeed": 0.3,
         "thermal": 0.5
     },
-    "note": "Both T-N charts (36 V and 48 V) in the RS01 manual are the same image files as in the RS02 manual, and the overload tables match entry for entry, while the two manuals give different winding limits (135 and 145 °C). The RS01 manual also states a 315 rpm no-load speed, the RS00 figure, against a 48 V chart that runs to 407 rpm. Treat this run as not measured on an RS01 until RobStride says otherwise."
+    "note": "The RS01 manual's overload table and T-N chart match the RS02 manual entry for entry, while the two manuals give different winding limits (135 and 145 °C). Treat this run as not measured on an RS01 until RobStride says otherwise."
 }

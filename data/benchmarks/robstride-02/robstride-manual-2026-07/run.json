@@ -51,10 +51,10 @@
         },
         {
             "rpm": 400,
-            "torqueNm": 1.4
+            "torqueNm": 1.5
         },
         {
-            "rpm": 407,
+            "rpm": 408,
             "torqueNm": 0.5
         }
     ],
